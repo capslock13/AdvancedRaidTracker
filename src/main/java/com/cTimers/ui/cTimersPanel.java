@@ -48,6 +48,7 @@ public class cTimersPanel extends PluginPanel
     {
         filters = new ArrayList<cFilterCondition>();
         raids = new cFilteredRaidsFrame();
+        raids.getContentPane().setBackground(Color.BLACK);
         loadFilterFrame = new cLoadFilterFrame(activeFiltersContainer);
         saveFilterFrame = new cSaveFilterFrame();
         raidsOpen = false;
@@ -215,7 +216,8 @@ public class cTimersPanel extends PluginPanel
             public void actionPerformed(ActionEvent e)
             {
                 raids.getContentPane().removeAll();
-                raids.updateFrameData(getActiveFilteredRaids()); //TODO active
+                raids.updateFrameData(getActiveFilteredRaids());
+                raids.getContentPane().setBackground(Color.BLACK);
                 raids.repaint();
                 raids.open();
             }

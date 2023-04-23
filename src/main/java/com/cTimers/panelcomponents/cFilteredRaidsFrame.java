@@ -12,10 +12,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Comparator;
-import java.util.Date;
+import java.util.*;
 
 @Slf4j
 public class cFilteredRaidsFrame extends cFrame
@@ -27,8 +24,10 @@ public class cFilteredRaidsFrame extends cFrame
 
 
     private JLabel raidsFoundLabel = new JLabel("", SwingConstants.LEFT);
+    private JLabel completionsFound = new JLabel("", SwingConstants.LEFT);
     private JComboBox viewByRaidComboBox;
 
+    private JComboBox sortOrderBox;
     private JComboBox sortOptionsBox;
     private JLabel overallPanelMaidenAverage = new JLabel("", SwingConstants.RIGHT);
     private JLabel overallPanelBloatAverage = new JLabel("", SwingConstants.RIGHT);
@@ -242,6 +241,8 @@ public class cFilteredRaidsFrame extends cFrame
     JCheckBox filterCheckBoxScale;
     JCheckBox filterTodayOnly;
     JCheckBox filterPartyOnly;
+
+    JCheckBox filterPartialData;
     JCheckBox filter8;
     JTable table;
 
@@ -250,6 +251,11 @@ public class cFilteredRaidsFrame extends cFrame
     JPanel container;
 
     public ArrayList<cRoomData> currentData;
+
+    String colorStr(Color c)
+    {
+        return "<html><font color='#" + Integer.toHexString(c.getRGB()).substring(2) + "'>";
+    }
 
     public cFilteredRaidsFrame()
     {
@@ -497,6 +503,7 @@ public class cFilteredRaidsFrame extends cFrame
     public void updateTable()
     {
         int timeToDisplay = 0;
+        int completions = 0;
         ArrayList<cRoomData> tableData = new ArrayList<>();
         for(cRoomData data : currentData)
         {
@@ -517,7 +524,7 @@ public class cFilteredRaidsFrame extends cFrame
             }
             if(filterCompletionOnly.isSelected())
             {
-                if(!data.raidCompleted)
+                if(!data.raidCompleted || !data.getOverallTimeAccurate())
                 {
                     shouldDataBeIncluded = false;
                 }
@@ -525,6 +532,18 @@ public class cFilteredRaidsFrame extends cFrame
             if(filterWipeResetOnly.isSelected())
             {
                 if(data.raidCompleted)
+                {
+                    shouldDataBeIncluded = false;
+                }
+            }
+            if(filterPartialData.isSelected())
+            {
+                if(!(data.maidenStartAccurate == data.maidenEndAccurate &&
+                        data.bloatStartAccurate == data.bloatEndAccurate &&
+                        data.nyloStartAccurate == data.nyloEndAccurate &&
+                        data.soteStartAccurate == data.soteEndAccurate &&
+                        data.xarpStartAccurate == data.xarpEndAccurate &&
+                        data.verzikStartAccurate == data.verzikEndAccurate))
                 {
                     shouldDataBeIncluded = false;
                 }
@@ -583,23 +602,114 @@ public class cFilteredRaidsFrame extends cFrame
             if(shouldDataBeIncluded)
             {
                 tableData.add(data);
+                if(data.raidCompleted && data.getOverallTimeAccurate())
+                {
+                    completions++;
+                }
             }
         }
         if(sortOptionsBox.getSelectedIndex() == 0)
         {
-            tableData.sort(Comparator.comparing(cRoomData::getDate));
+            if(sortOrderBox.getSelectedIndex() == 0)
+            {
+                tableData.sort(Comparator.comparing(cRoomData::getDate));
+            }
+            else
+            {
+                tableData.sort(Comparator.comparing(cRoomData::getDate).reversed());
+            }
         }
         else if(sortOptionsBox.getSelectedIndex() == 1)
         {
-            tableData.sort(Comparator.comparing(cRoomData::getOverallTime));
+            switch(viewByRaidComboBox.getSelectedIndex())
+            {
+                case 1:
+                    if(sortOrderBox.getSelectedIndex() == 0)
+                    {
+                        tableData.sort(Comparator.comparing(cRoomData::getMaidenTime));
+                    }
+                    else
+                    {
+                        tableData.sort(Comparator.comparing(cRoomData::getMaidenTime).reversed());
+                    }
+                    break;
+                case 2:
+                    if(sortOrderBox.getSelectedIndex() == 0)
+                    {
+                        tableData.sort(Comparator.comparing(cRoomData::getBloatTime));
+                    }
+                    else
+                    {
+                        tableData.sort(Comparator.comparing(cRoomData::getBloatTime).reversed());
+                    }
+                    break;
+                case 3:
+                    if(sortOrderBox.getSelectedIndex() == 0)
+                    {
+                        tableData.sort(Comparator.comparing(cRoomData::getNyloTime));
+                    }
+                    else
+                    {
+                        tableData.sort(Comparator.comparing(cRoomData::getNyloTime).reversed());
+                    }
+                    break;
+                case 4:
+                    if(sortOrderBox.getSelectedIndex() == 0)
+                    {
+                        tableData.sort(Comparator.comparing(cRoomData::getSoteTime));
+                    }
+                    else
+                    {
+                        tableData.sort(Comparator.comparing(cRoomData::getSoteTime).reversed());
+                    }
+                    break;
+                case 5:
+                    if(sortOrderBox.getSelectedIndex() == 0)
+                    {
+                        tableData.sort(Comparator.comparing(cRoomData::getXarpTime));
+                    }
+                    else
+                    {
+                        tableData.sort(Comparator.comparing(cRoomData::getXarpTime).reversed());
+                    }
+                    break;
+                case 6:
+                    if(sortOrderBox.getSelectedIndex() == 0)
+                    {
+                        tableData.sort(Comparator.comparing(cRoomData::getVerzikTime));
+                    }
+                    else
+                    {
+                        tableData.sort(Comparator.comparing(cRoomData::getVerzikTime).reversed());
+                    }
+                    break;
+                default:
+                    if(sortOrderBox.getSelectedIndex() == 0)
+                    {
+                        tableData.sort(Comparator.comparing(cRoomData::getOverallTime));
+                    }
+                    else
+                    {
+                        tableData.sort(Comparator.comparing(cRoomData::getOverallTime).reversed());
+                    }
+                    break;
+            }
         }
         else if(sortOptionsBox.getSelectedIndex() == 2)
         {
-            tableData.sort(Comparator.comparing(cRoomData::getScale));
+            if(sortOrderBox.getSelectedIndex() == 0)
+            {
+                tableData.sort(Comparator.comparing(cRoomData::getScale));
+            }
+            else
+            {
+                tableData.sort(Comparator.comparing(cRoomData::getScale).reversed());
+            }
         }
 
         updateCustomStats(tableData);
         raidsFoundLabel.setText("Raids Found: " + tableData.size());
+        completionsFound.setText("Completions Found: " + completions);
 
         String[] columnNames = { "Date", "Scale", "Status", viewByRaidComboBox.getSelectedItem().toString(), "Players", "Spectated?", "View"};
         ArrayList<Object[]> tableBuilder = new ArrayList<>();
@@ -1136,12 +1246,17 @@ public class cFilteredRaidsFrame extends cFrame
     public void updateFrameData(ArrayList<cRoomData> data)
     {
         /**/
+        int completions = 0;
         currentData = data;
         setTitle("Raids");
         String[] columnNames = { "Date", "Scale", "Status", "Overall Time", "Players", "Spectated?", "View"};
         ArrayList<Object[]> tableBuilder = new ArrayList<>();
         for(cRoomData raid : data)
         {
+            if(raid.raidCompleted && raid.getOverallTimeAccurate())
+            {
+                completions++;
+            }
             String players = "";
             for(String s : raid.players)
             {
@@ -1224,18 +1339,13 @@ public class cFilteredRaidsFrame extends cFrame
 
         JPanel subPanel1 = new JPanel();
         subPanel1.setLayout(new GridLayout(1, 1));
-        //subPanel1.setBorder(BorderFactory.createLineBorder(Color.black));
 
         JPanel subPanel2 = new JPanel();
         subPanel2.setLayout(new GridLayout(5, 2));
-        //subPanel2.setBorder(BorderFactory.createLineBorder(Color.black));
 
         JPanel subPanel3 = new JPanel();
-       // subPanel3.setBorder(BorderFactory.createLineBorder(Color.black));
 
         JPanel subPanel4 = new JPanel();
-       // subPanel4.setLayout(new BoxLayout(subPanel4, BoxLayout.Y_AXIS));
-       // subPanel4.setBorder(BorderFactory.createLineBorder(Color.black));
 
         sortOptionsBox = new JComboBox(new String[]
                 {
@@ -1244,6 +1354,12 @@ public class cFilteredRaidsFrame extends cFrame
                         "Scale"
                 }
                 );
+
+        sortOrderBox = new JComboBox(new String[]
+                {
+                        "Ascending",
+                        "Descending"
+                });
 
         statisticsBox = new JComboBox(new String[]
                 {
@@ -1296,6 +1412,13 @@ public class cFilteredRaidsFrame extends cFrame
                 }
         );
 
+        sortOrderBox.addActionListener(
+                al->
+                {
+                    updateTable();
+                }
+        );
+
         JLabel textCustomAverageLabel = new JLabel("Average:", SwingConstants.LEFT);
         JLabel textCustomMedianLabel = new JLabel("Median:", SwingConstants.LEFT);
         JLabel textCustomModeLabel = new JLabel("Mode:", SwingConstants.LEFT);
@@ -1323,6 +1446,7 @@ public class cFilteredRaidsFrame extends cFrame
         subPanel2.setBorder(BorderFactory.createTitledBorder("Results"));
         subPanel3.setBorder(BorderFactory.createTitledBorder("Sort Options"));
         subPanel3.add(sortOptionsBox);
+        subPanel3.add(sortOrderBox);
         JPanel buttonLine = new JPanel();
         buttonLine.setLayout(new GridLayout(1, 2));
         buttonLine.add(new JLabel("Config"));
@@ -1339,7 +1463,9 @@ public class cFilteredRaidsFrame extends cFrame
         subPanel4.add(viewByRaidComboBox);
 
         subPanel4.add(raidsFoundLabel);
+        subPanel4.add(completionsFound);
         raidsFoundLabel.setText("Raids found: " + data.size());
+        completionsFound.setText("Completions found: " + completions);
 
         customSubPanel.add(subPanel1);
         customSubPanel.add(subPanel2);
@@ -1352,10 +1478,12 @@ public class cFilteredRaidsFrame extends cFrame
         overallAveragePanel.setLayout(new BorderLayout());
         overallAveragePanel.setBorder(BorderFactory.createTitledBorder("Average"));
 
+        String roomColor = colorStr(new Color(200, 200, 200));
+
         JPanel overallAverageSubPanel = new JPanel();
         overallAverageSubPanel.setLayout(new GridLayout(7, 2));
 
-        overallAverageSubPanel.add(new JLabel("Maiden Time"));
+        overallAverageSubPanel.add(new JLabel(roomColor + "Maiden Time"));
         overallAverageSubPanel.add(overallPanelMaidenAverage);
 
         overallAverageSubPanel.add(new JLabel("Bloat Time"));
@@ -2495,6 +2623,8 @@ public class cFilteredRaidsFrame extends cFrame
          filterCheckBoxScale = new JCheckBox("Scale");
          filterTodayOnly = new JCheckBox("Today Only");
          filterPartyOnly = new JCheckBox("Party Only");
+         filterPartialData = new JCheckBox("Filter Partial Data");
+         filterPartialData.setToolTipText("Removes data sets that have any rooms that were partially completed");
 
         filterSpectateOnly.addActionListener(
                 al->
@@ -2536,7 +2666,11 @@ public class cFilteredRaidsFrame extends cFrame
                 {
                     updateTable();
                 });
-
+        filterPartialData.addActionListener(
+                al->
+                {
+                    updateTable();
+                });
 
         JPanel scaleContainer = new JPanel();
         scaleContainer.setLayout(new BoxLayout(scaleContainer, BoxLayout.X_AXIS));
@@ -2550,40 +2684,25 @@ public class cFilteredRaidsFrame extends cFrame
         filterHolder.add(filterWipeResetOnly);
         filterHolder.add(filterTodayOnly);
         filterHolder.add(filterPartyOnly);
+        filterHolder.add(filterPartialData);
         scaleContainer.add(filterCheckBoxScale);
         scaleContainer.add(filterComboBoxScale);
         filterHolder.add(scaleContainer);
-
-
-
-        JLabel blank6 = new JLabel("");
-        filterHolder.add(blank6);
 
         additionalFiltersPanel.add(filterHolder);
 
         JPanel topContainer = new JPanel();
         topContainer.setLayout(new BoxLayout(topContainer, BoxLayout.X_AXIS));
 
-
         topContainer.add(tabbedPane);
         topContainer.add(additionalFiltersPanel);
 
         setLabels(data);
 
-        //container.add(tabbedPane);
         container.add(topContainer);
         container.add(tablePanel);
+
         add(container);
         pack();
-    }
-
-    protected JComponent makeTextPanel(String text)
-    {
-        JPanel panel = new JPanel(false);
-        JLabel filler = new JLabel(text);
-        filler.setHorizontalAlignment(JLabel.CENTER);
-        panel.setLayout(new GridLayout(1, 1));
-        panel.add(filler);
-        return panel;
     }
 }

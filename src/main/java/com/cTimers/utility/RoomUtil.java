@@ -20,6 +20,10 @@ public class RoomUtil
 
     public static String time(int ticks)
     {
+        if(ticks == 0 || ticks == Integer.MAX_VALUE || ticks == -1)
+        {
+            return "-";
+        }
         String timeStr = "";
         double seconds = ticks*.6;
         int minutes = ((int)seconds-((int)seconds)%60)/60;
@@ -50,6 +54,10 @@ public class RoomUtil
 
     public static String time(double ticks)
     {
+        if(ticks == 0 || ticks == Integer.MAX_VALUE || ticks == -1)
+        {
+            return "-";
+        }
         String timeStr = "";
         double seconds = ticks*.6;
         int minutes = ((int)seconds-((int)seconds)%60)/60;

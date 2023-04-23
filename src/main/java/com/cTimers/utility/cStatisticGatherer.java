@@ -13,6 +13,11 @@ public class cStatisticGatherer
     public static double getMaiden70SplitAverage(ArrayList<cRoomData> data)
     {
         data = data.stream().filter(d -> d.maidenTimeAccurate).collect(Collectors.toCollection(ArrayList::new));
+
+        if(data.size() == 0)
+        {
+            return -1;
+        }
         double total = 0;
         double count = 0;
         for(cRoomData d : data)
@@ -26,6 +31,10 @@ public class cStatisticGatherer
     public static double getMaiden7050SplitAverage(ArrayList<cRoomData> data)
     {
         data = data.stream().filter(d -> d.maidenTimeAccurate).collect(Collectors.toCollection(ArrayList::new));
+        if(data.size() == 0)
+        {
+            return -1;
+        }
         double total = 0;
         double count = 0;
         for(cRoomData d : data)
@@ -39,6 +48,10 @@ public class cStatisticGatherer
     public static double getMaiden50SplitAverage(ArrayList<cRoomData> data)
     {
         data = data.stream().filter(d -> d.maidenTimeAccurate).collect(Collectors.toCollection(ArrayList::new));
+        if(data.size() == 0)
+        {
+            return -1;
+        }
         double total = 0;
         double count = 0;
         for(cRoomData d : data)
@@ -52,6 +65,10 @@ public class cStatisticGatherer
     public static double getMaiden5030SplitAverage(ArrayList<cRoomData> data)
     {
         data = data.stream().filter(d -> d.maidenTimeAccurate).collect(Collectors.toCollection(ArrayList::new));
+        if(data.size() == 0)
+        {
+            return -1;
+        }
         double total = 0;
         double count = 0;
         for(cRoomData d : data)
@@ -65,6 +82,10 @@ public class cStatisticGatherer
     public static double getMaiden30SplitAverage(ArrayList<cRoomData> data)
     {
         data = data.stream().filter(d -> d.maidenTimeAccurate).collect(Collectors.toCollection(ArrayList::new));
+        if(data.size() == 0)
+        {
+            return -1;
+        }
         double total = 0;
         double count = 0;
         for(cRoomData d : data)
@@ -78,6 +99,10 @@ public class cStatisticGatherer
     public static double getMaidenSkipSplitAverage(ArrayList<cRoomData> data)
     {
         data = data.stream().filter(d -> d.maidenTimeAccurate).collect(Collectors.toCollection(ArrayList::new));
+        if(data.size() == 0)
+        {
+            return -1;
+        }
         double total = 0;
         double count = 0;
         for(cRoomData d : data)
@@ -91,6 +116,10 @@ public class cStatisticGatherer
     public static double getMaidenTimeAverage(ArrayList<cRoomData> data)
     {
         data = data.stream().filter(d -> d.maidenTimeAccurate).collect(Collectors.toCollection(ArrayList::new));
+        if(data.size() == 0)
+        {
+            return -1;
+        }
         double total = 0;
         double count = 0;
         for(cRoomData d : data)
@@ -625,11 +654,14 @@ public class cStatisticGatherer
         }
         return minValue;
     }
-    //TODO handle not completions
 
     public static double getBloatFirstDownAverage(ArrayList<cRoomData> data)
     {
         data = data.stream().filter(d -> d.bloatTimeAccurate).collect(Collectors.toCollection(ArrayList::new));
+        if(data.size() == 0)
+        {
+            return -1;
+        }
         double total = 0;
         double count = 0;
         for(cRoomData d : data)
@@ -644,6 +676,10 @@ public class cStatisticGatherer
     {
         data = data.stream().filter(d -> d.bloatTimeAccurate).collect(Collectors.toCollection(ArrayList::new));
 
+        if(data.size() == 0)
+        {
+            return -1;
+        }
         double total = 0;
         double count = 0;
         for(cRoomData d : data)
@@ -807,6 +843,10 @@ public class cStatisticGatherer
     public static double getNyloLastWaveAverage(ArrayList<cRoomData> data)
     {
         data = data.stream().filter(d -> d.nyloTimeAccurate).collect(Collectors.toCollection(ArrayList::new));
+        if(data.size() == 0)
+        {
+            return -1;
+        }
         double total = 0;
         double count = 0;
         for(cRoomData d : data)
@@ -820,6 +860,10 @@ public class cStatisticGatherer
     public static double getNyloBossSpawnAverage(ArrayList<cRoomData> data)
     {
         data = data.stream().filter(d -> d.nyloTimeAccurate).collect(Collectors.toCollection(ArrayList::new));
+        if(data.size() == 0)
+        {
+            return -1;
+        }
         double total = 0;
         double count = 0;
         for(cRoomData d : data)
@@ -833,6 +877,10 @@ public class cStatisticGatherer
     public static double getNyloBossSplitAverage(ArrayList<cRoomData> data)
     {
         data = data.stream().filter(d -> d.nyloTimeAccurate).collect(Collectors.toCollection(ArrayList::new));
+        if(data.size() == 0)
+        {
+            return -1;
+        }
         double total = 0;
         double count = 0;
         for(cRoomData d : data)
@@ -846,6 +894,10 @@ public class cStatisticGatherer
     public static double getNyloTimeAverage(ArrayList<cRoomData> data)
     {
         data = data.stream().filter(d -> d.nyloTimeAccurate).collect(Collectors.toCollection(ArrayList::new));
+        if(data.size() == 0)
+        {
+            return -1;
+        }
         double total = 0;
         double count = 0;
         for(cRoomData d : data)
@@ -1159,6 +1211,10 @@ public class cStatisticGatherer
     public static double getSoteP1Average(ArrayList<cRoomData> data)
     {
         data = data.stream().filter(d -> d.soteTimeAccurate).collect(Collectors.toCollection(ArrayList::new));
+        if(data.size() == 0)
+        {
+            return -1;
+        }
         double total = 0;
         double count = 0;
         for(cRoomData d : data)
@@ -1172,6 +1228,10 @@ public class cStatisticGatherer
     public static double getSoteP2Average(ArrayList<cRoomData> data)
     {
         data = data.stream().filter(d -> d.soteTimeAccurate).collect(Collectors.toCollection(ArrayList::new));
+        if(data.size() == 0)
+        {
+            return -1;
+        }
         double total = 0;
         double count = 0;
         for(cRoomData d : data)
@@ -1185,6 +1245,10 @@ public class cStatisticGatherer
     public static double getSoteP3Average(ArrayList<cRoomData> data)
     {
         data = data.stream().filter(d -> d.soteTimeAccurate).collect(Collectors.toCollection(ArrayList::new));
+        if(data.size() == 0)
+        {
+            return -1;
+        }
         double total = 0;
         double count = 0;
         for(cRoomData d : data)
@@ -1198,6 +1262,10 @@ public class cStatisticGatherer
     public static double getSoteM1Average(ArrayList<cRoomData> data)
     {
         data = data.stream().filter(d -> d.soteTimeAccurate).collect(Collectors.toCollection(ArrayList::new));
+        if(data.size() == 0)
+        {
+            return -1;
+        }
         double total = 0;
         double count = 0;
         for(cRoomData d : data)
@@ -1211,6 +1279,10 @@ public class cStatisticGatherer
     public static double getSoteM2Average(ArrayList<cRoomData> data)
     {
         data = data.stream().filter(d -> d.soteTimeAccurate).collect(Collectors.toCollection(ArrayList::new));
+        if(data.size() == 0)
+        {
+            return -1;
+        }
         double total = 0;
         double count = 0;
         for(cRoomData d : data)
@@ -1224,6 +1296,10 @@ public class cStatisticGatherer
     public static double getSoteTimeAverage(ArrayList<cRoomData> data)
     {
         data = data.stream().filter(d -> d.soteTimeAccurate).collect(Collectors.toCollection(ArrayList::new));
+        if(data.size() == 0)
+        {
+            return -1;
+        }
         double total = 0;
         double count = 0;
         for(cRoomData d : data)
@@ -1686,6 +1762,10 @@ public class cStatisticGatherer
     public static double getXarpScreechAverage(ArrayList<cRoomData> data)
     {
         data = data.stream().filter(d -> d.xarpTimeAccurate).collect(Collectors.toCollection(ArrayList::new));
+        if(data.size() == 0)
+        {
+            return -1;
+        }
         double total = 0;
         double count = 0;
         for(cRoomData d : data)
@@ -1699,6 +1779,10 @@ public class cStatisticGatherer
     public static double getXarpTimeAverage(ArrayList<cRoomData> data)
     {
         data = data.stream().filter(d -> d.xarpTimeAccurate).collect(Collectors.toCollection(ArrayList::new));
+        if(data.size() == 0)
+        {
+            return -1;
+        }
         double total = 0;
         double count = 0;
         for(cRoomData d : data)
@@ -1862,6 +1946,10 @@ public class cStatisticGatherer
     public static double getVerzikP1Average(ArrayList<cRoomData> data)
     {
         data = data.stream().filter(d -> d.verzikTimeAccurate).collect(Collectors.toCollection(ArrayList::new));
+        if(data.size() == 0)
+        {
+            return -1;
+        }
         double total = 0;
         double count = 0;
         for(cRoomData d : data)
@@ -1875,6 +1963,10 @@ public class cStatisticGatherer
     public static double getVerzikP2Average(ArrayList<cRoomData> data)
     {
         data = data.stream().filter(d -> d.verzikTimeAccurate).collect(Collectors.toCollection(ArrayList::new));
+        if(data.size() == 0)
+        {
+            return -1;
+        }
         double total = 0;
         double count = 0;
         for(cRoomData d : data)
@@ -1888,6 +1980,10 @@ public class cStatisticGatherer
     public static double getVerzikP3EntryAverage(ArrayList<cRoomData> data)
     {
         data = data.stream().filter(d -> d.verzikTimeAccurate).collect(Collectors.toCollection(ArrayList::new));
+        if(data.size() == 0)
+        {
+            return -1;
+        }
         double total = 0;
         double count = 0;
         for(cRoomData d : data)
@@ -1901,6 +1997,10 @@ public class cStatisticGatherer
     public static double getVerzikP3Average(ArrayList<cRoomData> data)
     {
         data = data.stream().filter(d -> d.verzikTimeAccurate).collect(Collectors.toCollection(ArrayList::new));
+        if(data.size() == 0)
+        {
+            return -1;
+        }
         double total = 0;
         double count = 0;
         for(cRoomData d : data)
@@ -1914,6 +2014,10 @@ public class cStatisticGatherer
     public static double getVerzikTimeAverage(ArrayList<cRoomData> data)
     {
         data = data.stream().filter(d -> d.verzikTimeAccurate).collect(Collectors.toCollection(ArrayList::new));
+        if(data.size() == 0)
+        {
+            return -1;
+        }
         double total = 0;
         double count = 0;
         for(cRoomData d : data)
@@ -2302,6 +2406,10 @@ public class cStatisticGatherer
     public static double getOverallTimeAverage(ArrayList<cRoomData> data)
     {
         data = data.stream().filter(d -> d.getOverallTimeAccurate()).collect(Collectors.toCollection(ArrayList::new));
+        if(data.size() == 0)
+        {
+            return -1;
+        }
         double total = 0;
         double count = 0;
         for(cRoomData d : data)

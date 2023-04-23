@@ -356,6 +356,13 @@ public class cRoomData
         return maidenTime+bloatTime+nyloTime+soteTime+xarpTime+verzikTime;
     }
 
+    public int getMaidenTime() { return maidenTime; }
+    public int getBloatTime() { return bloatTime; }
+    public int getNyloTime() { return nyloTime; }
+    public int getSoteTime() { return soteTime; }
+    public int getXarpTime() { return xarpTime; }
+    public int getVerzikTime() { return verzikTime; }
+
     public boolean getOverallTimeAccurate()
     {
         return maidenStartAccurate && maidenEndAccurate

@@ -1,9 +1,8 @@
 package com.cTimers.utility;
 
-import com.google.inject.Inject;
 import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
-import com.cTimers.LogID;
+import com.cTimers.constants.LogID;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;

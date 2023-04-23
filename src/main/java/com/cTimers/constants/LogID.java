@@ -1,4 +1,4 @@
-package com.cTimers;
+package com.cTimers.constants;
 
 import lombok.Getter;
 

@@ -21,6 +21,11 @@ public class cRoom
     @Inject
     ClientThread clientThread;
 
+    public static final int ROOM_ACTIVE_VARBIT = 6447;
+
+    public static final int HP_VARBIT = 6448;
+
+
     protected boolean accurateTimer = true;
     protected boolean accurateEntry = true;
 

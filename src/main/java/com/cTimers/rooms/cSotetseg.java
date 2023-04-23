@@ -1,5 +1,6 @@
 package com.cTimers.rooms;
 
+import com.cTimers.constants.LogID;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.coords.WorldPoint;
@@ -84,7 +85,7 @@ public class cSotetseg extends cRoom
 
     public void endSotetseg()
     {
-        clog.write(304);
+        clog.write(LogID.ACCURATE_SOTE_END);
         clog.write(57, (client.getTickCount()+3-soteEntryTick)+"");
         soteDeathTick = client.getTickCount()+3;
         roomState = cRoomState.SotetsegRoomState.FINISHED;
@@ -130,7 +131,7 @@ public class cSotetseg extends cRoom
         if(client.getTickCount() == deferTick)
         {
             deferTick = -1;
-            if(client.getVarbitValue(6448) == 1000)
+            if(client.getVarbitValue(HP_VARBIT) == 1000)
             {
                 clog.write(204);
             }

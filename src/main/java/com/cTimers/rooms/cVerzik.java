@@ -1,10 +1,13 @@
 package com.cTimers.rooms;
 
+import com.cTimers.constants.LogID;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.events.*;
 import com.cTimers.utility.cLogger;
 import com.cTimers.utility.cRoomState;
+
+import static com.cTimers.constants.LogID.*;
 
 @Slf4j
 public class cVerzik extends cRoom
@@ -39,7 +42,7 @@ public class cVerzik extends cRoom
     {
         if(event.getActor().getGraphic() == 245)
         {
-            clog.write(77);
+            clog.write(LogID.VERZIK_BOUNCE);
         }
     }
 
@@ -110,8 +113,8 @@ public class cVerzik extends cRoom
     {
         roomState = cRoomState.VerzikRoomState.PHASE_1;
         verzikEntryTick = client.getTickCount();
-        clog.write(71);
-        clog.write(206);
+        clog.write(VERZIK_P1_START);
+        clog.write(ACCURATE_VERZIK_START);
     }
 
     private void endP1()
@@ -119,7 +122,7 @@ public class cVerzik extends cRoom
         roomState = cRoomState.VerzikRoomState.PHASE_2;
         verzikP1EndTick = client.getTickCount();
         sendTimeMessage("Wave 'Verzik phase 1' complete. Duration: ", verzikP1EndTick-verzikEntryTick);
-        clog.write(73, (verzikP1EndTick-verzikEntryTick)+"");
+        clog.write(VERZIK_P1_DESPAWNED, (verzikP1EndTick-verzikEntryTick)+"");
     }
 
     private void procReds()
@@ -127,7 +130,7 @@ public class cVerzik extends cRoom
         roomState = cRoomState.VerzikRoomState.PHASE_2_REDS;
         verzikRedsTick = client.getTickCount();
         sendTimeMessage("Red Crabs Spawned. Duration: ", verzikRedsTick-verzikEntryTick);
-        clog.write(80, (verzikRedsTick-verzikEntryTick)+"");
+        clog.write(VERZIK_P2_REDS_PROC, (verzikRedsTick-verzikEntryTick)+"");
     }
 
     private void endP2()
@@ -135,15 +138,15 @@ public class cVerzik extends cRoom
         roomState = cRoomState.VerzikRoomState.PHASE_3;
         verzikP2EndTick = client.getTickCount();
         sendTimeMessage("Wave 'Verzik phase 2' complete. Duration: ", verzikP2EndTick-verzikEntryTick, verzikP2EndTick-verzikP1EndTick);
-        clog.write(74, (verzikP2EndTick-verzikEntryTick)+"");
+        clog.write(VERZIK_P2_END, (verzikP2EndTick-verzikEntryTick)+"");
     }
 
     private void endP3()
     {
         roomState = cRoomState.VerzikRoomState.FINISHED;
         verzikP3EndTick = client.getTickCount()+6;
-        clog.write(306);
+        clog.write(ACCURATE_VERZIK_END);
         sendTimeMessage("Wave 'Verzik phase 3' complete. Duration: ", verzikP3EndTick-verzikEntryTick, verzikP3EndTick-verzikP2EndTick);
-        clog.write(76, (verzikP3EndTick-verzikEntryTick)+"");
+        clog.write(VERZIK_P3_DESPAWNED, (verzikP3EndTick-verzikEntryTick)+"");
     }
 }

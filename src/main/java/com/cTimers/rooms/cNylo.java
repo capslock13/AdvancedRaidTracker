@@ -17,6 +17,8 @@ import com.cTimers.utility.nyloutility.cNylocasWaveMatcher;
 
 import java.util.ArrayList;
 
+import static com.cTimers.constants.LogID.*;
+
 @Slf4j
 public class cNylo extends cRoom
 {
@@ -92,7 +94,7 @@ public class cNylo extends cRoom
         if(client.getTickCount() == expectedWaveTick && currentWave != 31)
         {
             log.info("Stalled on wave: " + currentWave + ", nylos alive: " + getAliveNylocasCount() + ", room time: " + RoomUtil.time(client.getTickCount()-pillarsSpawnedTick));
-            clog.write(31, ""+currentWave, ""+(client.getTickCount()-pillarsSpawnedTick), ""+nylosAlive.size()); //todo hm
+            clog.write(NYLO_STALL, ""+currentWave, ""+(client.getTickCount()-pillarsSpawnedTick), ""+nylosAlive.size()); //todo hm
             expectedWaveTick += 4;
         }
     }
@@ -187,7 +189,7 @@ public class cNylo extends cRoom
                     }
                     else
                     {
-                        clog.write(203);
+                        clog.write(ACCURATE_NYLO_START);
                     }
                 }
                 break;
@@ -261,21 +263,21 @@ public class cNylo extends cRoom
     {
         if(id == MELEE_ID)
         {
-            clog.write(41, ""+(client.getTickCount()-pillarsSpawnedTick));
+            clog.write(MELEE_PHASE, ""+(client.getTickCount()-pillarsSpawnedTick));
         }
         else if(id == 8356)
         {
-            clog.write(42, ""+(client.getTickCount()-pillarsSpawnedTick));
+            clog.write(MAGE_PHASE, ""+(client.getTickCount()-pillarsSpawnedTick));
         }
         else if(id == 8357)
         {
-            clog.write(43, ""+(client.getTickCount()-pillarsSpawnedTick));
+            clog.write(RANGE_PHASE, ""+(client.getTickCount()-pillarsSpawnedTick));
         }
     }
 
     private void startNylo()
     {
-        clog.write(30);
+        clog.write(NYLO_PILLAR_SPAWN);
         roomState = cRoomState.NyloRoomState.WAVES;
         pillarsSpawnedTick = client.getTickCount();
     }
@@ -288,7 +290,7 @@ public class cNylo extends cRoom
 
     private void wave31Spawn()
     {
-        clog.write(35, ""+(client.getTickCount()-pillarsSpawnedTick));
+        clog.write(LAST_WAVE, ""+(client.getTickCount()-pillarsSpawnedTick));
         roomState = cRoomState.NyloRoomState.CLEANUP;
         int stalls = (client.getTickCount()-pillarsSpawnedTick-entryTickOffset-236)/4;
         wave31 = client.getTickCount();
@@ -312,7 +314,7 @@ public class cNylo extends cRoom
 
     private void bossSpawned()
     {
-        clog.write(40, ""+(client.getTickCount()-pillarsSpawnedTick));
+        clog.write(BOSS_SPAWN, ""+(client.getTickCount()-pillarsSpawnedTick));
         roomState = cRoomState.NyloRoomState.BOSS;
         bossSpawn = client.getTickCount()-2;
         sendTimeMessage("Wave 'Nylocas boss spawn' complete! Duration: ", bossSpawn-pillarsSpawnedTick, bossSpawn-lastDead);
@@ -328,7 +330,7 @@ public class cNylo extends cRoom
             offset1 = 0;
         }
         sendTimeMessage("Wave 'Nylocas boss' complete! Duration: ", deathTick-pillarsSpawnedTick+offset1,deathTick+offset1-bossSpawn, false);
-        clog.write(45, ""+(deathTick-pillarsSpawnedTick+offset1));
+        clog.write(NYLO_DESPAWNED, ""+(deathTick-pillarsSpawnedTick+offset1));
     }
 
     private void bossKilled()

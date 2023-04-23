@@ -5,10 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.NPC;
 import net.runelite.api.events.*;
-import com.cTimers.LogID;
-import com.cTimers.Point;
 import com.cTimers.cTimersPlugin;
-import com.cTimers.utility.RoomUtil;
 import com.cTimers.utility.cLogger;
 import com.cTimers.utility.cRoomState;
 
@@ -17,17 +14,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.cTimers.LogID.*;
+import static com.cTimers.constants.LogID.*;
+import static com.cTimers.constants.NpcIDs.*;
 
 @Slf4j
 public class cMaiden extends cRoom
 {
-    final private int MAIDEN_FIRST = 8360; // 8362 30-50 //8363 30-end //8360 start
-    final private int MAIDEN_DEAD = 8365;
-    final private int MAIDEN_SECOND = 8361;
-    final private int MAIDEN_THIRD = 8362;
-    final private int MAIDEN_LAST = 8363;
-    final private int MATOMENOS = 8366;
+
+
 
 
     public cRoomState.MaidenRoomState roomState;
@@ -190,7 +184,7 @@ public class cMaiden extends cRoom
         if(client.getTickCount() == deferVarbitCheck)
         {
             deferVarbitCheck = -1;
-            if(client.getVarbitValue(6448) != 1000)
+            if(client.getVarbitValue(HP_VARBIT) != 1000)
             {
                 accurateEntry = false;
             }

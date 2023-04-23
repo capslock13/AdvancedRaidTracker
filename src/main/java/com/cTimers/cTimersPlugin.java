@@ -6,7 +6,6 @@ import net.runelite.api.Actor;
 import net.runelite.api.Client;
 import net.runelite.api.GameState;
 import net.runelite.api.Player;
-import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.*;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.eventbus.EventBus;
@@ -24,7 +23,6 @@ import com.cTimers.rooms.*;
 import com.cTimers.ui.cTimersPanel;
 import com.cTimers.utility.cLogger;
 import net.runelite.client.plugins.devtools.DevToolsPlugin;
-import net.runelite.client.plugins.party.data.PartyData;
 import net.runelite.client.plugins.specialcounter.SpecialCounterUpdate;
 import net.runelite.client.plugins.specialcounter.SpecialWeapon;
 import net.runelite.client.ui.ClientToolbar;
@@ -33,12 +31,11 @@ import net.runelite.client.util.ImageUtil;
 import net.runelite.client.util.Text;
 
 import java.awt.image.BufferedImage;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-import static com.cTimers.LogID.*;
+import static com.cTimers.constants.LogID.*;
 
 
 @Slf4j

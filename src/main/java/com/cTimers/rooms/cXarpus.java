@@ -1,5 +1,6 @@
 package com.cTimers.rooms;
 
+import com.cTimers.constants.LogID;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
@@ -9,6 +10,10 @@ import com.cTimers.Point;
 import com.cTimers.utility.RoomUtil;
 import com.cTimers.utility.cLogger;
 import com.cTimers.utility.cRoomState;
+
+import static com.cTimers.constants.LogID.*;
+import static com.cTimers.constants.LogID.ACCURATE_XARP_END;
+import static com.cTimers.constants.LogID.XARPUS_STARTED;
 
 @Slf4j
 public class cXarpus extends cRoom
@@ -52,7 +57,7 @@ public class cXarpus extends cRoom
         {
             if(event.getProjectile().getId() == 1550)
             {
-                clog.write(62);
+                clog.write(XARPUS_HEAL);
             }
         }
     }
@@ -77,7 +82,7 @@ public class cXarpus extends cRoom
             case 8339:
             case 8340:
             case 8341:
-                clog.write(65, ""+(xarpusEndTick-xarpusEntryTick));
+                clog.write(XARPUS_DESPAWNED, ""+(xarpusEndTick-xarpusEntryTick));
         }
     }
 
@@ -94,7 +99,7 @@ public class cXarpus extends cRoom
 
     private void startScreech()
     {
-        clog.write(63, ""+(client.getTickCount()-xarpusEntryTick));
+        clog.write(XARPUS_SCREECH, ""+(client.getTickCount()-xarpusEntryTick));
         roomState = cRoomState.XarpusRoomState.POSTSCREECH;
         xarpusScreechTick = client.getTickCount();
         String splitMessage = "Wave 'Xarpus phase 2' complete. Duration: " + timeColor() + RoomUtil.time(xarpusScreechTick-xarpusEntryTick) + " (" + RoomUtil.time(xarpusScreechTick-xarpusExhumedsEnd) + ")";
@@ -105,8 +110,8 @@ public class cXarpus extends cRoom
     {
         roomState = cRoomState.XarpusRoomState.EXHUMEDS;
         xarpusEntryTick = client.getTickCount();
-        clog.write(61);
-        clog.write(205);
+        clog.write(XARPUS_STARTED);
+        clog.write(ACCURATE_XARP_START);
     }
 
     private void endExhumeds()
@@ -122,7 +127,7 @@ public class cXarpus extends cRoom
 
         roomState = cRoomState.XarpusRoomState.FINISHED;
         xarpusEndTick = client.getTickCount()+3;
-        clog.write(305);
+        clog.write(ACCURATE_XARP_END);
         String splitMessage = "Wave 'Xarpus phase 3' complete. Duration: " + timeColor() + RoomUtil.time(xarpusEndTick-xarpusEntryTick) + " (" + RoomUtil.time(xarpusEndTick-xarpusScreechTick) + ")";
         this.client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", splitMessage, null,false);
     }

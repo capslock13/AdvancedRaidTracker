@@ -1,5 +1,6 @@
 package com.cTimers.rooms;
 
+import com.cTimers.constants.NpcIDs;
 import com.google.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
@@ -16,11 +17,14 @@ import com.cTimers.utility.cRoomState;
 
 import java.util.ArrayList;
 
+import static com.cTimers.constants.LogID.*;
+import static com.cTimers.constants.NpcIDs.BLOAT;
+
 @Slf4j
 public class cBloat extends cRoom
 {
     public cRoomState.BloatRoomState roomState;
-    final private int BLOAT = 8359;
+    //final private int BLOAT = 8359;
     private ArrayList<Integer> walks;
     private ArrayList<Integer> downs;
     private int bloatStartTick = -1;
@@ -56,7 +60,7 @@ public class cBloat extends cRoom
     {
         roomState = cRoomState.BloatRoomState.FINISHED;
         bloatDeathTick = client.getTickCount()+3;
-        clog.write(302);
+        clog.write(ACCURATE_BLOAT_END);
         if(bloatStartTick != -1)
             sendTimeMessage("Wave 'Bloat last down' complete! Duration: ", splitLastDown(), " Room time: ", bloatDeathTick-bloatStartTick, true);
     }
@@ -117,11 +121,11 @@ public class cBloat extends cRoom
 
     public void down()
     {
-        clog.write(21, ""+(client.getTickCount()-bloatStartTick));
+        clog.write(BLOAT_DOWN, ""+(client.getTickCount()-bloatStartTick));
         if(downs.size() == 0)
         {
-            int currentBloatHP = client.getVarbitValue(6448);
-            clog.write(24, ""+currentBloatHP);
+            int currentBloatHP = client.getVarbitValue(HP_VARBIT);
+            clog.write(BLOAT_HP_1ST_DOWN, ""+currentBloatHP);
         }
         downs.add(client.getTickCount());
         roomState = cRoomState.BloatRoomState.DOWN;
@@ -179,15 +183,15 @@ public class cBloat extends cRoom
     {
         if (event.getNpc().getId() == BLOAT)
         {
-            clog.write(20);
-            if(client.getVarbitValue(6447) != 0)
+            clog.write(BLOAT_SPAWNED);
+            if(client.getVarbitValue(ROOM_ACTIVE_VARBIT) != 0)
             {
                 accurateEntry = false;
             //    bloatStartTick = client.getTickCount();
             }
             else
             {
-                clog.write(202);
+                clog.write(ACCURATE_BLOAT_START);
             }
         }
     }
@@ -196,7 +200,7 @@ public class cBloat extends cRoom
     {
         if(event.getNpc().getId() == BLOAT)
         {
-            clog.write(23, ""+(client.getTickCount()-bloatStartTick));
+            clog.write(BLOAT_DESPAWN, ""+(client.getTickCount()-bloatStartTick));
         }
     }
 }

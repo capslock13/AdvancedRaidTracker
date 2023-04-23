@@ -1,5 +1,6 @@
 package com.cTimers.rooms;
 
+import com.cTimers.cTimersConfig;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.Player;
@@ -30,9 +31,9 @@ public class cBloat extends cRoom
 
 //    @Inject
 //    private EventBus eventBus;
-    public cBloat(Client client, cLogger clog)
+    public cBloat(Client client, cLogger clog, cTimersConfig config)
     {
-        super(client, clog);
+        super(client, clog, config);
     }
 
     public void reset()

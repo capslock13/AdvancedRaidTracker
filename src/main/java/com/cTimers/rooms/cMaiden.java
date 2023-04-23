@@ -1,5 +1,6 @@
 package com.cTimers.rooms;
 
+import com.cTimers.cTimersConfig;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
@@ -37,9 +38,9 @@ public class cMaiden extends cRoom
     ArrayList<MaidenCrab> maidenCrabs = new ArrayList<>();
 
 
-    public cMaiden(Client client, cLogger clog)
+    public cMaiden(Client client, cLogger clog, cTimersConfig config)
     {
-        super(client, clog);
+        super(client, clog, config);
         p70 = -1;
         p50 = -1;
         p30 = -1;

@@ -1,5 +1,6 @@
 package com.cTimers.rooms;
 
+import com.cTimers.cTimersConfig;
 import com.cTimers.constants.LogID;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.ChatMessageType;
@@ -20,9 +21,9 @@ public class cXarpus extends cRoom
 {
     public cRoomState.XarpusRoomState roomState = cRoomState.XarpusRoomState.NOT_STARTED;
 
-    public cXarpus(Client client, cLogger clog)
+    public cXarpus(Client client, cLogger clog, cTimersConfig config)
     {
-        super(client, clog);
+        super(client, clog, config);
     }
     private int xarpusEntryTick = -1;
     private int xarpusExhumedsEnd = -1;

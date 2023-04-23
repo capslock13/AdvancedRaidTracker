@@ -1,6 +1,7 @@
 package com.cTimers.rooms;
 
 
+import com.cTimers.cTimersConfig;
 import lombok.Getter;
 import lombok.Setter;
 import net.runelite.api.ChatMessageType;
@@ -26,6 +27,7 @@ public class cRoom
     public static final int HP_VARBIT = 6448;
 
 
+    private cTimersConfig config;
     protected boolean accurateTimer = true;
     protected boolean accurateEntry = true;
 
@@ -43,10 +45,11 @@ public class cRoom
         return "<col=EF1020>";
     }
 
-    public cRoom(Client client, cLogger clog)
+    public cRoom(Client client, cLogger clog, cTimersConfig config)
     {
         this.client = client;
         this.clog = clog;
+        this.config = config;
     }
 
     private String accuracy()
@@ -61,40 +64,52 @@ public class cRoom
 
     protected void sendTimeMessage(String message, int duration)
     {
-        String splitMessage = message + timeColor() + RoomUtil.time(duration) + entry() + accuracy();
-        client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", splitMessage, null, false);
+        if(config.chatSplits())
+        {
+            String splitMessage = message + timeColor() + RoomUtil.time(duration) + entry() + accuracy();
+            client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", splitMessage, null, false);
+        }
     }
 
     protected void sendTimeMessage(String message, int duration, int split)
     {
-        String splitMessage = message + timeColor() + RoomUtil.time(duration) + entry() + accuracy() + " (" + RoomUtil.time(split) + ")";
-        client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", splitMessage, null, false);
+        if(config.chatSplits())
+        {
+            String splitMessage = message + timeColor() + RoomUtil.time(duration) + entry() + accuracy() + " (" + RoomUtil.time(split) + ")";
+            client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", splitMessage, null, false);
+        }
     }
 
     protected void sendTimeMessage(String message, int duration, int split, boolean bloat)
     {
-        String splitMessage;
-        if(bloat)
+        if(config.chatSplits())
         {
-            splitMessage = message + timeColor() + duration + entry() + accuracy() + " (" + RoomUtil.time(split) + ")";
+            String splitMessage;
+            if (bloat) {
+                splitMessage = message + timeColor() + duration + entry() + accuracy() + " (" + RoomUtil.time(split) + ")";
+            } else {
+                splitMessage = message + timeColor() + RoomUtil.time(split) + entry() + accuracy() + defaultColor() + " Room time: " + timeColor() + RoomUtil.time(duration);
+            }
+            client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", splitMessage, null, false);
         }
-        else
-        {
-            splitMessage = message + timeColor() + RoomUtil.time(split) + entry() + accuracy() + defaultColor() + " Room time: " + timeColor() + RoomUtil.time(duration);
-        }
-        client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", splitMessage, null, false);
     }
 
     protected void sendTimeMessage(String message, int duration, String alternateText, int alternateNumber)
     {
-        String splitMessage = message + timeColor() + RoomUtil.time(duration) + entry() + accuracy() + defaultColor() + alternateText + timeColor() + alternateNumber;
-        client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", splitMessage, null, false);
+        if(config.chatSplits())
+        {
+            String splitMessage = message + timeColor() + RoomUtil.time(duration) + entry() + accuracy() + defaultColor() + alternateText + timeColor() + alternateNumber;
+            client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", splitMessage, null, false);
+        }
     }
 
     protected void sendTimeMessage(String message, int duration, String alternateText, int alternateNumber, boolean bloat)
     {
-        String splitMessage = message + timeColor() + duration + entry() + accuracy() + alternateText + RoomUtil.time(alternateNumber);
-        client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", splitMessage, null, false);
+        if(config.chatSplits())
+        {
+            String splitMessage = message + timeColor() + duration + entry() + accuracy() + alternateText + RoomUtil.time(alternateNumber);
+            client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", splitMessage, null, false);
+        }
     }
 
     public void handleNPCChanged(int id) { }

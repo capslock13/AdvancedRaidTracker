@@ -1,5 +1,6 @@
 package com.cTimers.rooms;
 
+import com.cTimers.cTimersConfig;
 import com.cTimers.constants.LogID;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
@@ -29,9 +30,9 @@ public class cSotetseg extends cRoom
 
 
 
-    public cSotetseg(Client client, cLogger clog)
+    public cSotetseg(Client client, cLogger clog, cTimersConfig config)
     {
-        super(client, clog);
+        super(client, clog, config);
     }
 
     public void reset()

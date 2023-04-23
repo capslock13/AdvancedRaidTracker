@@ -711,7 +711,7 @@ public class cFilteredRaidsFrame extends cFrame
         raidsFoundLabel.setText("Raids Found: " + tableData.size());
         completionsFound.setText("Completions Found: " + completions);
 
-        String[] columnNames = { "Date", "Scale", "Status", viewByRaidComboBox.getSelectedItem().toString(), "Players", "Spectated?", "View"};
+        String[] columnNames = { "Date", "Scale", "Status", viewByRaidComboBox.getSelectedItem().toString(), "Players", "Spectate", "View"};
         ArrayList<Object[]> tableBuilder = new ArrayList<>();
         for(cRoomData raid : tableData)
         {
@@ -792,7 +792,7 @@ public class cFilteredRaidsFrame extends cFrame
         table.getColumn("Status").setCellEditor(new cNonEditableCell(new JTextField()));
         table.getColumn(viewByRaidComboBox.getSelectedItem().toString()).setCellEditor(new cNonEditableCell(new JTextField()));
         table.getColumn("Players").setCellEditor(new cNonEditableCell(new JTextField()));
-        table.getColumn("Spectated?").setCellEditor(new cNonEditableCell(new JTextField()));
+        table.getColumn("Spectate").setCellEditor(new cNonEditableCell(new JTextField()));
         table.getColumn("View").setCellRenderer(new cButtonRenderer());
         table.getColumn("View").setCellEditor(new cButtonEditorRoomData(new JCheckBox(), tableData));
         resizeColumnWidth(table);
@@ -1249,7 +1249,7 @@ public class cFilteredRaidsFrame extends cFrame
         int completions = 0;
         currentData = data;
         setTitle("Raids");
-        String[] columnNames = { "Date", "Scale", "Status", "Overall Time", "Players", "Spectated?", "View"};
+        String[] columnNames = { "Date", "Scale", "Status", "Overall Time", "Players", "Spectate", "View"};
         ArrayList<Object[]> tableBuilder = new ArrayList<>();
         for(cRoomData raid : data)
         {
@@ -1309,7 +1309,7 @@ public class cFilteredRaidsFrame extends cFrame
         table.getColumn("Status").setCellEditor(new cNonEditableCell(new JTextField()));
         table.getColumn("Overall Time").setCellEditor(new cNonEditableCell(new JTextField()));
         table.getColumn("Players").setCellEditor(new cNonEditableCell(new JTextField()));
-        table.getColumn("Spectated?").setCellEditor(new cNonEditableCell(new JTextField()));
+        table.getColumn("Spectate").setCellEditor(new cNonEditableCell(new JTextField()));
         table.getColumn("View").setCellRenderer(new cButtonRenderer());
         table.getColumn("View").setCellEditor(new cButtonEditorRoomData(new JCheckBox(), data));
         resizeColumnWidth(table);
@@ -1453,7 +1453,7 @@ public class cFilteredRaidsFrame extends cFrame
 
 
         subPanel4.setBorder(BorderFactory.createTitledBorder("View Raid Time By"));
-         viewByRaidComboBox = new JComboBox(new String[]{"Overall Time", "Maiden Time", "Bloat Time", "Nylocas Time", "Sotetseg Time", "Xarpus Time", "Verzik Time"});
+        viewByRaidComboBox = new JComboBox(new String[]{"Overall Time", "Maiden Time", "Bloat Time", "Nylocas Time", "Sotetseg Time", "Xarpus Time", "Verzik Time"});
         viewByRaidComboBox.addActionListener(
                 al->
                 {

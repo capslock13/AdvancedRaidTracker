@@ -1,6 +1,7 @@
 package com.cTimers;
 
 import com.google.inject.Inject;
+import com.google.inject.Provides;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Actor;
 import net.runelite.api.Client;
@@ -8,6 +9,7 @@ import net.runelite.api.GameState;
 import net.runelite.api.Player;
 import net.runelite.api.events.*;
 import net.runelite.client.callback.ClientThread;
+import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.PartyChanged;
@@ -52,6 +54,13 @@ public class cTimersPlugin extends Plugin
 
     private boolean partyIntact = false;
 
+    @Inject
+    private cTimersConfig config;
+    @Provides
+    cTimersConfig getConfig(ConfigManager configManager)
+    {
+        return configManager.getConfig(cTimersConfig.class);
+    }
     @Inject
     private ClientToolbar clientToolbar;
 
@@ -125,14 +134,14 @@ public class cTimersPlugin extends Plugin
         navButton = NavigationButton.builder().tooltip("cTimers").icon(icon).priority(10).panel(timersPanel).build();
         clientToolbar.addNavigation(navButton);
 
-        clog = new cLogger(client);
-        lobby = new cLobby(client, clog);
-        maiden = new cMaiden(client, clog);
-        bloat = new cBloat(client, clog);
-        nylo = new cNylo(client, clog);
-        sote = new cSotetseg(client, clog);
-        xarpus = new cXarpus(client, clog);
-        verzik = new cVerzik(client, clog);
+        clog = new cLogger(client, config);
+        lobby = new cLobby(client, clog, config);
+        maiden = new cMaiden(client, clog, config);
+        bloat = new cBloat(client, clog, config);
+        nylo = new cNylo(client, clog, config);
+        sote = new cSotetseg(client, clog, config);
+        xarpus = new cXarpus(client, clog, config);
+        verzik = new cVerzik(client, clog, config);
         inTheatre = false;
         wasInTheatre = false;
         deferredTick = 0;

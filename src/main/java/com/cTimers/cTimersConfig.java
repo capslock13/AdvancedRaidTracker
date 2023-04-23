@@ -16,6 +16,14 @@ public interface cTimersConfig extends Config
     )
     default boolean chatSplits()
     {
-        return true;
+        return false;
     }
+
+    @ConfigItem(
+            position = 1,
+            keyName = "writeToLog",
+            name = "Track Raid Data",
+            description = "Tracks data about the raids you spectate and participate in."
+    )
+    default boolean writeToLog() { return true; }
 }

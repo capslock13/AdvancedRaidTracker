@@ -1,5 +1,6 @@
 package com.cTimers.rooms;
 
+import com.cTimers.cTimersConfig;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.NPC;
@@ -29,9 +30,9 @@ public class cNylo extends cRoom
 
     private final ArrayList<cNylocasShell> buildWave;
 
-    public cNylo(Client client, cLogger clog)
+    public cNylo(Client client, cLogger clog, cTimersConfig config)
     {
-        super(client, clog);
+        super(client, clog, config);
         buildWave = new ArrayList<>();
         nylosAlive = new ArrayList<>();
     }

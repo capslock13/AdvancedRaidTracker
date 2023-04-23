@@ -41,7 +41,7 @@ public class cViewRaidFrame extends cFrame
 
         JPanel maidenPanel = new JPanel();
         maidenPanel.setLayout(new BorderLayout());
-        maidenPanel.setBorder(BorderFactory.createTitledBorder(maidenColor + "Maiden"));
+        maidenPanel.setBorder(BorderFactory.createTitledBorder(maidenColor + "Maiden" + ((data.maidenScuffed) ? " (Scuffed after " + data.firstMaidenCrabScuffed + ")" : "")));
 
         JPanel bloatPanel = new JPanel();
         bloatPanel.setLayout(new BorderLayout());

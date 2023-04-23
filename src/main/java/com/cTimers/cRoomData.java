@@ -1145,7 +1145,7 @@ public class cRoomData
                 case 19:
                     if(!maidenScuffed)
                     {
-                        firstMaidenCrabScuffed = Integer.parseInt(subData[4]) + lastProc;
+                        firstMaidenCrabScuffed = lastProc;
                     }
                     maidenScuffed = true;
                     break;

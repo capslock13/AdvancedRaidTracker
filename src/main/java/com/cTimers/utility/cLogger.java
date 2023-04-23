@@ -1,5 +1,6 @@
 package com.cTimers.utility;
 
+import com.cTimers.cTimersConfig;
 import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
 import com.cTimers.constants.LogID;
@@ -11,10 +12,12 @@ import java.util.Objects;
 public class cLogger
 {
     private Client client;
+    private cTimersConfig config;
     private int versionID = 1;
 
-    public cLogger(Client client)
+    public cLogger(Client client, cTimersConfig config)
     {
+        this.config = config;
         this.client = client;
     }
 
@@ -65,24 +68,28 @@ public class cLogger
 
     public void writeFile(String msg)
     {
-        if(cDebugHelper.writeKeyMessagesToChatbox)
+        if(config.writeToLog())
         {
-            client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", msg, "");
-        }
-        try
-        {
-            File logFile = new File(System.getProperty("user.home").replace("\\", "/") + "/.runelite/logs/tobdata.log");
-            if (!logFile.exists())
+            if (cDebugHelper.writeKeyMessagesToChatbox)
             {
-                logFile.createNewFile();
+                client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", msg, "");
             }
-            BufferedWriter logger = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(System.getProperty("user.home").replace("\\", "/") + "/.runelite/logs/tobdata.log", true),StandardCharsets.UTF_8));
-            logger.write(msg);
-            logger.newLine();
-            logger.close();
-        } catch (IOException e)
-        {
-            e.printStackTrace();
+            try
+            {
+                File logFile = new File(System.getProperty("user.home").replace("\\", "/") + "/.runelite/logs/tobdata.log");
+                if (!logFile.exists())
+                {
+                    logFile.createNewFile();
+                }
+                BufferedWriter logger = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(System.getProperty("user.home").replace("\\", "/") + "/.runelite/logs/tobdata.log", true), StandardCharsets.UTF_8));
+                logger.write(msg);
+                logger.newLine();
+                logger.close();
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
         }
     }
 

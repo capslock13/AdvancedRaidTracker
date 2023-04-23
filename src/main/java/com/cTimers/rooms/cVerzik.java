@@ -1,5 +1,6 @@
 package com.cTimers.rooms;
 
+import com.cTimers.cTimersConfig;
 import com.cTimers.constants.LogID;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
@@ -14,9 +15,9 @@ public class cVerzik extends cRoom
 {
     public cRoomState.VerzikRoomState roomState;
 
-    public cVerzik(Client client, cLogger clog)
+    public cVerzik(Client client, cLogger clog, cTimersConfig config)
     {
-        super(client, clog);
+        super(client, clog, config);
     }
 
     private int verzikEntryTick = -1;

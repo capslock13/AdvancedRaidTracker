@@ -1138,7 +1138,7 @@ public class cFilteredRaidsFrame extends cFrame
         /**/
         currentData = data;
         setTitle("Raids");
-        String[] columnNames = { "Date", "Scale", "Status", "Time", "Players", "Spectated?", "View"};
+        String[] columnNames = { "Date", "Scale", "Status", "Overall Time", "Players", "Spectated?", "View"};
         ArrayList<Object[]> tableBuilder = new ArrayList<>();
         for(cRoomData raid : data)
         {
@@ -1192,7 +1192,7 @@ public class cFilteredRaidsFrame extends cFrame
         table.getColumn("Date").setCellEditor(new cNonEditableCell(new JTextField()));
         table.getColumn("Scale").setCellEditor(new cNonEditableCell(new JTextField()));
         table.getColumn("Status").setCellEditor(new cNonEditableCell(new JTextField()));
-        table.getColumn("Time").setCellEditor(new cNonEditableCell(new JTextField()));
+        table.getColumn("Overall Time").setCellEditor(new cNonEditableCell(new JTextField()));
         table.getColumn("Players").setCellEditor(new cNonEditableCell(new JTextField()));
         table.getColumn("Spectated?").setCellEditor(new cNonEditableCell(new JTextField()));
         table.getColumn("View").setCellRenderer(new cButtonRenderer());

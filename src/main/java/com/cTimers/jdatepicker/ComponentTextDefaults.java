@@ -124,7 +124,7 @@ public final class ComponentTextDefaults {
      * Instantiated with the values which is default for the current locale.
      */
     private ComponentTextDefaults() {
-        texts = toProperties(ResourceBundle.getBundle("net.runelite.client.plugins.cTimers.i18n.Text", Locale.getDefault()));
+        texts = toProperties(ResourceBundle.getBundle("com.cTimers.i18n.Text", Locale.getDefault()));
     }
 
     private Properties toProperties(ResourceBundle resource) {

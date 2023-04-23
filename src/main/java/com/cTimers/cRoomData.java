@@ -474,7 +474,7 @@ public class cRoomData
                         if(!subData[i].equals(""))
                         {
                             raidTeamSize++;
-                            players.add(subData[i]);
+                            players.add(subData[i].replaceAll("[^\\p{ASCII}]", ""));
                         }
                     }
                     break;
@@ -567,7 +567,7 @@ public class cRoomData
                         if(!subData[i].equals(""))
                         {
                             raidTeamSize++;
-                            players.add(subData[i]);
+                            players.add(subData[i].replaceAll("[^\\p{ASCII}]", ""));
                         }
                     }
                     break;
@@ -680,7 +680,7 @@ public class cRoomData
                         if(!subData[i].equals(""))
                         {
                             raidTeamSize++;
-                            players.add(subData[i]);
+                            players.add(subData[i].replaceAll("[^\\p{ASCII}]", ""));
                         }
                     }
                     break;
@@ -799,7 +799,7 @@ public class cRoomData
                         if(!subData[i].equals(""))
                         {
                             raidTeamSize++;
-                            players.add(subData[i]);
+                            players.add(subData[i].replaceAll("[^\\p{ASCII}]", ""));
                         }
                     }
                     break;
@@ -925,7 +925,7 @@ public class cRoomData
                         if(!subData[i].equals(""))
                         {
                             raidTeamSize++;
-                            players.add(subData[i]);
+                            players.add(subData[i].replaceAll("[^\\p{ASCII}]", ""));
                         }
                     }
                     break;
@@ -1031,7 +1031,7 @@ public class cRoomData
                         if(!subData[i].equals(""))
                         {
                             raidTeamSize++;
-                            players.add(subData[i]);
+                            players.add(subData[i].replaceAll("[^\\p{ASCII}]", ""));
                         }
                     }
                     break;

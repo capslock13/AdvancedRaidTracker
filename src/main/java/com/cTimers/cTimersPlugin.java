@@ -41,8 +41,8 @@ import static com.cTimers.constants.LogID.*;
 @Slf4j
 @PluginDescriptor(
         name = "cTimers",
-        description = "Timers for theatre of blood",
-        tags = {"timers", "tob", "tracker", "time"}
+        description = "Timers and statistics for Theatre of Blood",
+        tags = {"timers", "tob", "tracker", "time", "theatre"}
 )
 public class cTimersPlugin extends Plugin
 {
@@ -90,9 +90,9 @@ public class cTimersPlugin extends Plugin
     int deferredTick;
     private boolean flagPlayer = false;
     private int mode = -1;
-    private int REGULAR_TOB = 0;
-    private int STORY_TOB = 1;
-    private int HARD_TOB = 2;
+    private final int REGULAR_TOB = 0;
+    private final int STORY_TOB = 1;
+    private final int HARD_TOB = 2;
     private ArrayList<String> currentPlayers;
     private boolean checkDefer = false;
     public static int scale = -1;
@@ -166,11 +166,11 @@ public class cTimersPlugin extends Plugin
         {
             currentRoom = lobby;
         }
-        else if (previous == lobby && !inRegion(MAIDEN_REGION))
+        else if (previous == lobby && !inRegion(MAIDEN_REGION)) //TODO faulty logic
         {
             deferredTick = client.getTickCount()+2;
             clog.write(ENTERED_TOB);
-            clog.write(99);
+            clog.write(SPECTATE);
             clog.write(LATE_START, String.valueOf(currentRegion));
         }
         if(inRegion(MAIDEN_REGION))
@@ -232,42 +232,42 @@ public class cTimersPlugin extends Plugin
 
     private void enteredMaiden(cRoom old)
     {
-        clog.write(0);
+        clog.write(ENTERED_TOB);
         deferredTick = client.getTickCount()+2;
         maiden.reset();
     }
 
     private void enteredBloat(cRoom old)
     {
-        clog.write(6, "1");
+        clog.write(ENTERED_NEW_TOB_REGION, "1");
         maiden.reset();
         bloat.reset();
     }
 
     private void enteredNylo(cRoom old)
     {
-        clog.write(6, "2");
+        clog.write(ENTERED_NEW_TOB_REGION, "2");
         bloat.reset();
         nylo.reset();
     }
 
     private void enteredSote(cRoom old)
     {
-        clog.write(6, "3");
+        clog.write(ENTERED_NEW_TOB_REGION, "3");
         nylo.reset();
         sote.reset();
     }
 
     private void enteredXarpus(cRoom old)
     {
-        clog.write(6, "4");
+        clog.write(ENTERED_NEW_TOB_REGION, "4");
         sote.reset();
         xarpus.reset();
     }
 
     private void enteredVerzik(cRoom old)
     {
-        clog.write(6, "5");
+        clog.write(ENTERED_NEW_TOB_REGION, "5");
         xarpus.reset();
         verzik.reset();
     }
@@ -293,9 +293,9 @@ public class cTimersPlugin extends Plugin
             boolean playerInRaid = false;
             for(String player : currentPlayers)
             {
-                if(name.equals(player.replaceAll(String.valueOf((char) 160), String.valueOf((char) 32))))
-                {
+                if (name.equals(player.replaceAll(String.valueOf((char) 160), String.valueOf((char) 32)))) {
                     playerInRaid = true;
+                    break;
                 }
             }
             if(playerInRaid)
@@ -628,11 +628,11 @@ public class cTimersPlugin extends Plugin
     {
         if (client.getMapRegions() != null)
         {
-            for (int i : client.getMapRegions())
+            for (int currentRegion : client.getMapRegions())
             {
-                for (int j : regions)
+                for (int region : regions)
                 {
-                    if (i == j)
+                    if (currentRegion == region)
                     {
                         return true;
                     }

@@ -18,6 +18,11 @@ public class cLogger
         this.client = client;
     }
 
+    /**
+     * Writes a message to the log with the time, message ID, and up to 5 additional parameters
+     * @param id LogID of message
+     * @param params
+     */
     public void write(LogID id, String... params) {
         if (params.length > 5)
             throw new IllegalArgumentException("Too many values passed to cLogger");

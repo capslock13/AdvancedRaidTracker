@@ -19,6 +19,7 @@ import java.util.ArrayList;
 
 import static com.cTimers.constants.LogID.*;
 import static com.cTimers.constants.NpcIDs.*;
+import static com.cTimers.utility.cRoomState.NyloRoomState.*;
 
 @Slf4j
 public class cNylo extends cRoom
@@ -26,13 +27,13 @@ public class cNylo extends cRoom
 
     public cRoomState.NyloRoomState roomState;
 
-    private ArrayList<cNylocasShell> buildWave;
+    private final ArrayList<cNylocasShell> buildWave;
 
     public cNylo(Client client, cLogger clog)
     {
         super(client, clog);
-        buildWave = new ArrayList<cNylocasShell>();
-        nylosAlive = new ArrayList<NPC>();
+        buildWave = new ArrayList<>();
+        nylosAlive = new ArrayList<>();
     }
 
     public static int instanceStart = -1;
@@ -42,7 +43,7 @@ public class cNylo extends cRoom
     private int lastDead = -1;
     private int entryTickOffset = -1;
     private int wave31 = -1;
-    private ArrayList<NPC> nylosAlive;
+    private final ArrayList<NPC> nylosAlive;
     int currentWave = 0;
     boolean hard = false;
 
@@ -279,7 +280,7 @@ public class cNylo extends cRoom
     private void startNylo()
     {
         clog.write(NYLO_PILLAR_SPAWN);
-        roomState = cRoomState.NyloRoomState.WAVES;
+        roomState = WAVES;
         pillarsSpawnedTick = client.getTickCount();
     }
 
@@ -292,7 +293,7 @@ public class cNylo extends cRoom
     private void wave31Spawn()
     {
         clog.write(LAST_WAVE, ""+(client.getTickCount()-pillarsSpawnedTick));
-        roomState = cRoomState.NyloRoomState.CLEANUP;
+        roomState = CLEANUP;
         int stalls = (client.getTickCount()-pillarsSpawnedTick-entryTickOffset-236)/4;
         wave31 = client.getTickCount();
         sendTimeMessage("Wave 'Nylocas last wave' complete! Duration: ", wave31-pillarsSpawnedTick, " Stalls: ", stalls);
@@ -300,7 +301,7 @@ public class cNylo extends cRoom
 
     private void cleanupOver()
     {
-        roomState = cRoomState.NyloRoomState.WAITING_FOR_BOSS;
+        roomState = WAITING_FOR_BOSS;
         lastDead = client.getTickCount();
         int offsetTick = 4-((client.getTickCount()-instanceReference)%4);
         if(offsetTick == 4)
@@ -316,14 +317,14 @@ public class cNylo extends cRoom
     private void bossSpawned()
     {
         clog.write(BOSS_SPAWN, ""+(client.getTickCount()-pillarsSpawnedTick));
-        roomState = cRoomState.NyloRoomState.BOSS;
+        roomState = BOSS;
         bossSpawn = client.getTickCount()-2;
         sendTimeMessage("Wave 'Nylocas boss spawn' complete! Duration: ", bossSpawn-pillarsSpawnedTick, bossSpawn-lastDead);
     }
 
     private void bossDefinitelyKilled()
     {
-        roomState = cRoomState.NyloRoomState.FINISHED;
+        roomState = FINISHED;
         int deathTick = client.getTickCount();
         int offset1 = 4-((deathTick-instanceReference) % 4);
         if((4-((deathTick-instanceReference) % 4) == 4))

@@ -1,7 +1,5 @@
 package com.cTimers.rooms;
 
-import com.cTimers.constants.NpcIDs;
-import com.google.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.Player;
@@ -9,42 +7,33 @@ import net.runelite.api.events.AnimationChanged;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.NpcDespawned;
 import net.runelite.api.events.NpcSpawned;
-import net.runelite.client.eventbus.EventBus;
 import com.cTimers.Point;
 import com.cTimers.utility.RoomUtil;
 import com.cTimers.utility.cLogger;
-import com.cTimers.utility.cRoomState;
 
 import java.util.ArrayList;
 
 import static com.cTimers.constants.LogID.*;
 import static com.cTimers.constants.NpcIDs.BLOAT;
+import static com.cTimers.utility.cRoomState.*;
+import static com.cTimers.utility.cRoomState.BloatRoomState.*;
 
 @Slf4j
 public class cBloat extends cRoom
 {
-    public cRoomState.BloatRoomState roomState;
-    //final private int BLOAT = 8359;
-    private ArrayList<Integer> walks;
-    private ArrayList<Integer> downs;
+    public BloatRoomState roomState;
+
+    private final ArrayList<Integer> walks = new ArrayList<>();
+    private final ArrayList<Integer> downs = new ArrayList<>();
     private int bloatStartTick = -1;
+    private int bloatDeathTick = -1;
 
-    @Inject
-    private EventBus eventBus;
-
-    private int bloatDeathTick;
-
+//    @Inject
+//    private EventBus eventBus;
     public cBloat(Client client, cLogger clog)
     {
         super(client, clog);
-        walks = new ArrayList<Integer>();
-        downs = new ArrayList<Integer>();
-        bloatDeathTick = -1;
-        bloatStartTick = -1;
     }
-
-    private String timeColor = "<col=EF1020>";
-    private String defaultColor = "<col=000000>";
 
     public void reset()
     {
@@ -58,7 +47,7 @@ public class cBloat extends cRoom
 
     public void endBloat()
     {
-        roomState = cRoomState.BloatRoomState.FINISHED;
+        roomState = FINISHED;
         bloatDeathTick = client.getTickCount()+3;
         clog.write(ACCURATE_BLOAT_END);
         if(bloatStartTick != -1)
@@ -92,7 +81,7 @@ public class cBloat extends cRoom
     public void start()
     {
         bloatStartTick = client.getTickCount();
-        roomState = cRoomState.BloatRoomState.WALKING;
+        roomState = WALKING;
     }
 
     private int getLastWalk()
@@ -128,7 +117,7 @@ public class cBloat extends cRoom
             clog.write(BLOAT_HP_1ST_DOWN, ""+currentBloatHP);
         }
         downs.add(client.getTickCount());
-        roomState = cRoomState.BloatRoomState.DOWN;
+        roomState = DOWN;
         if(bloatStartTick != -1)
             sendTimeMessage("Wave 'Bloat walk' complete! Duration: ", getLastWalk(), getLastDownTime(), true);
     }
@@ -136,8 +125,9 @@ public class cBloat extends cRoom
     public void walk()
     {
         walks.add(client.getTickCount());
-        roomState = cRoomState.BloatRoomState.WALKING;
+        roomState = WALKING;
     }
+
     public void updateGameTick(GameTick event)
     {
         if(bloatStartTick == -1 && RoomUtil.crossedLine(RoomUtil.BLOAT_REGION, new Point(39, 30), new Point(39, 33), true, client))

@@ -498,7 +498,7 @@ public class cRoomData
                     {
                         return true;
                     }
-                    globalData = new ArrayList(globalData.subList(activeIndex+1, globalData.size()));
+                    globalData = new ArrayList<>(globalData.subList(activeIndex + 1, globalData.size()));
                     return false;
                 case 5:
                     verzikDeaths++;

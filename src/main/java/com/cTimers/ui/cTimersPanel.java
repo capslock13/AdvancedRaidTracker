@@ -411,7 +411,7 @@ public class cTimersPanel extends PluginPanel
 
 
         UtilDateModel model = new UtilDateModel();
-        JDatePanel datePanel = new JDatePanel(model);
+        JDatePanel datePanel = new JDatePanel(model); //TODO what is this and do we need it
         JDatePicker datePicker = new JDatePicker(model);
 
         JTextField players = new JTextField();

@@ -16,9 +16,8 @@ public class cFilterPlayers extends cFilterCondition
     {
         this.players = new ArrayList<String>();
         String[] playerNames = players.split(",");
-        for(int i = 0; i < playerNames.length; i++)
-        {
-            this.players.add(playerNames[i].replaceAll(String.valueOf((char) 160), String.valueOf((char) 32)).toLowerCase());
+        for (String playerName : playerNames) {
+            this.players.add(playerName.replaceAll(String.valueOf((char) 160), String.valueOf((char) 32)).toLowerCase());
         }
         this.operator = operator;
     }

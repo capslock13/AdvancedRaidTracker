@@ -8,7 +8,7 @@ public class cSotetsegUtil
 {
     private static ArrayList<Point> filterMaze(ArrayList<Point> tiles)
     {
-        ArrayList<Point> filteredTiles = new ArrayList<Point>();
+        ArrayList<Point> filteredTiles = new ArrayList<>();
         for (Point p : tiles)
         {
             if (p.getY() % 2 == 0)
@@ -21,7 +21,7 @@ public class cSotetsegUtil
 
     private static ArrayList<Point> restoreMaze(ArrayList<Point> tiles)
     {
-        ArrayList<Point> unfilteredTiles = new ArrayList<Point>();
+        ArrayList<Point> unfilteredTiles = new ArrayList<>();
         if (tiles.size() != 0)
         {
             unfilteredTiles.add(tiles.get(0));
@@ -60,7 +60,7 @@ public class cSotetsegUtil
 
     private static ArrayList<Point> decodeMaze(String maze)
     {
-        ArrayList<Point> tiles = new ArrayList<Point>();
+        ArrayList<Point> tiles = new ArrayList<>();
         int y = 0;
         for (char c : maze.toCharArray())
         {

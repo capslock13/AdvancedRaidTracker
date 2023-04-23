@@ -89,7 +89,7 @@ public final class ComponentIconDefaults {
 
     private static Icon loadIcon(String path) throws IOException {
         try {
-fuck            BufferedImage image = ImageUtil.loadImageResource(cTimersPlugin.class, "clear.png");
+           BufferedImage image = ImageUtil.loadImageResource(cTimersPlugin.class, "clear.png");
             //BufferedImage image = ImageUtil.loadImageResource(cTimersPlugin.class, "Clear.png");
             return new ImageIcon(image);
         } catch(Exception e)

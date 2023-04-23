@@ -1,0 +1,110 @@
+package com.cTimers.utility.nyloutility;
+
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
+@Slf4j
+public class cNylocasWaveMatcher
+{
+    private static boolean wave17Matched = false;
+    private static boolean wave26Matched = false;
+    private static boolean wave28Matched = false;
+
+    private static cNylocasWave lastWave = null;
+
+    public static boolean isWave(ArrayList<cNylocasShell> nylos)
+    {
+        ArrayList<cNylocasWave> potentialWaves = (ArrayList<cNylocasWave>) Arrays.stream(cNylocasWave.waves).filter(c->c.count() == nylos.size()).collect(Collectors.toList());
+        if(potentialWaves.size() != 0)
+        {
+            for(cNylocasWave w : potentialWaves)
+            {
+                boolean waveFlag = true;
+                for(cNylocas c : w.getNylos())
+                {
+                    if(waveFlag && !containsNylo(c, nylos))
+                    {
+                        waveFlag = false;
+                    }
+                }
+                if(waveFlag)
+                {
+                    if (wave17Matched && w.getWave() == 17)
+                    {
+                        waveFlag = false;
+                    }
+                    else if (wave26Matched && w.getWave() == 26)
+                    {
+                        waveFlag = false;
+
+                    } else if (wave28Matched && w.getWave() == 28)
+                    {
+                        waveFlag = false;
+                    }
+                    else if (w.getWave() == 17)
+                    {
+                        wave17Matched = true;
+                        wave26Matched = false;
+                        wave28Matched = false;
+                    } else if (w.getWave() == 26)
+                    {
+                        wave26Matched = true;
+                        wave28Matched = false;
+                    }
+                    else if(w.getWave() == 28)
+                    {
+                        wave28Matched = true;
+                    }
+                    else if (w.getWave() < 17)
+                    {
+                        wave17Matched = false;
+                        wave26Matched = false;
+                        wave28Matched = false;
+                    }
+                    else if (w.getWave() < 26 && w.getWave() > 17)
+                    {
+                        wave26Matched = false;
+                        wave28Matched = false;
+                    }
+                    else if (w.getWave() == 27)
+                    {
+                        wave28Matched = false;
+                    }
+                }
+                if(waveFlag)
+                {
+                    lastWave = w;
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public static cNylocasWave getWave()
+    {
+        return lastWave;
+    }
+
+    public static boolean containsNylo(cNylocas c, ArrayList<cNylocasShell> ns)
+    {
+        boolean flag = false;
+        for(cNylocasShell n : ns)
+        {
+            if(matchesNylo(c, n))
+            {
+                flag = true;
+            }
+        }
+        return flag;
+    }
+
+    public static boolean matchesNylo(cNylocas c1, cNylocasShell c2)
+    {
+        return (c1.getSpawnStyle() == c2.style && c1.position == c2.position);
+    }
+
+}

@@ -40,7 +40,7 @@ public class cVerzik extends cRoom
 
     public void updateGraphicChanged(GraphicChanged event)
     {
-        if(event.getActor().getGraphic() == 245)
+        if(event.getActor().hasSpotAnim(245))
         {
             clog.write(LogID.VERZIK_BOUNCE);
         }
@@ -58,7 +58,6 @@ public class cVerzik extends cRoom
     {
         if(redTicks != -1)
         {
-            log.info("t: " + redTicks);
             redTicks--;
         }
     }

@@ -185,11 +185,6 @@ public class cViewRaidFrame extends cFrame
         sotetsegSubPanel.add(new JLabel(soteBodyColor+"Deaths"));
         sotetsegSubPanel.add(new JLabel(soteBodyColor+data.soteDeaths));
 
-        //TODO
-       // sotetsegSubPanel.add(new JLabel(soteBodyColor+"Cycles lost"));
-       // String cyclesLost = (soteBodyColor+((data.soteCyclesLost == -1) ? "-" : data.soteCyclesLost + ""));
-       // sotetsegSubPanel.add(new JLabel(cyclesLost));
-
         sotetsegSubPanel.add(new JLabel(soteBodyColor+"First Maze Start"));
         sotetsegSubPanel.add(new JLabel(soteBodyColor+RoomUtil.time(data.soteFirstMazeStartSplit) + " (" + RoomUtil.time(data.soteFirstMazeStartSplit) + ")"));
 
@@ -240,15 +235,6 @@ public class cViewRaidFrame extends cFrame
 
         verzikSubPanel.add(new JLabel(verzikBodyColor+"Deaths"));
         verzikSubPanel.add(new JLabel(verzikBodyColor+data.verzikDeaths));
-
-        /*verzikSubPanel.add(new JLabel(verzikBodyColor+"Average P1 Spec:"));
-        String p1Spec = verzikBodyColor+"-";
-        if(data.verzikDawnCount != 0)
-        {
-            double averageP1Spec = (double) data.verzikDawnDamage / ((double) data.verzikDawnCount);
-            p1Spec = averageP1Spec + "";
-        }
-        verzikSubPanel.add(new JLabel(p1Spec));*/
 
         verzikSubPanel.add(new JLabel(verzikBodyColor+"Crabs Spawned"));
         verzikSubPanel.add(new JLabel(verzikBodyColor+data.verzikCrabsSpawned+""));
@@ -361,9 +347,6 @@ public class cViewRaidFrame extends cFrame
         summarySubPanel.add(new JLabel("Time: " + RoomUtil.time(data.maidenTime+data.bloatTime+data.nyloTime+data.soteTime+data.xarpTime+data.verzikTime)));
         summarySubPanel.add(new JLabel("Players: " + data.players.toString().substring(1, data.players.toString().length()-1)));
         summaryPanel.add(summarySubPanel);
-
-
-
 
         add(summaryPanel);
         add(thisSubPanel);

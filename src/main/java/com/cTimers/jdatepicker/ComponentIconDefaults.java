@@ -71,8 +71,8 @@ public final class ComponentIconDefaults {
 
     private ComponentIconDefaults() {
         // TODO consider making all the icons vector images which will scale
-        //try {
-            //clearIcon = loadIcon(CLEAR); TODO fix
+        try {
+            clearIcon = loadIcon(CLEAR);
             nextMonthIconEnabled = new JNextIcon(4, 7, false, true);
             nextYearIconEnabled = new JNextIcon(8, 7, true, true);
             previousMonthIconEnabled = new JPreviousIcon(4, 7, false, true);
@@ -82,14 +82,15 @@ public final class ComponentIconDefaults {
             previousMonthIconDisabled = new JPreviousIcon(4, 7, false, false);
             previousYearIconDisabled = new JPreviousIcon(8, 7, true, false);
             popupButtonIcon = null;
-        //} catch (IOException e) {
-        //    e.printStackTrace();
-        //}
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private static Icon loadIcon(String path) throws IOException {
         try {
-            BufferedImage image = ImageUtil.loadImageResource(cTimersPlugin.class, "Clear.png");
+            BufferedImage image = ImageUtil.loadImageResource(cTimersPlugin.class, "/Clear.png");
+            //BufferedImage image = ImageUtil.loadImageResource(cTimersPlugin.class, "Clear.png");
             return new ImageIcon(image);
         } finally {
 

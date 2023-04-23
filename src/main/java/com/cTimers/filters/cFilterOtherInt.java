@@ -17,6 +17,7 @@ public class cFilterOtherInt extends cFilterCondition
     @Override
     public boolean evaluate(cRoomData data)
     {
+        //TODO sort this out
         int conditionValue = -1;
         switch(conditionValue)
         {

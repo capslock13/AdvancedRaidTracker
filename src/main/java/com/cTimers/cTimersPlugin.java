@@ -593,6 +593,7 @@ public class cTimersPlugin extends Plugin
 
     public int getRoomTime()
     {
+        //TODO caps???
         return 0;
     }
 

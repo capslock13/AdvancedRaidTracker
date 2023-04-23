@@ -18,11 +18,12 @@ import com.cTimers.utility.nyloutility.cNylocasWaveMatcher;
 import java.util.ArrayList;
 
 import static com.cTimers.constants.LogID.*;
+import static com.cTimers.constants.NpcIDs.*;
 
 @Slf4j
 public class cNylo extends cRoom
 {
-    public static final int MELEE_ID = 8355;
+
     public cRoomState.NyloRoomState roomState;
 
     private ArrayList<cNylocasShell> buildWave;
@@ -261,15 +262,15 @@ public class cNylo extends cRoom
      */
     public void handleNPCChanged(int id)
     {
-        if(id == MELEE_ID)
+        if(id == MELEE_NYLO_BOSS_ID)
         {
             clog.write(MELEE_PHASE, ""+(client.getTickCount()-pillarsSpawnedTick));
         }
-        else if(id == 8356)
+        else if(id == MAGE_NYLO_BOSS_ID)
         {
             clog.write(MAGE_PHASE, ""+(client.getTickCount()-pillarsSpawnedTick));
         }
-        else if(id == 8357)
+        else if(id == RANGE_NYLO_BOSS_ID)
         {
             clog.write(RANGE_PHASE, ""+(client.getTickCount()-pillarsSpawnedTick));
         }

@@ -519,12 +519,18 @@ public class cFilteredRaidsFrame extends cFrame
                     shouldDataBeIncluded = false;
                 }
             }
+            if(data.index == 50) {
+                log.info("Index: " + data.index + ", " + shouldDataBeIncluded);
+            }
             if(filterInRaidOnly.isSelected())
             {
                 if(data.spectated)
                 {
                     shouldDataBeIncluded = false;
                 }
+            }
+            if(data.index == 50) {
+                log.info("Index: " + data.index + ", " + shouldDataBeIncluded);
             }
             if(filterCompletionOnly.isSelected())
             {
@@ -533,12 +539,18 @@ public class cFilteredRaidsFrame extends cFrame
                     shouldDataBeIncluded = false;
                 }
             }
+            if(data.index == 50) {
+                log.info("Index: " + data.index + ", " + shouldDataBeIncluded);
+            }
             if(filterWipeResetOnly.isSelected())
             {
                 if(data.raidCompleted)
                 {
                     shouldDataBeIncluded = false;
                 }
+            }
+            if(data.index == 50) {
+                log.info("Index: " + data.index + ", " + shouldDataBeIncluded);
             }
             if(filterPartialData.isSelected())
             {
@@ -552,6 +564,9 @@ public class cFilteredRaidsFrame extends cFrame
                     shouldDataBeIncluded = false;
                 }
             }
+            if(data.index == 50) {
+                log.info("6Index: " + data.index + ", " + shouldDataBeIncluded);
+            }
             if(shouldDataBeIncluded && filterTodayOnly.isSelected())
             {
                 shouldDataBeIncluded = false;
@@ -564,12 +579,18 @@ public class cFilteredRaidsFrame extends cFrame
                     shouldDataBeIncluded = true;
                 }
             }
+            if(data.index == 50) {
+                log.info("Index: " + data.index + ", " + shouldDataBeIncluded);
+            }
             if(filterPartyOnly.isSelected())
             {
                 if(!data.maidenDefenseAccurate || !data.bloatDefenseAccurate || !data.nyloDefenseAccurate || !data.soteDefenseAccurate || !data.xarpDefenseAccurate)
                 {
                     shouldDataBeIncluded = false;
                 }
+            }
+            if(data.index == 50) {
+                log.info("4Index: " + data.index + ", " + shouldDataBeIncluded);
             }
             if(filterPartialOnly.isSelected())
             {
@@ -619,9 +640,15 @@ public class cFilteredRaidsFrame extends cFrame
                         break;
                 }
             }
+            if(data.index == 50) {
+                log.info("8Index: " + data.index + ", " + shouldDataBeIncluded);
+            }
             if(shouldDataBeIncluded && filterCheckBoxScale.isSelected())
             {
                 shouldDataBeIncluded = filterComboBoxScale.getSelectedIndex()+1 == data.raidTeamSize;
+            }
+            if(data.index == 50) {
+                log.info("1Index: " + data.index + ", " + shouldDataBeIncluded);
             }
             switch(viewByRaidComboBox.getSelectedIndex())
             {
@@ -651,6 +678,9 @@ public class cFilteredRaidsFrame extends cFrame
             {
                 shouldDataBeIncluded = false;
             }
+            if(data.index == 50) {
+                log.info("Index: " + data.index + ", " + shouldDataBeIncluded);
+            }
             for(Integer i : filteredIndices)
             {
                 if(data.index == i)
@@ -658,9 +688,15 @@ public class cFilteredRaidsFrame extends cFrame
                     shouldDataBeIncluded = false;
                 }
             }
+            if(data.index == 50) {
+                log.info("Index: " + data.index + ", " + shouldDataBeIncluded);
+            }
             if(!evaluateAllFilters(data))
             {
                 shouldDataBeIncluded = false;
+            }
+            if(data.index == 50) {
+                log.info("Ifndex: " + data.index + ", " + shouldDataBeIncluded);
             }
             if(shouldDataBeIncluded)
             {
@@ -3087,11 +3123,17 @@ public class cFilteredRaidsFrame extends cFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
+
                 ArrayList<cRoomData> rows = new ArrayList<>();
-                for(Integer i : table.getSelectedRows())
+                int[] toRemove = table.getSelectedRows();
+                for(int i = 0; i < toRemove.length; i++)
+                {
+                    rows.add(currentData.get(Integer.parseInt(table.getModel().getValueAt(toRemove[i], 0).toString())));
+                }
+                /*for(Integer i : table.getSelectedRows())
                 {
                     rows.add(currentData.get(i));
-                }
+                }*/
                 comparisons.add(rows);
                 updateComparisonTable();
             }

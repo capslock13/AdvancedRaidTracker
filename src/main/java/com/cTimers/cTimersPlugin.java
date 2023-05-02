@@ -1,5 +1,6 @@
 package com.cTimers;
 
+import com.cTimers.ui.cTimersPanelPrimary;
 import com.google.inject.Inject;
 import com.google.inject.Provides;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +23,6 @@ import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.plugins.PluginInstantiationException;
 import net.runelite.client.plugins.PluginManager;
 import com.cTimers.rooms.*;
-import com.cTimers.ui.cTimersPanel;
 import com.cTimers.utility.cLogger;
 import net.runelite.client.plugins.devtools.DevToolsPlugin;
 import net.runelite.client.plugins.specialcounter.SpecialCounterUpdate;
@@ -48,8 +48,10 @@ import static com.cTimers.constants.LogID.*;
 )
 public class cTimersPlugin extends Plugin
 {
-    private cTimersPanel timersPanel;
+    private cTimersPanelPrimary timersPanelPrimary;
     private NavigationButton navButton;
+
+    private NavigationButton navButtonPrimary;
     private cLogger clog;
 
     private boolean partyIntact = false;
@@ -124,15 +126,16 @@ public class cTimersPlugin extends Plugin
     {
         super.startUp();
 
-        timersPanel = injector.getInstance(cTimersPanel.class);
-        timersPanel.init();
+        timersPanelPrimary = injector.getInstance(cTimersPanelPrimary.class);
         partyIntact = false;
 
 
         final BufferedImage icon = ImageUtil.loadImageResource(DevToolsPlugin.class, "devtools_icon.png");
+        navButtonPrimary = NavigationButton.builder().tooltip("cTimersPrimary").icon(icon).priority(10).panel(timersPanelPrimary).build();
 
-        navButton = NavigationButton.builder().tooltip("cTimers").icon(icon).priority(10).panel(timersPanel).build();
         clientToolbar.addNavigation(navButton);
+
+        clientToolbar.addNavigation(navButtonPrimary);
 
         clog = new cLogger(client, config);
         lobby = new cLobby(client, clog, config);

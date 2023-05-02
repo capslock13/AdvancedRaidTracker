@@ -12,6 +12,8 @@ public class cFilterPlayers extends cFilterCondition
 
     private ArrayList<String> players;
     private int operator;
+
+    private String stringValue;
     public cFilterPlayers(String players, int operator)
     {
         this.players = new ArrayList<String>();
@@ -20,6 +22,17 @@ public class cFilterPlayers extends cFilterCondition
             this.players.add(playerName.replaceAll(String.valueOf((char) 160), String.valueOf((char) 32)).toLowerCase());
         }
         this.operator = operator;
+    }
+
+    public cFilterPlayers(String players, int operator, String val)
+    {
+        this.players = new ArrayList<String>();
+        String[] playerNames = players.split(",");
+        for (String playerName : playerNames) {
+            this.players.add(playerName.replaceAll(String.valueOf((char) 160), String.valueOf((char) 32)).toLowerCase());
+        }
+        this.operator = operator;
+        stringValue = val;
     }
 
     private boolean cleanContains(cRoomData data, String player)
@@ -33,7 +46,11 @@ public class cFilterPlayers extends cFilterCondition
         }
         return false;
     }
-
+    @Override
+    public String toString()
+    {
+        return stringValue;
+    }
     @Override
     public boolean evaluate(cRoomData data)
     {

@@ -9,10 +9,23 @@ public class cFilterDate extends cFilterCondition
 {
     private Date date;
     private int qualifier;
+    private String stringValue;
     public cFilterDate(Date date, int qualifier)
     {
         this.date = date;
         this.qualifier = qualifier;
+    }
+
+    public cFilterDate(Date date, int qualifier, String val)
+    {
+        this.date = date;
+        this.qualifier = qualifier;
+        stringValue = val;
+    }
+    @Override
+    public String toString()
+    {
+        return stringValue;
     }
     @Override
     public boolean evaluate(cRoomData data)

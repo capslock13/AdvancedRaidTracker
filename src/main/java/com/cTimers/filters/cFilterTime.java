@@ -8,11 +8,26 @@ public class cFilterTime extends cFilterCondition
     private int split;
     private int compare;
     private int time;
+
+    private String stringValue;
     public cFilterTime(int split1, int compare1, int time1)
     {
         this.split = split1;
         this.compare = compare1;
         this.time = time1;
+    }
+    public cFilterTime(int split1, int compare1, int time1, String str)
+    {
+        this.split = split1;
+        this.compare = compare1;
+        this.time = time1;
+        stringValue = str;
+    }
+
+    @Override
+    public String toString()
+    {
+        return stringValue;
     }
 
     @Override

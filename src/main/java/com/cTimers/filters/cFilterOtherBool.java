@@ -6,6 +6,7 @@ public class cFilterOtherBool extends cFilterCondition
 {
     boolean value;
     int param;
+    String stringValue;
 
     public cFilterOtherBool(int param, boolean value)
     {
@@ -13,6 +14,17 @@ public class cFilterOtherBool extends cFilterCondition
         this.value = value;
     }
 
+    public cFilterOtherBool(int param, boolean value, String val)
+    {
+        this.param = param;
+        this.value = value;
+        stringValue = val;
+    }
+    @Override
+    public String toString()
+    {
+        return stringValue;
+    }
     @Override
     public boolean evaluate(cRoomData data)
     {

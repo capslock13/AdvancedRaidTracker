@@ -9,6 +9,7 @@ import com.cTimers.utility.cLogger;
 import com.cTimers.utility.cRoomState;
 
 import static com.cTimers.constants.LogID.*;
+import static com.cTimers.constants.NpcIDs.*;
 
 @Slf4j
 public class cVerzik extends cRoom
@@ -91,19 +92,19 @@ public class cVerzik extends cRoom
 
     public void handleNPCChanged(int id)
     {
-        if(id == 8370)
+        if(id == VERZIK_P1)
         {
             startVerzik();
         }
-        else if(id == 8371)
+        else if(id == VERZIK_P2)
         {
             endP1();
         }
-        else if (id == 8373)
+        else if (id == VERZIK_P3)
         {
             endP2();
         }
-        else if(id == 8375)
+        else if(id == VERZIK_DEAD)
         {
             endP3();
         }

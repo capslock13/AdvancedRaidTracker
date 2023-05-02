@@ -15,4 +15,10 @@ public class NpcIDs {
     public final static int MAIDEN_LAST = 8363;
     public final static int MATOMENOS = 8366;
 
+
+    public final static int VERZIK_P1 = 8370;
+    public final static int VERZIK_P2 = 8371;
+    public final static int VERZIK_P3 = 8373;
+    public final static int VERZIK_DEAD = 8375;
+
 }

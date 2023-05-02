@@ -5,9 +5,9 @@ import lombok.Getter;
 public class cFilter
 {
     @Getter
-    private String name;
+    private final String name;
     @Getter
-    private String[] filters;
+    private final String[] filters;
 
     public cFilter(String name, String[] filters)
     {

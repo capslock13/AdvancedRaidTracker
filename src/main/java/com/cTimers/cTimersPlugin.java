@@ -119,6 +119,7 @@ public class cTimersPlugin extends Plugin
     protected void shutDown()
     {
         partyIntact = false;
+        clientToolbar.removeNavigation(navButton);
     }
 
     @Override

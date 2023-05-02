@@ -10,6 +10,8 @@ import java.util.Calendar;
 public class cViewRaidFrame extends cFrame
 {
 
+    String INCOMPLETE_MARKER = "-";
+
     public cViewRaidFrame(cRoomData data)
     {
         String red = "<html><font color='#FF0000'>";
@@ -72,7 +74,7 @@ public class cViewRaidFrame extends cFrame
 
 
         maidenSubPanel.add(new JLabel(maidenBodyColor+"Defense"));
-        maidenSubPanel.add(new JLabel(maidenBodyColor+((data.maidenDefenseAccurate) ? ""+ Math.max(0, data.maidenDefense) : "Party Incomplete")));
+        maidenSubPanel.add(new JLabel(maidenBodyColor+((data.maidenDefenseAccurate) ? ""+ Math.max(0, data.maidenDefense) : INCOMPLETE_MARKER)));
 
         maidenSubPanel.add(new JLabel(maidenBodyColor+"Crabs leaked"));
         maidenSubPanel.add(new JLabel(maidenBodyColor+data.maidenCrabsLeaked + ", HP: " + data.maidenHeal));
@@ -111,7 +113,7 @@ public class cViewRaidFrame extends cFrame
         bloatSubPanel.add(new JLabel(bloatBodyColor+data.bloatDeaths));
 
         bloatSubPanel.add(new JLabel(bloatBodyColor+"Defense (1st walk)"));
-        bloatSubPanel.add(new JLabel(bloatBodyColor+((data.bloatDefenseAccurate) ? "" +data.bloatfirstWalkDefense : "Party Incomplete")));
+        bloatSubPanel.add(new JLabel(bloatBodyColor+((data.bloatDefenseAccurate) ? "" +data.bloatfirstWalkDefense : INCOMPLETE_MARKER)));
 
         bloatSubPanel.add(new JLabel(bloatBodyColor+"Scythes 1st walk"));
         bloatSubPanel.add(new JLabel(bloatBodyColor+data.bloatScytheBeforeFirstDown));
@@ -159,7 +161,7 @@ public class cViewRaidFrame extends cFrame
         nylocasSubPanel.add(new JLabel(nyloRotations));
 
         nylocasSubPanel.add(new JLabel(nyloBodyColor+"Defense"));
-        nylocasSubPanel.add(new JLabel(nyloBodyColor+((data.nyloDefenseAccurate) ? "" + Math.max(0, (50-data.nyloDefenseReduction)) : "Party Incomplete")));
+        nylocasSubPanel.add(new JLabel(nyloBodyColor+((data.nyloDefenseAccurate) ? "" + Math.max(0, (50-data.nyloDefenseReduction)) : INCOMPLETE_MARKER)));
 
         nylocasSubPanel.add(new JLabel(nyloBodyColor+"Deaths"));
         nylocasSubPanel.add(new JLabel(nyloBodyColor+data.nyloDeaths));
@@ -180,7 +182,7 @@ public class cViewRaidFrame extends cFrame
         sotetsegSubPanel.setLayout(new GridLayout(8, 2));
 
         sotetsegSubPanel.add(new JLabel(soteBodyColor+"Hammers hit"));
-        sotetsegSubPanel.add(new JLabel(soteBodyColor+((data.soteDefenseAccurate) ? ""  + data.soteSpecsP1 + " " + data.soteSpecsP2 + " " + data.soteSpecsP3 + " (" +(data.soteSpecsP1+data.soteSpecsP2+data.soteSpecsP3)+")" : "Party Incomplete")));
+        sotetsegSubPanel.add(new JLabel(soteBodyColor+((data.soteDefenseAccurate) ? ""  + data.soteSpecsP1 + " " + data.soteSpecsP2 + " " + data.soteSpecsP3 + " (" +(data.soteSpecsP1+data.soteSpecsP2+data.soteSpecsP3)+")" : INCOMPLETE_MARKER)));
 
         sotetsegSubPanel.add(new JLabel(soteBodyColor+"Deaths"));
         sotetsegSubPanel.add(new JLabel(soteBodyColor+data.soteDeaths));
@@ -204,7 +206,7 @@ public class cViewRaidFrame extends cFrame
         xarpusSubPanel.setLayout(new GridLayout(8, 2));
 
         xarpusSubPanel.add(new JLabel(xarpBodyColor+"Defense"));
-        xarpusSubPanel.add(new JLabel(xarpBodyColor+((data.xarpDefenseAccurate) ? ""+ Math.max(0, data.xarpDefense) : "Party Incomplete")));
+        xarpusSubPanel.add(new JLabel(xarpBodyColor+((data.xarpDefenseAccurate) ? ""+ Math.max(0, data.xarpDefense) : INCOMPLETE_MARKER)));
 
         xarpusSubPanel.add(new JLabel(xarpBodyColor+"Deaths"));
         xarpusSubPanel.add(new JLabel(xarpBodyColor+data.xarpDeaths));

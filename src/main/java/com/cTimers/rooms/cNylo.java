@@ -50,7 +50,6 @@ public class cNylo extends cRoom
 
     public void reset()
     {
-        log.info("Resetting nylo");
         pillarsSpawnedTick = -1;
         instanceReference = -1;
         instanceStart = -1;
@@ -67,13 +66,11 @@ public class cNylo extends cRoom
 
     public void updateGameTick(GameTick event)
     {
-        //log.info("New tick. Time: " + RoomUtil.time(client.getTickCount()-pillarsSpawnedTick) + ", Nylos alive: " + getAliveNylocasCount());
         if(buildWave.size() != 0)
         {
             if(cNylocasWaveMatcher.isWave(buildWave))
             {
                 cNylocasWave wave = cNylocasWaveMatcher.getWave();
-                log.info("Spawned wave " + wave.getWave() + " at " + RoomUtil.time(client.getTickCount()-pillarsSpawnedTick));
                 if(wave.getWave() == 1)
                 {
                     wave1Spawn();
@@ -96,7 +93,6 @@ public class cNylo extends cRoom
         }
         if(client.getTickCount() == expectedWaveTick && currentWave != 31)
         {
-            log.info("Stalled on wave: " + currentWave + ", nylos alive: " + getAliveNylocasCount() + ", room time: " + RoomUtil.time(client.getTickCount()-pillarsSpawnedTick));
             clog.write(NYLO_STALL, ""+currentWave, ""+(client.getTickCount()-pillarsSpawnedTick), ""+nylosAlive.size()); //todo hm
             expectedWaveTick += 4;
         }
@@ -197,7 +193,6 @@ public class cNylo extends cRoom
                 }
                 break;
             case 10803:
-                log.info("Prink spawned at " + RoomUtil.time(client.getTickCount()-pillarsSpawnedTick));
                 break;
             case 10804:
             case 10805:

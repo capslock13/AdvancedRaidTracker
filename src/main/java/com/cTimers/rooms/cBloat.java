@@ -38,7 +38,6 @@ public class cBloat extends cRoom
 
     public void reset()
     {
-        log.info("Resetting bloat");
         accurateEntry = true;
         bloatStartTick = -1;
         bloatDeathTick = -1;

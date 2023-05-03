@@ -31,7 +31,6 @@ public class cVerzik extends cRoom
 
     public void reset()
     {
-        log.info("Resetting verzik");
         verzikEntryTick = -1;
         verzikP1EndTick = -1;
         verzikRedsTick = -1;

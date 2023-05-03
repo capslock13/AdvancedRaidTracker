@@ -2478,8 +2478,11 @@ public class cStatisticGatherer
         double count = 0;
         for(int d : data)
         {
-            total += d;
-            count++;
+            if(d != -1)
+            {
+                total += d;
+                count++;
+            }
         }
         return total/count;
     }
@@ -2491,7 +2494,8 @@ public class cStatisticGatherer
         List<Double> values = new ArrayList<>();
         for(int d : data)
         {
-            values.add((double) d);
+            if(d != -1)
+                values.add((double) d);
         }
         Collections.sort(values);
         if(values.size() % 2 == 0)
@@ -2510,10 +2514,9 @@ public class cStatisticGatherer
         int minValue = Integer.MAX_VALUE;
         for(int d : data)
         {
-            int split = d;
-            if(split < minValue)
+            if(d < minValue && d != -1)
             {
-                minValue = split;
+                minValue = d;
             }
         }
         return minValue;
@@ -2524,10 +2527,9 @@ public class cStatisticGatherer
         int maxValue = 0;
         for(int d : data)
         {
-            int split = d;
-            if(split > maxValue)
+            if(d > maxValue)
             {
-                maxValue = split;
+                maxValue = d;
             }
         }
         return maxValue;
@@ -2541,9 +2543,10 @@ public class cStatisticGatherer
             int count = 0;
             for(int j = 0; j < data.size(); j++)
             {
-                if(Objects.equals(data.get(j), data.get(i)))
-                {
-                    count++;
+                if(data.get(j) != -1 && data.get(i) != -1) {
+                    if (Objects.equals(data.get(j), data.get(i))) {
+                        count++;
+                    }
                 }
             }
             if(count > maxCount)

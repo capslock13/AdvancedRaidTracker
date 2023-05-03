@@ -51,7 +51,6 @@ public class cMaiden extends cRoom
 
     public void reset()
     {
-        log.info("Resetting maiden");
         accurateEntry = true;
         p70 = -1;
         p50 = -1;
@@ -201,7 +200,6 @@ public class cMaiden extends cRoom
         for (MaidenCrab crab: leaked_crabs) {
             { // TODO replace with distance method in MaidenCrab
                 clog.write(CRAB_LEAK, crab.description, String.valueOf(crab.health));
-                log.info("LEAKED " + crab.description+ " and HEAL WAS " + crab.health*2);
                 // TODO add mising parameters (room time, current maiden health)
                 // TODO check what happens if someone hits a crab on the last tick possible - is hp correct? does sthis
             }

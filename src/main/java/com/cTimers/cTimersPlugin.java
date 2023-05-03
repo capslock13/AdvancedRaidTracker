@@ -49,7 +49,6 @@ import static com.cTimers.constants.LogID.*;
 public class cTimersPlugin extends Plugin
 {
     private cTimersPanelPrimary timersPanelPrimary;
-    private NavigationButton navButton;
 
     private NavigationButton navButtonPrimary;
     private cLogger clog;
@@ -119,7 +118,7 @@ public class cTimersPlugin extends Plugin
     protected void shutDown()
     {
         partyIntact = false;
-        clientToolbar.removeNavigation(navButton);
+        clientToolbar.removeNavigation(navButtonPrimary);
     }
 
     @Override
@@ -133,8 +132,6 @@ public class cTimersPlugin extends Plugin
 
         final BufferedImage icon = ImageUtil.loadImageResource(DevToolsPlugin.class, "devtools_icon.png");
         navButtonPrimary = NavigationButton.builder().tooltip("cTimersPrimary").icon(icon).priority(10).panel(timersPanelPrimary).build();
-
-        clientToolbar.addNavigation(navButton);
 
         clientToolbar.addNavigation(navButtonPrimary);
 

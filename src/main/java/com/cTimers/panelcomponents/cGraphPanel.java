@@ -89,7 +89,20 @@ public class cGraphPanel extends JPanel implements MouseMotionListener
         activeKey = key;
     }
 
-    private ArrayList<Integer> getCounts(ArrayList<Integer> data, int highestValue)
+    private ArrayList<Integer> filterForTime(ArrayList<Integer> data)
+    {
+        ArrayList<Integer> arrayToPass = new ArrayList<>();
+        for(Integer i : data)
+        {
+            if (!time || i != 0)
+            {
+                arrayToPass.add(i);
+            }
+        }
+        return arrayToPass;
+    }
+
+    public static ArrayList<Integer> getCounts(ArrayList<Integer> data, int highestValue)
     {
         ArrayList<Integer> countedData = new ArrayList<>();
         for(int i = 0; i < highestValue+1; i++)
@@ -98,7 +111,7 @@ public class cGraphPanel extends JPanel implements MouseMotionListener
         }
         for(Integer i : data)
         {
-            if(countedData.size() > i)
+            if(countedData.size() > i && i > -1)
             {
                 int incrementedValue = countedData.get(i) + 1;
                 countedData.set(i, incrementedValue);
@@ -107,12 +120,14 @@ public class cGraphPanel extends JPanel implements MouseMotionListener
         return countedData;
     }
 
-    private int getCountedTotal(ArrayList<Integer> data)
+    public static int getCountedTotal(ArrayList<Integer> data)
     {
         int count = 0;
+        int index = 0;
         for(Integer i : data)
         {
             count += i;
+            index++;
         }
         return count;
     }
@@ -232,7 +247,7 @@ public class cGraphPanel extends JPanel implements MouseMotionListener
 
     public void generateScales()
     {
-        ArrayList<Integer> data = getInternalDataSet(activeKey);
+        ArrayList<Integer> data = filterInvalid(getInternalDataSet(activeKey));
         int lowestValue = Integer.MAX_VALUE;
         int highestValue = 0;
 
@@ -269,7 +284,7 @@ public class cGraphPanel extends JPanel implements MouseMotionListener
     public void setBounds()
     {
         bounds.clear();
-        ArrayList<Integer> data = getInternalDataSet(activeKey);
+        ArrayList<Integer> data = filterInvalid(getInternalDataSet(activeKey));
         ArrayList<Integer> countedDataSet = getCounts(data, xScaleHigh);
         int highestCount = yScaleHigh;
         int bars = xScaleHigh-xScaleLow+1;
@@ -278,7 +293,7 @@ public class cGraphPanel extends JPanel implements MouseMotionListener
         int startX = GRAPH_XS+(GRAPH_WIDTH/2) - (usedWidth/2);
         int scale = (highestCount == 0) ? (int)(GRAPH_HEIGHT*.75) : (int)((GRAPH_HEIGHT*.75)/highestCount);
 
-        for(int i = xScaleLow; i < xScaleHigh+1; i++)
+        for(int i = Math.max(0, xScaleLow); i < xScaleHigh+1; i++)
         {
             int height = countedDataSet.get(i) * scale;
             int left = startX + ((i-xScaleLow)*(barWidth));
@@ -302,17 +317,36 @@ public class cGraphPanel extends JPanel implements MouseMotionListener
             int msgWidth = g.getFontMetrics().stringWidth(activeToolTip.message);
             int msgHeight = g.getFontMetrics().getHeight();
 
+
+            int left = activeToolTip.messageLeft-5;
+            int bottom = activeToolTip.messageBottom-msgHeight;
+
             g.setColor(new Color(30, 30, 30, 255));
             g.fillRect(activeToolTip.messageLeft-5, activeToolTip.messageBottom-msgHeight, msgWidth+10, msgHeight+10);
+            g.setColor(new Color(100, 100, 100));
+            g.drawRect(left, bottom, msgWidth+10, msgHeight+10);
             g.setColor(new Color(240, 240, 240));
             g.drawString(activeToolTip.message, activeToolTip.messageLeft, activeToolTip.messageBottom);
             g.setFont(oldFont);
             g.setColor(oldColor);
         }
     }
+
+    public static ArrayList<Integer> filterInvalid(ArrayList<Integer> data)
+    {
+        ArrayList<Integer> filteredData = new ArrayList<>();
+        for(Integer i : data)
+        {
+            if(i > -1)
+            {
+                filteredData.add(i);
+            }
+        }
+        return filteredData;
+    }
     public void drawGraph()
     {
-        ArrayList<Integer> data = getInternalDataSet(activeKey);
+        ArrayList<Integer> data = filterForTime(filterInvalid(getInternalDataSet(activeKey)));
         drawBlankGraph();
 
         Graphics2D g = (Graphics2D) img.getGraphics();
@@ -337,6 +371,15 @@ public class cGraphPanel extends JPanel implements MouseMotionListener
 
         int verticalScaleToUse = (highestCount > 100) ? 25 : (highestCount > 50) ? 10 : (highestCount > 10) ? 5 : 1;
 
+        g.setRenderingHint(
+                RenderingHints.KEY_TEXT_ANTIALIASING,
+                RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        Font oldFont = g.getFont();
+        Font font = new Font("SansSerif", Font.PLAIN, 14);
+        g.setFont(font);
+        String title = cRoomData.DataPoint[activeKey] + " (Based on " + totalCount + " raids)";
+        g.drawString(title, 300-g.getFontMetrics().stringWidth(title)/2, 16);
+        g.setFont(oldFont);
         for(int i = 0; i < highestCount+1; i++)
         {
             int stringOffset = 500-GRAPH_HEIGHT-GRAPH_YS-scale*i+8;
@@ -350,7 +393,7 @@ public class cGraphPanel extends JPanel implements MouseMotionListener
             }
         }
 
-        for(int i = lowestValue; i < highestValue+1; i++)
+        for(int i = Math.max(lowestValue, 0); i < highestValue+1; i++)
         {
             int currentBarCenter = startX + ((i-lowestValue)*(barWidth));
             int height = countedDataSet.get(i) * scale;

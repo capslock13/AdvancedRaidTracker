@@ -32,7 +32,6 @@ public class cXarpus extends cRoom
 
     public void reset()
     {
-        log.info("Resetting xarpus");
         xarpusEntryTick = -1;
         xarpusExhumedsEnd = -1;
         xarpusScreechTick = -1;

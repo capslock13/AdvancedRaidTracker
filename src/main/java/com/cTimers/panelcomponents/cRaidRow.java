@@ -14,7 +14,7 @@ public class cRaidRow extends JPanel
         this.data = data;
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
         JLabel raidCompleted = new JLabel((data.raidCompleted) ? "Completed" : "Not completed");
-        String time = RoomUtil.time(data.maidenTime+data.bloatTime+data.nyloTime+data.soteTime+data.xarpTime+data.verzikTime);
+        String time = RoomUtil.time(data.getTimeSum());
         JLabel raidTime = new JLabel(time);
         String players = "";
         for(String s : data.players)

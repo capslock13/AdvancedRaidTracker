@@ -2,6 +2,7 @@ package com.cTimers.panelcomponents;
 
 import com.cTimers.cRoomData;
 import com.cTimers.utility.RoomUtil;
+import com.cTimers.utility.cDataPoint;
 import com.cTimers.utility.cStatisticGatherer;
 import lombok.extern.slf4j.Slf4j;
 
@@ -91,7 +92,7 @@ public class cComparisonView extends cFrame
             switchGraphData();
             updateOtherPanels();
         });
-        compareByComboBox = new JComboBox(cRoomData.DataPoint);
+        compareByComboBox = new JComboBox(cDataPoint.getByNames());
         compareByComboBox.addActionListener(al->
         {
             switchGraphData();
@@ -204,7 +205,8 @@ public class cComparisonView extends cFrame
         ArrayList<Integer> arrayToPass = new ArrayList<>();
         for(cRoomData raidData : data)
         {
-            int value = raidData.getValueFromKey(compareByComboBox.getSelectedIndex());
+            int value = raidData.getValue(cDataPoint.getValue(String.valueOf(compareByComboBox.getSelectedItem())));
+
             if(value > -1)
             {
                 if(!time || value != 0)
@@ -237,17 +239,17 @@ public class cComparisonView extends cFrame
             String better = "<html><font color='#99E622'>";
             String even = "<html><font color='#CCCCF6'>";
 
-            double g1a = cStatisticGatherer.getGenericTimeAverage(getArrayForStatistics(topGraphData));
+            double g1a = cStatisticGatherer.getGenericAverage(getArrayForStatistics(topGraphData));
             double g1med = cStatisticGatherer.getGenericMedian(getArrayForStatistics(topGraphData));
             double g1mod = cStatisticGatherer.getGenericMode(getArrayForStatistics(topGraphData));
             double g1max = cStatisticGatherer.getGenericMax(getArrayForStatistics(topGraphData));
-            double g1min = cStatisticGatherer.getGenericTimeMin(getArrayForStatistics(topGraphData));
+            double g1min = cStatisticGatherer.getGenericMin(getArrayForStatistics(topGraphData));
 
-            double g2a = cStatisticGatherer.getGenericTimeAverage(getArrayForStatistics(bottomGraphData));
+            double g2a = cStatisticGatherer.getGenericAverage(getArrayForStatistics(bottomGraphData));
             double g2med = cStatisticGatherer.getGenericMedian(getArrayForStatistics(bottomGraphData));
             double g2mod = cStatisticGatherer.getGenericMode(getArrayForStatistics(bottomGraphData));
             double g2max = cStatisticGatherer.getGenericMax(getArrayForStatistics(bottomGraphData));
-            double g2min = cStatisticGatherer.getGenericTimeMin(getArrayForStatistics(bottomGraphData));
+            double g2min = cStatisticGatherer.getGenericMin(getArrayForStatistics(bottomGraphData));
 
             String g1as = (g1a<g2a) ? better : g2a==g1a ? even : worse;
             String g1meds = (g1med<g2med) ? better : g2med==g1med ? even : worse;

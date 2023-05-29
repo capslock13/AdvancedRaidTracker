@@ -2,11 +2,11 @@ package com.cTimers.panelcomponents;
 
 
 import com.cTimers.filters.*;
+import com.cTimers.utility.cDataPoint;
 import lombok.extern.slf4j.Slf4j;
 import com.cTimers.cRoomData;
 import com.cTimers.utility.RoomUtil;
 import com.cTimers.utility.cStatisticGatherer;
-import net.runelite.client.party.PartyMember;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -20,46 +20,38 @@ import java.util.*;
 @Slf4j
 public class cFilteredRaidsFrame extends cFrame
 {
-    public cFilteredRaidsFrame(ArrayList<cRoomData> data)
-    {
-        createFrame(data);
-    }
-
-    private JPopupMenu raidPopup;
-    private JMenuItem addToComparison;
-    private ArrayList<Integer> comparisonOptions;
-    private ArrayList<Integer> filteredIndices;
+    private final ArrayList<Integer> filteredIndices;
 
     private JTable comparisonTable;
-    private ArrayList<ArrayList<cRoomData>> comparisons;
+    private final ArrayList<ArrayList<cRoomData>> comparisons;
 
-    private ArrayList<cImplicitFilter> activeFilters;
-    private JLabel raidsFoundLabel = new JLabel("", SwingConstants.LEFT);
-    private JLabel completionsFound = new JLabel("", SwingConstants.LEFT);
+    private final ArrayList<cImplicitFilter> activeFilters;
+    private final JLabel raidsFoundLabel = new JLabel("", SwingConstants.LEFT);
+    private final JLabel completionsFound = new JLabel("", SwingConstants.LEFT);
     private JComboBox<String> viewByRaidComboBox;
 
     private JComboBox<String> sortOrderBox;
     private JComboBox<String> sortOptionsBox;
-    private JLabel overallPanelMaidenAverage = new JLabel("", SwingConstants.RIGHT);
-    private JLabel overallPanelBloatAverage = new JLabel("", SwingConstants.RIGHT);
-    private JLabel overallPanelNyloAverage = new JLabel("", SwingConstants.RIGHT);
-    private JLabel overallPanelSoteAverage = new JLabel("", SwingConstants.RIGHT);
-    private JLabel overallPanelXarpusAverage = new JLabel("", SwingConstants.RIGHT);
-    private JLabel overallPanelVerzikAverage = new JLabel("", SwingConstants.RIGHT);
-    private JLabel overallPanelOverallAverage = new JLabel("", SwingConstants.RIGHT);
+    private final JLabel overallPanelMaidenAverage = new JLabel("", SwingConstants.RIGHT);
+    private final JLabel overallPanelBloatAverage = new JLabel("", SwingConstants.RIGHT);
+    private final JLabel overallPanelNyloAverage = new JLabel("", SwingConstants.RIGHT);
+    private final JLabel overallPanelSoteAverage = new JLabel("", SwingConstants.RIGHT);
+    private final JLabel overallPanelXarpusAverage = new JLabel("", SwingConstants.RIGHT);
+    private final JLabel overallPanelVerzikAverage = new JLabel("", SwingConstants.RIGHT);
+    private final JLabel overallPanelOverallAverage = new JLabel("", SwingConstants.RIGHT);
 
-    private JLabel overallPanelMaidenMedian = new JLabel("", SwingConstants.RIGHT);
-    private JLabel overallPanelBloatMedian = new JLabel("", SwingConstants.RIGHT);
-    private JLabel overallPanelNyloMedian = new JLabel("", SwingConstants.RIGHT);
-    private JLabel overallPanelSoteMedian = new JLabel("", SwingConstants.RIGHT);
-    private JLabel overallPanelXarpusMedian = new JLabel("", SwingConstants.RIGHT);
-    private JLabel overallPanelVerzikMedian = new JLabel("", SwingConstants.RIGHT);
-    private JLabel overallPanelOverallMedian = new JLabel("", SwingConstants.RIGHT);
+    private final JLabel overallPanelMaidenMedian = new JLabel("", SwingConstants.RIGHT);
+    private final JLabel overallPanelBloatMedian = new JLabel("", SwingConstants.RIGHT);
+    private final JLabel overallPanelNyloMedian = new JLabel("", SwingConstants.RIGHT);
+    private final JLabel overallPanelSoteMedian = new JLabel("", SwingConstants.RIGHT);
+    private final JLabel overallPanelXarpusMedian = new JLabel("", SwingConstants.RIGHT);
+    private final JLabel overallPanelVerzikMedian = new JLabel("", SwingConstants.RIGHT);
+    private final JLabel overallPanelOverallMedian = new JLabel("", SwingConstants.RIGHT);
 
-    private JLabel overallPanelMaidenMinimum = new JLabel("", SwingConstants.RIGHT);
-    private JLabel overallPanelBloatMinimum = new JLabel("", SwingConstants.RIGHT);
-    private JLabel overallPanelNyloMinimum = new JLabel("", SwingConstants.RIGHT);
-    private JLabel overallPanelSoteMinimum = new JLabel("", SwingConstants.RIGHT);
+    private final JLabel overallPanelMaidenMinimum = new JLabel("", SwingConstants.RIGHT);
+    private final JLabel overallPanelBloatMinimum = new JLabel("", SwingConstants.RIGHT);
+    private final JLabel overallPanelNyloMinimum = new JLabel("", SwingConstants.RIGHT);
+    private final JLabel overallPanelSoteMinimum = new JLabel("", SwingConstants.RIGHT);
     private JLabel overallPanelXarpusMinimum = new JLabel("", SwingConstants.RIGHT);
     private JLabel overallPanelVerzikMinimum = new JLabel("", SwingConstants.RIGHT);
     private JLabel overallPanelOverallMinimum = new JLabel("", SwingConstants.RIGHT);
@@ -72,172 +64,11 @@ public class cFilteredRaidsFrame extends cFrame
     private JLabel overallPanelVerzikMaximum = new JLabel("", SwingConstants.RIGHT);
     private JLabel overallPanelOverallMaximum = new JLabel("", SwingConstants.RIGHT);
 
-    private JLabel resultsAverage = new JLabel("", SwingConstants.RIGHT);
+    private final JLabel resultsAverage = new JLabel("", SwingConstants.RIGHT);
     private JLabel resultsMedian = new JLabel("", SwingConstants.RIGHT);
     private JLabel resultsMode = new JLabel("", SwingConstants.RIGHT);
     private JLabel resultsMinimum = new JLabel("", SwingConstants.RIGHT);
     private JLabel resultsMaximum = new JLabel("", SwingConstants.RIGHT);
-
-    private JLabel maidenAverage70 = new JLabel("", SwingConstants.RIGHT);
-    private JLabel maidenAverage7050 = new JLabel("", SwingConstants.RIGHT);
-    private JLabel maidenAverage50 = new JLabel("", SwingConstants.RIGHT);
-    private JLabel maidenAverage5030 = new JLabel("", SwingConstants.RIGHT);
-    private JLabel maidenAverage30 = new JLabel("", SwingConstants.RIGHT);
-    private JLabel maidenAverageSkip = new JLabel("", SwingConstants.RIGHT);
-    private JLabel maidenAverageTime = new JLabel("", SwingConstants.RIGHT);
-
-    private JLabel maidenMedian70 = new JLabel("", SwingConstants.RIGHT);
-    private JLabel maidenMedian7050 = new JLabel("", SwingConstants.RIGHT);
-    private JLabel maidenMedian50 = new JLabel("", SwingConstants.RIGHT);
-    private JLabel maidenMedian5030 = new JLabel("", SwingConstants.RIGHT);
-    private JLabel maidenMedian30 = new JLabel("", SwingConstants.RIGHT);
-    private JLabel maidenMedianSkip = new JLabel("", SwingConstants.RIGHT);
-    private JLabel maidenMedianTime = new JLabel("", SwingConstants.RIGHT);
-
-    private JLabel maidenMode70 = new JLabel("", SwingConstants.RIGHT);
-    private JLabel maidenMode7050 = new JLabel("", SwingConstants.RIGHT);
-    private JLabel maidenMode50 = new JLabel("", SwingConstants.RIGHT);
-    private JLabel maidenMode5030 = new JLabel("", SwingConstants.RIGHT);
-    private JLabel maidenMode30 = new JLabel("", SwingConstants.RIGHT);
-    private JLabel maidenModeSkip = new JLabel("", SwingConstants.RIGHT);
-    private JLabel maidenModeTime = new JLabel("", SwingConstants.RIGHT);
-
-    private JLabel maidenMax70 = new JLabel("", SwingConstants.RIGHT);
-    private JLabel maidenMax7050 = new JLabel("", SwingConstants.RIGHT);
-    private JLabel maidenMax50 = new JLabel("", SwingConstants.RIGHT);
-    private JLabel maidenMax5030 = new JLabel("", SwingConstants.RIGHT);
-    private JLabel maidenMax30 = new JLabel("", SwingConstants.RIGHT);
-    private JLabel maidenMaxSkip = new JLabel("", SwingConstants.RIGHT);
-    private JLabel maidenMaxTime = new JLabel("", SwingConstants.RIGHT);
-
-    private JLabel maidenMin70 = new JLabel("", SwingConstants.RIGHT);
-    private JLabel maidenMin7050 = new JLabel("", SwingConstants.RIGHT);
-    private JLabel maidenMin50 = new JLabel("", SwingConstants.RIGHT);
-    private JLabel maidenMin5030 = new JLabel("", SwingConstants.RIGHT);
-    private JLabel maidenMin30 = new JLabel("", SwingConstants.RIGHT);
-    private JLabel maidenMinSkip = new JLabel("", SwingConstants.RIGHT);
-    private JLabel maidenMinTime = new JLabel("", SwingConstants.RIGHT);
-
-    private JLabel bloatAverageFirstDown = new JLabel("", SwingConstants.RIGHT);
-    private JLabel bloatAverageTime = new JLabel("", SwingConstants.RIGHT);
-
-    private JLabel bloatMedianFirstDown = new JLabel("", SwingConstants.RIGHT);
-    private JLabel bloatMedianTime = new JLabel("", SwingConstants.RIGHT);
-
-    private JLabel bloatModeFirstDown = new JLabel("", SwingConstants.RIGHT);
-    private JLabel bloatModeTime = new JLabel("", SwingConstants.RIGHT);
-
-    private JLabel bloatMinFirstDown = new JLabel("", SwingConstants.RIGHT);
-    private JLabel bloatMinTime = new JLabel("", SwingConstants.RIGHT);
-
-    private JLabel bloatMaxFirstDown = new JLabel("", SwingConstants.RIGHT);
-    private JLabel bloatMaxTime = new JLabel("", SwingConstants.RIGHT);
-
-    private JLabel nyloAverageLastWave = new JLabel("", SwingConstants.RIGHT);
-    private JLabel nyloAverageBossSpawn = new JLabel("", SwingConstants.RIGHT);
-    private JLabel nyloAverageBossDuration = new JLabel("", SwingConstants.RIGHT);
-    private JLabel nyloAverageTime = new JLabel("", SwingConstants.RIGHT);
-
-    private JLabel nyloMedianLastWave = new JLabel("", SwingConstants.RIGHT);
-    private JLabel nyloMedianBossSpawn = new JLabel("", SwingConstants.RIGHT);
-    private JLabel nyloMedianBossDuration = new JLabel("", SwingConstants.RIGHT);
-    private JLabel nyloMedianTime = new JLabel("", SwingConstants.RIGHT);
-
-    private JLabel nyloModeLastWave = new JLabel("", SwingConstants.RIGHT);
-    private JLabel nyloModeBossSpawn = new JLabel("", SwingConstants.RIGHT);
-    private JLabel nyloModeBossDuration = new JLabel("", SwingConstants.RIGHT);
-    private JLabel nyloModeTime = new JLabel("", SwingConstants.RIGHT);
-
-    private JLabel nyloMinLastWave = new JLabel("", SwingConstants.RIGHT);
-    private JLabel nyloMinBossSpawn = new JLabel("", SwingConstants.RIGHT);
-    private JLabel nyloMinBossDuration = new JLabel("", SwingConstants.RIGHT);
-    private JLabel nyloMinTime = new JLabel("", SwingConstants.RIGHT);
-
-    private JLabel nyloMaxLastWave = new JLabel("", SwingConstants.RIGHT);
-    private JLabel nyloMaxBossSpawn = new JLabel("", SwingConstants.RIGHT);
-    private JLabel nyloMaxBossDuration = new JLabel("", SwingConstants.RIGHT);
-    private JLabel nyloMaxTime = new JLabel("", SwingConstants.RIGHT);
-
-    private JLabel soteAverageP1 = new JLabel("", SwingConstants.RIGHT);
-    private JLabel soteAverageM1= new JLabel("", SwingConstants.RIGHT);
-    private JLabel soteAverageP2 = new JLabel("", SwingConstants.RIGHT);
-    private JLabel soteAverageM2 = new JLabel("", SwingConstants.RIGHT);
-    private JLabel soteAverageP3 = new JLabel("", SwingConstants.RIGHT);
-    private JLabel soteAverageTime = new JLabel("", SwingConstants.RIGHT);
-
-    private JLabel soteMedianP1 = new JLabel("", SwingConstants.RIGHT);
-    private JLabel soteMedianM1= new JLabel("", SwingConstants.RIGHT);
-    private JLabel soteMedianP2 = new JLabel("", SwingConstants.RIGHT);
-    private JLabel soteMedianM2 = new JLabel("", SwingConstants.RIGHT);
-    private JLabel soteMedianP3 = new JLabel("", SwingConstants.RIGHT);
-    private JLabel soteMedianTime = new JLabel("", SwingConstants.RIGHT);
-
-    private JLabel soteModeP1 = new JLabel("", SwingConstants.RIGHT);
-    private JLabel soteModeM1= new JLabel("", SwingConstants.RIGHT);
-    private JLabel soteModeP2 = new JLabel("", SwingConstants.RIGHT);
-    private JLabel soteModeM2 = new JLabel("", SwingConstants.RIGHT);
-    private JLabel soteModeP3 = new JLabel("", SwingConstants.RIGHT);
-    private JLabel soteModeTime = new JLabel("", SwingConstants.RIGHT);
-
-    private JLabel soteMinP1 = new JLabel("", SwingConstants.RIGHT);
-    private JLabel soteMinM1= new JLabel("", SwingConstants.RIGHT);
-    private JLabel soteMinP2 = new JLabel("", SwingConstants.RIGHT);
-    private JLabel soteMinM2 = new JLabel("", SwingConstants.RIGHT);
-    private JLabel soteMinP3 = new JLabel("", SwingConstants.RIGHT);
-    private JLabel soteMinTime = new JLabel("", SwingConstants.RIGHT);
-
-    private JLabel soteMaxP1 = new JLabel("", SwingConstants.RIGHT);
-    private JLabel soteMaxM1= new JLabel("", SwingConstants.RIGHT);
-    private JLabel soteMaxP2 = new JLabel("", SwingConstants.RIGHT);
-    private JLabel soteMaxM2 = new JLabel("", SwingConstants.RIGHT);
-    private JLabel soteMaxP3 = new JLabel("", SwingConstants.RIGHT);
-    private JLabel soteMaxTime = new JLabel("", SwingConstants.RIGHT);
-
-    private JLabel xarpModeScreech = new JLabel("", SwingConstants.RIGHT);
-    private JLabel xarpModeTime = new JLabel("", SwingConstants.RIGHT);
-
-    private JLabel xarpAverageScreech = new JLabel("", SwingConstants.RIGHT);
-    private JLabel xarpAverageTime = new JLabel("", SwingConstants.RIGHT);
-
-    private JLabel xarpMedianScreech = new JLabel("", SwingConstants.RIGHT);
-    private JLabel xarpMedianTime = new JLabel("", SwingConstants.RIGHT);
-
-    private JLabel xarpMaxScreech = new JLabel("", SwingConstants.RIGHT);
-    private JLabel xarpMaxTime = new JLabel("", SwingConstants.RIGHT);
-
-    private JLabel xarpMinScreech = new JLabel("", SwingConstants.RIGHT);
-    private JLabel xarpMinTime = new JLabel("", SwingConstants.RIGHT);
-
-    private JLabel verzikModeP1 = new JLabel("", SwingConstants.RIGHT);
-    private JLabel verzikModeP2 = new JLabel("", SwingConstants.RIGHT);
-    private JLabel verzikModeP3Entry = new JLabel("", SwingConstants.RIGHT);
-    private JLabel verzikModeP3 = new JLabel("", SwingConstants.RIGHT);
-    private JLabel verzikModeTime = new JLabel("", SwingConstants.RIGHT);
-
-    private JLabel verzikAverageP1 = new JLabel("", SwingConstants.RIGHT);
-    private JLabel verzikAverageP2 = new JLabel("", SwingConstants.RIGHT);
-    private JLabel verzikAverageP3Entry = new JLabel("", SwingConstants.RIGHT);
-    private JLabel verzikAverageP3 = new JLabel("", SwingConstants.RIGHT);
-    private JLabel verzikAverageTime = new JLabel("", SwingConstants.RIGHT);
-
-    private JLabel verzikMedianP1 = new JLabel("", SwingConstants.RIGHT);
-    private JLabel verzikMedianP2 = new JLabel("", SwingConstants.RIGHT);
-    private JLabel verzikMedianP3Entry = new JLabel("", SwingConstants.RIGHT);
-    private JLabel verzikMedianP3 = new JLabel("", SwingConstants.RIGHT);
-    private JLabel verzikMedianTime = new JLabel("", SwingConstants.RIGHT);
-
-    private JLabel verzikMinP1 = new JLabel("", SwingConstants.RIGHT);
-    private JLabel verzikMinP2 = new JLabel("", SwingConstants.RIGHT);
-    private JLabel verzikMinP3Entry = new JLabel("", SwingConstants.RIGHT);
-    private JLabel verzikMinP3 = new JLabel("", SwingConstants.RIGHT);
-    private JLabel verzikMinTime = new JLabel("", SwingConstants.RIGHT);
-
-    private JLabel verzikMaxP1 = new JLabel("", SwingConstants.RIGHT);
-    private JLabel verzikMaxP2 = new JLabel("", SwingConstants.RIGHT);
-    private JLabel verzikMaxP3Entry = new JLabel("", SwingConstants.RIGHT);
-    private JLabel verzikMaxP3 = new JLabel("", SwingConstants.RIGHT);
-    private JLabel verzikMaxTime = new JLabel("", SwingConstants.RIGHT);
-
     public JComboBox statisticsBox;
     public JLabel customAverageLabel = new JLabel("", SwingConstants.RIGHT);
     public JLabel customMedianLabel = new JLabel("", SwingConstants.RIGHT);
@@ -252,42 +83,32 @@ public class cFilteredRaidsFrame extends cFrame
     JCheckBox filterCheckBoxScale;
     JCheckBox filterTodayOnly;
     JCheckBox filterPartyOnly;
-
     JCheckBox filterPartialData;
     JCheckBox filterPartialOnly;
-    JCheckBox filter8;
     JTable table;
-
     private ArrayList<cRoomData> filteredData;
-
     JPanel container;
-
     private JPanel filterTableContainer;
-
     public ArrayList<cRoomData> currentData;
-
     private JComboBox<String> timeFilterChoice;
     private JComboBox<String> timeFilterOperator;
     private JTextField timeFilterValue;
-
     private JTable filterTable;
-
     private JComboBox<String> playerFilterOperator;
     private JTextField playerFilterValue;
-
+    private cStatisticTab maidenTab;
+    private cStatisticTab bloatTab;
+    private cStatisticTab nyloTab;
+    private cStatisticTab soteTab;
+    private cStatisticTab xarpTab;
+    private cStatisticTab verzikTab;
     private JComboBox<String> dateFilterOperator;
     private JTextField dateFilterValue;
-
     private JComboBox<String> otherIntFilterChoice;
     private JComboBox<String> otherIntFilterOperator;
     private JTextField otherIntFilterValue;
-
     private JComboBox<String> otherBoolFilterChoice;
     private JComboBox<String> otherBoolFilterOperator;
-    private JTextField otherBoolFilterValue;
-
-    private JTable comparisonTableOptions;
-
     String colorStr(Color c)
     {
         return "<html><font color='#" + Integer.toHexString(c.getRGB()).substring(2) + "'>";
@@ -297,14 +118,15 @@ public class cFilteredRaidsFrame extends cFrame
     {
         filteredIndices = new ArrayList<>();
         filteredData = new ArrayList<>();
-        comparisonOptions = new ArrayList<>();
-        comparisons = new ArrayList<ArrayList<cRoomData>>();
-        activeFilters = new ArrayList<cImplicitFilter>();
+        ArrayList<Integer> comparisonOptions = new ArrayList<>();
+        comparisons = new ArrayList<>();
+        activeFilters = new ArrayList<>();
         this.setPreferredSize(new Dimension(1200,720));
     }
 
     public void updateCustomStats(ArrayList<cRoomData> raids)
     {
+        //TODO: REPLACE ENTIRELY
         ArrayList<Integer> dataForCalc = new ArrayList<>();
         for(cRoomData raid : raids)
         {
@@ -352,7 +174,7 @@ public class cFilteredRaidsFrame extends cFrame
             }
             switch(statisticsBox.getSelectedIndex())
             {
-                case 1:
+               /* case 1:
                     dataForCalc.add(raid.maidenBloodsSpawned);
                     break;
                 case 2:
@@ -449,14 +271,14 @@ public class cFilteredRaidsFrame extends cFrame
                     dataForCalc.add(raid.verzikCrabsSpawned);
                     break;
                 default:
-                    break;
+                    break;*/
             }
         }
         if(dataForCalc.size() == 0)
         {
             return;
         }
-        String avgStr = "" + +cStatisticGatherer.getGenericTimeAverage(dataForCalc);
+        String avgStr = "" + +cStatisticGatherer.getGenericAverage(dataForCalc);
         if(avgStr.length() > 5)
         {
             avgStr = avgStr.substring(0, 5);
@@ -474,7 +296,7 @@ public class cFilteredRaidsFrame extends cFrame
             modStr = modStr.substring(0, 5);
         }
 
-        String minStr = "" + +cStatisticGatherer.getGenericTimeMin(dataForCalc);
+        String minStr = "" + +cStatisticGatherer.getGenericMin(dataForCalc);
         if(minStr.length() > 5)
         {
             minStr = minStr.substring(0, 5);
@@ -626,25 +448,25 @@ public class cFilteredRaidsFrame extends cFrame
             switch(viewByRaidComboBox.getSelectedIndex())
             {
                 case 0:
-                    timeToDisplay = data.maidenTime+data.bloatTime+data.nyloTime+data.soteTime+data.xarpTime+data.verzikTime;
+                    timeToDisplay = data.getTimeSum();
                     break;
                 case 1:
-                    timeToDisplay = data.maidenTime;
+                    timeToDisplay = data.getValue(cDataPoint.MAIDEN_TOTAL_TIME);
                     break;
                 case 2:
-                    timeToDisplay = data.bloatTime;
+                    timeToDisplay = data.getValue(cDataPoint.BLOAT_TOTAL_TIME);
                     break;
                 case 3:
-                    timeToDisplay = data.nyloTime;
+                    timeToDisplay = data.getValue(cDataPoint.NYLO_TOTAL_TIME);
                     break;
                 case 4:
-                    timeToDisplay = data.soteTime;
+                    timeToDisplay = data.getValue(cDataPoint.SOTE_TOTAL_TIME);
                     break;
                 case 5:
-                    timeToDisplay = data.xarpTime;
+                    timeToDisplay = data.getValue(cDataPoint.XARP_TOTAL_TIME);
                     break;
                 case 6:
-                    timeToDisplay = data.verzikTime;
+                    timeToDisplay = data.getValue(cDataPoint.VERZIK_TOTAL_TIME);
                     break;
             }
             if(timeToDisplay == 0)
@@ -749,11 +571,11 @@ public class cFilteredRaidsFrame extends cFrame
                 default:
                     if(sortOrderBox.getSelectedIndex() == 0)
                     {
-                        tableData.sort(Comparator.comparing(cRoomData::getOverallTime));
+                        tableData.sort(Comparator.comparing(cRoomData::getTimeSum));
                     }
                     else
                     {
-                        tableData.sort(Comparator.comparing(cRoomData::getOverallTime).reversed());
+                        tableData.sort(Comparator.comparing(cRoomData::getTimeSum).reversed());
                     }
                     break;
             }
@@ -808,25 +630,25 @@ public class cFilteredRaidsFrame extends cFrame
             switch(viewByRaidComboBox.getSelectedIndex())
             {
                 case 0:
-                    timeToDisplay = raid.maidenTime+raid.bloatTime+raid.nyloTime+raid.soteTime+raid.xarpTime+raid.verzikTime;
+                    timeToDisplay = raid.getTimeSum();
                     break;
                 case 1:
-                    timeToDisplay = raid.maidenTime;
+                    timeToDisplay = raid.getValue(cDataPoint.MAIDEN_TOTAL_TIME);
                     break;
                 case 2:
-                    timeToDisplay = raid.bloatTime;
+                    timeToDisplay = raid.getValue(cDataPoint.BLOAT_TOTAL_TIME);
                     break;
                 case 3:
-                    timeToDisplay = raid.nyloTime;
+                    timeToDisplay = raid.getValue(cDataPoint.NYLO_TOTAL_TIME);
                     break;
                 case 4:
-                    timeToDisplay = raid.soteTime;
+                    timeToDisplay = raid.getValue(cDataPoint.SOTE_TOTAL_TIME);
                     break;
                 case 5:
-                    timeToDisplay = raid.xarpTime;
+                    timeToDisplay = raid.getValue(cDataPoint.XARP_TOTAL_TIME);
                     break;
                 case 6:
-                    timeToDisplay = raid.verzikTime;
+                    timeToDisplay = raid.getValue(cDataPoint.VERZIK_TOTAL_TIME);
                     break;
             }
 
@@ -966,12 +788,12 @@ public class cFilteredRaidsFrame extends cFrame
     public void setLabels(ArrayList<cRoomData> data)
     {
         setOverallLabels(data);
-        setMaidenLabels(data);
-        setBloatLabels(data);
-        setNyloLabels(data);
-        setSoteLabels(data);
-        setXarpLabels(data);
-        setVerzikLabels(data);
+        maidenTab.updateTab(data);
+        bloatTab.updateTab(data);
+        nyloTab.updateTab(data);
+        soteTab.updateTab(data);
+        xarpTab.updateTab(data);
+        verzikTab.updateTab(data);
     }
     public void setOverallLabels(ArrayList<cRoomData> data)
     {
@@ -983,354 +805,49 @@ public class cFilteredRaidsFrame extends cFrame
 
     public void setOverallAverageLabels(ArrayList<cRoomData> data)
     {
-        overallPanelMaidenAverage.setText(RoomUtil.time(cStatisticGatherer.getMaidenTimeAverage(data)));
-        overallPanelBloatAverage.setText(RoomUtil.time(cStatisticGatherer.getBloatTimeAverage(data)));
-        overallPanelNyloAverage.setText(RoomUtil.time(cStatisticGatherer.getNyloTimeAverage(data)));
-        overallPanelSoteAverage.setText(RoomUtil.time(cStatisticGatherer.getSoteTimeAverage(data)));
-        overallPanelXarpusAverage.setText(RoomUtil.time(cStatisticGatherer.getXarpTimeAverage(data)));
-        overallPanelVerzikAverage.setText(RoomUtil.time(cStatisticGatherer.getVerzikTimeAverage(data)));
+        overallPanelMaidenAverage.setText(RoomUtil.time(cStatisticGatherer.getGenericAverage(data, cDataPoint.MAIDEN_TOTAL_TIME)));
+        overallPanelBloatAverage.setText(RoomUtil.time(cStatisticGatherer.getGenericAverage(data, cDataPoint.BLOAT_TOTAL_TIME)));
+        overallPanelNyloAverage.setText(RoomUtil.time(cStatisticGatherer.getGenericAverage(data, cDataPoint.NYLO_TOTAL_TIME)));
+        overallPanelSoteAverage.setText(RoomUtil.time(cStatisticGatherer.getGenericAverage(data, cDataPoint.SOTE_TOTAL_TIME)));
+        overallPanelXarpusAverage.setText(RoomUtil.time(cStatisticGatherer.getGenericAverage(data,cDataPoint.XARP_TOTAL_TIME)));
+        overallPanelVerzikAverage.setText(RoomUtil.time(cStatisticGatherer.getGenericAverage(data,cDataPoint.VERZIK_TOTAL_TIME)));
         overallPanelOverallAverage.setText(RoomUtil.time(cStatisticGatherer.getOverallTimeAverage(data)));
     }
 
     public void setOverallMedianLabels(ArrayList<cRoomData> data)
     {
-        overallPanelMaidenMedian.setText(RoomUtil.time(cStatisticGatherer.getMaidenTimeMedian(data)));
-        overallPanelBloatMedian.setText(RoomUtil.time(cStatisticGatherer.getBloatTimeMedian(data)));
-        overallPanelNyloMedian.setText(RoomUtil.time(cStatisticGatherer.getNyloTimeMedian(data)));
-        overallPanelSoteMedian.setText(RoomUtil.time(cStatisticGatherer.getSoteTimeMedian(data)));
-        overallPanelXarpusMedian.setText(RoomUtil.time(cStatisticGatherer.getXarpTimeMedian(data)));
-        overallPanelVerzikMedian.setText(RoomUtil.time(cStatisticGatherer.getVerzikTimeMedian(data)));
+        overallPanelMaidenMedian.setText(RoomUtil.time(cStatisticGatherer.getGenericMedian(data, cDataPoint.MAIDEN_TOTAL_TIME)));
+        overallPanelBloatMedian.setText(RoomUtil.time(cStatisticGatherer.getGenericMedian(data, cDataPoint.BLOAT_TOTAL_TIME)));
+        overallPanelNyloMedian.setText(RoomUtil.time(cStatisticGatherer.getGenericMedian(data, cDataPoint.NYLO_TOTAL_TIME)));
+        overallPanelSoteMedian.setText(RoomUtil.time(cStatisticGatherer.getGenericMedian(data, cDataPoint.SOTE_TOTAL_TIME)));
+        overallPanelXarpusMedian.setText(RoomUtil.time(cStatisticGatherer.getGenericMedian(data, cDataPoint.XARP_TOTAL_TIME)));
+        overallPanelVerzikMedian.setText(RoomUtil.time(cStatisticGatherer.getGenericMedian(data, cDataPoint.VERZIK_TOTAL_TIME)));
         overallPanelOverallMedian.setText(RoomUtil.time(cStatisticGatherer.getOverallMedian(data)));
     }
 
     public void setOverallMinLabels(ArrayList<cRoomData> data)
     {
-        overallPanelMaidenMinimum.setText(RoomUtil.time(cStatisticGatherer.getMaidenTimeMin(data)));
-        overallPanelBloatMinimum.setText(RoomUtil.time(cStatisticGatherer.getBloatTimeMin(data)));
-        overallPanelNyloMinimum.setText(RoomUtil.time(cStatisticGatherer.getNyloTimeMinimum(data)));
-        overallPanelSoteMinimum.setText(RoomUtil.time(cStatisticGatherer.getSoteTimeMin(data)));
-        overallPanelXarpusMinimum.setText(RoomUtil.time(cStatisticGatherer.getXarpTimeMin(data)));
-        overallPanelVerzikMinimum.setText(RoomUtil.time(cStatisticGatherer.getVerzikTimeMin(data)));
+        overallPanelMaidenMinimum.setText(RoomUtil.time(cStatisticGatherer.getGenericMin(data, cDataPoint.MAIDEN_TOTAL_TIME)));
+        overallPanelBloatMinimum.setText(RoomUtil.time(cStatisticGatherer.getGenericMin(data, cDataPoint.BLOAT_TOTAL_TIME)));
+        overallPanelNyloMinimum.setText(RoomUtil.time(cStatisticGatherer.getGenericMin(data, cDataPoint.NYLO_TOTAL_TIME)));
+        overallPanelSoteMinimum.setText(RoomUtil.time(cStatisticGatherer.getGenericMin(data, cDataPoint.SOTE_TOTAL_TIME)));
+        overallPanelXarpusMinimum.setText(RoomUtil.time(cStatisticGatherer.getGenericMin(data, cDataPoint.XARP_TOTAL_TIME)));
+        overallPanelVerzikMinimum.setText(RoomUtil.time(cStatisticGatherer.getGenericMin(data, cDataPoint.VERZIK_TOTAL_TIME)));
         overallPanelOverallMinimum.setText(RoomUtil.time(cStatisticGatherer.getOverallTimeMin(data)));
     }
     private void setOverallMaxLabels(ArrayList<cRoomData> data)
     {
-        overallPanelMaidenMaximum.setText(RoomUtil.time(cStatisticGatherer.getMaidenTimeMax(data)));
-        overallPanelBloatMaximum.setText(RoomUtil.time(cStatisticGatherer.getBloatTimeMax(data)));
-        overallPanelNyloMaximum.setText(RoomUtil.time(cStatisticGatherer.getNyloTimeMaximum(data)));
-        overallPanelSoteMaximum.setText(RoomUtil.time(cStatisticGatherer.getSoteTimeMax(data)));
-        overallPanelXarpusMaximum.setText(RoomUtil.time(cStatisticGatherer.getXarpTimeMax(data)));
-        overallPanelVerzikMaximum.setText(RoomUtil.time(cStatisticGatherer.getVerzikTimeMax(data)));
+        overallPanelMaidenMaximum.setText(RoomUtil.time(cStatisticGatherer.getGenericMax(data, cDataPoint.MAIDEN_TOTAL_TIME)));
+        overallPanelBloatMaximum.setText(RoomUtil.time(cStatisticGatherer.getGenericMax(data, cDataPoint.BLOAT_TOTAL_TIME)));
+        overallPanelNyloMaximum.setText(RoomUtil.time(cStatisticGatherer.getGenericMax(data, cDataPoint.NYLO_TOTAL_TIME)));
+        overallPanelSoteMaximum.setText(RoomUtil.time(cStatisticGatherer.getGenericMax(data, cDataPoint.SOTE_TOTAL_TIME)));
+        overallPanelXarpusMaximum.setText(RoomUtil.time(cStatisticGatherer.getGenericMax(data, cDataPoint.XARP_TOTAL_TIME)));
+        overallPanelVerzikMaximum.setText(RoomUtil.time(cStatisticGatherer.getGenericMax(data, cDataPoint.VERZIK_TOTAL_TIME)));
         overallPanelOverallMaximum.setText(RoomUtil.time(cStatisticGatherer.getOverallMax(data)));
-    }
-
-    public void setMaidenLabels(ArrayList<cRoomData> data)
-    {
-        setMaidenAverageLabels(data);
-        setMaidenMedianLabels(data);
-        setMaidenModeLabels(data);
-        setMaidenMinLabels(data);
-        setMaidenMaxLabels(data);
-    }
-
-    public void setMaidenAverageLabels(ArrayList<cRoomData> data)
-    {
-        maidenAverage70.setText(RoomUtil.time(cStatisticGatherer.getMaiden70SplitAverage(data)));
-        maidenAverage7050.setText(RoomUtil.time(cStatisticGatherer.getMaiden7050SplitAverage(data)));
-        maidenAverage50.setText(RoomUtil.time(cStatisticGatherer.getMaiden50SplitAverage(data)));
-        maidenAverage5030.setText(RoomUtil.time(cStatisticGatherer.getMaiden5030SplitAverage(data)));
-        maidenAverage30.setText(RoomUtil.time(cStatisticGatherer.getMaiden30SplitAverage(data)));
-        maidenAverageSkip.setText(RoomUtil.time(cStatisticGatherer.getMaidenSkipSplitAverage(data)));
-        maidenAverageTime.setText(RoomUtil.time(cStatisticGatherer.getMaidenTimeAverage(data)));
-    }
-
-    public void setMaidenMedianLabels(ArrayList<cRoomData> data)
-    {
-        maidenMedian70.setText(RoomUtil.time(cStatisticGatherer.getMaiden70SplitMedian(data)));
-        maidenMedian7050.setText(RoomUtil.time(cStatisticGatherer.getMaiden7050SplitMedian(data)));
-        maidenMedian50.setText(RoomUtil.time(cStatisticGatherer.getMaiden50SplitMedian(data)));
-        maidenMedian5030.setText(RoomUtil.time(cStatisticGatherer.getMaiden5030SplitMedian(data)));
-        maidenMedian30.setText(RoomUtil.time(cStatisticGatherer.getMaiden30SplitMedian(data)));
-        maidenMedianSkip.setText(RoomUtil.time(cStatisticGatherer.getMaidenSkipSplitMedian(data)));
-        maidenMedianTime.setText(RoomUtil.time(cStatisticGatherer.getMaidenTimeMedian(data)));
-    }
-
-    public void setMaidenModeLabels(ArrayList<cRoomData> data)
-    {
-        maidenMode70.setText(RoomUtil.time(cStatisticGatherer.getMaiden70SplitMode(data)));
-        maidenMode7050.setText(RoomUtil.time(cStatisticGatherer.getMaiden7050SplitMode(data)));
-        maidenMode50.setText(RoomUtil.time(cStatisticGatherer.getMaiden50SplitMode(data)));
-        maidenMode5030.setText(RoomUtil.time(cStatisticGatherer.getMaiden5030SplitMode(data)));
-        maidenMode30.setText(RoomUtil.time(cStatisticGatherer.getMaiden30SplitMode(data)));
-        maidenModeSkip.setText(RoomUtil.time(cStatisticGatherer.getMaidenSkipSplitMode(data)));
-        maidenModeTime.setText(RoomUtil.time(cStatisticGatherer.getMaidenTimeMode(data)));
-    }
-
-    public void setMaidenMinLabels(ArrayList<cRoomData> data)
-    {
-        maidenMin70.setText(RoomUtil.time(cStatisticGatherer.getMaiden70SplitMin(data)));
-        maidenMin7050.setText(RoomUtil.time(cStatisticGatherer.getMaiden7050SplitMin(data)));
-        maidenMin50.setText(RoomUtil.time(cStatisticGatherer.getMaiden50SplitMin(data)));
-        maidenMin5030.setText(RoomUtil.time(cStatisticGatherer.getMaiden5030SplitMin(data)));
-        maidenMin30.setText(RoomUtil.time(cStatisticGatherer.getMaiden30SplitMin(data)));
-        maidenMinSkip.setText(RoomUtil.time(cStatisticGatherer.getMaidenSkipSplitMin(data)));
-        maidenMinTime.setText(RoomUtil.time(cStatisticGatherer.getMaidenTimeMin(data)));
-    }
-
-    public void setMaidenMaxLabels(ArrayList<cRoomData> data)
-    {
-        maidenMax70.setText(RoomUtil.time(cStatisticGatherer.getMaiden70SplitMax(data)));
-        maidenMax7050.setText(RoomUtil.time(cStatisticGatherer.getMaiden7050SplitMax(data)));
-        maidenMax50.setText(RoomUtil.time(cStatisticGatherer.getMaiden50SplitMax(data)));
-        maidenMax5030.setText(RoomUtil.time(cStatisticGatherer.getMaiden5030SplitMax(data)));
-        maidenMax30.setText(RoomUtil.time(cStatisticGatherer.getMaiden30SplitMax(data)));
-        maidenMaxSkip.setText(RoomUtil.time(cStatisticGatherer.getMaidenSkipSplitMax(data)));
-        maidenMaxTime.setText(RoomUtil.time(cStatisticGatherer.getMaidenTimeMax(data)));
-    }
-
-    public void setBloatLabels(ArrayList<cRoomData> data)
-    {
-        setBloatAverageLabels(data);
-        setBloatMedianLabels(data);
-        setBloatModeLabels(data);
-        setBloatMinLabels(data);
-        setBloatMaxLabels(data);
-    }
-
-    public void setBloatAverageLabels(ArrayList<cRoomData> data)
-    {
-        bloatAverageFirstDown.setText(RoomUtil.time(cStatisticGatherer.getBloatFirstDownAverage(data)));
-        bloatAverageTime.setText(RoomUtil.time(cStatisticGatherer.getBloatTimeAverage(data)));
-    }
-
-    public void setBloatMedianLabels(ArrayList<cRoomData> data)
-    {
-        bloatMedianFirstDown.setText(RoomUtil.time(cStatisticGatherer.getBloatFirstDownMedian(data)));
-        bloatMedianTime.setText(RoomUtil.time(cStatisticGatherer.getBloatTimeMedian(data)));
-    }
-
-    public void setBloatModeLabels(ArrayList<cRoomData> data)
-    {
-        bloatModeFirstDown.setText(RoomUtil.time(cStatisticGatherer.getBloatFirstDownMode(data)));
-        bloatModeTime.setText(RoomUtil.time(cStatisticGatherer.getBloatTimeMode(data)));
-    }
-
-    public void setBloatMinLabels(ArrayList<cRoomData> data)
-    {
-        bloatMinFirstDown.setText(RoomUtil.time(cStatisticGatherer.getBloatFirstDownMin(data)));
-        bloatMinTime.setText(RoomUtil.time(cStatisticGatherer.getBloatTimeMin(data)));
-    }
-
-    public void setBloatMaxLabels(ArrayList<cRoomData> data)
-    {
-        bloatMaxFirstDown.setText(RoomUtil.time(cStatisticGatherer.getBloatFirstDownMax(data)));
-        bloatMaxTime.setText(RoomUtil.time(cStatisticGatherer.getBloatTimeMax(data)));
-    }
-
-    public void setNyloLabels(ArrayList<cRoomData> data)
-    {
-        setNyloAverageLabels(data);
-        setNyloMedianLabels(data);
-        setNyloModeLabels(data);
-        setNyloMinLabels(data);
-        setNyloMaxLabels(data);
-    }
-
-    public void setNyloAverageLabels(ArrayList<cRoomData> data)
-    {
-        nyloAverageLastWave.setText(RoomUtil.time(cStatisticGatherer.getNyloLastWaveAverage(data)));
-        nyloAverageBossSpawn.setText(RoomUtil.time(cStatisticGatherer.getNyloBossSpawnAverage(data)));
-        nyloAverageBossDuration.setText(RoomUtil.time(cStatisticGatherer.getNyloBossSplitAverage(data)));
-        nyloAverageTime.setText(RoomUtil.time(cStatisticGatherer.getNyloTimeAverage(data)));
-    }
-
-    public void setNyloMedianLabels(ArrayList<cRoomData> data)
-    {
-        nyloMedianLastWave.setText(RoomUtil.time(cStatisticGatherer.getNyloLastWaveMedian(data)));
-        nyloMedianBossSpawn.setText(RoomUtil.time(cStatisticGatherer.getNyloBossSpawnMedian(data)));
-        nyloMedianBossDuration.setText(RoomUtil.time(cStatisticGatherer.getNyloBossSplitMedian(data)));
-        nyloMedianTime.setText(RoomUtil.time(cStatisticGatherer.getNyloTimeMedian(data)));
-    }
-
-    public void setNyloModeLabels(ArrayList<cRoomData> data)
-    {
-        nyloModeLastWave.setText(RoomUtil.time(cStatisticGatherer.getNyloLastWaveMode(data)));
-        nyloModeBossSpawn.setText(RoomUtil.time(cStatisticGatherer.getNyloBossSpawnMode(data)));
-        nyloModeBossDuration.setText(RoomUtil.time(cStatisticGatherer.getNyloBossSplitMode(data)));
-        nyloModeTime.setText(RoomUtil.time(cStatisticGatherer.getNyloTimeMode(data)));
-    }
-
-    public void setNyloMinLabels(ArrayList<cRoomData> data)
-    {
-        nyloMinLastWave.setText(RoomUtil.time(cStatisticGatherer.getNyloLastWaveMinimum(data)));
-        nyloMinBossSpawn.setText(RoomUtil.time(cStatisticGatherer.getNyloBossSpawnMinimum(data)));
-        nyloMinBossDuration.setText(RoomUtil.time(cStatisticGatherer.getNyloBossSplitMinimum(data)));
-        nyloMinTime.setText(RoomUtil.time(cStatisticGatherer.getNyloTimeMinimum(data)));
-    }
-
-    public void setNyloMaxLabels(ArrayList<cRoomData> data)
-    {
-        nyloMaxLastWave.setText(RoomUtil.time(cStatisticGatherer.getNyloLastWaveMaximum(data)));
-        nyloMaxBossSpawn.setText(RoomUtil.time(cStatisticGatherer.getNyloBossSpawnMaximum(data)));
-        nyloMaxBossDuration.setText(RoomUtil.time(cStatisticGatherer.getNyloBossSplitMaximum(data)));
-        nyloMaxTime.setText(RoomUtil.time(cStatisticGatherer.getNyloTimeMaximum(data)));
-    }
-
-    public void setSoteLabels(ArrayList<cRoomData> data)
-    {
-        setSoteAverageLabels(data);
-        setSoteMedianLabels(data);
-        setSoteModeLabels(data);
-        setSoteMinLabels(data);
-        setSoteMaxLabels(data);
-    }
-
-    public void setSoteAverageLabels(ArrayList<cRoomData> data)
-    {
-        soteAverageP1.setText(RoomUtil.time(cStatisticGatherer.getSoteP1Average(data)));
-        soteAverageM1.setText(RoomUtil.time(cStatisticGatherer.getSoteM1Average(data)));
-        soteAverageP2.setText(RoomUtil.time(cStatisticGatherer.getSoteP2Average(data)));
-        soteAverageM2.setText(RoomUtil.time(cStatisticGatherer.getSoteM2Average(data)));
-        soteAverageP3.setText(RoomUtil.time(cStatisticGatherer.getSoteP3Average(data)));
-        soteAverageTime.setText(RoomUtil.time(cStatisticGatherer.getSoteTimeAverage(data)));
-    }
-
-    public void setSoteMedianLabels(ArrayList<cRoomData> data)
-    {
-        soteMedianP1.setText(RoomUtil.time(cStatisticGatherer.getSoteP1Median(data)));
-        soteMedianM1.setText(RoomUtil.time(cStatisticGatherer.getSoteM1Median(data)));
-        soteMedianP2.setText(RoomUtil.time(cStatisticGatherer.getSoteP2Median(data)));
-        soteMedianM2.setText(RoomUtil.time(cStatisticGatherer.getSoteM2Median(data)));
-        soteMedianP3.setText(RoomUtil.time(cStatisticGatherer.getSoteP3Median(data)));
-        soteMedianTime.setText(RoomUtil.time(cStatisticGatherer.getSoteTimeMedian(data)));
-    }
-
-    public void setSoteModeLabels(ArrayList<cRoomData> data)
-    {
-        soteModeP1.setText(RoomUtil.time(cStatisticGatherer.getSoteP1Mode(data)));
-        soteModeM1.setText(RoomUtil.time(cStatisticGatherer.getSoteM1Mode(data)));
-        soteModeP2.setText(RoomUtil.time(cStatisticGatherer.getSoteP2Mode(data)));
-        soteModeM2.setText(RoomUtil.time(cStatisticGatherer.getSoteM2Mode(data)));
-        soteModeP3.setText(RoomUtil.time(cStatisticGatherer.getSoteP3Mode(data)));
-        soteModeTime.setText(RoomUtil.time(cStatisticGatherer.getSoteTimeMode(data)));
-    }
-
-    public void setSoteMinLabels(ArrayList<cRoomData> data)
-    {
-        soteMinP1.setText(RoomUtil.time(cStatisticGatherer.getSoteP1Min(data)));
-        soteMinM1.setText(RoomUtil.time(cStatisticGatherer.getSoteM1Min(data)));
-        soteMinP2.setText(RoomUtil.time(cStatisticGatherer.getSoteP2Min(data)));
-        soteMinM2.setText(RoomUtil.time(cStatisticGatherer.getSoteM2Min(data)));
-        soteMinP3.setText(RoomUtil.time(cStatisticGatherer.getSoteP3Min(data)));
-        soteMinTime.setText(RoomUtil.time(cStatisticGatherer.getSoteTimeMin(data)));
-    }
-
-    public void setSoteMaxLabels(ArrayList<cRoomData> data)
-    {
-        soteMaxP1.setText(RoomUtil.time(cStatisticGatherer.getSoteP1Max(data)));
-        soteMaxM1.setText(RoomUtil.time(cStatisticGatherer.getSoteM1Max(data)));
-        soteMaxP2.setText(RoomUtil.time(cStatisticGatherer.getSoteP2Max(data)));
-        soteMaxM2.setText(RoomUtil.time(cStatisticGatherer.getSoteM2Max(data)));
-        soteMaxP3.setText(RoomUtil.time(cStatisticGatherer.getSoteP3Max(data)));
-        soteMaxTime.setText(RoomUtil.time(cStatisticGatherer.getSoteTimeMax(data)));
-    }
-
-    public void setXarpLabels(ArrayList<cRoomData> data)
-    {
-        setXarpAverageLabels(data);
-        setXarpMedianLabels(data);
-        setXarpModeLabels(data);
-        setXarpMinLabels(data);
-        setXarpMaxLabels(data);
-    }
-
-    public void setXarpAverageLabels(ArrayList<cRoomData> data)
-    {
-        xarpAverageScreech.setText(RoomUtil.time(cStatisticGatherer.getXarpScreechAverage(data)));
-        xarpAverageTime.setText(RoomUtil.time(cStatisticGatherer.getXarpTimeAverage(data)));
-    }
-
-    public void setXarpMedianLabels(ArrayList<cRoomData> data)
-    {
-        xarpMedianScreech.setText(RoomUtil.time(cStatisticGatherer.getXarpScreechMedian(data)));
-        xarpMedianTime.setText(RoomUtil.time(cStatisticGatherer.getXarpTimeMedian(data)));
-    }
-
-    public void setXarpModeLabels(ArrayList<cRoomData> data)
-    {
-        xarpModeScreech.setText(RoomUtil.time(cStatisticGatherer.getXarpScreechMode(data)));
-        xarpModeTime.setText(RoomUtil.time(cStatisticGatherer.getXarpTimeMode(data)));
-    }
-
-    public void setXarpMinLabels(ArrayList<cRoomData> data)
-    {
-        xarpMinScreech.setText(RoomUtil.time(cStatisticGatherer.getXarpScreechMin(data)));
-        xarpMinTime.setText(RoomUtil.time(cStatisticGatherer.getXarpTimeMin(data)));
-    }
-
-    public void setXarpMaxLabels(ArrayList<cRoomData> data)
-    {
-        xarpMaxScreech.setText(RoomUtil.time(cStatisticGatherer.getXarpScreechMax(data)));
-        xarpMaxTime.setText(RoomUtil.time(cStatisticGatherer.getXarpTimeMax(data)));
-    }
-
-    public void setVerzikLabels(ArrayList<cRoomData> data)
-    {
-        setVerzikAverageLabels(data);
-        setVerzikMedianLabels(data);
-        setVerzikModeLabels(data);
-        setVerzikMinLabels(data);
-        setVerzikMaxLabels(data);
-    }
-
-    public void setVerzikAverageLabels(ArrayList<cRoomData> data)
-    {
-        verzikAverageP1.setText(RoomUtil.time(cStatisticGatherer.getVerzikP1Average(data)));
-        verzikAverageP2.setText(RoomUtil.time(cStatisticGatherer.getVerzikP2Average(data)));
-        verzikAverageP3Entry.setText(RoomUtil.time(cStatisticGatherer.getVerzikP3EntryAverage(data)));
-        verzikAverageP3.setText(RoomUtil.time(cStatisticGatherer.getVerzikP3Average(data)));
-        verzikAverageTime.setText(RoomUtil.time(cStatisticGatherer.getVerzikTimeAverage(data)));
-    }
-
-    public void setVerzikMedianLabels(ArrayList<cRoomData> data)
-    {
-        verzikMedianP1.setText(RoomUtil.time(cStatisticGatherer.getVerzikP1Median(data)));
-        verzikMedianP2.setText(RoomUtil.time(cStatisticGatherer.getVerzikP2Median(data)));
-        verzikMedianP3Entry.setText(RoomUtil.time(cStatisticGatherer.getVerzikP3EntryMedian(data)));
-        verzikMedianP3.setText(RoomUtil.time(cStatisticGatherer.getVerzikP3Median(data)));
-        verzikMedianTime.setText(RoomUtil.time(cStatisticGatherer.getVerzikTimeMedian(data)));
-    }
-
-    public void setVerzikModeLabels(ArrayList<cRoomData> data)
-    {
-        verzikModeP1.setText(RoomUtil.time(cStatisticGatherer.getVerzikP1Mode(data)));
-        verzikModeP2.setText(RoomUtil.time(cStatisticGatherer.getVerzikP2Mode(data)));
-        verzikModeP3Entry.setText(RoomUtil.time(cStatisticGatherer.getVerzikP3EntryMode(data)));
-        verzikModeP3.setText(RoomUtil.time(cStatisticGatherer.getVerzikP3Mode(data)));
-        verzikModeTime.setText(RoomUtil.time(cStatisticGatherer.getVerzikTimeMode(data)));
-    }
-
-    public void setVerzikMinLabels(ArrayList<cRoomData> data)
-    {
-        verzikMinP1.setText(RoomUtil.time(cStatisticGatherer.getVerzikP1Min(data)));
-        verzikMinP2.setText(RoomUtil.time(cStatisticGatherer.getVerzikP2Min(data)));
-        verzikMinP3Entry.setText(RoomUtil.time(cStatisticGatherer.getVerzikP3EntryMin(data)));
-        verzikMinP3.setText(RoomUtil.time(cStatisticGatherer.getVerzikP3Min(data)));
-        verzikMinTime.setText(RoomUtil.time(cStatisticGatherer.getVerzikTimeMin(data)));
-    }
-
-    public void setVerzikMaxLabels(ArrayList<cRoomData> data)
-    {
-        verzikMaxP1.setText(RoomUtil.time(cStatisticGatherer.getVerzikP1Max(data)));
-        verzikMaxP2.setText(RoomUtil.time(cStatisticGatherer.getVerzikP2Max(data)));
-        verzikMaxP3Entry.setText(RoomUtil.time(cStatisticGatherer.getVerzikP3EntryMax(data)));
-        verzikMaxP3.setText(RoomUtil.time(cStatisticGatherer.getVerzikP3Max(data)));
-        verzikMaxTime.setText(RoomUtil.time(cStatisticGatherer.getVerzikTimeMax(data)));
     }
 
     public void createFrame(ArrayList<cRoomData> data)
     {
-        /**/
         for(int i = 0; i < data.size(); i++)
         {
             data.get(i).index = i;
@@ -1641,1006 +1158,20 @@ public class cFilteredRaidsFrame extends cFrame
 
         overallPanel.add(topStatPanel);
         overallPanel.add(overallCustomPanel);
-        JComponent maidenPanel = new JPanel();
-        tabbedPane.addTab("Maiden", maidenPanel);
-        maidenPanel.setLayout(new GridLayout(2, 3));
-        JPanel maidenAveragePanel = new JPanel();
-        maidenAveragePanel.setLayout(new BorderLayout());
-        maidenAveragePanel.setBorder(BorderFactory.createTitledBorder("Average"));
 
-        JPanel maidenAverageSubPanel = new JPanel();
-        maidenAverageSubPanel.setLayout(new GridLayout(7, 2));
+        maidenTab = new cStatisticTab(data, cDataPoint.rooms.MAIDEN);
+        tabbedPane.addTab("Maiden", maidenTab);
+        bloatTab = new cStatisticTab(data, cDataPoint.rooms.BLOAT);
+        tabbedPane.addTab("Bloat", bloatTab);
+        nyloTab = new cStatisticTab(data, cDataPoint.rooms.NYLOCAS);
+        tabbedPane.addTab("Nylo", nyloTab);
+        soteTab = new cStatisticTab(data, cDataPoint.rooms.SOTETSEG);
+        tabbedPane.addTab("Sotetseg", soteTab);
+        xarpTab = new cStatisticTab(data, cDataPoint.rooms.XARPUS);
+        tabbedPane.addTab("Xarpus", xarpTab);
+        verzikTab = new cStatisticTab(data, cDataPoint.rooms.VERZIK);
+        tabbedPane.addTab("Verzik", verzikTab);
 
-        maidenAverageSubPanel.add(new JLabel("70s Split"));
-        maidenAverageSubPanel.add(maidenAverage70);
-
-        maidenAverageSubPanel.add(new JLabel("70-50s Split"));
-        maidenAverageSubPanel.add(maidenAverage7050);
-
-        maidenAverageSubPanel.add(new JLabel("50s Split"));
-        maidenAverageSubPanel.add(maidenAverage50);
-
-        maidenAverageSubPanel.add(new JLabel("50-30s Split"));
-        maidenAverageSubPanel.add(maidenAverage5030);
-
-        maidenAverageSubPanel.add(new JLabel("30s Split"));
-        maidenAverageSubPanel.add(maidenAverage30);
-
-        maidenAverageSubPanel.add(new JLabel("Skip Split"));
-        maidenAverageSubPanel.add(maidenAverageSkip);
-
-        maidenAverageSubPanel.add(new JLabel("Room Time"));
-        maidenAverageSubPanel.add(maidenAverageTime);
-
-        maidenAveragePanel.add(maidenAverageSubPanel);
-
-        JPanel maidenMedianPanel = new JPanel();
-        maidenMedianPanel.setLayout(new BorderLayout());
-        maidenMedianPanel.setBorder(BorderFactory.createTitledBorder("Median"));
-
-        JPanel maidenMedianSubPanel = new JPanel();
-        maidenMedianSubPanel.setLayout(new GridLayout(7, 2));
-
-        maidenMedianSubPanel.add(new JLabel("70s Split"));
-        maidenMedianSubPanel.add(maidenMedian70);
-
-        maidenMedianSubPanel.add(new JLabel("70-50s Split"));
-        maidenMedianSubPanel.add(maidenMedian7050);
-
-        maidenMedianSubPanel.add(new JLabel("50s Split"));
-        maidenMedianSubPanel.add(maidenMedian50);
-
-        maidenMedianSubPanel.add(new JLabel("50-30s Split"));
-        maidenMedianSubPanel.add(maidenMedian5030);
-
-        maidenMedianSubPanel.add(new JLabel("30s Split"));
-        maidenMedianSubPanel.add(maidenMedian30);
-
-        maidenMedianSubPanel.add(new JLabel("Skip Split"));
-        maidenMedianSubPanel.add(maidenMedianSkip);
-
-        maidenMedianSubPanel.add(new JLabel("Room Time"));
-        maidenMedianSubPanel.add(maidenMedianTime);
-
-        maidenMedianPanel.add(maidenMedianSubPanel);
-
-        JPanel maidenModePanel = new JPanel();
-
-        maidenModePanel.setLayout(new BorderLayout());
-        maidenModePanel.setBorder(BorderFactory.createTitledBorder("Mode"));
-
-        JPanel maidenModeSubPanel = new JPanel();
-        maidenModeSubPanel.setLayout(new GridLayout(7, 2));
-
-        maidenModeSubPanel.add(new JLabel("70s Split"));
-        maidenModeSubPanel.add(maidenMode70);
-
-        maidenModeSubPanel.add(new JLabel("70-50s Split"));
-        maidenModeSubPanel.add(maidenMode7050);
-
-        maidenModeSubPanel.add(new JLabel("50s Split"));
-        maidenModeSubPanel.add(maidenMode50);
-
-        maidenModeSubPanel.add(new JLabel("50-30s Split"));
-        maidenModeSubPanel.add(maidenMode5030);
-
-        maidenModeSubPanel.add(new JLabel("30s Split"));
-        maidenModeSubPanel.add(maidenMode30);
-
-        maidenModeSubPanel.add(new JLabel("Skip Split"));
-        maidenModeSubPanel.add(maidenModeSkip);
-
-        maidenModeSubPanel.add(new JLabel("Room Time"));
-        maidenModeSubPanel.add(maidenModeTime);
-
-        maidenModePanel.add(maidenModeSubPanel);
-
-        JPanel maidenMinimumPanel = new JPanel();
-        maidenMinimumPanel.setLayout(new BorderLayout());
-        maidenMinimumPanel.setBorder(BorderFactory.createTitledBorder("Minimum"));
-
-        JPanel maidenMinimumSubPanel = new JPanel();
-        maidenMinimumSubPanel.setLayout(new GridLayout(7, 2));
-
-        maidenMinimumSubPanel.add(new JLabel("70s Split"));
-        maidenMinimumSubPanel.add(maidenMin70);
-
-        maidenMinimumSubPanel.add(new JLabel("70-50s Split"));
-        maidenMinimumSubPanel.add(maidenMin7050);
-
-        maidenMinimumSubPanel.add(new JLabel("50s Split"));
-        maidenMinimumSubPanel.add(maidenMin50);
-
-        maidenMinimumSubPanel.add(new JLabel("50-30s Split"));
-        maidenMinimumSubPanel.add(maidenMin5030);
-
-        maidenMinimumSubPanel.add(new JLabel("30s Split"));
-        maidenMinimumSubPanel.add(maidenMin30);
-
-        maidenMinimumSubPanel.add(new JLabel("Skip Split"));
-        maidenMinimumSubPanel.add(maidenMinSkip);
-
-        maidenMinimumSubPanel.add(new JLabel("Room Time"));
-        maidenMinimumSubPanel.add(maidenMinTime);
-
-        maidenMinimumPanel.add(maidenMinimumSubPanel);
-
-        JPanel maidenMaximumPanel = new JPanel();
-        maidenMaximumPanel.setLayout(new BorderLayout());
-        maidenMaximumPanel.setBorder(BorderFactory.createTitledBorder("Maximum"));
-
-        JPanel maidenMaximumSubPanel = new JPanel();
-        maidenMaximumSubPanel.setLayout(new GridLayout(7, 2));
-
-        maidenMaximumSubPanel.add(new JLabel("70s Split"));
-        maidenMaximumSubPanel.add(maidenMax70);
-
-        maidenMaximumSubPanel.add(new JLabel("70-50s Split"));
-        maidenMaximumSubPanel.add(maidenMax7050);
-
-        maidenMaximumSubPanel.add(new JLabel("50s Split"));
-        maidenMaximumSubPanel.add(maidenMax50);
-
-        maidenMaximumSubPanel.add(new JLabel("50-30s Split"));
-        maidenMaximumSubPanel.add(maidenMax5030);
-
-        maidenMaximumSubPanel.add(new JLabel("30s Split"));
-        maidenMaximumSubPanel.add(maidenMax30);
-
-        maidenMaximumSubPanel.add(new JLabel("Skip Split"));
-        maidenMaximumSubPanel.add(maidenMaxSkip);
-
-        maidenMaximumSubPanel.add(new JLabel("Room Time"));
-        maidenMaximumSubPanel.add(maidenMaxTime);
-
-        maidenMaximumPanel.add(maidenMaximumSubPanel);
-
-        JPanel maidenStatisticsPanel = new JPanel();
-        maidenStatisticsPanel.setLayout(new BorderLayout());
-        maidenStatisticsPanel.setBorder(BorderFactory.createTitledBorder("Statistics"));
-
-
-
-        maidenPanel.add(maidenAveragePanel);
-        maidenPanel.add(maidenMedianPanel);
-        maidenPanel.add(maidenModePanel);
-        maidenPanel.add(maidenMinimumPanel);
-        maidenPanel.add(maidenMaximumPanel);
-        maidenPanel.add(maidenStatisticsPanel);
-
-
-        JComponent bloatPanel = new JPanel();
-        tabbedPane.addTab("Bloat", bloatPanel);
-        bloatPanel.setLayout(new GridLayout(2, 3));
-
-        JPanel bloatAveragePanel = new JPanel();
-        bloatAveragePanel.setLayout(new BorderLayout());
-        bloatAveragePanel.setBorder(BorderFactory.createTitledBorder("Average"));
-
-        JPanel bloatAverageSubPanel = new JPanel();
-        bloatAverageSubPanel.setLayout(new GridLayout(7,2));
-
-        bloatAverageSubPanel.add(new JLabel("First Down Split"));
-        bloatAverageSubPanel.add(bloatAverageFirstDown);
-
-        bloatAverageSubPanel.add(new JLabel("Room Time"));
-        bloatAverageSubPanel.add(bloatAverageTime);
-
-        bloatAverageSubPanel.add(new JLabel(""));
-        bloatAverageSubPanel.add(new JLabel(""));
-
-        bloatAverageSubPanel.add(new JLabel(""));
-        bloatAverageSubPanel.add(new JLabel(""));
-
-        bloatAverageSubPanel.add(new JLabel(""));
-        bloatAverageSubPanel.add(new JLabel(""));
-
-        bloatAverageSubPanel.add(new JLabel(""));
-        bloatAverageSubPanel.add(new JLabel(""));
-
-        bloatAverageSubPanel.add(new JLabel(""));
-        bloatAverageSubPanel.add(new JLabel(""));
-
-
-        bloatAveragePanel.add(bloatAverageSubPanel);
-
-
-        JPanel bloatMedianPanel = new JPanel();
-        bloatMedianPanel.setLayout(new BorderLayout());
-        bloatMedianPanel.setBorder(BorderFactory.createTitledBorder("Median"));
-
-        JPanel bloatMedianSubPanel = new JPanel();
-        bloatMedianSubPanel.setLayout(new GridLayout(7, 2));
-
-        bloatMedianSubPanel.add(new JLabel("First Down Split"));
-        bloatMedianSubPanel.add(bloatMedianFirstDown);
-
-        bloatMedianSubPanel.add(new JLabel("Room Time"));
-        bloatMedianSubPanel.add(bloatMedianTime);
-
-        bloatMedianSubPanel.add(new JLabel(""));
-        bloatMedianSubPanel.add(new JLabel(""));
-
-        bloatMedianSubPanel.add(new JLabel(""));
-        bloatMedianSubPanel.add(new JLabel(""));
-
-        bloatMedianSubPanel.add(new JLabel(""));
-        bloatMedianSubPanel.add(new JLabel(""));
-
-        bloatMedianSubPanel.add(new JLabel(""));
-        bloatMedianSubPanel.add(new JLabel(""));
-
-        bloatMedianSubPanel.add(new JLabel(""));
-        bloatMedianSubPanel.add(new JLabel(""));
-
-        bloatMedianPanel.add(bloatMedianSubPanel);
-
-        JPanel bloatModePanel = new JPanel();
-        bloatModePanel.setLayout(new BorderLayout());
-        bloatModePanel.setBorder(BorderFactory.createTitledBorder("Mode"));
-
-        JPanel bloatModeSubPanel = new JPanel();
-        bloatModeSubPanel.setLayout(new GridLayout(7, 2));
-
-        bloatModeSubPanel.add(new JLabel("First Down Split"));
-        bloatModeSubPanel.add(bloatModeFirstDown);
-
-        bloatModeSubPanel.add(new JLabel("Room Time"));
-        bloatModeSubPanel.add(bloatModeTime);
-
-        bloatModeSubPanel.add(new JLabel(""));
-        bloatModeSubPanel.add(new JLabel(""));
-
-        bloatModeSubPanel.add(new JLabel(""));
-        bloatModeSubPanel.add(new JLabel(""));
-
-        bloatModeSubPanel.add(new JLabel(""));
-        bloatModeSubPanel.add(new JLabel(""));
-
-        bloatModeSubPanel.add(new JLabel(""));
-        bloatModeSubPanel.add(new JLabel(""));
-
-        bloatModeSubPanel.add(new JLabel(""));
-        bloatModeSubPanel.add(new JLabel(""));
-
-        bloatModePanel.add(bloatModeSubPanel);
-
-        JPanel bloatMinimumPanel = new JPanel();
-        bloatMinimumPanel.setLayout(new BorderLayout());
-        bloatMinimumPanel.setBorder(BorderFactory.createTitledBorder("Minimum"));
-
-        JPanel bloatMinSubPanel = new JPanel();
-        bloatMinSubPanel.setLayout(new GridLayout(7, 2));
-
-        bloatMinSubPanel.add(new JLabel("First Down Split"));
-        bloatMinSubPanel.add(bloatMinFirstDown);
-
-
-        bloatMinSubPanel.add(new JLabel("Room Time"));
-        bloatMinSubPanel.add(bloatMinTime);
-
-
-        bloatMinSubPanel.add(new JLabel(""));
-        bloatMinSubPanel.add(new JLabel(""));
-
-        bloatMinSubPanel.add(new JLabel(""));
-        bloatMinSubPanel.add(new JLabel(""));
-
-        bloatMinSubPanel.add(new JLabel(""));
-        bloatMinSubPanel.add(new JLabel(""));
-
-        bloatMinSubPanel.add(new JLabel(""));
-        bloatMinSubPanel.add(new JLabel(""));
-
-        bloatMinSubPanel.add(new JLabel(""));
-        bloatMinSubPanel.add(new JLabel(""));
-
-        bloatMinimumPanel.add(bloatMinSubPanel);
-
-        JPanel bloatMaximumPanel = new JPanel();
-        bloatMaximumPanel.setLayout(new BorderLayout());
-        bloatMaximumPanel.setBorder(BorderFactory.createTitledBorder("Maximum"));
-
-        JPanel bloatMaxSubPanel = new JPanel();
-        bloatMaxSubPanel.setLayout(new GridLayout(7, 2));
-
-        bloatMaxSubPanel.add(new JLabel("First Down Split"));
-        bloatMaxSubPanel.add(bloatMaxFirstDown);
-
-        bloatMaxSubPanel.add(new JLabel("Room Time"));
-        bloatMaxSubPanel.add(bloatMaxTime);
-
-        bloatMaxSubPanel.add(new JLabel(""));
-        bloatMaxSubPanel.add(new JLabel(""));
-
-        bloatMaxSubPanel.add(new JLabel(""));
-        bloatMaxSubPanel.add(new JLabel(""));
-
-        bloatMaxSubPanel.add(new JLabel(""));
-        bloatMaxSubPanel.add(new JLabel(""));
-
-        bloatMaxSubPanel.add(new JLabel(""));
-        bloatMaxSubPanel.add(new JLabel(""));
-
-        bloatMaxSubPanel.add(new JLabel(""));
-        bloatMaxSubPanel.add(new JLabel(""));
-
-        bloatMaximumPanel.add(bloatMaxSubPanel);
-
-        JPanel bloatStatisticsPanel = new JPanel();
-        bloatStatisticsPanel.setLayout(new BorderLayout());
-        bloatStatisticsPanel.setBorder(BorderFactory.createTitledBorder("Statistics"));
-
-        bloatPanel.add(bloatAveragePanel);
-        bloatPanel.add(bloatMedianPanel);
-        bloatPanel.add(bloatModePanel);
-        bloatPanel.add(bloatMinimumPanel);
-        bloatPanel.add(bloatMaximumPanel);
-        bloatPanel.add(bloatStatisticsPanel);
-
-
-        JComponent nylocasPanel = new JPanel();
-        tabbedPane.addTab("Nylocas", nylocasPanel);
-        nylocasPanel.setLayout(new GridLayout(2, 3));
-
-        JPanel nylocasAveragePanel = new JPanel();
-        nylocasAveragePanel.setLayout(new BorderLayout());
-        nylocasAveragePanel.setBorder(BorderFactory.createTitledBorder("Average"));
-
-        JPanel nylocasAverageSubPanel = new JPanel();
-        nylocasAverageSubPanel.setLayout(new GridLayout(7, 2));
-
-        nylocasAverageSubPanel.add(new JLabel("Last Wave"));
-        nylocasAverageSubPanel.add(nyloAverageLastWave);
-
-
-        nylocasAverageSubPanel.add(new JLabel("Boss Spawn"));
-        nylocasAverageSubPanel.add(nyloAverageBossSpawn);
-
-        nylocasAverageSubPanel.add(new JLabel("Boss Duration"));
-        nylocasAverageSubPanel.add(nyloAverageBossDuration);
-
-        nylocasAverageSubPanel.add(new JLabel("Room Time"));
-        nylocasAverageSubPanel.add(nyloAverageTime);
-
-
-        nylocasAverageSubPanel.add(new JLabel(""));
-        nylocasAverageSubPanel.add(new JLabel(""));
-
-        nylocasAverageSubPanel.add(new JLabel(""));
-        nylocasAverageSubPanel.add(new JLabel(""));
-
-        nylocasAverageSubPanel.add(new JLabel(""));
-        nylocasAverageSubPanel.add(new JLabel(""));
-
-        nylocasAveragePanel.add(nylocasAverageSubPanel);
-
-        JPanel nylocasMedianPanel = new JPanel();
-        nylocasMedianPanel.setLayout(new BorderLayout());
-        nylocasMedianPanel.setBorder(BorderFactory.createTitledBorder("Median"));
-
-        JPanel nylocasMedianSubPanel = new JPanel();
-        nylocasMedianSubPanel.setLayout(new GridLayout(7, 2));
-
-        nylocasMedianSubPanel.add(new JLabel("Last Wave"));
-        nylocasMedianSubPanel.add(nyloMedianLastWave);
-
-        nylocasMedianSubPanel.add(new JLabel("Boss Spawn"));
-        nylocasMedianSubPanel.add(nyloMedianBossSpawn);
-
-        nylocasMedianSubPanel.add(new JLabel("Boss Duration"));
-        nylocasMedianSubPanel.add(nyloMedianBossDuration);
-
-        nylocasMedianSubPanel.add(new JLabel("Room Time"));
-        nylocasMedianSubPanel.add(nyloMedianTime);
-
-        nylocasMedianSubPanel.add(new JLabel(""));
-        nylocasMedianSubPanel.add(new JLabel(""));
-
-        nylocasMedianSubPanel.add(new JLabel(""));
-        nylocasMedianSubPanel.add(new JLabel(""));
-
-        nylocasMedianSubPanel.add(new JLabel(""));
-        nylocasMedianSubPanel.add(new JLabel(""));
-
-        nylocasMedianPanel.add(nylocasMedianSubPanel);
-
-        JPanel nylocasModePanel = new JPanel();
-        nylocasModePanel.setLayout(new BorderLayout());
-        nylocasModePanel.setBorder(BorderFactory.createTitledBorder("Mode"));
-
-        JPanel nylocasModeSubPanel = new JPanel();
-        nylocasModeSubPanel.setLayout(new GridLayout(7, 2));
-
-        nylocasModeSubPanel.add(new JLabel("Last Wave"));
-        nylocasModeSubPanel.add(nyloModeLastWave);
-
-        nylocasModeSubPanel.add(new JLabel("Boss Spawn"));
-        nylocasModeSubPanel.add(nyloModeBossSpawn);
-
-        nylocasModeSubPanel.add(new JLabel("Boss Duration"));
-        nylocasModeSubPanel.add(nyloModeBossDuration);
-
-        nylocasModeSubPanel.add(new JLabel("Room Time"));
-        nylocasModeSubPanel.add(nyloModeTime);
-
-        nylocasModeSubPanel.add(new JLabel(""));
-        nylocasModeSubPanel.add(new JLabel(""));
-
-        nylocasModeSubPanel.add(new JLabel(""));
-        nylocasModeSubPanel.add(new JLabel(""));
-
-        nylocasModeSubPanel.add(new JLabel(""));
-        nylocasModeSubPanel.add(new JLabel(""));
-
-        nylocasModePanel.add(nylocasModeSubPanel);
-
-        JPanel nylocasMinPanel = new JPanel();
-        nylocasMinPanel.setLayout(new BorderLayout());
-        nylocasMinPanel.setBorder(BorderFactory.createTitledBorder("Minimum"));
-
-        JPanel nylocasMinSubPanel = new JPanel();
-        nylocasMinSubPanel.setLayout(new GridLayout(7, 2));
-
-        nylocasMinSubPanel.add(new JLabel("Last Wave"));
-        nylocasMinSubPanel.add(nyloMinLastWave);
-
-        nylocasMinSubPanel.add(new JLabel("Boss Spawn"));
-        nylocasMinSubPanel.add(nyloMinBossSpawn);
-
-        nylocasMinSubPanel.add(new JLabel("Boss Duration"));
-        nylocasMinSubPanel.add(nyloMinBossDuration);
-
-        nylocasMinSubPanel.add(new JLabel("Room Time"));
-        nylocasMinSubPanel.add(nyloMinTime);
-
-        nylocasMinSubPanel.add(new JLabel(""));
-        nylocasMinSubPanel.add(new JLabel(""));
-
-        nylocasMinSubPanel.add(new JLabel(""));
-        nylocasMinSubPanel.add(new JLabel(""));
-
-        nylocasMinSubPanel.add(new JLabel(""));
-        nylocasMinSubPanel.add(new JLabel(""));
-
-        nylocasMinPanel.add(nylocasMinSubPanel);
-
-        JPanel nylocasMaxPanel = new JPanel();
-        nylocasMaxPanel.setLayout(new BorderLayout());
-        nylocasMaxPanel.setBorder(BorderFactory.createTitledBorder("Maximum"));
-
-        JPanel nylocasMaxSubPanel = new JPanel();
-        nylocasMaxSubPanel.setLayout(new GridLayout(7, 2));
-
-        nylocasMaxSubPanel.add(new JLabel("Last Wave"));
-        nylocasMaxSubPanel.add(nyloMaxLastWave);
-
-        nylocasMaxSubPanel.add(new JLabel("Boss Spawn"));
-        nylocasMaxSubPanel.add(nyloMaxBossSpawn);
-
-        nylocasMaxSubPanel.add(new JLabel("Boss Duration"));
-        nylocasMaxSubPanel.add(nyloMaxBossDuration);
-
-        nylocasMaxSubPanel.add(new JLabel("Room Time"));
-        nylocasMaxSubPanel.add(nyloMaxTime);
-
-        nylocasMaxSubPanel.add(new JLabel(""));
-        nylocasMaxSubPanel.add(new JLabel(""));
-
-        nylocasMaxSubPanel.add(new JLabel(""));
-        nylocasMaxSubPanel.add(new JLabel(""));
-
-        nylocasMaxPanel.add(nylocasMaxSubPanel);
-
-        JPanel nylocasStatisticsPanel = new JPanel();
-        nylocasStatisticsPanel.setLayout(new BorderLayout());
-        nylocasStatisticsPanel.setBorder(BorderFactory.createTitledBorder("Statistics"));
-
-        nylocasPanel.add(nylocasAveragePanel);
-        nylocasPanel.add(nylocasMedianPanel);
-        nylocasPanel.add(nylocasModePanel);
-        nylocasPanel.add(nylocasMinPanel);
-        nylocasPanel.add(nylocasMaxPanel);
-        nylocasPanel.add(nylocasStatisticsPanel);
-
-        JComponent sotetsegPanel = new JPanel();
-        tabbedPane.addTab("Sotetseg", sotetsegPanel);
-        sotetsegPanel.setLayout(new GridLayout(2, 3));
-
-        JPanel sotetsegAveragePanel = new JPanel();
-        sotetsegAveragePanel.setLayout(new BorderLayout());
-        sotetsegAveragePanel.setBorder(BorderFactory.createTitledBorder("Average"));
-
-        JPanel sotetsegAverageSubPanel = new JPanel();
-        sotetsegAverageSubPanel.setLayout(new GridLayout(7, 2));
-
-        sotetsegAverageSubPanel.add(new JLabel("Phase 1"));
-        sotetsegAverageSubPanel.add(soteAverageP1);
-
-        sotetsegAverageSubPanel.add(new JLabel("Maze 1"));
-        sotetsegAverageSubPanel.add(soteAverageM1);
-
-        sotetsegAverageSubPanel.add(new JLabel("Phase 2"));
-        sotetsegAverageSubPanel.add(soteAverageP2);
-
-        sotetsegAverageSubPanel.add(new JLabel("Maze 2"));
-        sotetsegAverageSubPanel.add(soteAverageM2);
-
-        sotetsegAverageSubPanel.add(new JLabel("Phase 3"));
-        sotetsegAverageSubPanel.add(soteAverageP3);
-
-        sotetsegAverageSubPanel.add(new JLabel("Room Time"));
-        sotetsegAverageSubPanel.add(soteAverageTime);
-
-
-        sotetsegAverageSubPanel.add(new JLabel(""));
-        sotetsegAverageSubPanel.add(new JLabel(""));
-
-        sotetsegAveragePanel.add(sotetsegAverageSubPanel);
-
-        JPanel sotetsegMedianPanel = new JPanel();
-        sotetsegMedianPanel.setLayout(new BorderLayout());
-        sotetsegMedianPanel.setBorder(BorderFactory.createTitledBorder("Median"));
-
-        JPanel sotetsegMedianSubPanel = new JPanel();
-        sotetsegMedianSubPanel.setLayout(new GridLayout(7, 2));
-
-        sotetsegMedianSubPanel.add(new JLabel("Phase 1"));
-        sotetsegMedianSubPanel.add(soteMedianP1);
-
-        sotetsegMedianSubPanel.add(new JLabel("Maze 1"));
-        sotetsegMedianSubPanel.add(soteMedianM1);
-
-        sotetsegMedianSubPanel.add(new JLabel("Phase 2"));
-        sotetsegMedianSubPanel.add(soteMedianP2);
-
-        sotetsegMedianSubPanel.add(new JLabel("Maze 2"));
-        sotetsegMedianSubPanel.add(soteMedianM2);
-
-        sotetsegMedianSubPanel.add(new JLabel("Phase 3"));
-        sotetsegMedianSubPanel.add(soteMedianP3);
-
-        sotetsegMedianSubPanel.add(new JLabel("Room Time"));
-        sotetsegMedianSubPanel.add(soteMedianTime);
-
-        sotetsegMedianSubPanel.add(new JLabel(""));
-        sotetsegMedianSubPanel.add(new JLabel(""));
-
-        sotetsegMedianPanel.add(sotetsegMedianSubPanel);
-
-        JPanel sotetsegModePanel = new JPanel();
-        sotetsegModePanel.setLayout(new BorderLayout());
-        sotetsegModePanel.setBorder(BorderFactory.createTitledBorder("Mode"));
-
-        JPanel sotetsegModeSubPanel = new JPanel();
-        sotetsegModeSubPanel.setLayout(new GridLayout(7, 2));
-
-        sotetsegModeSubPanel.add(new JLabel("Phase 1"));
-        sotetsegModeSubPanel.add(soteModeP1);
-
-        sotetsegModeSubPanel.add(new JLabel("Maze 1"));
-        sotetsegModeSubPanel.add(soteModeM1);
-
-        sotetsegModeSubPanel.add(new JLabel("Phase 2"));
-        sotetsegModeSubPanel.add(soteModeP2);
-
-        sotetsegModeSubPanel.add(new JLabel("Maze 2"));
-        sotetsegModeSubPanel.add(soteModeM2);
-
-        sotetsegModeSubPanel.add(new JLabel("Phase 3"));
-        sotetsegModeSubPanel.add(soteModeP3);
-
-        sotetsegModeSubPanel.add(new JLabel("Room Time"));
-        sotetsegModeSubPanel.add(soteModeTime);
-
-        sotetsegModeSubPanel.add(new JLabel(""));
-        sotetsegModeSubPanel.add(new JLabel(""));
-
-        sotetsegModePanel.add(sotetsegModeSubPanel);
-
-        JPanel sotetsegMinPanel = new JPanel();
-        sotetsegMinPanel.setLayout(new BorderLayout());
-        sotetsegMinPanel.setBorder(BorderFactory.createTitledBorder("Minimum"));
-
-        JPanel sotetsegMinSubPanel = new JPanel();
-        sotetsegMinSubPanel.setLayout(new GridLayout(7, 2));
-
-        sotetsegMinSubPanel.add(new JLabel("Phase 1"));
-        sotetsegMinSubPanel.add(soteMinP1);
-
-        sotetsegMinSubPanel.add(new JLabel("Maze 1"));
-        sotetsegMinSubPanel.add(soteMinM1);
-
-        sotetsegMinSubPanel.add(new JLabel("Phase 2"));
-        sotetsegMinSubPanel.add(soteMinP2);
-
-        sotetsegMinSubPanel.add(new JLabel("Maze 2"));
-        sotetsegMinSubPanel.add(soteMinM2);
-
-        sotetsegMinSubPanel.add(new JLabel("Phase 3"));
-        sotetsegMinSubPanel.add(soteMinP3);
-
-        sotetsegMinSubPanel.add(new JLabel("Room Time"));
-        sotetsegMinSubPanel.add(soteMinTime);
-
-        sotetsegMinSubPanel.add(new JLabel(""));
-        sotetsegMinSubPanel.add(new JLabel(""));
-
-        sotetsegMinPanel.add(sotetsegMinSubPanel);
-
-        JPanel sotetsegMaxPanel = new JPanel();
-        sotetsegMaxPanel.setLayout(new BorderLayout());
-        sotetsegMaxPanel.setBorder(BorderFactory.createTitledBorder("Maximum"));
-
-        JPanel sotetsegMaxSubPanel = new JPanel();
-        sotetsegMaxSubPanel.setLayout(new GridLayout(7, 2));
-
-        sotetsegMaxSubPanel.add(new JLabel("Phase 1"));
-        sotetsegMaxSubPanel.add(soteMaxP1);
-
-        sotetsegMaxSubPanel.add(new JLabel("Maze 1"));
-        sotetsegMaxSubPanel.add(soteMaxM1);
-
-        sotetsegMaxSubPanel.add(new JLabel("Phase 2"));
-        sotetsegMaxSubPanel.add(soteMaxP2);
-
-        sotetsegMaxSubPanel.add(new JLabel("Maze 2"));
-        sotetsegMaxSubPanel.add(soteMaxM2);
-
-        sotetsegMaxSubPanel.add(new JLabel("Phase 3"));
-        sotetsegMaxSubPanel.add(soteMaxP3);
-
-        sotetsegMaxSubPanel.add(new JLabel("Room Time"));
-        sotetsegMaxSubPanel.add(soteMaxTime);
-
-        sotetsegMaxSubPanel.add(new JLabel(""));
-        sotetsegMaxSubPanel.add(new JLabel(""));
-
-        sotetsegMaxPanel.add(sotetsegMaxSubPanel);
-
-        JPanel sotetsegStatisticsPanel = new JPanel();
-        sotetsegStatisticsPanel.setLayout(new BorderLayout());
-        sotetsegStatisticsPanel.setBorder(BorderFactory.createTitledBorder("Statistics"));
-
-        sotetsegPanel.add(sotetsegAveragePanel);
-        sotetsegPanel.add(sotetsegMedianPanel);
-        sotetsegPanel.add(sotetsegModePanel);
-        sotetsegPanel.add(sotetsegMinPanel);
-        sotetsegPanel.add(sotetsegMaxPanel);
-        sotetsegPanel.add(sotetsegStatisticsPanel);
-
-        JComponent xarpusPanel = new JPanel();
-        tabbedPane.addTab("Xarpus", xarpusPanel);
-        xarpusPanel.setLayout(new GridLayout(2, 3));
-
-        JPanel xarpusAveragePanel = new JPanel();
-        xarpusAveragePanel.setLayout(new BorderLayout());
-        xarpusAveragePanel.setBorder(BorderFactory.createTitledBorder("Average"));
-
-        JPanel xarpusAverageSubPanel = new JPanel();
-        xarpusAverageSubPanel.setLayout(new GridLayout(7, 2));
-
-        xarpusAverageSubPanel.add(new JLabel("Screech Split"));
-        xarpusAverageSubPanel.add(xarpAverageScreech);
-
-        xarpusAverageSubPanel.add(new JLabel("Room Time"));
-        xarpusAverageSubPanel.add(xarpAverageTime);
-
-
-        xarpusAverageSubPanel.add(new JLabel(""));
-        xarpusAverageSubPanel.add(new JLabel(""));
-
-        xarpusAverageSubPanel.add(new JLabel(""));
-        xarpusAverageSubPanel.add(new JLabel(""));
-
-        xarpusAverageSubPanel.add(new JLabel(""));
-        xarpusAverageSubPanel.add(new JLabel(""));
-
-        xarpusAverageSubPanel.add(new JLabel(""));
-        xarpusAverageSubPanel.add(new JLabel(""));
-
-        xarpusAverageSubPanel.add(new JLabel(""));
-        xarpusAverageSubPanel.add(new JLabel(""));
-
-        xarpusAveragePanel.add(xarpusAverageSubPanel);
-
-        JPanel xarpusMedianPanel = new JPanel();
-        xarpusMedianPanel.setLayout(new BorderLayout());
-        xarpusMedianPanel.setBorder(BorderFactory.createTitledBorder("Median"));
-
-        JPanel xarpusMedianSubPanel = new JPanel();
-        xarpusMedianSubPanel.setLayout(new GridLayout(7, 2));
-
-        xarpusMedianSubPanel.add(new JLabel("Screech Split"));
-        xarpusMedianSubPanel.add(xarpMedianScreech);
-
-        xarpusMedianSubPanel.add(new JLabel("Room Time"));
-        xarpusMedianSubPanel.add(xarpMedianTime);
-
-
-        xarpusMedianSubPanel.add(new JLabel(""));
-        xarpusMedianSubPanel.add(new JLabel(""));
-
-        xarpusMedianSubPanel.add(new JLabel(""));
-        xarpusMedianSubPanel.add(new JLabel(""));
-
-        xarpusMedianSubPanel.add(new JLabel(""));
-        xarpusMedianSubPanel.add(new JLabel(""));
-
-        xarpusMedianSubPanel.add(new JLabel(""));
-        xarpusMedianSubPanel.add(new JLabel(""));
-
-        xarpusMedianSubPanel.add(new JLabel(""));
-        xarpusMedianSubPanel.add(new JLabel(""));
-
-        xarpusMedianPanel.add(xarpusMedianSubPanel);
-
-        JPanel xarpusModePanel = new JPanel();
-        xarpusModePanel.setLayout(new BorderLayout());
-        xarpusModePanel.setBorder(BorderFactory.createTitledBorder("Mode"));
-
-        JPanel xarpusModeSubPanel = new JPanel();
-        xarpusModeSubPanel.setLayout(new GridLayout(7, 2));
-
-        xarpusModeSubPanel.add(new JLabel("Screech Split"));
-        xarpusModeSubPanel.add(xarpModeScreech);
-
-        xarpusModeSubPanel.add(new JLabel("Room Time"));
-        xarpusModeSubPanel.add(xarpModeTime);
-
-        xarpusModeSubPanel.add(new JLabel(""));
-        xarpusModeSubPanel.add(new JLabel(""));
-
-        xarpusModeSubPanel.add(new JLabel(""));
-        xarpusModeSubPanel.add(new JLabel(""));
-
-        xarpusModeSubPanel.add(new JLabel(""));
-        xarpusModeSubPanel.add(new JLabel(""));
-
-        xarpusModeSubPanel.add(new JLabel(""));
-        xarpusModeSubPanel.add(new JLabel(""));
-
-        xarpusModeSubPanel.add(new JLabel(""));
-        xarpusModeSubPanel.add(new JLabel(""));
-
-        xarpusModePanel.add(xarpusModeSubPanel);
-
-        JPanel xarpusMinPanel = new JPanel();
-        xarpusMinPanel.setLayout(new BorderLayout());
-        xarpusMinPanel.setBorder(BorderFactory.createTitledBorder("Minimum"));
-
-        JPanel xarpusMinSubPanel = new JPanel();
-        xarpusMinSubPanel.setLayout(new GridLayout(7, 2));
-
-        xarpusMinSubPanel.add(new JLabel("Screech Split"));
-        xarpusMinSubPanel.add(xarpMinScreech);
-
-        xarpusMinSubPanel.add(new JLabel("Room Time"));
-        xarpusMinSubPanel.add(xarpMinTime);
-
-        xarpusMinSubPanel.add(new JLabel(""));
-        xarpusMinSubPanel.add(new JLabel(""));
-
-        xarpusMinSubPanel.add(new JLabel(""));
-        xarpusMinSubPanel.add(new JLabel(""));
-
-        xarpusMinSubPanel.add(new JLabel(""));
-        xarpusMinSubPanel.add(new JLabel(""));
-
-        xarpusMinSubPanel.add(new JLabel(""));
-        xarpusMinSubPanel.add(new JLabel(""));
-
-        xarpusMinSubPanel.add(new JLabel(""));
-        xarpusMinSubPanel.add(new JLabel(""));
-
-        xarpusMinPanel.add(xarpusMinSubPanel);
-
-        JPanel xarpusMaxPanel = new JPanel();
-        xarpusMaxPanel.setLayout(new BorderLayout());
-        xarpusMaxPanel.setBorder(BorderFactory.createTitledBorder("Maximum"));
-
-        JPanel xarpusMaxSubPanel = new JPanel();
-        xarpusMaxSubPanel.setLayout(new GridLayout(7, 2));
-
-        xarpusMaxSubPanel.add(new JLabel("Screech Split"));
-        xarpusMaxSubPanel.add(xarpMaxScreech);
-
-        xarpusMaxSubPanel.add(new JLabel("Room Time"));
-        xarpusMaxSubPanel.add(xarpMaxTime);
-
-        xarpusMaxSubPanel.add(new JLabel(""));
-        xarpusMaxSubPanel.add(new JLabel(""));
-
-        xarpusMaxSubPanel.add(new JLabel(""));
-        xarpusMaxSubPanel.add(new JLabel(""));
-
-        xarpusMaxSubPanel.add(new JLabel(""));
-        xarpusMaxSubPanel.add(new JLabel(""));
-
-        xarpusMaxSubPanel.add(new JLabel(""));
-        xarpusMaxSubPanel.add(new JLabel(""));
-
-        xarpusMaxSubPanel.add(new JLabel(""));
-        xarpusMaxSubPanel.add(new JLabel(""));
-
-        xarpusMaxPanel.add(xarpusMaxSubPanel);
-
-        JPanel xarpusStatisticsPanel = new JPanel();
-        xarpusStatisticsPanel.setLayout(new BorderLayout());
-        xarpusStatisticsPanel.setBorder(BorderFactory.createTitledBorder("Statistics"));
-
-        xarpusPanel.add(xarpusAveragePanel);
-        xarpusPanel.add(xarpusMedianPanel);
-        xarpusPanel.add(xarpusModePanel);
-        xarpusPanel.add(xarpusMinPanel);
-        xarpusPanel.add(xarpusMaxPanel);
-        xarpusPanel.add(xarpusStatisticsPanel);
-
-
-        JComponent verzikPanel = new JPanel();
-        tabbedPane.addTab("Verzik", verzikPanel);
-        verzikPanel.setLayout(new GridLayout(2,  3));
-
-        JPanel verzikAveragePanel = new JPanel();
-        verzikAveragePanel.setLayout(new BorderLayout());
-        verzikAveragePanel.setBorder(BorderFactory.createTitledBorder("Average"));
-
-        JPanel verzikAverageSubPanel = new JPanel();
-        verzikAverageSubPanel.setLayout(new GridLayout(7, 2));
-
-        verzikAverageSubPanel.add(new JLabel("Phase 1"));
-        verzikAverageSubPanel.add(verzikAverageP1);
-
-        verzikAverageSubPanel.add(new JLabel("Phase 2"));
-        verzikAverageSubPanel.add(verzikAverageP2);
-
-        verzikAverageSubPanel.add(new JLabel("Phase 3 Entry"));
-        verzikAverageSubPanel.add(verzikAverageP3Entry);
-
-        verzikAverageSubPanel.add(new JLabel("Phase 3"));
-        verzikAverageSubPanel.add(verzikAverageP3);
-
-        verzikAverageSubPanel.add(new JLabel("Room Time"));
-        verzikAverageSubPanel.add(verzikAverageTime);
-
-        verzikAverageSubPanel.add(new JLabel(""));
-        verzikAverageSubPanel.add(new JLabel(""));
-
-        verzikAverageSubPanel.add(new JLabel(""));
-        verzikAverageSubPanel.add(new JLabel(""));
-
-        verzikAveragePanel.add(verzikAverageSubPanel);
-
-        JPanel verzikMedianPanel = new JPanel();
-        verzikMedianPanel.setLayout(new BorderLayout());
-        verzikMedianPanel.setBorder(BorderFactory.createTitledBorder("Median"));
-
-        JPanel verzikMedianSubPanel = new JPanel();
-        verzikMedianSubPanel.setLayout(new GridLayout(7, 2));
-
-        verzikMedianSubPanel.add(new JLabel("Phase 1"));
-        verzikMedianSubPanel.add(verzikMedianP1);
-
-        verzikMedianSubPanel.add(new JLabel("Phase 2"));
-        verzikMedianSubPanel.add(verzikMedianP2);
-
-        verzikMedianSubPanel.add(new JLabel("Phase 3 Entry"));
-        verzikMedianSubPanel.add(verzikMedianP3Entry);
-
-        verzikMedianSubPanel.add(new JLabel("Phase 3"));
-        verzikMedianSubPanel.add(verzikMedianP3);
-
-        verzikMedianSubPanel.add(new JLabel("Room Time"));
-        verzikMedianSubPanel.add(verzikMedianTime);
-
-        verzikMedianSubPanel.add(new JLabel(""));
-        verzikMedianSubPanel.add(new JLabel(""));
-
-        verzikMedianSubPanel.add(new JLabel(""));
-        verzikMedianSubPanel.add(new JLabel(""));
-
-        verzikMedianPanel.add(verzikMedianSubPanel);
-
-        JPanel verzikModePanel = new JPanel();
-        verzikModePanel.setLayout(new BorderLayout());
-        verzikModePanel.setBorder(BorderFactory.createTitledBorder("Mode"));
-
-        JPanel verzikModeSubPanel = new JPanel();
-        verzikModeSubPanel.setLayout(new GridLayout(7, 2));
-
-        verzikModeSubPanel.add(new JLabel("Phase 1"));
-        verzikModeSubPanel.add(verzikModeP1);
-
-        verzikModeSubPanel.add(new JLabel("Phase 2"));
-        verzikModeSubPanel.add(verzikModeP2);
-
-        verzikModeSubPanel.add(new JLabel("Phase 3 Entry"));
-        verzikModeSubPanel.add(verzikModeP3Entry);
-
-        verzikModeSubPanel.add(new JLabel("Phase 3"));
-        verzikModeSubPanel.add(verzikModeP3);
-
-        verzikModeSubPanel.add(new JLabel("Room Time"));
-        verzikModeSubPanel.add(verzikModeTime);
-
-        verzikModeSubPanel.add(new JLabel(""));
-        verzikModeSubPanel.add(new JLabel(""));
-
-        verzikModeSubPanel.add(new JLabel(""));
-        verzikModeSubPanel.add(new JLabel(""));
-
-        verzikModePanel.add(verzikModeSubPanel);
-
-        JPanel verzikMinPanel = new JPanel();
-        verzikMinPanel.setLayout(new BorderLayout());
-        verzikMinPanel.setBorder(BorderFactory.createTitledBorder("Minimum"));
-
-        JPanel verzikMinSubPanel = new JPanel();
-        verzikMinSubPanel.setLayout(new GridLayout(7, 2));
-
-        verzikMinSubPanel.add(new JLabel("Phase 1"));
-        verzikMinSubPanel.add(verzikMinP1);
-
-        verzikMinSubPanel.add(new JLabel("Phase 2"));
-        verzikMinSubPanel.add(verzikMinP2);
-
-        verzikMinSubPanel.add(new JLabel("Phase 3 Entry"));
-        verzikMinSubPanel.add(verzikMinP3Entry);
-
-        verzikMinSubPanel.add(new JLabel("Phase 3"));
-        verzikMinSubPanel.add(verzikMinP3);
-
-        verzikMinSubPanel.add(new JLabel("Room Time"));
-        verzikMinSubPanel.add(verzikMinTime);
-
-        verzikMinSubPanel.add(new JLabel(""));
-        verzikMinSubPanel.add(new JLabel(""));
-
-        verzikMinSubPanel.add(new JLabel(""));
-        verzikMinSubPanel.add(new JLabel(""));
-
-        verzikMinPanel.add(verzikMinSubPanel);
-
-        JPanel verzikMaxPanel = new JPanel();
-        verzikMaxPanel.setLayout(new BorderLayout());
-        verzikMaxPanel.setBorder(BorderFactory.createTitledBorder("Maximum"));
-
-        JPanel verzikMaxSubPanel = new JPanel();
-        verzikMaxSubPanel.setLayout(new GridLayout(7, 2));
-
-        verzikMaxSubPanel.add(new JLabel("Phase 1"));
-        verzikMaxSubPanel.add(verzikMaxP1);
-
-        verzikMaxSubPanel.add(new JLabel("Phase 2"));
-        verzikMaxSubPanel.add(verzikMaxP2);
-
-        verzikMaxSubPanel.add(new JLabel("Phase 3 Entry"));
-        verzikMaxSubPanel.add(verzikMaxP3Entry);
-
-        verzikMaxSubPanel.add(new JLabel("Phase 3"));
-        verzikMaxSubPanel.add(verzikMaxP3);
-
-        verzikMaxSubPanel.add(new JLabel("Room Time"));
-        verzikMaxSubPanel.add(verzikMaxTime);
-
-        verzikMaxSubPanel.add(new JLabel(""));
-        verzikMaxSubPanel.add(new JLabel(""));
-
-        verzikMaxSubPanel.add(new JLabel(""));
-        verzikMaxSubPanel.add(new JLabel(""));
-
-        verzikMaxPanel.add(verzikMaxSubPanel);
-
-        JPanel verzikStatisticsPanel = new JPanel();
-        verzikStatisticsPanel.setLayout(new BorderLayout());
-        verzikStatisticsPanel.setBorder(BorderFactory.createTitledBorder("Statistics"));
-
-        verzikPanel.add(verzikAveragePanel);
-        verzikPanel.add(verzikMedianPanel);
-        verzikPanel.add(verzikModePanel);
-        verzikPanel.add(verzikMinPanel);
-        verzikPanel.add(verzikMaxPanel);
-        verzikPanel.add(verzikStatisticsPanel);
 
         tabbedPane.setMinimumSize(new Dimension(100,220));
 
@@ -2781,19 +1312,11 @@ public class cFilteredRaidsFrame extends cFrame
         filterOtherBoolPanel.setBorder(BorderFactory.createTitledBorder("Filter by other condition (bool)"));
         filterOtherBoolPanel.setLayout(new GridLayout(2,2));
 
-        String[] timeChoiceOptions = {
-                "Maiden total time", "Maiden 70 split", "Maiden 50 split", "Maiden 30 split", "Maiden 70-50 split", "Maiden 50-30 split", "Maiden skip split",
-                "Bloat total time", "Bloat first down split",
-                "Nylocas total time", "Nylo boss spawn", "Nylo boss duration", "Nylo last wave", "Nylo cleanup",
-                "Sotetseg total time", "Sote 66 split", "Sote 33 split", "Sote Maze 1", "Sote Maze 2", "Sote Maze Avg",
-                "Xarpus total time", "Xarpus screech", "Xarpus post screech",
-                "Verzik total time", "Verzik p1 split", "Verzik p2 split", "Verzik p2 duration", "Verzik p3 duration"
-        };
 
-        timeFilterChoice = new JComboBox<String>(timeChoiceOptions);
-      //  timeFilterChoice.setMaximumSize(new Dimension(100, Integer.MAX_VALUE));
+        timeFilterChoice = new JComboBox<String>(cDataPoint.getTimeNames());
 
-        String[] timeOperatorChoices = {
+        String[] timeOperatorChoices =
+                {
                 "=",
                 "<",
                 ">",
@@ -2816,7 +1339,7 @@ public class cFilteredRaidsFrame extends cFrame
                         return;
                     }
                     String timeStr = timeFilterChoice.getSelectedItem().toString() + " " + timeFilterOperator.getSelectedItem().toString() + " " + time;
-                    activeFilters.add(new cImplicitFilter(new cFilterTime(timeFilterChoice.getSelectedIndex(), timeFilterOperator.getSelectedIndex(), getTimeFromString(time), timeStr)));
+                    activeFilters.add(new cImplicitFilter(new cFilterTime(cDataPoint.getValue(String.valueOf(timeFilterChoice.getSelectedItem())), timeFilterOperator.getSelectedIndex(), getTimeFromString(time), timeStr)));
                     updateFilterTable();
                 });
         timeFilterAdd.setPreferredSize(new Dimension(55, timeFilterAdd.getPreferredSize().height));
@@ -2927,38 +1450,6 @@ public class cFilteredRaidsFrame extends cFrame
         filterDatePanel.add(Box.createRigidArea(new Dimension(5, 5)));
         filterDatePanel.add(dateBottomRow);
 
-        String[] choicesOtherInt = {
-                "Maiden bloods spawned",
-                "Maiden crabs leaked",
-                "Maiden def reduction",
-                "Maiden deaths",
-                "Bloat Downs",
-                "Bloat 1st walk deaths",
-                "Bloat first walk BGS",
-                "Bloat deaths",
-                "Nylo stalls pre 20",
-                "Nylo stalls post 20",
-                "Nylo total stalls",
-                "Nylo range splits",
-                "Nylo mage splits",
-                "Nylo melee splits",
-                "Nylo range rotations",
-                "Nylo mage rotations",
-                "Nylo melee roations",
-                "Nylo def reduction",
-                "Nylo deaths",
-                "Sote specs p1",
-                "Sote specs p2",
-                "Sote specs p3",
-                "Sote deaths",
-                "Sote total specs hit",
-                "Xarp def reduction",
-                "Xarp deaths",
-                "Xarpus healing",
-                "Verzik bounces",
-                "Verzik deaths",
-                "Raid team size"
-        };
 
         String[] otherIntOperatorChoices = {
                 "=",
@@ -2968,7 +1459,8 @@ public class cFilteredRaidsFrame extends cFrame
                 ">="
         };
 
-        otherIntFilterChoice = new JComboBox<String>(choicesOtherInt);
+
+        otherIntFilterChoice = new JComboBox<String>(cDataPoint.getOtherIntNames());
         otherIntFilterOperator = new JComboBox<String>(otherIntOperatorChoices);
         otherIntFilterValue = new JTextField();
 
@@ -2977,7 +1469,7 @@ public class cFilteredRaidsFrame extends cFrame
                 al->
                 {
                     String filterStr = otherIntFilterChoice.getSelectedItem().toString() + " " + otherIntFilterOperator.getSelectedItem().toString() + " " + otherIntFilterValue.getText() + " ";
-                    activeFilters.add(new cImplicitFilter(new cFilterOtherInt(otherIntFilterChoice.getSelectedIndex(), otherIntFilterOperator.getSelectedIndex(), Integer.parseInt(otherIntFilterValue.getText()), filterStr)));
+                    activeFilters.add(new cImplicitFilter(new cFilterOtherInt(cDataPoint.getValue(String.valueOf(otherIntFilterChoice.getSelectedItem())), otherIntFilterOperator.getSelectedIndex(), Integer.parseInt(otherIntFilterValue.getText()), filterStr)));
                     updateFilterTable();
                 }
         );
@@ -3080,8 +1572,8 @@ public class cFilteredRaidsFrame extends cFrame
 
         filterTableContainer = new JPanel();
 
-        raidPopup = new JPopupMenu();
-        addToComparison = new JMenuItem("Add set to comparison");
+        JPopupMenu raidPopup = new JPopupMenu();
+        JMenuItem addToComparison = new JMenuItem("Add set to comparison");
         addToComparison.addActionListener(new ActionListener()
         {
             @Override
@@ -3094,10 +1586,6 @@ public class cFilteredRaidsFrame extends cFrame
                 {
                     rows.add(currentData.get(Integer.parseInt(table.getModel().getValueAt(toRemove[i], 0).toString())));
                 }
-                /*for(Integer i : table.getSelectedRows())
-                {
-                    rows.add(currentData.get(i));
-                }*/
                 comparisons.add(rows);
                 updateComparisonTable();
             }
@@ -3192,8 +1680,6 @@ public class cFilteredRaidsFrame extends cFrame
         add(splitLeftRight);
         pack();
     }
-
-
 
     private String validateTime(String text) //TODO ERROR HANDLE + Below
     {

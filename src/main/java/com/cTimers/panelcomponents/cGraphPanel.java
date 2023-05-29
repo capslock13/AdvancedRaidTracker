@@ -2,6 +2,7 @@ package com.cTimers.panelcomponents;
 
 import com.cTimers.cRoomData;
 import com.cTimers.utility.RoomUtil;
+import com.cTimers.utility.cDataPoint;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
@@ -417,9 +418,9 @@ public class cGraphPanel extends JPanel implements MouseMotionListener
         ArrayList<Integer> dataSet = new ArrayList<>();
         for(cRoomData data : internalData)
         {
-            if(data.getValueFromKey(key) != -1)
+            if(data.getValue(cDataPoint.values()[key]) != -1)
             {
-                dataSet.add(data.getValueFromKey(key));
+                dataSet.add(data.getValue(cDataPoint.values()[key]));
             }
         }
         return dataSet;

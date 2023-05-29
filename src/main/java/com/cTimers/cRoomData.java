@@ -1,5 +1,7 @@
 package com.cTimers;
 
+import com.cTimers.utility.cDataManager;
+import com.cTimers.utility.cDataPoint;
 import lombok.extern.slf4j.Slf4j;
 import com.cTimers.exceptions.cDataOutOfOrderException;
 
@@ -170,15 +172,10 @@ public class cRoomData
 
     public boolean maidenTimeAccurate;
     public boolean partyComplete;
-    public int maidenBloodsSpawned;
-    public int maidenCrabsLeaked;
 
     public int getMaidenCrabsLeakedFullHP = 0;
     public int maidenHeal = 0;
-    public int maidenDefense = 200;
     public boolean maidenDefenseAccurate;
-    public int maidenDeaths;
-
     public int index = -1;
 
     public boolean maidenScuffed = false;
@@ -189,17 +186,9 @@ public class cRoomData
     public boolean maidenReset;
     public boolean maidenWipe;
 
-    public int maiden70Split = 0;
-    public int maiden50Split;
-    public int maiden30Split;
-    public int maidenTime;
 
     public boolean bloatTimeAccurate;
-    public int bloatDowns;
-    public int bloatFirstWalkDeaths;
-    public int bloatfirstWalkDefense = 100;
     public boolean bloatDefenseAccurate;
-    public int bloatDeaths;
     public int bloatHPAtDown;
     public int bloatScytheBeforeFirstDown;
 
@@ -207,20 +196,9 @@ public class cRoomData
     public boolean bloatReset;
     public boolean bloatWipe;
 
-    public int bloatFirstDownSplit;
-    public int bloatTime;
 
     public boolean nyloTimeAccurate;
-    public int nyloStallsPre20;
-    public int nyloStallsPost20;
-    public int nyloStallsTotal;
-    public int nyloRangeSplits;
-    public int nyloMageSplits;
-    public int nyloMeleeSplits;
-    public int nyloRangeRotations;
-    public int nyloMeleeRotations;
-    public int nyloMageRotations;
-    public int nyloDefenseReduction = 0;
+
     public boolean nyloDefenseAccurate;
     public int nyloDeaths;
 
@@ -230,52 +208,31 @@ public class cRoomData
     public boolean nyloReset;
     public boolean nyloStarted;
 
-    public int nyloLastWave;
-    public int nyloBossSpawn;
-    public int nyloTime;
 
     public boolean soteTimeAccurate;
-    public int soteSpecsP1;
-    public int soteSpecsP2;
-    public int soteSpecsP3;
-    public int soteSpecsTotal;
     public boolean soteDefenseAccurate;
-    public int soteDeaths;
     public int soteCyclesLost = -1;
 
     public boolean soteStarted;
     public boolean soteWipe;
     public boolean soteReset;
 
-    public int soteFirstMazeStartSplit;
-    public int soteFirstMazeEndSplit;
-    public int soteSecondMazeStartSplit;
-    public int soteSecondMazeEndSplit;
-    public int soteTime;
 
     public boolean xarpTimeAccurate;
-    public int xarpDefense = 250;
     public boolean xarpDefenseAccurate;
-    public int xarpDeaths;
-    public int xarpHealing;
 
     public boolean xarpWipe;
     public boolean xarpReset;
     public boolean xarpStarted;
 
-    public int xarpScreechSplit;
-    public int xarpTime;
 
-    public int verzikBounces;
-    public int verzikDeaths;
+
 
     public boolean verzikWipe;
     public boolean verzikStarted;
 
     public boolean verzikTimeAccurate;
-    public int verzikP1Split;
-    public int verzikP2Split;
-    public int verzikTime;
+
     public int verzikCrabsSpawned;
     public int verzikDawnDamage;
     public int verzikDawnCount;
@@ -290,115 +247,6 @@ public class cRoomData
     private ArrayList<String> globalData;
     public ArrayList<String> players;
 
-    /**
-     * Generates simulated room data for testing purposes
-     * @param v Controls maiden time
-     */
-    public cRoomData(int v)
-    {
-        resetBeforeMaiden = false;
-        maidenBloodsSpawned = 3;
-        maidenCrabsLeaked = 1;
-        maidenDefense = 0;
-
-        maidenSpawned = true;
-        maidenSkip = true;
-        maidenReset = false;
-        maidenWipe = false;
-
-        maiden70Split = 27;
-        maiden50Split = 46;
-        maiden30Split = 83;
-        maidenTime = 125;
-        if(v == 2)
-        {
-            maidenTime = 145;
-        }
-        if(v == 3)
-        {
-            maidenTime = 153;
-        }
-
-        bloatDowns = 1;
-        bloatFirstWalkDeaths = 0;
-        bloatfirstWalkDefense = 0;
-        bloatScytheBeforeFirstDown = 0;
-
-        bloatStarted = true;
-        bloatReset = false;
-        bloatWipe = false;
-
-        bloatFirstDownSplit = 39;
-        bloatTime = 70;
-        bloatHPAtDown = 745;
-
-        nyloStallsPre20 = 0;
-        nyloStallsPost20 = 0;
-        nyloStallsTotal = 0;
-        nyloRangeSplits = 20;
-        nyloMeleeSplits = 30;
-        nyloMageSplits = 25;
-        nyloRangeRotations = 2;
-        nyloMeleeRotations = 3;
-        nyloMageRotations = 0;
-        nyloDefenseReduction = 50;
-        nyloDeaths = 0;
-
-        nyloWipe = false;
-        nyloReset = false;
-        nyloStarted = true;
-
-        nyloLastWave = 236;
-        nyloLastDead = 262;
-        nyloBossSpawn = 280;
-        nyloTime = 344;
-
-        soteSpecsP1 = 2;
-        soteSpecsP2 = 2;
-        soteSpecsP3 = 2;
-        soteSpecsTotal = 6;
-        soteDeaths = 0;
-
-        soteStarted = true;
-        soteWipe = false;
-        soteReset = false;
-
-        soteFirstMazeStartSplit = 37;
-        soteFirstMazeEndSplit = 62;
-        soteSecondMazeStartSplit = 99;
-        soteSecondMazeEndSplit = 124;
-        soteTime = 204;
-
-        xarpDefense = 0;
-        xarpDeaths = 0;
-        xarpHealing = 16;
-
-        xarpWipe = false;
-        xarpReset = false;
-        xarpStarted = true;
-        xarpScreechSplit = 164;
-        xarpTime = 215;
-
-        verzikBounces = 0;
-        verzikDeaths = 0;
-        verzikWipe = false;
-        verzikStarted = true;
-
-        verzikP1Split = 53;
-        verzikP2Split = 210;
-        verzikTime = 326;
-
-        raidTeamSize = 5;
-        raidCompleted = true;
-        raidStarted = new Date();
-
-        players = new ArrayList<>();
-        players.add("Caps lock13");
-        players.add("2008Player44");
-        players.add("Rostikz");
-        players.add("TensorsFlow");
-        players.add("LaupieLaupie");
-    }
 
     enum TobRoom{
         MAIDEN, BLOAT, NYLOCAS, SOTETSEG, XARPUS, VERZIK
@@ -413,19 +261,36 @@ public class cRoomData
     {
         return raidTeamSize;
     }
-    public int getOverallTime()
+
+    public boolean getTimeAccurate(cDataPoint param)
     {
-        return maidenTime+bloatTime+nyloTime+soteTime+xarpTime+verzikTime;
+        switch(param.room)
+        {
+            case MAIDEN:
+                return maidenStartAccurate && maidenEndAccurate;
+            case BLOAT:
+                return bloatStartAccurate && bloatEndAccurate;
+            case NYLOCAS:
+                return nyloStartAccurate && nyloEndAccurate;
+            case SOTETSEG:
+                return soteStartAccurate && soteEndAccurate;
+            case XARPUS:
+                return xarpStartAccurate && xarpEndAccurate;
+            case VERZIK:
+                return verzikStartAccurate && verzikEndAccurate;
+            default:
+                return false;
+        }
     }
 
-    public int getMaidenTime() { return maidenTime; }
-    public int getBloatTime() { return bloatTime; }
-    public int getNyloTime() { return nyloTime; }
-    public int getSoteTime() { return soteTime; }
-    public int getXarpTime() { return xarpTime; }
-    public int getVerzikTime() { return verzikTime; }
+    public int getMaidenTime() { return getValue(cDataPoint.MAIDEN_TOTAL_TIME); }
+    public int getBloatTime() { return getValue(cDataPoint.BLOAT_TOTAL_TIME); }
+    public int getNyloTime() { return getValue(cDataPoint.NYLO_TOTAL_TIME); }
+    public int getSoteTime() { return getValue(cDataPoint.SOTE_TOTAL_TIME); }
+    public int getXarpTime() { return getValue(cDataPoint.XARP_TOTAL_TIME); }
+    public int getVerzikTime() { return getValue(cDataPoint.VERZIK_TOTAL_TIME); }
 
-    public int getValueFromKey(int key)
+    /*public int getValueFromKey(int key)
     {
         if(key < 4)
         {
@@ -590,7 +455,7 @@ public class cRoomData
             default:
                 return -1;
         }
-    }
+    }*/
 
     public boolean getOverallTimeAccurate()
     {
@@ -625,8 +490,32 @@ public class cRoomData
         return true;
     }
 
+    private cDataManager dataManager;
+
+    public int getValue(String name)
+    {
+        return dataManager.get(name);
+    }
+
+    public int getValue(cDataPoint point)
+    {
+        return dataManager.get(point);
+    }
+
+    public int getTimeSum()
+    {
+        return dataManager.get(cDataPoint.MAIDEN_TOTAL_TIME)
+                + dataManager.get(cDataPoint.BLOAT_TOTAL_TIME)
+                + dataManager.get(cDataPoint.NYLO_TOTAL_TIME)
+                + dataManager.get(cDataPoint.SOTE_TOTAL_TIME)
+                + dataManager.get(cDataPoint.XARP_TOTAL_TIME)
+                + dataManager.get(cDataPoint.VERZIK_TOTAL_TIME);
+    }
+
     public cRoomData(String[] parameters) throws Exception
     {
+        dataManager = new cDataManager();
+
         partyComplete = false;
         maidenDefenseAccurate = false;
         bloatDefenseAccurate = false;
@@ -719,7 +608,7 @@ public class cRoomData
                 case 3:
                     break;
                 case 4:
-                    if(verzikTime == 0)
+                    if(dataManager.get(cDataPoint.VERZIK_TOTAL_TIME) == 0)
                     {
                         if(!verzikStarted)
                         {
@@ -737,7 +626,7 @@ public class cRoomData
                     globalData = new ArrayList<>(globalData.subList(activeIndex + 1, globalData.size()));
                     return false;
                 case 5:
-                    verzikDeaths++;
+                    dataManager.increment(cDataPoint.VERZIK_DEATHS);
                 case 6:
                     break;
                 case 70:
@@ -747,18 +636,21 @@ public class cRoomData
                 case 72:
                     break;
                 case 73:
-                    verzikP1Split = Integer.parseInt(subData[4]);
+                    dataManager.set(cDataPoint.VERZIK_P1_SPLIT, Integer.parseInt(subData[4]));
                     break;
                 case 74:
-                    verzikP2Split = Integer.parseInt(subData[4]);
+                    dataManager.set(cDataPoint.VERZIK_P2_SPLIT, Integer.parseInt(subData[4]));
+                    dataManager.set(cDataPoint.VERZIK_P2_DURATION, dataManager.get(cDataPoint.VERZIK_P2_SPLIT) - dataManager.get(cDataPoint.VERZIK_P1_SPLIT));
+
                     break;
                 case 75:
                     break;
                 case 76:
-                    verzikTime = Integer.parseInt(subData[4]);
+                    dataManager.set(cDataPoint.VERZIK_TOTAL_TIME, Integer.parseInt(subData[4]));
+                    dataManager.set(cDataPoint.VERZIK_P3_DURATION, dataManager.get(cDataPoint.VERZIK_TOTAL_TIME) - dataManager.get(cDataPoint.VERZIK_P2_SPLIT));
                     break;
                 case 77:
-                    verzikBounces++;
+                    dataManager.increment(cDataPoint.VERZIK_BOUNCES);
                     break;
                 case 78:
                     verzikCrabsSpawned++;
@@ -808,17 +700,13 @@ public class cRoomData
                     }
                     break;
                 case 2:
-                    xarpDefense = (int) (xarpDefense*.7);
+                    dataManager.hammer(cDataPoint.XARP_DEFENSE);
                     break;
                 case 3:
-                    xarpDefense -= Integer.parseInt(subData[5]);
-                    if(xarpDefense < 0)
-                    {
-                        xarpDefense = 0;
-                    }
+                    dataManager.bgs(cDataPoint.XARP_DEFENSE, Integer.parseInt(subData[5]));
                     break;
                 case 4:
-                    if(xarpTime != 0)
+                    if(dataManager.get(cDataPoint.XARP_TOTAL_TIME) != 0)
                     {
                         xarpReset = true;
                     }
@@ -836,7 +724,7 @@ public class cRoomData
                     globalData = new ArrayList(globalData.subList(activeIndex+1, globalData.size()));
                     return false;
                 case 5:
-                    xarpDeaths++;
+                    dataManager.increment(cDataPoint.XARP_DEATHS);
                     break;
                 case 6:
                     break;
@@ -869,15 +757,16 @@ public class cRoomData
                             amount = 20;
                             break;
                     }
-                    xarpHealing += amount;
+                    dataManager.increment(cDataPoint.XARP_HEALING, amount);
                     break;
                 case 63:
-                    xarpScreechSplit = Integer.parseInt(subData[4]);
+                    dataManager.set(cDataPoint.XARP_SCREECH, Integer.parseInt(subData[4]));
                     break;
                 case 64:
                     break;
                 case 65:
-                    xarpTime = Integer.parseInt(subData[4]);
+                    dataManager.set(cDataPoint.XARP_TOTAL_TIME, Integer.parseInt(subData[4]));
+                    dataManager.set(cDataPoint.XARP_POST_SCREECH, dataManager.get(cDataPoint.XARP_TOTAL_TIME) - dataManager.get(cDataPoint.XARP_SCREECH));
                     break loop;
                 case 100:
                     partyComplete = true;
@@ -921,27 +810,27 @@ public class cRoomData
                     }
                     break;
                 case 2:
-                    if(soteFirstMazeStartSplit == 0)
+                    if(dataManager.get(cDataPoint.SOTE_P1_SPLIT) == 0)
                     {
-                        soteSpecsP1++;
-                        soteSpecsTotal++;
+                        dataManager.increment(cDataPoint.SOTE_SPECS_P1);
+                        dataManager.increment(cDataPoint.SOTE_SPECS_TOTAL);
                     }
-                    else if(soteSecondMazeStartSplit == 0)
+                    else if(dataManager.get(cDataPoint.SOTE_P2_SPLIT) == 0)
                     {
-                        soteSpecsP2++;
-                        soteSpecsTotal++;
+                        dataManager.increment(cDataPoint.SOTE_SPECS_P2);
+                        dataManager.increment(cDataPoint.SOTE_SPECS_TOTAL);
                     }
                     else
                     {
-                        soteSpecsP3++;
-                        soteSpecsTotal++;
+                        dataManager.increment(cDataPoint.SOTE_SPECS_P3);
+                        dataManager.increment(cDataPoint.SOTE_SPECS_TOTAL);
                     }
                     break;
                 case 3:
                 case 6:
                     break;
                 case 4:
-                    if(soteTime != 0)
+                    if(dataManager.get(cDataPoint.SOTE_TOTAL_TIME) == 0)
                     {
                         soteReset = true;
                     }
@@ -959,7 +848,7 @@ public class cRoomData
                     globalData = new ArrayList(globalData.subList(activeIndex+1, globalData.size()));
                     return false;
                 case 5:
-                    soteDeaths++;
+                    dataManager.increment(cDataPoint.SOTE_DEATHS);
                     break;
                 case 50:
                     break;
@@ -971,21 +860,22 @@ public class cRoomData
                     }
                     break;
                 case 52:
-                    soteFirstMazeStartSplit = Integer.parseInt(subData[4]);
+                    dataManager.set(cDataPoint.SOTE_P1_SPLIT, Integer.parseInt(subData[4]));
                     break;
                 case 53:
-                    soteFirstMazeEndSplit = Integer.parseInt(subData[4]);
+                    dataManager.set(cDataPoint.SOTE_M1_SPLIT, Integer.parseInt(subData[4]));
                     break;
                 case 54:
-                    soteSecondMazeStartSplit = Integer.parseInt(subData[4]);
+                    dataManager.set(cDataPoint.SOTE_P2_SPLIT, Integer.parseInt(subData[4]));
                     break;
                 case 55:
-                    soteSecondMazeEndSplit = Integer.parseInt(subData[4]);
+                    dataManager.set(cDataPoint.SOTE_M2_SPLIT, Integer.parseInt(subData[4]));
                     break;
                 case 56:
                     break;
                 case 57:
-                    soteTime = Integer.parseInt(subData[4]);
+                    dataManager.set(cDataPoint.SOTE_TOTAL_TIME, Integer.parseInt(subData[4]));
+                    dataManager.set(cDataPoint.SOTE_P3_SPLIT, dataManager.get(cDataPoint.SOTE_TOTAL_TIME) - dataManager.get(cDataPoint.SOTE_M2_SPLIT));
                     break loop;
                 case 58:
                     if(soteCyclesLost != -1)
@@ -1044,17 +934,13 @@ public class cRoomData
                 case 6:
                     break;
                 case 3:
-                    if(nyloBossSpawn != 0)
+                    if(dataManager.get(cDataPoint.NYLO_BOSS_SPAWN) != 0)
                     {
-                        nyloDefenseReduction += Integer.parseInt(subData[5]);
-                        if(nyloDefenseReduction > 50)
-                        {
-                            nyloDefenseReduction = 50;
-                        }
-                        break;
+                        dataManager.bgs(cDataPoint.NYLO_DEFENSE, Integer.parseInt(subData[5]));
                     }
+                    break;
                 case 4:
-                    if(nyloTime != 0)
+                    if(dataManager.get(cDataPoint.NYLO_TOTAL_TIME) != 0)
                     {
                         nyloReset = true;
                     }
@@ -1078,49 +964,51 @@ public class cRoomData
                     nyloStarted = true;
                     break;
                 case 31:
-                    nyloStallsTotal++;
+                    dataManager.increment(cDataPoint.NYLO_STALLS_TOTAL);
                     if(Integer.parseInt(subData[4]) > 19)
                     {
-                        nyloStallsPost20++;
+                        dataManager.increment(cDataPoint.NYLO_STALLS_POST_20);
                     }
                     else
                     {
-                        nyloStallsPre20++;
+                        dataManager.increment(cDataPoint.NYLO_STALLS_PRE_20);
                     }
                     break;
                 case 32:
-                    nyloRangeSplits++;
+                    dataManager.increment(cDataPoint.NYLO_SPLITS_RANGE);
                     break;
                 case 33:
-                    nyloMageSplits++;
+                    dataManager.increment(cDataPoint.NYLO_SPLITS_MAGE);
                     break;
                 case 34:
-                    nyloMeleeSplits++;
+                    dataManager.increment(cDataPoint.NYLO_SPLITS_MELEE);
                     break;
                 case 35:
-                    nyloLastWave = Integer.parseInt(subData[4]);
+                    dataManager.set(cDataPoint.NYLO_LAST_WAVE, Integer.parseInt(subData[4]));
                     break;
                 case 36:
                     nyloLastDead = Integer.parseInt(subData[4]);
+                    dataManager.set(cDataPoint.NYLO_CLEANUP, nyloLastDead - dataManager.get(cDataPoint.NYLO_LAST_WAVE));
                     break;
                 case 40:
-                    nyloBossSpawn = Integer.parseInt(subData[4])-2;
+                    dataManager.set(cDataPoint.NYLO_BOSS_SPAWN, Integer.parseInt(subData[4])-2);
                     if(partyComplete)
                     {
                         nyloDefenseAccurate = true;
                     }
                     break;
                 case 41:
-                    nyloMeleeRotations++;
+                    dataManager.increment(cDataPoint.NYLO_ROTATIONS_MELEE);
                     break;
                 case 42:
-                    nyloMageRotations++;
+                    dataManager.increment(cDataPoint.NYLO_ROTATIONS_MAGE);
                     break;
                 case 43:
-                    nyloRangeRotations++;
+                    dataManager.increment(cDataPoint.NYLO_ROTATIONS_RANGE);
                     break;
                 case 45:
-                    nyloTime = Integer.parseInt(subData[4]);
+                    dataManager.set(cDataPoint.NYLO_TOTAL_TIME, Integer.parseInt(subData[4]));
+                    dataManager.set(cDataPoint.NYLO_BOSS_DURATION, dataManager.get(cDataPoint.NYLO_TOTAL_TIME)- dataManager.get(cDataPoint.NYLO_BOSS_SPAWN));
                     break loop;
                 case 100:
                     partyComplete = true;
@@ -1172,23 +1060,19 @@ public class cRoomData
                     bloatHPAtDown = Integer.parseInt(subData[4]);
                     break;
                 case 25:
-                    if(bloatDowns == 0)
+                    if(dataManager.get(cDataPoint.BLOAT_DOWNS) == 0)
                     {
                         bloatScytheBeforeFirstDown++;
                     }
                     break;
                 case 3:
-                    if(bloatDowns == 0)
+                    if(dataManager.get(cDataPoint.BLOAT_DOWNS) == 0)
                     {
-                        bloatfirstWalkDefense -= (2*Integer.parseInt(subData[5]));
-                        if(bloatfirstWalkDefense < 0)
-                        {
-                            bloatfirstWalkDefense = 0;
-                        }
+                        dataManager.bgs(cDataPoint.BLOAT_DEFENSE, 2*Integer.parseInt(subData[5]));
                     }
                     break;
                 case 4:
-                    if(bloatTime != 0)
+                    if(dataManager.get(cDataPoint.BLOAT_TOTAL_TIME) != 0)
                     {
                         bloatReset = true;
                     }
@@ -1206,10 +1090,10 @@ public class cRoomData
                     globalData = new ArrayList(globalData.subList(activeIndex+1, globalData.size()));
                     return false;
                 case 5:
-                    bloatDeaths++;
-                    if(bloatDowns == 0)
+                    dataManager.increment(cDataPoint.BLOAT_DEATHS);
+                    if(dataManager.get(cDataPoint.BLOAT_DOWNS) == 0)
                     {
-                        bloatFirstWalkDeaths++;
+                        dataManager.increment(cDataPoint.BLOAT_FIRST_WALK_DEATHS);
                     }
                     break;
                 case 20:
@@ -1220,14 +1104,14 @@ public class cRoomData
                     }
                     break;
                 case 21:
-                    if(bloatDowns == 0)
+                    if(dataManager.get(cDataPoint.BLOAT_DOWNS) == 0)
                     {
-                        bloatFirstDownSplit = Integer.parseInt(subData[4]);
+                        dataManager.set(cDataPoint.BLOAT_FIRST_DOWN_TIME, Integer.parseInt(subData[4]));
                     }
-                    bloatDowns++;
+                    dataManager.increment(cDataPoint.BLOAT_DOWNS);
                     break;
                 case 23:
-                    bloatTime = Integer.parseInt(subData[4]);
+                    dataManager.set(cDataPoint.BLOAT_TOTAL_TIME, Integer.parseInt(subData[4]));
                     break loop;
                 case 100:
                     partyComplete = true;
@@ -1272,17 +1156,13 @@ public class cRoomData
                     }
                     break;
                 case 2:
-                    maidenDefense = (int)(maidenDefense*0.7);
+                    dataManager.hammer(cDataPoint.MAIDEN_DEFENSE);
                     break;
                 case 3:
-                    maidenDefense -= Integer.parseInt(subData[5]);
-                    if(maidenDefense < 0)
-                    {
-                        maidenDefense = 0;
-                    }
+                    dataManager.bgs(cDataPoint.MAIDEN_DEFENSE, Integer.parseInt(subData[5]));
                     break;
                 case 4:
-                    if(maidenTime != 0)
+                    if(dataManager.get(cDataPoint.MAIDEN_TOTAL_TIME) != 0)
                     {
                         maidenReset = true;
                     }
@@ -1300,16 +1180,16 @@ public class cRoomData
                     globalData = new ArrayList(globalData.subList(activeIndex+1, globalData.size()));
                     return false;
                 case 5:
-                    maidenDeaths++;
+                    dataManager.increment(cDataPoint.MAIDEN_DEATHS);
                     break;
                 case 6: break;
                 case 10:
-                    maidenBloodsSpawned++;
+                    dataManager.increment(cDataPoint.MAIDEN_BLOOD_SPAWNED);
                     break;
                 case 11:
-                    if(maidenTime == 0) //TODO: see case 16 fix
+                    if(dataManager.get(cDataPoint.MAIDEN_TOTAL_TIME) == 0) //TODO: see case 16 fix
                     {
-                        maidenCrabsLeaked++;
+                        dataManager.increment(cDataPoint.MAIDEN_CRABS_LEAKED);
                         int crabHP = -1;
                         try
                         {
@@ -1350,24 +1230,28 @@ public class cRoomData
                     }
                     break;
                 case 13:
-                    maiden70Split = Integer.parseInt(subData[4]);
+                    dataManager.set(cDataPoint.MAIDEN_70_SPLIT, Integer.parseInt(subData[4]));
                     lastProc = " 70s";
                     break;
                 case 14:
-                    maiden50Split = Integer.parseInt(subData[4]);
+                    dataManager.set(cDataPoint.MAIDEN_50_SPLIT, Integer.parseInt(subData[4]));
+                    dataManager.set(cDataPoint.MAIDEN_7050_SPLIT, Integer.parseInt(subData[4]) - dataManager.get(cDataPoint.MAIDEN_70_SPLIT));
                     lastProc = " 50s";
                     break;
                 case 15:
-                    maiden30Split = Integer.parseInt(subData[4]);
+                    dataManager.set(cDataPoint.MAIDEN_30_SPLIT, Integer.parseInt(subData[4]));
+                    dataManager.set(cDataPoint.MAIDEN_5030_SPLIT, Integer.parseInt(subData[4]) - dataManager.get(cDataPoint.MAIDEN_50_SPLIT));
                     lastProc = " 30s";
                     break;
                 case 16:
-                    maidenTime = Integer.parseInt(subData[4])+7;
+                    dataManager.set(cDataPoint.MAIDEN_TOTAL_TIME, Integer.parseInt(subData[4])+7);
+                    dataManager.set(cDataPoint.MAIDEN_SKIP_SPLIT, dataManager.get(cDataPoint.MAIDEN_TOTAL_TIME) - dataManager.get(cDataPoint.MAIDEN_30_SPLIT));
                     if (globalData.get(activeIndex+1).split(",", -1)[3].equals("4"))
                         maidenReset = true;
                     break loop;
                 case 17:
-                    maidenTime = Integer.parseInt(subData[4]);
+                    dataManager.set(cDataPoint.MAIDEN_TOTAL_TIME, Integer.parseInt(subData[4]));
+                    dataManager.set(cDataPoint.MAIDEN_SKIP_SPLIT, dataManager.get(cDataPoint.MAIDEN_TOTAL_TIME) - dataManager.get(cDataPoint.MAIDEN_30_SPLIT));
                     if (globalData.get(activeIndex+1).split(",", -1)[3].equals("4"))
                         maidenReset = true;
                     break loop;

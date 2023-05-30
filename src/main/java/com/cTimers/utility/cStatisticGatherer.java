@@ -257,9 +257,17 @@ public class cStatisticGatherer
             if(count > maxCount)
             {
                 maxValue = iv;
+                maxCount = count;
             }
         }
-        return maxValue;
+        if(maxCount > 1)
+        {
+            return maxValue;
+        }
+        else
+        {
+            return -1;
+        }
     }
     public static double getGenericMode(ArrayList<Integer> data)
     {
@@ -279,9 +287,17 @@ public class cStatisticGatherer
             if(count > maxCount)
             {
                 maxValue = data.get(i);
+                maxCount = count;
             }
         }
-        return maxValue;
+        if(maxCount > 1)
+        {
+            return maxValue;
+        }
+        else
+        {
+            return -1;
+        }
     }
 
 

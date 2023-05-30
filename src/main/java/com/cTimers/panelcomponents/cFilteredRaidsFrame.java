@@ -134,11 +134,23 @@ public class cFilteredRaidsFrame extends cFrame
         double min = cStatisticGatherer.getGenericMin(raids,dataPoint);
         double max = cStatisticGatherer.getGenericMax(raids,dataPoint);
 
-        customAverageLabel.setText((time) ? RoomUtil.time(avg) : avg + "");
-        customMedianLabel.setText((time) ? RoomUtil.time(med) : med + "");
-        customModeLabel.setText((time) ? RoomUtil.time(mod) : mod + "");
-        customMinLabel.setText((time) ? RoomUtil.time(min) : min + "");
-        customMaxLabel.setText((time) ? RoomUtil.time(max) : max + "");
+        String avgStr = (time) ? RoomUtil.time(avg) : avg + "";
+        String medStr = (time) ? RoomUtil.time(med) : med + "";
+        String modStr = (time) ? RoomUtil.time(mod) : mod + "";
+        String minStr = (time) ? RoomUtil.time(min) : min + "";
+        String maxStr = (time) ? RoomUtil.time(max) : max + "";
+
+        if(avg == -1) avgStr = "-";
+        if(med == -1) medStr = "-";
+        if(mod == -1) modStr = "-";
+        if(min == -1) minStr = "-";
+        if(max == -1) maxStr = "-";
+
+        customAverageLabel.setText(avgStr);
+        customMedianLabel.setText(medStr);
+        customModeLabel.setText(modStr);
+        customMinLabel.setText(minStr);
+        customMaxLabel.setText(maxStr);
     }
 
     private boolean evaluateAllFilters(cRoomData data)

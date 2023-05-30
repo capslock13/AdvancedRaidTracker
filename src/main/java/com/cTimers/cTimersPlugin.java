@@ -1,5 +1,6 @@
 package com.cTimers;
 
+import com.cTimers.constants.TOBRoom;
 import com.cTimers.ui.cTimersPanelPrimary;
 import com.google.inject.Inject;
 import com.google.inject.Provides;
@@ -38,6 +39,7 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 import static com.cTimers.constants.LogID.*;
+import static com.cTimers.constants.TOBRoom.*;
 
 
 @Slf4j
@@ -143,6 +145,9 @@ public class cTimersPlugin extends Plugin
         currentPlayers = new ArrayList<>();
     }
 
+    /**
+     * @return Room as int if inside TOB (0 indexed), -1 otherwise
+     */
     private int getRoom() {
         if (inRegion(LOBBY_REGION))
             return -1;
@@ -243,35 +248,35 @@ public class cTimersPlugin extends Plugin
 
     private void enteredBloat(cRoom old)
     {
-        clog.write(ENTERED_NEW_TOB_REGION, "1");
+        clog.write(ENTERED_NEW_TOB_REGION, BLOAT.ordinal());
         maiden.reset();
         bloat.reset();
     }
 
     private void enteredNylo(cRoom old)
     {
-        clog.write(ENTERED_NEW_TOB_REGION, "2");
+        clog.write(ENTERED_NEW_TOB_REGION, NYLO.ordinal());
         bloat.reset();
         nylo.reset();
     }
 
     private void enteredSote(cRoom old)
     {
-        clog.write(ENTERED_NEW_TOB_REGION, "3");
+        clog.write(ENTERED_NEW_TOB_REGION, SOTE.ordinal());
         nylo.reset();
         sote.reset();
     }
 
     private void enteredXarpus(cRoom old)
     {
-        clog.write(ENTERED_NEW_TOB_REGION, "4");
+        clog.write(ENTERED_NEW_TOB_REGION, XARPUS.ordinal());
         sote.reset();
         xarpus.reset();
     }
 
     private void enteredVerzik(cRoom old)
     {
-        clog.write(ENTERED_NEW_TOB_REGION, "5");
+        clog.write(ENTERED_NEW_TOB_REGION, VERZIK.ordinal());
         xarpus.reset();
         verzik.reset();
     }
@@ -295,6 +300,7 @@ public class cTimersPlugin extends Plugin
                 return;
             }
             boolean playerInRaid = false;
+            // Ensures correct names across encodings
             for(String player : currentPlayers)
             {
                 if (name.equals(player.replaceAll(String.valueOf((char) 160), String.valueOf((char) 32)))) {
@@ -306,11 +312,11 @@ public class cTimersPlugin extends Plugin
             {
                 if(event.getWeapon().equals(SpecialWeapon.BANDOS_GODSWORD))
                 {
-                    clog.write(3, name, ""+event.getHit());
+                    clog.write(BGS, name, ""+event.getHit());
                 }
                 if(event.getWeapon().equals(SpecialWeapon.DRAGON_WARHAMMER))
                 {
-                    clog.write(2, name);
+                    clog.write(DWH, name);
                 }
             }
         }
@@ -358,7 +364,7 @@ public class cTimersPlugin extends Plugin
                 if (!isPartyComplete())
                 {
                     partyIntact = false;
-                    clog.write(101);
+                    clog.write(PARTY_INCOMPLETE);
                 }
             }
             else
@@ -366,8 +372,7 @@ public class cTimersPlugin extends Plugin
                 if(isPartyComplete())
                 {
                     partyIntact = true;
-                    clog.write(100);
-
+                    clog.write(PARTY_COMPLETE);
                 }
             }
         }
@@ -404,11 +409,12 @@ public class cTimersPlugin extends Plugin
             if(client.getTickCount() == deferredTick)
             {
                 String[] players = {"", "", "", "", ""};
-                for(int i = 330; i < 335; i++)
+                int varcStrID = 330; // Widget for player names
+                for(int i = varcStrID; i < varcStrID+5; i++)
                 {
                     if(client.getVarcStrValue(i) != null && !client.getVarcStrValue(i).equals(""))
                     {
-                        players[i-330] = Text.escapeJagex(client.getVarcStrValue(i));
+                        players[i-varcStrID] = Text.escapeJagex(client.getVarcStrValue(i));
                     }
                 }
                 for(String s : players)

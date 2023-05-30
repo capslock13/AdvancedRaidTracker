@@ -41,6 +41,11 @@ public class cLogger
         write(key, "", "", "", "", "");
     }
 
+    public void write(LogID id, int param)
+    {
+        write(id, String.valueOf(param));
+    }
+
     public void write(int key, String v1)
     {
         write(key, v1, "", "", "", "");
@@ -49,16 +54,6 @@ public class cLogger
     public void write(int key, String v1, String v2)
     {
         write(key, v1, v2, "", "", "");
-    }
-
-    public void write(int key, String v1, String v2, String v3)
-    {
-        write(key, v1, v2, v3, "", "");
-    }
-
-    public void write(int key, String v1, String v2, String v3, String v4)
-    {
-        write(key, v1, v2, v3, v4, "");
     }
 
     public void write(int key, String v1, String v2, String v3, String v4, String v5)

@@ -10,7 +10,6 @@ public class cFilterTime extends cFilterCondition
     private cDataPoint split;
     private int compare;
     private int time;
-
     private String stringValue;
 
     public cFilterTime(cDataPoint split, int compare1, int time1, String str)
@@ -46,6 +45,11 @@ public class cFilterTime extends cFilterCondition
             default:
                 return false;
         }
+    }
+
+    public String getFilterCSV()
+    {
+       return "0-" + split.name + "-" + compare + "-" + time + "-" + stringValue;
     }
 }
 

@@ -8,10 +8,10 @@ import java.util.List;
 public class cNylocasWave
 {
     @Getter
-    private int wave;
+    private final int wave;
     @Getter
-    private int delay;
-    private cNylocas nylos[];
+    private final int delay;
+    private final cNylocas[] nylos;
 
     public static cNylocasWave[] waves =
             {

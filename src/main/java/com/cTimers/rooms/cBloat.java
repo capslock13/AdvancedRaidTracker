@@ -28,9 +28,6 @@ public class cBloat extends cRoom
     private final ArrayList<Integer> downs = new ArrayList<>();
     private int bloatStartTick = -1;
     private int bloatDeathTick = -1;
-
-//    @Inject
-//    private EventBus eventBus;
     public cBloat(Client client, cLogger clog, cTimersConfig config)
     {
         super(client, clog, config);
@@ -53,7 +50,6 @@ public class cBloat extends cRoom
         if(bloatStartTick != -1)
             sendTimeMessage("Wave 'Bloat last down' complete! Duration: ", splitLastDown(), " Room time: ", bloatDeathTick-bloatStartTick, true);
     }
-
 
     public int splitLastDown()
     {
@@ -177,7 +173,6 @@ public class cBloat extends cRoom
             if(client.getVarbitValue(ROOM_ACTIVE_VARBIT) != 0)
             {
                 accurateEntry = false;
-            //    bloatStartTick = client.getTickCount();
             }
             else
             {
@@ -185,7 +180,6 @@ public class cBloat extends cRoom
             }
         }
     }
-
     public void updateNpcDespawned(NpcDespawned event)
     {
         if(event.getNpc().getId() == BLOAT)

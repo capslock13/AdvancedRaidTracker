@@ -1,14 +1,17 @@
 package com.cTimers.utility;
 
 import com.cTimers.filters.cFilter;
+import com.cTimers.filters.cImplicitFilter;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class cFilterManager
 {
-    private static String filterFolder = System.getProperty("user.home").replace("\\", "/") + "/.runelite/cTimers/filters/";
+    private static final String filterFolder = System.getProperty("user.home").replace("\\", "/") + "/.runelite/cTimers/filters/";
     public static ArrayList<cFilter> getFilters()
     {
         ArrayList<cFilter> currentFilters = new ArrayList<>();
@@ -24,7 +27,7 @@ public class cFilterManager
                     {
                         try
                         {
-                            Scanner filterReader = new Scanner(new FileInputStream(entry));
+                            Scanner filterReader = new Scanner(Files.newInputStream(entry.toPath()));
                             while (filterReader.hasNextLine())
                             {
                                 activeFileFilters.add(filterReader.nextLine());
@@ -44,7 +47,7 @@ public class cFilterManager
         }
         catch(Exception e)
         {
-
+            e.printStackTrace();
         }
         return currentFilters;
     }
@@ -64,12 +67,12 @@ public class cFilterManager
         }
         catch(Exception e)
         {
-
+            e.printStackTrace();
         }
         return false;
     }
 
-    public static void saveOverwriteFilter(String name, String[] filters)
+    public static void saveOverwriteFilter(String name, ArrayList<cImplicitFilter> filters)
     {
         try
         {
@@ -85,10 +88,10 @@ public class cFilterManager
                 filterFile.delete();
             }
             filterFile.createNewFile();
-            BufferedWriter filterWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filterFolder + name + ".filter")));
-            for(String s : filters)
+            BufferedWriter filterWriter = new BufferedWriter(new OutputStreamWriter(Files.newOutputStream(Paths.get(filterFolder + name + ".filter"))));
+            for(cImplicitFilter s : filters)
             {
-                filterWriter.write(s);
+                filterWriter.write(s.getFilterDescription());
                 filterWriter.newLine();
             }
             filterWriter.close();
@@ -99,7 +102,7 @@ public class cFilterManager
         }
     }
 
-    public static void saveFilter(String name, String[] filters)
+    public static void saveFilter(String name, ArrayList<cImplicitFilter> filters)
     {
         try
         {
@@ -113,10 +116,10 @@ public class cFilterManager
             {
                 filterFile.createNewFile();
             }
-            BufferedWriter filterWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filterFolder + name + ".filter")));
-            for(String s : filters)
+            BufferedWriter filterWriter = new BufferedWriter(new OutputStreamWriter(Files.newOutputStream(Paths.get(filterFolder + name + ".filter"))));
+            for(cImplicitFilter filter : filters)
             {
-                filterWriter.write(s);
+                filterWriter.write(filter.getFilterCSV());
                 filterWriter.newLine();
             }
             filterWriter.close();

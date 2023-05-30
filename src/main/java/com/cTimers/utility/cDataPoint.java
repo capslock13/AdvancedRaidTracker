@@ -7,6 +7,8 @@ public enum cDataPoint
 {
     MAIDEN_BLOOD_SPAWNED("Maiden blood spawned", types.OTHER_INT, rooms.MAIDEN),
     MAIDEN_CRABS_LEAKED("Maiden crabs leaked", types.OTHER_INT, rooms.MAIDEN),
+    MAIDEN_CRABS_LEAKED_FULL_HP("Maiden crabs leaked full", types.OTHER_INT, rooms.MAIDEN),
+    MAIDEN_HP_HEALED("Maiden HP Healed", types.OTHER_INT, rooms.MAIDEN),
     MAIDEN_DEFENSE("Maiden defense", types.OTHER_INT, rooms.MAIDEN, 200),
     MAIDEN_DEATHS("Maiden deaths", types.OTHER_INT, rooms.MAIDEN),
     BLOAT_DOWNS("Bloat downs", types.OTHER_INT, rooms.BLOAT),
@@ -85,10 +87,10 @@ public enum cDataPoint
         OTHER_INT, OTHER_BOOL, TIME
     }
 
-    public String name;
-    public int value;
-    public types type;
-    public rooms room;
+    public final String name;
+    public final int value;
+    public final types type;
+    public final rooms room;
 
 
     cDataPoint(String name, types type, rooms room)

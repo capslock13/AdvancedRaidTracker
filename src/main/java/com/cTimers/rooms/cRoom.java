@@ -19,21 +19,16 @@ public class cRoom
 
     cLogger clog;
 
-    @Inject
-    ClientThread clientThread;
-
     public static final int ROOM_ACTIVE_VARBIT = 6447;
 
     public static final int HP_VARBIT = 6448;
 
 
-    private cTimersConfig config;
+    private final cTimersConfig config;
     protected boolean accurateTimer = true;
     protected boolean accurateEntry = true;
-
-    protected boolean accurateExit = true;
     @Getter @Setter
-    int scale; // TODO maybe handle team size differently
+    int scale;
 
     protected String defaultColor()
     {

@@ -173,8 +173,6 @@ public class cRoomData
     public boolean maidenTimeAccurate;
     public boolean partyComplete;
 
-    public int getMaidenCrabsLeakedFullHP = 0;
-    public int maidenHeal = 0;
     public boolean maidenDefenseAccurate;
     public int index = -1;
 
@@ -290,173 +288,6 @@ public class cRoomData
     public int getXarpTime() { return getValue(cDataPoint.XARP_TOTAL_TIME); }
     public int getVerzikTime() { return getValue(cDataPoint.VERZIK_TOTAL_TIME); }
 
-    /*public int getValueFromKey(int key)
-    {
-        if(key < 4)
-        {
-            if(!maidenStartAccurate || !maidenEndAccurate)
-            {
-                return -1;
-            }
-        }
-        if(key > 3 && key < 8)
-        {
-            if(!bloatStartAccurate || !bloatEndAccurate)
-            {
-                return -1;
-            }
-        }
-        if(key > 7 && key < 19)
-        {
-            if(!nyloStartAccurate || !nyloEndAccurate)
-            {
-                return -1;
-            }
-        }
-        if(key > 18 && key < 24)
-        {
-            if(!soteStartAccurate || !soteEndAccurate)
-            {
-                return -1;
-            }
-        }
-        if(key > 23 && key < 27)
-        {
-            if(!xarpEndAccurate || !xarpStartAccurate)
-            {
-                return -1;
-            }
-        }
-        if(key > 26 && key < 29)
-        {
-            if(!verzikStartAccurate || !verzikEndAccurate)
-            {
-                return -1;
-            }
-        }
-        switch (key)
-        {
-            case 0: // Maiden bloods spawned
-                return maidenBloodsSpawned;
-            case 1: // Maiden crabs leaked
-                return maidenCrabsLeaked;
-            case 2: // Maiden def reduction
-                return maidenDefense;
-            case 3: // Maiden deaths
-                return maidenDeaths;
-            case 4: // Bloat Downs
-                return bloatDowns;
-            case 5: // Bloat 1st walk deaths
-                return bloatFirstWalkDeaths;
-            case 6: // Bloat first walk BGS
-                return bloatfirstWalkDefense;
-            case 7: // Bloat deaths
-                return bloatDeaths;
-            case 8: // Nylo stalls pre 20
-                return nyloStallsPre20;
-            case 9: // Nylo stalls post 20
-                return nyloStallsPost20;
-            case 10: // Nylo total stalls
-                return nyloStallsTotal;
-            case 11: // Nylo range splits
-                return nyloRangeSplits;
-            case 12: // Nylo mage splits
-                return nyloMageSplits;
-            case 13: // Nylo melee splits
-                return nyloMeleeSplits;
-            case 14: // Nylo range rotations
-                return nyloRangeRotations;
-            case 15: // Nylo mage rotations
-                return nyloMageRotations;
-            case 16: // Nylo melee roations
-                return nyloMeleeRotations;
-            case 17: // Nylo def reduction
-                return nyloDefenseReduction;
-            case 18: // Nylo deaths
-                return nyloDeaths;
-            case 19: // Sote specs p1
-                return soteSpecsP1;
-            case 20: // Sote specs p2
-                return soteSpecsP2;
-            case 21: // Sote specs p3
-                return soteSpecsP3;
-            case 22: // Sote deaths
-                return soteDeaths;
-            case 23: // Sote total specs hit
-                return soteSpecsTotal;
-            case 24: // Xarp def reduction
-                return xarpDefense;
-            case 25: // Xarp deaths
-                return xarpDeaths;
-            case 26: // Xarpus healing
-                return xarpHealing;
-            case 27: // Verzik bounces
-                return verzikBounces;
-            case 28: // Verzik deaths
-                return verzikDeaths;
-            case 29: // Raid team size
-                return raidTeamSize;
-            case 30: // Maiden total time
-                return maidenTime;
-            case 31: // Maiden 70 split
-                return maiden70Split;
-            case 32: // Maiden 50 split
-                return maiden50Split;
-            case 33: // Maiden 30 split
-                return maiden30Split;
-            case 34: // Maiden 70-50 split
-                return maiden50Split - maiden70Split;
-            case 35: // Maiden 50-30 split
-                return maiden30Split - maiden50Split;
-            case 36: // Maiden skip split
-                return maidenTime - maiden30Split;
-            case 37: // Bloat total time
-                return bloatTime;
-            case 38: // Bloat first down split
-                return bloatFirstDownSplit;
-            case 39: // Nylocas total time
-                return nyloTime;
-            case 40: // Nylo boss spawn
-                return nyloBossSpawn;
-            case 41: // Nylo boss duration
-                return nyloTime - nyloBossSpawn;
-            case 42: // Nylo last wave
-                return nyloLastWave;
-            case 43: // Nylo cleanup
-                return nyloBossSpawn - nyloLastWave;
-            case 44: // Sotetseg total time
-                return soteTime;
-            case 45: // Sote p1 split
-                return soteFirstMazeStartSplit;
-            case 46: // Sote p2 split
-                return soteSecondMazeStartSplit - soteFirstMazeEndSplit;
-            case 47: // Sote p3 split
-                return soteTime - soteSecondMazeEndSplit;
-            case 48: // Sote maze1 split
-                return soteFirstMazeEndSplit - soteFirstMazeStartSplit;
-            case 49: // Sote maze2 split
-                return soteSecondMazeEndSplit - soteSecondMazeStartSplit;
-            case 50: // Xarpus total time
-                return xarpTime;
-            case 51: //Xarpus Screech
-                return xarpScreechSplit;
-            case 52: //Xarpus Post Screech
-                return xarpTime - xarpScreechSplit;
-            case 53: // Verzik Total Time
-                return verzikTime;
-            case 54: // Verzik p1
-                return verzikP1Split;
-            case 55: // verzik p2 split from start
-                return verzikP2Split;
-            case 56: // verzik p2 duration
-                return verzikP2Split - verzikP1Split;
-            case 57: // verzik p3 duration
-                return verzikTime - verzikP2Split;
-            default:
-                return -1;
-        }
-    }*/
-
     public boolean getOverallTimeAccurate()
     {
         return maidenStartAccurate && maidenEndAccurate
@@ -490,7 +321,7 @@ public class cRoomData
         return true;
     }
 
-    private cDataManager dataManager;
+    private final cDataManager dataManager;
 
     public int getValue(String name)
     {
@@ -742,13 +573,13 @@ public class cRoomData
                     switch(raidTeamSize)
                     {
                         case 5:
-                            amount = 8; //correct
+                            amount = 8;
                             break;
                         case 4:
                             amount = 9;
                             break;
                         case 3:
-                            amount = 12; //correct
+                            amount = 12;
                             break;
                         case 2:
                             amount = 16;
@@ -1199,7 +1030,7 @@ public class cRoomData
                         {
                             e.printStackTrace();
                         }
-                        maidenHeal += (crabHP*2);
+                        dataManager.increment(cDataPoint.MAIDEN_HP_HEALED, crabHP*2);
                         int maxCrabHP = 100;
                         switch(players.size())
                         {
@@ -1214,7 +1045,7 @@ public class cRoomData
                         }
                         if(crabHP == maxCrabHP)
                         {
-                            getMaidenCrabsLeakedFullHP++;
+                            dataManager.increment(cDataPoint.MAIDEN_CRABS_LEAKED_FULL_HP);
                         }
 
                         if (subData[4].contains("30"))
@@ -1282,8 +1113,6 @@ public class cRoomData
                     maidenEndAccurate = true;
                     maidenTimeAccurate = maidenStartAccurate;
                     break;
-                default:
-                   // throw new cDataOutOfOrderException("Key: " + subData[3] + " not expected during Maiden");
             }
             activeIndex++;
         }

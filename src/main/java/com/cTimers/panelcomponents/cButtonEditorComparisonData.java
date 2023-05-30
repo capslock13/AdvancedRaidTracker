@@ -2,6 +2,7 @@ package com.cTimers.panelcomponents;
 
 import com.cTimers.cRoomData;
 import com.cTimers.filters.cFilter;
+import com.cTimers.panelcomponents.cFilteredRaidsFrame;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,14 +15,12 @@ public class cButtonEditorComparisonData extends DefaultCellEditor
     protected JButton button;
     private String label;
     private boolean isPushed;
-    private ArrayList<cFilter> filters;
     private cFilteredRaidsFrame frame;
     int row;
 
     public cButtonEditorComparisonData(JCheckBox checkBox, cFilteredRaidsFrame raidsFrame)
     {
         super(checkBox);
-        //this.filters = filters;
         frame = raidsFrame;
         button = new JButton();
         button.setOpaque(true);

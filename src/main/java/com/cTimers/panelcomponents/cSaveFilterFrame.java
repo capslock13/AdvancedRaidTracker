@@ -1,18 +1,20 @@
 package com.cTimers.panelcomponents;
 
+import com.cTimers.filters.cImplicitFilter;
 import com.cTimers.utility.cFilterManager;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 public class cSaveFilterFrame extends cFrame
 {
     private JTextField field;
     private JButton saveButton;
 
-    public void updateFilterFrame(String[] filters)
+    public cSaveFilterFrame(ArrayList<cImplicitFilter> filters)
     {
         getContentPane().removeAll();
         setTitle("Save Filter");
@@ -47,11 +49,5 @@ public class cSaveFilterFrame extends cFrame
         pack();
         setLocationRelativeTo(null);
         repaint();
-
-    }
-
-    public cSaveFilterFrame()
-    {
-        updateFilterFrame(new String[] { });
     }
 }

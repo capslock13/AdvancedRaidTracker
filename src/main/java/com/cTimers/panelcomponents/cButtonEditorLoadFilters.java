@@ -1,13 +1,15 @@
 package com.cTimers.panelcomponents;
 
 import com.cTimers.filters.cFilter;
+import com.cTimers.filters.cImplicitFilter;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-
+@Slf4j
 class cButtonEditorLoadFilters extends DefaultCellEditor
 {
 
@@ -16,14 +18,15 @@ class cButtonEditorLoadFilters extends DefaultCellEditor
     private boolean isPushed;
     int row;
     private ArrayList<cFilter> data;
-    private JPanel activeFiltersContainer;
     private cFrame closeFrame;
 
-    public cButtonEditorLoadFilters(JCheckBox checkBox, ArrayList<cFilter> data, JPanel activeFiltersContainer, cLoadFilterFrame loadFrame)
+    private cFilteredRaidsFrame filteredRaidsFrame;
+
+    public cButtonEditorLoadFilters(JCheckBox checkBox, cFilteredRaidsFrame filteredRaidsFrame, ArrayList<cFilter> data, cLoadFilterFrame loadFrame)
     {
         super(checkBox);
         this.data = data;
-        this.activeFiltersContainer = activeFiltersContainer;
+        this.filteredRaidsFrame = filteredRaidsFrame;
         this.closeFrame = loadFrame;
         button = new JButton();
         button.setOpaque(true);
@@ -61,26 +64,13 @@ class cButtonEditorLoadFilters extends DefaultCellEditor
     public Object getCellEditorValue() {
         if (isPushed)
         {
-            ArrayList<Component> components = new ArrayList<>();
-            for(Component c : activeFiltersContainer.getComponents())
-            {
-                if(c instanceof JLabel)
-                {
-                    components.add(c);
-                }
-            }
-            for(Component c : components)
-            {
-                activeFiltersContainer.remove(c);
-            }
-            //TODO add clear filter?
-            activeFiltersContainer.setLayout(new GridLayout(1+data.get(row).getFilters().length, 1));
+
+            filteredRaidsFrame.activeFilters.clear();
             for(String s : data.get(row).getFilters())
             {
-                activeFiltersContainer.add(new JLabel(s));
+                filteredRaidsFrame.activeFilters.add(new cImplicitFilter(s));
             }
-            activeFiltersContainer.repaint();
-            activeFiltersContainer.revalidate();
+            filteredRaidsFrame.updateFilterTable();
             closeFrame.close();
         }
         isPushed = false;

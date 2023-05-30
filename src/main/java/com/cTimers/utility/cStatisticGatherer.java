@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 
 public class cStatisticGatherer
 {
-
     public static double getOverallTimeAverage(ArrayList<cRoomData> data)
     {
         data = data.stream().filter(cRoomData::getOverallTimeAccurate).collect(Collectors.toCollection(ArrayList::new));
@@ -41,11 +40,11 @@ public class cStatisticGatherer
         Collections.sort(values);
         if(values.size() % 2 == 0)
         {
-            median = ((double)values.get(values.size()/2) + (double)values.get(values.size()/2-1))/2.0;
+            median = ((double)values.get(values.size()/2) + values.get(values.size()/2-1))/2.0;
         }
         else
         {
-            median = (double) values.get(values.size()/2);
+            median = values.get(values.size()/2);
         }
         return median;
     }
@@ -153,15 +152,16 @@ public class cStatisticGatherer
                 values.add((double) d);
         }
         Collections.sort(values);
-        if(values.size() % 2 == 0)
+        if(values.size() > 0)
         {
-            median = ((double)values.get(values.size()/2) + (double)values.get(values.size()/2-1))/2.0;
+            if (values.size() % 2 == 0) {
+                median = (values.get(values.size() / 2) + (double) values.get(values.size() / 2 - 1)) / 2.0;
+            } else {
+                median = values.get(values.size() / 2);
+            }
+            return median;
         }
-        else
-        {
-            median = (double) values.get(values.size()/2);
-        }
-        return median;
+        return -1;
     }
 
     public static double getGenericMin(ArrayList<Integer> data)

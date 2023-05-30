@@ -51,7 +51,7 @@ public class cComparisonView extends cFrame
     ArrayList<cGraphPanel> topGraphs;
     ArrayList<cGraphPanel> bottomGraphs;
     ArrayList<String> labels;
-    cComparisonView(ArrayList<ArrayList<cRoomData>> raidData, ArrayList<String> names)
+    public cComparisonView(ArrayList<ArrayList<cRoomData>> raidData, ArrayList<String> names)
     {
         leftLabel = new JLabel("Min cutoff: ");
         rightLabel = new JLabel("Max cutoff: ");

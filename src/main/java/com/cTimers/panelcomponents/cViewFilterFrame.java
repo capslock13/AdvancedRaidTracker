@@ -11,7 +11,7 @@ public class cViewFilterFrame extends cFrame
     public cViewFilterFrame(cFilter filter)
     {
         setTitle("View Filter");
-        setPreferredSize(new Dimension(100, 200));
+        setPreferredSize(new Dimension(300, 300));
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BorderLayout());
         mainPanel.setBorder(BorderFactory.createTitledBorder("Filter Details"));
@@ -19,8 +19,12 @@ public class cViewFilterFrame extends cFrame
         pane.setLayout(new GridLayout(10, 1));
         for(String s : filter.getFilters())
         {
-            JLabel label = new JLabel(s);
-            pane.add(label);
+            String[] splitString = s.split("-");
+            if(splitString.length != 0)
+            {
+                JLabel label = new JLabel(splitString[splitString.length-1]);
+                pane.add(label);
+            }
         }
         mainPanel.add(pane);
         add(mainPanel);

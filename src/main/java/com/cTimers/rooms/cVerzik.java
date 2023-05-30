@@ -15,20 +15,16 @@ import static com.cTimers.constants.NpcIDs.*;
 public class cVerzik extends cRoom
 {
     public cRoomState.VerzikRoomState roomState;
-
     public cVerzik(Client client, cLogger clog, cTimersConfig config)
     {
         super(client, clog, config);
     }
-
     private int verzikEntryTick = -1;
     private int verzikP1EndTick = -1;
     private int verzikRedsTick = -1;
     private int verzikP2EndTick = -1;
     private int verzikP3EndTick = -1;
-
     private int redTicks = -1;
-
     public void reset()
     {
         verzikEntryTick = -1;

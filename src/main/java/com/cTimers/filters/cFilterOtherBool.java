@@ -7,13 +7,6 @@ public class cFilterOtherBool extends cFilterCondition
     boolean value;
     int param;
     String stringValue;
-
-    public cFilterOtherBool(int param, boolean value)
-    {
-        this.param = param;
-        this.value = value;
-    }
-
     public cFilterOtherBool(int param, boolean value, String val)
     {
         this.param = param;
@@ -56,5 +49,9 @@ public class cFilterOtherBool extends cFilterCondition
                 return data.verzikWipe == value;
         }
         return false;
+    }
+    public String getFilterCSV()
+    {
+        return "3-" + param + "-" + ((value) ? 1 : 0) + "-" + stringValue;
     }
 }

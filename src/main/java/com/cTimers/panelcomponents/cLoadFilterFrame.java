@@ -5,7 +5,6 @@ import com.cTimers.filters.cFilter;
 import com.cTimers.utility.cFilterManager;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
@@ -13,6 +12,7 @@ import java.util.ArrayList;
 @Slf4j
 public class cLoadFilterFrame extends cFrame
 {
+    private cFilteredRaidsFrame filteredRaidsFrame;
     public void resizeColumnWidth(JTable table)
     {
         final TableColumnModel columnModel = table.getColumnModel();
@@ -33,8 +33,9 @@ public class cLoadFilterFrame extends cFrame
         }
     }
 
-    public cLoadFilterFrame(JPanel activeFiltersContainer)
+    public cLoadFilterFrame(cFilteredRaidsFrame cFilteredRaidsFrame)
     {
+        this.filteredRaidsFrame = cFilteredRaidsFrame;
         setTitle("Load Filters");
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBorder(BorderFactory.createTitledBorder("Filters"));
@@ -70,7 +71,7 @@ public class cLoadFilterFrame extends cFrame
         table.getColumn("View").setCellEditor(new cButtonEditorViewFilters(new JCheckBox(), filters));
 
         table.getColumn("Load").setCellRenderer(new cButtonRenderer());
-        table.getColumn("Load").setCellEditor(new cButtonEditorLoadFilters(new JCheckBox(), filters, activeFiltersContainer, this));
+        table.getColumn("Load").setCellEditor(new cButtonEditorLoadFilters(new JCheckBox(), filteredRaidsFrame, filters, this));
         resizeColumnWidth(table);
         JScrollPane pane = new JScrollPane(table);
         table.setFillsViewportHeight(true);

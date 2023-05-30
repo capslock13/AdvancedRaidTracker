@@ -9,7 +9,6 @@ public class cFrame extends JFrame
     public cFrame()
     {
         setIconImage(ClientUI.ICON);
-       // setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
     }
     public void open()
     {

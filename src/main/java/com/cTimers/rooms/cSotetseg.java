@@ -24,12 +24,7 @@ public class cSotetseg extends cRoom
     private int soteDeathTick = -1;
     private int soteEnd = -1;
     private int deferTick = -1;
-
     private int lastRegion = -1;
-
-
-
-
     public cSotetseg(Client client, cLogger clog, cTimersConfig config)
     {
         super(client, clog, config);

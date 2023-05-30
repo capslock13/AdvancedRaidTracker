@@ -1,27 +1,20 @@
 package com.cTimers.panelcomponents;
-
-import com.cTimers.cRoomData;
-import com.cTimers.filters.cFilter;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 
 public class cButtonEditorFilterData extends DefaultCellEditor
 {
     protected JButton button;
     private String label;
     private boolean isPushed;
-    private ArrayList<cFilter> filters;
     private cFilteredRaidsFrame frame;
     int row;
 
     public cButtonEditorFilterData(JCheckBox checkBox, cFilteredRaidsFrame raidsFrame)
     {
         super(checkBox);
-        //this.filters = filters;
         frame = raidsFrame;
         button = new JButton();
         button.setOpaque(true);

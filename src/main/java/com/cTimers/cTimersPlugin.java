@@ -48,8 +48,6 @@ import static com.cTimers.constants.LogID.*;
 )
 public class cTimersPlugin extends Plugin
 {
-    private cTimersPanelPrimary timersPanelPrimary;
-
     private NavigationButton navButtonPrimary;
     private cLogger clog;
 
@@ -57,6 +55,10 @@ public class cTimersPlugin extends Plugin
 
     @Inject
     private cTimersConfig config;
+
+    public cTimersPlugin() {
+    }
+
     @Provides
     cTimersConfig getConfig(ConfigManager configManager)
     {
@@ -92,17 +94,10 @@ public class cTimersPlugin extends Plugin
     private final int XARPUS_REGION = 12612;
     private final int VERZIK_REGION = 12611;
 
-    private final int[] theatreIDs = {8360, 8361, 8362, 8363, 8364, 8365, 8359, 8355, 8356, 8357, 8387, 8388, 8338, 8339, 8340, 8341, 8369, 8370, 8371, 8372, 8373, 8374, 8375};
-
     private boolean inTheatre;
     private boolean wasInTheatre;
     private cRoom currentRoom;
     int deferredTick;
-    private boolean flagPlayer = false;
-    private int mode = -1;
-    private final int REGULAR_TOB = 0;
-    private final int STORY_TOB = 1;
-    private final int HARD_TOB = 2;
     private ArrayList<String> currentPlayers;
     private boolean checkDefer = false;
     public static int scale = -1;
@@ -112,7 +107,6 @@ public class cTimersPlugin extends Plugin
 
     @Inject
     private EventBus eventBus;
-
 
     @Override
     protected void shutDown()
@@ -126,7 +120,7 @@ public class cTimersPlugin extends Plugin
     {
         super.startUp();
 
-        timersPanelPrimary = injector.getInstance(cTimersPanelPrimary.class);
+        cTimersPanelPrimary timersPanelPrimary = injector.getInstance(cTimersPanelPrimary.class);
         partyIntact = false;
 
 

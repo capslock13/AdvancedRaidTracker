@@ -2,14 +2,13 @@ package com.cTimers.panelcomponents;
 
 import com.cTimers.cRoomData;
 import com.cTimers.utility.cDataPoint;
-
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
 public class cStatisticTab extends JPanel
 {
-    private ArrayList<cStatisticRoomPanel> panels;
+    private final ArrayList<cStatisticRoomPanel> panels;
     cDataPoint.rooms room;
     ArrayList<cRoomData> data;
     public cStatisticTab(ArrayList<cRoomData> data, cDataPoint.rooms room)
@@ -36,7 +35,6 @@ public class cStatisticTab extends JPanel
         validate();
         repaint();
     }
-
     public void updateTab(ArrayList<cRoomData> data)
     {
         for(cStatisticRoomPanel roomPanel : panels)

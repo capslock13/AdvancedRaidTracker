@@ -70,10 +70,6 @@ public class cLogger
     {
         if(config.writeToLog())
         {
-            if (cDebugHelper.writeKeyMessagesToChatbox)
-            {
-                client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", msg, "");
-            }
             try
             {
                 File logFile = new File(System.getProperty("user.home").replace("\\", "/") + "/.runelite/logs/tobdata.log");

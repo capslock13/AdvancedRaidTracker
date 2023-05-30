@@ -1,7 +1,4 @@
 package com.cTimers.utility.nyloutility;
-
-import net.runelite.api.NPC;
-
 public class cNylocas
 {
     enum cNylocasType
@@ -47,13 +44,6 @@ public class cNylocas
         SOUTH_BIG,
         WEST_BIG,
         ROOM
-    }
-
-    enum cNyloStyle
-    {
-        MELEE,
-        RANGE,
-        MAGE
     }
 
     public cNylocas(cNyloPosition position, cNylocasType type, boolean aggro)
@@ -105,6 +95,5 @@ public class cNylocas
 
     public cNyloPosition position;
     public cNylocasType type;
-    public NPC npc;
     public boolean aggro;
 }

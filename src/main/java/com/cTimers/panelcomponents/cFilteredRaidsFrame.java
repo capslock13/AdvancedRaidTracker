@@ -2,12 +2,14 @@ package com.cTimers.panelcomponents;
 
 
 import com.cTimers.filters.*;
+import com.cTimers.jdatepicker.JDatePanel;
+import com.cTimers.jdatepicker.JDatePicker;
+import com.cTimers.jdatepicker.UtilDateModel;
 import com.cTimers.utility.cDataPoint;
 import lombok.extern.slf4j.Slf4j;
 import com.cTimers.cRoomData;
 import com.cTimers.utility.RoomUtil;
 import com.cTimers.utility.cStatisticGatherer;
-
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
@@ -21,11 +23,10 @@ import java.util.*;
 public class cFilteredRaidsFrame extends cFrame
 {
     private final ArrayList<Integer> filteredIndices;
-
     private JTable comparisonTable;
     private final ArrayList<ArrayList<cRoomData>> comparisons;
 
-    private final ArrayList<cImplicitFilter> activeFilters;
+    public ArrayList<cImplicitFilter> activeFilters;
     private final JLabel raidsFoundLabel = new JLabel("", SwingConstants.LEFT);
     private final JLabel completionsFound = new JLabel("", SwingConstants.LEFT);
     private JComboBox<String> viewByRaidComboBox;
@@ -52,17 +53,17 @@ public class cFilteredRaidsFrame extends cFrame
     private final JLabel overallPanelBloatMinimum = new JLabel("", SwingConstants.RIGHT);
     private final JLabel overallPanelNyloMinimum = new JLabel("", SwingConstants.RIGHT);
     private final JLabel overallPanelSoteMinimum = new JLabel("", SwingConstants.RIGHT);
-    private JLabel overallPanelXarpusMinimum = new JLabel("", SwingConstants.RIGHT);
-    private JLabel overallPanelVerzikMinimum = new JLabel("", SwingConstants.RIGHT);
-    private JLabel overallPanelOverallMinimum = new JLabel("", SwingConstants.RIGHT);
+    private final JLabel overallPanelXarpusMinimum = new JLabel("", SwingConstants.RIGHT);
+    private final JLabel overallPanelVerzikMinimum = new JLabel("", SwingConstants.RIGHT);
+    private final JLabel overallPanelOverallMinimum = new JLabel("", SwingConstants.RIGHT);
 
-    private JLabel overallPanelMaidenMaximum = new JLabel("", SwingConstants.RIGHT);
-    private JLabel overallPanelBloatMaximum = new JLabel("", SwingConstants.RIGHT);
-    private JLabel overallPanelNyloMaximum = new JLabel("", SwingConstants.RIGHT);
-    private JLabel overallPanelSoteMaximum = new JLabel("", SwingConstants.RIGHT);
-    private JLabel overallPanelXarpusMaximum = new JLabel("", SwingConstants.RIGHT);
-    private JLabel overallPanelVerzikMaximum = new JLabel("", SwingConstants.RIGHT);
-    private JLabel overallPanelOverallMaximum = new JLabel("", SwingConstants.RIGHT);
+    private final JLabel overallPanelMaidenMaximum = new JLabel("", SwingConstants.RIGHT);
+    private final JLabel overallPanelBloatMaximum = new JLabel("", SwingConstants.RIGHT);
+    private final JLabel overallPanelNyloMaximum = new JLabel("", SwingConstants.RIGHT);
+    private final JLabel overallPanelSoteMaximum = new JLabel("", SwingConstants.RIGHT);
+    private final JLabel overallPanelXarpusMaximum = new JLabel("", SwingConstants.RIGHT);
+    private final JLabel overallPanelVerzikMaximum = new JLabel("", SwingConstants.RIGHT);
+    private final JLabel overallPanelOverallMaximum = new JLabel("", SwingConstants.RIGHT);
 
     private final JLabel resultsAverage = new JLabel("", SwingConstants.RIGHT);
     private JLabel resultsMedian = new JLabel("", SwingConstants.RIGHT);
@@ -86,7 +87,6 @@ public class cFilteredRaidsFrame extends cFrame
     JCheckBox filterPartialData;
     JCheckBox filterPartialOnly;
     JTable table;
-    private ArrayList<cRoomData> filteredData;
     JPanel container;
     private JPanel filterTableContainer;
     public ArrayList<cRoomData> currentData;
@@ -117,8 +117,6 @@ public class cFilteredRaidsFrame extends cFrame
     public cFilteredRaidsFrame()
     {
         filteredIndices = new ArrayList<>();
-        filteredData = new ArrayList<>();
-        ArrayList<Integer> comparisonOptions = new ArrayList<>();
         comparisons = new ArrayList<>();
         activeFilters = new ArrayList<>();
         this.setPreferredSize(new Dimension(1200,720));
@@ -1416,19 +1414,24 @@ public class cFilteredRaidsFrame extends cFrame
         dateFilterValue = new JTextField();
         dateFilterOperator.setMaximumSize(new Dimension(Integer.MAX_VALUE, dateFilterValue.getPreferredSize().height));
 
-        JButton datePickerLauncher = new JButton("...");
+        UtilDateModel model = new UtilDateModel();
+        JDatePicker datePicker = new JDatePicker(model);
+
         JButton dateFilterAdd = new JButton("Add");
         dateFilterAdd.addActionListener(
                 al->
                 {
-                    String filterStr = "Raid was "; //TODO dateselector monkas
+                    String filterStr = "Raid was " + dateFilterOperator.getSelectedItem().toString() + " " + datePicker.getModel().getValue().toString(); //TODO dateselector monkas
+                    activeFilters.add(new cImplicitFilter(new cFilterDate((Date)datePicker.getModel().getValue(), dateFilterOperator.getSelectedIndex(), filterStr)));
+                    dateFilterValue.setText((datePicker.getModel().getValue()).toString());
+                    updateFilterTable();
                 });
 
         dateFilterValue.setMaximumSize(new Dimension(Integer.MAX_VALUE, dateFilterAdd.getPreferredSize().height));
         dateFilterValue.setPreferredSize(new Dimension(90, dateFilterAdd.getPreferredSize().height));
 
-        datePickerLauncher.setMaximumSize(new Dimension(Integer.MAX_VALUE, dateFilterAdd.getPreferredSize().height));
-        datePickerLauncher.setPreferredSize(new Dimension(30, dateFilterAdd.getPreferredSize().height));
+        //datePicker.setMaximumSize(new Dimension(Integer.MAX_VALUE, dateFilterAdd.getPreferredSize().height));
+        //datePicker.setPreferredSize(new Dimension(30, dateFilterAdd.getPreferredSize().height));
 
         dateFilterAdd.setMaximumSize(new Dimension(Integer.MAX_VALUE, dateFilterAdd.getPreferredSize().height));
         dateFilterAdd.setPreferredSize(new Dimension(55, dateFilterAdd.getPreferredSize().height));
@@ -1440,11 +1443,12 @@ public class cFilteredRaidsFrame extends cFrame
         dateBottomRow.setLayout(new BoxLayout(dateBottomRow, BoxLayout.X_AXIS));
 
         dateTopRow.add(dateFilterOperator);
-        dateBottomRow.add(dateFilterValue);
-        dateBottomRow.add(Box.createRigidArea(new Dimension(2, 2)));
-        dateBottomRow.add(datePickerLauncher);
-        dateBottomRow.add(Box.createRigidArea(new Dimension(2, 2)));
-        dateBottomRow.add(dateFilterAdd);
+        dateTopRow.add(Box.createRigidArea(new Dimension(2, 2)));
+        dateTopRow.add(dateFilterAdd);
+        //dateBottomRow.add(dateFilterValue);
+        dateBottomRow.add(datePicker);
+        //dateBottomRow.add(Box.createRigidArea(new Dimension(2, 2)));
+        //dateBottomRow.add(dateFilterAdd);
         filterDatePanel.setLayout(new BoxLayout(filterDatePanel, BoxLayout.Y_AXIS));
         filterDatePanel.add(dateTopRow);
         filterDatePanel.add(Box.createRigidArea(new Dimension(5, 5)));
@@ -1624,13 +1628,14 @@ public class cFilteredRaidsFrame extends cFrame
         saveFiltersButton.addActionListener(
                 al->
                 {
-
+                    cSaveFilterFrame saveFilter = new cSaveFilterFrame(activeFilters);
+                    saveFilter.open();
                 });
         JButton loadFiltersButton = new JButton("Load");
         loadFiltersButton.addActionListener(
                 al->
                 {
-
+                   new cLoadFilterFrame(this).open();
                 });
         JButton clearFiltersButton = new JButton("Clear");
         clearFiltersButton.addActionListener(
@@ -1639,7 +1644,10 @@ public class cFilteredRaidsFrame extends cFrame
                     activeFilters.clear();
                     updateFilterTable();
                 });
-        filterOptions.setLayout(new GridLayout(2,2));
+        GridLayout layout = new GridLayout(2, 2);
+        layout.setHgap(2);
+        layout.setVgap(2);
+        filterOptions.setLayout(layout);
 
         filterOptions.add(saveFiltersButton);
         filterOptions.add(loadFiltersButton);
@@ -1745,7 +1753,7 @@ public class cFilteredRaidsFrame extends cFrame
         comparisonTable.validate();
         comparisonTable.repaint();
     }
-    private void updateFilterTable()
+    public void updateFilterTable()
     {
         String[] columnNames = {"Filter Descriptions", ""};
         ArrayList<Object[]> tableData = new ArrayList<>();

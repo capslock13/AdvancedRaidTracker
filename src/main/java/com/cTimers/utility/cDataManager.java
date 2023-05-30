@@ -1,7 +1,5 @@
 package com.cTimers.utility;
 
-import java.util.ArrayList;
-
 public class cDataManager
 {
 

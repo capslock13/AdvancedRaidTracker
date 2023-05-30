@@ -10,9 +10,7 @@ import java.util.Calendar;
 
 public class cViewRaidFrame extends cFrame
 {
-
     String INCOMPLETE_MARKER = "-";
-
     public cViewRaidFrame(cRoomData data)
     {
         String red = "<html><font color='#FF0000'>";
@@ -26,6 +24,7 @@ public class cViewRaidFrame extends cFrame
         setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
 
         JPanel thisSubPanel = new JPanel();
+        //thisSubPanel.setMinimumSize(new Dimension(400,400));
         thisSubPanel.setLayout(new GridLayout(2, 3));
 
         String maidenColor = (data.maidenTimeAccurate) ? green : (data.maidenStartAccurate || data.maidenEndAccurate) ? blue : red;
@@ -67,7 +66,7 @@ public class cViewRaidFrame extends cFrame
         verzikPanel.setBorder(BorderFactory.createTitledBorder(verzikColor + "Verzik"));
 
         JPanel maidenSubPanel = new JPanel();
-        GridLayout gl = new GridLayout(8, 2);
+        GridLayout gl = new GridLayout(10, 2);
         maidenSubPanel.setLayout(gl);
 
         maidenSubPanel.add(new JLabel(maidenBodyColor + "Bloods"));
@@ -78,13 +77,13 @@ public class cViewRaidFrame extends cFrame
         maidenSubPanel.add(new JLabel(maidenBodyColor+((data.maidenDefenseAccurate) ? data.getValue(cDataPoint.MAIDEN_DEFENSE) : INCOMPLETE_MARKER)));
 
         maidenSubPanel.add(new JLabel(maidenBodyColor+"Crabs leaked"));
-        maidenSubPanel.add(new JLabel(maidenBodyColor+data.getValue(cDataPoint.MAIDEN_CRABS_LEAKED) + ", HP: " + data.maidenHeal));
+        maidenSubPanel.add(new JLabel(maidenBodyColor+data.getValue(cDataPoint.MAIDEN_CRABS_LEAKED) + ", HP: " + data.getValue(cDataPoint.MAIDEN_HP_HEALED)));
 
-        //maidenSubPanel.add(new JLabel(maidenBodyColor+"100% Crabs leaked"));
-        //maidenSubPanel.add(new JLabel(maidenBodyColor+data.getMaidenCrabsLeakedFullHP));
+        maidenSubPanel.add(new JLabel(maidenBodyColor+"100% leaked"));
+        maidenSubPanel.add(new JLabel(maidenBodyColor+data.getValue(cDataPoint.MAIDEN_CRABS_LEAKED_FULL_HP)));
 
-        //maidenSubPanel.add(new JLabel(maidenBodyColor+"Scuffed?"));
-        //maidenSubPanel.add(new JLabel(maidenBodyColor+ ((data.maidenScuffed) ? data.firstMaidenCrabScuffed : "No")));
+        maidenSubPanel.add(new JLabel(maidenBodyColor+"Scuffed?"));
+        maidenSubPanel.add(new JLabel(maidenBodyColor+ ((data.maidenScuffed) ? data.firstMaidenCrabScuffed : "No")));
 
         maidenSubPanel.add(new JLabel(maidenBodyColor+"Deaths"));
         maidenSubPanel.add(new JLabel(maidenBodyColor+data.getValue(cDataPoint.MAIDEN_DEATHS)));

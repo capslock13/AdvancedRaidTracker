@@ -9,21 +9,6 @@ public class cFilterOtherInt extends cFilterCondition
     int qualifier;
     int value;
     public String stringValue;
-    /*public cFilterOtherInt(int param, int qualifier, int value)
-    {
-        this.param = param;
-        this.qualifier = qualifier;
-        this.value = value;
-    }
-
-    /*public cFilterOtherInt(int param, int qualifier, int value, String val)
-    {
-        this.param = param;
-        this.qualifier = qualifier;
-        this.value = value;
-        stringValue = val;
-    }*/
-
     public cFilterOtherInt(cDataPoint param, int qualifier, int value, String val)
     {
         this.param = param;
@@ -31,7 +16,11 @@ public class cFilterOtherInt extends cFilterCondition
         this.value = value;
         stringValue = val;
     }
-
+    @Override
+    public String toString()
+    {
+        return stringValue;
+    }
     @Override
     public boolean evaluate(cRoomData data)
     {
@@ -58,5 +47,9 @@ public class cFilterOtherInt extends cFilterCondition
         {
             return false;
         }
+    }
+    public String getFilterCSV()
+    {
+        return "1-" + param.name + "-" + qualifier + "-" + value + "-" + stringValue;
     }
 }

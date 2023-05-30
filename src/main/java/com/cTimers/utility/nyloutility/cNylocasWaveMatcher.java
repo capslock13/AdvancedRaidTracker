@@ -12,7 +12,6 @@ public class cNylocasWaveMatcher
     private static boolean wave17Matched = false;
     private static boolean wave26Matched = false;
     private static boolean wave28Matched = false;
-
     private static cNylocasWave lastWave = null;
 
     public static boolean isWave(ArrayList<cNylocasShell> nylos)

@@ -3,27 +3,16 @@ package com.cTimers.filters;
 import com.cTimers.filters.cFilterCondition;
 import lombok.extern.slf4j.Slf4j;
 import com.cTimers.cRoomData;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 @Slf4j
 public class cFilterPlayers extends cFilterCondition
 {
-
     private ArrayList<String> players;
     private int operator;
-
     private String stringValue;
-    public cFilterPlayers(String players, int operator)
-    {
-        this.players = new ArrayList<String>();
-        String[] playerNames = players.split(",");
-        for (String playerName : playerNames) {
-            this.players.add(playerName.replaceAll(String.valueOf((char) 160), String.valueOf((char) 32)).toLowerCase());
-        }
-        this.operator = operator;
-    }
-
     public cFilterPlayers(String players, int operator, String val)
     {
         this.players = new ArrayList<String>();
@@ -108,5 +97,17 @@ public class cFilterPlayers extends cFilterCondition
                 return true;
         }
         return false;
+    }
+
+    public String getFilterCSV()
+    {
+        String playerStr = "";
+        for(String s : players)
+        {
+            playerStr += s;
+            playerStr += ",";
+        }
+        playerStr = StringUtils.substring(playerStr, 0, playerStr.length()-1);
+        return "2-" + operator + "-" + playerStr + "-" + stringValue;
     }
 }

@@ -25,18 +25,14 @@ import static com.cTimers.utility.cRoomState.NyloRoomState.*;
 @Slf4j
 public class cNylo extends cRoom
 {
-
     public cRoomState.NyloRoomState roomState;
-
     private final ArrayList<cNylocasShell> buildWave;
-
     public cNylo(Client client, cLogger clog, cTimersConfig config)
     {
         super(client, clog, config);
         buildWave = new ArrayList<>();
         nylosAlive = new ArrayList<>();
     }
-
     public static int instanceStart = -1;
     private int pillarsSpawnedTick = -1;
     private int instanceReference = -1;
@@ -47,7 +43,6 @@ public class cNylo extends cRoom
     private final ArrayList<NPC> nylosAlive;
     int currentWave = 0;
     boolean hard = false;
-
     public void reset()
     {
         pillarsSpawnedTick = -1;
@@ -61,9 +56,7 @@ public class cNylo extends cRoom
         wave31 = -1;
         super.reset();
     }
-
     private int expectedWaveTick;
-
     public void updateGameTick(GameTick event)
     {
         if(buildWave.size() != 0)
@@ -97,40 +90,6 @@ public class cNylo extends cRoom
             expectedWaveTick += 4;
         }
     }
-
-    public int getAliveNylocasCount()
-    {
-        int count = 0;
-        for(NPC n : nylosAlive)
-        {
-            if(n.getId() > 10802 && n.getId() < 10807)
-            {
-                count += 3;
-            }
-            else
-            {
-                count++;
-            }
-        }
-        return count;
-    }
-
-    public void updateAnimationChanged(AnimationChanged event)
-    {
-        int animation = event.getActor().getAnimation();
-        if(animation == 7998 || animation == 7988 || animation == 8005)
-        {
-            if(event.getActor() instanceof NPC)
-            {
-                NPC npc = (NPC) event.getActor();
-                if(npc.getId() == 8355 || npc.getId() == 8357 || npc.getId() == 8356)
-                {
-                    bossKilled();
-                }
-            }
-        }
-    }
-
     public void updateNpcSpawned(NpcSpawned event)
     {
         switch(event.getNpc().getId())
@@ -211,7 +170,6 @@ public class cNylo extends cRoom
             case 8357:
             {
                 bossDefinitelyKilled();
-                //TODO handle boss not killed correctly
             }
             break;
             case 8342:
@@ -330,17 +288,4 @@ public class cNylo extends cRoom
         sendTimeMessage("Wave 'Nylocas boss' complete! Duration: ", deathTick-pillarsSpawnedTick+offset1,deathTick+offset1-bossSpawn, false);
         clog.write(NYLO_DESPAWNED, ""+(deathTick-pillarsSpawnedTick+offset1));
     }
-
-    private void bossKilled()
-    {
-        /*roomState = cRoomState.NyloRoomState.FINISHED;
-        int deathTick = client.getTickCount()+5;
-        int offset1 = 4-((deathTick - instanceReference) % 4);
-        if((4-((deathTick - instanceReference) % 4) == 4))
-        {
-            offset1 = 0;
-        }
-        sendTimeMessage("Wave 'Nylocas boss' complete! Duration: ", deathTick+offset1-bossSpawn, deathTick-pillarsSpawnedTick+offset1, false);*/
-    }
-
 }

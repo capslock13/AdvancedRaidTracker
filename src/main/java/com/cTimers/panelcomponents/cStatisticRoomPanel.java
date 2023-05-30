@@ -20,14 +20,13 @@ public class cStatisticRoomPanel extends JPanel
         MAXIMUM
     }
 
-    private ArrayList<JLabel> timeLabels;
-    private ArrayList<String> labelNames;
-    private JPanel subPanel;
-    private stat type;
+    private final ArrayList<JLabel> timeLabels;
+    private final ArrayList<String> labelNames;
+    private final stat type;
     public cStatisticRoomPanel(ArrayList<cRoomData> data, stat type, cDataPoint.rooms room)
     {
         super();
-        subPanel = new JPanel();
+        JPanel subPanel = new JPanel();
         this.type = type;
         timeLabels = new ArrayList<>();
         ArrayList<JLabel> nameLabels = new ArrayList<>();

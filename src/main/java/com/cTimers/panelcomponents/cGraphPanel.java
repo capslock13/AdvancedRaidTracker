@@ -38,7 +38,6 @@ public class cGraphPanel extends JPanel implements MouseMotionListener
 
     private cBounds activeBound = new cBounds(-1, -1, -1, -1);
 
-    private Point activePoint;
     private ArrayList<cBounds> bounds;
     private Color gradientStart;
     private Color gradientEnd;

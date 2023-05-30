@@ -3,37 +3,27 @@ package com.cTimers.ui;
 import com.cTimers.cRoomData;
 import com.cTimers.cTimersPlugin;
 import com.cTimers.panelcomponents.cFilteredRaidsFrame;
-import com.cTimers.utility.cDebugHelper;
 import com.google.inject.Inject;
 import net.runelite.client.ui.PluginPanel;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
-import java.io.FileInputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 
 public class cTimersPanelPrimary extends PluginPanel
 {
-    private JButton viewRaidsButton;
-
-    private JButton refreshRaidsButton;
-
     private JLabel raidCountLabel;
-
-    private JPanel primaryContainer;
-
     private ArrayList<cRoomData> raidsData;
 
-    private cFilteredRaidsFrame raids;
+    private final cFilteredRaidsFrame raids;
 
-    private final cTimersPlugin plugin;
     @Inject
     cTimersPanelPrimary(cTimersPlugin plugin)
     {
-        this.plugin = plugin;
         raidsData = getAllRaids();
         raids = new cFilteredRaidsFrame();
         buildComponents();
@@ -44,9 +34,9 @@ public class cTimersPanelPrimary extends PluginPanel
         ArrayList<cRoomData> raids = new ArrayList<>();
         try
         {
-            String path = (cDebugHelper.raidDataSource == cDebugHelper.PRIMARY_FILE) ? "/.runelite/logs/tobdata.log" : "/.runelite/logs/altdata.log";
+            String path = "/.runelite/logs/tobdata.log";
             File logFile = new File(System.getProperty("user.home").replace("\\", "/") + path);
-            Scanner logReader = new Scanner(new FileInputStream(logFile));
+            Scanner logReader = new Scanner(Files.newInputStream(logFile.toPath()));
             ArrayList<String> raid = new ArrayList<>();
             boolean raidActive = false;
             while(logReader.hasNextLine())
@@ -97,11 +87,11 @@ public class cTimersPanelPrimary extends PluginPanel
 
     private void buildComponents()
     {
-        primaryContainer = new JPanel();
+        JPanel primaryContainer = new JPanel();
         primaryContainer.setLayout(new GridLayout(3, 1));
 
-        viewRaidsButton = new JButton("View Raids");
-        refreshRaidsButton = new JButton("Refresh Raids");
+        JButton viewRaidsButton = new JButton("View Raids");
+        JButton refreshRaidsButton = new JButton("Refresh Raids");
 
         viewRaidsButton.addActionListener(
                 al->
@@ -122,8 +112,6 @@ public class cTimersPanelPrimary extends PluginPanel
 
         raidCountLabel = new JLabel("", SwingConstants.CENTER);
         updateRaidCountLabel();
-
-
         primaryContainer.add(raidCountLabel);
         primaryContainer.add(viewRaidsButton);
         primaryContainer.add(refreshRaidsButton);

@@ -26,6 +26,7 @@ public class cFilteredRaidsFrame extends cFrame
     private JTable comparisonTable;
     private final ArrayList<ArrayList<cRoomData>> comparisons;
 
+    private final JTabbedPane tabbedPane = new JTabbedPane();
     public ArrayList<cImplicitFilter> activeFilters;
     private final JLabel raidsFoundLabel = new JLabel("", SwingConstants.LEFT);
     private final JLabel completionsFound = new JLabel("", SwingConstants.LEFT);
@@ -124,192 +125,20 @@ public class cFilteredRaidsFrame extends cFrame
 
     public void updateCustomStats(ArrayList<cRoomData> raids)
     {
-        //TODO: REPLACE ENTIRELY
-        ArrayList<Integer> dataForCalc = new ArrayList<>();
-        for(cRoomData raid : raids)
-        {
-            if(statisticsBox.getSelectedIndex() < 6)
-            {
-                if(!raid.maidenEndAccurate || !raid.maidenStartAccurate)
-                {
-                    continue;
-                }
-            }
-            else if(statisticsBox.getSelectedIndex() < 13)
-            {
-                if(!raid.bloatStartAccurate || !raid.bloatEndAccurate)
-                {
-                    continue;
-                }
-            }
-            else if(statisticsBox.getSelectedIndex() < 22)
-            {
-                if(!raid.nyloStartAccurate || !raid.nyloEndAccurate)
-                {
-                    continue;
-                }
-            }
-            else if(statisticsBox.getSelectedIndex() < 27)
-            {
-                if(!raid.soteEndAccurate || !raid.soteStartAccurate)
-                {
-                    continue;
-                }
-            }
-            else if(statisticsBox.getSelectedIndex() < 30)
-            {
-                if(!raid.xarpEndAccurate || !raid.xarpStartAccurate)
-                {
-                    continue;
-                }
-            }
-            else
-            {
-                if(!raid.verzikStartAccurate || !raid.verzikEndAccurate)
-                {
-                    continue;
-                }
-            }
-            switch(statisticsBox.getSelectedIndex())
-            {
-               /* case 1:
-                    dataForCalc.add(raid.maidenBloodsSpawned);
-                    break;
-                case 2:
-                    dataForCalc.add(raid.maidenDefense);
-                    break;
-                case 3:
-                    dataForCalc.add(raid.maidenCrabsLeaked);
-                    break;
-                case 4:
-                    dataForCalc.add(raid.getMaidenCrabsLeakedFullHP);
-                    break;
-                case 5:
-                    dataForCalc.add(raid.maidenDeaths);
-                    break;
-                case 6:
-                    dataForCalc.add(raid.bloatDowns);
-                    break;
-                case 7:
-                    dataForCalc.add(raid.bloatFirstWalkDeaths);
-                    break;
-                case 8:
-                    dataForCalc.add(raid.bloatDeaths);
-                    break;
-                case 9:
-                    dataForCalc.add(raid.bloatfirstWalkDefense);
-                    break;
-                case 10:
-                    dataForCalc.add(raid.bloatScytheBeforeFirstDown);
-                    break;
-                case 11:
-                    dataForCalc.add(raid.bloatHPAtDown);
-                    break;
-                case 12:
-                    dataForCalc.add(raid.bloatFirstDownSplit);
-                    break;
-                case 13:
-                    dataForCalc.add(raid.nyloStallsPre20);
-                    break;
-                case 14:
-                    dataForCalc.add(raid.nyloStallsPost20);
-                    break;
-                case 15:
-                    dataForCalc.add(raid.nyloStallsTotal);
-                    break;
-                case 16:
-                    dataForCalc.add(raid.nyloMeleeRotations);
-                    break;
-                case 17:
-                    dataForCalc.add(raid.nyloRangeRotations);
-                    break;
-                case 18:
-                    dataForCalc.add(raid.nyloMageRotations);
-                    break;
-                case 19:
-                    dataForCalc.add(raid.nyloRangeRotations+raid.nyloMageRotations+raid.nyloMeleeRotations);
-                    break;
-                case 20:
-                    dataForCalc.add(50-raid.nyloDefenseReduction);
-                    break;
-                case 21:
-                    dataForCalc.add(raid.nyloDeaths);
-                    break;
-                case 22:
-                    dataForCalc.add(raid.soteSpecsP1);
-                    break;
-                case 23:
-                    dataForCalc.add(raid.soteSpecsP2);
-                    break;
-                case 24:
-                    dataForCalc.add(raid.soteSpecsP3);
-                    break;
-                case 25:
-                    dataForCalc.add(raid.soteSpecsTotal);
-                    break;
-                case 26:
-                    dataForCalc.add(raid.soteDeaths);
-                    break;
-                case 27:
-                    dataForCalc.add(raid.xarpDefense);
-                    break;
-                case 28:
-                    dataForCalc.add(raid.xarpDeaths);
-                    break;
-                case 29:
-                    dataForCalc.add(raid.xarpHealing);
-                    break;
-                case 30:
-                    dataForCalc.add(raid.verzikBounces);
-                    break;
-                case 31:
-                    dataForCalc.add(raid.verzikDeaths);
-                    break;
-                case 32:
-                    dataForCalc.add(raid.verzikCrabsSpawned);
-                    break;
-                default:
-                    break;*/
-            }
-        }
-        if(dataForCalc.size() == 0)
-        {
-            return;
-        }
-        String avgStr = "" + +cStatisticGatherer.getGenericAverage(dataForCalc);
-        if(avgStr.length() > 5)
-        {
-            avgStr = avgStr.substring(0, 5);
-        }
+        cDataPoint dataPoint = cDataPoint.values()[statisticsBox.getSelectedIndex()];
+        boolean time = dataPoint.type == cDataPoint.types.TIME;
 
-        String medStr = "" + +cStatisticGatherer.getGenericMedian(dataForCalc);
-        if(medStr.length() > 5)
-        {
-            medStr = medStr.substring(0, 5);
-        }
+        double avg = cStatisticGatherer.getGenericAverage(raids, dataPoint);
+        double med = cStatisticGatherer.getGenericMedian(raids,dataPoint);
+        double mod = cStatisticGatherer.getGenericMode(raids,dataPoint);
+        double min = cStatisticGatherer.getGenericMin(raids,dataPoint);
+        double max = cStatisticGatherer.getGenericMax(raids,dataPoint);
 
-        String modStr = "" + +cStatisticGatherer.getGenericMode(dataForCalc);
-        if(modStr.length() > 5)
-        {
-            modStr = modStr.substring(0, 5);
-        }
-
-        String minStr = "" + +cStatisticGatherer.getGenericMin(dataForCalc);
-        if(minStr.length() > 5)
-        {
-            minStr = minStr.substring(0, 5);
-        }
-
-        String maxStr = "" + +cStatisticGatherer.getGenericMax(dataForCalc);
-        if(maxStr.length() > 5)
-        {
-            maxStr = maxStr.substring(0, 5);
-        }
-        customAverageLabel.setText(avgStr);
-        customMedianLabel.setText(medStr);
-        customModeLabel.setText(modStr);
-        customMinLabel.setText(minStr);
-        customMaxLabel.setText(maxStr);
+        customAverageLabel.setText((time) ? RoomUtil.time(avg) : avg + "");
+        customMedianLabel.setText((time) ? RoomUtil.time(med) : med + "");
+        customModeLabel.setText((time) ? RoomUtil.time(mod) : mod + "");
+        customMinLabel.setText((time) ? RoomUtil.time(min) : min + "");
+        customMaxLabel.setText((time) ? RoomUtil.time(max) : max + "");
     }
 
     private boolean evaluateAllFilters(cRoomData data)
@@ -593,6 +422,7 @@ public class cFilteredRaidsFrame extends cFrame
         updateCustomStats(tableData);
         raidsFoundLabel.setText("Raids Found: " + tableData.size());
         completionsFound.setText("Completions Found: " + completions);
+        updateTabNames(tableData);
 
         String[] columnNames = { "", "Date", "Scale", "Status", viewByRaidComboBox.getSelectedItem().toString(), "Players", "Spectate", "View"};
         ArrayList<Object[]> tableBuilder = new ArrayList<>();
@@ -739,10 +569,56 @@ public class cFilteredRaidsFrame extends cFrame
         else
         {
             raidStatusString = "Completion";
+            if(!data.getOverallTimeAccurate())
+            {
+                raidStatusString += "*";
+            }
         }
         return raidStatusString;
     }
 
+    private void updateTabNames(ArrayList<cRoomData> data)
+    {
+        int maidenCount = 0;
+        int bloatCount = 0;
+        int nyloCount = 0;
+        int soteCount = 0;
+        int xarpCount = 0;
+        int verzikCount = 0;
+        for(cRoomData d : data)
+        {
+            if(d.maidenStartAccurate && d.maidenEndAccurate)
+            {
+                maidenCount++;
+            }
+            if(d.bloatStartAccurate && d.bloatEndAccurate)
+            {
+                bloatCount++;
+            }
+            if(d.nyloStartAccurate && d.nyloEndAccurate)
+            {
+                nyloCount++;
+            }
+            if(d.soteStartAccurate && d.soteEndAccurate)
+            {
+                soteCount++;
+            }
+            if(d.xarpStartAccurate && d.xarpEndAccurate)
+            {
+                xarpCount++;
+            }
+            if(d.verzikStartAccurate && d.verzikEndAccurate)
+            {
+                verzikCount++;
+            }
+        }
+        tabbedPane.setTitleAt(1, "Maiden (" + maidenCount + ")");
+        tabbedPane.setTitleAt(2, "Bloat (" + bloatCount + ")");
+        tabbedPane.setTitleAt(3, "Nylo (" + nyloCount + ")");
+        tabbedPane.setTitleAt(4, "Sotetseg (" + soteCount + ")");
+        tabbedPane.setTitleAt(5, "Xarpus (" + xarpCount + ")");
+        tabbedPane.setTitleAt(6, "Verzik (" + verzikCount + ")");
+    }
 
     public void resizeColumnWidthFilters(JTable table)
     {
@@ -865,8 +741,6 @@ public class cFilteredRaidsFrame extends cFrame
         container = new JPanel();
         container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
 
-        JTabbedPane tabbedPane = new JTabbedPane();
-
         JComponent overallPanel = new JPanel();
         tabbedPane.addTab("Overall", overallPanel);
         overallPanel.setLayout(new GridLayout(2, 3));
@@ -902,43 +776,8 @@ public class cFilteredRaidsFrame extends cFrame
                         "Descending"
                 });
 
-        statisticsBox = new JComboBox(new String[]
-                {
-                        "None",
-                        "Maiden Bloods Spawned",
-                        "Maiden Defense",
-                        "Maiden Crabs Leaked",
-                        "Maiden Crabs Leaked @ 100%",
-                        "Maiden HP Healed from crabs",
-                        "Maiden Deaths",
-                        "Bloat Downs",
-                        "Bloat Deaths During 1st Walk",
-                        "Bloat Deaths Total",
-                        "Bloat Defense 1st Walk",
-                        "Bloat Scythes 1st Walk",
-                        "Bloat HP % After 1st Down",
-                        "Bloat 1st Down Time",
-                        "Nylo precap stalls",
-                        "Nylo postcap stalls",
-                        "Nylo total stalls",
-                        "Nylo Melee Rotations",
-                        "Nylo Range Rotations",
-                        "Nylo Mage Rotations",
-                        "Nylo Total Rotations",
-                        "Nylo Boss Defense",
-                        "Nylo Deaths",
-                        "Sotetseg P1 Hammers",
-                        "Sotetseg P2 Hammers",
-                        "Sotetseg P3 Hammers",
-                        "Sotetseg Total Hammers",
-                        "Sotetseg Deaths",
-                        "Xarpus Defense",
-                        "Xarpus Deaths",
-                        "Xarpus Healing",
-                        "Verzik Bounces",
-                        "Verzik Deaths",
-                        "Verzik Crabs Spawned"
-                });
+        statisticsBox = new JComboBox(cDataPoint.getByNames());
+
 
         statisticsBox.addActionListener(
                 al->
@@ -1421,7 +1260,7 @@ public class cFilteredRaidsFrame extends cFrame
         dateFilterAdd.addActionListener(
                 al->
                 {
-                    String filterStr = "Raid was " + dateFilterOperator.getSelectedItem().toString() + " " + datePicker.getModel().getValue().toString(); //TODO dateselector monkas
+                    String filterStr = "Raid was " + dateFilterOperator.getSelectedItem().toString() + " " + datePicker.getModel().getValue().toString();
                     activeFilters.add(new cImplicitFilter(new cFilterDate((Date)datePicker.getModel().getValue(), dateFilterOperator.getSelectedIndex(), filterStr)));
                     dateFilterValue.setText((datePicker.getModel().getValue()).toString());
                     updateFilterTable();
@@ -1595,7 +1434,7 @@ public class cFilteredRaidsFrame extends cFrame
             }
         });
         JMenuItem exportRaids = new JMenuItem("Export Selected Raids to CSV");
-        JMenuItem filterRaids = new JMenuItem("Manually Filter Selected Raids");
+        JMenuItem filterRaids = new JMenuItem("Filter Selected Raids");
         filterRaids.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e)
@@ -1610,9 +1449,36 @@ public class cFilteredRaidsFrame extends cFrame
             }
         });
 
+        JMenuItem filterExclusiveRaids = new JMenuItem("Filter All Except Selected Raids");
+        filterExclusiveRaids.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                int[] toKeep = table.getSelectedRows();
+                for(int i = 0; i < table.getRowCount(); i++)
+                {
+                    boolean found = false;
+                    for(int j = 0; j < toKeep.length; j++)
+                    {
+                        if(i == toKeep[j])
+                        {
+                            found = true;
+                        }
+                    }
+                    if(!found)
+                    {
+                        filteredIndices.add(Integer.parseInt(table.getModel().getValueAt(i, 0).toString()));
+                    }
+                }
+
+                updateTable();
+            }
+        });
+
         raidPopup.add(exportRaids);
         raidPopup.add(addToComparison);
         raidPopup.add(filterRaids);
+        raidPopup.add(filterExclusiveRaids);
         table.setComponentPopupMenu(raidPopup);
 
         filterTable = new JTable();

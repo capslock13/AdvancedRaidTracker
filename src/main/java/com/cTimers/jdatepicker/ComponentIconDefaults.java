@@ -52,10 +52,6 @@ public final class ComponentIconDefaults {
         return instance;
     }
 
-    public enum Key {
-        // TODO
-    }
-
     private static String CLEAR = "clear.png";
 
     private Icon clearIcon;
@@ -70,7 +66,6 @@ public final class ComponentIconDefaults {
     private Icon popupButtonIcon;
 
     private ComponentIconDefaults() {
-        // TODO consider making all the icons vector images which will scale
         try {
             clearIcon = loadIcon(CLEAR);
             nextMonthIconEnabled = new JNextIcon(4, 7, false, true);

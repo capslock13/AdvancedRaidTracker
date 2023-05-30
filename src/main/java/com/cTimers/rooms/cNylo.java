@@ -86,7 +86,7 @@ public class cNylo extends cRoom
         }
         if(client.getTickCount() == expectedWaveTick && currentWave != 31)
         {
-            clog.write(NYLO_STALL, ""+currentWave, ""+(client.getTickCount()-pillarsSpawnedTick), ""+nylosAlive.size()); //todo hm
+            clog.write(NYLO_STALL, ""+currentWave, ""+(client.getTickCount()-pillarsSpawnedTick), ""+nylosAlive.size());
             expectedWaveTick += 4;
         }
     }
@@ -262,7 +262,6 @@ public class cNylo extends cRoom
         {
             offsetTick = 0;
         }
-       //TODO int estimateBossSpawn = client.getTickCount()-pillarsSpawnedTick+offsetTick+16;
         clog.write(303);
         clog.write(36, ""+(lastDead-pillarsSpawnedTick));
         sendTimeMessage("Wave 'Nylocas waves and cleanup' complete! Duration: ",lastDead-pillarsSpawnedTick, lastDead-wave31);

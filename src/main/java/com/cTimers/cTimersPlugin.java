@@ -582,7 +582,7 @@ public class cTimersPlugin extends Plugin
                 break;
             case 8367:
             {
-                clog.write(BLOOD_SPAWNED, ""+getRoomTime());
+                clog.write(BLOOD_SPAWNED);
                 maiden.updateNpcSpawned(event);
             }
                 break;
@@ -593,12 +593,6 @@ public class cTimersPlugin extends Plugin
                 }
                 break;
         }
-    }
-
-    public int getRoomTime()
-    {
-        //TODO caps???
-        return 0;
     }
 
     @Subscribe

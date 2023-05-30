@@ -12,7 +12,7 @@ import java.util.ArrayList;
 public class cConfirmationDialog extends cFrame
 {
     public cConfirmationDialog(String filterName, ArrayList<cImplicitFilter> filters, JFrame root)
-    { //TODO remove filters delete
+    {
         setTitle("Confirm");
         JPanel panelButtons = new JPanel(new GridLayout(1, 2));
         setLayout(new GridLayout(2, 1));

@@ -419,8 +419,6 @@ public class JDatePanel extends JComponent implements DatePanel {
                 noneLabel.setForeground(getColors().getColor(ComponentColorDefaults.Key.FG_TODAY_SELECTOR_ENABLED));
                 noneLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
                 noneLabel.addMouseListener(internalController);
-                //TODO get the translations for each language before adding this in
-                //noneLabel.setToolTipText(getText(ComponentTextDefaults.CLEAR));
                 noneLabel.setIcon(getIcons().getClearIcon());
             }
             return noneLabel;

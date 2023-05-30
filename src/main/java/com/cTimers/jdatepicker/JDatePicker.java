@@ -161,7 +161,6 @@ public class JDatePicker extends JComponent implements DatePicker {
 
         //Add event listeners
         addHierarchyBoundsListener(internalEventHandler);
-//TODO        addAncestorListener(listener)
         button.addActionListener(internalEventHandler);
         formattedTextField.addPropertyChangeListener("value", internalEventHandler);
         datePanel.addActionListener(internalEventHandler);

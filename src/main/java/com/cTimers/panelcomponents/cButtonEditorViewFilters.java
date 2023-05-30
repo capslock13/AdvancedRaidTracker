@@ -59,7 +59,6 @@ class cButtonEditorViewFilters extends DefaultCellEditor
         {
             cViewFilterFrame frame = new cViewFilterFrame(data.get(row));
             frame.open();
-            //TODO load filter
         }
         isPushed = false;
         return label;

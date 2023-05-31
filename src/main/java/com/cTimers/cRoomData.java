@@ -245,6 +245,8 @@ public class cRoomData
     private ArrayList<String> globalData;
     public ArrayList<String> players;
 
+    public String[] raidDataRaw;
+
 
     enum TobRoom{
         MAIDEN, BLOAT, NYLOCAS, SOTETSEG, XARPUS, VERZIK
@@ -346,7 +348,7 @@ public class cRoomData
     public cRoomData(String[] parameters) throws Exception
     {
         dataManager = new cDataManager();
-
+        raidDataRaw = parameters;
         partyComplete = false;
         maidenDefenseAccurate = false;
         bloatDefenseAccurate = false;

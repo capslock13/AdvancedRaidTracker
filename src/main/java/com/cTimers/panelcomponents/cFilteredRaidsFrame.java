@@ -1434,7 +1434,6 @@ public class cFilteredRaidsFrame extends cFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-
                 ArrayList<cRoomData> rows = new ArrayList<>();
                 int[] toRemove = table.getSelectedRows();
                 for(int i = 0; i < toRemove.length; i++)
@@ -1446,6 +1445,21 @@ public class cFilteredRaidsFrame extends cFrame
             }
         });
         JMenuItem exportRaids = new JMenuItem("Export Selected Raids to CSV");
+        exportRaids.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                ArrayList<cRoomData> rows = new ArrayList<>();
+                int[] toRemove = table.getSelectedRows();
+                for(int i = 0; i < toRemove.length; i++)
+                {
+                    rows.add(currentData.get(Integer.parseInt(table.getModel().getValueAt(toRemove[i], 0).toString())));
+                }
+                new cSaveRaidsFrame(rows).open();
+            }
+        });
+
         JMenuItem filterRaids = new JMenuItem("Filter Selected Raids");
         filterRaids.addActionListener(new ActionListener() {
             @Override

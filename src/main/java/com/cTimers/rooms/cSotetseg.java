@@ -11,18 +11,18 @@ import net.runelite.api.events.NpcSpawned;
 import com.cTimers.utility.cLogger;
 import com.cTimers.utility.cRoomState;
 
+import static com.cTimers.constants.NpcIDs.*;
+
 @Slf4j
 public class cSotetseg extends cRoom
 {
     public cRoomState.SotetsegRoomState roomState = cRoomState.SotetsegRoomState.NOT_STARTED;
-    private boolean chosen = false;
     private int soteEntryTick = -1;
     private int soteFirstMazeStart = -1;
     private int soteSecondMazeStart = -1;
     private int soteFirstMazeEnd = -1;
     private int soteSecondMazeEnd = -1;
     private int soteDeathTick = -1;
-    private int soteEnd = -1;
     private int deferTick = -1;
     private int lastRegion = -1;
     public cSotetseg(Client client, cLogger clog, cTimersConfig config)
@@ -40,16 +40,15 @@ public class cSotetseg extends cRoom
         soteFirstMazeEnd = -1;
         soteSecondMazeEnd = -1;
         soteDeathTick = -1;
-        soteEnd = -1;
         lastRegion = -1;
-        chosen = false;
     }
 
     public void updateNpcSpawned(NpcSpawned event)
     {
-        if(event.getNpc().getId() == 8388)
+        int id = event.getNpc().getId();
+        if(id == SOTETSEG_ACTIVE || id == SOTETSEG_ACTIVE_HM || id == SOTETSEG_ACTIVE_SM)
         {
-            if(lastRegion == 13379)
+            if(lastRegion == SOTETSEG_UNDERWORLD)
             {
                 if(roomState == cRoomState.SotetsegRoomState.MAZE_1)
                 {
@@ -65,7 +64,7 @@ public class cSotetseg extends cRoom
 
     public void updateAnimationChanged(AnimationChanged event)
     {
-        if(event.getActor().getAnimation() == 8140)
+        if(event.getActor().getAnimation() == SOTETSEG_DEATH_ANIMATION)
         {
             endSotetseg();
         }
@@ -76,13 +75,13 @@ public class cSotetseg extends cRoom
         soteEntryTick = client.getTickCount();
         deferTick = soteEntryTick+2;
         roomState = cRoomState.SotetsegRoomState.PHASE_1;
-        clog.write(51);
+        clog.write(LogID.SOTETSEG_STARTED);
     }
 
     public void endSotetseg()
     {
         clog.write(LogID.ACCURATE_SOTE_END);
-        clog.write(57, (client.getTickCount()+3-soteEntryTick)+"");
+        clog.write(LogID.SOTETSEG_ENDED, (client.getTickCount()+3-soteEntryTick)+"");
         soteDeathTick = client.getTickCount()+3;
         roomState = cRoomState.SotetsegRoomState.FINISHED;
         sendTimeMessage("Wave 'Sotetseg phase 3' complete. Duration: ", soteDeathTick-soteEntryTick, soteDeathTick-soteSecondMazeEnd, false);
@@ -91,7 +90,7 @@ public class cSotetseg extends cRoom
     public void startFirstMaze()
     {
         soteFirstMazeStart = client.getTickCount();
-        clog.write(52, (soteFirstMazeStart-soteEntryTick)+"");
+        clog.write(LogID.SOTETSEG_FIRST_MAZE_STARTED, (soteFirstMazeStart-soteEntryTick)+"");
         roomState = cRoomState.SotetsegRoomState.MAZE_1;
         sendTimeMessage("Wave 'Sotetseg phase 1' complete. Duration: ", soteFirstMazeStart-soteEntryTick);
     }
@@ -99,25 +98,25 @@ public class cSotetseg extends cRoom
     public void endFirstMaze()
     {
         soteFirstMazeEnd = client.getTickCount();
-        clog.write(53, (soteFirstMazeEnd-soteEntryTick)+"");
+        clog.write(LogID.SOTETSEG_FIRST_MAZE_ENDED, (soteFirstMazeEnd-soteEntryTick)+"");
         roomState = cRoomState.SotetsegRoomState.PHASE_2;
         sendTimeMessage("Wave 'Sotetseg maze 1' complete. Duration: ", soteFirstMazeEnd-soteEntryTick, soteFirstMazeEnd-soteFirstMazeStart);
-    }
-
-    public void endSecondMaze()
-    {
-        soteSecondMazeEnd = client.getTickCount();
-        clog.write(55, (soteSecondMazeEnd-soteEntryTick)+"");
-        roomState = cRoomState.SotetsegRoomState.PHASE_3;
-        sendTimeMessage("Wave 'Sotetseg maze 2' complete. Duration: ", soteSecondMazeEnd-soteEntryTick, soteSecondMazeEnd-soteSecondMazeStart);
     }
 
     public void startSecondMaze()
     {
         soteSecondMazeStart = client.getTickCount();
-        clog.write(54, (soteSecondMazeStart-soteEntryTick)+"");
+        clog.write(LogID.SOTETSEG_SECOND_MAZE_STARTED, (soteSecondMazeStart-soteEntryTick)+"");
         roomState = cRoomState.SotetsegRoomState.MAZE_2;
         sendTimeMessage("Wave 'Sotetseg phase 2' complete. Duration: ", soteSecondMazeStart-soteEntryTick, soteSecondMazeStart-soteFirstMazeEnd);
+    }
+
+    public void endSecondMaze()
+    {
+        soteSecondMazeEnd = client.getTickCount();
+        clog.write(LogID.SOTETSEG_SECOND_MAZE_ENDED, (soteSecondMazeEnd-soteEntryTick)+"");
+        roomState = cRoomState.SotetsegRoomState.PHASE_3;
+        sendTimeMessage("Wave 'Sotetseg maze 2' complete. Duration: ", soteSecondMazeEnd-soteEntryTick, soteSecondMazeEnd-soteSecondMazeStart);
     }
 
     public void updateGameTick(GameTick event)
@@ -127,19 +126,27 @@ public class cSotetseg extends cRoom
         if(client.getTickCount() == deferTick)
         {
             deferTick = -1;
-            if(client.getVarbitValue(HP_VARBIT) == 1000)
+            if(client.getVarbitValue(HP_VARBIT) == FULL_HP)
             {
-                clog.write(204);
+                clog.write(LogID.ACCURATE_SOTE_START);
             }
         }
     }
 
     public void handleNPCChanged(int id)
     {
-        if(id == 8388)
+        if(id == SOTETSEG_ACTIVE || id == SOTETSEG_ACTIVE_HM || id == SOTETSEG_ACTIVE_SM)
         {
             if(roomState == cRoomState.SotetsegRoomState.NOT_STARTED)
             {
+                if(id == SOTETSEG_ACTIVE_HM)
+                {
+                    clog.write(LogID.IS_HARD_MODE);
+                }
+                else if(id == SOTETSEG_ACTIVE_SM)
+                {
+                    clog.write(LogID.IS_STORY_MODE);
+                }
                 startSotetseg();
             }
             else if(roomState == cRoomState.SotetsegRoomState.MAZE_1)
@@ -151,7 +158,7 @@ public class cSotetseg extends cRoom
                 endSecondMaze();
             }
         }
-        else if(id == 8387)
+        else if(id == SOTETSEG_INACTIVE || id == SOTETSEG_INACTIVE_HM || id == SOTETSEG_INACTIVE_SM)
         {
             if(roomState == cRoomState.SotetsegRoomState.PHASE_1)
             {

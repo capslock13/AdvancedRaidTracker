@@ -24,7 +24,6 @@ public class cVerzik extends cRoom
     private int verzikRedsTick = -1;
     private int verzikP2EndTick = -1;
     private int verzikP3EndTick = -1;
-    private int redTicks = -1;
     public void reset()
     {
         verzikEntryTick = -1;
@@ -32,12 +31,11 @@ public class cVerzik extends cRoom
         verzikRedsTick = -1;
         verzikP2EndTick = -1;
         verzikP3EndTick = -1;
-        redTicks = -1;
     }
 
     public void updateGraphicChanged(GraphicChanged event)
     {
-        if(event.getActor().hasSpotAnim(245))
+        if(event.getActor().hasSpotAnim(VERZIK_BOUNCE_SPOT_ANIMATION))
         {
             clog.write(LogID.VERZIK_BOUNCE);
         }
@@ -45,41 +43,46 @@ public class cVerzik extends cRoom
 
     public void updateAnimationChanged(AnimationChanged event)
     {
-        if(event.getActor().getAnimation() == 8128)
+        if(event.getActor().getAnimation() == VERZIK_BECOMES_SPIDER)
         {
             endP3();
         }
     }
 
-    public void updateGameTick(GameTick event)
-    {
-        if(redTicks != -1)
-        {
-            redTicks--;
-        }
-    }
     public void updateNpcSpawned(NpcSpawned event)
     {
-        if(event.getNpc().getId() == 8385)
+        int id = event.getNpc().getId();
+        if(id == VERZIK_MATOMENOS || id == VERZIK_MATOMENOS_HM || id == VERZIK_MATOMENOS_SM)
         {
             if(roomState != cRoomState.VerzikRoomState.PHASE_2_REDS)
             {
                 procReds();
             }
         }
-        if(event.getNpc().getId() == 8381 || event.getNpc().getId() == 8382 || event.getNpc().getId() == 8383)
+        switch(id)
         {
-            clog.write(78);
+            case VERZIK_MELEE_NYLO:
+            case VERZIK_RANGE_NYLO:
+            case VERZIK_MAGE_NYLO:
+            case VERZIK_MELEE_NYLO_HM:
+            case VERZIK_RANGE_NYLO_HM:
+            case VERZIK_MAGE_NYLO_HM:
+            case VERZIK_MELEE_NYLO_SM:
+            case VERZIK_RANGE_NYLO_SM:
+            case VERZIK_MAGE_NYLO_SM:
+                clog.write(VERZIK_CRAB_SPAWNED);
+                break;
         }
     }
 
     public void updateNpcDespawned(NpcDespawned event)
     {
-        if(event.getNpc().getId() == 8370)
+        int id = event.getNpc().getId();
+        if(id == VERZIK_P1 || id == VERZIK_P1_HM || id == VERZIK_P1_SM)
         {
             endP1();
         }
-        else if(event.getNpc().getId() == 8372)
+        else if(id == VERZIK_P2 || id == VERZIK_P2_HM || id == VERZIK_P2_SM)
         {
             endP2();
         }
@@ -87,19 +90,27 @@ public class cVerzik extends cRoom
 
     public void handleNPCChanged(int id)
     {
-        if(id == VERZIK_P1)
+        if(id == VERZIK_P1 || id == VERZIK_P1_HM || id == VERZIK_P1_SM)
         {
+            if(id == VERZIK_P1_HM)
+            {
+                clog.write(IS_HARD_MODE);
+            }
+            else if(id == VERZIK_P1_SM)
+            {
+                clog.write(IS_STORY_MODE);
+            }
             startVerzik();
         }
-        else if(id == VERZIK_P2)
+        else if(id == VERZIK_P2 || id == VERZIK_P2_HM || id == VERZIK_P2_SM)
         {
             endP1();
         }
-        else if (id == VERZIK_P3)
+        else if (id == VERZIK_P3 || id == VERZIK_P3_HM || id == VERZIK_P3_SM)
         {
             endP2();
         }
-        else if(id == VERZIK_DEAD)
+        else if(id == VERZIK_DEAD || id == VERZIK_DEAD_HM || id == VERZIK_DEAD_SM)
         {
             endP3();
         }

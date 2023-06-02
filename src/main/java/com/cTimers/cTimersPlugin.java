@@ -1,6 +1,6 @@
 package com.cTimers;
 
-import com.cTimers.constants.TOBRoom;
+import com.cTimers.constants.NpcIDs;
 import com.cTimers.ui.cTimersPanelPrimary;
 import com.google.inject.Inject;
 import com.google.inject.Provides;
@@ -525,72 +525,137 @@ public class cTimersPlugin extends Plugin
     {
         switch(event.getNpc().getId())
         {
-            case 8360:
-            case 8361:
-            case 8362:
-            case 8363:
-            case 8364:
-            case 8365://TODO remove later if doesn't work
+            case NpcIDs.MAIDEN_P0:
+            case NpcIDs.MAIDEN_P1:
+            case NpcIDs.MAIDEN_P2:
+            case NpcIDs.MAIDEN_P3:
+            case NpcIDs.MAIDEN_PRE_DEAD:
+            case NpcIDs.MAIDEN_DEAD:
+            case NpcIDs.MAIDEN_MATOMENOS:
+            case NpcIDs.MAIDEN_P0_HM:
+            case NpcIDs.MAIDEN_P1_HM:
+            case NpcIDs.MAIDEN_P2_HM:
+            case NpcIDs.MAIDEN_P3_HM:
+            case NpcIDs.MAIDEN_PRE_DEAD_HM:
+            case NpcIDs.MAIDEN_DEAD_HM:
+            case NpcIDs.MAIDEN_MATOMENOS_HM:
+            case NpcIDs.MAIDEN_P0_SM:
+            case NpcIDs.MAIDEN_P1_SM:
+            case NpcIDs.MAIDEN_P2_SM:
+            case NpcIDs.MAIDEN_P3_SM:
+            case NpcIDs.MAIDEN_PRE_DEAD_SM:
+            case NpcIDs.MAIDEN_DEAD_SM:
+            case NpcIDs.MAIDEN_MATOMENOS_SM:
+            case NpcIDs.MAIDEN_BLOOD:
+            case NpcIDs.MAIDEN_BLOOD_HM:
+            case NpcIDs.MAIDEN_BLOOD_SM:
             {
                 maiden.updateNpcSpawned(event);
-                clog.write(12); //TODO really this should happen in maiden class
             }
                 break;
-            case 8366:
-                maiden.updateNpcSpawned(event);
-                break;
-            case 8359:
+            case NpcIDs.BLOAT:
+            case NpcIDs.BLOAT_HM:
+            case NpcIDs.BLOAT_SM:
                 bloat.updateNpcSpawned(event);
                 break;
-            case 8355:
-            case 8356:
-            case 8357:
-            case 8342:
-            case 8343:
-            case 8344:
-            case 8345:
-            case 8346:
-            case 8347:
-            case 8351:
-            case 8352:
-            case 8353:
-            case 10794:
-            case 10795:
-            case 10796:
-            case 10791:
-            case 10792:
-            case 10793:
-            case 10803:
-            case 10804:
-            case 10805:
-            case 10806:
+            case NpcIDs.NYLO_MELEE_SMALL:
+            case NpcIDs.NYLO_MELEE_SMALL_AGRO:
+            case NpcIDs.NYLO_RANGE_SMALL:
+            case NpcIDs.NYLO_RANGE_SMALL_AGRO:
+            case NpcIDs.NYLO_MAGE_SMALL:
+            case NpcIDs.NYLO_MAGE_SMALL_AGRO:
+            case NpcIDs.NYLO_MELEE_BIG:
+            case NpcIDs.NYLO_MELEE_BIG_AGRO:
+            case NpcIDs.NYLO_RANGE_BIG:
+            case NpcIDs.NYLO_RANGE_BIG_AGRO:
+            case NpcIDs.NYLO_MAGE_BIG:
+            case NpcIDs.NYLO_MAGE_BIG_AGRO:
+            case NpcIDs.NYLO_MELEE_SMALL_HM:
+            case NpcIDs.NYLO_MELEE_SMALL_AGRO_HM:
+            case NpcIDs.NYLO_RANGE_SMALL_HM:
+            case NpcIDs.NYLO_RANGE_SMALL_AGRO_HM:
+            case NpcIDs.NYLO_MAGE_SMALL_HM:
+            case NpcIDs.NYLO_MAGE_SMALL_AGRO_HM:
+            case NpcIDs.NYLO_MELEE_BIG_HM:
+            case NpcIDs.NYLO_MELEE_BIG_AGRO_HM:
+            case NpcIDs.NYLO_RANGE_BIG_HM:
+            case NpcIDs.NYLO_RANGE_BIG_AGRO_HM:
+            case NpcIDs.NYLO_MAGE_BIG_HM:
+            case NpcIDs.NYLO_MAGE_BIG_AGRO_HM:
+            case NpcIDs.NYLO_MELEE_SMALL_SM:
+            case NpcIDs.NYLO_MELEE_SMALL_AGRO_SM:
+            case NpcIDs.NYLO_RANGE_SMALL_SM:
+            case NpcIDs.NYLO_RANGE_SMALL_AGRO_SM:
+            case NpcIDs.NYLO_MAGE_SMALL_SM:
+            case NpcIDs.NYLO_MAGE_SMALL_AGRO_SM:
+            case NpcIDs.NYLO_MELEE_BIG_SM:
+            case NpcIDs.NYLO_MELEE_BIG_AGRO_SM:
+            case NpcIDs.NYLO_RANGE_BIG_SM:
+            case NpcIDs.NYLO_RANGE_BIG_AGRO_SM:
+            case NpcIDs.NYLO_MAGE_BIG_SM:
+            case NpcIDs.NYLO_MAGE_BIG_AGRO_SM:
+            case NpcIDs.NYLO_BOSS_DROPPING:
+            case NpcIDs.NYLO_BOSS_DROPPING_HM:
+            case NpcIDs.NYLO_BOSS_DROPING_SM:
+            case NpcIDs.NYLO_BOSS_MELEE:
+            case NpcIDs.NYLO_BOSS_MELEE_HM:
+            case NpcIDs.NYLO_BOSS_MELEE_SM:
+            case NpcIDs.NYLO_BOSS_MAGE:
+            case NpcIDs.NYLO_BOSS_MAGE_HM:
+            case NpcIDs.NYLO_BOSS_MAGE_SM:
+            case NpcIDs.NYLO_BOSS_RANGE:
+            case NpcIDs.NYLO_BOSS_RANGE_HM:
+            case NpcIDs.NYLO_BOSS_RANGE_SM:
+            case NpcIDs.NYLO_PRINKIPAS_DROPPING:
+            case NpcIDs.NYLO_PRINKIPAS_MELEE:
+            case NpcIDs.NYLO_PRINKIPAS_MAGIC:
+            case NpcIDs.NYLO_PRINKIPAS_RANGE:
                 nylo.updateNpcSpawned(event);
                 break;
-            case 8388:
-            case 8387:
+            case NpcIDs.SOTETSEG_ACTIVE:
+            case NpcIDs.SOTETSEG_ACTIVE_HM:
+            case NpcIDs.SOTETSEG_ACTIVE_SM:
+            case NpcIDs.SOTETSEG_INACTIVE:
+            case NpcIDs.SOTETSEG_INACTIVE_HM:
+            case NpcIDs.SOTETSEG_INACTIVE_SM:
                 sote.updateNpcSpawned(event);
                 break;
-            case 8338:
-            case 8339:
-            case 8340:
-            case 8341:
-                clog.write(50);
+            case NpcIDs.XARPUS_INACTIVE:
+            case NpcIDs.XARPUS_P1:
+            case NpcIDs.XARPUS_P23:
+            case NpcIDs.XARPUS_DEAD:
+            case NpcIDs.XARPUS_INACTIVE_HM:
+            case NpcIDs.XARPUS_P1_HM:
+            case NpcIDs.XARPUS_P23_HM:
+            case NpcIDs.XARPUS_DEAD_HM:
+            case NpcIDs.XARPUS_INACTIVE_SM:
+            case NpcIDs.XARPUS_P1_SM:
+            case NpcIDs.XARPUS_P23_SM:
+            case NpcIDs.XARPUS_DEAD_SM:
                 xarpus.updateNpcSpawned(event);
                 break;
-            case 8369:
-            case 8370:
-            case 8371:
-            case 8372:
-            case 8373:
-            case 8374:
-            case 8375:
+            case NpcIDs.VERZIK_P1_INACTIVE:
+            case NpcIDs.VERZIK_P1:
+            case NpcIDs.VERZIK_P2_INACTIVE:
+            case NpcIDs.VERZIK_P2:
+            case NpcIDs.VERZIK_P3_INACTIVE:
+            case NpcIDs.VERZIK_P3:
+            case NpcIDs.VERZIK_DEAD:
+            case NpcIDs.VERZIK_P1_INACTIVE_HM:
+            case NpcIDs.VERZIK_P1_HM:
+            case NpcIDs.VERZIK_P2_INACTIVE_HM:
+            case NpcIDs.VERZIK_P2_HM:
+            case NpcIDs.VERZIK_P3_INACTIVE_HM:
+            case NpcIDs.VERZIK_P3_HM:
+            case NpcIDs.VERZIK_DEAD_HM:
+            case NpcIDs.VERZIK_P1_INACTIVE_SM:
+            case NpcIDs.VERZIK_P1_SM:
+            case NpcIDs.VERZIK_P2_INACTIVE_SM:
+            case NpcIDs.VERZIK_P2_SM:
+            case NpcIDs.VERZIK_P3_INACTIVE_SM:
+            case NpcIDs.VERZIK_P3_SM:
+            case NpcIDs.VERZIK_DEAD_SM:
                 verzik.updateNpcSpawned(event);
-                break;
-            case 8367:
-            {
-                clog.write(BLOOD_SPAWNED);
-                maiden.updateNpcSpawned(event);
-            }
                 break;
             default:
                 if(currentRoom != null)

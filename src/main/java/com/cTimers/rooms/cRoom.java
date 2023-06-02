@@ -23,6 +23,8 @@ public class cRoom
 
     public static final int HP_VARBIT = 6448;
 
+    public static final int FULL_HP = 1000;
+
 
     private final cTimersConfig config;
     protected boolean accurateTimer = true;

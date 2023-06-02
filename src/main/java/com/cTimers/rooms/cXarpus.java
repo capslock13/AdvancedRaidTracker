@@ -2,6 +2,7 @@ package com.cTimers.rooms;
 
 import com.cTimers.cTimersConfig;
 import com.cTimers.constants.LogID;
+import com.cTimers.constants.NpcIDs;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
@@ -15,6 +16,7 @@ import com.cTimers.utility.cRoomState;
 import static com.cTimers.constants.LogID.*;
 import static com.cTimers.constants.LogID.ACCURATE_XARP_END;
 import static com.cTimers.constants.LogID.XARPUS_STARTED;
+import static com.cTimers.constants.NpcIDs.*;
 
 @Slf4j
 public class cXarpus extends cRoom
@@ -41,11 +43,11 @@ public class cXarpus extends cRoom
 
     public void updateAnimationChanged(AnimationChanged event)
     {
-        if(event.getActor().getAnimation() == 8061)
+        if(event.getActor().getAnimation() == XARPUS_AWAKENS)
         {
             endExhumeds();
         }
-        if(event.getActor().getAnimation() == 8063)
+        if(event.getActor().getAnimation() == XARPUS_DEATH_ANIMATION)
         {
             endXarpus();
         }
@@ -55,7 +57,7 @@ public class cXarpus extends cRoom
     {
         if(event.getProjectile().getEndCycle()-event.getProjectile().getStartCycle() == event.getProjectile().getRemainingCycles())
         {
-            if(event.getProjectile().getId() == 1550)
+            if(event.getProjectile().getId() == XARPUS_EXHUMED_PROJECTILE)
             {
                 clog.write(XARPUS_HEAL);
             }
@@ -67,7 +69,8 @@ public class cXarpus extends cRoom
         if(event.getActor() instanceof NPC)
         {
             NPC npc = (NPC) event.getActor();
-            if(npc.getId() == 8340)
+            int id = npc.getId();
+            if(id == XARPUS_P23 || id == XARPUS_P23_HM || id == XARPUS_P23_SM)
             {
                 startScreech();
             }
@@ -78,11 +81,44 @@ public class cXarpus extends cRoom
     {
         switch(event.getNpc().getId())
         {
-            case 8338:
-            case 8339:
-            case 8340:
-            case 8341:
+            case XARPUS_INACTIVE:
+            case XARPUS_P1:
+            case XARPUS_P23:
+            case XARPUS_DEAD:
+            case XARPUS_INACTIVE_HM:
+            case XARPUS_P1_HM:
+            case XARPUS_P23_HM:
+            case XARPUS_DEAD_HM:
+            case XARPUS_INACTIVE_SM:
+            case XARPUS_P1_SM:
+            case XARPUS_P23_SM:
+            case XARPUS_DEAD_SM:
                 clog.write(XARPUS_DESPAWNED, ""+(xarpusEndTick-xarpusEntryTick));
+        }
+    }
+
+    public void updateNpcSpawned(NpcSpawned event)
+    {
+        boolean story = false;
+        switch(event.getNpc().getId())
+        {
+            case NpcIDs.XARPUS_INACTIVE_SM:
+            case NpcIDs.XARPUS_P1_SM:
+            case NpcIDs.XARPUS_P23_SM:
+            case NpcIDs.XARPUS_DEAD_SM:
+                story = true;
+                clog.write(IS_STORY_MODE);
+            case NpcIDs.XARPUS_INACTIVE_HM:
+            case NpcIDs.XARPUS_P1_HM:
+            case NpcIDs.XARPUS_P23_HM:
+            case NpcIDs.XARPUS_DEAD_HM:
+                if(!story)
+                    clog.write(IS_HARD_MODE);
+            case NpcIDs.XARPUS_INACTIVE:
+            case NpcIDs.XARPUS_P1:
+            case NpcIDs.XARPUS_P23:
+            case NpcIDs.XARPUS_DEAD:
+                clog.write(XARPUS_SPAWNED);
         }
     }
 

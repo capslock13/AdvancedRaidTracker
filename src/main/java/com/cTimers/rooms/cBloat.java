@@ -15,7 +15,7 @@ import com.cTimers.utility.cLogger;
 import java.util.ArrayList;
 
 import static com.cTimers.constants.LogID.*;
-import static com.cTimers.constants.NpcIDs.BLOAT;
+import static com.cTimers.constants.NpcIDs.*;
 import static com.cTimers.utility.cRoomState.*;
 import static com.cTimers.utility.cRoomState.BloatRoomState.*;
 
@@ -143,7 +143,7 @@ public class cBloat extends cRoom
 
     public void updateAnimationChanged(AnimationChanged event)
     {
-        if(event.getActor().getAnimation() == 8082)
+        if(event.getActor().getAnimation() == BLOAT_DOWN_ANIMATION)
         {
             down();
         }
@@ -151,11 +151,11 @@ public class cBloat extends cRoom
         {
             walk();
         }
-        if(event.getActor().getAnimation() == 8085)
+        if(event.getActor().getAnimation() == BLOAT_DEATH_ANIMATION)
         {
             endBloat();
         }
-        if(event.getActor().getAnimation() == 8056)
+        if(event.getActor().getAnimation() == 8056) //TODO verify fly
         {
             if(event.getActor() instanceof Player)
             {
@@ -167,22 +167,32 @@ public class cBloat extends cRoom
 
     public void updateNpcSpawned(NpcSpawned event)
     {
-        if (event.getNpc().getId() == BLOAT)
+        boolean story = false;
+        switch (event.getNpc().getId())
         {
-            clog.write(BLOAT_SPAWNED);
-            if(client.getVarbitValue(ROOM_ACTIVE_VARBIT) != 0)
-            {
-                accurateEntry = false;
-            }
-            else
-            {
-                clog.write(ACCURATE_BLOAT_START);
-            }
+            case BLOAT_SM:
+                story = true;
+                clog.write(IS_STORY_MODE);
+            case BLOAT_HM:
+                if(!story)
+                    clog.write(IS_HARD_MODE);
+            case BLOAT:
+                clog.write(BLOAT_SPAWNED);
+                if(client.getVarbitValue(ROOM_ACTIVE_VARBIT) != 0)
+                {
+                    accurateEntry = false;
+                }
+                else
+                {
+                    clog.write(ACCURATE_BLOAT_START);
+                }
+                break;
         }
     }
     public void updateNpcDespawned(NpcDespawned event)
     {
-        if(event.getNpc().getId() == BLOAT)
+        int id = event.getNpc().getId();
+        if(id == BLOAT || id == BLOAT_HM || id == BLOAT_SM)
         {
             clog.write(BLOAT_DESPAWN, ""+(client.getTickCount()-bloatStartTick));
         }

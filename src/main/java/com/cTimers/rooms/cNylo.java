@@ -4,11 +4,9 @@ import com.cTimers.cTimersConfig;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.NPC;
-import net.runelite.api.events.AnimationChanged;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.NpcDespawned;
 import net.runelite.api.events.NpcSpawned;
-import com.cTimers.utility.RoomUtil;
 import com.cTimers.utility.cLogger;
 import com.cTimers.utility.cRoomState;
 import com.cTimers.utility.nyloutility.cNylocas;
@@ -43,6 +41,7 @@ public class cNylo extends cRoom
     private final ArrayList<NPC> nylosAlive;
     int currentWave = 0;
     boolean hard = false;
+    boolean story = false;
     public void reset()
     {
         pillarsSpawnedTick = -1;
@@ -53,6 +52,7 @@ public class cNylo extends cRoom
         accurateEntry = true;
         entryTickOffset = -1;
         hard = false;
+        story = false;
         wave31 = -1;
         super.reset();
     }
@@ -94,22 +94,53 @@ public class cNylo extends cRoom
     {
         switch(event.getNpc().getId())
         {
-            case 10794:
-            case 10795:
-            case 10796:
-            case 10791:
-            case 10792:
-            case 10793:
+            case NYLO_MELEE_SMALL_HM:
+            case NYLO_MELEE_SMALL_AGRO_HM:
+            case NYLO_MELEE_BIG_HM:
+            case NYLO_MELEE_BIG_AGRO_HM:
+            case NYLO_RANGE_SMALL_HM:
+            case NYLO_RANGE_SMALL_AGRO_HM:
+            case NYLO_RANGE_BIG_HM:
+            case NYLO_RANGE_BIG_AGRO_HM:
+            case NYLO_MAGE_SMALL_HM:
+            case NYLO_MAGE_SMALL_AGRO_HM:
+            case NYLO_MAGE_BIG_HM:
+            case NYLO_MAGE_BIG_AGRO_HM:
+                if(!hard)
+                    clog.write(IS_HARD_MODE);
                 hard = true;
-            case 8342: //mel
-            case 8343: //ran
-            case 8344: //mag
-            case 8345: //mel
-            case 8346: //ran
-            case 8347: //mag
-            case 8351: //mel
-            case 8352: //ran
-            case 8353: //mag
+            case NYLO_MELEE_SMALL_SM:
+            case NYLO_MELEE_SMALL_AGRO_SM:
+            case NYLO_MELEE_BIG_SM:
+            case NYLO_MELEE_BIG_AGRO_SM:
+            case NYLO_RANGE_SMALL_SM:
+            case NYLO_RANGE_SMALL_AGRO_SM:
+            case NYLO_RANGE_BIG_SM:
+            case NYLO_RANGE_BIG_AGRO_SM:
+            case NYLO_MAGE_SMALL_SM:
+            case NYLO_MAGE_SMALL_AGRO_SM:
+            case NYLO_MAGE_BIG_SM:
+            case NYLO_MAGE_BIG_AGRO_SM:
+                if(!hard)
+                {
+                    if(!story)
+                    {
+                        clog.write(IS_STORY_MODE);
+                    }
+                }
+                story = true;
+            case NYLO_MELEE_SMALL:
+            case NYLO_MELEE_SMALL_AGRO:
+            case NYLO_MELEE_BIG:
+            case NYLO_MELEE_BIG_AGRO:
+            case NYLO_RANGE_SMALL:
+            case NYLO_RANGE_SMALL_AGRO:
+            case NYLO_RANGE_BIG:
+            case NYLO_RANGE_BIG_AGRO:
+            case NYLO_MAGE_SMALL:
+            case NYLO_MAGE_SMALL_AGRO:
+            case NYLO_MAGE_BIG:
+            case NYLO_MAGE_BIG_AGRO:
                 cNylocasShell cShell = new cNylocasShell(event.getNpc().getId(), event.getNpc().getWorldLocation().getRegionX(), event.getNpc().getWorldLocation().getRegionY());
 
                 if(cShell.position != cNylocas.cNyloPosition.ROOM)
@@ -120,24 +151,47 @@ public class cNylo extends cRoom
                 {
                     switch(event.getNpc().getId())
                     {
-                        case 8342:
-                            clog.write(34, ""+currentWave, ""+(client.getTickCount()-pillarsSpawnedTick));
+                        case NYLO_MELEE_SMALL:
+                        case NYLO_MELEE_SMALL_AGRO:
+                        case NYLO_MELEE_SMALL_HM:
+                        case NYLO_MELEE_SMALL_AGRO_HM:
+                        case NYLO_MELEE_SMALL_SM:
+                        case NYLO_MELEE_SMALL_AGRO_SM:
+                            clog.write(MELEE_SPLIT, ""+currentWave, ""+(client.getTickCount()-pillarsSpawnedTick));
                             break;
-                        case 8343:
-                            clog.write(32, ""+currentWave, ""+(client.getTickCount()-pillarsSpawnedTick));
+                        case NYLO_RANGE_SMALL:
+                        case NYLO_RANGE_SMALL_AGRO:
+                        case NYLO_RANGE_SMALL_HM:
+                        case NYLO_RANGE_SMALL_AGRO_HM:
+                        case NYLO_RANGE_SMALL_SM:
+                        case NYLO_RANGE_SMALL_AGRO_SM:
+                            clog.write(RANGE_SPLIT, ""+currentWave, ""+(client.getTickCount()-pillarsSpawnedTick));
                             break;
-                        case 8344:
-                            clog.write(33, ""+currentWave, ""+(client.getTickCount()-pillarsSpawnedTick));
+                        case NYLO_MAGE_SMALL:
+                        case NYLO_MAGE_SMALL_AGRO:
+                        case NYLO_MAGE_SMALL_HM:
+                        case NYLO_MAGE_SMALL_AGRO_HM:
+                        case NYLO_MAGE_SMALL_SM:
+                        case NYLO_MAGE_SMALL_AGRO_SM:
+                            clog.write(MAGE_SPLIT, ""+currentWave, ""+(client.getTickCount()-pillarsSpawnedTick));
                             break;
                     }
                 }
                 nylosAlive.add(event.getNpc());
                 break;
-            case 8355:
-            case 8356:
-            case 8357:
+            case NYLO_BOSS_MELEE:
+            case NYLO_BOSS_RANGE:
+            case NYLO_BOSS_MAGE:
+            case NYLO_BOSS_MELEE_HM:
+            case NYLO_BOSS_RANGE_HM:
+            case NYLO_BOSS_MAGE_HM:
+            case NYLO_BOSS_MELEE_SM:
+            case NYLO_BOSS_RANGE_SM:
+            case NYLO_BOSS_MAGE_SM:
                 bossSpawned();
-            case 8358:
+            case NYLO_PILLAR:
+            case NYLO_PILLAR_HM:
+            case NYLO_PILLAR_SM:
                 if(pillarsSpawnedTick == -1)
                 {
                     startNylo();
@@ -151,11 +205,11 @@ public class cNylo extends cRoom
                     }
                 }
                 break;
-            case 10803:
+            case NYLO_PRINKIPAS_DROPPING:
                 break;
-            case 10804:
-            case 10805:
-            case 10806:
+            case NYLO_PRINKIPAS_MELEE:
+            case NYLO_PRINKIPAS_MAGIC:
+            case NYLO_PRINKIPAS_RANGE:
                 nylosAlive.add(event.getNpc());
                 break;
 
@@ -165,41 +219,59 @@ public class cNylo extends cRoom
     {
         switch(event.getNpc().getId())
         {
-            case 8355:
-            case 8356:
-            case 8357:
-            {
-                bossDefinitelyKilled();
-            }
-            break;
-            case 8342:
-            case 8343:
-            case 8344:
-            case 8345:
-            case 8351:
-            case 8346:
-            case 8352:
-            case 8348:
-            case 8350:
-            case 8349:
-            case 8347:
-            case 8353:
-            case 10791:
-            case 10792:
-            case 10793:
-            case 10794:
-            case 10795:
-            case 10796:
-            case 10797:
-            case 10798:
-            case 10799:
-            case 10803:
-            case 10804:
-            case 10805:
-            case 10806:
-            case 10800:
-            case 10801:
-            case 10802:
+            case NYLO_BOSS_MELEE:
+            case NYLO_BOSS_RANGE:
+            case NYLO_BOSS_MAGE:
+            case NYLO_BOSS_MELEE_HM:
+            case NYLO_BOSS_RANGE_HM:
+            case NYLO_BOSS_MAGE_HM:
+            case NYLO_BOSS_MELEE_SM:
+            case NYLO_BOSS_RANGE_SM:
+            case NYLO_BOSS_MAGE_SM:
+                {
+                    bossDefinitelyKilled();
+                }
+                break;
+            case NYLO_MELEE_SMALL_HM:
+            case NYLO_MELEE_SMALL_AGRO_HM:
+            case NYLO_MELEE_BIG_HM:
+            case NYLO_MELEE_BIG_AGRO_HM:
+            case NYLO_RANGE_SMALL_HM:
+            case NYLO_RANGE_SMALL_AGRO_HM:
+            case NYLO_RANGE_BIG_HM:
+            case NYLO_RANGE_BIG_AGRO_HM:
+            case NYLO_MAGE_SMALL_HM:
+            case NYLO_MAGE_SMALL_AGRO_HM:
+            case NYLO_MAGE_BIG_HM:
+            case NYLO_MAGE_BIG_AGRO_HM:
+            case NYLO_MELEE_SMALL_SM:
+            case NYLO_MELEE_SMALL_AGRO_SM:
+            case NYLO_MELEE_BIG_SM:
+            case NYLO_MELEE_BIG_AGRO_SM:
+            case NYLO_RANGE_SMALL_SM:
+            case NYLO_RANGE_SMALL_AGRO_SM:
+            case NYLO_RANGE_BIG_SM:
+            case NYLO_RANGE_BIG_AGRO_SM:
+            case NYLO_MAGE_SMALL_SM:
+            case NYLO_MAGE_SMALL_AGRO_SM:
+            case NYLO_MAGE_BIG_SM:
+            case NYLO_MAGE_BIG_AGRO_SM:
+            case NYLO_MELEE_SMALL:
+            case NYLO_MELEE_SMALL_AGRO:
+            case NYLO_MELEE_BIG:
+            case NYLO_MELEE_BIG_AGRO:
+            case NYLO_RANGE_SMALL:
+            case NYLO_RANGE_SMALL_AGRO:
+            case NYLO_RANGE_BIG:
+            case NYLO_RANGE_BIG_AGRO:
+            case NYLO_MAGE_SMALL:
+            case NYLO_MAGE_SMALL_AGRO:
+            case NYLO_MAGE_BIG:
+            case NYLO_MAGE_BIG_AGRO:
+            case NYLO_PRINKIPAS_DROPPING:
+            case NYLO_PRINKIPAS_MELEE:
+            case NYLO_PRINKIPAS_MAGIC:
+            case NYLO_PRINKIPAS_RANGE:
                 nylosAlive.remove(event.getNpc());
                 if(nylosAlive.size() == 0 && cNylocasWaveMatcher.getWave().getWave() == 31)
                 {
@@ -217,17 +289,23 @@ public class cNylo extends cRoom
      */
     public void handleNPCChanged(int id)
     {
-        if(id == MELEE_NYLO_BOSS_ID)
+        switch(id)
         {
-            clog.write(MELEE_PHASE, ""+(client.getTickCount()-pillarsSpawnedTick));
-        }
-        else if(id == MAGE_NYLO_BOSS_ID)
-        {
-            clog.write(MAGE_PHASE, ""+(client.getTickCount()-pillarsSpawnedTick));
-        }
-        else if(id == RANGE_NYLO_BOSS_ID)
-        {
-            clog.write(RANGE_PHASE, ""+(client.getTickCount()-pillarsSpawnedTick));
+            case NYLO_BOSS_MELEE:
+            case NYLO_BOSS_MELEE_HM:
+            case NYLO_BOSS_MELEE_SM:
+                clog.write(MELEE_PHASE, ""+(client.getTickCount()-pillarsSpawnedTick));
+                break;
+            case NYLO_BOSS_MAGE:
+            case NYLO_BOSS_MAGE_HM:
+            case NYLO_BOSS_MAGE_SM:
+                clog.write(MAGE_PHASE, ""+(client.getTickCount()-pillarsSpawnedTick));
+                break;
+            case NYLO_BOSS_RANGE:
+            case NYLO_BOSS_RANGE_HM:
+            case NYLO_BOSS_RANGE_SM:
+                clog.write(RANGE_PHASE, ""+(client.getTickCount()-pillarsSpawnedTick));
+                break;
         }
     }
 
@@ -262,8 +340,8 @@ public class cNylo extends cRoom
         {
             offsetTick = 0;
         }
-        clog.write(303);
-        clog.write(36, ""+(lastDead-pillarsSpawnedTick));
+        clog.write(ACCURATE_NYLO_END);
+        clog.write(36, ""+(lastDead-pillarsSpawnedTick)); //TODO huh?
         sendTimeMessage("Wave 'Nylocas waves and cleanup' complete! Duration: ",lastDead-pillarsSpawnedTick, lastDead-wave31);
     }
 

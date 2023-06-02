@@ -87,6 +87,7 @@ public class cFilteredRaidsFrame extends cFrame
     JCheckBox filterPartyOnly;
     JCheckBox filterPartialData;
     JCheckBox filterPartialOnly;
+    JCheckBox filterNormalOnly;
     JTable table;
     JPanel container;
     private JPanel filterTableContainer;
@@ -120,7 +121,7 @@ public class cFilteredRaidsFrame extends cFrame
         filteredIndices = new ArrayList<>();
         comparisons = new ArrayList<>();
         activeFilters = new ArrayList<>();
-        this.setPreferredSize(new Dimension(1200,720));
+        this.setPreferredSize(new Dimension(1200,820));
     }
 
     public void updateCustomStats(ArrayList<cRoomData> raids)
@@ -228,6 +229,13 @@ public class cFilteredRaidsFrame extends cFrame
             if(filterPartyOnly.isSelected())
             {
                 if(!data.maidenDefenseAccurate || !data.bloatDefenseAccurate || !data.nyloDefenseAccurate || !data.soteDefenseAccurate || !data.xarpDefenseAccurate)
+                {
+                    shouldDataBeIncluded = false;
+                }
+            }
+            if(filterNormalOnly.isSelected())
+            {
+                if(data.storyMode || data.hardMode)
                 {
                     shouldDataBeIncluded = false;
                 }
@@ -466,6 +474,14 @@ public class cFilteredRaidsFrame extends cFrame
                 case 5:
                     scaleString = "5 Man";
                     break;
+            }
+            if(raid.storyMode)
+            {
+                scaleString += " (Story)";
+            }
+            if(raid.hardMode)
+            {
+                scaleString += " (Hard)";
             }
             switch(viewByRaidComboBox.getSelectedIndex())
             {
@@ -1022,13 +1038,13 @@ public class cFilteredRaidsFrame extends cFrame
         tabbedPane.addTab("Verzik", verzikTab);
 
 
-        tabbedPane.setMinimumSize(new Dimension(100,220));
+        tabbedPane.setMinimumSize(new Dimension(100,300));
 
         JPanel additionalFiltersPanel = new JPanel();
         additionalFiltersPanel.setLayout(new BorderLayout());
         additionalFiltersPanel.setBorder(BorderFactory.createTitledBorder("Quick Filters"));
-        additionalFiltersPanel.setMinimumSize(new Dimension(200, 220));
-        additionalFiltersPanel.setPreferredSize(new Dimension(200, 220));
+        additionalFiltersPanel.setMinimumSize(new Dimension(200, 300));
+        additionalFiltersPanel.setPreferredSize(new Dimension(200, 300));
 
          filterSpectateOnly = new JCheckBox("Spectate Only");
          filterInRaidOnly = new JCheckBox("In Raid Only");
@@ -1041,6 +1057,7 @@ public class cFilteredRaidsFrame extends cFrame
          filterPartialData = new JCheckBox("Filter Partial Raids");
          filterPartialOnly = new JCheckBox("Filter Partial Rooms");
          filterPartialData.setToolTipText("Removes data sets that have any rooms that were partially completed");
+         filterNormalOnly = new JCheckBox("Normal Mode Only", true);
 
         filterSpectateOnly.addActionListener(
                 al->
@@ -1094,13 +1111,19 @@ public class cFilteredRaidsFrame extends cFrame
                 {
                     updateTable();
                 });
+        filterNormalOnly.addActionListener(
+                al->
+                {
+                    updateTable();
+                }
+        );
 
         JPanel scaleContainer = new JPanel();
         scaleContainer.setLayout(new BoxLayout(scaleContainer, BoxLayout.X_AXIS));
 
 
         JPanel filterHolder = new JPanel();
-        filterHolder.setLayout(new GridLayout(9, 1));
+        filterHolder.setLayout(new GridLayout(10, 1));
         filterHolder.add(filterSpectateOnly);
         filterHolder.add(filterInRaidOnly);
         filterHolder.add(filterCompletionOnly);
@@ -1109,6 +1132,7 @@ public class cFilteredRaidsFrame extends cFrame
         filterHolder.add(filterPartyOnly);
         filterHolder.add(filterPartialData);
         filterHolder.add(filterPartialOnly);
+        filterHolder.add(filterNormalOnly);
         scaleContainer.add(filterCheckBoxScale);
         scaleContainer.add(filterComboBoxScale);
         filterHolder.add(scaleContainer);
@@ -1118,13 +1142,14 @@ public class cFilteredRaidsFrame extends cFrame
         JPanel topContainer = new JPanel();
         topContainer.setLayout(new BoxLayout(topContainer, BoxLayout.X_AXIS));
 
+        topContainer.setPreferredSize(new Dimension(800, 300));
         topContainer.add(tabbedPane);
         topContainer.add(additionalFiltersPanel);
 
         setLabels(data);
         updateTable();
 
-        container.setPreferredSize(new Dimension(800, 600));
+        container.setPreferredSize(new Dimension(800, 700));
 
         container.add(topContainer);
         container.add(tablePanel);
@@ -1134,7 +1159,7 @@ public class cFilteredRaidsFrame extends cFrame
         splitLeftRight.add(container);
 
         JPanel rightContainer = new JPanel();
-        rightContainer.setPreferredSize(new Dimension(400, 600));
+        rightContainer.setPreferredSize(new Dimension(400, 700));
         rightContainer.setLayout(new BoxLayout(rightContainer, BoxLayout.Y_AXIS));
 
         JPanel rightTopContainer = new JPanel();

@@ -1,5 +1,6 @@
 package com.cTimers;
 
+import com.cTimers.constants.LogID;
 import com.cTimers.utility.cDataManager;
 import com.cTimers.utility.cDataPoint;
 import lombok.extern.slf4j.Slf4j;
@@ -94,6 +95,7 @@ Key:Description //Value1, Value2, Value3, Value4, Value5
 public class cRoomData
 {
 
+    private static final String EXIT_FLAG = "4";
     public static String[] DataPoint = {
             "Maiden bloods spawned",
             "Maiden crabs leaked",
@@ -183,6 +185,9 @@ public class cRoomData
     public boolean maidenSkip;
     public boolean maidenReset;
     public boolean maidenWipe;
+
+    public boolean hardMode;
+    public boolean storyMode;
 
 
     public boolean bloatTimeAccurate;
@@ -302,7 +307,7 @@ public class cRoomData
 
     public boolean checkExit(TobRoom room)
     {
-        if(globalData.size() == 0 || globalData.get(0).split(",", -1)[3].equals("4"))
+        if(globalData.size() == 0 || globalData.get(0).split(",", -1)[3].equals(EXIT_FLAG))
         {
             switch (room) {
                 case MAIDEN:
@@ -317,7 +322,10 @@ public class cRoomData
                 case SOTETSEG:
                     soteReset = true;
                     break;
-            } // TODO missing a case
+                case XARPUS:
+                    xarpReset = true;
+                    break;
+            }
             return false;
         }
         return true;
@@ -355,6 +363,8 @@ public class cRoomData
         nyloDefenseAccurate = false;
         soteDefenseAccurate = false;
         xarpDefenseAccurate = false;
+        hardMode = false;
+        storyMode = false;
 
         players = new ArrayList<>();
         globalData = new ArrayList<String>(Arrays.asList(parameters));
@@ -395,8 +405,11 @@ public class cRoomData
         }
         else {
             try {
+                log.info("parsing maiden");
                 if (parseMaiden()) {
+                    log.info("parsing bloat");
                     if (checkExit(MAIDEN) && parseBloat()) {
+                        log.info("parsing nylo");
                         if (checkExit(BLOAT) && parseNylo()) {
                             if (checkExit(NYLOCAS) && parseSotetseg()) {
                                 if (checkExit(SOTETSEG) && parseXarpus()) {
@@ -432,7 +445,7 @@ public class cRoomData
                         if(!subData[i].equals(""))
                         {
                             raidTeamSize++;
-                            players.add(subData[i].replaceAll("[^\\p{ASCII}]", ""));
+                            players.add(subData[i].replaceAll("[^\\p{ASCII}]", "")); //TODO check if removes spaces
                         }
                     }
                     break;
@@ -501,6 +514,12 @@ public class cRoomData
                 case 306:
                     verzikEndAccurate = true;
                     verzikTimeAccurate = verzikStartAccurate;
+                    break;
+                case 401:
+                    hardMode = true;
+                    break;
+                case 402:
+                    storyMode = true;
                     break;
 
             }
@@ -613,6 +632,12 @@ public class cRoomData
                 case 305:
                     xarpTimeAccurate = xarpStartAccurate;
                     xarpEndAccurate = true;
+                    break;
+                case 401:
+                    hardMode = true;
+                    break;
+                case 402:
+                    storyMode = true;
                     break;
             }
             activeIndex++;
@@ -733,6 +758,12 @@ public class cRoomData
                     soteEndAccurate = true;
                     soteTimeAccurate = soteStartAccurate;
                     break;
+                case 401:
+                    hardMode = true;
+                    break;
+                case 402:
+                    storyMode = true;
+                    break;
 
             }
             activeIndex++;
@@ -748,6 +779,7 @@ public class cRoomData
         {
             String[] subData = s.split(",", -1);
             switch(Integer.parseInt(subData[3]))
+            //switch (LogID.valueOf(subData[3]))
             {
                 case 0:
                     raidStarted = new Date(Long.parseLong(subData[1]));
@@ -856,6 +888,12 @@ public class cRoomData
                     nyloEndAccurate = true;
                     nyloTimeAccurate = nyloStartAccurate;
                     break;
+                case 401:
+                    hardMode = true;
+                    break;
+                case 402:
+                    storyMode = true;
+                    break;
 
             }
             activeIndex++;
@@ -958,6 +996,12 @@ public class cRoomData
                 case 302:
                     bloatEndAccurate = true;
                     bloatTimeAccurate = bloatStartAccurate;
+                    break;
+                case 401:
+                    hardMode = true;
+                    break;
+                case 402:
+                    storyMode = true;
                     break;
             }
             activeIndex++;
@@ -1114,6 +1158,12 @@ public class cRoomData
                 case 301:
                     maidenEndAccurate = true;
                     maidenTimeAccurate = maidenStartAccurate;
+                    break;
+                case 401:
+                    hardMode = true;
+                    break;
+                case 402:
+                    storyMode = true;
                     break;
             }
             activeIndex++;

@@ -1,6 +1,7 @@
 package com.cTimers.rooms;
 
 import com.cTimers.cTimersConfig;
+import com.cTimers.constants.NpcIDs;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
@@ -21,10 +22,6 @@ import static com.cTimers.constants.NpcIDs.*;
 @Slf4j
 public class cMaiden extends cRoom
 {
-
-
-
-
     public cRoomState.MaidenRoomState roomState;
 
     int maidenStartTick;
@@ -117,14 +114,29 @@ public class cMaiden extends cRoom
         NPC npc = event.getNpc();
         switch(npc.getId())
         {
-            case MAIDEN_FIRST:
-            case MAIDEN_SECOND:
-            case MAIDEN_THIRD:
-            case MAIDEN_LAST:
-            case MAIDEN_DEAD:
+            case NpcIDs.MAIDEN_P0:
+            case NpcIDs.MAIDEN_P1:
+            case NpcIDs.MAIDEN_P2:
+            case NpcIDs.MAIDEN_P3:
+            case NpcIDs.MAIDEN_PRE_DEAD:
+            case NpcIDs.MAIDEN_DEAD:
+            case NpcIDs.MAIDEN_P0_HM:
+            case NpcIDs.MAIDEN_P1_HM:
+            case NpcIDs.MAIDEN_P2_HM:
+            case NpcIDs.MAIDEN_P3_HM:
+            case NpcIDs.MAIDEN_PRE_DEAD_HM:
+            case NpcIDs.MAIDEN_DEAD_HM:
+            case NpcIDs.MAIDEN_P0_SM:
+            case NpcIDs.MAIDEN_P1_SM:
+            case NpcIDs.MAIDEN_P2_SM:
+            case NpcIDs.MAIDEN_P3_SM:
+            case NpcIDs.MAIDEN_PRE_DEAD_SM:
+            case NpcIDs.MAIDEN_DEAD_SM:
                 clog.write(MAIDEN_DESPAWNED, ""+(client.getTickCount()-maidenStartTick));
                 break;
-            case MATOMENOS:
+            case MAIDEN_MATOMENOS:
+            case MAIDEN_MATOMENOS_HM:
+            case MAIDEN_MATOMENOS_SM:
                 maidenCrabs.removeIf(x -> x.crab.equals(event.getNpc()));
             default:
                 break;
@@ -135,42 +147,71 @@ public class cMaiden extends cRoom
     {
 
         NPC npc = event.getNpc();
+        boolean story = false;
         switch(npc.getId())
         {
-            case MAIDEN_FIRST:
-            case MAIDEN_SECOND:
-            case MAIDEN_THIRD:
-            case MAIDEN_LAST:
+            case MAIDEN_P0_SM:
+            case MAIDEN_P1_SM:
+            case MAIDEN_P2_SM:
+            case MAIDEN_P3_SM:
+            case MAIDEN_PRE_DEAD_SM:
+            case MAIDEN_DEAD_SM:
+                story = true;
+                clog.write(IS_STORY_MODE);
+            case MAIDEN_P0_HM:
+            case MAIDEN_P1_HM:
+            case MAIDEN_P2_HM:
+            case MAIDEN_P3_HM:
+            case MAIDEN_PRE_DEAD_HM:
+            case MAIDEN_DEAD_HM:
+                if(!story)
+                    clog.write(IS_HARD_MODE);
+            case MAIDEN_P0:
+            case MAIDEN_P1:
+            case MAIDEN_P2:
+            case MAIDEN_P3:
             case MAIDEN_DEAD:
+                clog.write(MAIDEN_SPAWNED);
                 maidenNPC = npc;
                 startMaiden();
                 break;
-            case MATOMENOS:
+            case MAIDEN_MATOMENOS:
+            case MAIDEN_MATOMENOS_HM:
+            case MAIDEN_MATOMENOS_SM:
                 MaidenCrab crab = new MaidenCrab(npc, cTimersPlugin.scale, identifySpawn(npc));
                 logCrabSpawn(crab.description);
                 maidenCrabs.add(crab);
                 break;
-            default:
+            case NpcIDs.MAIDEN_BLOOD:
+            case NpcIDs.MAIDEN_BLOOD_HM:
+            case NpcIDs.MAIDEN_BLOOD_SM:
+                clog.write(BLOOD_SPAWNED);
                 break;
         }
     }
-
-
 
     public void handleNPCChanged(int id)
     {
         switch(id)
         {
-            case MAIDEN_SECOND:
+            case MAIDEN_P1:
+            case MAIDEN_P1_HM:
+            case MAIDEN_P1_SM:
                 proc70();
                 break;
-            case MAIDEN_THIRD:
+            case MAIDEN_P2:
+            case MAIDEN_P2_HM:
+            case MAIDEN_P2_SM:
                 proc50();
                 break;
-            case MAIDEN_LAST:
+            case MAIDEN_P3:
+            case MAIDEN_P3_HM:
+            case MAIDEN_P3_SM:
                 proc30();
                 break;
             case MAIDEN_DEAD:
+            case MAIDEN_DEAD_HM:
+            case MAIDEN_DEAD_SM:
                 break;
         }
     }
@@ -184,7 +225,7 @@ public class cMaiden extends cRoom
         if(client.getTickCount() == deferVarbitCheck)
         {
             deferVarbitCheck = -1;
-            if(client.getVarbitValue(HP_VARBIT) != 1000)
+            if(client.getVarbitValue(HP_VARBIT) != FULL_HP)
             {
                 accurateEntry = false;
             }

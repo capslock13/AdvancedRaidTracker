@@ -5,6 +5,7 @@ import com.cTimers.utility.cDataManager;
 import com.cTimers.utility.cDataPoint;
 import lombok.extern.slf4j.Slf4j;
 import com.cTimers.exceptions.cDataOutOfOrderException;
+import net.runelite.client.util.Text;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1028,7 +1029,8 @@ public class cRoomData
                         if(!subData[i].equals(""))
                         {
                             raidTeamSize++;
-                            players.add(subData[i].replaceAll("[^\\p{ASCII}]", ""));
+                            players.add(subData[i].replaceAll("[^\\p{ASCII}]", " ").replaceAll(" +", " "));
+                            //players.add(Text.sanitize(subData[i]));
                         }
                     }
                     break;

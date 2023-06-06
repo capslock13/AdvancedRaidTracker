@@ -16,11 +16,6 @@ public class DataWriter
 
     public DataWriter(Client client, TheatreTrackerConfig config)
     {
-        File dirMain = new File(System.getProperty("user.home").replace("\\", "/") + "/.runelite/theatretracker/primary/");
-        File dirFilters = new File(System.getProperty("user.home").replace("\\", "/") + "/.runelite/theatretracker/filters/");
-        File dirRaids = new File(System.getProperty("user.home").replace("\\", "/") + "/.runelite/theatretracker/raids/");
-
-        if(!dirMain.exists()) dirMain.mkdirs();
         this.config = config;
         this.client = client;
     }

@@ -34,6 +34,7 @@ import net.runelite.client.util.ImageUtil;
 import net.runelite.client.util.Text;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -125,6 +126,19 @@ public class TheatreTrackerPlugin extends Plugin
         RaidTrackerPanelPrimary timersPanelPrimary = injector.getInstance(RaidTrackerPanelPrimary.class);
         partyIntact = false;
 
+        File dirMain = new File(System.getProperty("user.home").replace("\\", "/") + "/.runelite/theatretracker/primary/");
+        File dirFilters = new File(System.getProperty("user.home").replace("\\", "/") + "/.runelite/theatretracker/filters/");
+        File dirRaids = new File(System.getProperty("user.home").replace("\\", "/") + "/.runelite/theatretracker/raids/");
+
+        if(!dirMain.exists()) dirMain.mkdirs();
+        if(!dirFilters.exists()) dirFilters.mkdirs();
+        if(!dirRaids.exists()) dirRaids.mkdirs();
+
+        File logFile = new File(System.getProperty("user.home").replace("\\", "/") + "/.runelite/theatretracker/primary/tobdata.log");
+        if (!logFile.exists())
+        {
+            logFile.createNewFile();
+        }
 
         final BufferedImage icon = ImageUtil.loadImageResource(DevToolsPlugin.class, "devtools_icon.png");
         navButtonPrimary = NavigationButton.builder().tooltip("RaidTrackerPanelPrimary").icon(icon).priority(10).panel(timersPanelPrimary).build();

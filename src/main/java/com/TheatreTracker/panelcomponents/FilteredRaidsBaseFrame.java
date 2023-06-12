@@ -1585,13 +1585,19 @@ public class FilteredRaidsBaseFrame extends BaseFrame
         JButton viewComparisonsButton = new JButton("View Comparisons");
         viewComparisonsButton.addActionListener(al ->
         {
-            ArrayList<String> labels = new ArrayList<>();
-            for(int i = 0; i < comparisonTable.getModel().getRowCount(); i++)
+            if(comparisonTable.getModel().getRowCount() == 0)
             {
-                labels.add(comparisonTable.getModel().getValueAt(i, 1).toString());
+                new NoDataPopUp().open();
             }
-            ComparisonView graphView = new ComparisonView(comparisons, labels);
-            graphView.open();
+            else
+            {
+                ArrayList<String> labels = new ArrayList<>();
+                for (int i = 0; i < comparisonTable.getModel().getRowCount(); i++) {
+                    labels.add(comparisonTable.getModel().getValueAt(i, 1).toString());
+                }
+                ComparisonView graphView = new ComparisonView(comparisons, labels);
+                graphView.open();
+            }
         });
         rightBottomBottomContainer.add(viewComparisonsButton);
 

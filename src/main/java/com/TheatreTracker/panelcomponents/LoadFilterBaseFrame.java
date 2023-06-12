@@ -12,22 +12,21 @@ import java.util.ArrayList;
 @Slf4j
 public class LoadFilterBaseFrame extends BaseFrame
 {
-    private FilteredRaidsBaseFrame filteredRaidsFrame;
     public void resizeColumnWidth(JTable table)
     {
         final TableColumnModel columnModel = table.getColumnModel();
         for (int column = 0; column < table.getColumnCount(); column++)
         {
-            int width = 15; // Min width
+            int width = 30; // Min width
             for (int row = 0; row < table.getRowCount(); row++)
             {
                 TableCellRenderer renderer = table.getCellRenderer(row, column);
                 Component comp = table.prepareRenderer(renderer, row, column);
                 width = Math.max(comp.getPreferredSize().width +1 , width);
             }
-            if(width > 300)
+            if(width > 400)
             {
-                width = 300;
+                width = 400;
             }
             columnModel.getColumn(column).setPreferredWidth(width);
         }
@@ -35,27 +34,26 @@ public class LoadFilterBaseFrame extends BaseFrame
 
     public LoadFilterBaseFrame(FilteredRaidsBaseFrame FilteredRaidsFrame)
     {
-        this.filteredRaidsFrame = FilteredRaidsFrame;
         setTitle("Load Filters");
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBorder(BorderFactory.createTitledBorder("Filters"));
 
-        String[] columnNames = {"Filter Name", "View", "Load"};
+        String[] columnNames = {"Filter Name", "View", "Replace", "Add"};
         ArrayList<Object[]> tableBuilder = new ArrayList<>();
 
         ArrayList<Filter> filters = FilterManager.getFilters();
-        System.out.println("filters size: " + filters.size());
         for(Filter filter : filters)
         {
             Object[] row =
                     {
                             filter.getName(),
-                            "View",
-                            "Load"
+                            "View Filter",
+                            "Replace Active",
+                            "Add to Active"
                     };
             tableBuilder.add(row);
         }
-        Object[][] tableObject = new Object[filters.size()][3];
+        Object[][] tableObject = new Object[filters.size()][4];
         int count = 0;
         for(Object[] row : tableBuilder)
         {
@@ -70,8 +68,12 @@ public class LoadFilterBaseFrame extends BaseFrame
         table.getColumn("View").setCellRenderer(new ButtonRenderer());
         table.getColumn("View").setCellEditor(new ButtonEditorViewFilters(new JCheckBox(), filters));
 
-        table.getColumn("Load").setCellRenderer(new ButtonRenderer());
-        table.getColumn("Load").setCellEditor(new ButtonEditorLoadFilters(new JCheckBox(), filteredRaidsFrame, filters, this));
+        table.getColumn("Replace").setCellRenderer(new ButtonRenderer());
+        table.getColumn("Replace").setCellEditor(new ButtonEditorLoadFilters(new JCheckBox(), FilteredRaidsFrame, filters, this));
+
+        table.getColumn("Add").setCellRenderer(new ButtonRenderer());
+        table.getColumn("Add").setCellEditor(new ButtonEditorLoadFilters(new JCheckBox(), FilteredRaidsFrame, filters, this, false));
+
         resizeColumnWidth(table);
         JScrollPane pane = new JScrollPane(table);
         table.setFillsViewportHeight(true);

@@ -1,5 +1,9 @@
 package com.TheatreTracker.panelcomponents;
 
+import com.TheatreTracker.RoomData;
+
+import java.util.ArrayList;
+
 public class Bounds
 {
     private int left;
@@ -7,8 +11,11 @@ public class Bounds
     private int bottom;
     private int top;
 
-    public Bounds(int l, int r, int b, int t)
+    public ArrayList<RoomData> raids;
+
+    public Bounds(int l, int r, int b, int t, ArrayList<RoomData> raids)
     {
+        this.raids = raids;
         left = l;
         right = r;
         bottom = b;

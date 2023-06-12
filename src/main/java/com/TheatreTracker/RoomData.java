@@ -14,7 +14,7 @@ public class RoomData
 {
 
     private static final String EXIT_FLAG = "4";
-    public static String[] DataPoint =
+   /* public static String[] DataPoint =
             {
             "Maiden bloods spawned",
             "Maiden crabs leaked",
@@ -74,7 +74,7 @@ public class RoomData
             "Verzik p2 split",
             "Verzik p2 duration",
             "Verzik p3 duration"
-    };
+    };*/
     public boolean spectated = false;
     public boolean maidenStartAccurate = false;
     public boolean bloatStartAccurate = false;

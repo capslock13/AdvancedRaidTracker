@@ -16,6 +16,8 @@ class ButtonEditorLoadFilters extends DefaultCellEditor
     protected JButton button;
     private String label;
     private boolean isPushed;
+
+    private boolean replace;
     int row;
     private ArrayList<Filter> data;
     private BaseFrame closeBaseFrame;
@@ -26,10 +28,30 @@ class ButtonEditorLoadFilters extends DefaultCellEditor
     {
         super(checkBox);
         this.data = data;
+        this.replace = true;
         this.filteredRaidsFrame = filteredRaidsFrame;
         this.closeBaseFrame = loadFrame;
         button = new JButton();
         button.setOpaque(true);
+        button.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                fireEditingStopped();
+            }
+        });
+    }
+
+    public ButtonEditorLoadFilters(JCheckBox checkBox, FilteredRaidsBaseFrame filteredRaidsFrame, ArrayList<Filter> data, LoadFilterBaseFrame loadFrame, boolean replace)
+    {
+        super(checkBox);
+        this.data = data;
+        this.filteredRaidsFrame = filteredRaidsFrame;
+        this.closeBaseFrame = loadFrame;
+        button = new JButton();
+        button.setOpaque(true);
+        this.replace = replace;
         button.addActionListener(new ActionListener()
         {
             @Override
@@ -65,7 +87,8 @@ class ButtonEditorLoadFilters extends DefaultCellEditor
         if (isPushed)
         {
 
-            filteredRaidsFrame.activeFilters.clear();
+            if(replace)
+                filteredRaidsFrame.activeFilters.clear();
             for(String s : data.get(row).getFilters())
             {
                 filteredRaidsFrame.activeFilters.add(new ImplicitFilter(s));

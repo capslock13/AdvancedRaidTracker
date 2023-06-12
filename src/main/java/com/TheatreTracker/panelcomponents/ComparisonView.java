@@ -9,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Objects;
+
 @Slf4j
 public class ComparisonView extends BaseFrame
 {
@@ -18,8 +20,8 @@ public class ComparisonView extends BaseFrame
     private JSlider leftCutOff;
     private JSlider rightCutOff;
 
-    private JLabel leftLabel;
-    private JLabel rightLabel;
+    private JTextField leftLabel;
+    private JTextField rightLabel;
 
     private JLabel graph1Average;
     private JLabel graph1Median;
@@ -39,6 +41,9 @@ public class ComparisonView extends BaseFrame
     private JPanel otherBottomRight;
     private JTabbedPane topGraphTabs;
     private JTabbedPane bottomGraphTabs;
+    private JCheckBox matchYScales;
+
+    private JCheckBox matchXScales;
 
     private JComboBox compareByComboBox;
     private boolean time = false;
@@ -53,13 +58,17 @@ public class ComparisonView extends BaseFrame
     ArrayList<String> labels;
     public ComparisonView(ArrayList<ArrayList<RoomData>> raidData, ArrayList<String> names)
     {
-        leftLabel = new JLabel("Min cutoff: ");
-        rightLabel = new JLabel("Max cutoff: ");
+        leftLabel = new JTextField("Min cutoff: ");
+        rightLabel = new JTextField("Max cutoff: ");
+        leftLabel.setEditable(false);
+        rightLabel.setEditable(false);
         leftCutOff = new JSlider();
         rightCutOff = new JSlider();
         topGraphs = new ArrayList<>();
         bottomGraphs = new ArrayList<>();
         data = raidData;
+        matchYScales = new JCheckBox("Match Y-Axis", true);
+        matchXScales = new JCheckBox("Match X-Axis", true);
         labels = names;
 
         scrollTopPanel = new JPanel();
@@ -99,8 +108,20 @@ public class ComparisonView extends BaseFrame
             updateOtherPanels();
         });
 
+        matchYScales.addActionListener(al->
+        {
+            switchGraphData();
+        });
+
+        matchXScales.addActionListener(al->
+        {
+            switchGraphData();
+            leftCutOff.setEnabled(matchXScales.isSelected());
+            rightCutOff.setEnabled(matchXScales.isSelected());
+        });
+
         container = new JPanel();
-        container.setPreferredSize(new Dimension(980, 600));
+        container.setPreferredSize(new Dimension(980, 650));
         container.setLayout(new BoxLayout(container, BoxLayout.X_AXIS));
 
         buildUI();
@@ -119,11 +140,12 @@ public class ComparisonView extends BaseFrame
         int xHigh = 0;
         int xLow = Integer.MAX_VALUE;
         int yHigh = 0;
-        time = compareByComboBox.getSelectedIndex() > 29;
+        time = compareByComboBox.getSelectedIndex() > 29; //TODO shouldn't be needed
         for(int i = 0; i < topGraphs.size(); i++)
         {
             topGraphs.get(i).switchKey(compareByComboBox.getSelectedIndex());
             bottomGraphs.get(i).switchKey(compareByComboBox.getSelectedIndex());
+
             topGraphs.get(i).generateScales();
             bottomGraphs.get(i).generateScales();
 
@@ -149,25 +171,56 @@ public class ComparisonView extends BaseFrame
         updateSliders();
         container.repaint();
         valX = xHigh;
-        redrawGraphs(xLow, xHigh, yHigh);
+        if(matchYScales.isSelected())
+        {
+            setYScales(yHigh);
+        }
+        if(matchXScales.isSelected())
+        {
+            setXScales(xLow, xHigh);
+        }
 
+        redrawGraphs();
+
+    }
+
+    private void setXScales(int xLow, int xHigh)
+    {
+        for(int i = 0; i < topGraphs.size(); i++)
+        {
+            topGraphs.get(i).setScales(xLow, xHigh, topGraphs.get(i).getScaleYHigh());
+            bottomGraphs.get(i).setScales(xLow, xHigh, bottomGraphs.get(i).getScaleYHigh());
+        }
+    }
+
+    private void setYScales(int yHigh)
+    {
+        for(int i = 0; i < topGraphs.size(); i++)
+        {
+            topGraphs.get(i).setScales(topGraphs.get(i).getScaleXLow(), topGraphs.get(i).getScaleXHigh(), yHigh);
+            bottomGraphs.get(i).setScales(bottomGraphs.get(i).getScaleXLow(), bottomGraphs.get(i).getScaleXHigh(), yHigh);
+        }
     }
 
     private void redrawGraphs(int xLow, int xHigh)
     {
-        if(topGraphs.size()!= 0)
+        for(int i = 0; i < topGraphs.size(); i++)
         {
-            redrawGraphs(xLow, xHigh, topGraphs.get(0).getScaleYHigh());
+            topGraphs.get(i).setScales(xLow, xHigh, topGraphs.get(i).getScaleYHigh());
+            bottomGraphs.get(i).setScales(xLow, xHigh, bottomGraphs.get(i).getScaleYHigh());
+
+            topGraphs.get(i).setBounds();
+            topGraphs.get(i).drawGraph();
+            bottomGraphs.get(i).setBounds();
+            bottomGraphs.get(i).drawGraph();
         }
     }
 
 
-    private void redrawGraphs(int xLow, int xHigh, int yHigh)
+    private void redrawGraphs()
     {
         for(int i = 0; i < topGraphs.size(); i++)
         {
-            topGraphs.get(i).setScales(xLow, xHigh, yHigh);
-            bottomGraphs.get(i).setScales(xLow, xHigh, yHigh);
             topGraphs.get(i).setBounds();
             topGraphs.get(i).drawGraph();
             bottomGraphs.get(i).setBounds();
@@ -177,7 +230,11 @@ public class ComparisonView extends BaseFrame
 
     private void updateCutoffs()
     {
-        redrawGraphs(leftCutOff.getValue(), rightCutOff.getMaximum()-rightCutOff.getValue()+rightCutOff.getMinimum());
+        if(matchXScales.isSelected())
+        {
+            redrawGraphs(leftCutOff.getValue(), rightCutOff.getMaximum() - rightCutOff.getValue() + rightCutOff.getMinimum());
+
+        }
     }
 
     private void updateSliders()
@@ -206,11 +263,49 @@ public class ComparisonView extends BaseFrame
         for(RoomData raidData : data)
         {
             int value = raidData.getValue(DataPoint.getValue(String.valueOf(compareByComboBox.getSelectedItem())));
-
             if(value > -1)
             {
                 if(!time || value != 0)
                 {
+                    switch((Objects.requireNonNull(DataPoint.getValue(String.valueOf(compareByComboBox.getSelectedItem())))).room)
+                    {
+                        case MAIDEN:
+                            if(!raidData.maidenStartAccurate || !raidData.maidenEndAccurate)
+                            {
+                                continue;
+                            }
+                            break;
+                        case BLOAT:
+                            if(!raidData.bloatStartAccurate || !raidData.bloatEndAccurate)
+                            {
+                                continue;
+                            }
+                            break;
+                        case NYLOCAS:
+                            if(!raidData.nyloStartAccurate || !raidData.nyloEndAccurate)
+                            {
+                                continue;
+                            }
+                            break;
+                        case SOTETSEG:
+                            if(!raidData.soteStartAccurate || !raidData.soteEndAccurate)
+                            {
+                                continue;
+                            }
+                            break;
+                        case XARPUS:
+                            if(!raidData.xarpStartAccurate || !raidData.xarpEndAccurate)
+                            {
+                                continue;
+                            }
+                            break;
+                        case VERZIK:
+                            if(!raidData.verzikStartAccurate || !raidData.verzikEndAccurate)
+                            {
+                                continue;
+                            }
+                            break;
+                    }
                     arrayToPass.add(value);
                 }
             }
@@ -361,11 +456,11 @@ public class ComparisonView extends BaseFrame
         container.add(leftContainer);
 
         JPanel sidebar = new JPanel();
-        sidebar.setPreferredSize(new Dimension(370, 600));
+        sidebar.setPreferredSize(new Dimension(370, 650));
 
         JPanel graphOptionsPanel = new JPanel();
         graphOptionsPanel.setBorder(BorderFactory.createTitledBorder("Graph Options"));
-        graphOptionsPanel.setPreferredSize(new Dimension(190, 110));
+        graphOptionsPanel.setPreferredSize(new Dimension(190, 160));
 
         leftCutOff.setPaintLabels(true);
         leftCutOff.setPaintTicks(true);
@@ -408,6 +503,8 @@ public class ComparisonView extends BaseFrame
         graphOptionsPanel.add(leftLabel);
         graphOptionsPanel.add(rightCutOff);
         graphOptionsPanel.add(rightLabel);
+        graphOptionsPanel.add(matchXScales);
+        graphOptionsPanel.add(matchYScales);
         JPanel compareByPanel = new JPanel();
         compareByPanel.setBorder(BorderFactory.createTitledBorder("Compare by"));
         compareByPanel.setPreferredSize(new Dimension(190, 60));

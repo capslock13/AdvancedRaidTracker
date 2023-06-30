@@ -317,7 +317,7 @@ public class FilteredRaidsBaseFrame extends BaseFrame
             }
             if(timeToDisplay == 0)
             {
-                shouldDataBeIncluded = false;
+                //shouldDataBeIncluded = false;
             }
             for(Integer i : filteredIndices)
             {
@@ -488,22 +488,22 @@ public class FilteredRaidsBaseFrame extends BaseFrame
                     timeToDisplay = raid.getTimeSum();
                     break;
                 case 1:
-                    timeToDisplay = raid.getValue(DataPoint.MAIDEN_TOTAL_TIME);
+                    timeToDisplay = raid.getMaidenTime();
                     break;
                 case 2:
-                    timeToDisplay = raid.getValue(DataPoint.BLOAT_TOTAL_TIME);
+                    timeToDisplay = raid.getBloatTime();
                     break;
                 case 3:
-                    timeToDisplay = raid.getValue(DataPoint.NYLO_TOTAL_TIME);
+                    timeToDisplay = raid.getNyloTime();
                     break;
                 case 4:
-                    timeToDisplay = raid.getValue(DataPoint.SOTE_TOTAL_TIME);
+                    timeToDisplay = raid.getSoteTime();
                     break;
                 case 5:
-                    timeToDisplay = raid.getValue(DataPoint.XARP_TOTAL_TIME);
+                    timeToDisplay = raid.getXarpTime();
                     break;
                 case 6:
-                    timeToDisplay = raid.getValue(DataPoint.VERZIK_TOTAL_TIME);
+                    timeToDisplay = raid.getVerzikTime();
                     break;
             }
 
@@ -556,6 +556,10 @@ public class FilteredRaidsBaseFrame extends BaseFrame
         else if(data.maidenReset)
         {
             raidStatusString = "Maiden Reset";
+            if(data.getMaidenTime() == 0)
+            {
+                raidStatusString += "*";
+            }
         }
         else if(data.bloatWipe)
         {
@@ -564,6 +568,10 @@ public class FilteredRaidsBaseFrame extends BaseFrame
         else if(data.bloatReset)
         {
             raidStatusString = "Bloat Reset";
+            if(data.getBloatTime() == 0)
+            {
+                raidStatusString += "*";
+            }
         }
         else if(data.nyloWipe)
         {
@@ -572,6 +580,10 @@ public class FilteredRaidsBaseFrame extends BaseFrame
         else if(data.nyloReset)
         {
             raidStatusString = "Nylo Reset";
+            if(data.getNyloTime() == 0)
+            {
+                raidStatusString += "*";
+            }
         }
         else if(data.soteWipe)
         {
@@ -580,6 +592,10 @@ public class FilteredRaidsBaseFrame extends BaseFrame
         else if(data.soteReset)
         {
             raidStatusString = "Sotetseg Reset";
+            if(data.getSoteTime() == 0)
+            {
+                raidStatusString += "*";
+            }
         }
         else if(data.xarpWipe)
         {
@@ -588,6 +604,10 @@ public class FilteredRaidsBaseFrame extends BaseFrame
         else if(data.xarpReset)
         {
             raidStatusString = "Xarpus Reset";
+            if(data.getXarpTime() == 0)
+            {
+                raidStatusString += "*";
+            }
         }
         else if(data.verzikWipe)
         {

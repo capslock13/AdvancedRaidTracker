@@ -7,7 +7,11 @@ import com.TheatreTracker.utility.StatisticGatherer;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -56,6 +60,13 @@ public class ComparisonView extends BaseFrame
     ArrayList<GraphPanel> topGraphs;
     ArrayList<GraphPanel> bottomGraphs;
     ArrayList<String> labels;
+
+    JSpinner groupSizeSpinner;
+    SpinnerNumberModel spinnerSizeModel;
+    SpinnerNumberModel spinnerOffsetModel;
+    JSpinner groupOffsetSpinner;
+
+    JCheckBox groupingEnabled;
     public ComparisonView(ArrayList<ArrayList<RoomData>> raidData, ArrayList<String> names)
     {
         leftLabel = new JTextField("Min cutoff: ");
@@ -69,6 +80,73 @@ public class ComparisonView extends BaseFrame
         data = raidData;
         matchYScales = new JCheckBox("Match Y-Axis", true);
         matchXScales = new JCheckBox("Match X-Axis", true);
+
+        spinnerSizeModel = new SpinnerNumberModel(1, 1, 10, 1);
+        groupSizeSpinner = new JSpinner(spinnerSizeModel);
+
+        spinnerOffsetModel = new SpinnerNumberModel(0, 0, 0, 1);
+        groupOffsetSpinner = new JSpinner(spinnerOffsetModel);
+
+        groupingEnabled = new JCheckBox("Enable Grouping?");
+        groupingEnabled.setSelected(false);
+        groupOffsetSpinner.setEnabled(false);
+        groupSizeSpinner.setEnabled(false);
+
+        groupingEnabled.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                for(GraphPanel panel : topGraphs)
+                {
+                    panel.setGroupingEnabled(groupingEnabled.isSelected());
+                    panel.updateGroupOffset((Integer) groupOffsetSpinner.getValue());
+                    panel.updateGroupSize((Integer) groupSizeSpinner.getValue());
+
+                }
+                for(GraphPanel panel : bottomGraphs)
+                {
+                    panel.setGroupingEnabled(groupingEnabled.isSelected());
+                    panel.updateGroupOffset((Integer) groupOffsetSpinner.getValue());
+                    panel.updateGroupSize((Integer) groupSizeSpinner.getValue());
+
+
+                }
+                groupSizeSpinner.setEnabled(groupingEnabled.isSelected());
+                groupOffsetSpinner.setEnabled(groupingEnabled.isSelected());
+
+            }
+        });
+
+        groupSizeSpinner.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                for(GraphPanel panel : topGraphs)
+                {
+                    panel.updateGroupSize((int)groupSizeSpinner.getValue());
+                }
+                for(GraphPanel panel : bottomGraphs)
+                {
+                    panel.updateGroupSize((int)groupSizeSpinner.getValue());
+                }
+                spinnerOffsetModel.setMaximum((int)groupSizeSpinner.getValue()-1);
+            }
+        });
+
+        groupOffsetSpinner.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                for(GraphPanel panel : topGraphs)
+                {
+                    panel.updateGroupOffset((int)groupOffsetSpinner.getValue());
+                }
+                for(GraphPanel panel : bottomGraphs)
+                {
+                    panel.updateGroupOffset((int)groupOffsetSpinner.getValue());
+                }
+                spinnerSizeModel.setMinimum((int)groupOffsetSpinner.getValue()+1);
+            }
+        });
+
+
         labels = names;
 
         scrollTopPanel = new JPanel();
@@ -121,7 +199,7 @@ public class ComparisonView extends BaseFrame
         });
 
         container = new JPanel();
-        container.setPreferredSize(new Dimension(980, 650));
+        container.setPreferredSize(new Dimension(1000, 680));
         container.setLayout(new BoxLayout(container, BoxLayout.X_AXIS));
 
         buildUI();
@@ -208,7 +286,6 @@ public class ComparisonView extends BaseFrame
         {
             topGraphs.get(i).setScales(xLow, xHigh, topGraphs.get(i).getScaleYHigh());
             bottomGraphs.get(i).setScales(xLow, xHigh, bottomGraphs.get(i).getScaleYHigh());
-
             topGraphs.get(i).setBounds();
             topGraphs.get(i).drawGraph();
             bottomGraphs.get(i).setBounds();
@@ -456,11 +533,11 @@ public class ComparisonView extends BaseFrame
         container.add(leftContainer);
 
         JPanel sidebar = new JPanel();
-        sidebar.setPreferredSize(new Dimension(370, 650));
+        sidebar.setPreferredSize(new Dimension(390, 680));
 
         JPanel graphOptionsPanel = new JPanel();
         graphOptionsPanel.setBorder(BorderFactory.createTitledBorder("Graph Options"));
-        graphOptionsPanel.setPreferredSize(new Dimension(190, 160));
+        graphOptionsPanel.setPreferredSize(new Dimension(210, 190));
 
         leftCutOff.setPaintLabels(true);
         leftCutOff.setPaintTicks(true);
@@ -505,6 +582,15 @@ public class ComparisonView extends BaseFrame
         graphOptionsPanel.add(rightLabel);
         graphOptionsPanel.add(matchXScales);
         graphOptionsPanel.add(matchYScales);
+
+        graphOptionsPanel.add(new JLabel(""));
+
+        graphOptionsPanel.add(groupingEnabled);
+        graphOptionsPanel.add(new JLabel("Group Size: "));
+        graphOptionsPanel.add(groupSizeSpinner);
+        graphOptionsPanel.add(new JLabel("Group Offset: "));
+        graphOptionsPanel.add(groupOffsetSpinner);
+
         JPanel compareByPanel = new JPanel();
         compareByPanel.setBorder(BorderFactory.createTitledBorder("Compare by"));
         compareByPanel.setPreferredSize(new Dimension(190, 60));

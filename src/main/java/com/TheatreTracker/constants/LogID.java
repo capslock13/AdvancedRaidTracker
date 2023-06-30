@@ -90,7 +90,13 @@ public enum LogID{
     ACCURATE_XARP_END(305),
     ACCURATE_VERZIK_END(306),
     IS_HARD_MODE(401),
-    IS_STORY_MODE(402);
+    IS_STORY_MODE(402),
+
+    THRALL_ATTACKED(403), // player, type
+
+    THRALL_DAMAGED (404) // player, damage
+
+    ;
 
 
     /*

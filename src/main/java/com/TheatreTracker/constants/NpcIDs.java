@@ -2,6 +2,29 @@ package com.TheatreTracker.constants;
 
 public class NpcIDs {
 
+
+    public final static int VENG_CAST = 8361;
+    public final static int VENG_OTHER_CAST = 4411;
+    public final static int VENG_GRAPHIC = 726;
+    public final static int VENG_OTHER_GRAPHIC = 725;
+    //veng other 725
+
+    public final static int MELEE_THRALL = 10886;
+    public final static int RANGE_THRALL = 10883;
+    public final static int MAGE_THRALL = 10880;
+
+    public final static int MELEE_THRALL_ATTACK_ANIMATION = 5568;
+    public final static int RANGE_THRALL_ATTACK_ANIMATION = 5512;
+    public final static int MAGE_THRALL_ATTACK_ANIMATION = 5540;
+
+    public final static int THRALL_CAST_ANIMATION = 8973;
+    public final static int THRALL_CAST_GRAPHIC_MAGE = 1873;
+    public final static int THRALL_CAST_GRAPHIC_RANGE = 1874;
+    public final static int THRALL_CAST_GRAPHIC_MELEE = 1875;
+
+    public final static int THRALL_PROJECTILE_RANGE = 1906;
+    public final static int THRALL_PROJECTILE_MAGE = 1907;
+
     public final static int MAIDEN_P0 = 8360; // 8362 30-50 //8363 30-end //8360 start
     public final static int MAIDEN_P0_HM = 10822;
     public final static int MAIDEN_P0_SM = 10814;

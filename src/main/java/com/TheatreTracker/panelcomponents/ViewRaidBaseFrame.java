@@ -3,11 +3,12 @@ package com.TheatreTracker.panelcomponents;
 import com.TheatreTracker.RoomData;
 import com.TheatreTracker.utility.RoomUtil;
 import com.TheatreTracker.utility.DataPoint;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.Calendar;
-
+@Slf4j
 public class ViewRaidBaseFrame extends BaseFrame
 {
     String INCOMPLETE_MARKER = "-";
@@ -24,7 +25,6 @@ public class ViewRaidBaseFrame extends BaseFrame
         setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
 
         JPanel thisSubPanel = new JPanel();
-        //thisSubPanel.setMinimumSize(new Dimension(400,400));
         thisSubPanel.setLayout(new GridLayout(2, 3));
 
         String maidenColor = (data.maidenTimeAccurate) ? green : (data.maidenStartAccurate || data.maidenEndAccurate) ? blue : red;
@@ -368,10 +368,27 @@ public class ViewRaidBaseFrame extends BaseFrame
         }
         summarySubPanel.add(new JLabel("Raid Status: " + raidStatusString));
         summarySubPanel.add(new JLabel("Time: " + RoomUtil.time(data.getTimeSum())));
-        summarySubPanel.add(new JLabel("Players: " + data.players.toString().substring(1, data.players.toString().length()-1)));
+        summarySubPanel.add(new JLabel("Players:" ));
+        for(int i = 0; i < data.players.size(); i++)
+        {
+            summarySubPanel.add(new JLabel("        " + data.players.get(i)));
+        }
         summaryPanel.add(summarySubPanel);
 
-        add(summaryPanel);
+        JPanel topPanel = new JPanel();
+        topPanel.setLayout(new GridLayout(1, 3));
+        topPanel.add(summaryPanel);
+
+        JPanel deathsPanel = new JPanel();
+        deathsPanel.setBorder(BorderFactory.createTitledBorder("Deaths"));
+
+        JPanel vengPanel = new JPanel();
+        vengPanel.setBorder(BorderFactory.createTitledBorder("Venges"));
+
+        topPanel.add(deathsPanel);
+        topPanel.add(vengPanel);
+
+        add(topPanel);
         add(thisSubPanel);
 
         pack();

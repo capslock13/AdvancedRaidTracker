@@ -34,6 +34,8 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
     private ToolTipData activeToolTip;
     private boolean shouldDrawToolTip = false;
 
+    private boolean groupingEnabled = true;
+
 
     private ArrayList<Bounds> selectedBounds;
     private Bounds activeBound = new Bounds(-1, -1, -1, -1, null);
@@ -132,27 +134,6 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
             }
         }
         return countedData;
-    }
-
-    public static GraphInternalBoundMatchedContainer getCounts(GraphInternalDataContainer data, int highestValue)
-    {
-        ArrayList<Integer> countedIntData = new ArrayList<>();
-        ArrayList<ArrayList<RoomData>> countedFullData = new ArrayList<>();
-        for(int i = 0; i < highestValue+1; i++)
-        {
-            countedIntData.add(0);
-            countedFullData.add(new ArrayList<RoomData>());
-        }
-        for(int i = 0; i < data.intData.size(); i++)
-        {
-            if(countedIntData.size() > data.intData.get(i) && data.intData.get(i) > -1)
-            {
-                int incrementedValue = countedIntData.get(data.intData.get(i)) + 1;
-                countedIntData.set(data.intData.get(i), incrementedValue);
-                countedFullData.get(data.intData.get(i)).add(data.fullData.get(i));
-            }
-        }
-        return new GraphInternalBoundMatchedContainer(countedFullData, countedIntData);
     }
 
     public static int getCountedTotal(ArrayList<Integer> data)
@@ -331,14 +312,56 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
         yScaleHigh = yh;
     }
 
+    public static GraphInternalBoundMatchedContainer getCounts(GraphInternalDataContainer data, int highestValue)
+    {
+        ArrayList<Integer> countedIntData = new ArrayList<>();
+        ArrayList<ArrayList<RoomData>> countedFullData = new ArrayList<>();
+        for(int i = 0; i < highestValue+1; i++)
+        {
+            countedIntData.add(0);
+            countedFullData.add(new ArrayList<>());
+        }
+        for(int i = 0; i < data.intData.size(); i++)
+        {
+            if(countedIntData.size() > data.intData.get(i) && data.intData.get(i) > -1)
+            {
+                int incrementedValue = countedIntData.get(data.intData.get(i)) + 1;
+                countedIntData.set(data.intData.get(i), incrementedValue);
+                countedFullData.get(data.intData.get(i)).add(data.fullData.get(i));
+            }
+        }
+        return new GraphInternalBoundMatchedContainer(countedFullData, countedIntData);
+    }
+
+    private int getAlternateYScale(GraphInternalBoundMatchedContainer sets)
+    {
+        int max = 0;
+        for(int i = 0; i < sets.intData.size(); i++)
+        {
+            int partialSum = 0;
+            for(int j = i; j < i+groupSize; j++)
+            {
+                if(j < sets.intData.size())
+                {
+                    partialSum += sets.intData.get(j);
+                }
+            }
+            if(partialSum > max)
+            {
+                max = partialSum;
+            }
+        }
+        return max;
+    }
+
     public void setBounds()
     {
         bounds.clear();
         GraphInternalDataContainer graphData = getInternalDataSet(activeKey);
-        ArrayList<Integer> data = filterInvalid(graphData.intData);
         GraphInternalBoundMatchedContainer countedDataSet = getCounts(graphData, xScaleHigh);
-        int highestCount = yScaleHigh;
-        int bars = xScaleHigh-xScaleLow+1;
+        int highestCount = (groupingEnabled) ? getAlternateYScale(countedDataSet) : yScaleHigh;
+        int firstGroupCount = (groupOffset == 0) ? groupSize : groupOffset;
+        int bars = (groupingEnabled) ? ((int) (1+ Math.ceil(((double)(1+xScaleHigh-firstGroupCount-xScaleLow))/((double)groupSize)))) : xScaleHigh-xScaleLow+1;
         int barWidth = GRAPH_WIDTH/(bars);
         int usedWidth = barWidth*bars;
         int startX = GRAPH_XS+(GRAPH_WIDTH/2) - (usedWidth/2);
@@ -346,14 +369,98 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
 
         for(int i = Math.max(0, xScaleLow); i < xScaleHigh+1; i++)
         {
-            int height = (int) (countedDataSet.intData.get(i) * scale);
-            int left = startX + ((i-xScaleLow)*(barWidth));
-            int right = left+barWidth;
-            int top = GRAPH_HEIGHT-GRAPH_YS-height;
-            int bottom = GRAPH_HEIGHT-GRAPH_YS;
-            bounds.add(new Bounds(left, right, bottom, top, countedDataSet.fullData.get(i)));
+            if(groupingEnabled)
+            {
+                if((i-xScaleLow)%groupSize==groupOffset || i == xScaleLow+groupOffset || i == xScaleLow)
+                {
+                    int barOffset = 0;
+                    if(i != xScaleLow && groupOffset != 0)
+                    {
+                        barOffset = 1;
+                    }
+                    int summedRegion = (groupOffset == 0 || i != xScaleLow) ? sumRegion(countedDataSet, i, groupSize) : sumRegion(countedDataSet, i-groupSize+groupOffset, groupSize);
+                    int height = (int) (summedRegion * scale);
+                    int barsToDraw = (i-Math.max(0, xScaleLow))/groupSize;
+                    int left = startX + ((barsToDraw+barOffset) * (barWidth));
+                    int right = left + barWidth;
+                    int top = GRAPH_HEIGHT - GRAPH_YS - height;
+                    int bottom = GRAPH_HEIGHT - GRAPH_YS;
+                    ArrayList<RoomData> summedRegionData;
+                    if(groupOffset == 0 || i != xScaleLow)
+                    {
+                        summedRegionData = sumRegionRaidData(countedDataSet, i, groupSize);
+                    }
+                    else
+                    {
+                        summedRegionData = sumRegionRaidData(countedDataSet, i - groupSize + groupOffset, groupSize);
+                    }
+                    bounds.add(new Bounds(left, right, bottom, top, summedRegionData));
+                }
+            }
+            else
+            {
+                int height = (int) (countedDataSet.intData.get(i) * scale);
+                int left = startX + ((i - xScaleLow) * (barWidth));
+                int right = left + barWidth;
+                int top = GRAPH_HEIGHT - GRAPH_YS - height;
+                int bottom = GRAPH_HEIGHT - GRAPH_YS;
+                bounds.add(new Bounds(left, right, bottom, top, countedDataSet.fullData.get(i)));
+            }
         }
     }
+
+    public void setGroupingEnabled(boolean enabled)
+    {
+        groupingEnabled = enabled;
+        setBounds();
+        drawGraph();
+    }
+
+    public void updateGroupSize(int groupSize)
+    {
+        this.groupSize = groupSize;
+        setBounds();
+        drawGraph();
+    }
+
+    public void updateGroupOffset(int groupOffset)
+    {
+        this.groupOffset = groupOffset;
+        setBounds();
+        drawGraph();
+    }
+
+    private int sumRegion(GraphInternalBoundMatchedContainer data, int index, int length)
+    {
+        int sum = 0;
+        for(int i = index; i < index+length; i++)
+        {
+            if(i < data.intData.size() && i > -1)
+            {
+                sum += data.intData.get(i);
+            }
+        }
+        return sum;
+    }
+
+    private ArrayList<RoomData> sumRegionRaidData(GraphInternalBoundMatchedContainer data, int index, int length)
+    {
+        ArrayList<RoomData> summedData = new ArrayList<>();
+        for(int i = index; i < index+length; i++)
+        {
+            if(i < data.fullData.size() && i > -1)
+            {
+                for(RoomData tempData : data.fullData.get(i))
+                {
+                    summedData.add(tempData);
+                }
+            }
+        }
+        return summedData;
+    }
+
+    private int groupSize = 1;
+    private int groupOffset = 0;
 
     private void drawDragArea()
     {
@@ -416,74 +523,162 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
     }
     public void drawGraph()
     {
-        ArrayList<Integer> data = filterForTime(filterInvalid(getInternalDataSet(activeKey).intData));
-        drawBlankGraph();
-
-        Graphics2D g = (Graphics2D) img.getGraphics();
-        Stroke oldStroke = g.getStroke();
-
-        int lowestValue = xScaleLow;
-        int highestValue = xScaleHigh;
-
-        ArrayList<Integer> countedDataSet = getCounts(data, highestValue);
-        int highestCount = yScaleHigh;
-        int bars = highestValue-lowestValue+1;
-        int barWidth = GRAPH_WIDTH/(bars);
-        if(barWidth == 0)
+        if(groupingEnabled)
         {
-            barWidth = 1;
-        }
-        int usedWidth = barWidth*bars;
-        int startX = GRAPH_XS+(GRAPH_WIDTH/2) - (usedWidth/2);
-        double scale = ((highestCount == 0) ? (GRAPH_HEIGHT*.75) : ((GRAPH_HEIGHT*.75)/(double)highestCount));
-        int totalCount = getCountedTotal(countedDataSet);
-        int horizontalScaleToUse = (highestValue-lowestValue > 100) ? 25 : (highestValue-lowestValue > 50) ? 10 : (highestValue-lowestValue > 10) ? 5 : 1;
-        if(barWidth > 16)
-        {
-            horizontalScaleToUse = 1;
-        }
+            drawBlankGraph();
 
-        int verticalScaleToUse = (highestCount > 250) ? 50 : (highestCount > 100) ? 25 : (highestCount > 50) ? 10 : (highestCount > 10) ? 5 : 1;
-        g.setRenderingHint(
-                RenderingHints.KEY_TEXT_ANTIALIASING,
-                RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-        Font oldFont = g.getFont();
-        Font font = new Font("SansSerif", Font.PLAIN, 14);
-        g.setFont(font);
-        String title = DataPoint.values()[activeKey].name + " (Based on " + totalCount + " raids)";
-        g.drawString(title, 300-g.getFontMetrics().stringWidth(title)/2, 16);
-        g.setFont(oldFont);
-        for(int i = 0; i < highestCount+1; i++)
-        {
-            int stringOffset = (int)(500-GRAPH_HEIGHT-GRAPH_YS-scale*i+8);
-            if(i == 0 || i%verticalScaleToUse == 0)
+            Graphics2D g = (Graphics2D) img.getGraphics();
+            Stroke oldStroke = g.getStroke();
+
+            int lowestValue = xScaleLow;
+            int highestValue = xScaleHigh;
+
+            GraphInternalBoundMatchedContainer countedDataSet = getCounts(getInternalDataSet(activeKey), highestValue);
+            int highestCount = getAlternateYScale(countedDataSet);
+            int firstGroupCount = (groupOffset == 0) ? groupSize : groupOffset;
+            int bars = ((int) (1+ Math.ceil(((double)(1+xScaleHigh-firstGroupCount-xScaleLow))/((double)groupSize))));
+            int barWidth = GRAPH_WIDTH/(bars);
+            if(barWidth == 0)
             {
-                Color oldColor = g.getColor();
-                g.setColor(new Color(100, 100, 100, 100));
-                g.drawLine(GRAPH_XS, stringOffset-8, GRAPH_XE, stringOffset-8);
-                g.setColor(oldColor);
-                g.drawString(i + "", GRAPH_XS - 20, stringOffset);
+                barWidth = 1;
             }
-        }
-
-        for(int i = Math.max(lowestValue, 0); i < highestValue+1; i++)
-        {
-            int currentBarCenter = startX + ((i-lowestValue)*(barWidth));
-            int height = (int) (countedDataSet.get(i) * scale);
-            drawBar(g, barWidth, height, currentBarCenter, countedDataSet.get(i), totalCount, getString(i));
-            int stringOffset = 16 + barWidth/2 - 8;
-            if(i == lowestValue || i == highestValue || i%horizontalScaleToUse==0)
+            int usedWidth = barWidth*bars;
+            int startX = GRAPH_XS+(GRAPH_WIDTH/2) - (usedWidth/2);
+            double scale = ((highestCount == 0) ? (GRAPH_HEIGHT*.75) : ((GRAPH_HEIGHT*.75)/(double)highestCount));
+            int totalCount = getCountedTotal(countedDataSet.intData);
+            int horizontalScaleToUse = (highestValue-lowestValue > 100) ? 25 : (highestValue-lowestValue > 50) ? 10 : (highestValue-lowestValue > 10) ? 5 : 1;
+            if(barWidth > 16)
             {
-                drawStringRotated(g, getString(i), startX + stringOffset + ((i - lowestValue) * barWidth), 500 - GRAPH_HEIGHT - GRAPH_YS + 5);
+                horizontalScaleToUse = 1;
             }
+
+            int verticalScaleToUse = (highestCount > 250) ? 50 : (highestCount > 100) ? 25 : (highestCount > 50) ? 10 : (highestCount > 10) ? 5 : 1;
+            g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+            Font oldFont = g.getFont();
+            Font font = new Font("SansSerif", Font.PLAIN, 14);
+            g.setFont(font);
+            String title = DataPoint.values()[activeKey].name + " (Based on " + totalCount + " raids)";
+            g.drawString(title, 300-g.getFontMetrics().stringWidth(title)/2, 16);
+            g.setFont(oldFont);
+            for(int i = 0; i < highestCount+1; i++)
+            {
+                {
+                    int stringOffset = (int) (500 - GRAPH_HEIGHT - GRAPH_YS - scale * i + 8);
+                    if (i == 0 || i % verticalScaleToUse == 0)
+                    {
+                        Color oldColor = g.getColor();
+                        g.setColor(new Color(100, 100, 100, 100));
+                        g.drawLine(GRAPH_XS, stringOffset - 8, GRAPH_XE, stringOffset - 8);
+                        g.setColor(oldColor);
+                        g.drawString(i + "", GRAPH_XS - 20, stringOffset);
+                    }
+                }
+            }
+
+            for(int i = Math.max(lowestValue, 0); i < highestValue+1; i++)
+            {
+                if((i-lowestValue)%groupSize==groupOffset || i == lowestValue+groupOffset || i == lowestValue)
+                {
+                    int barOffset = 0;
+                    if(i != lowestValue && groupOffset != 0)
+                    {
+                        barOffset = 1;
+                    }
+                    int currentBarCenter = startX + (((i-Math.max(0, xScaleLow))/groupSize)+barOffset) * (barWidth);
+                    int summedRegion = (groupOffset == 0 || i != lowestValue) ? sumRegion(countedDataSet, i, groupSize) : sumRegion(countedDataSet, i-groupSize+groupOffset, groupSize);
+                    int height = (int) (summedRegion * scale);
+                    int stringOffset = 16 + barWidth / 2 - 8;
+                    String axisValue = "";
+                    if (i == lowestValue || i == highestValue || i % horizontalScaleToUse == 0)
+                    {
+                        axisValue = (i == lowestValue && groupOffset != 0) ? getString(i-groupSize+groupOffset) : getString(i);
+                        if(groupSize != 1)
+                        {
+                            if (i != lowestValue || groupOffset == 0)
+                            {
+                                axisValue += "-" + getString(i + groupSize - 1);
+                            } else {
+                                axisValue += "-" + getString(i);
+                            }
+                        }
+                        drawStringRotated(g, axisValue, startX + stringOffset + ((((i-Math.max(0, xScaleLow))/groupSize)+barOffset) * barWidth), 500 - GRAPH_HEIGHT - GRAPH_YS + 5);
+                    }
+                    drawBar(g, barWidth, height, currentBarCenter, summedRegion, totalCount, axisValue);
+                }
+            }
+            drawToolTip();
+
+            drawDragArea();
+
+            g.setStroke(oldStroke);
+            g.dispose();
+            repaint();
         }
-        drawToolTip();
+        else
+        {
+            ArrayList<Integer> data = filterForTime(filterInvalid(getInternalDataSet(activeKey).intData));
+            drawBlankGraph();
 
-        drawDragArea();
+            Graphics2D g = (Graphics2D) img.getGraphics();
+            Stroke oldStroke = g.getStroke();
 
-        g.setStroke(oldStroke);
-        g.dispose();
-        repaint();
+            int lowestValue = xScaleLow;
+            int highestValue = xScaleHigh;
+
+            ArrayList<Integer> countedDataSet = getCounts(data, highestValue);
+            int highestCount = yScaleHigh;
+            int bars = highestValue - lowestValue + 1;
+            int barWidth = GRAPH_WIDTH / (bars);
+            if (barWidth == 0) {
+                barWidth = 1;
+            }
+            int usedWidth = barWidth * bars;
+            int startX = GRAPH_XS + (GRAPH_WIDTH / 2) - (usedWidth / 2);
+            double scale = ((highestCount == 0) ? (GRAPH_HEIGHT * .75) : ((GRAPH_HEIGHT * .75) / (double) highestCount));
+            int totalCount = getCountedTotal(countedDataSet);
+            int horizontalScaleToUse = (highestValue - lowestValue > 100) ? 25 : (highestValue - lowestValue > 50) ? 10 : (highestValue - lowestValue > 10) ? 5 : 1;
+            if (barWidth > 16) {
+                horizontalScaleToUse = 1;
+            }
+
+            int verticalScaleToUse = (highestCount > 250) ? 50 : (highestCount > 100) ? 25 : (highestCount > 50) ? 10 : (highestCount > 10) ? 5 : 1;
+            g.setRenderingHint(
+                    RenderingHints.KEY_TEXT_ANTIALIASING,
+                    RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+            Font oldFont = g.getFont();
+            Font font = new Font("SansSerif", Font.PLAIN, 14);
+            g.setFont(font);
+            String title = DataPoint.values()[activeKey].name + " (Based on " + totalCount + " raids)";
+            g.drawString(title, 300 - g.getFontMetrics().stringWidth(title) / 2, 16);
+            g.setFont(oldFont);
+            for (int i = 0; i < highestCount + 1; i++) {
+                int stringOffset = (int) (500 - GRAPH_HEIGHT - GRAPH_YS - scale * i + 8);
+                if (i == 0 || i % verticalScaleToUse == 0) {
+                    Color oldColor = g.getColor();
+                    g.setColor(new Color(100, 100, 100, 100));
+                    g.drawLine(GRAPH_XS, stringOffset - 8, GRAPH_XE, stringOffset - 8);
+                    g.setColor(oldColor);
+                    g.drawString(i + "", GRAPH_XS - 20, stringOffset);
+                }
+            }
+
+            for (int i = Math.max(lowestValue, 0); i < highestValue + 1; i++) {
+                int currentBarCenter = startX + ((i - lowestValue) * (barWidth));
+                int height = (int) (countedDataSet.get(i) * scale);
+                drawBar(g, barWidth, height, currentBarCenter, countedDataSet.get(i), totalCount, getString(i));
+                int stringOffset = 16 + barWidth / 2 - 8;
+                if (i == lowestValue || i == highestValue || i % horizontalScaleToUse == 0) {
+                    drawStringRotated(g, getString(i), startX + stringOffset + ((i - lowestValue) * barWidth), 500 - GRAPH_HEIGHT - GRAPH_YS + 5);
+                }
+            }
+            drawToolTip();
+
+            drawDragArea();
+
+            g.setStroke(oldStroke);
+            g.dispose();
+            repaint();
+        }
     }
 
     private GraphInternalDataContainer getInternalDataSet(int key)
@@ -682,6 +877,7 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
             if(checkBounds(e.getX(), e.getY()))
             {
                 selectedBounds.add(getBound(e.getX(), e.getY()));
+
                 drawGraph();
             }
         }

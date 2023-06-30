@@ -207,12 +207,12 @@ public class RoomData
         }
     }
 
-    public int getMaidenTime() { return getValue(com.TheatreTracker.utility.DataPoint.MAIDEN_TOTAL_TIME); }
-    public int getBloatTime() { return getValue(com.TheatreTracker.utility.DataPoint.BLOAT_TOTAL_TIME); }
-    public int getNyloTime() { return getValue(com.TheatreTracker.utility.DataPoint.NYLO_TOTAL_TIME); }
-    public int getSoteTime() { return getValue(com.TheatreTracker.utility.DataPoint.SOTE_TOTAL_TIME); }
-    public int getXarpTime() { return getValue(com.TheatreTracker.utility.DataPoint.XARP_TOTAL_TIME); }
-    public int getVerzikTime() { return getValue(com.TheatreTracker.utility.DataPoint.VERZIK_TOTAL_TIME); }
+    public int getMaidenTime() { return (maidenStartAccurate && maidenEndAccurate) ? getValue(com.TheatreTracker.utility.DataPoint.MAIDEN_TOTAL_TIME) : 0; }
+    public int getBloatTime() { return (bloatStartAccurate && bloatEndAccurate) ? getValue(com.TheatreTracker.utility.DataPoint.BLOAT_TOTAL_TIME) : 0; }
+    public int getNyloTime() { return (nyloStartAccurate && nyloEndAccurate) ? getValue(com.TheatreTracker.utility.DataPoint.NYLO_TOTAL_TIME): 0; }
+    public int getSoteTime() { return (soteStartAccurate && soteEndAccurate) ? getValue(com.TheatreTracker.utility.DataPoint.SOTE_TOTAL_TIME) : 0; }
+    public int getXarpTime() { return (xarpStartAccurate && xarpEndAccurate) ? getValue(com.TheatreTracker.utility.DataPoint.XARP_TOTAL_TIME) : 0; }
+    public int getVerzikTime() { return (verzikStartAccurate && verzikEndAccurate) ? getValue(com.TheatreTracker.utility.DataPoint.VERZIK_TOTAL_TIME) : 0; }
 
     public boolean getOverallTimeAccurate()
     {
@@ -228,12 +228,20 @@ public class RoomData
     {
         if(globalData.size() == 0 || globalData.get(0).split(",", -1)[3].equals(EXIT_FLAG))
         {
-            switch (room) {
+            switch (room)
+            {
                 case MAIDEN:
                     maidenReset = true;
                     break;
                 case BLOAT:
-                    bloatReset = true;
+                    if(!bloatEndAccurate)
+                    {
+                        bloatWipe = true;
+                    }
+                    else
+                    {
+                        bloatReset = true;
+                    }
                     break;
                 case NYLOCAS:
                     nyloReset = true;
@@ -264,12 +272,12 @@ public class RoomData
 
     public int getTimeSum()
     {
-        return dataManager.get(com.TheatreTracker.utility.DataPoint.MAIDEN_TOTAL_TIME)
+        return getMaidenTime() + getBloatTime() + getNyloTime() + getSoteTime() + getXarpTime() + getVerzikTime(); /*
                 + dataManager.get(com.TheatreTracker.utility.DataPoint.BLOAT_TOTAL_TIME)
                 + dataManager.get(com.TheatreTracker.utility.DataPoint.NYLO_TOTAL_TIME)
                 + dataManager.get(com.TheatreTracker.utility.DataPoint.SOTE_TOTAL_TIME)
                 + dataManager.get(com.TheatreTracker.utility.DataPoint.XARP_TOTAL_TIME)
-                + dataManager.get(com.TheatreTracker.utility.DataPoint.VERZIK_TOTAL_TIME);
+                + dataManager.get(com.TheatreTracker.utility.DataPoint.VERZIK_TOTAL_TIME);*/
     }
 
     public RoomData(String[] parameters) throws Exception
@@ -325,12 +333,18 @@ public class RoomData
         else {
             try
             {
-                if (parseMaiden()) {
-                    if (checkExit(MAIDEN) && parseBloat()) {
-                        if (checkExit(BLOAT) && parseNylo()) {
-                            if (checkExit(NYLOCAS) && parseSotetseg()) {
-                                if (checkExit(SOTETSEG) && parseXarpus()) {
-                                    if (checkExit(XARPUS) && parseVerzik()) {
+                if (parseMaiden())
+                {
+                    if (checkExit(MAIDEN) && parseBloat())
+                    {
+                        if (checkExit(BLOAT) && parseNylo())
+                        {
+                            if (checkExit(NYLOCAS) && parseSotetseg())
+                            {
+                                if (checkExit(SOTETSEG) && parseXarpus())
+                                {
+                                    if (checkExit(XARPUS) && parseVerzik())
+                                    {
                                         finishRaid();
                                     }
                                 }
@@ -605,7 +619,7 @@ public class RoomData
                 case 6:
                     break;
                 case 4:
-                    if(dataManager.get(com.TheatreTracker.utility.DataPoint.SOTE_TOTAL_TIME) == 0)
+                    if(dataManager.get(com.TheatreTracker.utility.DataPoint.SOTE_TOTAL_TIME) != 0)
                     {
                         soteReset = true;
                     }
@@ -730,7 +744,14 @@ public class RoomData
                     {
                         if(!nyloStarted)
                         {
-                            bloatReset = true;
+                            if(!bloatEndAccurate)
+                            {
+                                bloatWipe = true;
+                            }
+                            else
+                            {
+                                bloatReset = true;
+                            }
                         }
                         else
                         {
@@ -860,7 +881,7 @@ public class RoomData
                     }
                     break;
                 case 4:
-                    if(dataManager.get(com.TheatreTracker.utility.DataPoint.BLOAT_TOTAL_TIME) != 0)
+                    if(bloatEndAccurate)
                     {
                         bloatReset = true;
                     }

@@ -1,15 +1,16 @@
 package com.TheatreTracker;
 
 import com.TheatreTracker.constants.NpcIDs;
+import com.TheatreTracker.constants.TOBRoom;
 import com.TheatreTracker.ui.RaidTrackerPanelPrimary;
 import com.TheatreTracker.utility.DataWriter;
+import com.TheatreTracker.utility.thrallvengtracking.*;
 import com.google.inject.Inject;
 import com.google.inject.Provides;
 import lombok.extern.slf4j.Slf4j;
-import net.runelite.api.Actor;
-import net.runelite.api.Client;
-import net.runelite.api.GameState;
-import net.runelite.api.Player;
+import net.runelite.api.*;
+import net.runelite.api.coords.LocalPoint;
+import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.*;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
@@ -35,11 +36,11 @@ import net.runelite.client.util.Text;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.TheatreTracker.constants.LogID.*;
+import static com.TheatreTracker.constants.NpcIDs.*;
 import static com.TheatreTracker.constants.TOBRoom.*;
 
 
@@ -52,7 +53,7 @@ import static com.TheatreTracker.constants.TOBRoom.*;
 public class TheatreTrackerPlugin extends Plugin
 {
     private NavigationButton navButtonPrimary;
-    private DataWriter clog;
+    public DataWriter clog;
 
     private boolean partyIntact = false;
 
@@ -87,6 +88,9 @@ public class TheatreTrackerPlugin extends Plugin
     private XarpusHandler xarpus;
     private VerzikHandler verzik;
 
+    private ArrayList<DamageQueueShell> queuedThrallDamage;
+    private ArrayList<ThrallCurrentDamage> currentThrallDamage;
+
 
     private final int LOBBY_REGION = 14642;
     private final int MAIDEN_REGION = 12613;
@@ -104,6 +108,10 @@ public class TheatreTrackerPlugin extends Plugin
     private ArrayList<String> currentPlayers;
     private boolean checkDefer = false;
     public static int scale = -1;
+
+    private ThrallTracker thrallTracker;
+    private VengTracker vengTracker;
+    private List<PlayerShell> localPlayers;
 
     @Inject
     private PluginManager pluginManager;
@@ -123,6 +131,11 @@ public class TheatreTrackerPlugin extends Plugin
     {
         super.startUp();
 
+        localPlayers = new ArrayList<>();
+        thrallTracker = new ThrallTracker(this);
+        vengTracker = new VengTracker();
+        queuedThrallDamage = new ArrayList<>();
+        currentThrallDamage = new ArrayList<>();
         RaidTrackerPanelPrimary timersPanelPrimary = injector.getInstance(RaidTrackerPanelPrimary.class);
         partyIntact = false;
 
@@ -189,9 +202,9 @@ public class TheatreTrackerPlugin extends Plugin
         {
             currentRoom = lobby;
         }
-        else if (previous == lobby && !inRegion(MAIDEN_REGION)) //TODO faulty logic
+        else if (previous == lobby && inRegion(BLOAT_REGION, NYLO_REGION, SOTETSEG_REGION, XARPUS_REGION, VERZIK_REGION)) //TODO verify logic fix
         {
-            deferredTick = client.getTickCount()+2;
+            deferredTick = client.getTickCount()+2; //Check two ticks from now for player names in orbs
             clog.write(ENTERED_TOB);
             clog.write(SPECTATE);
             clog.write(LATE_START, String.valueOf(currentRegion));
@@ -262,7 +275,7 @@ public class TheatreTrackerPlugin extends Plugin
 
     private void enteredBloat(RoomHandler old)
     {
-        clog.write(ENTERED_NEW_TOB_REGION, BLOAT.ordinal());
+        clog.write(ENTERED_NEW_TOB_REGION, TOBRoom.BLOAT.ordinal());
         maiden.reset();
         bloat.reset();
     }
@@ -411,9 +424,26 @@ public class TheatreTrackerPlugin extends Plugin
         checkPartyUpdate();
     }
 
+    public void addQueuedThrallDamage(int targetIndex, int sourceIndex, int offset, String source)
+    {
+        queuedThrallDamage.add(new DamageQueueShell(targetIndex, sourceIndex, offset, source));
+    }
+
     @Subscribe
     public void onGameTick(GameTick event) throws PluginInstantiationException
     {
+        localPlayers.clear();
+        for(Player p : client.getPlayers())
+        {
+            localPlayers.add(new PlayerShell(p.getWorldLocation(), p.getName()));
+            thrallTracker.updatePlayerInteracting(p.getName(), p.getInteracting());
+        }
+        for(DamageQueueShell damage : queuedThrallDamage)
+        {
+            damage.offset--;
+        }
+        thrallTracker.updateTick();
+        vengTracker.updateTick();
         updateRoom();
         if(inTheatre)
         {
@@ -492,6 +522,35 @@ public class TheatreTrackerPlugin extends Plugin
     @Subscribe
     public void onGraphicChanged(GraphicChanged event)
     {
+        if(event.getActor() instanceof Player)
+        {
+            int id = -1;
+            if(event.getActor().hasSpotAnim(THRALL_CAST_GRAPHIC_MAGE))
+            {
+                id = THRALL_CAST_GRAPHIC_MAGE;
+            }
+            else if(event.getActor().hasSpotAnim(THRALL_CAST_GRAPHIC_MELEE))
+            {
+                id = THRALL_CAST_GRAPHIC_MELEE;
+            }
+            else if(event.getActor().hasSpotAnim(THRALL_CAST_GRAPHIC_RANGE))
+            {
+                id = THRALL_CAST_GRAPHIC_RANGE;
+            }
+            else if(event.getActor().hasSpotAnim(VENG_GRAPHIC))
+            {
+                vengTracker.vengSelfGraphicApplied((Player)event.getActor());
+            }
+            else if(event.getActor().hasSpotAnim(VENG_OTHER_GRAPHIC))
+            {
+                vengTracker.vengOtherGraphicApplied((Player)event.getActor());
+            }
+            if(id != -1)
+            {
+                thrallTracker.playerHasThrallCastSpotAnim((Player) event.getActor(), id);
+            }
+
+        }
         if(inTheatre)
         {
             currentRoom.updateGraphicChanged(event);
@@ -501,6 +560,13 @@ public class TheatreTrackerPlugin extends Plugin
     @Subscribe
     public void onProjectileMoved(ProjectileMoved event)
     {
+        if(event.getProjectile().getId() == THRALL_PROJECTILE_RANGE || event.getProjectile().getId() == THRALL_PROJECTILE_MAGE)
+        {
+            if(event.getProjectile().getStartCycle() == client.getGameCycle())
+            {
+                thrallTracker.projectileCreated(event.getProjectile(), WorldPoint.fromLocal(client, new LocalPoint(event.getProjectile().getX1(), event.getProjectile().getY1())), event.getProjectile().getInteracting().getWorldLocation());
+            }
+        }
         if(inTheatre)
         {
             currentRoom.updateProjectileMoved(event);
@@ -510,6 +576,22 @@ public class TheatreTrackerPlugin extends Plugin
     @Subscribe
     public void onAnimationChanged(AnimationChanged event)
     {
+        if(event.getActor().getAnimation() == THRALL_CAST_ANIMATION)
+        {
+            thrallTracker.castThrallAnimation((Player)event.getActor());
+        }
+        else if(event.getActor().getAnimation() == MELEE_THRALL_ATTACK_ANIMATION && event.getActor() instanceof NPC)
+        {
+            thrallTracker.meleeThrallAttacked((NPC) event.getActor());
+        }
+        else if(event.getActor().getAnimation() == VENG_CAST)
+        {
+            vengTracker.vengSelfCast((Player)event.getActor());
+        }
+        else if(event.getActor().getAnimation() == VENG_OTHER_CAST)
+        {
+            vengTracker.vengOtherCast((Player)event.getActor());
+        }
         if(inTheatre)
         {
             currentRoom.updateAnimationChanged(event);
@@ -534,9 +616,27 @@ public class TheatreTrackerPlugin extends Plugin
         }
     }
 
+    private void handleThrallSpawn(NPC npc)
+    {
+        ArrayList<PlayerShell> potentialPlayers = new ArrayList<>();
+        for(PlayerShell p : localPlayers)
+        {
+            if(p.worldLocation.distanceTo(npc.getWorldLocation()) == 1)
+            {
+                potentialPlayers.add(p);
+            }
+        }
+        thrallTracker.thrallSpawned(npc, potentialPlayers);
+    }
+
     @Subscribe
     public void onNpcSpawned(NpcSpawned event)
     {
+        int id = event.getNpc().getId();
+        if(id == MELEE_THRALL || id == RANGE_THRALL || id == MAGE_THRALL)
+        {
+            handleThrallSpawn(event.getNpc());
+        }
         switch(event.getNpc().getId())
         {
             case NpcIDs.MAIDEN_P0:
@@ -683,6 +783,11 @@ public class TheatreTrackerPlugin extends Plugin
     @Subscribe
     public void onNpcDespawned(NpcDespawned event)
     {
+        int id = event.getNpc().getId();
+        if(id == MELEE_THRALL || id == RANGE_THRALL || id == MAGE_THRALL)
+        {
+            thrallTracker.removeThrall(event.getNpc());
+        }
         if(inTheatre)
         {
             currentRoom.updateNpcDespawned(event);
@@ -692,6 +797,25 @@ public class TheatreTrackerPlugin extends Plugin
     @Subscribe
     public void onHitsplatApplied(HitsplatApplied event)
     {
+        queuedThrallDamage.sort(Comparator.comparing(DamageQueueShell::getSourceIndex));
+        int index = -1;
+        if(event.getActor() instanceof NPC && event.getHitsplat().getHitsplatType() != HitsplatID.HEAL)
+        {
+            for(int i = 0; i < queuedThrallDamage.size(); i++)
+            {
+                if(queuedThrallDamage.get(i).offset == 0 && queuedThrallDamage.get(i).targetIndex == ((NPC) event.getActor()).getIndex())
+                {
+                    index = i;
+                    clog.write(THRALL_DAMAGED, queuedThrallDamage.get(i).source, String.valueOf(event.getHitsplat().getAmount()));
+                    break;
+                }
+            }
+            if(index != -1)
+            {
+                queuedThrallDamage.remove(index);
+            }
+        }
+
         if(inTheatre)
         {
             currentRoom.updateHitsplatApplied(event);

@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import com.TheatreTracker.utility.RoomUtil;
 import com.TheatreTracker.utility.StatisticGatherer;
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
@@ -97,12 +99,14 @@ public class FilteredRaidsBaseFrame extends BaseFrame
     private JTable filterTable;
     private JComboBox<String> playerFilterOperator;
     private JTextField playerFilterValue;
+    private JCheckBox timeFollowsTab;
     private StatisticTab maidenTab;
     private StatisticTab bloatTab;
     private StatisticTab nyloTab;
     private StatisticTab soteTab;
     private StatisticTab xarpTab;
     private StatisticTab verzikTab;
+    private boolean built = false;
     private JComboBox<String> dateFilterOperator;
     private JTextField dateFilterValue;
     private JComboBox<String> otherIntFilterChoice;
@@ -769,6 +773,10 @@ public class FilteredRaidsBaseFrame extends BaseFrame
 
     public void createFrame(ArrayList<RoomData> data)
     {
+        viewByRaidComboBox = new JComboBox(new String[]{"Overall Time", "Maiden Time", "Bloat Time", "Nylocas Time", "Sotetseg Time", "Xarpus Time", "Verzik Time"});
+        timeFollowsTab = new JCheckBox("Time Follows Tab");
+        timeFollowsTab.setSelected(true);
+
         for(int i = 0; i < data.size(); i++)
         {
             data.get(i).index = i;
@@ -785,8 +793,25 @@ public class FilteredRaidsBaseFrame extends BaseFrame
         tablePanel.setBorder(BorderFactory.createTitledBorder("Raids"));
         tablePanel.add(pane);
 
+
         container = new JPanel();
         container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
+
+        tabbedPane.addChangeListener(new ChangeListener()
+        {
+            @Override
+            public void stateChanged(ChangeEvent e)
+            {
+                if(timeFollowsTab.isSelected())
+                {
+                    if(built)
+                    {
+                        viewByRaidComboBox.setSelectedIndex(tabbedPane.getSelectedIndex());
+                        updateTable();
+                    }
+                }
+            }
+        });
 
         JComponent overallPanel = new JPanel();
         tabbedPane.addTab("Overall", overallPanel);
@@ -888,7 +913,6 @@ public class FilteredRaidsBaseFrame extends BaseFrame
 
 
         subPanel4.setBorder(BorderFactory.createTitledBorder("View Raid Time By"));
-        viewByRaidComboBox = new JComboBox(new String[]{"Overall Time", "Maiden Time", "Bloat Time", "Nylocas Time", "Sotetseg Time", "Xarpus Time", "Verzik Time"});
         viewByRaidComboBox.addActionListener(
                 al->
                 {
@@ -896,6 +920,8 @@ public class FilteredRaidsBaseFrame extends BaseFrame
                 });
 
         subPanel4.add(viewByRaidComboBox);
+
+        subPanel4.add(timeFollowsTab);
 
         subPanel4.add(raidsFoundLabel);
         subPanel4.add(completionsFound);
@@ -1629,6 +1655,7 @@ public class FilteredRaidsBaseFrame extends BaseFrame
 
         add(splitLeftRight);
         pack();
+        built = true;
     }
 
     private String validateTime(String text) //TODO ERROR HANDLE + Below

@@ -19,7 +19,7 @@ public class ViewRaidBaseFrame extends BaseFrame
         String dark = "<html><font color='#404040'>";
         String green = "<html><font color='#33FF33'>";
         String blue = "<html><font color='#6666DD'>";
-        String white = "";
+        String white = "<html><font color='#BBBBBB'>";
 
         setTitle("View Raid");
         setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
@@ -43,23 +43,60 @@ public class ViewRaidBaseFrame extends BaseFrame
 
         JPanel maidenPanel = new JPanel();
         maidenPanel.setLayout(new BorderLayout());
+
+        int maidenEntry = 0;
+        int maidenSplit = data.getMaidenTime();
+
+        int bloatEntry = maidenEntry+maidenSplit;
+        int bloatSplit = data.getBloatTime();
+
+        int nyloEntry = bloatEntry+bloatSplit;
+        int nyloSplit = data.getNyloTime();
+
+        int soteEntry = nyloEntry+nyloSplit;
+        int soteSplit = data.getSoteTime();
+
+        int xarpEntry = soteEntry+soteSplit;
+        int xarpSplit = data.getXarpTime();
+
+        int verzikEntry = xarpEntry+xarpSplit;
+        int verzikSplit = data.getVerzikTime();
+
+        String maidenEntryStr = RoomUtil.time(maidenEntry);
+        String maidenSplitStr = RoomUtil.time(maidenSplit);
+
+        String bloatEntryStr = RoomUtil.time(bloatEntry);
+        String bloatSplitStr = RoomUtil.time(bloatSplit);
+
+        String nyloEntryStr = RoomUtil.time(nyloEntry);
+        String nyloSplitStr = RoomUtil.time(nyloSplit);
+
+        String soteEntryStr = RoomUtil.time(soteEntry);
+        String soteSplitStr = RoomUtil.time(soteSplit);
+
+        String xarpEntryStr = RoomUtil.time(xarpEntry);
+        String xarpSplitStr = RoomUtil.time(xarpSplit);
+
+        String verzikEntryStr = RoomUtil.time(verzikEntry);
+        String verzikSplitStr = RoomUtil.time(verzikSplit);
+
         maidenPanel.setBorder(BorderFactory.createTitledBorder(maidenColor + "Maiden" + ((data.maidenScuffed) ? " (Scuffed after " + data.firstMaidenCrabScuffed + ")" : "")));
 
         JPanel bloatPanel = new JPanel();
         bloatPanel.setLayout(new BorderLayout());
-        bloatPanel.setBorder(BorderFactory.createTitledBorder(bloatColor + "Bloat"));
+        bloatPanel.setBorder(BorderFactory.createTitledBorder(bloatColor + "Bloat - " + bloatBodyColor + nyloEntryStr + " (" + bloatSplitStr + ")"));
 
         JPanel nylocasPanel = new JPanel();
         nylocasPanel.setLayout(new BorderLayout());
-        nylocasPanel.setBorder(BorderFactory.createTitledBorder(nyloColor + "Nylocas"));
+        nylocasPanel.setBorder(BorderFactory.createTitledBorder(nyloColor + "Nylocas - " + nyloBodyColor + soteEntryStr + " (" + nyloSplitStr + ")"));
 
         JPanel sotetsegPanel = new JPanel();
         sotetsegPanel.setLayout(new BorderLayout());
-        sotetsegPanel.setBorder(BorderFactory.createTitledBorder(soteColor + "Sotetseg"));
+        sotetsegPanel.setBorder(BorderFactory.createTitledBorder(soteColor + "Sotetseg - " + soteBodyColor + xarpEntryStr + " (" + soteSplitStr + ")"));
 
         JPanel xarpusPanel = new JPanel();
         xarpusPanel.setLayout(new BorderLayout());
-        xarpusPanel.setBorder(BorderFactory.createTitledBorder(xarpColor + "Xarpus"));
+        xarpusPanel.setBorder(BorderFactory.createTitledBorder(xarpColor + "Xarpus - " + xarpBodyColor + verzikEntryStr + " (" + xarpSplitStr + ")"));
 
         JPanel verzikPanel = new JPanel();
         verzikPanel.setLayout(new BorderLayout());
@@ -69,8 +106,8 @@ public class ViewRaidBaseFrame extends BaseFrame
         GridLayout gl = new GridLayout(10, 2);
         maidenSubPanel.setLayout(gl);
 
-        maidenSubPanel.add(new JLabel(maidenBodyColor + "Bloods"));
-        maidenSubPanel.add(new JLabel(maidenBodyColor+data.getValue(DataPoint.MAIDEN_BLOOD_SPAWNED)));
+        maidenSubPanel.add(new JLabel(maidenBodyColor + "Blood Spawned (thrown)"));
+        maidenSubPanel.add(new JLabel(maidenBodyColor+data.getValue(DataPoint.MAIDEN_BLOOD_SPAWNED)+" (" + data.getValue(DataPoint.MAIDEN_BLOOD_THROWN)+")"));
 
 
         maidenSubPanel.add(new JLabel(maidenBodyColor+"Defense"));
@@ -379,13 +416,62 @@ public class ViewRaidBaseFrame extends BaseFrame
         topPanel.setLayout(new GridLayout(1, 3));
         topPanel.add(summaryPanel);
 
-        JPanel deathsPanel = new JPanel();
-        deathsPanel.setBorder(BorderFactory.createTitledBorder("Deaths"));
+        JPanel thrallsPanel = new JPanel();
+        thrallsPanel.setBorder(BorderFactory.createTitledBorder("Thralls"));
+        thrallsPanel.setLayout(new GridLayout(7, 2));
+
+        thrallsPanel.add(new JLabel("Total Thrall Hits: "));
+        thrallsPanel.add(new JLabel(data.getValue(DataPoint.THRALL_ATTACKS_TOTAL) + "", SwingConstants.RIGHT));
+
+        thrallsPanel.add(new JLabel("Maiden Thrall Hits: "));
+        thrallsPanel.add(new JLabel(data.getValue(DataPoint.THRALL_ATTACKS_MAIDEN) + "", SwingConstants.RIGHT));
+
+        thrallsPanel.add(new JLabel("Bloat Thrall Hits: "));
+        thrallsPanel.add(new JLabel(data.getValue(DataPoint.THRALL_ATTACKS_BLOAT) + "", SwingConstants.RIGHT));
+
+        thrallsPanel.add(new JLabel("Nylo Thrall Hits: "));
+        thrallsPanel.add(new JLabel(data.getValue(DataPoint.THRALL_ATTACKS_NYLO) + "", SwingConstants.RIGHT));
+
+        thrallsPanel.add(new JLabel("Sotetseg Thrall Hits: "));
+        thrallsPanel.add(new JLabel(data.getValue(DataPoint.THRALL_ATTACKS_SOTE) + "", SwingConstants.RIGHT));
+
+        thrallsPanel.add(new JLabel("Xarpus Thrall Hits: "));
+        thrallsPanel.add(new JLabel(data.getValue(DataPoint.THRALL_ATTACKS_XARP) + "", SwingConstants.RIGHT));
+
+        thrallsPanel.add(new JLabel("Verzik Thrall Hits: "));
+        thrallsPanel.add(new JLabel(data.getValue(DataPoint.THRALL_ATTACKS_VERZIK) + "", SwingConstants.RIGHT));
+
+
 
         JPanel vengPanel = new JPanel();
         vengPanel.setBorder(BorderFactory.createTitledBorder("Venges"));
+        vengPanel.setLayout(new GridLayout(8,2));
 
-        topPanel.add(deathsPanel);
+        vengPanel.add(new JLabel("Venges"));
+        vengPanel.add(new JLabel("(Procced/Cast): Damage"));
+
+        vengPanel.add(new JLabel("All Rooms"));
+        vengPanel.add(new JLabel("("+data.getValue(DataPoint.VENG_PROCS_TOTAL) + "/" + data.getValue(DataPoint.VENG_CASTS_TOTAL) + "): " + data.getValue(DataPoint.VENG_DAMAGE_TOTAL), SwingConstants.RIGHT));
+
+        vengPanel.add(new JLabel("Maiden"));
+        vengPanel.add(new JLabel("("+data.getValue(DataPoint.VENG_PROCS_MAIDEN) + "/" + data.getValue(DataPoint.VENG_CASTS_MAIDEN) + "): " + data.getValue(DataPoint.VENG_DAMAGE_MAIDEN), SwingConstants.RIGHT));
+
+        vengPanel.add(new JLabel("Bloat"));
+        vengPanel.add(new JLabel("("+data.getValue(DataPoint.VENG_PROCS_BLOAT) + "/" + data.getValue(DataPoint.VENG_CASTS_BLOAT) + "): " + data.getValue(DataPoint.VENG_DAMAGE_BLOAT), SwingConstants.RIGHT));
+
+        vengPanel.add(new JLabel("Nylo"));
+        vengPanel.add(new JLabel("("+data.getValue(DataPoint.VENG_PROCS_NYLO) + "/" + data.getValue(DataPoint.VENG_CASTS_NYLO) + "): " + data.getValue(DataPoint.VENG_DAMAGE_NYLO), SwingConstants.RIGHT));
+
+        vengPanel.add(new JLabel("Sote"));
+        vengPanel.add(new JLabel("("+data.getValue(DataPoint.VENG_PROCS_SOTE) + "/" + data.getValue(DataPoint.VENG_CASTS_SOTE) + "): " + data.getValue(DataPoint.VENG_DAMAGE_SOTE), SwingConstants.RIGHT));
+
+        vengPanel.add(new JLabel("Xarp"));
+        vengPanel.add(new JLabel("("+data.getValue(DataPoint.VENG_PROCS_XARP) + "/" + data.getValue(DataPoint.VENG_CASTS_XARP) + "): " + data.getValue(DataPoint.VENG_DAMAGE_XARP), SwingConstants.RIGHT));
+
+        vengPanel.add(new JLabel("Verzik"));
+        vengPanel.add(new JLabel("("+data.getValue(DataPoint.VENG_PROCS_VERZIK) + "/" + data.getValue(DataPoint.VENG_CASTS_VERZIK) + "): " + data.getValue(DataPoint.VENG_DAMAGE_VERZIK), SwingConstants.RIGHT));
+
+        topPanel.add(thrallsPanel);
         topPanel.add(vengPanel);
 
         add(topPanel);

@@ -6,6 +6,7 @@ import java.util.Arrays;
 public enum DataPoint
 {
     MAIDEN_BLOOD_SPAWNED("Maiden blood spawned", types.OTHER_INT, rooms.MAIDEN),
+    MAIDEN_BLOOD_THROWN("Maiden blood thrown", types.OTHER_INT, rooms.MAIDEN),
     MAIDEN_CRABS_LEAKED("Maiden crabs leaked", types.OTHER_INT, rooms.MAIDEN),
     MAIDEN_CRABS_LEAKED_FULL_HP("Maiden crabs leaked full", types.OTHER_INT, rooms.MAIDEN),
     MAIDEN_HP_HEALED("Maiden HP Healed", types.OTHER_INT, rooms.MAIDEN),
@@ -63,7 +64,68 @@ public enum DataPoint
     VERZIK_P1_SPLIT("Verzik P1 Split", types.TIME, rooms.VERZIK),
     VERZIK_P2_SPLIT("Verzik P2 Split", types.TIME, rooms.VERZIK),
     VERZIK_P2_DURATION("Verzik P2 Duration", types.TIME, rooms.VERZIK),
-    VERZIK_P3_DURATION("Verzik P3 Duration", types.TIME, rooms.VERZIK);
+    VERZIK_P3_DURATION("Verzik P3 Duration", types.TIME, rooms.VERZIK),
+
+    NYLO_ENTRY("Nylo Entry", types.TIME, rooms.BLOAT),
+    SOTE_ENTRY("Sote Entry", types.TIME, rooms.NYLOCAS),
+    XARP_ENTRY("Xarp Entry", types.TIME, rooms.SOTETSEG),
+    VERZIK_ENTRY("Verzik Entry", types.TIME, rooms.XARPUS),
+
+    ATTEMPTED_HAMMERS_MAIDEN("Attempted Hammers Maiden", types.OTHER_INT, rooms.MAIDEN),
+    ATTEMPTED_HAMMERS_BLOAT("Attempted Hammers Bloat", types.OTHER_INT, rooms.BLOAT),
+    ATTEMPTED_HAMMERS_NYLO("Attempted Hammers Nylo", types.OTHER_INT, rooms.NYLOCAS),
+    ATTEMPTED_HAMMERS_SOTE("Attempted Hammers Sote", types.OTHER_INT, rooms.SOTETSEG),
+    ATTEMPTED_HAMMERS_XARP("Attempted Hammers Xarp", types.OTHER_INT, rooms.XARPUS),
+    ATTEMPTED_HAMMERS_VERZIK("Attempted Hammers Verzik", types.OTHER_INT, rooms.VERZIK),
+    HIT_HAMMERS_MAIDEN("Hit Hammers Maiden", types.OTHER_INT, rooms.MAIDEN),
+    HIT_HAMMERS_BLOAT("Hit Hammers Bloat", types.OTHER_INT, rooms.BLOAT),
+    HIT_HAMMERS_NYLO("Hit Hammers Nylo", types.OTHER_INT, rooms.NYLOCAS),
+    HIT_HAMMERS_SOTE("Hit Hammers Sote", types.OTHER_INT, rooms.SOTETSEG),
+    HIT_HAMMERS_XARP("Hit Hammers Xarp", types.OTHER_INT, rooms.XARPUS),
+    HIT_HAMMERS_VERZIK("Hit Hammers Verzik", types.OTHER_INT, rooms.VERZIK),
+
+    THRALL_ATTACKS_TOTAL("Total Thrall Attacks", types.OTHER_INT, rooms.ANY),
+    THRALL_ATTACKS_MAIDEN("Thrall Attacks Maiden", types.OTHER_INT, rooms.MAIDEN),
+    THRALL_ATTACKS_BLOAT("Thrall Attacks Bloat", types.OTHER_INT, rooms.BLOAT),
+    THRALL_ATTACKS_NYLO("Thrall Attacks Nylo", types.OTHER_INT, rooms.NYLOCAS),
+    THRALL_ATTACKS_SOTE("Thrall Attacks Sote", types.OTHER_INT, rooms.SOTETSEG),
+    THRALL_ATTACKS_XARP("Thrall Attacks Xarp", types.OTHER_INT, rooms.XARPUS),
+    THRALL_ATTACKS_VERZIK("Thrall Attacks Verz", types.OTHER_INT, rooms.VERZIK),
+
+    THRALL_DAMAGE_TOTAL("Total Thrall Damage", types.OTHER_INT, rooms.ANY),
+    THRALL_DAMAGE_MAIDEN("Thrall Damage Maiden", types.OTHER_INT, rooms.MAIDEN),
+    THRALL_DAMAGE_BLOAT("Thrall Damage Bloat", types.OTHER_INT, rooms.BLOAT),
+    THRALL_DAMAGE_NYLO("Thrall Damage Nylo", types.OTHER_INT, rooms.NYLOCAS),
+    THRALL_DAMAGE_SOTE("Thrall Damage Sote", types.OTHER_INT, rooms.SOTETSEG),
+    THRALL_DAMAGE_XARP("Thrall Damage Xarp", types.OTHER_INT, rooms.XARPUS),
+    THRALL_DAMAGE_VERZIK("Thrall Damage Verz", types.OTHER_INT, rooms.VERZIK),
+
+    VENG_DAMAGE_TOTAL("Total Veng Damage", types.OTHER_INT, rooms.ANY),
+    VENG_DAMAGE_MAIDEN("Veng Damage Maiden", types.OTHER_INT, rooms.MAIDEN),
+    VENG_DAMAGE_BLOAT("Veng Damage Bloat", types.OTHER_INT, rooms.BLOAT),
+    VENG_DAMAGE_NYLO("Veng Damage Nylo", types.OTHER_INT, rooms.NYLOCAS),
+    VENG_DAMAGE_SOTE("Veng Damage Sote", types.OTHER_INT, rooms.SOTETSEG),
+    VENG_DAMAGE_XARP("Veng Damage Xarp", types.OTHER_INT, rooms.XARPUS),
+    VENG_DAMAGE_VERZIK("Veng Damage Verz", types.OTHER_INT, rooms.VERZIK),
+
+    VENG_CASTS_TOTAL("Total Veng Casts", types.OTHER_INT, rooms.ANY),
+    VENG_CASTS_MAIDEN("Veng Damage Maiden", types.OTHER_INT, rooms.MAIDEN),
+    VENG_CASTS_BLOAT("Veng Damage Bloat", types.OTHER_INT, rooms.BLOAT),
+    VENG_CASTS_NYLO("Veng Damage Nylo", types.OTHER_INT, rooms.NYLOCAS),
+    VENG_CASTS_SOTE("Veng Damage Sote", types.OTHER_INT, rooms.SOTETSEG),
+    VENG_CASTS_XARP("Veng Damage Xarp", types.OTHER_INT, rooms.XARPUS),
+    VENG_CASTS_VERZIK("Veng Damage Verz", types.OTHER_INT, rooms.VERZIK),
+
+    VENG_PROCS_TOTAL("Total Veng Procs", types.OTHER_INT, rooms.ANY),
+    VENG_PROCS_MAIDEN("Veng Procs Maiden", types.OTHER_INT, rooms.MAIDEN),
+    VENG_PROCS_BLOAT("Veng Procs Bloat", types.OTHER_INT, rooms.BLOAT),
+    VENG_PROCS_NYLO("Veng Procs Nylo", types.OTHER_INT, rooms.NYLOCAS),
+    VENG_PROCS_SOTE("Veng Procs Sote", types.OTHER_INT, rooms.SOTETSEG),
+    VENG_PROCS_XARP("Veng Procs Xarp", types.OTHER_INT, rooms.XARPUS),
+    VENG_PROCS_VERZIK("Veng Procs Verz", types.OTHER_INT, rooms.VERZIK),
+
+
+    ;
 
     public static DataPoint getValue(String s)
     {
@@ -79,7 +141,7 @@ public enum DataPoint
 
     public static enum rooms
     {
-        MAIDEN, BLOAT, NYLOCAS, SOTETSEG, XARPUS, VERZIK
+        MAIDEN, BLOAT, NYLOCAS, SOTETSEG, XARPUS, VERZIK, ANY
     };
 
     public static enum types

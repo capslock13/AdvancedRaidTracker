@@ -1,7 +1,9 @@
 package com.TheatreTracker;
 
 import com.TheatreTracker.utility.DataManager;
+import com.TheatreTracker.utility.DataPoint;
 import lombok.extern.slf4j.Slf4j;
+import net.runelite.client.plugins.raids.RoomType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -381,6 +383,7 @@ public class RoomData
                     }
                     break;
                 case 2:
+                    dataManager.increment(DataPoint.HIT_HAMMERS_VERZIK);
                     break;
                 case 3:
                     break;
@@ -405,6 +408,9 @@ public class RoomData
                 case 5:
                     dataManager.increment(com.TheatreTracker.utility.DataPoint.VERZIK_DEATHS);
                 case 6:
+                    break;
+                case 7:
+                    dataManager.increment(DataPoint.ATTEMPTED_HAMMERS_VERZIK);
                     break;
                 case 70:
                     break;
@@ -452,12 +458,73 @@ public class RoomData
                 case 402:
                     storyMode = true;
                     break;
+                case 403:
+                    dataManager.increment(DataPoint.THRALL_ATTACKS_VERZIK);
+                    dataManager.increment(DataPoint.THRALL_ATTACKS_TOTAL);
+                    break;
+                case 404:
+                    int amount = Integer.parseInt(subData[5]);
+                    dataManager.increment(DataPoint.THRALL_DAMAGE_VERZIK, amount);
+                    dataManager.increment(DataPoint.THRALL_DAMAGE_TOTAL, amount);
+                    break;
+                case 405:
+                    dataManager.increment(DataPoint.VENG_CASTS_VERZIK);
+                    dataManager.increment(DataPoint.VENG_CASTS_TOTAL);
+                    break;
+                case 406:
+                    dataManager.increment(DataPoint.VENG_PROCS_VERZIK);
+                    dataManager.increment(DataPoint.VENG_PROCS_TOTAL);
+                    dataManager.increment(DataPoint.VENG_DAMAGE_VERZIK, Integer.parseInt(subData[5]));
+                    dataManager.increment(DataPoint.VENG_DAMAGE_TOTAL, Integer.parseInt(subData[5]));
+                    break;
 
             }
             activeIndex++;
         }
         globalData = new ArrayList(globalData.subList(activeIndex+1, globalData.size()));
         return true;
+    }
+
+    private boolean isTimeAccurateThroughRoom(TobRoom room)
+    {
+        switch(room)
+        {
+            case VERZIK:
+                if(!verzikTimeAccurate)
+                {
+                    return false;
+                }
+            case XARPUS:
+                if(!xarpTimeAccurate)
+                {
+                    return false;
+                }
+            case SOTETSEG:
+                if(!soteTimeAccurate)
+                {
+                    return false;
+                }
+            case NYLOCAS:
+                if(!nyloTimeAccurate)
+                {
+                    return false;
+                }
+            case BLOAT:
+                if(!bloatTimeAccurate)
+                {
+                    return false;
+                }
+            case MAIDEN:
+                if(!maidenTimeAccurate)
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+        }
+        return false;
     }
 
     private boolean parseXarpus()
@@ -484,6 +551,7 @@ public class RoomData
                     break;
                 case 2:
                     dataManager.hammer(com.TheatreTracker.utility.DataPoint.XARP_DEFENSE);
+                    dataManager.increment(DataPoint.HIT_HAMMERS_XARP);
                     break;
                 case 3:
                     dataManager.bgs(com.TheatreTracker.utility.DataPoint.XARP_DEFENSE, Integer.parseInt(subData[5]));
@@ -510,6 +578,9 @@ public class RoomData
                     dataManager.increment(com.TheatreTracker.utility.DataPoint.XARP_DEATHS);
                     break;
                 case 6:
+                    break;
+                case 7:
+                    dataManager.increment(DataPoint.ATTEMPTED_HAMMERS_XARP);
                     break;
                 case 60:
                     break;
@@ -550,6 +621,8 @@ public class RoomData
                 case 65:
                     dataManager.set(com.TheatreTracker.utility.DataPoint.XARP_TOTAL_TIME, Integer.parseInt(subData[4]));
                     dataManager.set(com.TheatreTracker.utility.DataPoint.XARP_POST_SCREECH, dataManager.get(com.TheatreTracker.utility.DataPoint.XARP_TOTAL_TIME) - dataManager.get(com.TheatreTracker.utility.DataPoint.XARP_SCREECH));
+                    if(isTimeAccurateThroughRoom(SOTETSEG))
+                        dataManager.set(DataPoint.VERZIK_ENTRY, Integer.parseInt(subData[4])+dataManager.get(DataPoint.XARP_ENTRY));
                     break loop;
                 case 100:
                     partyComplete = true;
@@ -569,6 +642,24 @@ public class RoomData
                     break;
                 case 402:
                     storyMode = true;
+                    break;
+                case 403:
+                    dataManager.increment(DataPoint.THRALL_ATTACKS_XARP);
+                    dataManager.increment(DataPoint.THRALL_ATTACKS_TOTAL);
+                    break;
+                case 404:
+                    dataManager.increment(DataPoint.THRALL_DAMAGE_XARP, Integer.parseInt(subData[5]));
+                    dataManager.increment(DataPoint.THRALL_DAMAGE_TOTAL, Integer.parseInt(subData[5]));
+                    break;
+                case 405:
+                    dataManager.increment(DataPoint.VENG_CASTS_XARP);
+                    dataManager.increment(DataPoint.VENG_CASTS_TOTAL);
+                    break;
+                case 406:
+                    dataManager.increment(DataPoint.VENG_PROCS_XARP);
+                    dataManager.increment(DataPoint.VENG_PROCS_TOTAL);
+                    dataManager.increment(DataPoint.VENG_DAMAGE_XARP, Integer.parseInt(subData[5]));
+                    dataManager.increment(DataPoint.VENG_DAMAGE_TOTAL, Integer.parseInt(subData[5]));
                     break;
             }
             activeIndex++;
@@ -614,6 +705,7 @@ public class RoomData
                         dataManager.increment(com.TheatreTracker.utility.DataPoint.SOTE_SPECS_P3);
                         dataManager.increment(com.TheatreTracker.utility.DataPoint.SOTE_SPECS_TOTAL);
                     }
+                    dataManager.increment(DataPoint.HIT_HAMMERS_SOTE);
                     break;
                 case 3:
                 case 6:
@@ -636,6 +728,9 @@ public class RoomData
                     }
                     globalData = new ArrayList(globalData.subList(activeIndex+1, globalData.size()));
                     return false;
+                case 7:
+                    dataManager.increment(DataPoint.ATTEMPTED_HAMMERS_SOTE);
+                    break;
                 case 5:
                     dataManager.increment(com.TheatreTracker.utility.DataPoint.SOTE_DEATHS);
                     break;
@@ -665,6 +760,8 @@ public class RoomData
                 case 57:
                     dataManager.set(com.TheatreTracker.utility.DataPoint.SOTE_TOTAL_TIME, Integer.parseInt(subData[4]));
                     dataManager.set(com.TheatreTracker.utility.DataPoint.SOTE_P3_SPLIT, dataManager.get(com.TheatreTracker.utility.DataPoint.SOTE_TOTAL_TIME) - dataManager.get(com.TheatreTracker.utility.DataPoint.SOTE_M2_SPLIT));
+                    if(isTimeAccurateThroughRoom(NYLOCAS))
+                        dataManager.set(DataPoint.XARP_ENTRY, Integer.parseInt(subData[4])+dataManager.get(DataPoint.SOTE_ENTRY));
                     break loop;
                 case 58:
                     if(soteCyclesLost != -1)
@@ -694,6 +791,25 @@ public class RoomData
                     break;
                 case 402:
                     storyMode = true;
+                    break;
+                case 403:
+                    dataManager.increment(DataPoint.THRALL_ATTACKS_SOTE);
+                    dataManager.increment(DataPoint.THRALL_ATTACKS_TOTAL);
+                    break;
+                case 404:
+                    int amount = Integer.parseInt(subData[5]);
+                    dataManager.increment(DataPoint.THRALL_DAMAGE_SOTE, amount);
+                    dataManager.increment(DataPoint.THRALL_DAMAGE_TOTAL, amount);
+                    break;
+                case 405:
+                    dataManager.increment(DataPoint.VENG_CASTS_SOTE);
+                    dataManager.increment(DataPoint.VENG_CASTS_TOTAL);
+                    break;
+                case 406:
+                    dataManager.increment(DataPoint.VENG_PROCS_SOTE);
+                    dataManager.increment(DataPoint.VENG_PROCS_TOTAL);
+                    dataManager.increment(DataPoint.VENG_DAMAGE_SOTE, Integer.parseInt(subData[5]));
+                    dataManager.increment(DataPoint.VENG_DAMAGE_TOTAL, Integer.parseInt(subData[5]));
                     break;
 
             }
@@ -726,6 +842,8 @@ public class RoomData
                     }
                     break;
                 case 2:
+                    dataManager.increment(DataPoint.HIT_HAMMERS_NYLO);
+                    break;
                 case 44:
                 case 6:
                     break;
@@ -762,6 +880,9 @@ public class RoomData
                     return false;
                 case 5:
                     nyloDeaths++;
+                    break;
+                case 7:
+                    dataManager.increment(DataPoint.ATTEMPTED_HAMMERS_NYLO);
                     break;
                 case 30:
                     nyloStarted = true;
@@ -812,6 +933,8 @@ public class RoomData
                 case 45:
                     dataManager.set(com.TheatreTracker.utility.DataPoint.NYLO_TOTAL_TIME, Integer.parseInt(subData[4]));
                     dataManager.set(com.TheatreTracker.utility.DataPoint.NYLO_BOSS_DURATION, dataManager.get(com.TheatreTracker.utility.DataPoint.NYLO_TOTAL_TIME)- dataManager.get(com.TheatreTracker.utility.DataPoint.NYLO_BOSS_SPAWN));
+                    if(isTimeAccurateThroughRoom(BLOAT))
+                        dataManager.set(DataPoint.SOTE_ENTRY, Integer.parseInt(subData[4])+dataManager.get(DataPoint.NYLO_ENTRY));
                     break loop;
                 case 100:
                     partyComplete = true;
@@ -831,6 +954,25 @@ public class RoomData
                     break;
                 case 402:
                     storyMode = true;
+                    break;
+                case 403:
+                    dataManager.increment(DataPoint.THRALL_ATTACKS_NYLO);
+                    dataManager.increment(DataPoint.THRALL_ATTACKS_TOTAL);
+                    break;
+                case 404:
+                    int amount = Integer.parseInt(subData[5]);
+                    dataManager.increment(DataPoint.THRALL_DAMAGE_NYLO, amount);
+                    dataManager.increment(DataPoint.THRALL_DAMAGE_TOTAL, amount);
+                    break;
+                case 405:
+                    dataManager.increment(DataPoint.VENG_CASTS_NYLO);
+                    dataManager.increment(DataPoint.VENG_CASTS_TOTAL);
+                    break;
+                case 406:
+                    dataManager.increment(DataPoint.VENG_PROCS_NYLO);
+                    dataManager.increment(DataPoint.VENG_PROCS_TOTAL);
+                    dataManager.increment(DataPoint.VENG_DAMAGE_NYLO, Integer.parseInt(subData[5]));
+                    dataManager.increment(DataPoint.VENG_DAMAGE_TOTAL, Integer.parseInt(subData[5]));
                     break;
 
             }
@@ -863,6 +1005,8 @@ public class RoomData
                     }
                     break;
                 case 2:
+                    dataManager.increment(DataPoint.HIT_HAMMERS_BLOAT);
+                    break;
                 case 6:
                     break;
                 case 24:
@@ -905,6 +1049,9 @@ public class RoomData
                         dataManager.increment(com.TheatreTracker.utility.DataPoint.BLOAT_FIRST_WALK_DEATHS);
                     }
                     break;
+                case 7:
+                    dataManager.increment(DataPoint.ATTEMPTED_HAMMERS_BLOAT);
+                    break;
                 case 20:
                     bloatStarted = true;
                     if(partyComplete)
@@ -921,6 +1068,8 @@ public class RoomData
                     break;
                 case 23:
                     dataManager.set(com.TheatreTracker.utility.DataPoint.BLOAT_TOTAL_TIME, Integer.parseInt(subData[4]));
+                    if(isTimeAccurateThroughRoom(MAIDEN))
+                        dataManager.set(DataPoint.NYLO_ENTRY, Integer.parseInt(subData[4])+dataManager.get(DataPoint.MAIDEN_TOTAL_TIME));
                     break loop;
                 case 100:
                     partyComplete = true;
@@ -940,6 +1089,25 @@ public class RoomData
                     break;
                 case 402:
                     storyMode = true;
+                    break;
+                case 403:
+                    dataManager.increment(DataPoint.THRALL_ATTACKS_BLOAT);
+                    dataManager.increment(DataPoint.THRALL_ATTACKS_TOTAL);
+                    break;
+                case 404:
+                    int amount = Integer.parseInt(subData[5]);
+                    dataManager.increment(DataPoint.THRALL_DAMAGE_BLOAT, amount);
+                    dataManager.increment(DataPoint.THRALL_DAMAGE_TOTAL, amount);
+                    break;
+                case 405:
+                    dataManager.increment(DataPoint.VENG_CASTS_BLOAT);
+                    dataManager.increment(DataPoint.VENG_CASTS_TOTAL);
+                    break;
+                case 406:
+                    dataManager.increment(DataPoint.VENG_PROCS_BLOAT);
+                    dataManager.increment(DataPoint.VENG_PROCS_TOTAL);
+                    dataManager.increment(DataPoint.VENG_DAMAGE_BLOAT, Integer.parseInt(subData[5]));
+                    dataManager.increment(DataPoint.VENG_DAMAGE_TOTAL, Integer.parseInt(subData[5]));
                     break;
             }
             activeIndex++;
@@ -973,6 +1141,7 @@ public class RoomData
                     break;
                 case 2:
                     dataManager.hammer(com.TheatreTracker.utility.DataPoint.MAIDEN_DEFENSE);
+                    dataManager.increment(DataPoint.HIT_HAMMERS_MAIDEN);
                     break;
                 case 3:
                     dataManager.bgs(com.TheatreTracker.utility.DataPoint.MAIDEN_DEFENSE, Integer.parseInt(subData[5]));
@@ -999,6 +1168,12 @@ public class RoomData
                     dataManager.increment(com.TheatreTracker.utility.DataPoint.MAIDEN_DEATHS);
                     break;
                 case 6: break;
+                case 7:
+                    dataManager.increment(DataPoint.ATTEMPTED_HAMMERS_MAIDEN);
+                    break;
+                case 9:
+                    dataManager.increment(DataPoint.MAIDEN_BLOOD_THROWN);
+                    break;
                 case 10:
                     dataManager.increment(com.TheatreTracker.utility.DataPoint.MAIDEN_BLOOD_SPAWNED);
                     break;
@@ -1103,6 +1278,25 @@ public class RoomData
                     break;
                 case 402:
                     storyMode = true;
+                    break;
+                case 403:
+                    dataManager.increment(DataPoint.THRALL_ATTACKS_MAIDEN);
+                    dataManager.increment(DataPoint.THRALL_ATTACKS_TOTAL);
+                    break;
+                case 404:
+                    int amount = Integer.parseInt(subData[5]);
+                    dataManager.increment(DataPoint.THRALL_DAMAGE_MAIDEN, amount);
+                    dataManager.increment(DataPoint.THRALL_DAMAGE_TOTAL, amount);
+                    break;
+                case 405:
+                    dataManager.increment(DataPoint.VENG_CASTS_MAIDEN);
+                    dataManager.increment(DataPoint.VENG_CASTS_TOTAL);
+                    break;
+                case 406:
+                    dataManager.increment(DataPoint.VENG_PROCS_MAIDEN);
+                    dataManager.increment(DataPoint.VENG_PROCS_TOTAL);
+                    dataManager.increment(DataPoint.VENG_DAMAGE_MAIDEN, Integer.parseInt(subData[5]));
+                    dataManager.increment(DataPoint.VENG_DAMAGE_TOTAL, Integer.parseInt(subData[5]));
                     break;
             }
             activeIndex++;

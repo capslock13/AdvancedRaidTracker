@@ -112,6 +112,9 @@ public class TheatreTrackerPlugin extends Plugin
     private ThrallTracker thrallTracker;
     private VengTracker vengTracker;
     private List<PlayerShell> localPlayers;
+    private List<ProjectileQueue> activeProjectiles;
+
+    private List<VengDamageQueue> activeVenges;
 
     @Inject
     private PluginManager pluginManager;
@@ -126,6 +129,11 @@ public class TheatreTrackerPlugin extends Plugin
         clientToolbar.removeNavigation(navButtonPrimary);
     }
 
+    public void addToProjectileQueue(ProjectileQueue queueItem)
+    {
+        activeProjectiles.add(queueItem);
+    }
+
     @Override
     protected void startUp() throws Exception
     {
@@ -133,12 +141,15 @@ public class TheatreTrackerPlugin extends Plugin
 
         localPlayers = new ArrayList<>();
         thrallTracker = new ThrallTracker(this);
-        vengTracker = new VengTracker();
+        vengTracker = new VengTracker(this);
+        activeProjectiles = new ArrayList<>();
+        activeVenges = new ArrayList<>();
         queuedThrallDamage = new ArrayList<>();
         currentThrallDamage = new ArrayList<>();
         RaidTrackerPanelPrimary timersPanelPrimary = injector.getInstance(RaidTrackerPanelPrimary.class);
         partyIntact = false;
 
+        playersTextChanged = new ArrayList<>();
         File dirMain = new File(System.getProperty("user.home").replace("\\", "/") + "/.runelite/theatretracker/primary/");
         File dirFilters = new File(System.getProperty("user.home").replace("\\", "/") + "/.runelite/theatretracker/filters/");
         File dirRaids = new File(System.getProperty("user.home").replace("\\", "/") + "/.runelite/theatretracker/raids/");
@@ -202,7 +213,7 @@ public class TheatreTrackerPlugin extends Plugin
         {
             currentRoom = lobby;
         }
-        else if (previous == lobby && inRegion(BLOAT_REGION, NYLO_REGION, SOTETSEG_REGION, XARPUS_REGION, VERZIK_REGION)) //TODO verify logic fix
+        else if (previous == lobby && inRegion(BLOAT_REGION, NYLO_REGION, SOTETSEG_REGION, XARPUS_REGION, VERZIK_REGION))
         {
             deferredTick = client.getTickCount()+2; //Check two ticks from now for player names in orbs
             clog.write(ENTERED_TOB);
@@ -426,12 +437,25 @@ public class TheatreTrackerPlugin extends Plugin
 
     public void addQueuedThrallDamage(int targetIndex, int sourceIndex, int offset, String source)
     {
-        queuedThrallDamage.add(new DamageQueueShell(targetIndex, sourceIndex, offset, source));
+        queuedThrallDamage.add(new DamageQueueShell(targetIndex, sourceIndex, offset, source, client.getTickCount()));
+    }
+
+    public void removeDeadProjectiles()
+    {
+        activeProjectiles.removeIf(projectileQueue -> projectileQueue.finalTick <= client.getTickCount());
+    }
+
+    public void removeDeadVenges()
+    {
+        activeVenges.removeIf(vengDamageQueue -> vengDamageQueue.appliedTick <= client.getTickCount());
     }
 
     @Subscribe
     public void onGameTick(GameTick event) throws PluginInstantiationException
     {
+        removeDeadProjectiles();
+        removeDeadVenges();
+        playersTextChanged.clear();
         localPlayers.clear();
         for(Player p : client.getPlayers())
         {
@@ -539,6 +563,8 @@ public class TheatreTrackerPlugin extends Plugin
             }
             else if(event.getActor().hasSpotAnim(VENG_GRAPHIC))
             {
+               // log.info("GRAPHIC: Casting veng on self on tick: " + client.getTickCount());
+
                 vengTracker.vengSelfGraphicApplied((Player)event.getActor());
             }
             else if(event.getActor().hasSpotAnim(VENG_OTHER_GRAPHIC))
@@ -560,11 +586,31 @@ public class TheatreTrackerPlugin extends Plugin
     @Subscribe
     public void onProjectileMoved(ProjectileMoved event)
     {
-        if(event.getProjectile().getId() == THRALL_PROJECTILE_RANGE || event.getProjectile().getId() == THRALL_PROJECTILE_MAGE)
+        int id = event.getProjectile().getId();
+        if(id == THRALL_PROJECTILE_RANGE || id == THRALL_PROJECTILE_MAGE)
         {
             if(event.getProjectile().getStartCycle() == client.getGameCycle())
             {
-                thrallTracker.projectileCreated(event.getProjectile(), WorldPoint.fromLocal(client, new LocalPoint(event.getProjectile().getX1(), event.getProjectile().getY1())), event.getProjectile().getInteracting().getWorldLocation());
+               //log.info("Projectile " + event.getProjectile().getId() + " created at " + WorldPoint.fromLocal(client, new LocalPoint(event.getProjectile().getX1(), event.getProjectile().getY1())) + " targeting " + event.getProjectile().getInteracting().getWorldLocation() + " on tick " + client.getTickCount());
+                thrallTracker.projectileCreated(event.getProjectile(), WorldPoint.fromLocal(client, new LocalPoint(event.getProjectile().getX1(), event.getProjectile().getY1())), event.getProjectile().getInteracting().getWorldLocation(), client.getTickCount());
+            }
+        }
+        else if(event.getProjectile().getStartCycle() == client.getGameCycle())
+        {
+            if(id == TBOW_PROJECTILE || id == ZCB_PROJECTILE || id == ZCB_SPEC_PROJECTILE)
+            {
+                //log.info("Projectile " + event.getProjectile().getId() + " created at " + WorldPoint.fromLocal(client, new LocalPoint(event.getProjectile().getX1(), event.getProjectile().getY1())) + " targeting " + event.getProjectile().getInteracting().getWorldLocation() + " on tick " + client.getTickCount());
+               // log.info("cycles left: " + event.getProjectile().getRemainingCycles());
+                int altHit = event.getProjectile().getRemainingCycles()/30;
+                altHit++;
+                int projectileHitTick = 10+event.getProjectile().getRemainingCycles();
+                projectileHitTick = (projectileHitTick/30);
+                if(event.getProjectile().getInteracting() instanceof NPC)
+                {
+                    int index = ((NPC)event.getProjectile().getInteracting()).getIndex();
+                    activeProjectiles.add(new ProjectileQueue(client.getTickCount(), projectileHitTick+client.getTickCount(), index));
+                   // log.info("arrow spawned on tick " + client.getTickCount() + " expected to land on tick " + projectileHitTick + ", alt: " + altHit);
+                }
             }
         }
         if(inTheatre)
@@ -573,9 +619,15 @@ public class TheatreTrackerPlugin extends Plugin
         }
     }
 
+    public int getTicks()
+    {
+        return client.getTickCount();
+    }
+
     @Subscribe
     public void onAnimationChanged(AnimationChanged event)
     {
+        int id = event.getActor().getAnimation();
         if(event.getActor().getAnimation() == THRALL_CAST_ANIMATION)
         {
             thrallTracker.castThrallAnimation((Player)event.getActor());
@@ -586,11 +638,20 @@ public class TheatreTrackerPlugin extends Plugin
         }
         else if(event.getActor().getAnimation() == VENG_CAST)
         {
+           // log.info("ANIMATION: Casting veng on self on tick: " + client.getTickCount());
             vengTracker.vengSelfCast((Player)event.getActor());
         }
         else if(event.getActor().getAnimation() == VENG_OTHER_CAST)
         {
             vengTracker.vengOtherCast((Player)event.getActor());
+        }
+        else if(id == DWH_SPEC)
+        {
+            clog.write(HAMMER_ATTEMPTED, event.getActor().getName());
+        }
+        else if(event.getActor().getName() != null && event.getActor().getName().contains("Maiden") && id == MAIDEN_BLOOD_THROW_ANIM)
+        {
+            clog.write(BLOOD_THROWN);
         }
         if(inTheatre)
         {
@@ -797,22 +858,82 @@ public class TheatreTrackerPlugin extends Plugin
     @Subscribe
     public void onHitsplatApplied(HitsplatApplied event)
     {
+        if(event.getActor() instanceof Player)
+        {
+            playersTextChanged.add(new vengpair(event.getActor().getName(), event.getHitsplat().getAmount()));
+        }
+        if(event.getActor() instanceof NPC)
+        {
+            //log.info(client.getTickCount() + ", damage: " + event.getHitsplat().getAmount() + ", type: " + event.getHitsplat().getHitsplatType());
+        }
         queuedThrallDamage.sort(Comparator.comparing(DamageQueueShell::getSourceIndex));
         int index = -1;
         if(event.getActor() instanceof NPC && event.getHitsplat().getHitsplatType() != HitsplatID.HEAL)
         {
             for(int i = 0; i < queuedThrallDamage.size(); i++)
             {
+                int altIndex = 0;
+                int matchedIndex = -1;
+                boolean postponeThrallHit = false;
+                for(ProjectileQueue projectile : activeProjectiles)
+                {
+                    if(projectile.targetIndex == ((NPC) event.getActor()).getIndex())
+                    {
+                        if(client.getTickCount() == projectile.finalTick)
+                        {
+                            if(projectile.originTick < queuedThrallDamage.get(i).originTick)
+                            {
+                                //log.info("Postpone true");
+                                postponeThrallHit = true;
+                                matchedIndex = altIndex;
+                            }
+                        }
+                    }
+                    altIndex++;
+                }
                 if(queuedThrallDamage.get(i).offset == 0 && queuedThrallDamage.get(i).targetIndex == ((NPC) event.getActor()).getIndex())
                 {
-                    index = i;
-                    clog.write(THRALL_DAMAGED, queuedThrallDamage.get(i).source, String.valueOf(event.getHitsplat().getAmount()));
-                    break;
+                    if(postponeThrallHit)
+                    {
+                        activeProjectiles.remove(matchedIndex);
+                    }
+                    else
+                    {
+                        if(event.getHitsplat().getAmount() > 3)
+                        {
+                            //log.info("FAILED THRALL ATTACK: " + event.getHitsplat().getAmount());
+                        }
+                        else
+                        {
+                            index = i;
+                            //log.info(queuedThrallDamage.get(i).source + "'s thrall did " + event.getHitsplat().getAmount() + " damage");
+                            clog.write(THRALL_DAMAGED, queuedThrallDamage.get(i).source, String.valueOf(event.getHitsplat().getAmount()));
+                        }
+                    }
+                    if(index != -1)
+                    {
+                        queuedThrallDamage.remove(index);
+                    }
+                    if(inTheatre)
+                    {
+                        currentRoom.updateHitsplatApplied(event);
+                    }
+                    return;
                 }
             }
-            if(index != -1)
+            for(VengDamageQueue veng : activeVenges)
             {
-                queuedThrallDamage.remove(index);
+                int expectedDamage = (int)(0.75 * veng.damage);
+                if(event.getHitsplat().getAmount() == expectedDamage)
+                {
+                    //log.info(veng.target + "'s veng did " + expectedDamage + " damage.");
+                    clog.write(VENG_WAS_PROCCED, veng.target, String.valueOf(expectedDamage));
+                    if(inTheatre)
+                    {
+                        currentRoom.updateHitsplatApplied(event);
+                    }
+                    return;
+                }
             }
         }
 
@@ -822,9 +943,23 @@ public class TheatreTrackerPlugin extends Plugin
         }
     }
 
+    private ArrayList<vengpair> playersTextChanged;
+
     @Subscribe
     public void onOverheadTextChanged(OverheadTextChanged event)
     {
+        if(event.getOverheadText().equals("Taste vengeance!"))
+        {
+            for(vengpair vp : playersTextChanged)
+            {
+                if(vp.player.equals(event.getActor().getName()))
+                {
+                    vengTracker.vengProcced(vp);
+                    activeVenges.add(new VengDamageQueue(vp.player, vp.hitsplat, client.getTickCount()+1));
+                    //log.info("player " + vp.player + " has dmg: " + vp.hitsplat + " on tick " + client.getTickCount());
+                }
+            }
+        }
         if(currentRoom instanceof XarpusHandler)
         {
             xarpus.updateOverheadText(event);

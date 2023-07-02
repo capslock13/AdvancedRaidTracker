@@ -14,8 +14,10 @@ public enum LogID{
     LEFT_TOB(4),
     PLAYER_DIED(5),
     ENTERED_NEW_TOB_REGION(6),
+    HAMMER_ATTEMPTED(7),
     DB_SPECS(8),
 
+    BLOOD_THROWN(9),
     BLOOD_SPAWNED(10),
     CRAB_LEAK(11),
     MAIDEN_SPAWNED(12),
@@ -94,7 +96,11 @@ public enum LogID{
 
     THRALL_ATTACKED(403), // player, type
 
-    THRALL_DAMAGED (404) // player, damage
+    THRALL_DAMAGED (404), // player, damage
+
+    VENG_WAS_CAST(405), //target, source
+
+    VENG_WAS_PROCCED(406), //player, source of veng, damage
 
     ;
 

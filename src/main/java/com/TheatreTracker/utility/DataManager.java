@@ -25,7 +25,12 @@ public class DataManager
 
     public int get(String point)
     {
-        return data[DataPoint.getValue(point).ordinal()].value;
+        DataPoint dataPoint = DataPoint.getValue(point);
+        if(dataPoint != null)
+        {
+            return data[dataPoint.ordinal()].value;
+        }
+        return 0;
     }
 
     public void increment(DataPoint point, int valueAdded)

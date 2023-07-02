@@ -2,8 +2,6 @@ package com.TheatreTracker.utility.thrallvengtracking;
 
 import com.TheatreTracker.TheatreTrackerPlugin;
 import com.TheatreTracker.constants.LogID;
-import com.TheatreTracker.utility.DataWriter;
-import com.google.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Actor;
 import net.runelite.api.NPC;
@@ -58,6 +56,8 @@ public class ThrallTracker
             {
                 thrall.setOwner(thrall.potentialPlayers.get(0));
                 activeThralls.add(thrall);
+                //log.info("New thrall summoned by: " + thrall.getOwner());
+
                 assignedPlayers.add(new PlayerShell(thrall.player.worldLocation, thrall.player.name));
             }
         }
@@ -74,6 +74,8 @@ public class ThrallTracker
             {
                 thrall.setOwner(thrall.potentialPlayers.get(0));
                 activeThralls.add(thrall);
+                //log.info("New thrall summoned by: " + thrall.getOwner());
+
             }
         }
         queuedThrallSpawn.removeIf(thrall -> thrall.potentialPlayers.size() == 1);
@@ -92,6 +94,8 @@ public class ThrallTracker
             {
                 thrall.setOwner(thrall.potentialPlayers.get(0));
                 activeThralls.add(thrall);
+                //log.info("New thrall summoned by: " + thrall.getOwner());
+
             }
         }
         queuedThrallSpawn.removeIf(thrall -> thrall.potentialPlayers.size() == 1);
@@ -103,6 +107,7 @@ public class ThrallTracker
         for(Thrall thrall : queuedThrallSpawn)
         {
             activeThralls.add(thrall);
+            //log.info("New thrall summoned by: " + thrall.getOwner());
         }
         queuedThrallSpawn.clear();
 
@@ -142,6 +147,7 @@ public class ThrallTracker
                 {
                     if(thrall.lastParentInteraction.getWorldArea().distanceTo(thrall.npc.getWorldLocation()) < 2)
                     {
+                       // log.info("Melee thrall, expected hitsplat on tick: " + plugin.getTicks());
                         plugin.clog.write(LogID.THRALL_ATTACKED, thrall.getOwner(), "melee");
                         plugin.addQueuedThrallDamage(((((NPC) thrall.lastParentInteraction).getIndex())), thrall.npc.getIndex(), 1, thrall.getOwner());
                     }
@@ -149,28 +155,29 @@ public class ThrallTracker
             }
         }
     }
-    public void projectileCreated(Projectile projectile, WorldPoint origin, WorldPoint target)
+    public void projectileCreated(Projectile projectile, WorldPoint origin, WorldPoint target, int tick)
     {
         if(projectile.getInteracting() instanceof NPC)
         {
-            int distance = origin.distanceTo(target);
-            int hitOffset = (int) Math.floor((3.0 + distance) / (6.0));
-            hitOffset = ((projectile.getRemainingCycles()%30 == 0) ? 0 : 1 + projectile.getRemainingCycles()/30)-1;
-            if(projectile.getId() == THRALL_PROJECTILE_MAGE)
+            int hitOffset = -1;
+
+            if(projectile.getId() == THRALL_PROJECTILE_RANGE)
             {
-                hitOffset--;
+                hitOffset = (projectile.getRemainingCycles() > 30) ? (projectile.getRemainingCycles() > 60) ? 2 : 1 : 0;
             }
-            if(hitOffset < 0)
+            else if(projectile.getId() == THRALL_PROJECTILE_MAGE)
             {
-                hitOffset = 0;
+                hitOffset = (projectile.getRemainingCycles() > 40) ? 1 : 0;
             }
-            for (Thrall t : activeThralls) {
-                if (t.npc.getWorldLocation().distanceTo(origin) == 0)
+           //log.info(projectile.getId() + ", cycles: " + projectile.getRemainingCycles() + " expected on tick :" + (tick+hitOffset));
+            for (Thrall t : activeThralls)
+            {
+                if (t.npc.getWorldLocation().distanceTo(origin) == 0 && hitOffset != -1)
                 {
                     plugin.clog.write(LogID.THRALL_ATTACKED, t.getOwner(), String.valueOf(projectile.getId()));
                     plugin.addQueuedThrallDamage(((NPC) (projectile.getInteracting())).getIndex(), t.npc.getIndex(), hitOffset, t.getOwner());
+                    break;
                 }
-                break;
             }
         }
     }

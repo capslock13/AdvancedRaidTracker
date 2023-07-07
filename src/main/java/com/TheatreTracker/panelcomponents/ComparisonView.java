@@ -81,7 +81,7 @@ public class ComparisonView extends BaseFrame
         matchYScales = new JCheckBox("Match Y-Axis", true);
         matchXScales = new JCheckBox("Match X-Axis", true);
 
-        spinnerSizeModel = new SpinnerNumberModel(1, 1, 10, 1);
+        spinnerSizeModel = new SpinnerNumberModel(1, 1, 100, 1);
         groupSizeSpinner = new JSpinner(spinnerSizeModel);
 
         spinnerOffsetModel = new SpinnerNumberModel(0, 0, 0, 1);
@@ -218,7 +218,8 @@ public class ComparisonView extends BaseFrame
         int xHigh = 0;
         int xLow = Integer.MAX_VALUE;
         int yHigh = 0;
-        time = compareByComboBox.getSelectedIndex() > 29; //TODO shouldn't be needed
+        time = DataPoint.values()[compareByComboBox.getSelectedIndex()].type == DataPoint.types.TIME;
+        //time = compareByComboBox.getSelectedIndex() > 29; //TODO shouldn't be needed
         for(int i = 0; i < topGraphs.size(); i++)
         {
             topGraphs.get(i).switchKey(compareByComboBox.getSelectedIndex());
@@ -590,6 +591,8 @@ public class ComparisonView extends BaseFrame
         graphOptionsPanel.add(groupSizeSpinner);
         graphOptionsPanel.add(new JLabel("Group Offset: "));
         graphOptionsPanel.add(groupOffsetSpinner);
+
+        graphOptionsPanel.add(new JCheckBox("Show Chronological"));
 
         JPanel compareByPanel = new JPanel();
         compareByPanel.setBorder(BorderFactory.createTitledBorder("Compare by"));

@@ -126,5 +126,11 @@ public class RoomHandler
 
     public void updateProjectileMoved(ProjectileMoved event) {}
 
+    public void updateGraphicsObjectCreated(GraphicsObjectCreated event) {}
+
+    public void updateGameObjectSpawned(GameObjectSpawned event) {}
+
+    public void updateGameObjectDespawned(GameObjectDespawned event) {}
+
     public void reset() { }
 }

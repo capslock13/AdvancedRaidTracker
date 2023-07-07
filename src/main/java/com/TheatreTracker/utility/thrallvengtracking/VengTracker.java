@@ -70,11 +70,8 @@ public class VengTracker
     {
         String nameTarget = "";
         String nameSource = "";
-        if(nameSource != null)
-        {
-            nameSource = caster.getName();
-        }
-        if(nameTarget != null)
+        nameSource = caster.getName();
+        if(caster.getInteracting() != null)
         {
             nameTarget = caster.getInteracting().getName();
         }

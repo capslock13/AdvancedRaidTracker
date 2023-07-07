@@ -102,6 +102,10 @@ public enum LogID{
 
     VENG_WAS_PROCCED(406), //player, source of veng, damage
 
+    PLAYER_STOOD_IN_THROWN_BLOOD(411), //player, damage, blood tick
+    PLAYER_STOOD_IN_SPAWNED_BLOOD(412),  //player, damage
+    CRAB_HEALED_MAIDEN(413), //damage
+
     ;
 
 

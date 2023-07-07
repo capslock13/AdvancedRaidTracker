@@ -3,8 +3,6 @@ package com.TheatreTracker.panelcomponents;
 
 import com.TheatreTracker.RoomData;
 import com.TheatreTracker.filters.*;
-import com.TheatreTracker.jdatepicker.JDatePicker;
-import com.TheatreTracker.jdatepicker.UtilDateModel;
 import com.TheatreTracker.utility.DataPoint;
 import lombok.extern.slf4j.Slf4j;
 import com.TheatreTracker.utility.RoomUtil;
@@ -1335,16 +1333,14 @@ public class FilteredRaidsBaseFrame extends BaseFrame
         dateFilterValue = new JTextField();
         dateFilterOperator.setMaximumSize(new Dimension(Integer.MAX_VALUE, dateFilterValue.getPreferredSize().height));
 
-        UtilDateModel model = new UtilDateModel();
-        JDatePicker datePicker = new JDatePicker(model);
 
         JButton dateFilterAdd = new JButton("Add");
         dateFilterAdd.addActionListener(
                 al->
                 {
-                    String filterStr = "Raid was " + dateFilterOperator.getSelectedItem().toString() + " " + datePicker.getModel().getValue().toString();
-                    activeFilters.add(new ImplicitFilter(new FilterDate((Date)datePicker.getModel().getValue(), dateFilterOperator.getSelectedIndex(), filterStr)));
-                    dateFilterValue.setText((datePicker.getModel().getValue()).toString());
+                    //String filterStr = "Raid was " + dateFilterOperator.getSelectedItem().toString() + " " + datePicker.getModel().getValue().toString();
+                    //activeFilters.add(new ImplicitFilter(new FilterDate((Date)datePicker.getModel().getValue(), dateFilterOperator.getSelectedIndex(), filterStr)));
+                    //dateFilterValue.setText((datePicker.getModel().getValue()).toString()); //TODO
                     updateFilterTable();
                 });
 
@@ -1367,7 +1363,7 @@ public class FilteredRaidsBaseFrame extends BaseFrame
         dateTopRow.add(Box.createRigidArea(new Dimension(2, 2)));
         dateTopRow.add(dateFilterAdd);
         //dateBottomRow.add(dateFilterValue);
-        dateBottomRow.add(datePicker);
+        dateBottomRow.add(new JLabel("YYYY/MM/DD"));
         //dateBottomRow.add(Box.createRigidArea(new Dimension(2, 2)));
         //dateBottomRow.add(dateFilterAdd);
         filterDatePanel.setLayout(new BoxLayout(filterDatePanel, BoxLayout.Y_AXIS));

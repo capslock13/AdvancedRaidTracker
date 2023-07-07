@@ -2,18 +2,22 @@ package com.TheatreTracker.rooms;
 
 import com.TheatreTracker.TheatreTrackerConfig;
 import com.TheatreTracker.constants.NpcIDs;
-import com.TheatreTracker.utility.DataWriter;
+import com.TheatreTracker.utility.*;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
+import net.runelite.api.HitsplatID;
 import net.runelite.api.NPC;
+import net.runelite.api.Player;
+import net.runelite.api.coords.LocalPoint;
+import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.*;
 import com.TheatreTracker.TheatreTrackerPlugin;
-import com.TheatreTracker.utility.RoomState;
 
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.TheatreTracker.constants.LogID.*;
@@ -30,9 +34,21 @@ public class MaidenHandler extends RoomHandler
     int p30;
     int maidenDeathTick;
     NPC maidenNPC;
+    int bloodHeals = 0;
 
     public int deferVarbitCheck = -1;
     ArrayList<MaidenCrab> maidenCrabs = new ArrayList<>();
+
+    ArrayList<PlayerHitsWrapper> hitsplatsPerPlayer;
+    ArrayList<PlayerHitsWrapper> ignoredHitsPerPlayer;
+    ArrayList<PlayerDamageQueueItem> queuedDamage;
+    ArrayList<BloodPositionWrapper> thrownBloodLocations;
+    ArrayList<Player> playersWithCastAnimation;
+    ArrayList<Player> playersWithCrossbowAnimation;
+    ArrayList<WorldPoint> zcbProjectileOrigins;
+    ArrayList<WorldPoint> spawnedBloodLocations;
+    ArrayList<Integer> maidenHeals;
+    ArrayList<BloodDamageToBeApplied> queuedBloodDamage;
 
 
     public MaidenHandler(Client client, DataWriter clog, TheatreTrackerConfig config)
@@ -44,6 +60,16 @@ public class MaidenHandler extends RoomHandler
         maidenStartTick = -1;
         maidenDeathTick = -1;
         accurateEntry = true;
+        hitsplatsPerPlayer = new ArrayList<>();
+        ignoredHitsPerPlayer = new ArrayList<>();
+        queuedDamage = new ArrayList<>();
+        thrownBloodLocations = new ArrayList<>();
+        spawnedBloodLocations = new ArrayList<>();
+        playersWithCastAnimation = new ArrayList<>();
+        playersWithCrossbowAnimation = new ArrayList<>();
+        zcbProjectileOrigins = new ArrayList<>();
+        maidenHeals = new ArrayList<>();
+        queuedBloodDamage = new ArrayList<>();
     }
 
     public void reset()
@@ -54,6 +80,16 @@ public class MaidenHandler extends RoomHandler
         p30 = -1;
         maidenStartTick = -1;
         maidenDeathTick = -1;
+        hitsplatsPerPlayer.clear();
+        queuedDamage.clear();
+        ignoredHitsPerPlayer.clear();
+        queuedDamage.clear();
+        thrownBloodLocations.clear();
+        playersWithCastAnimation.clear();
+        playersWithCrossbowAnimation.clear();
+        maidenHeals.clear();
+        queuedBloodDamage.clear();
+        bloodHeals = 0;
     }
 
     public void startMaiden()
@@ -107,6 +143,28 @@ public class MaidenHandler extends RoomHandler
         {
             endMaiden();
         }
+        if(event.getActor() instanceof Player)
+        {
+            if(event.getActor().getAnimation() == 4411)
+            {
+                playersWithCastAnimation.add((Player) event.getActor());
+            }
+            else if(event.getActor().getAnimation() == 9168)
+            {
+                playersWithCrossbowAnimation.add((Player)event.getActor());
+            }
+        }
+    }
+
+    public void updateGraphicChanged(GraphicChanged event)
+    {
+        if(event.getActor() instanceof Player)
+        {
+            if(event.getActor().hasSpotAnim(560)) //divine
+            {
+                queuedDamage.add(new PlayerDamageQueueItem(client.getTickCount(), event.getActor().getName()));
+            }
+        }
     }
 
     public void updateNpcDespawned(NpcDespawned event)
@@ -145,7 +203,6 @@ public class MaidenHandler extends RoomHandler
 
     public void updateNpcSpawned(NpcSpawned event)
     {
-
         NPC npc = event.getNpc();
         boolean story = false;
         switch(npc.getId())
@@ -220,8 +277,147 @@ public class MaidenHandler extends RoomHandler
         clog.write(MATOMENOS_SPAWNED, description);
     }
 
-    public void updateGameTick(GameTick event)
+    private void applyBlood()
     {
+        for(BloodDamageToBeApplied p : queuedBloodDamage)
+        {
+            int bloodDamage = -1;
+            Optional<PlayerHitsWrapper> hits = hitsplatsPerPlayer.stream().filter(playerHitsWrapper -> playerHitsWrapper.name.equals(p.playerName)).findAny();
+            if(hits.isPresent())
+            {
+                Optional<PlayerHitsWrapper> ignoredHits = ignoredHitsPerPlayer.stream().filter(playerHitsWrapper -> playerHitsWrapper.name.equals(p.playerName)).findAny();
+                if(ignoredHits.isPresent())
+                {
+                    if(hits.get().hitsplats.size() > ignoredHits.get().hits)
+                    {
+                        bloodDamage = hits.get().hitsplats.get(ignoredHits.get().hits);
+                    }
+                    else
+                    {
+                        //log.info("Wrong amount of hits on " + p.playerName);
+                    }
+                }
+                else
+                {
+                    bloodDamage = hits.get().hitsplats.get(0);
+                }
+            }
+            else
+            {
+               // log.info(p.playerName + " had no hitsplats but was in blood");
+            }
+            if(bloodDamage != -1)
+            {
+                if(p.bloodTicksAlive == -1)
+                {
+                    //log.info("Spawned: " + p.playerName + " stood in blood for " + bloodDamage + " damage. Blood existed for: " + p.bloodTicksAlive + " ticks. Client ticks: " + client.getTickCount());
+                    clog.write(PLAYER_STOOD_IN_SPAWNED_BLOOD, p.playerName, String.valueOf(bloodDamage)); //player, dmg
+                    bloodHeals++;
+                }
+                else
+                {
+                    //log.info("Thrown: " + p.playerName + " stood in blood for " + bloodDamage + " damage. Blood existed for: " + p.bloodTicksAlive + " ticks. Client ticks: " + client.getTickCount());
+                    clog.write(PLAYER_STOOD_IN_THROWN_BLOOD, p.playerName, String.valueOf(bloodDamage), String.valueOf(p.bloodTicksAlive)); //player, dmg, blood tick
+                    bloodHeals++;
+                }
+            }
+        }
+    }
+    private void assessBloodForNextTick()
+    {
+        queuedBloodDamage.clear();
+        for(Player p : client.getPlayers())
+        {
+            for(BloodPositionWrapper blood : thrownBloodLocations)
+            {
+                if(blood.initialTick <= client.getTickCount() && p.getWorldLocation().distanceTo(blood.location) == 0)
+                {
+                    queuedBloodDamage.add(new BloodDamageToBeApplied(p.getName(), 10-(blood.finalTick-client.getTickCount())));
+                }
+            }
+            for(WorldPoint blood : spawnedBloodLocations)
+            {
+                if(p.getWorldLocation().distanceTo(blood) == 0)
+                {
+                   queuedBloodDamage.add(new BloodDamageToBeApplied(p.getName(), -1));
+                }
+            }
+        }
+
+        thrownBloodLocations.removeIf(bloodPositionWrapper -> bloodPositionWrapper.finalTick <= client.getTickCount());
+    }
+
+    private void generateHitsplats()
+    {
+        for(PlayerDamageQueueItem item : queuedDamage)
+        {
+            if(item.arrivalTick == client.getTickCount())
+            {
+                Optional<PlayerHitsWrapper> playerHits = ignoredHitsPerPlayer.stream().filter(playerHitsWrapper -> playerHitsWrapper.name.equals(item.playerName)).findAny();
+                if(playerHits.isPresent())
+                {
+                    playerHits.get().hits++;
+                }
+                else
+                {
+                    ignoredHitsPerPlayer.add(new PlayerHitsWrapper(item.playerName));
+                }
+            }
+        }
+    }
+
+    private void handleCasts()
+    {
+        for(Player p : playersWithCastAnimation)
+        {
+            if (p.getInteracting() != null)
+            {
+                if(p.getInteracting().hasSpotAnim(736))
+                {
+                    queuedDamage.add(new PlayerDamageQueueItem(client.getTickCount() + 1, p.getName()));
+                }
+            }
+        }
+        playersWithCastAnimation.clear();
+    }
+
+    private void handleZCB()
+    {
+        for(WorldPoint zcbLocation : zcbProjectileOrigins)
+        {
+            for(Player p : playersWithCrossbowAnimation)
+            {
+                if(p.getWorldLocation().distanceTo(zcbLocation) == 0)
+                {
+                    queuedDamage.add(new PlayerDamageQueueItem(client.getTickCount()+1, p.getName()));
+                }
+            }
+        }
+        playersWithCrossbowAnimation.clear();
+        zcbProjectileOrigins.clear();
+    }
+
+    private void handleCrabHeals()
+    {
+        for(int i = bloodHeals; i < maidenHeals.size(); i++)
+        {
+            clog.write(CRAB_HEALED_MAIDEN, String.valueOf(maidenHeals.get(i)));
+           // log.info("Crab healed maiden for: " + maidenHeals.get(i));
+        }
+    }
+
+    public void updateGameTick(GameTick event) //TODO: Blood dmg is 1t after being in blood
+    {
+        handleCasts();
+        handleZCB();
+        generateHitsplats();
+        applyBlood();
+        handleCrabHeals();
+        assessBloodForNextTick();
+        hitsplatsPerPlayer.clear();
+        ignoredHitsPerPlayer.clear();
+        maidenHeals.clear();
+
         if(client.getTickCount() == deferVarbitCheck)
         {
             deferVarbitCheck = -1;
@@ -251,10 +447,75 @@ public class MaidenHandler extends RoomHandler
     /**
      * Tracks crab hps
      */
-    public void updateHitsplatApplied(HitsplatApplied event) {
-        if (maidenCrabs.stream().map(x -> x.crab).collect(Collectors.toList()).contains(event.getActor())) {
+    public void updateHitsplatApplied(HitsplatApplied event)
+    {
+        if (maidenCrabs.stream().map(x -> x.crab).collect(Collectors.toList()).contains(event.getActor()))
+        {
             MaidenCrab crab = maidenCrabs.stream().filter(x -> x.crab.equals(event.getActor())).collect(Collectors.toList()).get(0);
             crab.health -= event.getHitsplat().getAmount();
+        }
+        if(event.getActor() instanceof Player) //Heal tracking
+        {
+            //log.info("Damage done to player: " + event.getHitsplat().getAmount() + ", " + client.getTickCount());
+            if(hitsplatsPerPlayer.stream().noneMatch(playerHPWrapper -> playerHPWrapper.name.equals(event.getActor().getName())))
+            {
+                hitsplatsPerPlayer.add(new PlayerHitsWrapper(event.getActor().getName(), event.getHitsplat().getAmount()));
+            }
+            else
+            {
+                for(int i = 0; i < hitsplatsPerPlayer.size(); i++)
+                {
+                    if(hitsplatsPerPlayer.get(i).name.equals(event.getActor().getName()))
+                    {
+                        hitsplatsPerPlayer.get(i).hitsplats.add(event.getHitsplat().getAmount());
+                    }
+                }
+            }
+        }
+        else if(event.getActor().getName() != null && event.getActor().getName().contains("Maiden"))
+        {
+            if(event.getHitsplat().getHitsplatType() == HitsplatID.HEAL)
+            {
+                maidenHeals.add(event.getHitsplat().getAmount());
+            }
+        }
+    }
+
+    public void updateGameObjectSpawned(GameObjectSpawned event)
+    {
+        if(event.getGameObject().getId() == 32984)
+        {
+            spawnedBloodLocations.add(event.getGameObject().getWorldLocation());
+        }
+    }
+
+    public void updateGameObjectDespawned(GameObjectDespawned event)
+    {
+        if(event.getGameObject().getId() == 32984)
+        {
+            spawnedBloodLocations.removeIf(worldPoint -> worldPoint.getRegionX() == event.getGameObject().getWorldLocation().getRegionX() &&
+                    worldPoint.getRegionY() == event.getGameObject().getWorldLocation().getRegionY());
+
+        }
+    }
+
+    public void updateGraphicsObjectCreated(GraphicsObjectCreated event)
+    {
+        if(event.getGraphicsObject().getId() == MAIDEN_THROWN_BLOOD_GRAPHIC_OBJECT)
+        {
+            //log.info(event.getGraphicsObject().getStartCycle() + ", " + client.getGameCycle() + ", " + (event.getGraphicsObject().getStartCycle()-client.getGameCycle()+1) + ", " + (((event.getGraphicsObject().getStartCycle()-client.getGameCycle()+1)/30)) + " , tick " + client.getTickCount());
+
+            thrownBloodLocations.add(new BloodPositionWrapper(WorldPoint.fromLocal(client, event.getGraphicsObject().getLocation()), ((((event.getGraphicsObject().getStartCycle()-client.getGameCycle()+1)/30))+client.getTickCount())));
+        }
+    }
+    public void updateProjectileMoved(ProjectileMoved event)
+    {
+        if(event.getProjectile().getStartCycle() == client.getGameCycle())
+        {
+            if(event.getProjectile().getId() == 1995)
+            {
+                zcbProjectileOrigins.add(WorldPoint.fromLocal(client, new LocalPoint(event.getProjectile().getX1(), event.getProjectile().getY1())));
+            }
         }
     }
 

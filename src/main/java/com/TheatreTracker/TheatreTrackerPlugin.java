@@ -584,6 +584,33 @@ public class TheatreTrackerPlugin extends Plugin
     }
 
     @Subscribe
+    public void onGraphicsObjectCreated(GraphicsObjectCreated event)
+    {
+        if(inTheatre)
+        {
+            currentRoom.updateGraphicsObjectCreated(event);
+        }
+    }
+
+    @Subscribe
+    public void onGameObjectSpawned(GameObjectSpawned event)
+    {
+        if(inTheatre)
+        {
+            currentRoom.updateGameObjectSpawned(event);
+        }
+    }
+
+    @Subscribe
+    public void onGameObjectDespawned(GameObjectDespawned event)
+    {
+        if(inTheatre)
+        {
+            currentRoom.updateGameObjectDespawned(event);
+        }
+    }
+
+    @Subscribe
     public void onProjectileMoved(ProjectileMoved event)
     {
         int id = event.getProjectile().getId();
@@ -591,25 +618,20 @@ public class TheatreTrackerPlugin extends Plugin
         {
             if(event.getProjectile().getStartCycle() == client.getGameCycle())
             {
-               //log.info("Projectile " + event.getProjectile().getId() + " created at " + WorldPoint.fromLocal(client, new LocalPoint(event.getProjectile().getX1(), event.getProjectile().getY1())) + " targeting " + event.getProjectile().getInteracting().getWorldLocation() + " on tick " + client.getTickCount());
                 thrallTracker.projectileCreated(event.getProjectile(), WorldPoint.fromLocal(client, new LocalPoint(event.getProjectile().getX1(), event.getProjectile().getY1())), event.getProjectile().getInteracting().getWorldLocation(), client.getTickCount());
             }
         }
+        //Thrall hitsplats come before damage hitsplits unless the source is a projectile that was spawned on a tick before the thrall projectile spawned
         else if(event.getProjectile().getStartCycle() == client.getGameCycle())
-        {
+        { //Thrall projectiles move slower and the only time this situation occurs in TOB is max distance TBOW/ZCB during maiden
             if(id == TBOW_PROJECTILE || id == ZCB_PROJECTILE || id == ZCB_SPEC_PROJECTILE)
-            {
-                //log.info("Projectile " + event.getProjectile().getId() + " created at " + WorldPoint.fromLocal(client, new LocalPoint(event.getProjectile().getX1(), event.getProjectile().getY1())) + " targeting " + event.getProjectile().getInteracting().getWorldLocation() + " on tick " + client.getTickCount());
-               // log.info("cycles left: " + event.getProjectile().getRemainingCycles());
-                int altHit = event.getProjectile().getRemainingCycles()/30;
-                altHit++;
+            { //Not sure why 10 is correct instead of 19 (60 - 41 tick delay) but extensive trial and error shows this to be accurate
                 int projectileHitTick = 10+event.getProjectile().getRemainingCycles();
                 projectileHitTick = (projectileHitTick/30);
                 if(event.getProjectile().getInteracting() instanceof NPC)
                 {
                     int index = ((NPC)event.getProjectile().getInteracting()).getIndex();
                     activeProjectiles.add(new ProjectileQueue(client.getTickCount(), projectileHitTick+client.getTickCount(), index));
-                   // log.info("arrow spawned on tick " + client.getTickCount() + " expected to land on tick " + projectileHitTick + ", alt: " + altHit);
                 }
             }
         }
@@ -628,6 +650,10 @@ public class TheatreTrackerPlugin extends Plugin
     public void onAnimationChanged(AnimationChanged event)
     {
         int id = event.getActor().getAnimation();
+        if(id == 8117)
+        {
+          //  log.info("verzik healing  " + client.getTickCount());
+        }
         if(event.getActor().getAnimation() == THRALL_CAST_ANIMATION)
         {
             thrallTracker.castThrallAnimation((Player)event.getActor());
@@ -638,7 +664,6 @@ public class TheatreTrackerPlugin extends Plugin
         }
         else if(event.getActor().getAnimation() == VENG_CAST)
         {
-           // log.info("ANIMATION: Casting veng on self on tick: " + client.getTickCount());
             vengTracker.vengSelfCast((Player)event.getActor());
         }
         else if(event.getActor().getAnimation() == VENG_OTHER_CAST)
@@ -855,11 +880,22 @@ public class TheatreTrackerPlugin extends Plugin
         }
     }
 
+    //blood before damage
+    //divine->heal other/ZCB ->blood->damage
+
     @Subscribe
     public void onHitsplatApplied(HitsplatApplied event)
     {
-        if(event.getActor() instanceof Player)
+     if(event.getActor().getName() != null)
+     {
+         if(event.getActor().getName().contains("Verzik"))
+         {
+            // log.info("Verzik took " + event.getHitsplat().getAmount() + " damage (" + event.getHitsplat().getHitsplatType() +") on tick " + client.getTickCount());
+         }
+     }
+        if(event.getActor() instanceof Player) //todo in theatre
         {
+            //log.info(event.getActor().getName() + " took " + event.getHitsplat().getAmount() + " damage (" + client.getTickCount() + ")");
             playersTextChanged.add(new vengpair(event.getActor().getName(), event.getHitsplat().getAmount()));
         }
         if(event.getActor() instanceof NPC)

@@ -61,14 +61,12 @@ public class VerzikHandler extends RoomHandler
         {
             if(event.getProjectile().getStartCycle() == client.getGameCycle())
             {
-                log.info("Expected purple/red heal on tick: " + (client.getTickCount()-1));
             }
         }
         if(event.getProjectile().getId() == 1591)
         {
             if(event.getProjectile().getRemainingCycles() == 0)
             {
-                log.info("Expected heal auto on tick: " + (client.getTickCount()));
             }
         }
     }
@@ -80,7 +78,6 @@ public class VerzikHandler extends RoomHandler
             if(event.getActor().getName().contains("Verzik") && event.getHitsplat().getHitsplatType() == HitsplatID.HEAL)
             {
                 currentHits.add(event.getHitsplat().getAmount());
-                log.info("Verzik healed " + event.getHitsplat().getAmount() + " damage (" + event.getHitsplat().getHitsplatType() +") on tick " + client.getTickCount());
             }
         }
     }
@@ -99,7 +96,6 @@ public class VerzikHandler extends RoomHandler
         int id = event.getActor().getAnimation();
         if(id == 8117)
         {
-            //log.info("verzik healing active on:" + client.getTickCount() +". Ending on " + client.getTickCount()+8);
         }
         if(event.getActor().getAnimation() == VERZIK_BECOMES_SPIDER)
         {

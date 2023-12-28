@@ -1340,9 +1340,6 @@ public class FilteredRaidsBaseFrame extends BaseFrame
         dateFilterAdd.addActionListener(
                 al->
                 {
-                    //String filterStr = "Raid was " + dateFilterOperator.getSelectedItem().toString() + " " + datePicker.getModel().getValue().toString();
-                    //activeFilters.add(new ImplicitFilter(new FilterDate((Date)datePicker.getModel().getValue(), dateFilterOperator.getSelectedIndex(), filterStr)));
-                    //dateFilterValue.setText((datePicker.getModel().getValue()).toString()); //TODO
                     try
                     {
                         String dateString = dateTextField.getText();
@@ -1364,9 +1361,6 @@ public class FilteredRaidsBaseFrame extends BaseFrame
         dateFilterValue.setMaximumSize(new Dimension(Integer.MAX_VALUE, dateFilterAdd.getPreferredSize().height));
         dateFilterValue.setPreferredSize(new Dimension(90, dateFilterAdd.getPreferredSize().height));
 
-        //datePicker.setMaximumSize(new Dimension(Integer.MAX_VALUE, dateFilterAdd.getPreferredSize().height));
-        //datePicker.setPreferredSize(new Dimension(30, dateFilterAdd.getPreferredSize().height));
-
         dateFilterAdd.setMaximumSize(new Dimension(Integer.MAX_VALUE, dateFilterAdd.getPreferredSize().height));
         dateFilterAdd.setPreferredSize(new Dimension(55, dateFilterAdd.getPreferredSize().height));
 
@@ -1379,12 +1373,9 @@ public class FilteredRaidsBaseFrame extends BaseFrame
         dateTopRow.add(dateFilterOperator);
         dateTopRow.add(Box.createRigidArea(new Dimension(2, 2)));
         dateTopRow.add(dateFilterAdd);
-        //dateBottomRow.add(dateFilterValue);
         dateTextField = new JTextField();
         dateBottomRow.add(dateTextField);
         dateBottomRow.add(new JLabel("YYYY/MM/DD"));
-        //dateBottomRow.add(Box.createRigidArea(new Dimension(2, 2)));
-        //dateBottomRow.add(dateFilterAdd);
         filterDatePanel.setLayout(new BoxLayout(filterDatePanel, BoxLayout.Y_AXIS));
         filterDatePanel.add(dateTopRow);
         filterDatePanel.add(Box.createRigidArea(new Dimension(5, 5)));
@@ -1673,16 +1664,16 @@ public class FilteredRaidsBaseFrame extends BaseFrame
         built = true;
     }
 
-    private String validateTime(String text) //TODO ERROR HANDLE + Below
+    private String validateTime(String text)
     {
         if(text.startsWith(":"))
         {
-
+            //ignore for now
         }
         return text;
     }
 
-    private int getTimeFromString(String text) //TODO ERROR HANDLE
+    private int getTimeFromString(String text)
     {
         int ticks = 0;
         String sub = text;

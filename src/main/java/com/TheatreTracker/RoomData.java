@@ -826,7 +826,6 @@ public class RoomData
         {
             String[] subData = s.split(",", -1);
             switch(Integer.parseInt(subData[3]))
-            //switch (LogID.valueOf(subData[3]))
             {
                 case 0:
                     raidStarted = new Date(Long.parseLong(subData[1]));
@@ -1135,7 +1134,6 @@ public class RoomData
                         {
                             raidTeamSize++;
                             players.add(subData[i].replaceAll("[^\\p{ASCII}]", " ").replaceAll(" +", " "));
-                            //players.add(Text.sanitize(subData[i]));
                         }
                     }
                     break;

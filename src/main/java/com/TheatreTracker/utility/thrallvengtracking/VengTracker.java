@@ -52,7 +52,6 @@ public class VengTracker
     public void vengProcced(vengpair veng)
     {
         int amount = Math.max(1, ((int)(veng.hitsplat * .75)));
-       // plugin.clog.write(LogID.VENG_WAS_PROCCED, veng.player, String.valueOf(amount));
     }
 
     public void updateTick()

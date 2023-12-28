@@ -10,7 +10,7 @@ public class NpcIDs {
     public final static int ZCB_PROJECTILE = 1468;
     public final static int ZCB_SPEC_PROJECTILE = 1995;
     public final static int VENG_CAST = 8316;
-    public final static int VENG_OTHER_CAST = 4411;//todo also used for healother
+    public final static int VENG_OTHER_CAST = 4411;
     public final static int VENG_GRAPHIC = 726;
     public final static int VENG_OTHER_GRAPHIC = 725;
 

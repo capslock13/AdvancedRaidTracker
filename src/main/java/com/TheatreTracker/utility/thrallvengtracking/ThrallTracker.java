@@ -56,7 +56,6 @@ public class ThrallTracker
             {
                 thrall.setOwner(thrall.potentialPlayers.get(0));
                 activeThralls.add(thrall);
-                //log.info("New thrall summoned by: " + thrall.getOwner());
 
                 assignedPlayers.add(new PlayerShell(thrall.player.worldLocation, thrall.player.name));
             }
@@ -74,8 +73,6 @@ public class ThrallTracker
             {
                 thrall.setOwner(thrall.potentialPlayers.get(0));
                 activeThralls.add(thrall);
-                //log.info("New thrall summoned by: " + thrall.getOwner());
-
             }
         }
         queuedThrallSpawn.removeIf(thrall -> thrall.potentialPlayers.size() == 1);
@@ -94,8 +91,6 @@ public class ThrallTracker
             {
                 thrall.setOwner(thrall.potentialPlayers.get(0));
                 activeThralls.add(thrall);
-                //log.info("New thrall summoned by: " + thrall.getOwner());
-
             }
         }
         queuedThrallSpawn.removeIf(thrall -> thrall.potentialPlayers.size() == 1);
@@ -107,7 +102,6 @@ public class ThrallTracker
         for(Thrall thrall : queuedThrallSpawn)
         {
             activeThralls.add(thrall);
-            //log.info("New thrall summoned by: " + thrall.getOwner());
         }
         queuedThrallSpawn.clear();
 
@@ -147,7 +141,6 @@ public class ThrallTracker
                 {
                     if(thrall.lastParentInteraction.getWorldArea().distanceTo(thrall.npc.getWorldLocation()) < 2)
                     {
-                       // log.info("Melee thrall, expected hitsplat on tick: " + plugin.getTicks());
                         plugin.clog.write(LogID.THRALL_ATTACKED, thrall.getOwner(), "melee");
                         plugin.addQueuedThrallDamage(((((NPC) thrall.lastParentInteraction).getIndex())), thrall.npc.getIndex(), 1, thrall.getOwner());
                     }
@@ -169,7 +162,6 @@ public class ThrallTracker
             {
                 hitOffset = (projectile.getRemainingCycles() > 40) ? 1 : 0;
             }
-           //log.info(projectile.getId() + ", cycles: " + projectile.getRemainingCycles() + " expected on tick :" + (tick+hitOffset));
             for (Thrall t : activeThralls)
             {
                 if (t.npc.getWorldLocation().distanceTo(origin) == 0 && hitOffset != -1)

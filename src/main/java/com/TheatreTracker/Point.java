@@ -2,7 +2,6 @@ package com.TheatreTracker;
 
 
 import lombok.Getter;
-//TODO replace with runelite Point
 public class Point
 {
     @Getter

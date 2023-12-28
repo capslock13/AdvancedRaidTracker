@@ -253,18 +253,15 @@ public class MaidenHandler extends RoomHandler
             }
             else
             {
-                log.info(p.playerName + " had no hitsplats but was in blood");
             }
             if(bloodDamage != -1)
             {
                 if(p.bloodTicksAlive == -1)
                 {
-                    log.info(p.playerName + " stood in blood for " + bloodDamage + " damage. Blood existed for: " + p.bloodTicksAlive + " ticks. Client ticks: " + client.getTickCount());
                     clog.write(PLAYER_STOOD_IN_SPAWNED_BLOOD, p.playerName, String.valueOf(bloodDamage)); //player, dmg
                 }
                 else
                 {
-                    log.info(p.playerName + " stood in blood for " + bloodDamage + " damage. Blood existed for: " + p.bloodTicksAlive + " ticks. Client ticks: " + client.getTickCount());
                     clog.write(PLAYER_STOOD_IN_THROWN_BLOOD, p.playerName, String.valueOf(bloodDamage), String.valueOf(p.bloodTicksAlive)); //player, dmg, blood tick
                 }
                 bloodHeals++;
@@ -300,7 +297,6 @@ public class MaidenHandler extends RoomHandler
         for(int i = 0; i < maidenHeals.size()-bloodHeals; i++)
         {
             clog.write(CRAB_HEALED_MAIDEN, String.valueOf(maidenHeals.get(i)));
-            log.info("Crab healed maiden for: " + maidenHeals.get(i));
         }
         bloodHeals = 0;
     }

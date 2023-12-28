@@ -510,7 +510,6 @@ public class TheatreTrackerPlugin extends Plugin
                 clog.write(PARTY_MEMBERS, players[0], players[1], players[2], players[3], players[4]);
                 maiden.setScale(Arrays.stream(players).filter(x -> !x.equals("")).collect(Collectors.toList()).size());
                 scale = currentPlayers.size();
-                //TODO better way of doing this
             }
         }
         else
@@ -874,9 +873,6 @@ public class TheatreTrackerPlugin extends Plugin
             currentRoom.updateNpcDespawned(event);
         }
     }
-
-    //blood before damage
-    //divine->heal other/ZCB ->blood->damage
 
     @Subscribe
     public void onHitsplatApplied(HitsplatApplied event)

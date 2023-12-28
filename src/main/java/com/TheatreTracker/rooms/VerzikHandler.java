@@ -5,8 +5,14 @@ import com.TheatreTracker.constants.LogID;
 import com.TheatreTracker.utility.DataWriter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
+import net.runelite.api.HitsplatID;
+import net.runelite.api.NPC;
+import net.runelite.api.coords.LocalPoint;
+import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.*;
 import com.TheatreTracker.utility.RoomState;
+
+import java.util.ArrayList;
 
 import static com.TheatreTracker.constants.LogID.*;
 import static com.TheatreTracker.constants.NpcIDs.*;
@@ -18,19 +24,65 @@ public class VerzikHandler extends RoomHandler
     public VerzikHandler(Client client, DataWriter clog, TheatreTrackerConfig config)
     {
         super(client, clog, config);
+        currentHits = new ArrayList<>();
+        lastHits = new ArrayList<>();
     }
     private int verzikEntryTick = -1;
     private int verzikP1EndTick = -1;
     private int verzikRedsTick = -1;
     private int verzikP2EndTick = -1;
     private int verzikP3EndTick = -1;
+
+    private ArrayList<Integer> currentHits;
+    private ArrayList<Integer> lastHits;
     public void reset()
     {
+        currentHits.clear();
+        lastHits.clear();
         verzikEntryTick = -1;
         verzikP1EndTick = -1;
         verzikRedsTick = -1;
         verzikP2EndTick = -1;
         verzikP3EndTick = -1;
+    }
+
+    public void updateGameTick(GameTick event)
+    {
+        if(lastHits.size() != 0)
+        {
+
+        }
+        lastHits = currentHits;
+    }
+
+    public void updateProjectileMoved(ProjectileMoved event)
+    {
+        if(event.getProjectile().getId() == 1587)
+        {
+            if(event.getProjectile().getStartCycle() == client.getGameCycle())
+            {
+                log.info("Expected purple/red heal on tick: " + (client.getTickCount()-1));
+            }
+        }
+        if(event.getProjectile().getId() == 1591)
+        {
+            if(event.getProjectile().getRemainingCycles() == 0)
+            {
+                log.info("Expected heal auto on tick: " + (client.getTickCount()));
+            }
+        }
+    }
+
+    public void updateHitsplatApplied(HitsplatApplied event)
+    {
+        if(event.getActor().getName() != null)
+        {
+            if(event.getActor().getName().contains("Verzik") && event.getHitsplat().getHitsplatType() == HitsplatID.HEAL)
+            {
+                currentHits.add(event.getHitsplat().getAmount());
+                log.info("Verzik healed " + event.getHitsplat().getAmount() + " damage (" + event.getHitsplat().getHitsplatType() +") on tick " + client.getTickCount());
+            }
+        }
     }
 
     public void updateGraphicChanged(GraphicChanged event)
@@ -41,8 +93,14 @@ public class VerzikHandler extends RoomHandler
         }
     }
 
+
     public void updateAnimationChanged(AnimationChanged event)
     {
+        int id = event.getActor().getAnimation();
+        if(id == 8117)
+        {
+            //log.info("verzik healing active on:" + client.getTickCount() +". Ending on " + client.getTickCount()+8);
+        }
         if(event.getActor().getAnimation() == VERZIK_BECOMES_SPIDER)
         {
             endP3();

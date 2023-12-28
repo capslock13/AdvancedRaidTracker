@@ -14,10 +14,12 @@ import java.util.Scanner;
 public class RaidsManager
 {
     private static final String raidsFolder = System.getProperty("user.home").replace("\\", "/") + "/.runelite/theatretracker/raids/";
+
     public static ArrayList<RaidsArrayWrapper> getRaidsSets()
     {
         ArrayList<RaidsArrayWrapper> raidSets = new ArrayList<>();
         File folder = new File(raidsFolder);
+        if(!folder.exists()) folder.mkdirs();
         try
         {
             for (File entry : folder.listFiles())

@@ -7,6 +7,22 @@ public class DataPointWrapper
     public DataPointWrapper(DataPoint point)
     {
         dataPoint = point;
+        if(point.equals(DataPoint.MAIDEN_DEFENSE))
+        {
+            value = 200;
+        }
+        else if(point.equals(DataPoint.BLOAT_DEFENSE))
+        {
+            value = 100;
+        }
+        else if(point.equals(DataPoint.NYLO_DEFENSE))
+        {
+            value = 50;
+        }
+        else if(point.equals(DataPoint.XARP_DEFENSE))
+        {
+            value = 250;
+        }
     }
     public void setValue(int value)
     {

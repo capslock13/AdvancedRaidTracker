@@ -152,11 +152,12 @@ public class TheatreTrackerPlugin extends Plugin
         playersTextChanged = new ArrayList<>();
         File dirMain = new File(System.getProperty("user.home").replace("\\", "/") + "/.runelite/theatretracker/primary/");
         File dirFilters = new File(System.getProperty("user.home").replace("\\", "/") + "/.runelite/theatretracker/filters/");
+
         File dirRaids = new File(System.getProperty("user.home").replace("\\", "/") + "/.runelite/theatretracker/raids/");
+        if(!dirRaids.exists()) dirRaids.mkdirs();
 
         if(!dirMain.exists()) dirMain.mkdirs();
         if(!dirFilters.exists()) dirFilters.mkdirs();
-        if(!dirRaids.exists()) dirRaids.mkdirs();
 
         File logFile = new File(System.getProperty("user.home").replace("\\", "/") + "/.runelite/theatretracker/primary/tobdata.log");
         if (!logFile.exists())
@@ -563,8 +564,6 @@ public class TheatreTrackerPlugin extends Plugin
             }
             else if(event.getActor().hasSpotAnim(VENG_GRAPHIC))
             {
-               // log.info("GRAPHIC: Casting veng on self on tick: " + client.getTickCount());
-
                 vengTracker.vengSelfGraphicApplied((Player)event.getActor());
             }
             else if(event.getActor().hasSpotAnim(VENG_OTHER_GRAPHIC))
@@ -650,10 +649,6 @@ public class TheatreTrackerPlugin extends Plugin
     public void onAnimationChanged(AnimationChanged event)
     {
         int id = event.getActor().getAnimation();
-        if(id == 8117)
-        {
-          //  log.info("verzik healing  " + client.getTickCount());
-        }
         if(event.getActor().getAnimation() == THRALL_CAST_ANIMATION)
         {
             thrallTracker.castThrallAnimation((Player)event.getActor());
@@ -886,21 +881,9 @@ public class TheatreTrackerPlugin extends Plugin
     @Subscribe
     public void onHitsplatApplied(HitsplatApplied event)
     {
-     if(event.getActor().getName() != null)
-     {
-         if(event.getActor().getName().contains("Verzik"))
-         {
-            // log.info("Verzik took " + event.getHitsplat().getAmount() + " damage (" + event.getHitsplat().getHitsplatType() +") on tick " + client.getTickCount());
-         }
-     }
-        if(event.getActor() instanceof Player) //todo in theatre
+        if(event.getActor() instanceof Player && inTheatre)
         {
-            //log.info(event.getActor().getName() + " took " + event.getHitsplat().getAmount() + " damage (" + client.getTickCount() + ")");
             playersTextChanged.add(new vengpair(event.getActor().getName(), event.getHitsplat().getAmount()));
-        }
-        if(event.getActor() instanceof NPC)
-        {
-            //log.info(client.getTickCount() + ", damage: " + event.getHitsplat().getAmount() + ", type: " + event.getHitsplat().getHitsplatType());
         }
         queuedThrallDamage.sort(Comparator.comparing(DamageQueueShell::getSourceIndex));
         int index = -1;
@@ -919,7 +902,6 @@ public class TheatreTrackerPlugin extends Plugin
                         {
                             if(projectile.originTick < queuedThrallDamage.get(i).originTick)
                             {
-                                //log.info("Postpone true");
                                 postponeThrallHit = true;
                                 matchedIndex = altIndex;
                             }
@@ -937,12 +919,10 @@ public class TheatreTrackerPlugin extends Plugin
                     {
                         if(event.getHitsplat().getAmount() > 3)
                         {
-                            //log.info("FAILED THRALL ATTACK: " + event.getHitsplat().getAmount());
                         }
                         else
                         {
                             index = i;
-                            //log.info(queuedThrallDamage.get(i).source + "'s thrall did " + event.getHitsplat().getAmount() + " damage");
                             clog.write(THRALL_DAMAGED, queuedThrallDamage.get(i).source, String.valueOf(event.getHitsplat().getAmount()));
                         }
                     }
@@ -962,7 +942,6 @@ public class TheatreTrackerPlugin extends Plugin
                 int expectedDamage = (int)(0.75 * veng.damage);
                 if(event.getHitsplat().getAmount() == expectedDamage)
                 {
-                    //log.info(veng.target + "'s veng did " + expectedDamage + " damage.");
                     clog.write(VENG_WAS_PROCCED, veng.target, String.valueOf(expectedDamage));
                     if(inTheatre)
                     {
@@ -992,7 +971,6 @@ public class TheatreTrackerPlugin extends Plugin
                 {
                     vengTracker.vengProcced(vp);
                     activeVenges.add(new VengDamageQueue(vp.player, vp.hitsplat, client.getTickCount()+1));
-                    //log.info("player " + vp.player + " has dmg: " + vp.hitsplat + " on tick " + client.getTickCount());
                 }
             }
         }

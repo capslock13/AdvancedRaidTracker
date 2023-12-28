@@ -45,7 +45,6 @@ public class VengTracker
         vengedPlayers.clear();
         for(VengCastQueue vcq : temp)
         {
-            //log.info(vcq.source + " cast veng on " + vcq.target);
             plugin.clog.write(LogID.VENG_WAS_CAST, vcq.target, vcq.source);
         }
     }

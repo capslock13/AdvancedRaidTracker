@@ -76,6 +76,8 @@ public class FilteredRaidsBaseFrame extends BaseFrame
     public JLabel customModeLabel = new JLabel("", SwingConstants.RIGHT);
     public JLabel customMinLabel = new JLabel("", SwingConstants.RIGHT);
     public JLabel customMaxLabel = new JLabel("", SwingConstants.RIGHT);
+
+    JTextField dateTextField;
     JCheckBox filterSpectateOnly;
     JCheckBox filterInRaidOnly;
     JCheckBox filterCompletionOnly;
@@ -558,7 +560,7 @@ public class FilteredRaidsBaseFrame extends BaseFrame
         else if(data.maidenReset)
         {
             raidStatusString = "Maiden Reset";
-            if(data.getMaidenTime() == 0)
+            if(!data.maidenSpawned)
             {
                 raidStatusString += "*";
             }
@@ -1341,6 +1343,21 @@ public class FilteredRaidsBaseFrame extends BaseFrame
                     //String filterStr = "Raid was " + dateFilterOperator.getSelectedItem().toString() + " " + datePicker.getModel().getValue().toString();
                     //activeFilters.add(new ImplicitFilter(new FilterDate((Date)datePicker.getModel().getValue(), dateFilterOperator.getSelectedIndex(), filterStr)));
                     //dateFilterValue.setText((datePicker.getModel().getValue()).toString()); //TODO
+                    try
+                    {
+                        String dateString = dateTextField.getText();
+                        String[] datePartial = dateString.split("/");
+                        int year = Integer.parseInt(datePartial[0]);
+                        int month = Integer.parseInt(datePartial[1]);
+                        int day = Integer.parseInt(datePartial[2]);
+                        Date date = new GregorianCalendar(year, month-1, day).getTime();
+                        String filterStr = "Raid was " + dateFilterOperator.getSelectedItem().toString() + " " + date.toString();
+                        activeFilters.add(new ImplicitFilter(new FilterDate(date, dateFilterOperator.getSelectedIndex(), filterStr)));
+                    }
+                    catch (Exception e)
+                    {
+
+                    }
                     updateFilterTable();
                 });
 
@@ -1363,6 +1380,8 @@ public class FilteredRaidsBaseFrame extends BaseFrame
         dateTopRow.add(Box.createRigidArea(new Dimension(2, 2)));
         dateTopRow.add(dateFilterAdd);
         //dateBottomRow.add(dateFilterValue);
+        dateTextField = new JTextField();
+        dateBottomRow.add(dateTextField);
         dateBottomRow.add(new JLabel("YYYY/MM/DD"));
         //dateBottomRow.add(Box.createRigidArea(new Dimension(2, 2)));
         //dateBottomRow.add(dateFilterAdd);

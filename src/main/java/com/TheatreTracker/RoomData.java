@@ -102,7 +102,7 @@ public class RoomData
     public boolean maidenScuffed = false;
     public String firstMaidenCrabScuffed = "";
 
-    public boolean maidenSpawned;
+    public boolean maidenSpawned = false;
     public boolean maidenSkip;
     public boolean maidenReset;
     public boolean maidenWipe;
@@ -1153,8 +1153,9 @@ public class RoomData
                     }
                     else
                     {
-                        if(maidenSpawned)
+                        if(!maidenSpawned)
                         {
+                            maidenReset = true;
                             resetBeforeMaiden = true;
                         }
                         else

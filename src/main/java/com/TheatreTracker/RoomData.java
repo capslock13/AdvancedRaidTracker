@@ -10,73 +10,73 @@ import java.util.Arrays;
 import java.util.Date;
 
 import static com.TheatreTracker.RoomData.TobRoom.*;
+
 @Slf4j
 
-public class RoomData
-{
+public class RoomData {
 
     private static final String EXIT_FLAG = "4";
-   /* public static String[] DataPoint =
-            {
-            "Maiden bloods spawned",
-            "Maiden crabs leaked",
-            "Maiden def reduction",
-            "Maiden deaths",
-            "Bloat Downs",
-            "Bloat 1st walk deaths",
-            "Bloat first walk BGS",
-            "Bloat deaths",
-            "Nylo stalls pre 20",
-            "Nylo stalls post 20",
-            "Nylo total stalls",
-            "Nylo range splits",
-            "Nylo mage splits",
-            "Nylo melee splits",
-            "Nylo range rotations",
-            "Nylo mage rotations",
-            "Nylo melee roations",
-            "Nylo def reduction",
-            "Nylo deaths",
-            "Sote specs p1",
-            "Sote specs p2",
-            "Sote specs p3",
-            "Sote deaths",
-            "Sote total specs hit",
-            "Xarp def reduction",
-            "Xarp deaths",
-            "Xarpus healing",
-            "Verzik bounces",
-            "Verzik deaths",
-            "Raid team size",
-            "Maiden total time",
-            "Maiden 70 split",
-            "Maiden 50 split",
-            "Maiden 30 split",
-            "Maiden 70-50 split",
-            "Maiden 50-30 split",
-            "Maiden skip split",
-            "Bloat total time",
-            "Bloat first down split",
-            "Nylocas total time",
-            "Nylo boss spawn",
-            "Nylo boss duration",
-            "Nylo last wave",
-            "Nylo cleanup",
-            "Sotetseg total time",
-            "Sote p1 split",
-            "Sote p2 split",
-            "Sote p3 split",
-            "Sote maze1 split",
-            "Sote maze2 split",
-            "Xarpus total time",
-            "Xarpus screech",
-            "Xarpus post screech",
-            "Verzik total time",
-            "Verzik p1 split",
-            "Verzik p2 split",
-            "Verzik p2 duration",
-            "Verzik p3 duration"
-    };*/
+    /* public static String[] DataPoint =
+             {
+             "Maiden bloods spawned",
+             "Maiden crabs leaked",
+             "Maiden def reduction",
+             "Maiden deaths",
+             "Bloat Downs",
+             "Bloat 1st walk deaths",
+             "Bloat first walk BGS",
+             "Bloat deaths",
+             "Nylo stalls pre 20",
+             "Nylo stalls post 20",
+             "Nylo total stalls",
+             "Nylo range splits",
+             "Nylo mage splits",
+             "Nylo melee splits",
+             "Nylo range rotations",
+             "Nylo mage rotations",
+             "Nylo melee roations",
+             "Nylo def reduction",
+             "Nylo deaths",
+             "Sote specs p1",
+             "Sote specs p2",
+             "Sote specs p3",
+             "Sote deaths",
+             "Sote total specs hit",
+             "Xarp def reduction",
+             "Xarp deaths",
+             "Xarpus healing",
+             "Verzik bounces",
+             "Verzik deaths",
+             "Raid team size",
+             "Maiden total time",
+             "Maiden 70 split",
+             "Maiden 50 split",
+             "Maiden 30 split",
+             "Maiden 70-50 split",
+             "Maiden 50-30 split",
+             "Maiden skip split",
+             "Bloat total time",
+             "Bloat first down split",
+             "Nylocas total time",
+             "Nylo boss spawn",
+             "Nylo boss duration",
+             "Nylo last wave",
+             "Nylo cleanup",
+             "Sotetseg total time",
+             "Sote p1 split",
+             "Sote p2 split",
+             "Sote p3 split",
+             "Sote maze1 split",
+             "Sote maze2 split",
+             "Xarpus total time",
+             "Xarpus screech",
+             "Xarpus post screech",
+             "Verzik total time",
+             "Verzik p1 split",
+             "Verzik p2 split",
+             "Verzik p2 duration",
+             "Verzik p3 duration"
+     };*/
     public boolean spectated = false;
     public boolean maidenStartAccurate = false;
     public boolean bloatStartAccurate = false;
@@ -150,8 +150,6 @@ public class RoomData
     public boolean xarpStarted;
 
 
-
-
     public boolean verzikWipe;
     public boolean verzikStarted;
 
@@ -174,24 +172,20 @@ public class RoomData
     public String[] raidDataRaw;
 
 
-    enum TobRoom{
+    enum TobRoom {
         MAIDEN, BLOAT, NYLOCAS, SOTETSEG, XARPUS, VERZIK
     }
 
-    public Date getDate()
-    {
+    public Date getDate() {
         return raidStarted;
     }
 
-    public int getScale()
-    {
+    public int getScale() {
         return raidTeamSize;
     }
 
-    public boolean getTimeAccurate(com.TheatreTracker.utility.DataPoint param)
-    {
-        switch(param.room)
-        {
+    public boolean getTimeAccurate(com.TheatreTracker.utility.DataPoint param) {
+        switch (param.room) {
             case MAIDEN:
                 return maidenStartAccurate && maidenEndAccurate;
             case BLOAT:
@@ -209,15 +203,31 @@ public class RoomData
         }
     }
 
-    public int getMaidenTime() { return (maidenStartAccurate && maidenEndAccurate) ? getValue(com.TheatreTracker.utility.DataPoint.MAIDEN_TOTAL_TIME) : 0; }
-    public int getBloatTime() { return (bloatStartAccurate && bloatEndAccurate) ? getValue(com.TheatreTracker.utility.DataPoint.BLOAT_TOTAL_TIME) : 0; }
-    public int getNyloTime() { return (nyloStartAccurate && nyloEndAccurate) ? getValue(com.TheatreTracker.utility.DataPoint.NYLO_TOTAL_TIME): 0; }
-    public int getSoteTime() { return (soteStartAccurate && soteEndAccurate) ? getValue(com.TheatreTracker.utility.DataPoint.SOTE_TOTAL_TIME) : 0; }
-    public int getXarpTime() { return (xarpStartAccurate && xarpEndAccurate) ? getValue(com.TheatreTracker.utility.DataPoint.XARP_TOTAL_TIME) : 0; }
-    public int getVerzikTime() { return (verzikStartAccurate && verzikEndAccurate) ? getValue(com.TheatreTracker.utility.DataPoint.VERZIK_TOTAL_TIME) : 0; }
+    public int getMaidenTime() {
+        return (maidenStartAccurate && maidenEndAccurate) ? getValue(com.TheatreTracker.utility.DataPoint.MAIDEN_TOTAL_TIME) : 0;
+    }
 
-    public boolean getOverallTimeAccurate()
-    {
+    public int getBloatTime() {
+        return (bloatStartAccurate && bloatEndAccurate) ? getValue(com.TheatreTracker.utility.DataPoint.BLOAT_TOTAL_TIME) : 0;
+    }
+
+    public int getNyloTime() {
+        return (nyloStartAccurate && nyloEndAccurate) ? getValue(com.TheatreTracker.utility.DataPoint.NYLO_TOTAL_TIME) : 0;
+    }
+
+    public int getSoteTime() {
+        return (soteStartAccurate && soteEndAccurate) ? getValue(com.TheatreTracker.utility.DataPoint.SOTE_TOTAL_TIME) : 0;
+    }
+
+    public int getXarpTime() {
+        return (xarpStartAccurate && xarpEndAccurate) ? getValue(com.TheatreTracker.utility.DataPoint.XARP_TOTAL_TIME) : 0;
+    }
+
+    public int getVerzikTime() {
+        return (verzikStartAccurate && verzikEndAccurate) ? getValue(com.TheatreTracker.utility.DataPoint.VERZIK_TOTAL_TIME) : 0;
+    }
+
+    public boolean getOverallTimeAccurate() {
         return maidenStartAccurate && maidenEndAccurate
                 && bloatStartAccurate && bloatEndAccurate
                 && nyloStartAccurate && nyloEndAccurate
@@ -226,22 +236,16 @@ public class RoomData
                 && verzikStartAccurate && verzikEndAccurate;
     }
 
-    public boolean checkExit(TobRoom room)
-    {
-        if(globalData.size() == 0 || globalData.get(0).split(",", -1)[3].equals(EXIT_FLAG))
-        {
-            switch (room)
-            {
+    public boolean checkExit(TobRoom room) {
+        if (globalData.size() == 0 || globalData.get(0).split(",", -1)[3].equals(EXIT_FLAG)) {
+            switch (room) {
                 case MAIDEN:
                     maidenReset = true;
                     break;
                 case BLOAT:
-                    if(!bloatEndAccurate)
-                    {
+                    if (!bloatEndAccurate) {
                         bloatWipe = true;
-                    }
-                    else
-                    {
+                    } else {
                         bloatReset = true;
                     }
                     break;
@@ -262,18 +266,15 @@ public class RoomData
 
     private final DataManager dataManager;
 
-    public int getValue(String name)
-    {
+    public int getValue(String name) {
         return dataManager.get(name);
     }
 
-    public int getValue(com.TheatreTracker.utility.DataPoint point)
-    {
+    public int getValue(com.TheatreTracker.utility.DataPoint point) {
         return dataManager.get(point);
     }
 
-    public int getTimeSum()
-    {
+    public int getTimeSum() {
         return getMaidenTime() + getBloatTime() + getNyloTime() + getSoteTime() + getXarpTime() + getVerzikTime(); /*
                 + dataManager.get(com.TheatreTracker.utility.DataPoint.BLOAT_TOTAL_TIME)
                 + dataManager.get(com.TheatreTracker.utility.DataPoint.NYLO_TOTAL_TIME)
@@ -282,8 +283,7 @@ public class RoomData
                 + dataManager.get(com.TheatreTracker.utility.DataPoint.VERZIK_TOTAL_TIME);*/
     }
 
-    public RoomData(String[] parameters) throws Exception
-    {
+    public RoomData(String[] parameters) throws Exception {
         dataManager = new DataManager();
         raidDataRaw = parameters;
         partyComplete = false;
@@ -299,54 +299,41 @@ public class RoomData
         globalData = new ArrayList<String>(Arrays.asList(parameters));
 
         int room = -1;
-        for(String s : globalData)
-        {
+        for (String s : globalData) {
             String[] subData = s.split(",");
             int key = Integer.parseInt(subData[3]);
-            if(key == 98)
-            {
+            if (key == 98) {
                 room = Integer.parseInt(subData[4]);
                 spectated = true;
             }
         }
-        if(room > 0)
-        {
-            switch(room)
-            {
+        if (room > 0) {
+            switch (room) {
                 case 1:
-                    if(!(checkExit(MAIDEN) && parseBloat()))
+                    if (!(checkExit(MAIDEN) && parseBloat()))
                         break;
                 case 2:
-                    if(!(checkExit(BLOAT) && parseNylo()))
+                    if (!(checkExit(BLOAT) && parseNylo()))
                         break;
                 case 3:
-                    if(!(checkExit(NYLOCAS) && parseSotetseg()))
+                    if (!(checkExit(NYLOCAS) && parseSotetseg()))
                         break;
                 case 4:
-                    if(!(checkExit(SOTETSEG) && parseXarpus()))
+                    if (!(checkExit(SOTETSEG) && parseXarpus()))
                         break;
                 case 5:
-                    if(checkExit(XARPUS) && parseVerzik())
-                    {
+                    if (checkExit(XARPUS) && parseVerzik()) {
                         finishRaid();
                     }
             }
-        }
-        else {
-            try
-            {
-                if (parseMaiden())
-                {
-                    if (checkExit(MAIDEN) && parseBloat())
-                    {
-                        if (checkExit(BLOAT) && parseNylo())
-                        {
-                            if (checkExit(NYLOCAS) && parseSotetseg())
-                            {
-                                if (checkExit(SOTETSEG) && parseXarpus())
-                                {
-                                    if (checkExit(XARPUS) && parseVerzik())
-                                    {
+        } else {
+            try {
+                if (parseMaiden()) {
+                    if (checkExit(MAIDEN) && parseBloat()) {
+                        if (checkExit(BLOAT) && parseNylo()) {
+                            if (checkExit(NYLOCAS) && parseSotetseg()) {
+                                if (checkExit(SOTETSEG) && parseXarpus()) {
+                                    if (checkExit(XARPUS) && parseVerzik()) {
                                         finishRaid();
                                     }
                                 }
@@ -354,29 +341,23 @@ public class RoomData
                         }
                     }
                 }
-            } catch (Exception e)
-            {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
 
-    private boolean parseVerzik()
-    {
+    private boolean parseVerzik() {
         int activeIndex = 0;
-        for(String s : globalData)
-        {
+        for (String s : globalData) {
             String[] subData = s.split(",", -1);
-            switch(Integer.parseInt(subData[3]))
-            {
+            switch (Integer.parseInt(subData[3])) {
                 case 0:
                     raidStarted = new Date(Long.parseLong(subData[1]));
                     break;
                 case 1:
-                    for(int i = 4; i < 9; i++)
-                    {
-                        if(!subData[i].equals(""))
-                        {
+                    for (int i = 4; i < 9; i++) {
+                        if (!subData[i].equals("")) {
                             raidTeamSize++;
                             players.add(subData[i].replaceAll("[^\\p{ASCII}]", " ").replaceAll(" +", " "));
                         }
@@ -388,19 +369,13 @@ public class RoomData
                 case 3:
                     break;
                 case 4:
-                    if(dataManager.get(com.TheatreTracker.utility.DataPoint.VERZIK_TOTAL_TIME) == 0)
-                    {
-                        if(!verzikStarted)
-                        {
+                    if (dataManager.get(com.TheatreTracker.utility.DataPoint.VERZIK_TOTAL_TIME) == 0) {
+                        if (!verzikStarted) {
                             xarpReset = true;
-                        }
-                        else
-                        {
+                        } else {
                             verzikWipe = true;
                         }
-                    }
-                    else
-                    {
+                    } else {
                         return true;
                     }
                     globalData = new ArrayList<>(globalData.subList(activeIndex + 1, globalData.size()));
@@ -481,69 +456,55 @@ public class RoomData
             }
             activeIndex++;
         }
-        globalData = new ArrayList(globalData.subList(activeIndex+1, globalData.size()));
+        globalData = new ArrayList(globalData.subList(activeIndex + 1, globalData.size()));
         return true;
     }
 
-    private boolean isTimeAccurateThroughRoom(TobRoom room)
-    {
-        switch(room)
-        {
+    private boolean isTimeAccurateThroughRoom(TobRoom room) {
+        switch (room) {
             case VERZIK:
-                if(!verzikTimeAccurate)
-                {
+                if (!verzikTimeAccurate) {
                     return false;
                 }
             case XARPUS:
-                if(!xarpTimeAccurate)
-                {
+                if (!xarpTimeAccurate) {
                     return false;
                 }
             case SOTETSEG:
-                if(!soteTimeAccurate)
-                {
+                if (!soteTimeAccurate) {
                     return false;
                 }
             case NYLOCAS:
-                if(!nyloTimeAccurate)
-                {
+                if (!nyloTimeAccurate) {
                     return false;
                 }
             case BLOAT:
-                if(!bloatTimeAccurate)
-                {
+                if (!bloatTimeAccurate) {
                     return false;
                 }
             case MAIDEN:
-                if(!maidenTimeAccurate)
-                {
+                if (!maidenTimeAccurate) {
                     return false;
-                }
-                else
-                {
+                } else {
                     return true;
                 }
         }
         return false;
     }
 
-    private boolean parseXarpus()
-    {
+    private boolean parseXarpus() {
 
         int activeIndex = 0;
-        loop: for(String s : globalData)
-        {
+        loop:
+        for (String s : globalData) {
             String[] subData = s.split(",", -1);
-            switch(Integer.parseInt(subData[3]))
-            {
+            switch (Integer.parseInt(subData[3])) {
                 case 0:
                     raidStarted = new Date(Long.parseLong(subData[1]));
                     break;
                 case 1:
-                    for(int i = 4; i < 9; i++)
-                    {
-                        if(!subData[i].equals(""))
-                        {
+                    for (int i = 4; i < 9; i++) {
+                        if (!subData[i].equals("")) {
                             raidTeamSize++;
                             players.add(subData[i].replaceAll("[^\\p{ASCII}]", " ").replaceAll(" +", " "));
                         }
@@ -557,22 +518,16 @@ public class RoomData
                     dataManager.bgs(com.TheatreTracker.utility.DataPoint.XARP_DEFENSE, Integer.parseInt(subData[5]));
                     break;
                 case 4:
-                    if(dataManager.get(com.TheatreTracker.utility.DataPoint.XARP_TOTAL_TIME) != 0)
-                    {
+                    if (dataManager.get(com.TheatreTracker.utility.DataPoint.XARP_TOTAL_TIME) != 0) {
                         xarpReset = true;
-                    }
-                    else
-                    {
-                        if(!xarpStarted)
-                        {
+                    } else {
+                        if (!xarpStarted) {
                             soteReset = true;
-                        }
-                        else
-                        {
+                        } else {
                             xarpWipe = true;
                         }
                     }
-                    globalData = new ArrayList(globalData.subList(activeIndex+1, globalData.size()));
+                    globalData = new ArrayList(globalData.subList(activeIndex + 1, globalData.size()));
                     return false;
                 case 5:
                     dataManager.increment(com.TheatreTracker.utility.DataPoint.XARP_DEATHS);
@@ -586,15 +541,13 @@ public class RoomData
                     break;
                 case 61:
                     xarpStarted = true;
-                    if(partyComplete)
-                    {
+                    if (partyComplete) {
                         xarpDefenseAccurate = true;
                     }
                     break;
                 case 62:
                     int amount = 0;
-                    switch(raidTeamSize)
-                    {
+                    switch (raidTeamSize) {
                         case 5:
                             amount = 8;
                             break;
@@ -621,8 +574,8 @@ public class RoomData
                 case 65:
                     dataManager.set(com.TheatreTracker.utility.DataPoint.XARP_TOTAL_TIME, Integer.parseInt(subData[4]));
                     dataManager.set(com.TheatreTracker.utility.DataPoint.XARP_POST_SCREECH, dataManager.get(com.TheatreTracker.utility.DataPoint.XARP_TOTAL_TIME) - dataManager.get(com.TheatreTracker.utility.DataPoint.XARP_SCREECH));
-                    if(isTimeAccurateThroughRoom(SOTETSEG))
-                        dataManager.set(DataPoint.VERZIK_ENTRY, Integer.parseInt(subData[4])+dataManager.get(DataPoint.XARP_ENTRY));
+                    if (isTimeAccurateThroughRoom(SOTETSEG))
+                        dataManager.set(DataPoint.VERZIK_ENTRY, Integer.parseInt(subData[4]) + dataManager.get(DataPoint.XARP_ENTRY));
                     break loop;
                 case 100:
                     partyComplete = true;
@@ -664,44 +617,35 @@ public class RoomData
             }
             activeIndex++;
         }
-        globalData = new ArrayList(globalData.subList(activeIndex+1, globalData.size()));
+        globalData = new ArrayList(globalData.subList(activeIndex + 1, globalData.size()));
         return true;
     }
 
-    private boolean parseSotetseg()
-    {
+    private boolean parseSotetseg() {
         int activeIndex = 0;
-        loop: for(String s : globalData)
-        {
+        loop:
+        for (String s : globalData) {
             String[] subData = s.split(",", -1);
-            switch(Integer.parseInt(subData[3]))
-            {
+            switch (Integer.parseInt(subData[3])) {
                 case 0:
                     raidStarted = new Date(Long.parseLong(subData[1]));
                     break;
                 case 1:
-                    for(int i = 4; i < 9; i++)
-                    {
-                        if(!subData[i].equals(""))
-                        {
+                    for (int i = 4; i < 9; i++) {
+                        if (!subData[i].equals("")) {
                             raidTeamSize++;
                             players.add(subData[i].replaceAll("[^\\p{ASCII}]", " ").replaceAll(" +", " "));
                         }
                     }
                     break;
                 case 2:
-                    if(dataManager.get(com.TheatreTracker.utility.DataPoint.SOTE_P1_SPLIT) == 0)
-                    {
+                    if (dataManager.get(com.TheatreTracker.utility.DataPoint.SOTE_P1_SPLIT) == 0) {
                         dataManager.increment(com.TheatreTracker.utility.DataPoint.SOTE_SPECS_P1);
                         dataManager.increment(com.TheatreTracker.utility.DataPoint.SOTE_SPECS_TOTAL);
-                    }
-                    else if(dataManager.get(com.TheatreTracker.utility.DataPoint.SOTE_P2_SPLIT) == 0)
-                    {
+                    } else if (dataManager.get(com.TheatreTracker.utility.DataPoint.SOTE_P2_SPLIT) == 0) {
                         dataManager.increment(com.TheatreTracker.utility.DataPoint.SOTE_SPECS_P2);
                         dataManager.increment(com.TheatreTracker.utility.DataPoint.SOTE_SPECS_TOTAL);
-                    }
-                    else
-                    {
+                    } else {
                         dataManager.increment(com.TheatreTracker.utility.DataPoint.SOTE_SPECS_P3);
                         dataManager.increment(com.TheatreTracker.utility.DataPoint.SOTE_SPECS_TOTAL);
                     }
@@ -711,22 +655,16 @@ public class RoomData
                 case 6:
                     break;
                 case 4:
-                    if(dataManager.get(com.TheatreTracker.utility.DataPoint.SOTE_TOTAL_TIME) != 0)
-                    {
+                    if (dataManager.get(com.TheatreTracker.utility.DataPoint.SOTE_TOTAL_TIME) != 0) {
                         soteReset = true;
-                    }
-                    else
-                    {
-                        if(!soteStarted)
-                        {
+                    } else {
+                        if (!soteStarted) {
                             nyloReset = true;
-                        }
-                        else
-                        {
+                        } else {
                             soteWipe = true;
                         }
                     }
-                    globalData = new ArrayList(globalData.subList(activeIndex+1, globalData.size()));
+                    globalData = new ArrayList(globalData.subList(activeIndex + 1, globalData.size()));
                     return false;
                 case 7:
                     dataManager.increment(DataPoint.ATTEMPTED_HAMMERS_SOTE);
@@ -738,8 +676,7 @@ public class RoomData
                     break;
                 case 51:
                     soteStarted = true;
-                    if(partyComplete)
-                    {
+                    if (partyComplete) {
                         soteDefenseAccurate = true;
                     }
                     break;
@@ -760,16 +697,13 @@ public class RoomData
                 case 57:
                     dataManager.set(com.TheatreTracker.utility.DataPoint.SOTE_TOTAL_TIME, Integer.parseInt(subData[4]));
                     dataManager.set(com.TheatreTracker.utility.DataPoint.SOTE_P3_SPLIT, dataManager.get(com.TheatreTracker.utility.DataPoint.SOTE_TOTAL_TIME) - dataManager.get(com.TheatreTracker.utility.DataPoint.SOTE_M2_SPLIT));
-                    if(isTimeAccurateThroughRoom(NYLOCAS))
-                        dataManager.set(DataPoint.XARP_ENTRY, Integer.parseInt(subData[4])+dataManager.get(DataPoint.SOTE_ENTRY));
+                    if (isTimeAccurateThroughRoom(NYLOCAS))
+                        dataManager.set(DataPoint.XARP_ENTRY, Integer.parseInt(subData[4]) + dataManager.get(DataPoint.SOTE_ENTRY));
                     break loop;
                 case 58:
-                    if(soteCyclesLost != -1)
-                    {
+                    if (soteCyclesLost != -1) {
                         soteCyclesLost += Integer.parseInt(subData[4]);
-                    }
-                    else
-                    {
+                    } else {
                         soteCyclesLost = Integer.parseInt(subData[4]);
                     }
                     break;
@@ -815,26 +749,22 @@ public class RoomData
             }
             activeIndex++;
         }
-        globalData = new ArrayList(globalData.subList(activeIndex+1, globalData.size()));
+        globalData = new ArrayList(globalData.subList(activeIndex + 1, globalData.size()));
         return true;
     }
 
-    private boolean parseNylo()
-    {
+    private boolean parseNylo() {
         int activeIndex = 0;
-        loop: for(String s : globalData)
-        {
+        loop:
+        for (String s : globalData) {
             String[] subData = s.split(",", -1);
-            switch(Integer.parseInt(subData[3]))
-            {
+            switch (Integer.parseInt(subData[3])) {
                 case 0:
                     raidStarted = new Date(Long.parseLong(subData[1]));
                     break;
                 case 1:
-                    for(int i = 4; i < 9; i++)
-                    {
-                        if(!subData[i].equals(""))
-                        {
+                    for (int i = 4; i < 9; i++) {
+                        if (!subData[i].equals("")) {
                             raidTeamSize++;
                             players.add(subData[i].replaceAll("[^\\p{ASCII}]", " ").replaceAll(" +", " "));
                         }
@@ -847,35 +777,25 @@ public class RoomData
                 case 6:
                     break;
                 case 3:
-                    if(dataManager.get(com.TheatreTracker.utility.DataPoint.NYLO_BOSS_SPAWN) != 0)
-                    {
+                    if (dataManager.get(com.TheatreTracker.utility.DataPoint.NYLO_BOSS_SPAWN) != 0) {
                         dataManager.bgs(com.TheatreTracker.utility.DataPoint.NYLO_DEFENSE, Integer.parseInt(subData[5]));
                     }
                     break;
                 case 4:
-                    if(dataManager.get(com.TheatreTracker.utility.DataPoint.NYLO_TOTAL_TIME) != 0)
-                    {
+                    if (dataManager.get(com.TheatreTracker.utility.DataPoint.NYLO_TOTAL_TIME) != 0) {
                         nyloReset = true;
-                    }
-                    else
-                    {
-                        if(!nyloStarted)
-                        {
-                            if(!bloatEndAccurate)
-                            {
+                    } else {
+                        if (!nyloStarted) {
+                            if (!bloatEndAccurate) {
                                 bloatWipe = true;
-                            }
-                            else
-                            {
+                            } else {
                                 bloatReset = true;
                             }
-                        }
-                        else
-                        {
+                        } else {
                             nyloWipe = true;
                         }
                     }
-                    globalData = new ArrayList(globalData.subList(activeIndex+1, globalData.size()));
+                    globalData = new ArrayList(globalData.subList(activeIndex + 1, globalData.size()));
                     return false;
                 case 5:
                     nyloDeaths++;
@@ -888,12 +808,9 @@ public class RoomData
                     break;
                 case 31:
                     dataManager.increment(com.TheatreTracker.utility.DataPoint.NYLO_STALLS_TOTAL);
-                    if(Integer.parseInt(subData[4]) > 19)
-                    {
+                    if (Integer.parseInt(subData[4]) > 19) {
                         dataManager.increment(com.TheatreTracker.utility.DataPoint.NYLO_STALLS_POST_20);
-                    }
-                    else
-                    {
+                    } else {
                         dataManager.increment(com.TheatreTracker.utility.DataPoint.NYLO_STALLS_PRE_20);
                     }
                     break;
@@ -914,9 +831,8 @@ public class RoomData
                     dataManager.set(com.TheatreTracker.utility.DataPoint.NYLO_CLEANUP, nyloLastDead - dataManager.get(com.TheatreTracker.utility.DataPoint.NYLO_LAST_WAVE));
                     break;
                 case 40:
-                    dataManager.set(com.TheatreTracker.utility.DataPoint.NYLO_BOSS_SPAWN, Integer.parseInt(subData[4])-2);
-                    if(partyComplete)
-                    {
+                    dataManager.set(com.TheatreTracker.utility.DataPoint.NYLO_BOSS_SPAWN, Integer.parseInt(subData[4]) - 2);
+                    if (partyComplete) {
                         nyloDefenseAccurate = true;
                     }
                     break;
@@ -931,9 +847,9 @@ public class RoomData
                     break;
                 case 45:
                     dataManager.set(com.TheatreTracker.utility.DataPoint.NYLO_TOTAL_TIME, Integer.parseInt(subData[4]));
-                    dataManager.set(com.TheatreTracker.utility.DataPoint.NYLO_BOSS_DURATION, dataManager.get(com.TheatreTracker.utility.DataPoint.NYLO_TOTAL_TIME)- dataManager.get(com.TheatreTracker.utility.DataPoint.NYLO_BOSS_SPAWN));
-                    if(isTimeAccurateThroughRoom(BLOAT))
-                        dataManager.set(DataPoint.SOTE_ENTRY, Integer.parseInt(subData[4])+dataManager.get(DataPoint.NYLO_ENTRY));
+                    dataManager.set(com.TheatreTracker.utility.DataPoint.NYLO_BOSS_DURATION, dataManager.get(com.TheatreTracker.utility.DataPoint.NYLO_TOTAL_TIME) - dataManager.get(com.TheatreTracker.utility.DataPoint.NYLO_BOSS_SPAWN));
+                    if (isTimeAccurateThroughRoom(BLOAT))
+                        dataManager.set(DataPoint.SOTE_ENTRY, Integer.parseInt(subData[4]) + dataManager.get(DataPoint.NYLO_ENTRY));
                     break loop;
                 case 100:
                     partyComplete = true;
@@ -977,27 +893,23 @@ public class RoomData
             }
             activeIndex++;
         }
-        globalData = new ArrayList(globalData.subList(activeIndex+1, globalData.size()));
+        globalData = new ArrayList(globalData.subList(activeIndex + 1, globalData.size()));
         return true;
     }
 
-    private boolean parseBloat()
-    {
+    private boolean parseBloat() {
         int activeIndex = 0;
         bloatDefenseAccurate = maidenDefenseAccurate;
-        loop: for(String s : globalData)
-        {
+        loop:
+        for (String s : globalData) {
             String[] subData = s.split(",", -1);
-            switch(Integer.parseInt(subData[3]))
-            {
+            switch (Integer.parseInt(subData[3])) {
                 case 0:
                     raidStarted = new Date(Long.parseLong(subData[1]));
                     break;
                 case 1:
-                    for(int i = 4; i < 9; i++)
-                    {
-                        if(!subData[i].equals(""))
-                        {
+                    for (int i = 4; i < 9; i++) {
+                        if (!subData[i].equals("")) {
                             raidTeamSize++;
                             players.add(subData[i].replaceAll("[^\\p{ASCII}]", " ").replaceAll(" +", " "));
                         }
@@ -1012,39 +924,30 @@ public class RoomData
                     bloatHPAtDown = Integer.parseInt(subData[4]);
                     break;
                 case 25:
-                    if(dataManager.get(com.TheatreTracker.utility.DataPoint.BLOAT_DOWNS) == 0)
-                    {
+                    if (dataManager.get(com.TheatreTracker.utility.DataPoint.BLOAT_DOWNS) == 0) {
                         bloatScytheBeforeFirstDown++;
                     }
                     break;
                 case 3:
-                    if(dataManager.get(com.TheatreTracker.utility.DataPoint.BLOAT_DOWNS) == 0)
-                    {
-                        dataManager.bgs(com.TheatreTracker.utility.DataPoint.BLOAT_DEFENSE, 2*Integer.parseInt(subData[5]));
+                    if (dataManager.get(com.TheatreTracker.utility.DataPoint.BLOAT_DOWNS) == 0) {
+                        dataManager.bgs(com.TheatreTracker.utility.DataPoint.BLOAT_DEFENSE, 2 * Integer.parseInt(subData[5]));
                     }
                     break;
                 case 4:
-                    if(bloatEndAccurate)
-                    {
+                    if (bloatEndAccurate) {
                         bloatReset = true;
-                    }
-                    else
-                    {
-                        if(!bloatStarted)
-                        {
+                    } else {
+                        if (!bloatStarted) {
                             maidenReset = true;
-                        }
-                        else
-                        {
+                        } else {
                             bloatWipe = true;
                         }
                     }
-                    globalData = new ArrayList(globalData.subList(activeIndex+1, globalData.size()));
+                    globalData = new ArrayList(globalData.subList(activeIndex + 1, globalData.size()));
                     return false;
                 case 5:
                     dataManager.increment(com.TheatreTracker.utility.DataPoint.BLOAT_DEATHS);
-                    if(dataManager.get(com.TheatreTracker.utility.DataPoint.BLOAT_DOWNS) == 0)
-                    {
+                    if (dataManager.get(com.TheatreTracker.utility.DataPoint.BLOAT_DOWNS) == 0) {
                         dataManager.increment(com.TheatreTracker.utility.DataPoint.BLOAT_FIRST_WALK_DEATHS);
                     }
                     break;
@@ -1053,22 +956,20 @@ public class RoomData
                     break;
                 case 20:
                     bloatStarted = true;
-                    if(partyComplete)
-                    {
+                    if (partyComplete) {
                         bloatDefenseAccurate = true;
                     }
                     break;
                 case 21:
-                    if(dataManager.get(com.TheatreTracker.utility.DataPoint.BLOAT_DOWNS) == 0)
-                    {
+                    if (dataManager.get(com.TheatreTracker.utility.DataPoint.BLOAT_DOWNS) == 0) {
                         dataManager.set(com.TheatreTracker.utility.DataPoint.BLOAT_FIRST_DOWN_TIME, Integer.parseInt(subData[4]));
                     }
                     dataManager.increment(com.TheatreTracker.utility.DataPoint.BLOAT_DOWNS);
                     break;
                 case 23:
                     dataManager.set(com.TheatreTracker.utility.DataPoint.BLOAT_TOTAL_TIME, Integer.parseInt(subData[4]));
-                    if(isTimeAccurateThroughRoom(MAIDEN))
-                        dataManager.set(DataPoint.NYLO_ENTRY, Integer.parseInt(subData[4])+dataManager.get(DataPoint.MAIDEN_TOTAL_TIME));
+                    if (isTimeAccurateThroughRoom(MAIDEN))
+                        dataManager.set(DataPoint.NYLO_ENTRY, Integer.parseInt(subData[4]) + dataManager.get(DataPoint.MAIDEN_TOTAL_TIME));
                     break loop;
                 case 100:
                     partyComplete = true;
@@ -1111,27 +1012,23 @@ public class RoomData
             }
             activeIndex++;
         }
-        globalData = new ArrayList(globalData.subList(activeIndex+1, globalData.size()));
+        globalData = new ArrayList(globalData.subList(activeIndex + 1, globalData.size()));
         return true;
     }
 
-    private boolean parseMaiden() throws Exception
-    {
+    private boolean parseMaiden() throws Exception {
         int activeIndex = 0;
         String lastProc = " 70s";
-        loop: for(String s : globalData)
-        {
+        loop:
+        for (String s : globalData) {
             String[] subData = s.split(",", -1);
-            switch(Integer.parseInt(subData[3]))
-            {
+            switch (Integer.parseInt(subData[3])) {
                 case 0:
                     raidStarted = new Date(Long.parseLong(subData[1]));
                     break;
                 case 1:
-                    for(int i = 4; i < 9; i++)
-                    {
-                        if(!subData[i].equals(""))
-                        {
+                    for (int i = 4; i < 9; i++) {
+                        if (!subData[i].equals("")) {
                             raidTeamSize++;
                             players.add(subData[i].replaceAll("[^\\p{ASCII}]", " ").replaceAll(" +", " "));
                         }
@@ -1145,28 +1042,23 @@ public class RoomData
                     dataManager.bgs(com.TheatreTracker.utility.DataPoint.MAIDEN_DEFENSE, Integer.parseInt(subData[5]));
                     break;
                 case 4:
-                    if(dataManager.get(com.TheatreTracker.utility.DataPoint.MAIDEN_TOTAL_TIME) != 0)
-                    {
+                    if (dataManager.get(com.TheatreTracker.utility.DataPoint.MAIDEN_TOTAL_TIME) != 0) {
                         maidenReset = true;
-                    }
-                    else
-                    {
-                        if(!maidenSpawned)
-                        {
+                    } else {
+                        if (!maidenSpawned) {
                             maidenReset = true;
                             resetBeforeMaiden = true;
-                        }
-                        else
-                        {
+                        } else {
                             maidenWipe = true;
                         }
                     }
-                    globalData = new ArrayList(globalData.subList(activeIndex+1, globalData.size()));
+                    globalData = new ArrayList(globalData.subList(activeIndex + 1, globalData.size()));
                     return false;
                 case 5:
                     dataManager.increment(com.TheatreTracker.utility.DataPoint.MAIDEN_DEATHS);
                     break;
-                case 6: break;
+                case 6:
+                    break;
                 case 7:
                     dataManager.increment(DataPoint.ATTEMPTED_HAMMERS_MAIDEN);
                     break;
@@ -1177,22 +1069,18 @@ public class RoomData
                     dataManager.increment(com.TheatreTracker.utility.DataPoint.MAIDEN_BLOOD_SPAWNED);
                     break;
                 case 11:
-                    if(dataManager.get(com.TheatreTracker.utility.DataPoint.MAIDEN_TOTAL_TIME) == 0) //TODO: see case 16 fix
+                    if (dataManager.get(com.TheatreTracker.utility.DataPoint.MAIDEN_TOTAL_TIME) == 0) //TODO: see case 16 fix
                     {
                         dataManager.increment(com.TheatreTracker.utility.DataPoint.MAIDEN_CRABS_LEAKED);
                         int crabHP = -1;
-                        try
-                        {
+                        try {
                             crabHP = Integer.parseInt(subData[5]);
-                        }
-                        catch(Exception e )
-                        {
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
-                        dataManager.increment(com.TheatreTracker.utility.DataPoint.MAIDEN_HP_HEALED, crabHP*2);
+                        dataManager.increment(com.TheatreTracker.utility.DataPoint.MAIDEN_HP_HEALED, crabHP * 2);
                         int maxCrabHP = 100;
-                        switch(players.size())
-                        {
+                        switch (players.size()) {
                             case 1:
                             case 2:
                             case 3:
@@ -1202,20 +1090,17 @@ public class RoomData
                                 maxCrabHP = 87;
                                 break;
                         }
-                        if(crabHP == maxCrabHP)
-                        {
+                        if (crabHP == maxCrabHP) {
                             dataManager.increment(com.TheatreTracker.utility.DataPoint.MAIDEN_CRABS_LEAKED_FULL_HP);
                         }
 
-                        if (subData[4].contains("30"))
-                        {
+                        if (subData[4].contains("30")) {
                             maidenSkip = false;
                         }
                     }
                 case 12:
                     maidenSpawned = true;
-                    if(partyComplete)
-                    {
+                    if (partyComplete) {
                         maidenDefenseAccurate = true;
                     }
                     break;
@@ -1234,27 +1119,26 @@ public class RoomData
                     lastProc = " 30s";
                     break;
                 case 16:
-                    dataManager.set(com.TheatreTracker.utility.DataPoint.MAIDEN_TOTAL_TIME, Integer.parseInt(subData[4])+7);
+                    dataManager.set(com.TheatreTracker.utility.DataPoint.MAIDEN_TOTAL_TIME, Integer.parseInt(subData[4]) + 7);
                     dataManager.set(com.TheatreTracker.utility.DataPoint.MAIDEN_SKIP_SPLIT, dataManager.get(com.TheatreTracker.utility.DataPoint.MAIDEN_TOTAL_TIME) - dataManager.get(com.TheatreTracker.utility.DataPoint.MAIDEN_30_SPLIT));
-                    if (globalData.get(activeIndex+1).split(",", -1)[3].equals("4"))
+                    if (globalData.get(activeIndex + 1).split(",", -1)[3].equals("4"))
                         maidenReset = true;
                     break loop;
                 case 17:
                     dataManager.set(com.TheatreTracker.utility.DataPoint.MAIDEN_TOTAL_TIME, Integer.parseInt(subData[4]));
                     dataManager.set(com.TheatreTracker.utility.DataPoint.MAIDEN_SKIP_SPLIT, dataManager.get(com.TheatreTracker.utility.DataPoint.MAIDEN_TOTAL_TIME) - dataManager.get(com.TheatreTracker.utility.DataPoint.MAIDEN_30_SPLIT));
-                    if (globalData.get(activeIndex+1).split(",", -1)[3].equals("4"))
+                    if (globalData.get(activeIndex + 1).split(",", -1)[3].equals("4"))
                         maidenReset = true;
                     break loop;
                 case 19:
-                    if(!maidenScuffed)
-                    {
+                    if (!maidenScuffed) {
                         firstMaidenCrabScuffed = lastProc;
                     }
                     maidenScuffed = true;
                     break;
                 case 20:
                     //todo: joined after maiden was kill. mark this somehow?
-                        maidenReset = true; //TODO remove
+                    maidenReset = true; //TODO remove
                     break loop;
                 case 99:
                     spectated = true;
@@ -1300,12 +1184,11 @@ public class RoomData
             }
             activeIndex++;
         }
-        globalData = new ArrayList(globalData.subList(activeIndex+1, globalData.size()));
+        globalData = new ArrayList(globalData.subList(activeIndex + 1, globalData.size()));
         return true;
     }
 
-    private void finishRaid()
-    {
+    private void finishRaid() {
         raidCompleted = true;
     }
 }

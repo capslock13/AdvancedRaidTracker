@@ -1,8 +1,7 @@
 package com.TheatreTracker.utility.nyloutility;
-public class NylocasData
-{
-    enum cNylocasType
-    {
+
+public class NylocasData {
+    enum cNylocasType {
         MELEE_BIG,
         MELEE_SMALL,
         RANGE_BIG,
@@ -32,8 +31,7 @@ public class NylocasData
         RANGE_MELEE_RANGE_BIG,
     }
 
-    public enum cNyloPosition
-    {
+    public enum cNyloPosition {
         EAST_NORTH,
         EAST_SOUTH,
         SOUTH_EAST,
@@ -46,17 +44,14 @@ public class NylocasData
         ROOM
     }
 
-    public NylocasData(cNyloPosition position, cNylocasType type, boolean aggro)
-    {
+    public NylocasData(cNyloPosition position, cNylocasType type, boolean aggro) {
         this.position = position;
         this.type = type;
         this.aggro = aggro;
     }
 
-    public int getSpawnStyle()
-    {
-        switch (type)
-        {
+    public int getSpawnStyle() {
+        switch (type) {
             case MELEE_SMALL:
             case MELEE_MAGE_RANGE_SMALL:
             case MELEE_MAGE_MELEE_SMALL:

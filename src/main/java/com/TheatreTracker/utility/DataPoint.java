@@ -3,8 +3,7 @@ package com.TheatreTracker.utility;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public enum DataPoint
-{
+public enum DataPoint {
     MAIDEN_BLOOD_SPAWNED("Maiden blood spawned", types.OTHER_INT, rooms.MAIDEN),
     MAIDEN_BLOOD_THROWN("Maiden blood thrown", types.OTHER_INT, rooms.MAIDEN),
     MAIDEN_CRABS_LEAKED("Maiden crabs leaked", types.OTHER_INT, rooms.MAIDEN),
@@ -127,25 +126,22 @@ public enum DataPoint
 
     ;
 
-    public static DataPoint getValue(String s)
-    {
-        for(DataPoint point : values())
-        {
-            if(point.name.equals(s))
-            {
+    public static DataPoint getValue(String s) {
+        for (DataPoint point : values()) {
+            if (point.name.equals(s)) {
                 return point;
             }
         }
         return null;
     }
 
-    public static enum rooms
-    {
+    public static enum rooms {
         MAIDEN, BLOAT, NYLOCAS, SOTETSEG, XARPUS, VERZIK, ANY
-    };
+    }
 
-    public static enum types
-    {
+    ;
+
+    public static enum types {
         OTHER_INT, OTHER_BOOL, TIME
     }
 
@@ -155,64 +151,52 @@ public enum DataPoint
     public final rooms room;
 
 
-    DataPoint(String name, types type, rooms room)
-    {
+    DataPoint(String name, types type, rooms room) {
         this.name = name;
         this.value = 0;
         this.type = type;
         this.room = room;
     }
 
-    DataPoint(String name, types type, rooms room, int value)
-    {
+    DataPoint(String name, types type, rooms room, int value) {
         this.name = name;
         this.value = value;
         this.type = type;
         this.room = room;
     }
 
-    public static String[] getOtherIntNames()
-    {
+    public static String[] getOtherIntNames() {
         ArrayList<String> valuesToGather = new ArrayList<>();
-        for(DataPoint point : DataPoint.values())
-        {
-            if(point.type.equals(types.OTHER_INT))
-            {
+        for (DataPoint point : DataPoint.values()) {
+            if (point.type.equals(types.OTHER_INT)) {
                 valuesToGather.add(point.name);
             }
         }
         return Arrays.copyOf(valuesToGather.toArray(), valuesToGather.size(), String[].class);
     }
 
-    public static String[] getByNames()
-    {
+    public static String[] getByNames() {
         ArrayList<String> valuesToGather = new ArrayList<>();
-        for(DataPoint point : DataPoint.values())
-        {
+        for (DataPoint point : DataPoint.values()) {
             valuesToGather.add(point.name);
         }
         return Arrays.copyOf(valuesToGather.toArray(), valuesToGather.size(), String[].class);
     }
 
-    public static String[] getTimeNames()
-    {
+    public static String[] getTimeNames() {
         ArrayList<String> valuesToGather = new ArrayList<>();
-        for(DataPoint point : DataPoint.values())
-        {
-            if(point.type.equals(types.TIME))
-            {
+        for (DataPoint point : DataPoint.values()) {
+            if (point.type.equals(types.TIME)) {
                 valuesToGather.add(point.name);
             }
         }
         return Arrays.copyOf(valuesToGather.toArray(), valuesToGather.size(), String[].class);
     }
-    public static ArrayList<String> getTimeNamesByRoom(rooms room)
-    {
+
+    public static ArrayList<String> getTimeNamesByRoom(rooms room) {
         ArrayList<String> timesToGather = new ArrayList<>();
-        for(DataPoint point : DataPoint.values())
-        {
-            if(point.room.equals(room) && point.type.equals(types.TIME))
-            {
+        for (DataPoint point : DataPoint.values()) {
+            if (point.room.equals(room) && point.type.equals(types.TIME)) {
                 timesToGather.add(point.name);
             }
         }

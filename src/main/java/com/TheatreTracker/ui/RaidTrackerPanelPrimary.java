@@ -17,8 +17,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 
-public class RaidTrackerPanelPrimary extends PluginPanel
-{
+public class RaidTrackerPanelPrimary extends PluginPanel {
     private JLabel raidCountLabel;
     private ArrayList<RoomData> raidsData;
     private JTable loadRaidsTable;
@@ -27,71 +26,53 @@ public class RaidTrackerPanelPrimary extends PluginPanel
     private FilteredRaidsBaseFrame raids;
 
     @Inject
-    RaidTrackerPanelPrimary(TheatreTrackerPlugin plugin)
-    {
+    RaidTrackerPanelPrimary(TheatreTrackerPlugin plugin) {
         raidsData = getAllRaids();
         raids = new FilteredRaidsBaseFrame();
         buildComponents();
     }
 
-    private ArrayList<RoomData> getAllRaids()
-    {
+    private ArrayList<RoomData> getAllRaids() {
         ArrayList<RoomData> raids = new ArrayList<>();
-        try
-        {
+        try {
             String path = "/.runelite/theatretracker/primary/tobdata.log";
             File logFile = new File(System.getProperty("user.home").replace("\\", "/") + path);
             Scanner logReader = new Scanner(Files.newInputStream(logFile.toPath()));
             ArrayList<String> raid = new ArrayList<>();
             boolean raidActive = false;
-            while(logReader.hasNextLine())
-            {
+            while (logReader.hasNextLine()) {
                 String line = logReader.nextLine();
                 String[] lineSplit = line.split(",");
-                if(!raidActive)
-                {
-                    if(lineSplit.length > 3)
-                    {
-                        if(Integer.parseInt(lineSplit[3]) == 0)
-                        {
+                if (!raidActive) {
+                    if (lineSplit.length > 3) {
+                        if (Integer.parseInt(lineSplit[3]) == 0) {
                             raid.add(line);
                             raidActive = true;
                         }
                     }
-                }
-                else
-                {
-                    if(lineSplit.length > 3)
-                    {
-                        if(Integer.parseInt(lineSplit[3]) == 99)
-                        {
+                } else {
+                    if (lineSplit.length > 3) {
+                        if (Integer.parseInt(lineSplit[3]) == 99) {
                             raid.add(line);
-                        }
-                        else if(Integer.parseInt(lineSplit[3]) == 4)
-                        {
+                        } else if (Integer.parseInt(lineSplit[3]) == 4) {
                             raid.add(line);
                             raidActive = false;
                             raids.add(new RoomData(raid.toArray(new String[raid.size()])));
                             raid.clear();
-                        }
-                        else
-                        {
+                        } else {
                             raid.add(line);
                         }
                     }
                 }
             }
             logReader.close();
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return raids;
     }
 
-    private void buildComponents()
-    {
+    private void buildComponents() {
         JPanel container = new JPanel();
         JPanel primaryContainer = new JPanel();
         primaryContainer.setLayout(new GridLayout(4, 1));
@@ -102,7 +83,7 @@ public class RaidTrackerPanelPrimary extends PluginPanel
         JButton tableRaidsButton = new JButton("View Saved Raids From Table");
 
         viewRaidsButton.addActionListener(
-                al->
+                al ->
                 {
                     raids = new FilteredRaidsBaseFrame();
                     raids.createFrame(raidsData);
@@ -112,7 +93,7 @@ public class RaidTrackerPanelPrimary extends PluginPanel
                 });
 
         refreshRaidsButton.addActionListener(
-                al->
+                al ->
                 {
                     raidsData = getAllRaids();
                     updateRaidCountLabel();
@@ -120,8 +101,7 @@ public class RaidTrackerPanelPrimary extends PluginPanel
                     Object[] columnNames = {"File Name", "Include?"};
                     raidSets = RaidsManager.getRaidsSets();
                     Object[][] tableData = new Object[raidSets.size()][2];
-                    for(int i = 0; i < raidSets.size(); i++)
-                    {
+                    for (int i = 0; i < raidSets.size(); i++) {
                         tableData[i] = new Object[]{raidSets.get(i).filename, false};
                     }
                     DefaultTableModel model = new DefaultTableModel(tableData, columnNames);
@@ -130,7 +110,7 @@ public class RaidTrackerPanelPrimary extends PluginPanel
                 });
 
         tableRaidsButton.addActionListener(
-                al->
+                al ->
                 {
                     raids = new FilteredRaidsBaseFrame();
                     raids.createFrame(getTableData());
@@ -150,18 +130,14 @@ public class RaidTrackerPanelPrimary extends PluginPanel
         Object[] columnNames = {"File Name", "Include?"};
         raidSets = RaidsManager.getRaidsSets();
         Object[][] tableData = new Object[raidSets.size()][2];
-        for(int i = 0; i < raidSets.size(); i++)
-        {
+        for (int i = 0; i < raidSets.size(); i++) {
             tableData[i] = new Object[]{raidSets.get(i).filename, false};
         }
         DefaultTableModel model = new DefaultTableModel(tableData, columnNames);
-        loadRaidsTable = new JTable(model)
-        {
+        loadRaidsTable = new JTable(model) {
             @Override
-            public Class getColumnClass(int column)
-            {
-                if (column == 0)
-                {
+            public Class getColumnClass(int column) {
+                if (column == 0) {
                     return String.class;
                 }
                 return Boolean.class;
@@ -169,31 +145,24 @@ public class RaidTrackerPanelPrimary extends PluginPanel
         };
         loadRaidsTable.setPreferredScrollableViewportSize(loadRaidsTable.getPreferredScrollableViewportSize());
         JScrollPane scrollPane = new JScrollPane(loadRaidsTable);
-        scrollPane.setPreferredSize(new Dimension(225,scrollPane.getPreferredSize().height));
+        scrollPane.setPreferredSize(new Dimension(225, scrollPane.getPreferredSize().height));
         container.add(primaryContainer);
         container.add(scrollPane);
         add(container);
     }
 
-    private ArrayList<RoomData> getTableData()
-    {
+    private ArrayList<RoomData> getTableData() {
         ArrayList<String> includedSets = new ArrayList<>();
-        for(int i = 0; i < loadRaidsTable.getRowCount(); i++)
-        {
-            if((boolean)loadRaidsTable.getValueAt(i, 1))
-            {
+        for (int i = 0; i < loadRaidsTable.getRowCount(); i++) {
+            if ((boolean) loadRaidsTable.getValueAt(i, 1)) {
                 includedSets.add((String) loadRaidsTable.getValueAt(i, 0));
             }
         }
         ArrayList<RoomData> collectedRaids = new ArrayList<>();
-        for(RaidsArrayWrapper set : raidSets)
-        {
-            for(String s : includedSets)
-            {
-                if(s.equals(set.filename))
-                {
-                    for(RoomData raid : set.data)
-                    {
+        for (RaidsArrayWrapper set : raidSets) {
+            for (String s : includedSets) {
+                if (s.equals(set.filename)) {
+                    for (RoomData raid : set.data) {
                         collectedRaids.add(raid);
                     }
                 }
@@ -202,8 +171,7 @@ public class RaidTrackerPanelPrimary extends PluginPanel
         return collectedRaids;
     }
 
-    private void updateRaidCountLabel()
-    {
+    private void updateRaidCountLabel() {
         raidCountLabel.setText("Raids Found: " + raidsData.size());
     }
 

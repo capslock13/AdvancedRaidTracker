@@ -1,9 +1,7 @@
 package com.TheatreTracker.utility;
 
-public class RoomState
-{
-    public enum MaidenRoomState
-    {
+public class RoomState {
+    public enum MaidenRoomState {
         NOT_STARTED,
         PHASE_1,
         PHASE_2,
@@ -12,16 +10,14 @@ public class RoomState
         FINISHED
     }
 
-   public enum BloatRoomState
-    {
+    public enum BloatRoomState {
         NOT_STARTED,
         WALKING,
         DOWN,
         FINISHED
     }
 
-    public enum NyloRoomState
-    {
+    public enum NyloRoomState {
         NOT_STARTED,
         WAVES,
         CLEANUP,
@@ -30,8 +26,7 @@ public class RoomState
         FINISHED
     }
 
-    public enum SotetsegRoomState
-    {
+    public enum SotetsegRoomState {
         NOT_STARTED,
         PHASE_1,
         MAZE_1,
@@ -41,8 +36,7 @@ public class RoomState
         FINISHED
     }
 
-    public enum XarpusRoomState
-    {
+    public enum XarpusRoomState {
         NOT_STARTED,
         EXHUMEDS,
         PRESCREECH,
@@ -50,8 +44,7 @@ public class RoomState
         FINISHED
     }
 
-    public enum VerzikRoomState
-    {
+    public enum VerzikRoomState {
         NOT_STARTED,
         PHASE_1,
         PHASE_2,

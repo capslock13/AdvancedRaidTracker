@@ -5,8 +5,7 @@ import lombok.Getter;
 import java.util.Arrays;
 import java.util.List;
 
-public class NylocasWave
-{
+public class NylocasWave {
     @Getter
     private final int wave;
     @Getter
@@ -230,20 +229,18 @@ public class NylocasWave
                                     new NylocasData(NylocasData.cNyloPosition.WEST_NORTH, NylocasData.cNylocasType.MELEE_RANGE_MAGE_SMALL, false),
                             }),
             };
-            public NylocasWave(int wave, int delay, NylocasData nylos[])
-            {
-                this.wave = wave;
-                this.delay = delay;
-                this.nylos = nylos;
-            }
 
-            public int count()
-            {
-                return this.nylos.length;
-            }
+    public NylocasWave(int wave, int delay, NylocasData nylos[]) {
+        this.wave = wave;
+        this.delay = delay;
+        this.nylos = nylos;
+    }
 
-            public List<NylocasData> getNylos()
-            {
-                return Arrays.asList(nylos);
-            }
+    public int count() {
+        return this.nylos.length;
+    }
+
+    public List<NylocasData> getNylos() {
+        return Arrays.asList(nylos);
+    }
 }

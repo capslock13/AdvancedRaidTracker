@@ -50,6 +50,7 @@ public class ComparisonView extends BaseFrame
     private JCheckBox matchXScales;
 
     private JComboBox compareByComboBox;
+    private JComboBox graphTypeComboBox;
     private boolean time = false;
     ArrayList<ArrayList<RoomData>> data;
 
@@ -92,6 +93,23 @@ public class ComparisonView extends BaseFrame
         groupOffsetSpinner.setEnabled(false);
         groupSizeSpinner.setEnabled(false);
 
+        graphTypeComboBox = new JComboBox(new String[]{"Bar Graph", "Pie Chart", "Line Plot"});
+
+        graphTypeComboBox.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                for(GraphPanel panel : topGraphs)
+                {
+                    panel.setGraphType(graphTypeComboBox.getSelectedIndex());
+                }
+                for(GraphPanel panel : bottomGraphs)
+                {
+                    panel.setGraphType(graphTypeComboBox.getSelectedIndex());
+                }
+            }
+        });
         groupingEnabled.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -593,6 +611,9 @@ public class ComparisonView extends BaseFrame
         graphOptionsPanel.add(groupOffsetSpinner);
 
         graphOptionsPanel.add(new JCheckBox("Show Chronological"));
+        graphOptionsPanel.add(new JCheckBox("Rotate 90"));
+
+        graphOptionsPanel.add(graphTypeComboBox);
 
         JPanel compareByPanel = new JPanel();
         compareByPanel.setBorder(BorderFactory.createTitledBorder("Compare by"));

@@ -644,9 +644,27 @@ public class TheatreTrackerPlugin extends Plugin
         return client.getTickCount();
     }
 
+    //DO NOT INCLUDE
+
+    private void sendChatMessage(String msg)
+    {
+        clientThread.invoke(() -> client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", msg, null, false));
+    }
+
+    //DO NOT INCLUDE
+    
     @Subscribe
     public void onAnimationChanged(AnimationChanged event)
     {
+        //DO NOT INCLUDE
+
+        Player p;
+        if (event.getActor() instanceof Player)
+        {
+
+        }
+
+        //DO NOT INCLUDE
         int id = event.getActor().getAnimation();
         if(event.getActor().getAnimation() == THRALL_CAST_ANIMATION)
         {

@@ -14,8 +14,7 @@ import com.TheatreTracker.utility.RoomState;
 import static com.TheatreTracker.constants.NpcIDs.*;
 
 @Slf4j
-public class SotetsegHandler extends RoomHandler
-{
+public class SotetsegHandler extends RoomHandler {
     public RoomState.SotetsegRoomState roomState = RoomState.SotetsegRoomState.NOT_STARTED;
     private int soteEntryTick = -1;
     private int soteFirstMazeStart = -1;
@@ -25,13 +24,12 @@ public class SotetsegHandler extends RoomHandler
     private int soteDeathTick = -1;
     private int deferTick = -1;
     private int lastRegion = -1;
-    public SotetsegHandler(Client client, DataWriter clog, TheatreTrackerConfig config)
-    {
+
+    public SotetsegHandler(Client client, DataWriter clog, TheatreTrackerConfig config) {
         super(client, clog, config);
     }
 
-    public void reset()
-    {
+    public void reset() {
         accurateTimer = true;
         soteEntryTick = -1;
         roomState = RoomState.SotetsegRoomState.NOT_STARTED;
@@ -43,129 +41,97 @@ public class SotetsegHandler extends RoomHandler
         lastRegion = -1;
     }
 
-    public void updateNpcSpawned(NpcSpawned event)
-    {
+    public void updateNpcSpawned(NpcSpawned event) {
         int id = event.getNpc().getId();
-        if(id == SOTETSEG_ACTIVE || id == SOTETSEG_ACTIVE_HM || id == SOTETSEG_ACTIVE_SM)
-        {
-            if(lastRegion == SOTETSEG_UNDERWORLD)
-            {
-                if(roomState == RoomState.SotetsegRoomState.MAZE_1)
-                {
+        if (id == SOTETSEG_ACTIVE || id == SOTETSEG_ACTIVE_HM || id == SOTETSEG_ACTIVE_SM) {
+            if (lastRegion == SOTETSEG_UNDERWORLD) {
+                if (roomState == RoomState.SotetsegRoomState.MAZE_1) {
                     endFirstMaze();
-                }
-                else if(roomState == RoomState.SotetsegRoomState.MAZE_2)
-                {
+                } else if (roomState == RoomState.SotetsegRoomState.MAZE_2) {
                     endSecondMaze();
                 }
             }
         }
     }
 
-    public void updateAnimationChanged(AnimationChanged event)
-    {
-        if(event.getActor().getAnimation() == SOTETSEG_DEATH_ANIMATION)
-        {
+    public void updateAnimationChanged(AnimationChanged event) {
+        if (event.getActor().getAnimation() == SOTETSEG_DEATH_ANIMATION) {
             endSotetseg();
         }
     }
 
-    public void startSotetseg()
-    {
+    public void startSotetseg() {
         soteEntryTick = client.getTickCount();
-        deferTick = soteEntryTick+2;
+        deferTick = soteEntryTick + 2;
         roomState = RoomState.SotetsegRoomState.PHASE_1;
         clog.write(LogID.SOTETSEG_STARTED);
     }
 
-    public void endSotetseg()
-    {
+    public void endSotetseg() {
         clog.write(LogID.ACCURATE_SOTE_END);
-        clog.write(LogID.SOTETSEG_ENDED, (client.getTickCount()+3-soteEntryTick)+"");
-        soteDeathTick = client.getTickCount()+3;
+        clog.write(LogID.SOTETSEG_ENDED, (client.getTickCount() + 3 - soteEntryTick) + "");
+        soteDeathTick = client.getTickCount() + 3;
         roomState = RoomState.SotetsegRoomState.FINISHED;
-        sendTimeMessage("Wave 'Sotetseg phase 3' complete. Duration: ", soteDeathTick-soteEntryTick, soteDeathTick-soteSecondMazeEnd, false);
+        sendTimeMessage("Wave 'Sotetseg phase 3' complete. Duration: ", soteDeathTick - soteEntryTick, soteDeathTick - soteSecondMazeEnd, false);
     }
 
-    public void startFirstMaze()
-    {
+    public void startFirstMaze() {
         soteFirstMazeStart = client.getTickCount();
-        clog.write(LogID.SOTETSEG_FIRST_MAZE_STARTED, (soteFirstMazeStart-soteEntryTick)+"");
+        clog.write(LogID.SOTETSEG_FIRST_MAZE_STARTED, (soteFirstMazeStart - soteEntryTick) + "");
         roomState = RoomState.SotetsegRoomState.MAZE_1;
-        sendTimeMessage("Wave 'Sotetseg phase 1' complete. Duration: ", soteFirstMazeStart-soteEntryTick);
+        sendTimeMessage("Wave 'Sotetseg phase 1' complete. Duration: ", soteFirstMazeStart - soteEntryTick);
     }
 
-    public void endFirstMaze()
-    {
+    public void endFirstMaze() {
         soteFirstMazeEnd = client.getTickCount();
-        clog.write(LogID.SOTETSEG_FIRST_MAZE_ENDED, (soteFirstMazeEnd-soteEntryTick)+"");
+        clog.write(LogID.SOTETSEG_FIRST_MAZE_ENDED, (soteFirstMazeEnd - soteEntryTick) + "");
         roomState = RoomState.SotetsegRoomState.PHASE_2;
-        sendTimeMessage("Wave 'Sotetseg maze 1' complete. Duration: ", soteFirstMazeEnd-soteEntryTick, soteFirstMazeEnd-soteFirstMazeStart);
+        sendTimeMessage("Wave 'Sotetseg maze 1' complete. Duration: ", soteFirstMazeEnd - soteEntryTick, soteFirstMazeEnd - soteFirstMazeStart);
     }
 
-    public void startSecondMaze()
-    {
+    public void startSecondMaze() {
         soteSecondMazeStart = client.getTickCount();
-        clog.write(LogID.SOTETSEG_SECOND_MAZE_STARTED, (soteSecondMazeStart-soteEntryTick)+"");
+        clog.write(LogID.SOTETSEG_SECOND_MAZE_STARTED, (soteSecondMazeStart - soteEntryTick) + "");
         roomState = RoomState.SotetsegRoomState.MAZE_2;
-        sendTimeMessage("Wave 'Sotetseg phase 2' complete. Duration: ", soteSecondMazeStart-soteEntryTick, soteSecondMazeStart-soteFirstMazeEnd);
+        sendTimeMessage("Wave 'Sotetseg phase 2' complete. Duration: ", soteSecondMazeStart - soteEntryTick, soteSecondMazeStart - soteFirstMazeEnd);
     }
 
-    public void endSecondMaze()
-    {
+    public void endSecondMaze() {
         soteSecondMazeEnd = client.getTickCount();
-        clog.write(LogID.SOTETSEG_SECOND_MAZE_ENDED, (soteSecondMazeEnd-soteEntryTick)+"");
+        clog.write(LogID.SOTETSEG_SECOND_MAZE_ENDED, (soteSecondMazeEnd - soteEntryTick) + "");
         roomState = RoomState.SotetsegRoomState.PHASE_3;
-        sendTimeMessage("Wave 'Sotetseg maze 2' complete. Duration: ", soteSecondMazeEnd-soteEntryTick, soteSecondMazeEnd-soteSecondMazeStart);
+        sendTimeMessage("Wave 'Sotetseg maze 2' complete. Duration: ", soteSecondMazeEnd - soteEntryTick, soteSecondMazeEnd - soteSecondMazeStart);
     }
 
-    public void updateGameTick(GameTick event)
-    {
+    public void updateGameTick(GameTick event) {
         lastRegion = client.isInInstancedRegion() ? WorldPoint.fromLocalInstance(client, client.getLocalPlayer().getLocalLocation()).getRegionID() : client.getLocalPlayer().getWorldLocation().getRegionID();
 
-        if(client.getTickCount() == deferTick)
-        {
+        if (client.getTickCount() == deferTick) {
             deferTick = -1;
-            if(client.getVarbitValue(HP_VARBIT) == FULL_HP)
-            {
+            if (client.getVarbitValue(HP_VARBIT) == FULL_HP) {
                 clog.write(LogID.ACCURATE_SOTE_START);
             }
         }
     }
 
-    public void handleNPCChanged(int id)
-    {
-        if(id == SOTETSEG_ACTIVE || id == SOTETSEG_ACTIVE_HM || id == SOTETSEG_ACTIVE_SM)
-        {
-            if(roomState == RoomState.SotetsegRoomState.NOT_STARTED)
-            {
-                if(id == SOTETSEG_ACTIVE_HM)
-                {
+    public void handleNPCChanged(int id) {
+        if (id == SOTETSEG_ACTIVE || id == SOTETSEG_ACTIVE_HM || id == SOTETSEG_ACTIVE_SM) {
+            if (roomState == RoomState.SotetsegRoomState.NOT_STARTED) {
+                if (id == SOTETSEG_ACTIVE_HM) {
                     clog.write(LogID.IS_HARD_MODE);
-                }
-                else if(id == SOTETSEG_ACTIVE_SM)
-                {
+                } else if (id == SOTETSEG_ACTIVE_SM) {
                     clog.write(LogID.IS_STORY_MODE);
                 }
                 startSotetseg();
-            }
-            else if(roomState == RoomState.SotetsegRoomState.MAZE_1)
-            {
+            } else if (roomState == RoomState.SotetsegRoomState.MAZE_1) {
                 endFirstMaze();
-            }
-            else if(roomState == RoomState.SotetsegRoomState.MAZE_2)
-            {
+            } else if (roomState == RoomState.SotetsegRoomState.MAZE_2) {
                 endSecondMaze();
             }
-        }
-        else if(id == SOTETSEG_INACTIVE || id == SOTETSEG_INACTIVE_HM || id == SOTETSEG_INACTIVE_SM)
-        {
-            if(roomState == RoomState.SotetsegRoomState.PHASE_1)
-            {
+        } else if (id == SOTETSEG_INACTIVE || id == SOTETSEG_INACTIVE_HM || id == SOTETSEG_INACTIVE_SM) {
+            if (roomState == RoomState.SotetsegRoomState.PHASE_1) {
                 startFirstMaze();
-            }
-            else if(roomState == RoomState.SotetsegRoomState.PHASE_2)
-            {
+            } else if (roomState == RoomState.SotetsegRoomState.PHASE_2) {
                 startSecondMaze();
             }
         }

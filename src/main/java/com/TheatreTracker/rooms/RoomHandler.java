@@ -10,8 +10,7 @@ import net.runelite.api.Client;
 import net.runelite.api.events.*;
 import com.TheatreTracker.utility.RoomUtil;
 
-public class RoomHandler
-{
+public class RoomHandler {
     protected Client client;
 
     DataWriter clog;
@@ -26,58 +25,48 @@ public class RoomHandler
     private final TheatreTrackerConfig config;
     protected boolean accurateTimer = true;
     protected boolean accurateEntry = true;
-    @Getter @Setter
+    @Getter
+    @Setter
     int scale;
 
-    protected String defaultColor()
-    {
+    protected String defaultColor() {
         return (client.isResized()) ? "<col=FFFFFF>" : "<col=000000>";
     }
 
-    protected String timeColor()
-    {
+    protected String timeColor() {
         return "<col=EF1020>";
     }
 
-    public RoomHandler(Client client, DataWriter clog, TheatreTrackerConfig config)
-    {
+    public RoomHandler(Client client, DataWriter clog, TheatreTrackerConfig config) {
         this.client = client;
         this.clog = clog;
         this.config = config;
     }
 
-    private String accuracy()
-    {
+    private String accuracy() {
         return (accurateTimer) ? "" : "**";
     }
 
-    private String entry()
-    {
+    private String entry() {
         return (accurateEntry) ? "" : "*";
     }
 
-    protected void sendTimeMessage(String message, int duration)
-    {
-        if(config.chatSplits())
-        {
+    protected void sendTimeMessage(String message, int duration) {
+        if (config.chatSplits()) {
             String splitMessage = message + timeColor() + RoomUtil.time(duration) + entry() + accuracy();
             client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", splitMessage, null, false);
         }
     }
 
-    protected void sendTimeMessage(String message, int duration, int split)
-    {
-        if(config.chatSplits())
-        {
+    protected void sendTimeMessage(String message, int duration, int split) {
+        if (config.chatSplits()) {
             String splitMessage = message + timeColor() + RoomUtil.time(duration) + entry() + accuracy() + " (" + RoomUtil.time(split) + ")";
             client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", splitMessage, null, false);
         }
     }
 
-    protected void sendTimeMessage(String message, int duration, int split, boolean bloat)
-    {
-        if(config.chatSplits())
-        {
+    protected void sendTimeMessage(String message, int duration, int split, boolean bloat) {
+        if (config.chatSplits()) {
             String splitMessage;
             if (bloat) {
                 splitMessage = message + timeColor() + duration + entry() + accuracy() + " (" + RoomUtil.time(split) + ")";
@@ -88,49 +77,59 @@ public class RoomHandler
         }
     }
 
-    protected void sendTimeMessage(String message, int duration, String alternateText, int alternateNumber)
-    {
-        if(config.chatSplits())
-        {
+    protected void sendTimeMessage(String message, int duration, String alternateText, int alternateNumber) {
+        if (config.chatSplits()) {
             String splitMessage = message + timeColor() + RoomUtil.time(duration) + entry() + accuracy() + defaultColor() + alternateText + timeColor() + alternateNumber;
             client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", splitMessage, null, false);
         }
     }
 
-    protected void sendTimeMessage(String message, int duration, String alternateText, int alternateNumber, boolean bloat)
-    {
-        if(config.chatSplits())
-        {
+    protected void sendTimeMessage(String message, int duration, String alternateText, int alternateNumber, boolean bloat) {
+        if (config.chatSplits()) {
             String splitMessage = message + timeColor() + duration + entry() + accuracy() + alternateText + RoomUtil.time(alternateNumber);
             client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", splitMessage, null, false);
         }
     }
 
-    public void handleNPCChanged(int id) { }
+    public void handleNPCChanged(int id) {
+    }
 
-    public void updateNpcSpawned(NpcSpawned event) { }
+    public void updateNpcSpawned(NpcSpawned event) {
+    }
 
-    public void updateNpcDespawned(NpcDespawned event) { }
+    public void updateNpcDespawned(NpcDespawned event) {
+    }
 
-    public void updateOverheadText(OverheadTextChanged event) { }
+    public void updateOverheadText(OverheadTextChanged event) {
+    }
 
-    public void updateGameTick(GameTick event) { }
+    public void updateGameTick(GameTick event) {
+    }
 
-    public void updateAnimationChanged(AnimationChanged event) { }
+    public void updateAnimationChanged(AnimationChanged event) {
+    }
 
-    public void updateInteractingChanged(InteractingChanged event) { }
+    public void updateInteractingChanged(InteractingChanged event) {
+    }
 
-    public void updateHitsplatApplied(HitsplatApplied event) { }
+    public void updateHitsplatApplied(HitsplatApplied event) {
+    }
 
-    public void updateGraphicChanged(GraphicChanged event) { }
+    public void updateGraphicChanged(GraphicChanged event) {
+    }
 
-    public void updateProjectileMoved(ProjectileMoved event) {}
+    public void updateProjectileMoved(ProjectileMoved event) {
+    }
 
-    public void updateGraphicsObjectCreated(GraphicsObjectCreated event) {}
+    public void updateGraphicsObjectCreated(GraphicsObjectCreated event) {
+    }
 
-    public void updateGameObjectSpawned(GameObjectSpawned event) {}
+    public void updateGameObjectSpawned(GameObjectSpawned event) {
+    }
 
-    public void updateGameObjectDespawned(GameObjectDespawned event) {}
+    public void updateGameObjectDespawned(GameObjectDespawned event) {
+    }
 
-    public void reset() { }
+    public void reset() {
+    }
 }

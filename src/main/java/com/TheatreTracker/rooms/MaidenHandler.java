@@ -388,7 +388,7 @@ public class MaidenHandler extends RoomHandler {
                     {
                         if(crab.crab.getIndex() == npc.getIndex())
                         {
-                            additionalDescription = crab.description;
+                            //additionalDescription = crab.description;
                             //log.info(npc.getName() + "(" + additionalDescription+ ") -" + npc.getIndex() + " HP: " + crab.health);
                         }
                     }

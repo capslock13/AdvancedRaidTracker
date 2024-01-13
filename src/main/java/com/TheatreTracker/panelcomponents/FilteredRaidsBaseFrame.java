@@ -295,30 +295,7 @@ public class FilteredRaidsBaseFrame extends BaseFrame
             {
                 shouldDataBeIncluded = filterComboBoxScale.getSelectedIndex()+1 == data.raidTeamSize;
             }
-            switch(viewByRaidComboBox.getSelectedIndex())
-            {
-                case 0:
-                    timeToDisplay = data.getTimeSum();
-                    break;
-                case 1:
-                    timeToDisplay = data.getValue(DataPoint.MAIDEN_TOTAL_TIME);
-                    break;
-                case 2:
-                    timeToDisplay = data.getValue(DataPoint.BLOAT_TOTAL_TIME);
-                    break;
-                case 3:
-                    timeToDisplay = data.getValue(DataPoint.NYLO_TOTAL_TIME);
-                    break;
-                case 4:
-                    timeToDisplay = data.getValue(DataPoint.SOTE_TOTAL_TIME);
-                    break;
-                case 5:
-                    timeToDisplay = data.getValue(DataPoint.XARP_TOTAL_TIME);
-                    break;
-                case 6:
-                    timeToDisplay = data.getValue(DataPoint.VERZIK_TOTAL_TIME);
-                    break;
-            }
+            timeToDisplay = data.getSpecificTimeInactive(viewByRaidComboBox.getSelectedItem().toString());
             if(timeToDisplay == 0)
             {
                 //shouldDataBeIncluded = false;
@@ -356,78 +333,19 @@ public class FilteredRaidsBaseFrame extends BaseFrame
         }
         else if(sortOptionsBox.getSelectedIndex() == 1)
         {
-            switch(viewByRaidComboBox.getSelectedIndex())
+            if(sortOrderBox.getSelectedIndex() == 0)
             {
-                case 1:
-                    if(sortOrderBox.getSelectedIndex() == 0)
-                    {
-                        tableData.sort(Comparator.comparing(RoomData::getMaidenTime));
-                    }
-                    else
-                    {
-                        tableData.sort(Comparator.comparing(RoomData::getMaidenTime).reversed());
-                    }
-                    break;
-                case 2:
-                    if(sortOrderBox.getSelectedIndex() == 0)
-                    {
-                        tableData.sort(Comparator.comparing(RoomData::getBloatTime));
-                    }
-                    else
-                    {
-                        tableData.sort(Comparator.comparing(RoomData::getBloatTime).reversed());
-                    }
-                    break;
-                case 3:
-                    if(sortOrderBox.getSelectedIndex() == 0)
-                    {
-                        tableData.sort(Comparator.comparing(RoomData::getNyloTime));
-                    }
-                    else
-                    {
-                        tableData.sort(Comparator.comparing(RoomData::getNyloTime).reversed());
-                    }
-                    break;
-                case 4:
-                    if(sortOrderBox.getSelectedIndex() == 0)
-                    {
-                        tableData.sort(Comparator.comparing(RoomData::getSoteTime));
-                    }
-                    else
-                    {
-                        tableData.sort(Comparator.comparing(RoomData::getSoteTime).reversed());
-                    }
-                    break;
-                case 5:
-                    if(sortOrderBox.getSelectedIndex() == 0)
-                    {
-                        tableData.sort(Comparator.comparing(RoomData::getXarpTime));
-                    }
-                    else
-                    {
-                        tableData.sort(Comparator.comparing(RoomData::getXarpTime).reversed());
-                    }
-                    break;
-                case 6:
-                    if(sortOrderBox.getSelectedIndex() == 0)
-                    {
-                        tableData.sort(Comparator.comparing(RoomData::getVerzikTime));
-                    }
-                    else
-                    {
-                        tableData.sort(Comparator.comparing(RoomData::getVerzikTime).reversed());
-                    }
-                    break;
-                default:
-                    if(sortOrderBox.getSelectedIndex() == 0)
-                    {
-                        tableData.sort(Comparator.comparing(RoomData::getTimeSum));
-                    }
-                    else
-                    {
-                        tableData.sort(Comparator.comparing(RoomData::getTimeSum).reversed());
-                    }
-                    break;
+                for (RoomData data : tableData) {
+                    data.activeValue = viewByRaidComboBox.getSelectedItem().toString();
+                }
+                tableData.sort(Comparator.comparing(RoomData::getSpecificTime));
+            }
+            else
+            {
+                for (RoomData data : tableData) {
+                    data.activeValue = viewByRaidComboBox.getSelectedItem().toString();
+                }
+                tableData.sort(Comparator.comparing(RoomData::getSpecificTime).reversed());
             }
         }
         else if(sortOptionsBox.getSelectedIndex() == 2)
@@ -486,38 +404,14 @@ public class FilteredRaidsBaseFrame extends BaseFrame
             {
                 scaleString += " (Hard)";
             }
-            switch(viewByRaidComboBox.getSelectedIndex())
-            {
-                case 0:
-                    timeToDisplay = raid.getTimeSum();
-                    break;
-                case 1:
-                    timeToDisplay = raid.getMaidenTime();
-                    break;
-                case 2:
-                    timeToDisplay = raid.getBloatTime();
-                    break;
-                case 3:
-                    timeToDisplay = raid.getNyloTime();
-                    break;
-                case 4:
-                    timeToDisplay = raid.getSoteTime();
-                    break;
-                case 5:
-                    timeToDisplay = raid.getXarpTime();
-                    break;
-                case 6:
-                    timeToDisplay = raid.getVerzikTime();
-                    break;
-            }
-
+            timeToDisplay = raid.getSpecificTimeInactive(viewByRaidComboBox.getSelectedItem().toString());
             Object[] row =
                     {
                             raid.index,
                             dateString,
                             scaleString,
                             getRoomStatus(raid),
-                            RoomUtil.time(timeToDisplay),
+                            (isTime())? RoomUtil.time(timeToDisplay) : timeToDisplay,
                             (players.length() > 2) ? players.substring(0, players.length()-2) : "",
                             (raid.spectated) ? "Yes" : "No",
                             "View"
@@ -548,6 +442,11 @@ public class FilteredRaidsBaseFrame extends BaseFrame
         container.repaint();
 
 
+    }
+
+    boolean isTime()
+    {
+        return (Objects.requireNonNull(DataPoint.getValue(Objects.requireNonNull(viewByRaidComboBox.getSelectedItem()).toString())).type == DataPoint.types.TIME);
     }
 
     public String getRoomStatus(RoomData data)
@@ -773,7 +672,9 @@ public class FilteredRaidsBaseFrame extends BaseFrame
 
     public void createFrame(ArrayList<RoomData> data)
     {
-        viewByRaidComboBox = new JComboBox(new String[]{"Overall Time", "Maiden Time", "Bloat Time", "Nylocas Time", "Sotetseg Time", "Xarpus Time", "Verzik Time"});
+        //FIX TIMER OPTIONS
+        //viewByRaidComboBox = new JComboBox(new String[]{"Overall Time", "Maiden Time", "Bloat Time", "Nylocas Time", "Sotetseg Time", "Xarpus Time", "Verzik Time"});
+        viewByRaidComboBox = new JComboBox<>(DataPoint.getByNames());
         timeFollowsTab = new JCheckBox("Time Follows Tab");
         timeFollowsTab.setSelected(true);
 
@@ -837,7 +738,7 @@ public class FilteredRaidsBaseFrame extends BaseFrame
         sortOptionsBox = new JComboBox(new String[]
                 {
                         "Date",
-                        "Time",
+                        "Value",
                         "Scale"
                 }
                 );

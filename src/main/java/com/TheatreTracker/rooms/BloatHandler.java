@@ -129,7 +129,7 @@ public class BloatHandler extends RoomHandler {
         if (event.getActor().getAnimation() == BLOAT_DEATH_ANIMATION) {
             endBloat();
         }
-        if (event.getActor().getAnimation() == 8056) //TODO verify fly
+        if (event.getActor().getAnimation() == 8056) //Player scythed
         {
             if (event.getActor() instanceof Player) {
                 Player p = (Player) event.getActor();

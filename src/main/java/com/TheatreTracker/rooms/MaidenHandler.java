@@ -15,9 +15,7 @@ import net.runelite.api.events.*;
 import com.TheatreTracker.TheatreTrackerPlugin;
 
 import java.security.InvalidParameterException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.TheatreTracker.constants.LogID.*;
@@ -44,6 +42,11 @@ public class MaidenHandler extends RoomHandler {
     ArrayList<Integer> maidenHeals;
     ArrayList<BloodDamageToBeApplied> queuedBloodDamage;
 
+    ArrayList<Player> dinhsers;
+
+
+    ArrayList<NPCTimeInChunkShell> npcs;
+
 
     public MaidenHandler(Client client, DataWriter clog, TheatreTrackerConfig config) {
         super(client, clog, config);
@@ -58,6 +61,8 @@ public class MaidenHandler extends RoomHandler {
         spawnedBloodLocations = new ArrayList<>();
         maidenHeals = new ArrayList<>();
         queuedBloodDamage = new ArrayList<>();
+        npcs = new ArrayList<>();
+        dinhsers = new ArrayList<>();
     }
 
     public void reset() {
@@ -72,6 +77,8 @@ public class MaidenHandler extends RoomHandler {
         maidenHeals.clear();
         queuedBloodDamage.clear();
         bloodHeals = 0;
+        npcs.clear();
+        dinhsers.clear();
     }
 
     public void startMaiden() {
@@ -152,7 +159,8 @@ public class MaidenHandler extends RoomHandler {
         }
     }
 
-    public void updateNpcSpawned(NpcSpawned event) {
+    public void updateNpcSpawned(NpcSpawned event)
+    {
         NPC npc = event.getNpc();
         boolean story = false;
         switch (npc.getId()) {
@@ -268,8 +276,133 @@ public class MaidenHandler extends RoomHandler {
         bloodHeals = 0;
     }
 
+    private int findChunk(int x, int y)
+    {
+        int chunkX = 3-((x-8)/8);
+        int chunkY = 3-((y-16)/8);
+        return (4*chunkX)+chunkY;
+    }
+
+    private void trackNPCMovements()
+    {
+        ArrayList<NPCTimeInChunkShell> merge = new ArrayList<>();
+        for(NPC npc : client.getNpcs())
+        {
+            if(npcs.stream().noneMatch(o->o.npc.getIndex() == npc.getIndex()))
+            {
+                merge.add(new NPCTimeInChunkShell(npc, findChunk(npc.getWorldLocation().getRegionX(), npc.getWorldLocation().getRegionY()),0));
+            }
+            else
+            {
+                int index = -1;
+                for(int i = 0; i < npcs.size(); i++)
+                {
+                    if(npc.getIndex() == npcs.get(i).npc.getIndex())
+                    {
+                        index = i;
+                    }
+                }
+                if(index != -1)
+                {
+                    npcs.get(index).marked = true;
+                    if(npcs.get(index).chunk == findChunk(npc.getWorldLocation().getRegionX(), npc.getWorldLocation().getRegionY()))
+                    {
+                        npcs.get(index).timeInChunk++;
+                    }
+                    else
+                    {
+                        npcs.get(index).chunk = findChunk(npc.getWorldLocation().getRegionX(), npc.getWorldLocation().getRegionY());
+                        npcs.get(index).timeInChunk = 0;
+                    }
+                }
+
+            }
+        }
+        npcs.removeIf(o->!o.marked);
+        for(NPCTimeInChunkShell npc : npcs)
+        {
+            npc.marked = false;
+        }
+        npcs.addAll(merge);
+    }
+
+    private void analyzeDinhs()
+    {
+        for(Player p : dinhsers)
+        {
+            ArrayList<NPC> targets = new ArrayList<>();
+            if(p.getInteracting() instanceof NPC)
+            {
+                NPC primaryTarget = (NPC) p.getInteracting();
+                int centerX = p.getWorldLocation().getRegionX();
+                int centerY = p.getWorldLocation().getRegionY();
+                int centerChunk = findChunk(centerX, centerY);
+                int minChunk = centerChunk-4;
+                int maxChunk = centerChunk+4;
+                for(int i = minChunk; i <= maxChunk; i++)
+                {
+                    ArrayList<NPCTimeInChunkShell> potentialTargets = new ArrayList<>();
+                    int maxToInclude = 9-targets.size();
+                    if(maxToInclude > 0)
+                    {
+                        for (NPCTimeInChunkShell npc : npcs)
+                        {
+                            if (npc.chunk == i)
+                            {
+                                if (!npc.npc.getName().contains("Maiden") && !npc.npc.getName().contains("null") && npc.npc.getHealthRatio() != 0)
+                                {
+                                    if (npc.npc.getWorldLocation().getRegionX() <= centerX + 5 &&
+                                            npc.npc.getWorldLocation().getRegionX() >= centerX - 5 &&
+                                            npc.npc.getWorldLocation().getRegionY() <= centerY + 5 &&
+                                            npc.npc.getWorldLocation().getRegionY() >= centerY - 5)
+                                    {
+                                        potentialTargets.add(npc);
+                                    }
+                                }
+                            }
+                        }
+                        if (potentialTargets.size() > maxToInclude) //DO NOT REPLACE SORT METHODS WITH LIST.SORT OR WILL HAVE UNDEFINED RESULTS
+                        {
+                            Collections.sort(potentialTargets, Comparator.comparing(NPCTimeInChunkShell::getIndex));
+                            Collections.sort(potentialTargets, Comparator.comparing(NPCTimeInChunkShell::getTimeInChunk));
+                            for(int j = 0; j < maxToInclude; j++)
+                            {
+                                targets.add(potentialTargets.get(j).npc);
+                            }
+
+                        }
+                        else
+                        {
+                            for (NPCTimeInChunkShell npc : potentialTargets)
+                            {
+                                targets.add(npc.npc);
+                            }
+                        }
+                    }
+                }
+                //log.info(p.getName() + " targeting " + primaryTarget.getName() + " and " + targets.size() + " additional npcs: ");
+                for(NPC npc : targets)
+                {
+                    String additionalDescription = "";
+                    for(MaidenCrab crab : maidenCrabs)
+                    {
+                        if(crab.crab.getIndex() == npc.getIndex())
+                        {
+                            additionalDescription = crab.description;
+                            //log.info(npc.getName() + "(" + additionalDescription+ ") -" + npc.getIndex() + " HP: " + crab.health);
+                        }
+                    }
+                }
+            }
+        }
+        dinhsers.clear();
+    }
+
     public void updateGameTick(GameTick event) //TODO: Blood dmg is 1t after being in blood
     {
+        trackNPCMovements();
+        analyzeDinhs();
+
         applyBlood();
         handleCrabHeals();
         assessBloodForNextTick();
@@ -344,86 +477,111 @@ public class MaidenHandler extends RoomHandler {
         }
     }
 
+    public void updateGraphicChanged(GraphicChanged event)
+    {
+        if(event.getActor() instanceof Player)
+        {
+            if(event.getActor().hasSpotAnim(1336) || event.getActor().hasSpotAnim(2623)) //1336 dinhs spec graphic , 7511 is animation
+            {
+                dinhsers.add((Player)event.getActor());
+            }
+        }
+    }
+
     /**
      * Returns a string describing the spawn position of a maiden crab
      *
      * @param npc
      * @return
      */
-    private String identifySpawn(NPC npc) {
+    private String identifySpawn(NPC npc)
+    {
+
         int x = npc.getWorldLocation().getRegionX();
         int y = npc.getWorldLocation().getRegionY();
         String proc = "";
+        if(maidenNPC.getId() == MAIDEN_P1 || maidenNPC.getId() == MAIDEN_P1_HM || maidenNPC.getId() == MAIDEN_P1_SM)
+        {
+            proc = " 70s";
+        }
+        else if(maidenNPC.getId() == MAIDEN_P2 || maidenNPC.getId() == MAIDEN_P2_HM || maidenNPC.getId() == MAIDEN_P2_SM)
+        {
+            proc = " 50s";
+        }
+        else if(maidenNPC.getId() == MAIDEN_P3 || maidenNPC.getId() == MAIDEN_P3_HM || maidenNPC.getId() == MAIDEN_P3_SM)
+        {
+            proc = " 30s";
+        }
         if (x == 21 && y == 40) {
-            return "N1";
+            return "N1" + proc;
         }
         if (x == 22 && y == 41) {
             clog.write(MAIDEN_SCUFFED, "N1");
-            return "N1";
+            return "N1" + proc;
         }
         if (x == 25 && y == 40) {
-            return "N2";
+            return "N2" + proc;
         }
         if (x == 26 && y == 41) {
             clog.write(MAIDEN_SCUFFED, "N2");
-            return "N2";
+            return "N2" + proc;
         }
         if (x == 29 && y == 40) {
-            return "N3";
+            return "N3" + proc;
         }
         if (x == 30 && y == 41) {
             clog.write(MAIDEN_SCUFFED, "N3");
-            return "N3";
+            return "N3" + proc;
         }
         if (x == 33 && y == 40) {
-            return "N4 (1)";
+            return "N4 (1)" + proc;
         }
         if (x == 34 && y == 41) {
             clog.write(MAIDEN_SCUFFED, "N4 (1)");
-            return "N4 (1)";
+            return "N4 (1)" + proc;
         }
         if (x == 33 && y == 38) {
-            return "N4 (2)";
+            return "N4 (2)" + proc;
         }
         if (x == 34 && y == 39) {
             clog.write(MAIDEN_SCUFFED, "N4 (2)");
-            return "N4 (2)";
+            return "N4 (2)" + proc;
         }
         //
         if (x == 21 && y == 20) {
-            return "S1";
+            return "S1" + proc;
         }
         if (x == 22 && y == 19) {
             clog.write(MAIDEN_SCUFFED, "S1");
-            return "S1";
+            return "S1" + proc;
         }
         if (x == 25 && y == 20) {
-            return "S2";
+            return "S2" + proc;
         }
         if (x == 26 && y == 19) {
             clog.write(MAIDEN_SCUFFED, "S2");
-            return "S2";
+            return "S2" + proc;
         }
         if (x == 29 && y == 20) {
-            return "S3";
+            return "S3" + proc;
         }
         if (x == 30 && y == 19) {
             clog.write(MAIDEN_SCUFFED, "S3");
-            return "S3";
+            return "S3" + proc;
         }
         if (x == 33 && y == 20) {
-            return "S4 (1)";
+            return "S4 (1)" + proc;
         }
         if (x == 34 && y == 19) {
             clog.write(MAIDEN_SCUFFED, "S4 (1)");
-            return "S4 (1)";
+            return "S4 (1)" + proc;
         }
         if (x == 33 && y == 22) {
-            return "S4 (2)";
+            return "S4 (2)" + proc;
         }
         if (x == 34 && y == 20) {
             clog.write(MAIDEN_SCUFFED, "S4 (2)");
-            return "S4 (2)";
+            return "S4 (2)" + proc;
         } else throw new InvalidParameterException("Impossible crab spawn data at maiden");
     }
 

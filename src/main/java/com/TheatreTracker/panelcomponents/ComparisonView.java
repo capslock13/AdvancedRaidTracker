@@ -32,13 +32,14 @@ public class ComparisonView extends BaseFrame
     private JLabel graph1Maximum;
     private JLabel graph1Minimum;
     private JLabel graph1Mode;
-
+    private JPanel otherPanel = new JPanel();
     private JLabel graph2Average;
     private JLabel graph2Median;
     private JLabel graph2Maximum;
     private JLabel graph2Minimum;
     private JLabel graph2Mode;
 
+    private String panelName = "Other";
     private JPanel otherTopLeft;
     private JPanel otherTopRight;
     private JPanel otherBottomLeft;
@@ -415,6 +416,8 @@ public class ComparisonView extends BaseFrame
     }
     private void updateOtherPanels()
     {
+        panelName = "Other - " + compareByComboBox.getSelectedItem();
+        otherPanel.setBorder(BorderFactory.createTitledBorder(panelName));
         if(topGraphTabs.getSelectedIndex() != -1 && bottomGraphTabs.getSelectedIndex() != -1 && built)
         {
             otherTopLeft.setBorder(BorderFactory.createTitledBorder(topGraphTabs.getTitleAt(topGraphTabs.getSelectedIndex())));
@@ -623,10 +626,10 @@ public class ComparisonView extends BaseFrame
 
 
 
-        JPanel otherPanel = new JPanel();
-        otherPanel.setBorder(BorderFactory.createTitledBorder("Other"));
+        otherPanel.setBorder(BorderFactory.createTitledBorder(panelName));
         otherPanel.setPreferredSize(new Dimension(190, 430));
         otherPanel.setLayout(new BoxLayout(otherPanel, BoxLayout.Y_AXIS));
+
 
         JPanel otherTop = new JPanel();
         otherTop.setLayout(new BoxLayout(otherTop, BoxLayout.X_AXIS));

@@ -1,24 +1,56 @@
+/*
+ * Copyright (c) 2022, TheStonedTurtle <https://github.com/TheStonedTurtle>
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice, this
+ *    list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+
 package com.TheatreTracker;
 
 import com.TheatreTracker.constants.NpcIDs;
 import com.TheatreTracker.constants.TOBRoom;
+import com.TheatreTracker.hubpanelintercept.*;
 import com.TheatreTracker.ui.RaidTrackerPanelPrimary;
 import com.TheatreTracker.utility.DataWriter;
 import com.TheatreTracker.utility.thrallvengtracking.*;
 import com.google.inject.Inject;
+import com.google.inject.Injector;
+import com.google.inject.Key;
 import com.google.inject.Provides;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.*;
+import net.runelite.api.kit.KitType;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.PartyChanged;
+import net.runelite.client.game.ItemManager;
 import net.runelite.client.party.PartyMember;
 import net.runelite.client.party.PartyService;
+import net.runelite.client.party.WSClient;
 import net.runelite.client.party.events.UserJoin;
 import net.runelite.client.party.events.UserPart;
 import net.runelite.client.plugins.Plugin;
@@ -44,6 +76,7 @@ import static com.TheatreTracker.constants.NpcIDs.*;
 import static com.TheatreTracker.constants.TOBRoom.*;
 
 
+
 @Slf4j
 @PluginDescriptor(
         name = "Theatre of Blood Tracker",
@@ -59,6 +92,9 @@ public class TheatreTrackerPlugin extends Plugin
 
     @Inject
     private TheatreTrackerConfig config;
+
+    @Inject
+    private ItemManager itemManager;
 
     public TheatreTrackerPlugin() {
     }
@@ -91,6 +127,8 @@ public class TheatreTrackerPlugin extends Plugin
     private ArrayList<DamageQueueShell> queuedThrallDamage;
     private ArrayList<ThrallCurrentDamage> currentThrallDamage;
 
+    private Map<Long, PartyPlayer> partyMembers = new HashMap<>();
+
 
     private final int LOBBY_REGION = 14642;
     private final int MAIDEN_REGION = 12613;
@@ -122,6 +160,9 @@ public class TheatreTrackerPlugin extends Plugin
     @Inject
     private EventBus eventBus;
 
+    @Inject
+    private WSClient wsClient;
+
     @Override
     protected void shutDown()
     {
@@ -138,7 +179,6 @@ public class TheatreTrackerPlugin extends Plugin
     protected void startUp() throws Exception
     {
         super.startUp();
-
         localPlayers = new ArrayList<>();
         thrallTracker = new ThrallTracker(this);
         vengTracker = new VengTracker(this);
@@ -421,12 +461,15 @@ public class TheatreTrackerPlugin extends Plugin
     @Subscribe
     public void onPartyChanged(final PartyChanged party)
     {
+        partyMembers.clear();
+
         checkPartyUpdate();
     }
 
     @Subscribe
     public void onUserPart(final UserPart event)
     {
+        partyMembers.remove(event.getMemberId());
         checkPartyUpdate();
     }
 
@@ -454,6 +497,10 @@ public class TheatreTrackerPlugin extends Plugin
     @Subscribe
     public void onGameTick(GameTick event) throws PluginInstantiationException
     {
+        for(long ID : partyMembers.keySet())
+        {
+            log.info("tick " + client.getTickCount() + ": " + ID);
+        }
         removeDeadProjectiles();
         removeDeadVenges();
         playersTextChanged.clear();
@@ -651,17 +698,75 @@ public class TheatreTrackerPlugin extends Plugin
         clientThread.invoke(() -> client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", msg, null, false));
     }
 
+    @Subscribe
+    public void onPartyBatchedChange(PartyBatchedChange e)
+    {
+
+
+        log.info("test");
+        /*if (party.getLocalMember() != null && party.getLocalMember().getMemberId() == e.getMemberId())
+        {
+            return;
+        }*/
+
+        // create new PartyPlayer for this member if they don't already exist
+        final PartyPlayer player = partyMembers.computeIfAbsent(e.getMemberId(), k -> new PartyPlayer(party.getMemberById(e.getMemberId())));
+
+        // Create placeholder stats object
+        if (player.getStats() == null && e.hasStatChange())
+        {
+            player.setStats(new Stats());
+        }
+
+        // Create placeholder prayer object
+        if (player.getPrayers() == null && (e.getAp() != null || e.getEp() != null))
+        {
+            player.setPrayers(new Prayers());
+        }
+        clientThread.invoke(() ->
+        {
+            e.process(player, itemManager);
+        });
+    }
+
     //DO NOT INCLUDE
+
+    private PartyPlayer getPartyMemeberByName(String name)
+    {
+        Optional<PartyMember> o = party.getMembers().stream().filter(partyMember -> partyMember.getDisplayName().equals(name)).findAny();
+        {
+            if(o.isPresent())
+            {
+                PartyMember partyMember = o.get();
+                return partyMembers.get(partyMember.getMemberId());
+            }
+        }
+        return null;
+    }
     
     @Subscribe
     public void onAnimationChanged(AnimationChanged event)
     {
-        //DO NOT INCLUDE
-
         Player p;
         if (event.getActor() instanceof Player)
         {
+            p = (Player) event.getActor();
+            if(event.getActor().getAnimation() == 8056)
+            {
+                if(p.getPlayerComposition().getEquipmentId(KitType.WEAPON) == 22486)
+                {
+                    sendChatMessage(event.getActor().getName() + " is using an uncharged scythe");
+                }
+                PartyPlayer pp = getPartyMemeberByName(p.getName());
+                if(pp != null)
+                {
+                    if(pp.getStats().getBoostedLevels().get(Skill.STRENGTH) != 118)
+                    {
+                        sendChatMessage(p.getName() + " scythed at " + pp.getStats().getBoostedLevels().get(Skill.STRENGTH) + "strength");
+                    }
+                }
 
+            }
         }
 
         //DO NOT INCLUDE

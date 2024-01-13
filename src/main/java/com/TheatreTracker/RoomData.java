@@ -171,6 +171,8 @@ public class RoomData {
 
     public String[] raidDataRaw;
 
+    public String activeValue = "";
+
 
     enum TobRoom {
         MAIDEN, BLOAT, NYLOCAS, SOTETSEG, XARPUS, VERZIK
@@ -201,6 +203,23 @@ public class RoomData {
             default:
                 return false;
         }
+    }
+
+    public int getSpecificTimeInactive(String inactive)
+    {
+        if(inactive.equals("Overall Time"))
+        {
+            return getMaidenTime() + getBloatTime() + getNyloTime() + getSoteTime() + getXarpTime() + getVerzikTime();
+        }
+        return getValue(DataPoint.getValue(inactive));
+    }
+    public int getSpecificTime()
+    {
+        if(activeValue.equals("Overall Time"))
+        {
+            return getMaidenTime() + getBloatTime() + getNyloTime() + getSoteTime() + getXarpTime() + getVerzikTime();
+        }
+        return getValue(DataPoint.getValue(activeValue));
     }
 
     public int getMaidenTime() {
@@ -406,12 +425,13 @@ public class RoomData {
                 case 76:
                     dataManager.set(com.TheatreTracker.utility.DataPoint.VERZIK_TOTAL_TIME, Integer.parseInt(subData[4]));
                     dataManager.set(com.TheatreTracker.utility.DataPoint.VERZIK_P3_DURATION, dataManager.get(com.TheatreTracker.utility.DataPoint.VERZIK_TOTAL_TIME) - dataManager.get(com.TheatreTracker.utility.DataPoint.VERZIK_P2_SPLIT));
+                    dataManager.set(DataPoint.RAID_TIME, (Integer.parseInt(subData[4])+dataManager.get(DataPoint.VERZIK_ENTRY)));
                     break;
                 case 77:
                     dataManager.increment(com.TheatreTracker.utility.DataPoint.VERZIK_BOUNCES);
                     break;
                 case 78:
-                    verzikCrabsSpawned++;
+                    dataManager.increment(DataPoint.VERZIK_CRABS_SPAWNED);
                     break;
                 case 79:
                     verzikDawnCount++;
@@ -684,19 +704,20 @@ public class RoomData {
                     dataManager.set(com.TheatreTracker.utility.DataPoint.SOTE_P1_SPLIT, Integer.parseInt(subData[4]));
                     break;
                 case 53:
-                    dataManager.set(com.TheatreTracker.utility.DataPoint.SOTE_M1_SPLIT, Integer.parseInt(subData[4]));
+                    dataManager.set(com.TheatreTracker.utility.DataPoint.SOTE_M1_SPLIT, Integer.parseInt(subData[4])-dataManager.get(DataPoint.SOTE_P1_SPLIT));
                     break;
                 case 54:
-                    dataManager.set(com.TheatreTracker.utility.DataPoint.SOTE_P2_SPLIT, Integer.parseInt(subData[4]));
+                    dataManager.set(com.TheatreTracker.utility.DataPoint.SOTE_P2_SPLIT, Integer.parseInt(subData[4])-dataManager.get(DataPoint.SOTE_P1_SPLIT)-dataManager.get(DataPoint.SOTE_M1_SPLIT));
                     break;
                 case 55:
-                    dataManager.set(com.TheatreTracker.utility.DataPoint.SOTE_M2_SPLIT, Integer.parseInt(subData[4]));
+                    dataManager.set(com.TheatreTracker.utility.DataPoint.SOTE_M2_SPLIT, Integer.parseInt(subData[4])-dataManager.get(DataPoint.SOTE_P2_SPLIT)-dataManager.get(DataPoint.SOTE_M1_SPLIT)-dataManager.get(DataPoint.SOTE_P1_SPLIT));
+                    dataManager.set(DataPoint.SOTE_MAZE_SUM, dataManager.get(DataPoint.SOTE_M1_SPLIT)+ dataManager.get(DataPoint.SOTE_M2_SPLIT));
                     break;
                 case 56:
                     break;
                 case 57:
                     dataManager.set(com.TheatreTracker.utility.DataPoint.SOTE_TOTAL_TIME, Integer.parseInt(subData[4]));
-                    dataManager.set(com.TheatreTracker.utility.DataPoint.SOTE_P3_SPLIT, dataManager.get(com.TheatreTracker.utility.DataPoint.SOTE_TOTAL_TIME) - dataManager.get(com.TheatreTracker.utility.DataPoint.SOTE_M2_SPLIT));
+                    dataManager.set(com.TheatreTracker.utility.DataPoint.SOTE_P3_SPLIT, dataManager.get(com.TheatreTracker.utility.DataPoint.SOTE_TOTAL_TIME) - dataManager.get(com.TheatreTracker.utility.DataPoint.SOTE_M2_SPLIT)-dataManager.get(DataPoint.SOTE_P2_SPLIT)-dataManager.get(DataPoint.SOTE_M1_SPLIT)-dataManager.get(DataPoint.SOTE_P1_SPLIT));
                     if (isTimeAccurateThroughRoom(NYLOCAS))
                         dataManager.set(DataPoint.XARP_ENTRY, Integer.parseInt(subData[4]) + dataManager.get(DataPoint.SOTE_ENTRY));
                     break loop;
@@ -921,10 +942,20 @@ public class RoomData {
                 case 6:
                     break;
                 case 24:
-                    bloatHPAtDown = Integer.parseInt(subData[4]);
+                    dataManager.set(DataPoint.BLOAT_HP_FIRST_DOWN, Integer.parseInt(subData[4]));
                     break;
                 case 25:
-                    if (dataManager.get(com.TheatreTracker.utility.DataPoint.BLOAT_DOWNS) == 0) {
+                    if (dataManager.get(com.TheatreTracker.utility.DataPoint.BLOAT_DOWNS) == 0)
+                    {
+                        dataManager.increment(DataPoint.BLOAT_FIRST_WALK_SCYTHES);
+                        if(subData[4].equals("RostiKz"))
+                        {
+                            dataManager.increment(DataPoint.BLOAT_SCY_ROSTIKZ);
+                        }
+                        else if(subData[4].equals("Caps lock13"))
+                        {
+                            dataManager.increment(DataPoint.BLOAT_SCY_CAPS);
+                        }
                         bloatScytheBeforeFirstDown++;
                     }
                     break;

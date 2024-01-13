@@ -157,7 +157,7 @@ public class ViewRaidBaseFrame extends BaseFrame
 
         bloatSubPanel.add(new JLabel(bloatBodyColor+"HP % 1st down"));
 
-        bloatSubPanel.add(new JLabel(bloatBodyColor+(((double)data.bloatHPAtDown)/10.0)+"%"));
+        bloatSubPanel.add(new JLabel(bloatBodyColor+(((double)data.getValue(DataPoint.BLOAT_HP_FIRST_DOWN))/10.0)+"%"));
 
         bloatSubPanel.add(new JLabel(bloatBodyColor+"1st down time"));
         bloatSubPanel.add(new JLabel(bloatBodyColor+data.getValue(DataPoint.BLOAT_FIRST_DOWN_TIME)));
@@ -297,7 +297,7 @@ public class ViewRaidBaseFrame extends BaseFrame
         verzikSubPanel.add(new JLabel(verzikBodyColor+data.getValue(DataPoint.VERZIK_DEATHS)));
 
         verzikSubPanel.add(new JLabel(verzikBodyColor+"Crabs Spawned"));
-        verzikSubPanel.add(new JLabel(verzikBodyColor+data.verzikCrabsSpawned+""));
+        verzikSubPanel.add(new JLabel(verzikBodyColor+data.getValue(DataPoint.VERZIK_CRABS_SPAWNED)+""));
 
         verzikSubPanel.add(new JLabel(verzikBodyColor+"Phase 1"));
         verzikSubPanel.add(new JLabel(verzikBodyColor+RoomUtil.time(data.getValue(DataPoint.VERZIK_P1_SPLIT))));

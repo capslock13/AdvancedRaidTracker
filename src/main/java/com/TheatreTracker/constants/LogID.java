@@ -78,6 +78,9 @@ public enum LogID {
     PARTY_INCOMPLETE(101),
     PARTY_ACCURATE_PREMAIDEN(102),
 
+    MAIDEN_DINHS_SPEC(111), //Player, tick, primary target:primary target hp, targets~hp:,stats:stats
+    MAIDEN_DINHS_TARGET(112), //
+
     ACCURATE_MAIDEN_START(201),
     ACCURATE_BLOAT_START(202),
     ACCURATE_NYLO_START(203),

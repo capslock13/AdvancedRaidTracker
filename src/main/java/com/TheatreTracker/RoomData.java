@@ -1180,6 +1180,74 @@ public class RoomData {
                 case 101:
                     partyComplete = false;
                     break;
+                case 111:
+                    dataManager.increment(DataPoint.MAIDEN_DINHS_SPECS);
+                    String[] targets = subData[6].split(":");
+                    int targetCountThisSpec = 0;
+                    int crabCountThisSpec = 0;
+                    String[] specData = subData[7].split(":");
+                    if(specData.length != 5)
+                    {
+                        break;
+                    }
+                    for(String target : targets)
+                    {
+                        String[] targetData = target.split("~");
+                        if(targetData.length == 3)
+                        {
+                            targetCountThisSpec++;
+                            String npcName = targetData[0];
+                            String spawnID = targetData[1];
+                            int hp = Integer.parseInt(targetData[2]);
+                            if(!spawnID.equals("^")) //Target is crab
+                            {
+                                crabCountThisSpec++;
+                            }
+
+                        }
+                    }
+                    int averageHP = Integer.parseInt(specData[0]);
+                    int belowThreshold = Integer.parseInt(specData[1]);
+                    boolean didDoubleHit = Boolean.parseBoolean(specData[4]);
+
+
+                    if(dataManager.get(DataPoint.MAIDEN_DINHS_SPECS) == 0)
+                    {
+                        int percentCrabsTargeted = (int) ((((double)crabCountThisSpec)/targetCountThisSpec)*100);
+                        int percentCrabsUnder27Targeted = (int) ((((double)belowThreshold)/crabCountThisSpec)*100);
+
+                        dataManager.set(DataPoint.MAIDEN_DINHS_TARGETS_HIT, targetCountThisSpec);
+                        dataManager.set(DataPoint.MAIDEN_DINHS_CRABS_HIT, crabCountThisSpec);
+                        dataManager.set(DataPoint.MAIDEN_DINHS_AVERAGE_HP_HIT, averageHP);
+                        dataManager.set(DataPoint.MAIDEN_DINHS_CRABS_UNDER_27_TARGETED, belowThreshold);
+                        dataManager.set(DataPoint.MAIDEN_DINHS_PERCENT_TARGETS_CRAB, percentCrabsTargeted);
+                        dataManager.set(DataPoint.MAIDEN_DINHS_CRABS_UNDER_27_TARGETED_PERCENT, percentCrabsUnder27Targeted);
+                    }
+                    else
+                    {
+                        int previousAverage = dataManager.get(DataPoint.MAIDEN_DINHS_AVERAGE_HP_HIT);
+                        int previousCrabsHit = dataManager.get(DataPoint.MAIDEN_DINHS_CRABS_HIT);
+                        int previousTotalHit = dataManager.get(DataPoint.MAIDEN_DINHS_TARGETS_HIT);
+                        int previousBelow27Hit = dataManager.get(DataPoint.MAIDEN_DINHS_CRABS_UNDER_27_TARGETED);
+
+                        dataManager.set(DataPoint.MAIDEN_DINHS_TARGETS_HIT, previousTotalHit+targetCountThisSpec);
+                        dataManager.set(DataPoint.MAIDEN_DINHS_CRABS_HIT, previousCrabsHit+crabCountThisSpec);
+                        dataManager.set(DataPoint.MAIDEN_DINHS_CRABS_UNDER_27_TARGETED, previousBelow27Hit+belowThreshold);
+
+                        int roundedAverageSum = ((previousAverage*previousCrabsHit)+(averageHP*crabCountThisSpec));
+                        int roundedAverageCumulative = (int)(((double)roundedAverageSum)/(previousCrabsHit+crabCountThisSpec));
+
+                        dataManager.set(DataPoint.MAIDEN_DINHS_AVERAGE_HP_HIT, roundedAverageCumulative);
+
+                        int percentTargetedCumulative = (int)(((double)(previousCrabsHit+crabCountThisSpec)/(previousTotalHit+targetCountThisSpec))*100);
+
+                        dataManager.set(DataPoint.MAIDEN_DINHS_PERCENT_TARGETS_CRAB, percentTargetedCumulative);
+
+                        int percentBelow27Cumulative = (int)((double)(previousBelow27Hit+belowThreshold)/(previousCrabsHit+crabCountThisSpec));
+
+                        dataManager.set(DataPoint.MAIDEN_DINHS_CRABS_UNDER_27_TARGETED_PERCENT, percentBelow27Cumulative);
+                    }
+                    break;
                 case 201:
                     maidenStartAccurate = true;
                     break;

@@ -1,6 +1,7 @@
 package com.TheatreTracker.rooms;
 
 import com.TheatreTracker.TheatreTrackerConfig;
+import com.TheatreTracker.constants.LogID;
 import com.TheatreTracker.constants.NpcIDs;
 import com.TheatreTracker.utility.*;
 import lombok.Getter;
@@ -334,6 +335,7 @@ public class MaidenHandler extends RoomHandler {
             if(p.getInteracting() instanceof NPC)
             {
                 NPC primaryTarget = (NPC) p.getInteracting();
+                int primaryIndex = primaryTarget.getIndex();
                 int centerX = p.getWorldLocation().getRegionX();
                 int centerY = p.getWorldLocation().getRegionY();
                 int centerChunk = findChunk(centerX, centerY);
@@ -380,19 +382,60 @@ public class MaidenHandler extends RoomHandler {
                         }
                     }
                 }
-                //log.info(p.getName() + " targeting " + primaryTarget.getName() + " and " + targets.size() + " additional npcs: ");
+                String whichCrab = "";
+                int primaryHP = 0;
+                boolean didDoubleHit = false;
+                for(MaidenCrab crab : maidenCrabs)
+                {
+                    if(primaryTarget.getIndex() == crab.crab.getIndex())
+                    {
+                        whichCrab = crab.description;
+                        primaryHP = crab.health;
+                    }
+                }
+                String value3 = primaryTarget.getName() + "(" + whichCrab + ")" + ":" + primaryHP;
+                String value4 = "";
+                log.info(p.getName() + " dinhs spec targeted " + primaryTarget.getName() + "(" + whichCrab + ") and " + targets.size() + " additional npcs: ");
+                ArrayList<Integer> healths = new ArrayList<>();
                 for(NPC npc : targets)
                 {
-                    String additionalDescription = "";
+                    if(npc.getIndex() == primaryIndex)
+                    {
+                        didDoubleHit = true;
+                    }
+                    String additionalDescription = "^";
+                    int hp = -1;
                     for(MaidenCrab crab : maidenCrabs)
                     {
                         if(crab.crab.getIndex() == npc.getIndex())
                         {
-                            //additionalDescription = crab.description;
-                            //log.info(npc.getName() + "(" + additionalDescription+ ") -" + npc.getIndex() + " HP: " + crab.health);
+                            additionalDescription = crab.description;
+                            hp = crab.health;
+                            healths.add(hp);
                         }
                     }
+                    log.info(npc.getName() + " (" + additionalDescription+ ") HP: " + hp);
+                    value4 += npc.getName() + "~" + additionalDescription+ "~" + hp +":";
                 }
+                double total = 0;
+                double count = healths.size();
+                int belowThreshold = 0;
+                for(Integer i : healths)
+                {
+                    total += i;
+                    if(i < 27)
+                    {
+                        belowThreshold++;
+                    }
+                }
+                double average = total/healths.size();
+                log.info("Average HP of dinhs target (crabs only): " + average);
+                log.info("Number of crabs under 27 HP targeted: " + belowThreshold + "(" + ((belowThreshold/count)*100) + "%)");
+                log.info("Number of crabs targeted compared to total targets: " + count + "/" + targets.size() + " (" + ((count/targets.size())*100) + "%)");
+                log.info("Primary target HP: " + primaryHP);
+                log.info("Did primary target receive two hits? " + didDoubleHit);
+                String value5 = ((int)average) +":" + belowThreshold+":"+((int)count)+":"+targets.size()+":"+didDoubleHit;
+                clog.write(MAIDEN_DINHS_SPEC, p.getName(),value3, value4, value5);
             }
         }
         dinhsers.clear();

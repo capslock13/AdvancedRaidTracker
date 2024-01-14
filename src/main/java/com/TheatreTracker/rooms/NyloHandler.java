@@ -59,7 +59,8 @@ public class NyloHandler extends RoomHandler {
 
     private int expectedWaveTick;
 
-    public void updateGameTick(GameTick event) {
+    public void updateGameTick(GameTick event)
+    {
         if (buildWave.size() != 0) {
             if (NylocasWaveMatcher.isWave(buildWave)) {
                 NylocasWave wave = NylocasWaveMatcher.getWave();
@@ -198,8 +199,15 @@ public class NyloHandler extends RoomHandler {
         }
     }
 
-    public void updateNpcDespawned(NpcDespawned event) {
-        switch (event.getNpc().getId()) {
+    public void updateNpcDespawned(NpcDespawned event)
+    {
+        switch (event.getNpc().getId())
+        {
+            case NYLO_PILLAR:
+            case NYLO_PILLAR_HM:
+            case NYLO_PILLAR_SM:
+                clog.write(NYLO_PILLAR_DESPAWNED, client.getTickCount()-pillarsSpawnedTick);
+                break;
             case NYLO_BOSS_MELEE:
             case NYLO_BOSS_RANGE:
             case NYLO_BOSS_MAGE:
@@ -325,7 +333,8 @@ public class NyloHandler extends RoomHandler {
         sendTimeMessage("Wave 'Nylocas boss spawn' complete! Duration: ", bossSpawn - pillarsSpawnedTick, bossSpawn - lastDead);
     }
 
-    private void bossDefinitelyKilled() {
+    private void bossDefinitelyKilled()
+    {
         roomState = FINISHED;
         int deathTick = client.getTickCount();
         int offset1 = 4 - ((deathTick - instanceReference) % 4);

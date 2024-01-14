@@ -28,7 +28,6 @@ package com.TheatreTracker;
 
 import com.TheatreTracker.constants.NpcIDs;
 import com.TheatreTracker.constants.TOBRoom;
-import com.TheatreTracker.hubpanelintercept.*;
 import com.TheatreTracker.ui.RaidTrackerPanelPrimary;
 import com.TheatreTracker.utility.DataWriter;
 import com.TheatreTracker.utility.thrallvengtracking.*;
@@ -126,8 +125,6 @@ public class TheatreTrackerPlugin extends Plugin
 
     private ArrayList<DamageQueueShell> queuedThrallDamage;
     private ArrayList<ThrallCurrentDamage> currentThrallDamage;
-
-    private Map<Long, PartyPlayer> partyMembers = new HashMap<>();
 
 
     private final int LOBBY_REGION = 14642;
@@ -461,7 +458,6 @@ public class TheatreTrackerPlugin extends Plugin
     @Subscribe
     public void onPartyChanged(final PartyChanged party)
     {
-        partyMembers.clear();
 
         checkPartyUpdate();
     }
@@ -469,7 +465,6 @@ public class TheatreTrackerPlugin extends Plugin
     @Subscribe
     public void onUserPart(final UserPart event)
     {
-        partyMembers.remove(event.getMemberId());
         checkPartyUpdate();
     }
 
@@ -497,10 +492,6 @@ public class TheatreTrackerPlugin extends Plugin
     @Subscribe
     public void onGameTick(GameTick event) throws PluginInstantiationException
     {
-        for(long ID : partyMembers.keySet())
-        {
-            log.info("tick " + client.getTickCount() + ": " + ID);
-        }
         removeDeadProjectiles();
         removeDeadVenges();
         playersTextChanged.clear();
@@ -698,51 +689,7 @@ public class TheatreTrackerPlugin extends Plugin
         clientThread.invoke(() -> client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", msg, null, false));
     }
 
-    @Subscribe
-    public void onPartyBatchedChange(PartyBatchedChange e)
-    {
 
-
-        log.info("test");
-        /*if (party.getLocalMember() != null && party.getLocalMember().getMemberId() == e.getMemberId())
-        {
-            return;
-        }*/
-
-        // create new PartyPlayer for this member if they don't already exist
-        final PartyPlayer player = partyMembers.computeIfAbsent(e.getMemberId(), k -> new PartyPlayer(party.getMemberById(e.getMemberId())));
-
-        // Create placeholder stats object
-        if (player.getStats() == null && e.hasStatChange())
-        {
-            player.setStats(new Stats());
-        }
-
-        // Create placeholder prayer object
-        if (player.getPrayers() == null && (e.getAp() != null || e.getEp() != null))
-        {
-            player.setPrayers(new Prayers());
-        }
-        clientThread.invoke(() ->
-        {
-            e.process(player, itemManager);
-        });
-    }
-
-    //DO NOT INCLUDE
-
-    private PartyPlayer getPartyMemeberByName(String name)
-    {
-        Optional<PartyMember> o = party.getMembers().stream().filter(partyMember -> partyMember.getDisplayName().equals(name)).findAny();
-        {
-            if(o.isPresent())
-            {
-                PartyMember partyMember = o.get();
-                return partyMembers.get(partyMember.getMemberId());
-            }
-        }
-        return null;
-    }
     
     @Subscribe
     public void onAnimationChanged(AnimationChanged event)
@@ -757,15 +704,6 @@ public class TheatreTrackerPlugin extends Plugin
                 {
                     sendChatMessage(event.getActor().getName() + " is using an uncharged scythe");
                 }
-                PartyPlayer pp = getPartyMemeberByName(p.getName());
-                if(pp != null)
-                {
-                    if(pp.getStats().getBoostedLevels().get(Skill.STRENGTH) != 118)
-                    {
-                        sendChatMessage(p.getName() + " scythed at " + pp.getStats().getBoostedLevels().get(Skill.STRENGTH) + "strength");
-                    }
-                }
-
             }
         }
 

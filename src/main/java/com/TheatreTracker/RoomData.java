@@ -128,6 +128,8 @@ public class RoomData {
 
     public int nyloLastDead;
 
+    public int pillarDespawnTick;
+
     public boolean nyloWipe;
     public boolean nyloReset;
     public boolean nyloStarted;
@@ -803,6 +805,11 @@ public class RoomData {
                     }
                     break;
                 case 4:
+                    if(pillarDespawnTick-5 < dataManager.get(DataPoint.NYLO_BOSS_SPAWN))
+                    {
+                        dataManager.set(DataPoint.NYLO_BOSS_SPAWN, 0);
+                        dataManager.set(DataPoint.NYLO_TOTAL_TIME, 0);
+                    }
                     if (dataManager.get(com.TheatreTracker.utility.DataPoint.NYLO_TOTAL_TIME) != 0) {
                         nyloReset = true;
                     } else {
@@ -849,6 +856,8 @@ public class RoomData {
                     break;
                 case 36:
                     nyloLastDead = Integer.parseInt(subData[4]);
+                    int offset = 20-(nyloLastDead%4);
+                    dataManager.set(DataPoint.NYLO_BOSS_SPAWN, nyloLastDead+offset);
                     dataManager.set(com.TheatreTracker.utility.DataPoint.NYLO_CLEANUP, nyloLastDead - dataManager.get(com.TheatreTracker.utility.DataPoint.NYLO_LAST_WAVE));
                     break;
                 case 40:
@@ -867,11 +876,17 @@ public class RoomData {
                     dataManager.increment(com.TheatreTracker.utility.DataPoint.NYLO_ROTATIONS_RANGE);
                     break;
                 case 45:
-                    dataManager.set(com.TheatreTracker.utility.DataPoint.NYLO_TOTAL_TIME, Integer.parseInt(subData[4]));
-                    dataManager.set(com.TheatreTracker.utility.DataPoint.NYLO_BOSS_DURATION, dataManager.get(com.TheatreTracker.utility.DataPoint.NYLO_TOTAL_TIME) - dataManager.get(com.TheatreTracker.utility.DataPoint.NYLO_BOSS_SPAWN));
-                    if (isTimeAccurateThroughRoom(BLOAT))
-                        dataManager.set(DataPoint.SOTE_ENTRY, Integer.parseInt(subData[4]) + dataManager.get(DataPoint.NYLO_ENTRY));
+                    if(Integer.parseInt(subData[4])-dataManager.get(DataPoint.NYLO_BOSS_SPAWN) > 30)
+                    {
+                        dataManager.set(com.TheatreTracker.utility.DataPoint.NYLO_TOTAL_TIME, Integer.parseInt(subData[4]));
+                        dataManager.set(com.TheatreTracker.utility.DataPoint.NYLO_BOSS_DURATION, dataManager.get(com.TheatreTracker.utility.DataPoint.NYLO_TOTAL_TIME) - dataManager.get(com.TheatreTracker.utility.DataPoint.NYLO_BOSS_SPAWN));
+                        if (isTimeAccurateThroughRoom(BLOAT))
+                            dataManager.set(DataPoint.SOTE_ENTRY, Integer.parseInt(subData[4]) + dataManager.get(DataPoint.NYLO_ENTRY));
+                    }
                     break loop;
+                case 46:
+                    pillarDespawnTick = Integer.parseInt(subData[4]);
+                    break;
                 case 100:
                     partyComplete = true;
                     break;
@@ -1073,6 +1088,13 @@ public class RoomData {
                     dataManager.bgs(com.TheatreTracker.utility.DataPoint.MAIDEN_DEFENSE, Integer.parseInt(subData[5]));
                     break;
                 case 4:
+                    int percent = 100;
+                    if(dataManager.get(DataPoint.MAIDEN_CHINS_THROWN) != 0)
+                    {
+                        double percentDouble = ((double)(dataManager.get(DataPoint.MAIDEN_CHINS_THROWN_WRONG_DISTANCE))/dataManager.get(DataPoint.MAIDEN_CHINS_THROWN))*100;
+                        percent = (int) percentDouble;
+                    }
+                    dataManager.set(DataPoint.MAIDEN_CHIN_CORRECT_DISTANCE_PERCENT, percent);
                     if (dataManager.get(com.TheatreTracker.utility.DataPoint.MAIDEN_TOTAL_TIME) != 0) {
                         maidenReset = true;
                     } else {
@@ -1246,6 +1268,21 @@ public class RoomData {
                         int percentBelow27Cumulative = (int)((double)(previousBelow27Hit+belowThreshold)/(previousCrabsHit+crabCountThisSpec));
 
                         dataManager.set(DataPoint.MAIDEN_DINHS_CRABS_UNDER_27_TARGETED_PERCENT, percentBelow27Cumulative);
+                    }
+                    break;
+                case 113:
+                    dataManager.increment(DataPoint.MAIDEN_CHINS_THROWN);
+                    try
+                    {
+                        if(Integer.parseInt(subData[5]) < 4 || Integer.parseInt(subData[5]) > 6)
+                        {
+                            dataManager.increment(DataPoint.MAIDEN_CHINS_THROWN_WRONG_DISTANCE);
+                        }
+                    }
+                    catch
+                    (Exception e)
+                    {
+
                     }
                     break;
                 case 201:

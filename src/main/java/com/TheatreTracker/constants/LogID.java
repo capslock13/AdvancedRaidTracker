@@ -47,6 +47,7 @@ public enum LogID {
     RANGE_PHASE(43),
     NYLO_0HP(44),
     NYLO_DESPAWNED(45),
+    NYLO_PILLAR_DESPAWNED(46), //tick
     SOTETSEG_STARTED(51),
     SOTETSEG_FIRST_MAZE_STARTED(52),
     SOTETSEG_FIRST_MAZE_ENDED(53),
@@ -80,6 +81,8 @@ public enum LogID {
 
     MAIDEN_DINHS_SPEC(111), //Player, tick, primary target:primary target hp, targets~hp:,stats:stats
     MAIDEN_DINHS_TARGET(112), //
+
+    MAIDEN_CHIN_THROWN(113), //player, distance
 
     ACCURATE_MAIDEN_START(201),
     ACCURATE_BLOAT_START(202),

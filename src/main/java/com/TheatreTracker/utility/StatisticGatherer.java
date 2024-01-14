@@ -1,6 +1,7 @@
 package com.TheatreTracker.utility;
 
 import com.TheatreTracker.RoomData;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -8,6 +9,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+@Slf4j
 public class StatisticGatherer {
     public static double getOverallTimeAverage(ArrayList<RoomData> data) {
         data = data.stream().filter(RoomData::getOverallTimeAccurate).collect(Collectors.toCollection(ArrayList::new));
@@ -81,14 +83,22 @@ public class StatisticGatherer {
     public static double getGenericAverage(ArrayList<RoomData> data, DataPoint parameter) {
         double total = 0;
         double count = 0;
-        for (RoomData room : data) {
-            if (!room.getTimeAccurate(parameter)) {
+        int i = 0;
+        for (RoomData room : data)
+        {
+            i++;
+            if (!room.getTimeAccurate(parameter))
+            {
                 continue;
             }
             int d = room.getValue(parameter);
-            if (d != -1) {
-                total += d;
-                count++;
+            if (d != -1)
+            {
+                if(parameter.type != DataPoint.types.TIME || d != 0)
+                {
+                    total += d;
+                    count++;
+                }
             }
         }
         return total / count;
@@ -142,22 +152,29 @@ public class StatisticGatherer {
     public static double getGenericMin(ArrayList<Integer> data) {
         int minValue = Integer.MAX_VALUE;
         for (int d : data) {
-            if (d < minValue && d != -1) {
+            if (d < minValue && d != -1)
+            {
                 minValue = d;
             }
         }
         return minValue;
     }
 
-    public static double getGenericMin(ArrayList<RoomData> data, DataPoint parameter) {
+    public static double getGenericMin(ArrayList<RoomData> data, DataPoint parameter)
+    {
         int minValue = Integer.MAX_VALUE;
         for (RoomData room : data) {
-            if (!room.getTimeAccurate(parameter)) {
+            if (!room.getTimeAccurate(parameter))
+            {
                 continue;
             }
             int d = room.getValue(parameter);
-            if (d < minValue && d != -1) {
-                minValue = d;
+            if (d < minValue && d != -1)
+            {
+                if(parameter.type != DataPoint.types.TIME || room.getValue(parameter) != 0)
+                {
+                    minValue = d;
+                }
             }
         }
         return minValue;

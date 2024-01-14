@@ -26,6 +26,9 @@ public enum DataPoint {
     MAIDEN_DINHS_PERCENT_TARGETS_CRAB("Maiden Dinhs % crabs targeted", types.OTHER_INT, rooms.MAIDEN),
     MAIDEN_DINHS_CRABS_UNDER_27_TARGETED("Maiden Dinhs crab < 27hp targeted" , types.OTHER_INT, rooms.MAIDEN),
     MAIDEN_DINHS_CRABS_UNDER_27_TARGETED_PERCENT("Maiden Dinhs crabs <27hp targeted %", types.OTHER_INT, rooms.MAIDEN),
+    MAIDEN_CHINS_THROWN("Maiden Chins Thrown", types.OTHER_INT, rooms.MAIDEN),
+    MAIDEN_CHINS_THROWN_WRONG_DISTANCE("Maiden Chins Thrown Wrong Distance", types.OTHER_INT, rooms.MAIDEN),
+    MAIDEN_CHIN_CORRECT_DISTANCE_PERCENT("Maiden Chins Correct Distance %", types.OTHER_INT, rooms.MAIDEN),
 
     BLOAT_DOWNS("Bloat downs", types.OTHER_INT, rooms.BLOAT),
     BLOAT_HP_FIRST_DOWN("Bloat HP 1st Down", types.OTHER_INT, rooms.BLOAT),

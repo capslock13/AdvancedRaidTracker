@@ -1,15 +1,13 @@
 package com.TheatreTracker.rooms;
 
+import com.TheatreTracker.Point;
 import com.TheatreTracker.TheatreTrackerConfig;
 import com.TheatreTracker.constants.LogID;
 import com.TheatreTracker.constants.NpcIDs;
 import com.TheatreTracker.utility.*;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import net.runelite.api.Client;
-import net.runelite.api.HitsplatID;
-import net.runelite.api.NPC;
-import net.runelite.api.Player;
+import net.runelite.api.*;
 import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.*;
@@ -123,8 +121,24 @@ public class MaidenHandler extends RoomHandler {
 
 
     public void updateAnimationChanged(AnimationChanged event) {
-        if (event.getActor().getAnimation() == 8093) {
+        if (event.getActor().getAnimation() == 8093)
+        {
             endMaiden();
+        }
+        else if(event.getActor().getAnimation() == 7618)
+        {
+            if(event.getActor() instanceof Player)
+            {
+                Player player = (Player) event.getActor();
+                Actor target = player.getInteracting();
+                int distance = target.getWorldArea().distanceTo(player.getWorldLocation());
+                clog.write(MAIDEN_CHIN_THROWN, player.getName(), ""+distance);
+                if(distance < 4 || distance > 6)
+                {
+                    client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", player.getName() + " chinned from " + distance + " tiles away.", null, false);
+                }
+                //log.info(player.getName() + " chinned from " + distance + " tiles away.");
+            }
         }
     }
 
@@ -396,6 +410,10 @@ public class MaidenHandler extends RoomHandler {
                 String value3 = primaryTarget.getName() + "(" + whichCrab + ")" + ":" + primaryHP;
                 String value4 = "";
                 log.info(p.getName() + " dinhs spec targeted " + primaryTarget.getName() + "(" + whichCrab + ") and " + targets.size() + " additional npcs: ");
+                if(targets.size() < 9)
+                {
+                    client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", p.getName() + " only targeted " + targets.size() + " additional NPCs with dinhs spec.", null, false);
+                }
                 ArrayList<Integer> healths = new ArrayList<>();
                 for(NPC npc : targets)
                 {

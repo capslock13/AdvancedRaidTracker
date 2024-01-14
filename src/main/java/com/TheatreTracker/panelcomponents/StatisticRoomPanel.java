@@ -8,6 +8,7 @@ import com.TheatreTracker.utility.StatisticGatherer;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class StatisticRoomPanel extends JPanel
 {
@@ -79,9 +80,12 @@ public class StatisticRoomPanel extends JPanel
             ArrayList<Integer> collectedData = new ArrayList<>();
             for (RoomData d : data)
             {
-                if(d.getTimeAccurate(DataPoint.getValue(labelNames.get(i))))
+                if(d.getTimeAccurate(Objects.requireNonNull(DataPoint.getValue(labelNames.get(i)))))
                 {
-                    collectedData.add(d.getValue(labelNames.get(i)));
+                    if(Objects.requireNonNull(DataPoint.getValue(labelNames.get(i))).type != DataPoint.types.TIME || d.getValue(labelNames.get(i)) != 0)
+                    {
+                        collectedData.add(d.getValue(labelNames.get(i)));
+                    }
                 }
             }
             double statistic = 0;

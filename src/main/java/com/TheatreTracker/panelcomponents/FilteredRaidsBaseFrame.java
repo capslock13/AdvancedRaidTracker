@@ -825,8 +825,34 @@ public class FilteredRaidsBaseFrame extends BaseFrame
                 if(timeFollowsTab.isSelected())
                 {
                     if(built)
-                    { //FIX FOLLOW TODO HELLO HI HELLO ACTUALLY FIX PLS
-                        viewByRaidComboBox.setSelectedIndex(tabbedPane.getSelectedIndex());
+                    {
+                        viewByRaidComboBox.setEditable(true);
+                        switch(tabbedPane.getSelectedIndex())
+                        {
+                            case 0:
+                                viewByRaidComboBox.setSelectedItem("Overall Time");
+                                break;
+                            case 1:
+                                viewByRaidComboBox.setSelectedItem("Maiden Time");
+                                break;
+                            case 2:
+                                viewByRaidComboBox.setSelectedItem("Bloat Time");
+                                break;
+                            case 3:
+                                viewByRaidComboBox.setSelectedItem("Nylo Time");
+                                break;
+                            case 4:
+                                viewByRaidComboBox.setSelectedItem("Sote Time");
+                                break;
+                            case 5:
+                                viewByRaidComboBox.setSelectedItem("Xarp Time");
+                                break;
+                            case 6:
+                                viewByRaidComboBox.setSelectedItem("Verzik Time");
+                                break;
+
+                        }
+                        viewByRaidComboBox.setEditable(false);
                         updateTable();
                     }
                 }
@@ -932,11 +958,10 @@ public class FilteredRaidsBaseFrame extends BaseFrame
         buttonLine.add(new JLabel("Config"));
 
 
-        subPanel4.setBorder(BorderFactory.createTitledBorder("View Raid Time By"));
+        subPanel4.setBorder(BorderFactory.createTitledBorder("View Raid By"));
         viewByRaidComboBox.addActionListener(
                 al->
                 {
-                    log.info("Selected index: " + viewByRaidComboBox.getSelectedIndex());
                     updateTable();
                 });
 

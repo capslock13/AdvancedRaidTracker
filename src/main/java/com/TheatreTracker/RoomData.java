@@ -474,6 +474,18 @@ public class RoomData {
                     dataManager.increment(DataPoint.VENG_DAMAGE_VERZIK, Integer.parseInt(subData[5]));
                     dataManager.increment(DataPoint.VENG_DAMAGE_TOTAL, Integer.parseInt(subData[5]));
                     break;
+                case 501:
+                    dataManager.increment(DataPoint.KODAI_BOPS);
+                    break;
+                case 502:
+                    dataManager.increment(DataPoint.DWH_BOPS);
+                    break;
+                case 503:
+                    dataManager.increment(DataPoint.BGS_WHACKS);
+                    break;
+                case 504:
+                    dataManager.increment(DataPoint.CHALLY_POKE);
+                    break;
 
             }
             activeIndex++;
@@ -636,6 +648,18 @@ public class RoomData {
                     dataManager.increment(DataPoint.VENG_DAMAGE_XARP, Integer.parseInt(subData[5]));
                     dataManager.increment(DataPoint.VENG_DAMAGE_TOTAL, Integer.parseInt(subData[5]));
                     break;
+                case 501:
+                    dataManager.increment(DataPoint.KODAI_BOPS);
+                    break;
+                case 502:
+                    dataManager.increment(DataPoint.DWH_BOPS);
+                    break;
+                case 503:
+                    dataManager.increment(DataPoint.BGS_WHACKS);
+                    break;
+                case 504:
+                    dataManager.increment(DataPoint.CHALLY_POKE);
+                    break;
             }
             activeIndex++;
         }
@@ -767,6 +791,18 @@ public class RoomData {
                     dataManager.increment(DataPoint.VENG_PROCS_TOTAL);
                     dataManager.increment(DataPoint.VENG_DAMAGE_SOTE, Integer.parseInt(subData[5]));
                     dataManager.increment(DataPoint.VENG_DAMAGE_TOTAL, Integer.parseInt(subData[5]));
+                    break;
+                case 501:
+                    dataManager.increment(DataPoint.KODAI_BOPS);
+                    break;
+                case 502:
+                    dataManager.increment(DataPoint.DWH_BOPS);
+                    break;
+                case 503:
+                    dataManager.increment(DataPoint.BGS_WHACKS);
+                    break;
+                case 504:
+                    dataManager.increment(DataPoint.CHALLY_POKE);
                     break;
 
             }
@@ -929,6 +965,18 @@ public class RoomData {
                     dataManager.increment(DataPoint.VENG_DAMAGE_NYLO, Integer.parseInt(subData[5]));
                     dataManager.increment(DataPoint.VENG_DAMAGE_TOTAL, Integer.parseInt(subData[5]));
                     break;
+                case 501:
+                    dataManager.increment(DataPoint.KODAI_BOPS);
+                    break;
+                case 502:
+                    dataManager.increment(DataPoint.DWH_BOPS);
+                    break;
+                case 503:
+                    dataManager.increment(DataPoint.BGS_WHACKS);
+                    break;
+                case 504:
+                    dataManager.increment(DataPoint.CHALLY_POKE);
+                    break;
 
             }
             activeIndex++;
@@ -972,14 +1020,6 @@ public class RoomData {
                     if (dataManager.get(com.TheatreTracker.utility.DataPoint.BLOAT_DOWNS) == 0)
                     {
                         dataManager.increment(DataPoint.BLOAT_FIRST_WALK_SCYTHES);
-                        if(subData[4].equals("RostiKz"))
-                        {
-                            dataManager.increment(DataPoint.BLOAT_SCY_ROSTIKZ);
-                        }
-                        else if(subData[4].equals("Caps lock13"))
-                        {
-                            dataManager.increment(DataPoint.BLOAT_SCY_CAPS);
-                        }
                         bloatScytheBeforeFirstDown++;
                     }
                     break;
@@ -1063,6 +1103,18 @@ public class RoomData {
                     dataManager.increment(DataPoint.VENG_PROCS_TOTAL);
                     dataManager.increment(DataPoint.VENG_DAMAGE_BLOAT, Integer.parseInt(subData[5]));
                     dataManager.increment(DataPoint.VENG_DAMAGE_TOTAL, Integer.parseInt(subData[5]));
+                    break;
+                case 501:
+                    dataManager.increment(DataPoint.KODAI_BOPS);
+                    break;
+                case 502:
+                    dataManager.increment(DataPoint.DWH_BOPS);
+                    break;
+                case 503:
+                    dataManager.increment(DataPoint.BGS_WHACKS);
+                    break;
+                case 504:
+                    dataManager.increment(DataPoint.CHALLY_POKE);
                     break;
             }
             activeIndex++;
@@ -1325,6 +1377,30 @@ public class RoomData {
                     dataManager.increment(DataPoint.VENG_PROCS_TOTAL);
                     dataManager.increment(DataPoint.VENG_DAMAGE_MAIDEN, Integer.parseInt(subData[5]));
                     dataManager.increment(DataPoint.VENG_DAMAGE_TOTAL, Integer.parseInt(subData[5]));
+                    break;
+                case 411:
+                    dataManager.increment(DataPoint.MAIDEN_PLAYER_STOOD_IN_THROWN_BLOOD);
+                    dataManager.increment(DataPoint.MAIDEN_HEALS_FROM_THROWN_BLOOD, Integer.parseInt(subData[5]));
+                    dataManager.increment(DataPoint.MAIDEN_PLAYER_STOOD_IN_BLOOD);
+                    dataManager.increment(DataPoint.MAIDEN_HEALS_FROM_ANY_BLOOD, Integer.parseInt(subData[5]));
+                    break;
+                case 412:
+                    dataManager.increment(DataPoint.MAIDEN_PLAYER_STOOD_IN_SPAWNED_BLOOD);
+                    dataManager.increment(DataPoint.MAIDEN_HEALS_FROM_SPAWNED_BLOOD, Integer.parseInt(subData[5]));
+                    dataManager.increment(DataPoint.MAIDEN_PLAYER_STOOD_IN_BLOOD);
+                    dataManager.increment(DataPoint.MAIDEN_HEALS_FROM_ANY_BLOOD, Integer.parseInt(subData[5]));
+                    break;
+                case 501:
+                    dataManager.increment(DataPoint.KODAI_BOPS);
+                    break;
+                case 502:
+                    dataManager.increment(DataPoint.DWH_BOPS);
+                    break;
+                case 503:
+                    dataManager.increment(DataPoint.BGS_WHACKS);
+                    break;
+                case 504:
+                    dataManager.increment(DataPoint.CHALLY_POKE);
                     break;
             }
             activeIndex++;

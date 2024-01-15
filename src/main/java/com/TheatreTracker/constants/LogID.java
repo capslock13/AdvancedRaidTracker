@@ -112,6 +112,11 @@ public enum LogID {
     PLAYER_STOOD_IN_SPAWNED_BLOOD(412),  //player, damage
     CRAB_HEALED_MAIDEN(413), //damage
 
+    KODAI_BOP(501),
+    DWH_BOP(502),
+    BGS_WHACK(503),
+    CHALLY_POKE(504),
+
     ;
 
 

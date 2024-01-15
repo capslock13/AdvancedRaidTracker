@@ -26,4 +26,12 @@ public interface TheatreTrackerConfig extends Config
             description = "Tracks data about the raids you spectate and participate in."
     )
     default boolean writeToLog() { return true; }
+
+    @ConfigItem(
+            position = 2,
+            keyName = "showMistakesInChat",
+            name = "Show mistakes in chat?",
+            description = "Shows mistakes (hammer bop, etc) in chat box when they occur."
+    )
+    default boolean showMistakesInChat() {return true;}
 }

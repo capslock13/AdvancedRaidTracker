@@ -5,6 +5,7 @@ import com.TheatreTracker.TheatreTrackerConfig;
 import com.TheatreTracker.constants.LogID;
 import com.TheatreTracker.constants.NpcIDs;
 import com.TheatreTracker.utility.*;
+import com.google.inject.Inject;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
@@ -47,6 +48,9 @@ public class MaidenHandler extends RoomHandler {
     ArrayList<NPCTimeInChunkShell> npcs;
 
 
+    TheatreTrackerConfig config;
+
+
     public MaidenHandler(Client client, DataWriter clog, TheatreTrackerConfig config) {
         super(client, clog, config);
         p70 = -1;
@@ -62,6 +66,7 @@ public class MaidenHandler extends RoomHandler {
         queuedBloodDamage = new ArrayList<>();
         npcs = new ArrayList<>();
         dinhsers = new ArrayList<>();
+        this.config = config;
     }
 
     public void reset() {
@@ -135,8 +140,11 @@ public class MaidenHandler extends RoomHandler {
                 clog.write(MAIDEN_CHIN_THROWN, player.getName(), ""+distance);
                 if(distance < 4 || distance > 6)
                 {
-                    client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", player.getName() + " chinned from " + distance + " tiles away.", null, false);
-                }
+                    if(config.showMistakesInChat())
+                    {
+                        client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", player.getName() + " chinned from " + distance + " tiles away.", null, false);
+                    }
+                    }
                 //log.info(player.getName() + " chinned from " + distance + " tiles away.");
             }
         }
@@ -255,8 +263,10 @@ public class MaidenHandler extends RoomHandler {
                 bloodDamage = hits.get().hitsplats.get(hits.get().hitsplats.size() - 1); //Last hitsplat is blood
             } else {
             }
-            if (bloodDamage != -1) {
-                if (p.bloodTicksAlive == -1) {
+            if (bloodDamage != -1)
+            {
+                if (p.bloodTicksAlive == -1)
+                {
                     clog.write(PLAYER_STOOD_IN_SPAWNED_BLOOD, p.playerName, String.valueOf(bloodDamage)); //player, dmg
                 } else {
                     clog.write(PLAYER_STOOD_IN_THROWN_BLOOD, p.playerName, String.valueOf(bloodDamage), String.valueOf(p.bloodTicksAlive)); //player, dmg, blood tick
@@ -412,7 +422,10 @@ public class MaidenHandler extends RoomHandler {
                 log.info(p.getName() + " dinhs spec targeted " + primaryTarget.getName() + "(" + whichCrab + ") and " + targets.size() + " additional npcs: ");
                 if(targets.size() < 9)
                 {
-                    client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", p.getName() + " only targeted " + targets.size() + " additional NPCs with dinhs spec.", null, false);
+                    if(config.showMistakesInChat())
+                    {
+                        client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", p.getName() + " only targeted " + targets.size() + " additional NPCs with dinhs spec.", null, false);
+                    }
                 }
                 ArrayList<Integer> healths = new ArrayList<>();
                 for(NPC npc : targets)

@@ -698,11 +698,56 @@ public class TheatreTrackerPlugin extends Plugin
         if (event.getActor() instanceof Player)
         {
             p = (Player) event.getActor();
-            if(event.getActor().getAnimation() == 8056)
+            if(p.getPlayerComposition() != null)
             {
-                if(p.getPlayerComposition().getEquipmentId(KitType.WEAPON) == 22486)
+                int id = p.getPlayerComposition().getEquipmentId(KitType.WEAPON);
+                if (event.getActor().getAnimation() == 8056)
                 {
-                    sendChatMessage(event.getActor().getName() + " is using an uncharged scythe");
+                    if (id == 22486 || id == 25738 || id == 25741)
+                    {
+                        if(config.showMistakesInChat())
+                        {
+                            sendChatMessage(event.getActor().getName() + " is using an uncharged scythe");
+                        }
+                    }
+                } else if (event.getActor().getAnimation() == 401)
+                {
+                    if (id == 13576 || id == 20785)
+                    {
+                        if(config.showMistakesInChat())
+                        {
+                            sendChatMessage(event.getActor().getName() + " hammer bopped (bad rng)");
+                        }
+                        clog.write(DWH_BOP, event.getActor().getName());
+                    }
+                } else if (event.getActor().getAnimation() == 414)
+                {
+                    if (id == 21006 || id == 23626)
+                    {
+                        if(config.showMistakesInChat())
+                        {
+                            sendChatMessage(event.getActor().getName() + " kodai bopped (nothing they could've done to prevent it)");
+                        }
+                        clog.write(KODAI_BOP, event.getActor().getName());
+                    }
+                }
+                else if (event.getActor().getAnimation() == 440)
+                {
+                    if (id == 23987)
+                    {
+                        if(config.showMistakesInChat())
+                        {
+                            sendChatMessage(event.getActor().getName() + " chally poked");
+                        }
+                        clog.write(CHALLY_POKE, event.getActor().getName());
+                    }
+                } else if (event.getActor().getAnimation() == 7045)
+                {
+                    if(config.showMistakesInChat())
+                    {
+                        sendChatMessage(event.getActor().getName() + " swung BGS without speccing");
+                    }
+                    clog.write(BGS_WHACK, event.getActor().getName());
                 }
             }
         }

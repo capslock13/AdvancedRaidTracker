@@ -810,11 +810,15 @@ public class RoomData {
                         dataManager.set(DataPoint.NYLO_BOSS_SPAWN, 0);
                         dataManager.set(DataPoint.NYLO_TOTAL_TIME, 0);
                     }
-                    if (dataManager.get(com.TheatreTracker.utility.DataPoint.NYLO_TOTAL_TIME) != 0) {
+                    if (dataManager.get(com.TheatreTracker.utility.DataPoint.NYLO_TOTAL_TIME) != 0)
+                    {
                         nyloReset = true;
-                    } else {
-                        if (!nyloStarted) {
-                            if (!bloatEndAccurate) {
+                    } else
+                    {
+                        if (!nyloStarted)
+                        {
+                            if (!bloatEndAccurate)
+                            {
                                 bloatWipe = true;
                             } else {
                                 bloatReset = true;
@@ -933,19 +937,24 @@ public class RoomData {
         return true;
     }
 
-    private boolean parseBloat() {
+    private boolean parseBloat()
+    {
         int activeIndex = 0;
         bloatDefenseAccurate = maidenDefenseAccurate;
         loop:
-        for (String s : globalData) {
+        for (String s : globalData)
+        {
             String[] subData = s.split(",", -1);
-            switch (Integer.parseInt(subData[3])) {
+            switch (Integer.parseInt(subData[3]))
+            {
                 case 0:
                     raidStarted = new Date(Long.parseLong(subData[1]));
                     break;
                 case 1:
-                    for (int i = 4; i < 9; i++) {
-                        if (!subData[i].equals("")) {
+                    for (int i = 4; i < 9; i++)
+                    {
+                        if (!subData[i].equals(""))
+                        {
                             raidTeamSize++;
                             players.add(subData[i].replaceAll("[^\\p{ASCII}]", " ").replaceAll(" +", " "));
                         }

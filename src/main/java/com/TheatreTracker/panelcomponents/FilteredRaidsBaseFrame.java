@@ -8,15 +8,22 @@ import lombok.extern.slf4j.Slf4j;
 import com.TheatreTracker.utility.RoomUtil;
 import com.TheatreTracker.utility.StatisticGatherer;
 import javax.swing.*;
+import javax.swing.border.MatteBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.plaf.basic.BasicComboPopup;
+import javax.swing.plaf.basic.ComboPopup;
+import javax.swing.plaf.metal.MetalComboBoxUI;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.*;
+import java.util.List;
 
 @Slf4j
 public class FilteredRaidsBaseFrame extends BaseFrame
@@ -245,45 +252,45 @@ public class FilteredRaidsBaseFrame extends BaseFrame
             }
             if(filterPartialOnly.isSelected())
             {
-                switch(viewByRaidComboBox.getSelectedIndex())
+                switch(viewByRaidComboBox.getSelectedItem().toString())
                 {
-                    case 0:
+                    case "Overall Time":
                         if(!data.getOverallTimeAccurate())
                         {
                             shouldDataBeIncluded = false;
                         }
                         break;
-                    case 1:
+                    case "Maiden Time":
                         if(!data.maidenStartAccurate || !data.maidenEndAccurate)
                         {
                             shouldDataBeIncluded = false;
                         }
                         break;
-                    case 2:
+                    case "Bloat Time":
                         if(!data.bloatStartAccurate || !data.bloatEndAccurate)
                         {
                             shouldDataBeIncluded = false;
                         }
                         break;
-                    case 3:
+                    case "Nylo Time":
                         if(!data.nyloStartAccurate || !data.nyloEndAccurate)
                         {
                             shouldDataBeIncluded = false;
                         }
                         break;
-                    case 4:
+                    case "Sote Time":
                         if(!data.soteStartAccurate || !data.soteEndAccurate)
                         {
                             shouldDataBeIncluded = false;
                         }
                         break;
-                    case 5:
+                    case "Xarp Time":
                         if(!data.xarpStartAccurate || !data.xarpEndAccurate)
                         {
                             shouldDataBeIncluded = false;
                         }
                         break;
-                    case 6:
+                    case "Verzik Time":
                         if(!data.verzikStartAccurate || !data.verzikEndAccurate)
                         {
                             shouldDataBeIncluded = false;
@@ -669,12 +676,124 @@ public class FilteredRaidsBaseFrame extends BaseFrame
         overallPanelVerzikMaximum.setText(RoomUtil.time(StatisticGatherer.getGenericMax(data, DataPoint.VERZIK_TOTAL_TIME)));
         overallPanelOverallMaximum.setText(RoomUtil.time(StatisticGatherer.getOverallMax(data)));
     }
+    private Map<String, String[]> testMenuData;
+    private JPopupMenu testPopupMenu;
+    private List<String> testFlattenedData;
+    private AbstractButton arrowButton;
+
+    private void setPopupVisible(boolean visible)
+    {
+        if (visible)
+        {
+            testPopupMenu.show(viewByRaidComboBox, 0, viewByRaidComboBox.getSize().height);
+        }
+        else
+        {
+            testPopupMenu.setVisible(false);
+        }
+    }
+    private void setComboSelection(String name)
+    {
+        Vector<String> items = new Vector<String>();
+
+        for (String item : testFlattenedData)
+        {
+            if (item.endsWith(name))
+            {
+                items.add(item);
+                break;
+            }
+        }
+
+        viewByRaidComboBox.setModel(new DefaultComboBoxModel<String>(items));
+
+        if (items.size() == 1)
+        {
+            viewByRaidComboBox.setSelectedIndex(0);
+        }
+    }
+
+    private JMenuItem createMenuItem(final String name)
+    {
+        JMenuItem item = new JMenuItem(name);
+        item.setBackground(Color.BLACK);
+        item.setOpaque(true);
+        item.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent event)
+            {
+                setComboSelection(name);
+            }
+        });
+        return item;
+    }
 
     public void createFrame(ArrayList<RoomData> data)
     {
+        testMenuData = new LinkedHashMap<String, String[]>();
+        testMenuData.put("Room Times", DataPoint.getRoomTimes());
+        testMenuData.put("Maiden", DataPoint.getMaidenNames());
+        testMenuData.put("Bloat", DataPoint.getBloatNames());
+        testMenuData.put("Nylocas", DataPoint.getNyloNames());
+        testMenuData.put("Sotetseg", DataPoint.getSoteNames());
+        testMenuData.put("Xarpus", DataPoint.getXarpNames());
+        testMenuData.put("Verzik", DataPoint.getVerzikNames());
+        testMenuData.put("Any", DataPoint.getAnyRoomNames());
+
+        testPopupMenu = new JPopupMenu();
+        testPopupMenu.setBorder(new MatteBorder(1, 1, 1, 1, Color.DARK_GRAY));
+
+        List<String> testCategories = new ArrayList<String>(testMenuData.keySet());
+
+        testFlattenedData = new ArrayList<String>();
+
+        for(String category : testCategories)
+        {
+            JMenu menu = new JMenu(category);
+            menu.setBackground(Color.BLACK);
+            menu.setOpaque(true);
+            for(String itemName : testMenuData.get(category))
+            {
+                menu.add(createMenuItem(itemName));
+                testFlattenedData.add(itemName);
+            }
+            testPopupMenu.add(menu);
+        }
+
+        viewByRaidComboBox = new JComboBox<>();
+        viewByRaidComboBox.setEditable(true);
+        viewByRaidComboBox.setPrototypeDisplayValue("Overall Time");
+        viewByRaidComboBox.setSelectedItem("Overall Time");
+        viewByRaidComboBox.setEditable(false);
+        for(Component comp : viewByRaidComboBox.getComponents())
+        {
+            if(comp instanceof AbstractButton)
+            {
+                arrowButton = (AbstractButton) comp;
+                arrowButton.setBackground(Color.BLACK);
+            }
+        }
+
+        arrowButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                setPopupVisible(!testPopupMenu.isVisible());
+            }
+        });
+
+        viewByRaidComboBox.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e)
+            {
+                setPopupVisible(!testPopupMenu.isVisible());
+            }
+        });
+
         //FIX TIMER OPTIONS
+
         //viewByRaidComboBox = new JComboBox(new String[]{"Overall Time", "Maiden Time", "Bloat Time", "Nylocas Time", "Sotetseg Time", "Xarpus Time", "Verzik Time"});
-        viewByRaidComboBox = new JComboBox<>(DataPoint.getByNames());
+        //viewByRaidComboBox = new JComboBox<>(DataPoint.getByNames());
         timeFollowsTab = new JCheckBox("Time Follows Tab");
         timeFollowsTab.setSelected(true);
 
@@ -706,7 +825,7 @@ public class FilteredRaidsBaseFrame extends BaseFrame
                 if(timeFollowsTab.isSelected())
                 {
                     if(built)
-                    {
+                    { //FIX FOLLOW TODO HELLO HI HELLO ACTUALLY FIX PLS
                         viewByRaidComboBox.setSelectedIndex(tabbedPane.getSelectedIndex());
                         updateTable();
                     }
@@ -817,6 +936,7 @@ public class FilteredRaidsBaseFrame extends BaseFrame
         viewByRaidComboBox.addActionListener(
                 al->
                 {
+                    log.info("Selected index: " + viewByRaidComboBox.getSelectedIndex());
                     updateTable();
                 });
 
@@ -1406,6 +1526,9 @@ public class FilteredRaidsBaseFrame extends BaseFrame
 
         JPopupMenu raidPopup = new JPopupMenu();
         JMenuItem addToComparison = new JMenuItem("Add set to comparison");
+        addToComparison.setBackground(Color.BLACK);
+        addToComparison.setOpaque(true);
+
         addToComparison.addActionListener(new ActionListener()
         {
             @Override
@@ -1422,6 +1545,8 @@ public class FilteredRaidsBaseFrame extends BaseFrame
             }
         });
         JMenuItem exportRaids = new JMenuItem("Export Selected Raids to CSV");
+        exportRaids.setBackground(Color.BLACK);
+        exportRaids.setOpaque(true);
         exportRaids.addActionListener(new ActionListener()
         {
             @Override
@@ -1438,6 +1563,8 @@ public class FilteredRaidsBaseFrame extends BaseFrame
         });
 
         JMenuItem filterRaids = new JMenuItem("Filter Selected Raids");
+        filterRaids.setBackground(Color.BLACK);
+        filterRaids.setOpaque(true);
         filterRaids.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e)
@@ -1453,6 +1580,8 @@ public class FilteredRaidsBaseFrame extends BaseFrame
         });
 
         JMenuItem filterExclusiveRaids = new JMenuItem("Filter All Except Selected Raids");
+        filterExclusiveRaids.setBackground(Color.BLACK);
+        filterExclusiveRaids.setOpaque(true);
         filterExclusiveRaids.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e)

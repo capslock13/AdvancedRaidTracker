@@ -212,6 +212,102 @@ public enum DataPoint {
         return Arrays.copyOf(valuesToGather.toArray(), valuesToGather.size(), String[].class);
     }
 
+    public static String[] getMaidenNames()
+    {
+        ArrayList<String> valuesToGather = new ArrayList<>();
+        for (DataPoint point : DataPoint.values())
+        {
+            if (point.room.equals(rooms.MAIDEN))
+            {
+                valuesToGather.add(point.name);
+            }
+        }
+        return Arrays.copyOf(valuesToGather.toArray(), valuesToGather.size(), String[].class);
+    }
+
+    public static String[] getBloatNames()
+    {
+        ArrayList<String> valuesToGather = new ArrayList<>();
+        for (DataPoint point : DataPoint.values())
+        {
+            if (point.room.equals(rooms.BLOAT))
+            {
+                valuesToGather.add(point.name);
+            }
+        }
+        return Arrays.copyOf(valuesToGather.toArray(), valuesToGather.size(), String[].class);
+    }
+
+    public static String[] getNyloNames()
+    {
+        ArrayList<String> valuesToGather = new ArrayList<>();
+        for (DataPoint point : DataPoint.values())
+        {
+            if (point.room.equals(rooms.NYLOCAS))
+            {
+                valuesToGather.add(point.name);
+            }
+        }
+        return Arrays.copyOf(valuesToGather.toArray(), valuesToGather.size(), String[].class);
+    }
+
+    public static String[] getSoteNames()
+    {
+        ArrayList<String> valuesToGather = new ArrayList<>();
+        for (DataPoint point : DataPoint.values())
+        {
+            if (point.room.equals(rooms.SOTETSEG))
+            {
+                valuesToGather.add(point.name);
+            }
+        }
+        return Arrays.copyOf(valuesToGather.toArray(), valuesToGather.size(), String[].class);
+    }
+
+    public static String[] getXarpNames()
+    {
+        ArrayList<String> valuesToGather = new ArrayList<>();
+        for (DataPoint point : DataPoint.values())
+        {
+            if (point.room.equals(rooms.XARPUS))
+            {
+                valuesToGather.add(point.name);
+            }
+        }
+        return Arrays.copyOf(valuesToGather.toArray(), valuesToGather.size(), String[].class);
+    }
+
+    public static String[] getVerzikNames()
+    {
+        ArrayList<String> valuesToGather = new ArrayList<>();
+        for (DataPoint point : DataPoint.values())
+        {
+            if (point.room.equals(rooms.VERZIK))
+            {
+                valuesToGather.add(point.name);
+            }
+        }
+        return Arrays.copyOf(valuesToGather.toArray(), valuesToGather.size(), String[].class);
+    }
+
+    public static String[] getAnyRoomNames()
+    {
+        ArrayList<String> valuesToGather = new ArrayList<>();
+        for (DataPoint point : DataPoint.values())
+        {
+            if (point.room.equals(rooms.ANY))
+            {
+                valuesToGather.add(point.name);
+            }
+        }
+        return Arrays.copyOf(valuesToGather.toArray(), valuesToGather.size(), String[].class);
+    }
+
+    public static String[] getRoomTimes()
+    {
+        return new String[]{"Overall Time", "Maiden Time", "Bloat Time", "Nylo Time", "Sote Time", "Xarp Time", "Verzik Time"};
+    }
+
     public static ArrayList<String> getTimeNamesByRoom(rooms room) {
         ArrayList<String> timesToGather = new ArrayList<>();
         for (DataPoint point : DataPoint.values()) {

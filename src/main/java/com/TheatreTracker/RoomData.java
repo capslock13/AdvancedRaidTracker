@@ -8,6 +8,7 @@ import net.runelite.client.plugins.raids.RoomType;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.LinkedHashMap;
 
 import static com.TheatreTracker.RoomData.TobRoom.*;
 
@@ -169,7 +170,7 @@ public class RoomData {
     public Date raidStarted;
 
     private ArrayList<String> globalData;
-    public ArrayList<String> players;
+    public LinkedHashMap<String, Integer> players;
 
     public String[] raidDataRaw;
 
@@ -316,14 +317,16 @@ public class RoomData {
         hardMode = false;
         storyMode = false;
 
-        players = new ArrayList<>();
+        players = new LinkedHashMap<>();
         globalData = new ArrayList<String>(Arrays.asList(parameters));
 
         int room = -1;
-        for (String s : globalData) {
+        for (String s : globalData)
+        {
             String[] subData = s.split(",");
             int key = Integer.parseInt(subData[3]);
-            if (key == 98) {
+            if (key == 98)
+            {
                 room = Integer.parseInt(subData[4]);
                 spectated = true;
             }
@@ -380,7 +383,7 @@ public class RoomData {
                     for (int i = 4; i < 9; i++) {
                         if (!subData[i].equals("")) {
                             raidTeamSize++;
-                            players.add(subData[i].replaceAll("[^\\p{ASCII}]", " ").replaceAll(" +", " "));
+                            players.put(subData[i].replaceAll("[^\\p{ASCII}]", " ").replaceAll(" +", " "), 0);
                         }
                     }
                     break;
@@ -388,6 +391,8 @@ public class RoomData {
                     dataManager.increment(DataPoint.HIT_HAMMERS_VERZIK);
                     break;
                 case 3:
+                    dataManager.increment(DataPoint.ATTEMPTED_BGS_VERZ);
+                    dataManager.increment(DataPoint.BGS_DAMAGE_VERZ, Integer.parseInt(subData[5]));
                     break;
                 case 4:
                     if (dataManager.get(com.TheatreTracker.utility.DataPoint.VERZIK_TOTAL_TIME) == 0) {
@@ -403,6 +408,11 @@ public class RoomData {
                     return false;
                 case 5:
                     dataManager.increment(com.TheatreTracker.utility.DataPoint.VERZIK_DEATHS);
+                    dataManager.increment(DataPoint.TOTAL_DEATHS);
+                    if(players.get(subData[4]) != null)
+                    {
+                        players.put(subData[4], players.get(subData[4]) + 1);
+                    }
                 case 6:
                     break;
                 case 7:
@@ -415,7 +425,7 @@ public class RoomData {
                 case 72:
                     break;
                 case 73:
-                    dataManager.set(com.TheatreTracker.utility.DataPoint.VERZIK_P1_SPLIT, Integer.parseInt(subData[4]));
+                    dataManager.set(com.TheatreTracker.utility.DataPoint.VERZIK_P1_SPLIT, Integer.parseInt(subData[4])-13);
                     break;
                 case 74:
                     dataManager.set(com.TheatreTracker.utility.DataPoint.VERZIK_P2_SPLIT, Integer.parseInt(subData[4]));
@@ -540,7 +550,7 @@ public class RoomData {
                     for (int i = 4; i < 9; i++) {
                         if (!subData[i].equals("")) {
                             raidTeamSize++;
-                            players.add(subData[i].replaceAll("[^\\p{ASCII}]", " ").replaceAll(" +", " "));
+                            players.put(subData[i].replaceAll("[^\\p{ASCII}]", " ").replaceAll(" +", " "), 0);
                         }
                     }
                     break;
@@ -549,6 +559,8 @@ public class RoomData {
                     dataManager.increment(DataPoint.HIT_HAMMERS_XARP);
                     break;
                 case 3:
+                    dataManager.increment(DataPoint.ATTEMPTED_BGS_XARP);
+                    dataManager.increment(DataPoint.BGS_DAMAGE_XARP, Integer.parseInt(subData[5]));
                     dataManager.bgs(com.TheatreTracker.utility.DataPoint.XARP_DEFENSE, Integer.parseInt(subData[5]));
                     break;
                 case 4:
@@ -565,6 +577,11 @@ public class RoomData {
                     return false;
                 case 5:
                     dataManager.increment(com.TheatreTracker.utility.DataPoint.XARP_DEATHS);
+                    dataManager.increment(DataPoint.TOTAL_DEATHS);
+                    if(players.get(subData[4]) != null)
+                    {
+                        players.put(subData[4], players.get(subData[4]) + 1);
+                    }
                     break;
                 case 6:
                     break;
@@ -680,7 +697,7 @@ public class RoomData {
                     for (int i = 4; i < 9; i++) {
                         if (!subData[i].equals("")) {
                             raidTeamSize++;
-                            players.add(subData[i].replaceAll("[^\\p{ASCII}]", " ").replaceAll(" +", " "));
+                            players.put(subData[i].replaceAll("[^\\p{ASCII}]", " ").replaceAll(" +", " "),0);
                         }
                     }
                     break;
@@ -698,6 +715,9 @@ public class RoomData {
                     dataManager.increment(DataPoint.HIT_HAMMERS_SOTE);
                     break;
                 case 3:
+                    dataManager.increment(DataPoint.ATTEMPTED_BGS_SOTE);
+                    dataManager.increment(DataPoint.BGS_DAMAGE_SOTE, Integer.parseInt(subData[5]));
+                    break;
                 case 6:
                     break;
                 case 4:
@@ -716,7 +736,12 @@ public class RoomData {
                     dataManager.increment(DataPoint.ATTEMPTED_HAMMERS_SOTE);
                     break;
                 case 5:
+                    dataManager.increment(DataPoint.TOTAL_DEATHS);
                     dataManager.increment(com.TheatreTracker.utility.DataPoint.SOTE_DEATHS);
+                    if(players.get(subData[4]) != null)
+                    {
+                        players.put(subData[4], players.get(subData[4]) + 1);
+                    }
                     break;
                 case 50:
                     break;
@@ -812,7 +837,8 @@ public class RoomData {
         return true;
     }
 
-    private boolean parseNylo() {
+    private boolean parseNylo()
+    {
         int activeIndex = 0;
         loop:
         for (String s : globalData) {
@@ -825,7 +851,7 @@ public class RoomData {
                     for (int i = 4; i < 9; i++) {
                         if (!subData[i].equals("")) {
                             raidTeamSize++;
-                            players.add(subData[i].replaceAll("[^\\p{ASCII}]", " ").replaceAll(" +", " "));
+                            players.put(subData[i].replaceAll("[^\\p{ASCII}]", " ").replaceAll(" +", " "), 0);
                         }
                     }
                     break;
@@ -836,6 +862,8 @@ public class RoomData {
                 case 6:
                     break;
                 case 3:
+                    dataManager.increment(DataPoint.ATTEMPTED_BGS_NYLO);
+                    dataManager.increment(DataPoint.BGS_DAMAGE_NYLO, Integer.parseInt(subData[5]));
                     if (dataManager.get(com.TheatreTracker.utility.DataPoint.NYLO_BOSS_SPAWN) != 0) {
                         dataManager.bgs(com.TheatreTracker.utility.DataPoint.NYLO_DEFENSE, Integer.parseInt(subData[5]));
                     }
@@ -867,6 +895,10 @@ public class RoomData {
                     return false;
                 case 5:
                     nyloDeaths++;
+                    dataManager.increment(DataPoint.TOTAL_DEATHS);
+                    if(players.get(subData[4]) != null) {
+                        players.put(subData[4], players.get(subData[4]) + 1);
+                    }
                     break;
                 case 7:
                     dataManager.increment(DataPoint.ATTEMPTED_HAMMERS_NYLO);
@@ -1004,7 +1036,7 @@ public class RoomData {
                         if (!subData[i].equals(""))
                         {
                             raidTeamSize++;
-                            players.add(subData[i].replaceAll("[^\\p{ASCII}]", " ").replaceAll(" +", " "));
+                            players.put(subData[i].replaceAll("[^\\p{ASCII}]", " ").replaceAll(" +", " "), 0);
                         }
                     }
                     break;
@@ -1027,6 +1059,8 @@ public class RoomData {
                     if (dataManager.get(com.TheatreTracker.utility.DataPoint.BLOAT_DOWNS) == 0) {
                         dataManager.bgs(com.TheatreTracker.utility.DataPoint.BLOAT_DEFENSE, 2 * Integer.parseInt(subData[5]));
                     }
+                    dataManager.increment(DataPoint.ATTEMPTED_BGS_BLOAT);
+                    dataManager.increment(DataPoint.BGS_DAMAGE_BLOAT, Integer.parseInt(subData[5]));
                     break;
                 case 4:
                     if (bloatEndAccurate) {
@@ -1042,6 +1076,11 @@ public class RoomData {
                     return false;
                 case 5:
                     dataManager.increment(com.TheatreTracker.utility.DataPoint.BLOAT_DEATHS);
+                    dataManager.increment(DataPoint.TOTAL_DEATHS);
+                    if(players.get(subData[4]) != null)
+                    {
+                        players.put(subData[4], players.get(subData[4]) + 1);
+                    }
                     if (dataManager.get(com.TheatreTracker.utility.DataPoint.BLOAT_DOWNS) == 0) {
                         dataManager.increment(com.TheatreTracker.utility.DataPoint.BLOAT_FIRST_WALK_DEATHS);
                     }
@@ -1137,7 +1176,7 @@ public class RoomData {
                     for (int i = 4; i < 9; i++) {
                         if (!subData[i].equals("")) {
                             raidTeamSize++;
-                            players.add(subData[i].replaceAll("[^\\p{ASCII}]", " ").replaceAll(" +", " "));
+                            players.put(subData[i].replaceAll("[^\\p{ASCII}]", " ").replaceAll(" +", " "), 0);
                         }
                     }
                     break;
@@ -1147,6 +1186,8 @@ public class RoomData {
                     break;
                 case 3:
                     dataManager.bgs(com.TheatreTracker.utility.DataPoint.MAIDEN_DEFENSE, Integer.parseInt(subData[5]));
+                    dataManager.increment(DataPoint.ATTEMPTED_BGS_MAIDEN);
+                    dataManager.increment(DataPoint.BGS_DAMAGE_MAIDEN, Integer.parseInt(subData[5]));
                     break;
                 case 4:
                     int percent = 100;
@@ -1170,6 +1211,10 @@ public class RoomData {
                     return false;
                 case 5:
                     dataManager.increment(com.TheatreTracker.utility.DataPoint.MAIDEN_DEATHS);
+                    dataManager.increment(DataPoint.TOTAL_DEATHS);
+                    if(players.get(subData[4]) != null) {
+                        players.put(subData[4], players.get(subData[4]) + 1);
+                    }
                     break;
                 case 6:
                     break;

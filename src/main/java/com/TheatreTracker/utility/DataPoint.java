@@ -14,34 +14,34 @@ public enum DataPoint {
     VERZIK_TOTAL_TIME("Verzik Time", types.TIME, rooms.VERZIK),
     MAIDEN_BLOOD_SPAWNED("Maiden blood spawned", types.OTHER_INT, rooms.MAIDEN),
     MAIDEN_BLOOD_THROWN("Maiden blood thrown", types.OTHER_INT, rooms.MAIDEN),
-    MAIDEN_PLAYER_STOOD_IN_THROWN_BLOOD("Maiden player stood in thrown blood", types.OTHER_INT, rooms.MAIDEN),
-    MAIDEN_PLAYER_STOOD_IN_SPAWNED_BLOOD("Maiden player stood in spawned blood", types.OTHER_INT, rooms.MAIDEN),
-    MAIDEN_HEALS_FROM_THROWN_BLOOD("Maiden heals from thrown blood", types.OTHER_INT, rooms.MAIDEN),
-    MAIDEN_HEALS_FROM_SPAWNED_BLOOD("Maiden heals from spawned blood", types.OTHER_INT, rooms.MAIDEN),
-    MAIDEN_PLAYER_STOOD_IN_BLOOD("Maiden player stood in any blood", types.OTHER_INT, rooms.MAIDEN),
-    MAIDEN_HEALS_FROM_ANY_BLOOD("Maiden heals from any blood", types.OTHER_INT, rooms.MAIDEN),
+    MAIDEN_PLAYER_STOOD_IN_THROWN_BLOOD("Maiden player stood in thrown blood", types.OTHER_INT, rooms.MAIDEN, true),
+    MAIDEN_PLAYER_STOOD_IN_SPAWNED_BLOOD("Maiden player stood in spawned blood", types.OTHER_INT, rooms.MAIDEN, true),
+    MAIDEN_HEALS_FROM_THROWN_BLOOD("Maiden heals from thrown blood", types.OTHER_INT, rooms.MAIDEN, true),
+    MAIDEN_HEALS_FROM_SPAWNED_BLOOD("Maiden heals from spawned blood", types.OTHER_INT, rooms.MAIDEN, true),
+    MAIDEN_PLAYER_STOOD_IN_BLOOD("Maiden player stood in any blood", types.OTHER_INT, rooms.MAIDEN, true),
+    MAIDEN_HEALS_FROM_ANY_BLOOD("Maiden heals from any blood", types.OTHER_INT, rooms.MAIDEN, true),
     MAIDEN_CRABS_LEAKED("Maiden crabs leaked", types.OTHER_INT, rooms.MAIDEN),
     MAIDEN_CRABS_LEAKED_FULL_HP("Maiden crabs leaked full", types.OTHER_INT, rooms.MAIDEN),
     MAIDEN_HP_HEALED("Maiden HP healed", types.OTHER_INT, rooms.MAIDEN),
     MAIDEN_DEFENSE("Maiden defense", types.OTHER_INT, rooms.MAIDEN, 200),
-    MAIDEN_DEATHS("Maiden deaths", types.OTHER_INT, rooms.MAIDEN),
-    MAIDEN_DINHS_SPECS("Maiden dinhs specs", types.OTHER_INT, rooms.MAIDEN),
-    MAIDEN_DINHS_CRABS_HIT("Maiden dinhs crabs Hit", types.OTHER_INT, rooms.MAIDEN),
-    MAIDEN_DINHS_TARGETS_HIT("Maiden dinhs targets hit", types.OTHER_INT, rooms.MAIDEN),
-    MAIDEN_DINHS_AVERAGE_HP_HIT("Maiden dinhs average HP crab", types.OTHER_INT, rooms.MAIDEN),
-    MAIDEN_DINHS_PERCENT_TARGETS_CRAB("Maiden dinhs % crabs targeted", types.OTHER_INT, rooms.MAIDEN),
-    MAIDEN_DINHS_CRABS_UNDER_27_TARGETED("Maiden dinhs crab < 27hp targeted" , types.OTHER_INT, rooms.MAIDEN),
-    MAIDEN_DINHS_CRABS_UNDER_27_TARGETED_PERCENT("Maiden dinhs crabs <27hp targeted %", types.OTHER_INT, rooms.MAIDEN),
-    MAIDEN_CHINS_THROWN("Maiden chins thrown", types.OTHER_INT, rooms.MAIDEN),
-    MAIDEN_CHINS_THROWN_WRONG_DISTANCE("Maiden chins thrown wrong distance", types.OTHER_INT, rooms.MAIDEN),
-    MAIDEN_CHIN_CORRECT_DISTANCE_PERCENT("Maiden chins correct distance %", types.OTHER_INT, rooms.MAIDEN),
+    MAIDEN_DEATHS("Maiden deaths", types.OTHER_INT, rooms.MAIDEN, true),
+    MAIDEN_DINHS_SPECS("Maiden dinhs specs", types.OTHER_INT, rooms.MAIDEN, true),
+    MAIDEN_DINHS_CRABS_HIT("Maiden dinhs crabs Hit", types.OTHER_INT, rooms.MAIDEN, true),
+    MAIDEN_DINHS_TARGETS_HIT("Maiden dinhs targets hit", types.OTHER_INT, rooms.MAIDEN, true),
+    MAIDEN_DINHS_AVERAGE_HP_HIT("Maiden dinhs average HP crab", types.OTHER_INT, rooms.MAIDEN, true),
+    MAIDEN_DINHS_PERCENT_TARGETS_CRAB("Maiden dinhs % crabs targeted", types.OTHER_INT, rooms.MAIDEN, true),
+    MAIDEN_DINHS_CRABS_UNDER_27_TARGETED("Maiden dinhs crab < 27hp targeted" , types.OTHER_INT, rooms.MAIDEN, true),
+    MAIDEN_DINHS_CRABS_UNDER_27_TARGETED_PERCENT("Maiden dinhs crabs <27hp targeted %", types.OTHER_INT, rooms.MAIDEN, true),
+    MAIDEN_CHINS_THROWN("Maiden chins thrown", types.OTHER_INT, rooms.MAIDEN, true),
+    MAIDEN_CHINS_THROWN_WRONG_DISTANCE("Maiden chins thrown wrong distance", types.OTHER_INT, rooms.MAIDEN, true),
+    MAIDEN_CHIN_CORRECT_DISTANCE_PERCENT("Maiden chins correct distance %", types.OTHER_INT, rooms.MAIDEN, true),
 
     BLOAT_DOWNS("Bloat downs", types.OTHER_INT, rooms.BLOAT),
     BLOAT_HP_FIRST_DOWN("Bloat HP 1st down", types.OTHER_INT, rooms.BLOAT),
-    BLOAT_FIRST_WALK_SCYTHES("Bloat 1st walk scythes", types.OTHER_INT, rooms.BLOAT),
-    BLOAT_FIRST_WALK_DEATHS("Bloat 1st walk deaths", types.OTHER_INT, rooms.BLOAT),
+    BLOAT_FIRST_WALK_SCYTHES("Bloat 1st walk scythes", types.OTHER_INT, rooms.BLOAT, true),
+    BLOAT_FIRST_WALK_DEATHS("Bloat 1st walk deaths", types.OTHER_INT, rooms.BLOAT, true),
     BLOAT_DEFENSE("Bloat defense", types.OTHER_INT, rooms.BLOAT, 100),
-    BLOAT_DEATHS("Bloat deaths", types.OTHER_INT, rooms.BLOAT),
+    BLOAT_DEATHS("Bloat deaths", types.OTHER_INT, rooms.BLOAT, true),
     NYLO_STALLS_PRE_20("Nylo stalls pre 20", types.OTHER_INT, rooms.NYLOCAS),
     NYLO_STALLS_POST_20("Nylo stalls post 20", types.OTHER_INT, rooms.NYLOCAS),
     NYLO_STALLS_TOTAL("Nylo stalls total", types.OTHER_INT, rooms.NYLOCAS),
@@ -52,18 +52,18 @@ public enum DataPoint {
     NYLO_ROTATIONS_MAGE("Nylo rotations mage", types.OTHER_INT, rooms.NYLOCAS),
     NYLO_ROTATIONS_MELEE("Nylo rotations melee", types.OTHER_INT, rooms.NYLOCAS),
     NYLO_DEFENSE("Nylo defense", types.OTHER_INT, rooms.NYLOCAS, 50),
-    NYLO_DEATHS("Nylo deaths", types.OTHER_INT, rooms.NYLOCAS),
+    NYLO_DEATHS("Nylo deaths", types.OTHER_INT, rooms.NYLOCAS, true),
     SOTE_SPECS_P1("Sote specs p1", types.OTHER_INT, rooms.SOTETSEG),
     SOTE_SPECS_P2("Sote specs p2", types.OTHER_INT, rooms.SOTETSEG),
     SOTE_SPECS_P3("Sote specs p3", types.OTHER_INT, rooms.SOTETSEG),
     SOTE_SPECS_TOTAL("Sote specs total", types.OTHER_INT, rooms.SOTETSEG),
-    SOTE_DEATHS("Sote deaths", types.OTHER_INT, rooms.SOTETSEG),
+    SOTE_DEATHS("Sote deaths", types.OTHER_INT, rooms.SOTETSEG, true),
     XARP_HEALING("Xarp Healing", types.OTHER_INT, rooms.SOTETSEG),
     XARP_DEFENSE("Xarp defense", types.OTHER_INT, rooms.XARPUS, 250),
-    XARP_DEATHS("Xarp Deaths", types.OTHER_INT, rooms.XARPUS),
-    VERZIK_BOUNCES("Verzik bounces", types.OTHER_INT, rooms.VERZIK),
+    XARP_DEATHS("Xarp Deaths", types.OTHER_INT, rooms.XARPUS, true),
+    VERZIK_BOUNCES("Verzik bounces", types.OTHER_INT, rooms.VERZIK, true),
     VERZIK_CRABS_SPAWNED("Verzik crabs spawned", types.OTHER_INT, rooms.VERZIK),
-    VERZIK_DEATHS("Verzik deaths", types.OTHER_INT, rooms.VERZIK),
+    VERZIK_DEATHS("Verzik deaths", types.OTHER_INT, rooms.VERZIK, true),
     MAIDEN_70_SPLIT("Maiden 70s split", types.TIME, rooms.MAIDEN),
     MAIDEN_7050_SPLIT("Maiden 70-50s split", types.TIME, rooms.MAIDEN),
     MAIDEN_50_SPLIT("Maiden 50s split", types.TIME, rooms.MAIDEN),
@@ -93,62 +93,81 @@ public enum DataPoint {
     XARP_ENTRY("Xarp entry", types.TIME, rooms.XARPUS),
     VERZIK_ENTRY("Verzik entry", types.TIME, rooms.VERZIK),
 
-    ATTEMPTED_HAMMERS_MAIDEN("Attempted hammers Maiden", types.OTHER_INT, rooms.MAIDEN),
-    ATTEMPTED_HAMMERS_BLOAT("Attempted hammers Bloat", types.OTHER_INT, rooms.BLOAT),
-    ATTEMPTED_HAMMERS_NYLO("Attempted hammers Nylo", types.OTHER_INT, rooms.NYLOCAS),
-    ATTEMPTED_HAMMERS_SOTE("Attempted hammers Sote", types.OTHER_INT, rooms.SOTETSEG),
-    ATTEMPTED_HAMMERS_XARP("Attempted hammers Xarp", types.OTHER_INT, rooms.XARPUS),
-    ATTEMPTED_HAMMERS_VERZIK("Attempted hammers Verzik", types.OTHER_INT, rooms.VERZIK),
-    HIT_HAMMERS_MAIDEN("Hit hammers Maiden", types.OTHER_INT, rooms.MAIDEN),
-    HIT_HAMMERS_BLOAT("Hit hammers Bloat", types.OTHER_INT, rooms.BLOAT),
-    HIT_HAMMERS_NYLO("Hit hammers Nylo", types.OTHER_INT, rooms.NYLOCAS),
-    HIT_HAMMERS_SOTE("Hit hammers Sote", types.OTHER_INT, rooms.SOTETSEG),
-    HIT_HAMMERS_XARP("Hit hammers Xarp", types.OTHER_INT, rooms.XARPUS),
-    HIT_HAMMERS_VERZIK("Hit hammers Verzik", types.OTHER_INT, rooms.VERZIK),
+    ATTEMPTED_HAMMERS_MAIDEN("Maiden attempted hammers", types.OTHER_INT, rooms.MAIDEN, true),
+    ATTEMPTED_HAMMERS_BLOAT("Bloat attempted hammers", types.OTHER_INT, rooms.BLOAT, true),
+    ATTEMPTED_HAMMERS_NYLO("Nylo attempted hammers", types.OTHER_INT, rooms.NYLOCAS, true),
+    ATTEMPTED_HAMMERS_SOTE("Sote attempted hammers", types.OTHER_INT, rooms.SOTETSEG, true),
+    ATTEMPTED_HAMMERS_XARP("Xarp attempted hammers", types.OTHER_INT, rooms.XARPUS, true),
+    ATTEMPTED_HAMMERS_VERZIK("Verzik attempted hammers", types.OTHER_INT, rooms.VERZIK, true),
+    HIT_HAMMERS_MAIDEN("Maiden hit hammers", types.OTHER_INT, rooms.MAIDEN, true),
+    HIT_HAMMERS_BLOAT("Bloat hit hammers", types.OTHER_INT, rooms.BLOAT, true),
+    HIT_HAMMERS_NYLO("Nylo hit hammers", types.OTHER_INT, rooms.NYLOCAS, true),
+    HIT_HAMMERS_SOTE("Sote hit hammers", types.OTHER_INT, rooms.SOTETSEG, true),
+    HIT_HAMMERS_XARP("Xarp hit hammers", types.OTHER_INT, rooms.XARPUS, true),
+    HIT_HAMMERS_VERZIK("Verzik hit hammers", types.OTHER_INT, rooms.VERZIK, true),
 
-    THRALL_ATTACKS_TOTAL("Total thrall attacks", types.OTHER_INT, rooms.ANY),
-    THRALL_ATTACKS_MAIDEN("Thrall attacks Maiden", types.OTHER_INT, rooms.MAIDEN),
-    THRALL_ATTACKS_BLOAT("Thrall attacks Bloat", types.OTHER_INT, rooms.BLOAT),
-    THRALL_ATTACKS_NYLO("Thrall attacks Nylo", types.OTHER_INT, rooms.NYLOCAS),
-    THRALL_ATTACKS_SOTE("Thrall attacks Sote", types.OTHER_INT, rooms.SOTETSEG),
-    THRALL_ATTACKS_XARP("Thrall attacks Xarp", types.OTHER_INT, rooms.XARPUS),
-    THRALL_ATTACKS_VERZIK("Thrall attacks Verz", types.OTHER_INT, rooms.VERZIK),
+    ATTEMPTED_BGS_MAIDEN("Maiden attempted BGS", types.OTHER_INT, rooms.MAIDEN, true),
+    BGS_DAMAGE_MAIDEN("Maiden BGS damage", types.OTHER_INT, rooms.MAIDEN, true),
 
-    THRALL_DAMAGE_TOTAL("Total thrall damage", types.OTHER_INT, rooms.ANY),
-    THRALL_DAMAGE_MAIDEN("Thrall damage Maiden", types.OTHER_INT, rooms.MAIDEN),
-    THRALL_DAMAGE_BLOAT("Thrall damage Bloat", types.OTHER_INT, rooms.BLOAT),
-    THRALL_DAMAGE_NYLO("Thrall damage Nylo", types.OTHER_INT, rooms.NYLOCAS),
-    THRALL_DAMAGE_SOTE("Thrall damage Sote", types.OTHER_INT, rooms.SOTETSEG),
-    THRALL_DAMAGE_XARP("Thrall damage Xarp", types.OTHER_INT, rooms.XARPUS),
-    THRALL_DAMAGE_VERZIK("Thrall damage Verz", types.OTHER_INT, rooms.VERZIK),
+    ATTEMPTED_BGS_BLOAT("Bloat attempted BGS", types.OTHER_INT, rooms.BLOAT, true),
+    BGS_DAMAGE_BLOAT("Bloat BGS damage", types.OTHER_INT, rooms.BLOAT, true),
+
+    ATTEMPTED_BGS_NYLO("Nylo attempted BGS", types.OTHER_INT, rooms.NYLOCAS, true),
+    BGS_DAMAGE_NYLO("Nylo BGS damage", types.OTHER_INT, rooms.NYLOCAS, true),
+
+    ATTEMPTED_BGS_SOTE("Sote attempted BGS", types.OTHER_INT, rooms.SOTETSEG, true),
+    BGS_DAMAGE_SOTE("Sote BGS damage", types.OTHER_INT, rooms.SOTETSEG, true),
+
+    ATTEMPTED_BGS_XARP("Xarp attempted BGS", types.OTHER_INT, rooms.XARPUS, true),
+    BGS_DAMAGE_XARP("Xarp BGS damage", types.OTHER_INT, rooms.XARPUS, true),
+
+    ATTEMPTED_BGS_VERZ("Verzik attempted BGS", types.OTHER_INT, rooms.VERZIK, true),
+    BGS_DAMAGE_VERZ("Verzik BGS damage", types.OTHER_INT, rooms.VERZIK, true),
+
+    THRALL_ATTACKS_TOTAL("Total thrall attacks", types.OTHER_INT, rooms.ANY, true),
+    THRALL_ATTACKS_MAIDEN("Maiden thrall attacks", types.OTHER_INT, rooms.MAIDEN, true),
+    THRALL_ATTACKS_BLOAT("Bloat thrall attacks", types.OTHER_INT, rooms.BLOAT, true),
+    THRALL_ATTACKS_NYLO("Nylo thrall attacks", types.OTHER_INT, rooms.NYLOCAS, true),
+    THRALL_ATTACKS_SOTE("Sote thrall attacks", types.OTHER_INT, rooms.SOTETSEG, true),
+    THRALL_ATTACKS_XARP("Xarp thrall attacks", types.OTHER_INT, rooms.XARPUS, true),
+    THRALL_ATTACKS_VERZIK("Verz thrall attacks", types.OTHER_INT, rooms.VERZIK, true),
+
+    THRALL_DAMAGE_TOTAL("Total thrall damage", types.OTHER_INT, rooms.ANY, true),
+    THRALL_DAMAGE_MAIDEN("Maiden thrall damage", types.OTHER_INT, rooms.MAIDEN, true),
+    THRALL_DAMAGE_BLOAT("Bloat thrall damage", types.OTHER_INT, rooms.BLOAT, true),
+    THRALL_DAMAGE_NYLO("Nylo thrall damage", types.OTHER_INT, rooms.NYLOCAS, true),
+    THRALL_DAMAGE_SOTE("Sote thrall damage", types.OTHER_INT, rooms.SOTETSEG, true),
+    THRALL_DAMAGE_XARP("Xarp thrall damage", types.OTHER_INT, rooms.XARPUS, true),
+    THRALL_DAMAGE_VERZIK("Verz thrall damage", types.OTHER_INT, rooms.VERZIK, true),
 
     VENG_DAMAGE_TOTAL("Total veng damage", types.OTHER_INT, rooms.ANY),
-    VENG_DAMAGE_MAIDEN("Veng damage Maiden", types.OTHER_INT, rooms.MAIDEN),
-    VENG_DAMAGE_BLOAT("Veng damage Bloat", types.OTHER_INT, rooms.BLOAT),
-    VENG_DAMAGE_NYLO("Veng damage Nylo", types.OTHER_INT, rooms.NYLOCAS),
-    VENG_DAMAGE_SOTE("Veng damage Sote", types.OTHER_INT, rooms.SOTETSEG),
-    VENG_DAMAGE_XARP("Veng damage Xarp", types.OTHER_INT, rooms.XARPUS),
-    VENG_DAMAGE_VERZIK("Veng damage Verz", types.OTHER_INT, rooms.VERZIK),
+    VENG_DAMAGE_MAIDEN("Maiden veng damage", types.OTHER_INT, rooms.MAIDEN),
+    VENG_DAMAGE_BLOAT("Bloat veng damage", types.OTHER_INT, rooms.BLOAT),
+    VENG_DAMAGE_NYLO("Nylo veng damage", types.OTHER_INT, rooms.NYLOCAS),
+    VENG_DAMAGE_SOTE("Sote veng damage", types.OTHER_INT, rooms.SOTETSEG),
+    VENG_DAMAGE_XARP("Xarp veng damage", types.OTHER_INT, rooms.XARPUS),
+    VENG_DAMAGE_VERZIK("Verz veng damage", types.OTHER_INT, rooms.VERZIK),
 
     VENG_CASTS_TOTAL("Total veng casts", types.OTHER_INT, rooms.ANY),
-    VENG_CASTS_MAIDEN("Veng damage Maiden", types.OTHER_INT, rooms.MAIDEN),
-    VENG_CASTS_BLOAT("Veng damage Bloat", types.OTHER_INT, rooms.BLOAT),
-    VENG_CASTS_NYLO("Veng damage Nylo", types.OTHER_INT, rooms.NYLOCAS),
-    VENG_CASTS_SOTE("Veng damage Sote", types.OTHER_INT, rooms.SOTETSEG),
-    VENG_CASTS_XARP("Veng damage Xarp", types.OTHER_INT, rooms.XARPUS),
-    VENG_CASTS_VERZIK("Veng damage Verz", types.OTHER_INT, rooms.VERZIK),
+    VENG_CASTS_MAIDEN("Maiden veng casts", types.OTHER_INT, rooms.MAIDEN),
+    VENG_CASTS_BLOAT("Bloat veng casts", types.OTHER_INT, rooms.BLOAT),
+    VENG_CASTS_NYLO("Nylo veng casts", types.OTHER_INT, rooms.NYLOCAS),
+    VENG_CASTS_SOTE("Sote veng casts", types.OTHER_INT, rooms.SOTETSEG),
+    VENG_CASTS_XARP("Xarp veng casts", types.OTHER_INT, rooms.XARPUS),
+    VENG_CASTS_VERZIK("Verz veng casts", types.OTHER_INT, rooms.VERZIK),
 
     VENG_PROCS_TOTAL("Total veng procs", types.OTHER_INT, rooms.ANY),
-    VENG_PROCS_MAIDEN("Veng procs Maiden", types.OTHER_INT, rooms.MAIDEN),
-    VENG_PROCS_BLOAT("Veng procs Bloat", types.OTHER_INT, rooms.BLOAT),
-    VENG_PROCS_NYLO("Veng procs Nylo", types.OTHER_INT, rooms.NYLOCAS),
-    VENG_PROCS_SOTE("Veng procs Sote", types.OTHER_INT, rooms.SOTETSEG),
-    VENG_PROCS_XARP("Veng procs Xarp", types.OTHER_INT, rooms.XARPUS),
-    VENG_PROCS_VERZIK("Veng procs Verz", types.OTHER_INT, rooms.VERZIK),
-    KODAI_BOPS("Kodai bops", types.OTHER_INT, rooms.ANY),
-    DWH_BOPS("DWH bops", types.OTHER_INT, rooms.ANY),
-    CHALLY_POKE("Chally pokes", types.OTHER_INT, rooms.ANY),
-    BGS_WHACKS("BGS whacks", types.OTHER_INT, rooms.ANY),
+    VENG_PROCS_MAIDEN("Maiden veng procs", types.OTHER_INT, rooms.MAIDEN),
+    VENG_PROCS_BLOAT("Bloat veng procs", types.OTHER_INT, rooms.BLOAT),
+    VENG_PROCS_NYLO("Nylo veng procs", types.OTHER_INT, rooms.NYLOCAS),
+    VENG_PROCS_SOTE("Sote veng procs", types.OTHER_INT, rooms.SOTETSEG),
+    VENG_PROCS_XARP("Xarp veng procs", types.OTHER_INT, rooms.XARPUS),
+    VENG_PROCS_VERZIK("Verz veng procs", types.OTHER_INT, rooms.VERZIK),
+    KODAI_BOPS("Kodai bops", types.OTHER_INT, rooms.ANY, true),
+    DWH_BOPS("DWH bops", types.OTHER_INT, rooms.ANY, true),
+    CHALLY_POKE("Chally pokes", types.OTHER_INT, rooms.ANY, true),
+    BGS_WHACKS("BGS whacks", types.OTHER_INT, rooms.ANY, true),
+    TOTAL_DEATHS("Total deaths", types.OTHER_INT, rooms.ANY, true),
 
 
     ;
@@ -176,6 +195,7 @@ public enum DataPoint {
     public final int value;
     public final types type;
     public final rooms room;
+    public final boolean playerSpecific;
 
 
     DataPoint(String name, types type, rooms room) {
@@ -183,11 +203,23 @@ public enum DataPoint {
         this.value = 0;
         this.type = type;
         this.room = room;
+        this.playerSpecific = false;
     }
 
-    DataPoint(String name, types type, rooms room, int value) {
+    DataPoint(String name, types type, rooms room, int value)
+    {
         this.name = name;
         this.value = value;
+        this.type = type;
+        this.room = room;
+        this.playerSpecific = false;
+    }
+
+    DataPoint(String name, types type, rooms room, boolean playerSpecific)
+    {
+        this.playerSpecific = playerSpecific;
+        this.name = name;
+        this.value = 0;
         this.type = type;
         this.room = room;
     }
@@ -219,6 +251,75 @@ public enum DataPoint {
         }
         return Arrays.copyOf(valuesToGather.toArray(), valuesToGather.size(), String[].class);
     }
+
+    public static String[] filterTimes(String[] data)
+    {
+        ArrayList<String> filtered = new ArrayList<>();
+        for(String s : data)
+        {
+            if(DataPoint.getValue(s).type == types.TIME)
+            {
+                filtered.add(s);
+            }
+        }
+        return Arrays.copyOf(filtered.toArray(), filtered.size(), String[].class);
+    }
+
+    public static String[] filterInt(String[] data)
+    {
+        ArrayList<String> filtered = new ArrayList<>();
+        for(String s : data)
+        {
+            DataPoint dp = DataPoint.getValue(s);
+            if(dp.type == types.OTHER_INT && !dp.name.contains("thrall") && !dp.name.contains("veng")
+            && !dp.name.contains("BGS") && !dp.name.contains("hammers") && !dp.name.contains("dinhs"))
+            {
+                filtered.add(s);
+            }
+        }
+        return Arrays.copyOf(filtered.toArray(), filtered.size(), String[].class);
+    }
+
+    public static String[] filterThrall(String[] data)
+    {
+        ArrayList<String> filtered = new ArrayList<>();
+        for(String s : data)
+        {
+            if(DataPoint.getValue(s).name.contains("thrall"))
+            {
+                filtered.add(s);
+            }
+        }
+        return Arrays.copyOf(filtered.toArray(), filtered.size(), String[].class);
+    }
+
+    public static String[] filterVeng(String[] data)
+    {
+        ArrayList<String> filtered = new ArrayList<>();
+        for(String s : data)
+        {
+            if(DataPoint.getValue(s).name.contains("veng"))
+            {
+                filtered.add(s);
+            }
+        }
+        return Arrays.copyOf(filtered.toArray(), filtered.size(), String[].class);
+    }
+
+    public static String[] filterSpecs(String[] data)
+    {
+        ArrayList<String> filtered = new ArrayList<>();
+        for(String s : data)
+        {
+            String name = DataPoint.getValue(s).name;
+            if(name.contains("BGS") || name.contains("hammers") || name.contains("dinhs"))
+            {
+                filtered.add(s);
+            }
+        }
+        return Arrays.copyOf(filtered.toArray(), filtered.size(), String[].class);
+    }
+
 
     public static String[] getMaidenNames()
     {

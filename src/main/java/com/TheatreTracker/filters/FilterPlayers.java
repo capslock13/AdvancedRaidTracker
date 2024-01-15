@@ -23,7 +23,8 @@ public class FilterPlayers extends FilterCondition {
     }
 
     private boolean cleanContains(RoomData data, String player) {
-        for (String p : data.players) {
+        for (String p : data.players.keySet())
+        {
             if (p.replaceAll(String.valueOf((char) 160), String.valueOf((char) 32)).toLowerCase().equals(player)) {
                 return true;
             }

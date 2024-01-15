@@ -406,10 +406,11 @@ public class ViewRaidBaseFrame extends BaseFrame
         summarySubPanel.add(new JLabel("Raid Status: " + raidStatusString));
         summarySubPanel.add(new JLabel("Time: " + RoomUtil.time(data.getTimeSum())));
         summarySubPanel.add(new JLabel("Players:" ));
-        for(int i = 0; i < data.players.size(); i++)
+        for(String player : data.players.keySet())
         {
-            summarySubPanel.add(new JLabel("        " + data.players.get(i)));
+            summarySubPanel.add(new JLabel("        " + player + " (" + data.players.get(player) + ")"));
         }
+
         summaryPanel.add(summarySubPanel);
 
         JPanel topPanel = new JPanel();

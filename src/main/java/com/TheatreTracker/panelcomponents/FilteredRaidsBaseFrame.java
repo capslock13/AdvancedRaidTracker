@@ -377,7 +377,7 @@ public class FilteredRaidsBaseFrame extends BaseFrame
         for(RoomData raid : tableData)
         {
             String players = "";
-            for(String s : raid.players)
+            for(String s : raid.players.keySet())
             {
                 players += s + ", ";
             }
@@ -718,6 +718,8 @@ public class FilteredRaidsBaseFrame extends BaseFrame
         JMenuItem item = new JMenuItem(name);
         item.setBackground(Color.BLACK);
         item.setOpaque(true);
+
+
         item.addActionListener(new ActionListener()
         {
             public void actionPerformed(ActionEvent event)
@@ -752,11 +754,62 @@ public class FilteredRaidsBaseFrame extends BaseFrame
             JMenu menu = new JMenu(category);
             menu.setBackground(Color.BLACK);
             menu.setOpaque(true);
-            for(String itemName : testMenuData.get(category))
+            if(!category.equals("Room Times") && !category.equals("Any"))
             {
-                menu.add(createMenuItem(itemName));
-                testFlattenedData.add(itemName);
+                JMenu timeMenu = new JMenu("Time");
+                timeMenu.setBackground(Color.BLACK);
+                timeMenu.setOpaque(true);
+                for (String itemName : DataPoint.filterTimes(testMenuData.get(category))) {
+                    timeMenu.add(createMenuItem(itemName));
+                    testFlattenedData.add(itemName);
+                }
+                JMenu countMenu = new JMenu("Misc");
+                countMenu.setBackground(Color.BLACK);
+                countMenu.setOpaque(true);
+                for (String itemName : DataPoint.filterInt(testMenuData.get(category))) {
+                    countMenu.add(createMenuItem(itemName));
+                    testFlattenedData.add(itemName);
+                }
+                JMenu thrallMenu = new JMenu("Thrall");
+                thrallMenu.setBackground(Color.BLACK);
+                thrallMenu.setOpaque(true);
+                for (String itemName : DataPoint.filterThrall(testMenuData.get(category))) {
+                    thrallMenu.add(createMenuItem(itemName));
+                    testFlattenedData.add(itemName);
+                }
+                JMenu vengMenu = new JMenu("Veng");
+                vengMenu.setBackground(Color.BLACK);
+                vengMenu.setOpaque(true);
+                for (String itemName : DataPoint.filterVeng(testMenuData.get(category)))
+                {
+                    vengMenu.add(createMenuItem(itemName));
+                    testFlattenedData.add(itemName);
+                }
+
+                JMenu specMenu = new JMenu("Spec");
+                specMenu.setBackground(Color.BLACK);
+                specMenu.setOpaque(true);
+                for (String itemName : DataPoint.filterSpecs(testMenuData.get(category)))
+                {
+                    specMenu.add(createMenuItem(itemName));
+                    testFlattenedData.add(itemName);
+                }
+
+                menu.add(timeMenu);
+                menu.add(countMenu);
+                menu.add(thrallMenu);
+                menu.add(vengMenu);
+                menu.add(specMenu);
             }
+            else
+            {
+                for(String itemName : testMenuData.get(category))
+                {
+                    menu.add(createMenuItem(itemName));
+                    testFlattenedData.add(itemName);
+                }
+            }
+
             testPopupMenu.add(menu);
         }
 

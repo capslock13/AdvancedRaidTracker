@@ -7,6 +7,8 @@ import com.TheatreTracker.utility.DataPoint;
 import lombok.extern.slf4j.Slf4j;
 import com.TheatreTracker.utility.RoomUtil;
 import com.TheatreTracker.utility.StatisticGatherer;
+import net.runelite.client.plugins.raids.solver.Room;
+
 import javax.swing.*;
 import javax.swing.border.MatteBorder;
 import javax.swing.event.ChangeEvent;
@@ -1603,6 +1605,61 @@ public class FilteredRaidsBaseFrame extends BaseFrame
         filterTableContainer = new JPanel();
 
         JPopupMenu raidPopup = new JPopupMenu();
+
+        JMenuItem analyzeSessions = new JMenuItem("Analyze Sessions");
+        analyzeSessions.setBackground(Color.BLACK);
+        analyzeSessions.setOpaque(true);
+        analyzeSessions.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                ArrayList<RoomData> rows = new ArrayList<>();
+                int[] toRemove = table.getSelectedRows();
+                for(int i = 0; i < toRemove.length; i++)
+                {
+                    rows.add(currentData.get(Integer.parseInt(table.getModel().getValueAt(toRemove[i], 0).toString())));
+                }
+                Map<Integer, Map<String,ArrayList<RoomData>>> sessions = new LinkedHashMap<>();
+                for(RoomData data : rows)
+                {
+                    if(!sessions.containsKey(data.players.size()))
+                    {
+                        Map<String, ArrayList<RoomData>> scale = new LinkedHashMap<>();
+                        ArrayList<RoomData> list = new ArrayList<>();
+                        list.add(data);
+                        scale.put(data.getPlayerList(), list);
+                        sessions.put(data.players.size(), scale);
+                    }
+                    else
+                    {
+                        if(!sessions.get(data.players.size()).containsKey(data.getPlayerList()))
+                        {
+                            ArrayList<RoomData> list = new ArrayList<>();
+                            list.add(data);
+                            sessions.get(data.players.size()).put(data.getPlayerList(), list);
+                        }
+                        else
+                        {
+                            sessions.get(data.players.size()).get(data.getPlayerList()).add(data);
+                        }
+                    }
+                }
+                ArrayList<String> labels = new ArrayList<>();
+                ArrayList<ArrayList<RoomData>> dataSets = new ArrayList<>();
+                for(Integer scale : sessions.keySet())
+                {
+                    for(String playerList : sessions.get(scale).keySet())
+                    {
+                        dataSets.add(sessions.get(scale).get(playerList));
+                        labels.add(playerList);
+                    }
+                }
+                ComparisonView graphView = new ComparisonView(dataSets, labels);
+                graphView.open();
+            }
+        });
+
         JMenuItem addToComparison = new JMenuItem("Add set to comparison");
         addToComparison.setBackground(Color.BLACK);
         addToComparison.setOpaque(true);
@@ -1689,6 +1746,7 @@ public class FilteredRaidsBaseFrame extends BaseFrame
         raidPopup.add(addToComparison);
         raidPopup.add(filterRaids);
         raidPopup.add(filterExclusiveRaids);
+        raidPopup.add(analyzeSessions);
         table.setComponentPopupMenu(raidPopup);
 
         filterTable = new JTable();

@@ -208,6 +208,24 @@ public class RoomData {
         }
     }
 
+    public String getPlayerList()
+    {
+        String list = "";
+        for(String s : players.keySet())
+        {
+            list += s;
+            list += ",";
+        }
+        if(list.length() != 0)
+        {
+            return list.substring(0,list.length()-1);
+        }
+        else
+        {
+            return "";
+        }
+    }
+
     public int getSpecificTimeInactive(String inactive)
     {
         if(inactive.equals("Overall Time"))

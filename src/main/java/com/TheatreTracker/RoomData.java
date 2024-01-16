@@ -447,6 +447,7 @@ public class RoomData {
                     dataManager.increment(DataPoint.HIT_HAMMERS_VERZIK);
                     dataManager.incrementPlayerSpecific(DataPoint.HIT_HAMMERS_VERZIK, subData[4]);
 
+
                     break;
                 case 3:
                     dataManager.increment(DataPoint.ATTEMPTED_BGS_VERZ);

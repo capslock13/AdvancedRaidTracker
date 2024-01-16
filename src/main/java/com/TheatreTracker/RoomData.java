@@ -2,13 +2,12 @@ package com.TheatreTracker;
 
 import com.TheatreTracker.utility.DataManager;
 import com.TheatreTracker.utility.DataPoint;
+import com.TheatreTracker.utility.DataPointPlayerData;
+import com.TheatreTracker.utility.PlayerCorrelatedPointData;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.plugins.raids.RoomType;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.LinkedHashMap;
+import java.util.*;
 
 import static com.TheatreTracker.RoomData.TobRoom.*;
 
@@ -172,6 +171,8 @@ public class RoomData {
     private ArrayList<String> globalData;
     public LinkedHashMap<String, Integer> players;
 
+    private ArrayList<DataPointPlayerData> playerSpecificData;
+
     public String[] raidDataRaw;
 
     public String activeValue = "";
@@ -208,14 +209,29 @@ public class RoomData {
         }
     }
 
-    public String getPlayerList()
+    public String getPlayerList(ArrayList<Map<String, ArrayList<String>>> aliases)
     {
         String list = "";
         for(String s : players.keySet())
         {
-            list += s;
+            String name = s;
+            for(Map<String, ArrayList<String>> alternateNames : aliases)
+            {
+                for(String alias : alternateNames.keySet())
+                {
+                    for(String potentialName : alternateNames.get(alias))
+                    {
+                        if(name.equalsIgnoreCase(potentialName))
+                        {
+                            name = alias;
+                        }
+                    }
+                }
+            }
+            list += name;
             list += ",";
         }
+        log.info("Returning: " + list);
         if(list.length() != 0)
         {
             return list.substring(0,list.length()-1);
@@ -226,8 +242,24 @@ public class RoomData {
         }
     }
 
+    public PlayerCorrelatedPointData getSpecificTimeInactiveCorrelated(String inactive)
+    {
+        if(inactive.contains("Player: "))
+        {
+            return dataManager.getHighest(DataPoint.getValue(inactive.substring(8)));
+        }
+        else
+        {
+            return null;
+        }
+    }
+
     public int getSpecificTimeInactive(String inactive)
     {
+        if(inactive.contains("Player: "))
+        {
+            return dataManager.getHighest(DataPoint.getValue(inactive.substring(8))).value;
+        }
         if(inactive.equals("Overall Time"))
         {
             return getMaidenTime() + getBloatTime() + getNyloTime() + getSoteTime() + getXarpTime() + getVerzikTime();
@@ -236,6 +268,10 @@ public class RoomData {
     }
     public int getSpecificTime()
     {
+        if(activeValue.contains("Player: "))
+        {
+            return dataManager.getHighest(DataPoint.getValue(activeValue.substring(8))).value;
+        }
         if(activeValue.equals("Overall Time"))
         {
             return getMaidenTime() + getBloatTime() + getNyloTime() + getSoteTime() + getXarpTime() + getVerzikTime();
@@ -310,7 +346,8 @@ public class RoomData {
         return dataManager.get(name);
     }
 
-    public int getValue(com.TheatreTracker.utility.DataPoint point) {
+    public int getValue(com.TheatreTracker.utility.DataPoint point)
+    {
         return dataManager.get(point);
     }
 
@@ -334,6 +371,7 @@ public class RoomData {
         xarpDefenseAccurate = false;
         hardMode = false;
         storyMode = false;
+        playerSpecificData = new ArrayList<>();
 
         players = new LinkedHashMap<>();
         globalData = new ArrayList<String>(Arrays.asList(parameters));
@@ -407,6 +445,8 @@ public class RoomData {
                     break;
                 case 2:
                     dataManager.increment(DataPoint.HIT_HAMMERS_VERZIK);
+                    dataManager.incrementPlayerSpecific(DataPoint.HIT_HAMMERS_VERZIK, subData[4]);
+
                     break;
                 case 3:
                     dataManager.increment(DataPoint.ATTEMPTED_BGS_VERZ);
@@ -427,6 +467,8 @@ public class RoomData {
                 case 5:
                     dataManager.increment(com.TheatreTracker.utility.DataPoint.VERZIK_DEATHS);
                     dataManager.increment(DataPoint.TOTAL_DEATHS);
+                    dataManager.incrementPlayerSpecific(DataPoint.VERZIK_DEATHS,subData[4]);
+                    dataManager.incrementPlayerSpecific(DataPoint.TOTAL_DEATHS, subData[4]);
                     if(players.get(subData[4]) != null)
                     {
                         players.put(subData[4], players.get(subData[4]) + 1);
@@ -435,6 +477,8 @@ public class RoomData {
                     break;
                 case 7:
                     dataManager.increment(DataPoint.ATTEMPTED_HAMMERS_VERZIK);
+                    dataManager.incrementPlayerSpecific(DataPoint.ATTEMPTED_HAMMERS_VERZIK, subData[4]);
+
                     break;
                 case 70:
                     break;
@@ -459,6 +503,7 @@ public class RoomData {
                     break;
                 case 77:
                     dataManager.increment(com.TheatreTracker.utility.DataPoint.VERZIK_BOUNCES);
+                    dataManager.incrementPlayerSpecific(DataPoint.VERZIK_BOUNCES,subData[4]);
                     break;
                 case 78:
                     dataManager.increment(DataPoint.VERZIK_CRABS_SPAWNED);
@@ -504,15 +549,19 @@ public class RoomData {
                     break;
                 case 501:
                     dataManager.increment(DataPoint.KODAI_BOPS);
+                    dataManager.incrementPlayerSpecific(DataPoint.KODAI_BOPS, subData[4]);
                     break;
                 case 502:
                     dataManager.increment(DataPoint.DWH_BOPS);
+                    dataManager.incrementPlayerSpecific(DataPoint.DWH_BOPS, subData[4]);
                     break;
                 case 503:
                     dataManager.increment(DataPoint.BGS_WHACKS);
+                    dataManager.incrementPlayerSpecific(DataPoint.BGS_WHACKS, subData[4]);
                     break;
                 case 504:
                     dataManager.increment(DataPoint.CHALLY_POKE);
+                    dataManager.incrementPlayerSpecific(DataPoint.CHALLY_POKE, subData[4]);
                     break;
 
             }
@@ -575,6 +624,8 @@ public class RoomData {
                 case 2:
                     dataManager.hammer(com.TheatreTracker.utility.DataPoint.XARP_DEFENSE);
                     dataManager.increment(DataPoint.HIT_HAMMERS_XARP);
+                    dataManager.incrementPlayerSpecific(DataPoint.HIT_HAMMERS_XARP, subData[4]);
+
                     break;
                 case 3:
                     dataManager.increment(DataPoint.ATTEMPTED_BGS_XARP);
@@ -596,6 +647,8 @@ public class RoomData {
                 case 5:
                     dataManager.increment(com.TheatreTracker.utility.DataPoint.XARP_DEATHS);
                     dataManager.increment(DataPoint.TOTAL_DEATHS);
+                    dataManager.incrementPlayerSpecific(DataPoint.XARP_DEATHS,subData[4]);
+                    dataManager.incrementPlayerSpecific(DataPoint.TOTAL_DEATHS, subData[4]);
                     if(players.get(subData[4]) != null)
                     {
                         players.put(subData[4], players.get(subData[4]) + 1);
@@ -605,6 +658,8 @@ public class RoomData {
                     break;
                 case 7:
                     dataManager.increment(DataPoint.ATTEMPTED_HAMMERS_XARP);
+                    dataManager.incrementPlayerSpecific(DataPoint.ATTEMPTED_HAMMERS_XARP, subData[4]);
+
                     break;
                 case 60:
                     break;
@@ -685,15 +740,19 @@ public class RoomData {
                     break;
                 case 501:
                     dataManager.increment(DataPoint.KODAI_BOPS);
+                    dataManager.incrementPlayerSpecific(DataPoint.KODAI_BOPS, subData[4]);
                     break;
                 case 502:
                     dataManager.increment(DataPoint.DWH_BOPS);
+                    dataManager.incrementPlayerSpecific(DataPoint.DWH_BOPS, subData[4]);
                     break;
                 case 503:
                     dataManager.increment(DataPoint.BGS_WHACKS);
+                    dataManager.incrementPlayerSpecific(DataPoint.BGS_WHACKS, subData[4]);
                     break;
                 case 504:
                     dataManager.increment(DataPoint.CHALLY_POKE);
+                    dataManager.incrementPlayerSpecific(DataPoint.CHALLY_POKE, subData[4]);
                     break;
             }
             activeIndex++;
@@ -720,7 +779,8 @@ public class RoomData {
                     }
                     break;
                 case 2:
-                    if (dataManager.get(com.TheatreTracker.utility.DataPoint.SOTE_P1_SPLIT) == 0) {
+                    if (dataManager.get(com.TheatreTracker.utility.DataPoint.SOTE_P1_SPLIT) == 0)
+                    {
                         dataManager.increment(com.TheatreTracker.utility.DataPoint.SOTE_SPECS_P1);
                         dataManager.increment(com.TheatreTracker.utility.DataPoint.SOTE_SPECS_TOTAL);
                     } else if (dataManager.get(com.TheatreTracker.utility.DataPoint.SOTE_P2_SPLIT) == 0) {
@@ -731,6 +791,8 @@ public class RoomData {
                         dataManager.increment(com.TheatreTracker.utility.DataPoint.SOTE_SPECS_TOTAL);
                     }
                     dataManager.increment(DataPoint.HIT_HAMMERS_SOTE);
+                    dataManager.incrementPlayerSpecific(DataPoint.HIT_HAMMERS_SOTE, subData[4]);
+
                     break;
                 case 3:
                     dataManager.increment(DataPoint.ATTEMPTED_BGS_SOTE);
@@ -752,10 +814,14 @@ public class RoomData {
                     return false;
                 case 7:
                     dataManager.increment(DataPoint.ATTEMPTED_HAMMERS_SOTE);
+                    dataManager.incrementPlayerSpecific(DataPoint.ATTEMPTED_HAMMERS_SOTE, subData[4]);
+
                     break;
                 case 5:
                     dataManager.increment(DataPoint.TOTAL_DEATHS);
                     dataManager.increment(com.TheatreTracker.utility.DataPoint.SOTE_DEATHS);
+                    dataManager.incrementPlayerSpecific(DataPoint.SOTE_DEATHS,subData[4]);
+                    dataManager.incrementPlayerSpecific(DataPoint.TOTAL_DEATHS, subData[4]);
                     if(players.get(subData[4]) != null)
                     {
                         players.put(subData[4], players.get(subData[4]) + 1);
@@ -837,15 +903,19 @@ public class RoomData {
                     break;
                 case 501:
                     dataManager.increment(DataPoint.KODAI_BOPS);
+                    dataManager.incrementPlayerSpecific(DataPoint.KODAI_BOPS, subData[4]);
                     break;
                 case 502:
                     dataManager.increment(DataPoint.DWH_BOPS);
+                    dataManager.incrementPlayerSpecific(DataPoint.DWH_BOPS, subData[4]);
                     break;
                 case 503:
                     dataManager.increment(DataPoint.BGS_WHACKS);
+                    dataManager.incrementPlayerSpecific(DataPoint.BGS_WHACKS, subData[4]);
                     break;
                 case 504:
                     dataManager.increment(DataPoint.CHALLY_POKE);
+                    dataManager.incrementPlayerSpecific(DataPoint.CHALLY_POKE, subData[4]);
                     break;
 
             }
@@ -875,6 +945,8 @@ public class RoomData {
                     break;
                 case 2:
                     dataManager.increment(DataPoint.HIT_HAMMERS_NYLO);
+                    dataManager.incrementPlayerSpecific(DataPoint.HIT_HAMMERS_NYLO, subData[4]);
+
                     break;
                 case 44:
                 case 6:
@@ -914,12 +986,17 @@ public class RoomData {
                 case 5:
                     nyloDeaths++;
                     dataManager.increment(DataPoint.TOTAL_DEATHS);
-                    if(players.get(subData[4]) != null) {
+                    dataManager.incrementPlayerSpecific(DataPoint.NYLO_DEATHS,subData[4]);
+                    dataManager.incrementPlayerSpecific(DataPoint.TOTAL_DEATHS, subData[4]);
+                    if(players.get(subData[4]) != null)
+                    {
                         players.put(subData[4], players.get(subData[4]) + 1);
                     }
                     break;
                 case 7:
                     dataManager.increment(DataPoint.ATTEMPTED_HAMMERS_NYLO);
+                    dataManager.incrementPlayerSpecific(DataPoint.ATTEMPTED_HAMMERS_NYLO, subData[4]);
+
                     break;
                 case 30:
                     nyloStarted = true;
@@ -1017,15 +1094,19 @@ public class RoomData {
                     break;
                 case 501:
                     dataManager.increment(DataPoint.KODAI_BOPS);
+                    dataManager.incrementPlayerSpecific(DataPoint.KODAI_BOPS, subData[4]);
                     break;
                 case 502:
                     dataManager.increment(DataPoint.DWH_BOPS);
+                    dataManager.incrementPlayerSpecific(DataPoint.DWH_BOPS, subData[4]);
                     break;
                 case 503:
                     dataManager.increment(DataPoint.BGS_WHACKS);
+                    dataManager.incrementPlayerSpecific(DataPoint.BGS_WHACKS, subData[4]);
                     break;
                 case 504:
                     dataManager.increment(DataPoint.CHALLY_POKE);
+                    dataManager.incrementPlayerSpecific(DataPoint.CHALLY_POKE, subData[4]);
                     break;
 
             }
@@ -1060,6 +1141,7 @@ public class RoomData {
                     break;
                 case 2:
                     dataManager.increment(DataPoint.HIT_HAMMERS_BLOAT);
+                    dataManager.incrementPlayerSpecific(DataPoint.HIT_HAMMERS_BLOAT, subData[4]);
                     break;
                 case 6:
                     break;
@@ -1070,6 +1152,7 @@ public class RoomData {
                     if (dataManager.get(com.TheatreTracker.utility.DataPoint.BLOAT_DOWNS) == 0)
                     {
                         dataManager.increment(DataPoint.BLOAT_FIRST_WALK_SCYTHES);
+                        dataManager.incrementPlayerSpecific(DataPoint.BLOAT_FIRST_WALK_SCYTHES, subData[4]);
                         bloatScytheBeforeFirstDown++;
                     }
                     break;
@@ -1094,17 +1177,23 @@ public class RoomData {
                     return false;
                 case 5:
                     dataManager.increment(com.TheatreTracker.utility.DataPoint.BLOAT_DEATHS);
+                    dataManager.incrementPlayerSpecific(DataPoint.BLOAT_DEATHS,subData[4]);
+                    dataManager.incrementPlayerSpecific(DataPoint.TOTAL_DEATHS, subData[4]);
                     dataManager.increment(DataPoint.TOTAL_DEATHS);
                     if(players.get(subData[4]) != null)
                     {
                         players.put(subData[4], players.get(subData[4]) + 1);
                     }
-                    if (dataManager.get(com.TheatreTracker.utility.DataPoint.BLOAT_DOWNS) == 0) {
+                    if (dataManager.get(com.TheatreTracker.utility.DataPoint.BLOAT_DOWNS) == 0)
+                    {
                         dataManager.increment(com.TheatreTracker.utility.DataPoint.BLOAT_FIRST_WALK_DEATHS);
+                        dataManager.incrementPlayerSpecific(DataPoint.BLOAT_FIRST_WALK_DEATHS, subData[4]);
                     }
                     break;
                 case 7:
                     dataManager.increment(DataPoint.ATTEMPTED_HAMMERS_BLOAT);
+                    dataManager.incrementPlayerSpecific(DataPoint.ATTEMPTED_HAMMERS_BLOAT, subData[4]);
+
                     break;
                 case 20:
                     bloatStarted = true;
@@ -1163,15 +1252,19 @@ public class RoomData {
                     break;
                 case 501:
                     dataManager.increment(DataPoint.KODAI_BOPS);
+                    dataManager.incrementPlayerSpecific(DataPoint.KODAI_BOPS, subData[4]);
                     break;
                 case 502:
                     dataManager.increment(DataPoint.DWH_BOPS);
+                    dataManager.incrementPlayerSpecific(DataPoint.DWH_BOPS, subData[4]);
                     break;
                 case 503:
                     dataManager.increment(DataPoint.BGS_WHACKS);
+                    dataManager.incrementPlayerSpecific(DataPoint.BGS_WHACKS, subData[4]);
                     break;
                 case 504:
                     dataManager.increment(DataPoint.CHALLY_POKE);
+                    dataManager.incrementPlayerSpecific(DataPoint.CHALLY_POKE, subData[4]);
                     break;
             }
             activeIndex++;
@@ -1201,6 +1294,7 @@ public class RoomData {
                 case 2:
                     dataManager.hammer(com.TheatreTracker.utility.DataPoint.MAIDEN_DEFENSE);
                     dataManager.increment(DataPoint.HIT_HAMMERS_MAIDEN);
+                    dataManager.incrementPlayerSpecific(DataPoint.HIT_HAMMERS_MAIDEN, subData[4]);
                     break;
                 case 3:
                     dataManager.bgs(com.TheatreTracker.utility.DataPoint.MAIDEN_DEFENSE, Integer.parseInt(subData[5]));
@@ -1230,14 +1324,18 @@ public class RoomData {
                 case 5:
                     dataManager.increment(com.TheatreTracker.utility.DataPoint.MAIDEN_DEATHS);
                     dataManager.increment(DataPoint.TOTAL_DEATHS);
-                    if(players.get(subData[4]) != null) {
+                    dataManager.incrementPlayerSpecific(DataPoint.TOTAL_DEATHS, subData[4]);
+                    if(players.get(subData[4]) != null)
+                    {
                         players.put(subData[4], players.get(subData[4]) + 1);
                     }
+                    dataManager.incrementPlayerSpecific(DataPoint.MAIDEN_DEATHS, subData[4]);
                     break;
                 case 6:
                     break;
                 case 7:
                     dataManager.increment(DataPoint.ATTEMPTED_HAMMERS_MAIDEN);
+                    dataManager.incrementPlayerSpecific(DataPoint.ATTEMPTED_HAMMERS_MAIDEN, subData[4]);
                     break;
                 case 9:
                     dataManager.increment(DataPoint.MAIDEN_BLOOD_THROWN);
@@ -1328,6 +1426,7 @@ public class RoomData {
                     break;
                 case 111:
                     dataManager.increment(DataPoint.MAIDEN_DINHS_SPECS);
+                    dataManager.incrementPlayerSpecific(DataPoint.MAIDEN_DINHS_SPECS, subData[4]);
                     String[] targets = subData[6].split(":");
                     int targetCountThisSpec = 0;
                     int crabCountThisSpec = 0;
@@ -1396,11 +1495,13 @@ public class RoomData {
                     break;
                 case 113:
                     dataManager.increment(DataPoint.MAIDEN_CHINS_THROWN);
+                    dataManager.incrementPlayerSpecific(DataPoint.MAIDEN_CHINS_THROWN, subData[4]);
                     try
                     {
                         if(Integer.parseInt(subData[5]) < 4 || Integer.parseInt(subData[5]) > 6)
                         {
                             dataManager.increment(DataPoint.MAIDEN_CHINS_THROWN_WRONG_DISTANCE);
+                            dataManager.incrementPlayerSpecific(DataPoint.MAIDEN_CHINS_THROWN_WRONG_DISTANCE, subData[4]);
                         }
                     }
                     catch
@@ -1444,26 +1545,44 @@ public class RoomData {
                 case 411:
                     dataManager.increment(DataPoint.MAIDEN_PLAYER_STOOD_IN_THROWN_BLOOD);
                     dataManager.increment(DataPoint.MAIDEN_HEALS_FROM_THROWN_BLOOD, Integer.parseInt(subData[5]));
+
                     dataManager.increment(DataPoint.MAIDEN_PLAYER_STOOD_IN_BLOOD);
                     dataManager.increment(DataPoint.MAIDEN_HEALS_FROM_ANY_BLOOD, Integer.parseInt(subData[5]));
+
+                    dataManager.incrementPlayerSpecific(DataPoint.MAIDEN_PLAYER_STOOD_IN_THROWN_BLOOD, subData[4]);
+                    dataManager.incrementPlayerSpecific(DataPoint.MAIDEN_HEALS_FROM_THROWN_BLOOD, subData[4], Integer.parseInt(subData[5]));
+
+                    dataManager.incrementPlayerSpecific(DataPoint.MAIDEN_PLAYER_STOOD_IN_BLOOD, subData[4]);
+                    dataManager.incrementPlayerSpecific(DataPoint.MAIDEN_HEALS_FROM_ANY_BLOOD, subData[4], Integer.parseInt(subData[5]));
                     break;
                 case 412:
                     dataManager.increment(DataPoint.MAIDEN_PLAYER_STOOD_IN_SPAWNED_BLOOD);
                     dataManager.increment(DataPoint.MAIDEN_HEALS_FROM_SPAWNED_BLOOD, Integer.parseInt(subData[5]));
+
                     dataManager.increment(DataPoint.MAIDEN_PLAYER_STOOD_IN_BLOOD);
                     dataManager.increment(DataPoint.MAIDEN_HEALS_FROM_ANY_BLOOD, Integer.parseInt(subData[5]));
+
+                    dataManager.incrementPlayerSpecific(DataPoint.MAIDEN_PLAYER_STOOD_IN_SPAWNED_BLOOD, subData[4]);
+                    dataManager.incrementPlayerSpecific(DataPoint.MAIDEN_HEALS_FROM_SPAWNED_BLOOD, subData[4], Integer.parseInt(subData[5]));
+
+                    dataManager.incrementPlayerSpecific(DataPoint.MAIDEN_PLAYER_STOOD_IN_BLOOD, subData[4]);
+                    dataManager.incrementPlayerSpecific(DataPoint.MAIDEN_HEALS_FROM_ANY_BLOOD, subData[4], Integer.parseInt(subData[5]));
                     break;
                 case 501:
                     dataManager.increment(DataPoint.KODAI_BOPS);
+                    dataManager.incrementPlayerSpecific(DataPoint.KODAI_BOPS, subData[4]);
                     break;
                 case 502:
                     dataManager.increment(DataPoint.DWH_BOPS);
+                    dataManager.incrementPlayerSpecific(DataPoint.DWH_BOPS, subData[4]);
                     break;
                 case 503:
                     dataManager.increment(DataPoint.BGS_WHACKS);
+                    dataManager.incrementPlayerSpecific(DataPoint.BGS_WHACKS, subData[4]);
                     break;
                 case 504:
                     dataManager.increment(DataPoint.CHALLY_POKE);
+                    dataManager.incrementPlayerSpecific(DataPoint.CHALLY_POKE, subData[4]);
                     break;
             }
             activeIndex++;

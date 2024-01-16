@@ -73,8 +73,9 @@ public class VerzikHandler extends RoomHandler {
     }
 
     public void updateGraphicChanged(GraphicChanged event) {
-        if (event.getActor().hasSpotAnim(VERZIK_BOUNCE_SPOT_ANIMATION)) {
-            clog.write(LogID.VERZIK_BOUNCE);
+        if (event.getActor().hasSpotAnim(VERZIK_BOUNCE_SPOT_ANIMATION))
+        {
+            clog.write(LogID.VERZIK_BOUNCE, event.getActor().getName());
         }
     }
 

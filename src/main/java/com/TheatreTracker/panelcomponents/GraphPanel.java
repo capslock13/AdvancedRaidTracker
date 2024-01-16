@@ -80,6 +80,7 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
     private ArrayList<RoomData> internalData;
 
     public GraphPanel(ArrayList<RoomData> data) {
+
         selectedBounds = new ArrayList<>();
         gradientStart = new Color(100, 170, 230, 90);
         gradientEnd = new Color(200, 240, 255, 90);

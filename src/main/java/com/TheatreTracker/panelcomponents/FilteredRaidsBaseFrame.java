@@ -3,22 +3,19 @@ package com.TheatreTracker.panelcomponents;
 
 import com.TheatreTracker.RoomData;
 import com.TheatreTracker.filters.*;
-import com.TheatreTracker.utility.DataPoint;
+import com.TheatreTracker.utility.*;
 import lombok.extern.slf4j.Slf4j;
-import com.TheatreTracker.utility.RoomUtil;
-import com.TheatreTracker.utility.StatisticGatherer;
-import net.runelite.client.plugins.raids.solver.Room;
 
 import javax.swing.*;
 import javax.swing.border.MatteBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.plaf.basic.BasicComboPopup;
-import javax.swing.plaf.basic.ComboPopup;
-import javax.swing.plaf.metal.MetalComboBoxUI;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
+import javax.swing.text.BadLocationException;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -65,7 +62,6 @@ public class FilteredRaidsBaseFrame extends BaseFrame
     private final JLabel overallPanelXarpusMinimum = new JLabel("", SwingConstants.RIGHT);
     private final JLabel overallPanelVerzikMinimum = new JLabel("", SwingConstants.RIGHT);
     private final JLabel overallPanelOverallMinimum = new JLabel("", SwingConstants.RIGHT);
-
     private final JLabel overallPanelMaidenMaximum = new JLabel("", SwingConstants.RIGHT);
     private final JLabel overallPanelBloatMaximum = new JLabel("", SwingConstants.RIGHT);
     private final JLabel overallPanelNyloMaximum = new JLabel("", SwingConstants.RIGHT);
@@ -85,6 +81,10 @@ public class FilteredRaidsBaseFrame extends BaseFrame
     public JLabel customModeLabel = new JLabel("", SwingConstants.RIGHT);
     public JLabel customMinLabel = new JLabel("", SwingConstants.RIGHT);
     public JLabel customMaxLabel = new JLabel("", SwingConstants.RIGHT);
+
+    private ArrayList<Map<String, ArrayList<String>>> aliases;
+
+    private final JTextArea aliasText;
 
     JTextField dateTextField;
     JCheckBox filterSpectateOnly;
@@ -130,9 +130,11 @@ public class FilteredRaidsBaseFrame extends BaseFrame
 
     public FilteredRaidsBaseFrame()
     {
+        aliases = new ArrayList<>();
         filteredIndices = new ArrayList<>();
         comparisons = new ArrayList<>();
         activeFilters = new ArrayList<>();
+        aliasText = new JTextArea();
         this.setPreferredSize(new Dimension(1200,820));
     }
 
@@ -180,7 +182,8 @@ public class FilteredRaidsBaseFrame extends BaseFrame
 
     public void updateTable()
     {
-        int timeToDisplay = 0;
+
+        String timeToDisplay = "0";
         int completions = 0;
         ArrayList<RoomData> tableData = new ArrayList<>();
         for(RoomData data : currentData)
@@ -304,8 +307,8 @@ public class FilteredRaidsBaseFrame extends BaseFrame
             {
                 shouldDataBeIncluded = filterComboBoxScale.getSelectedIndex()+1 == data.raidTeamSize;
             }
-            timeToDisplay = data.getSpecificTimeInactive(viewByRaidComboBox.getSelectedItem().toString());
-            if(timeToDisplay == 0)
+            timeToDisplay = String.valueOf(data.getSpecificTimeInactive(viewByRaidComboBox.getSelectedItem().toString()));
+            if(timeToDisplay == "0")
             {
                 //shouldDataBeIncluded = false;
             }
@@ -413,7 +416,22 @@ public class FilteredRaidsBaseFrame extends BaseFrame
             {
                 scaleString += " (Hard)";
             }
-            timeToDisplay = raid.getSpecificTimeInactive(viewByRaidComboBox.getSelectedItem().toString());
+            PlayerCorrelatedPointData pointData = raid.getSpecificTimeInactiveCorrelated(viewByRaidComboBox.getSelectedItem().toString());
+            if(pointData == null)
+            {
+                timeToDisplay = String.valueOf(raid.getSpecificTimeInactive(viewByRaidComboBox.getSelectedItem().toString()));
+            }
+            else
+            {
+                if(pointData.value == 0)
+                {
+                    timeToDisplay = "0";
+                }
+                else
+                {
+                    timeToDisplay = pointData.value + " (" + pointData.player + ")";
+                }
+            }
             Object[] row =
                     {
                             raid.index,
@@ -455,7 +473,14 @@ public class FilteredRaidsBaseFrame extends BaseFrame
 
     boolean isTime()
     {
-        return (Objects.requireNonNull(DataPoint.getValue(Objects.requireNonNull(viewByRaidComboBox.getSelectedItem()).toString())).type == DataPoint.types.TIME);
+        if(!viewByRaidComboBox.getSelectedItem().toString().contains("Player:"))
+        {
+            return (Objects.requireNonNull(DataPoint.getValue(Objects.requireNonNull(viewByRaidComboBox.getSelectedItem()).toString())).type == DataPoint.types.TIME);
+        }
+        else
+        {
+            return false;
+        }
     }
 
     public String getRoomStatus(RoomData data)
@@ -571,6 +596,7 @@ public class FilteredRaidsBaseFrame extends BaseFrame
                 verzikCount++;
             }
         }
+        tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
         tabbedPane.setTitleAt(1, "Maiden (" + maidenCount + ")");
         tabbedPane.setTitleAt(2, "Bloat (" + bloatCount + ")");
         tabbedPane.setTitleAt(3, "Nylo (" + nyloCount + ")");
@@ -682,6 +708,32 @@ public class FilteredRaidsBaseFrame extends BaseFrame
     private JPopupMenu testPopupMenu;
     private List<String> testFlattenedData;
     private AbstractButton arrowButton;
+    private boolean writing = false;
+
+    private void updateAliases()
+    {
+        writing = true;
+        aliases.clear();
+        aliasText.setText("");
+        for(String s : DataWriter.readAliasFile())
+        {
+            aliasText.append(s+"\n");
+            String[] split = s.split(":");
+            if(split.length != 2)
+            {
+                continue;
+            }
+            String name = split[0];
+            ArrayList<String> names = new ArrayList<String>(Arrays.asList(split[1].split(",")));
+            if(names.size() != 0)
+            {
+                Map<String,ArrayList<String>> map = new LinkedHashMap<>();
+                map.put(name, names);
+                aliases.add(map);
+            }
+        }
+        writing = false;
+    }
 
     private void setPopupVisible(boolean visible)
     {
@@ -811,9 +863,50 @@ public class FilteredRaidsBaseFrame extends BaseFrame
                     testFlattenedData.add(itemName);
                 }
             }
-
             testPopupMenu.add(menu);
         }
+        JMenu playerSpecificMenu = new JMenu("Player Specific");
+        playerSpecificMenu.setBackground(Color.BLACK);
+        playerSpecificMenu.setOpaque(true);
+        String[] qualifiers = new String[]{"Maiden","Bloat","Nylo","Sote","Xarp","Verz","deaths"};
+
+        for(String s : qualifiers)
+        {
+            JMenu room = new JMenu(s);
+            room.setBackground(Color.BLACK);
+            room.setOpaque(true);
+            for(String qualified : DataPoint.getPlayerSpecific())
+            {
+                if(qualified.contains(s))
+                {
+                    room.add(createMenuItem("Player: " + qualified));
+                    testFlattenedData.add("Player: " + qualified);
+                }
+            }
+            playerSpecificMenu.add(room);
+        }
+        JMenu room = new JMenu("Other");
+        room.setBackground(Color.BLACK);
+        room.setOpaque(true);
+        for(String qualified : DataPoint.getPlayerSpecific())
+        {
+            boolean anyFlagged = false;
+            for(String s : qualifiers)
+            {
+                if(qualified.contains(s))
+                {
+                    anyFlagged = true;
+                }
+            }
+            if(!anyFlagged)
+            {
+                room.add(createMenuItem("Player: " + qualified));
+                testFlattenedData.add("Player: " + qualified);
+            }
+        }
+        playerSpecificMenu.add(room);
+
+        testPopupMenu.add(playerSpecificMenu);
 
         viewByRaidComboBox = new JComboBox<>();
         viewByRaidComboBox.setEditable(true);
@@ -1614,6 +1707,7 @@ public class FilteredRaidsBaseFrame extends BaseFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
+                updateAliases();
                 ArrayList<RoomData> rows = new ArrayList<>();
                 int[] toRemove = table.getSelectedRows();
                 for(int i = 0; i < toRemove.length; i++)
@@ -1628,34 +1722,38 @@ public class FilteredRaidsBaseFrame extends BaseFrame
                         Map<String, ArrayList<RoomData>> scale = new LinkedHashMap<>();
                         ArrayList<RoomData> list = new ArrayList<>();
                         list.add(data);
-                        scale.put(data.getPlayerList(), list);
+                        scale.put(data.getPlayerList(aliases), list);
                         sessions.put(data.players.size(), scale);
                     }
                     else
                     {
-                        if(!sessions.get(data.players.size()).containsKey(data.getPlayerList()))
+                        if(!sessions.get(data.players.size()).containsKey(data.getPlayerList(aliases)))
                         {
                             ArrayList<RoomData> list = new ArrayList<>();
                             list.add(data);
-                            sessions.get(data.players.size()).put(data.getPlayerList(), list);
+                            sessions.get(data.players.size()).put(data.getPlayerList(aliases), list);
                         }
                         else
                         {
-                            sessions.get(data.players.size()).get(data.getPlayerList()).add(data);
+                            sessions.get(data.players.size()).get(data.getPlayerList(aliases)).add(data);
                         }
                     }
                 }
-                ArrayList<String> labels = new ArrayList<>();
-                ArrayList<ArrayList<RoomData>> dataSets = new ArrayList<>();
+                ArrayList<ArrayList<String>> labelSets = new ArrayList<>();
+                Map<Integer, ArrayList<ArrayList<RoomData>>> dataSets = new LinkedHashMap<>();
                 for(Integer scale : sessions.keySet())
                 {
+                    ArrayList<ArrayList<RoomData>> scaleData = new ArrayList<>();
+                    ArrayList<String> labels = new ArrayList<>();
                     for(String playerList : sessions.get(scale).keySet())
                     {
-                        dataSets.add(sessions.get(scale).get(playerList));
+                        scaleData.add(sessions.get(scale).get(playerList));
                         labels.add(playerList);
                     }
+                    dataSets.put(scale, scaleData);
+                    labelSets.add(labels);
                 }
-                ComparisonView graphView = new ComparisonView(dataSets, labels);
+                ComparisonViewFrame graphView = new ComparisonViewFrame(dataSets, labelSets);
                 graphView.open();
             }
         });
@@ -1798,6 +1896,57 @@ public class FilteredRaidsBaseFrame extends BaseFrame
         comparisonTableScroll.setPreferredSize(new Dimension(380, 155));
         updateComparisonTable();
 
+        JPanel rightBottomMostContainer = new JPanel();
+        rightBottomMostContainer.setBorder(BorderFactory.createTitledBorder("Alias Options"));
+
+        aliasText.getDocument().addDocumentListener(new DocumentListener()
+        {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                try
+                {
+                    if(!writing)
+                        DataWriter.writeAliasFile(e.getDocument().getText(0, e.getDocument().getLength()).replaceAll("\n", System.getProperty("line.separator")));
+                }
+                catch (BadLocationException ex)
+                {
+                    ex.printStackTrace();
+                }
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                try
+                {
+                    if(!writing)
+                        DataWriter.writeAliasFile(e.getDocument().getText(0, e.getDocument().getLength()).replaceAll("\n", System.getProperty("line.separator")));
+                }
+                catch (BadLocationException ex)
+                {
+                    ex.printStackTrace();
+                }
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e)
+            {
+                try
+                {
+                    if(!writing)
+                        DataWriter.writeAliasFile(e.getDocument().getText(0, e.getDocument().getLength()).replaceAll("\n", System.getProperty("line.separator")));
+                }
+                catch (BadLocationException ex)
+                {
+                    ex.printStackTrace();
+                }
+            }
+        });
+
+        updateAliases();
+
+        JScrollPane aliasScrollPane = new JScrollPane(aliasText);
+        aliasScrollPane.setPreferredSize(new Dimension(380, 70));
+        rightBottomMostContainer.add(aliasScrollPane);
 
         rightBottomBottomContainer.add(comparisonTableScroll);
         JButton viewComparisonsButton = new JButton("View Comparisons");
@@ -1813,7 +1962,7 @@ public class FilteredRaidsBaseFrame extends BaseFrame
                 for (int i = 0; i < comparisonTable.getModel().getRowCount(); i++) {
                     labels.add(comparisonTable.getModel().getValueAt(i, 1).toString());
                 }
-                ComparisonView graphView = new ComparisonView(comparisons, labels);
+                ComparisonViewFrame graphView = new ComparisonViewFrame(comparisons, labels);
                 graphView.open();
             }
         });
@@ -1822,7 +1971,7 @@ public class FilteredRaidsBaseFrame extends BaseFrame
         rightContainer.add(rightTopContainer);
         rightContainer.add(rightBottomContainer);
         rightContainer.add(rightBottomBottomContainer);
-
+        rightContainer.add(rightBottomMostContainer);
         splitLeftRight.add(rightContainer);
 
         add(splitLeftRight);

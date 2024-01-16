@@ -172,6 +172,7 @@ public enum DataPoint {
 
     ;
 
+
     public static DataPoint getValue(String s) {
         for (DataPoint point : values()) {
             if (point.name.equals(s)) {
@@ -222,6 +223,19 @@ public enum DataPoint {
         this.value = 0;
         this.type = type;
         this.room = room;
+    }
+
+    public static String[] getPlayerSpecific()
+    {
+        ArrayList<String> valuesToGather = new ArrayList<>();
+        for (DataPoint point : DataPoint.values())
+        {
+            if (point.playerSpecific)
+            {
+                valuesToGather.add(point.name);
+            }
+        }
+        return Arrays.copyOf(valuesToGather.toArray(), valuesToGather.size(), String[].class);
     }
 
     public static String[] getOtherIntNames() {

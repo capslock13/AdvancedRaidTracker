@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 @Slf4j
-public class ComparisonView extends BaseFrame
+public class ComparisonViewPanel extends JPanel
 {
     private JPanel container;
     private GraphPanel graph;
@@ -69,7 +69,7 @@ public class ComparisonView extends BaseFrame
     JSpinner groupOffsetSpinner;
 
     JCheckBox groupingEnabled;
-    public ComparisonView(ArrayList<ArrayList<RoomData>> raidData, ArrayList<String> names)
+    public ComparisonViewPanel(ArrayList<ArrayList<RoomData>> raidData, ArrayList<String> names)
     {
         leftLabel = new JTextField("Min cutoff: ");
         rightLabel = new JTextField("Max cutoff: ");
@@ -187,12 +187,14 @@ public class ComparisonView extends BaseFrame
         graph2Minimum = new JLabel("", SwingConstants.RIGHT);
 
         topGraphTabs = new JTabbedPane();
+        topGraphTabs.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
         topGraphTabs.addChangeListener(cl ->
         {
             switchGraphData();
             updateOtherPanels();
         });
         bottomGraphTabs = new JTabbedPane();
+        bottomGraphTabs.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
         bottomGraphTabs.addChangeListener(cl->
         {
             switchGraphData();
@@ -223,7 +225,6 @@ public class ComparisonView extends BaseFrame
 
         buildUI();
         add(container);
-        pack();
     }
 
     private int valX = 0;

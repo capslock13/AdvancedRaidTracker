@@ -17,7 +17,20 @@ public class RoomUtil {
 
     public static boolean debug = true;
 
-    public static String time(int ticks) {
+    public static String time(String ticks)
+    {
+        try
+        {
+            return time(Integer.parseInt(ticks));
+        }
+        catch (Exception e)
+        {
+            return ticks;
+        }
+    }
+
+    public static String time(int ticks)
+    {
         if (ticks == 0 || ticks == Integer.MAX_VALUE || ticks == -1) {
             return "-";
         }

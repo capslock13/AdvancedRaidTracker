@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.HitsplatID;
 import net.runelite.api.NPC;
+import net.runelite.api.Player;
 import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.*;
@@ -80,11 +81,22 @@ public class VerzikHandler extends RoomHandler {
     }
 
 
-    public void updateAnimationChanged(AnimationChanged event) {
+    public void updateAnimationChanged(AnimationChanged event)
+    {
         int id = event.getActor().getAnimation();
-        if (id == 8117) {
+        if(roomState == RoomState.VerzikRoomState.PHASE_1) {
+            if (event.getActor() instanceof Player)
+            {
+                Player p = (Player) event.getActor();
+                clog.write(P1_ATTACK, p.getName(), ""+p.getAnimation(), ""+(client.getTickCount()-verzikEntryTick));
+            }
+
         }
-        if (event.getActor().getAnimation() == VERZIK_BECOMES_SPIDER) {
+        if (id == 8117)
+        {
+        }
+        if (event.getActor().getAnimation() == VERZIK_BECOMES_SPIDER)
+        {
             endP3();
         }
     }

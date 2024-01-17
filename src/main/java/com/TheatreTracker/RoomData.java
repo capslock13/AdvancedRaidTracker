@@ -1,9 +1,6 @@
 package com.TheatreTracker;
 
-import com.TheatreTracker.utility.DataManager;
-import com.TheatreTracker.utility.DataPoint;
-import com.TheatreTracker.utility.DataPointPlayerData;
-import com.TheatreTracker.utility.PlayerCorrelatedPointData;
+import com.TheatreTracker.utility.*;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.plugins.raids.RoomType;
 
@@ -172,6 +169,8 @@ public class RoomData {
     public LinkedHashMap<String, Integer> players;
 
     private ArrayList<DataPointPlayerData> playerSpecificData;
+
+    public ArrayList<PlayerDidAttack> attacksP1;
 
     public String[] raidDataRaw;
 
@@ -360,7 +359,8 @@ public class RoomData {
                 + dataManager.get(com.TheatreTracker.utility.DataPoint.VERZIK_TOTAL_TIME);*/
     }
 
-    public RoomData(String[] parameters) throws Exception {
+    public RoomData(String[] parameters) throws Exception
+    {
         dataManager = new DataManager();
         raidDataRaw = parameters;
         partyComplete = false;
@@ -372,6 +372,7 @@ public class RoomData {
         hardMode = false;
         storyMode = false;
         playerSpecificData = new ArrayList<>();
+        attacksP1 = new ArrayList<>();
 
         players = new LinkedHashMap<>();
         globalData = new ArrayList<String>(Arrays.asList(parameters));
@@ -446,8 +447,6 @@ public class RoomData {
                 case 2:
                     dataManager.increment(DataPoint.HIT_HAMMERS_VERZIK);
                     dataManager.incrementPlayerSpecific(DataPoint.HIT_HAMMERS_VERZIK, subData[4]);
-
-
                     break;
                 case 3:
                     dataManager.increment(DataPoint.ATTEMPTED_BGS_VERZ);
@@ -479,7 +478,16 @@ public class RoomData {
                 case 7:
                     dataManager.increment(DataPoint.ATTEMPTED_HAMMERS_VERZIK);
                     dataManager.incrementPlayerSpecific(DataPoint.ATTEMPTED_HAMMERS_VERZIK, subData[4]);
-
+                    break;
+                case 8:
+                    try
+                    {
+                        attacksP1.add(new PlayerDidAttack(subData[4], Integer.parseInt(subData[5]), Integer.parseInt(subData[6])));
+                    }
+                    catch(Exception e)
+                    {
+                        log.info("Could not parse attacks p1");
+                    }
                     break;
                 case 70:
                     break;
@@ -1313,10 +1321,12 @@ public class RoomData {
                     if (dataManager.get(com.TheatreTracker.utility.DataPoint.MAIDEN_TOTAL_TIME) != 0) {
                         maidenReset = true;
                     } else {
-                        if (!maidenSpawned) {
+                        if (!maidenSpawned)
+                        {
                             maidenReset = true;
                             resetBeforeMaiden = true;
-                        } else {
+                        } else
+                        {
                             maidenWipe = true;
                         }
                     }

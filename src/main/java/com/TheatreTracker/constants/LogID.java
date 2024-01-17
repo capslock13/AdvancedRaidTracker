@@ -15,7 +15,7 @@ public enum LogID {
     PLAYER_DIED(5),
     ENTERED_NEW_TOB_REGION(6),
     HAMMER_ATTEMPTED(7),
-    DB_SPECS(8),
+    P1_ATTACK(8),
 
     BLOOD_THROWN(9),
     BLOOD_SPAWNED(10),

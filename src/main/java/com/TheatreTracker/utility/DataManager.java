@@ -2,11 +2,14 @@ package com.TheatreTracker.utility;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.ArrayList;
+
 @Slf4j
 public class DataManager {
 
     private DataPointWrapper data[];
     private DataPointPlayerData playerSpecificData[];
+
 
     public DataManager()
     {

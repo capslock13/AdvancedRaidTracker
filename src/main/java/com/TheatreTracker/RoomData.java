@@ -169,6 +169,7 @@ public class RoomData {
     public LinkedHashMap<String, Integer> players;
 
     private ArrayList<DataPointPlayerData> playerSpecificData;
+    public ArrayList<Integer> dawnDrops;
 
     public ArrayList<PlayerDidAttack> attacksP1;
 
@@ -373,6 +374,7 @@ public class RoomData {
         storyMode = false;
         playerSpecificData = new ArrayList<>();
         attacksP1 = new ArrayList<>();
+        dawnDrops = new ArrayList<>();
 
         players = new LinkedHashMap<>();
         globalData = new ArrayList<String>(Arrays.asList(parameters));
@@ -480,13 +482,21 @@ public class RoomData {
                     dataManager.incrementPlayerSpecific(DataPoint.ATTEMPTED_HAMMERS_VERZIK, subData[4]);
                     break;
                 case 8:
-                    try
+                    String weapon = "";
+                        try
+                        {
+                            weapon = subData[8];
+                        }
+                        catch (Exception e)
+                        {
+                            log.info("Could not parse attacks p1");
+                        }
+                    attacksP1.add(new PlayerDidAttack(subData[4], Integer.parseInt(subData[5]), Integer.parseInt(subData[6]), weapon));
+                    break;
+                case 800:
+                    if(verzikStarted)
                     {
-                        attacksP1.add(new PlayerDidAttack(subData[4], Integer.parseInt(subData[5]), Integer.parseInt(subData[6])));
-                    }
-                    catch(Exception e)
-                    {
-                        log.info("Could not parse attacks p1");
+                        dawnDrops.add(Integer.parseInt(subData[4]));
                     }
                     break;
                 case 70:

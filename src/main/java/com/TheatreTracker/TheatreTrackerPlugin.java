@@ -647,6 +647,12 @@ public class TheatreTrackerPlugin extends Plugin
     }
 
     @Subscribe
+    public void onItemSpawned(ItemSpawned event)
+    {
+        currentRoom.updateItemSpawned(event);
+    }
+
+    @Subscribe
     public void onProjectileMoved(ProjectileMoved event)
     {
         int id = event.getProjectile().getId();

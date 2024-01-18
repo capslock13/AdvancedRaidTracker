@@ -4,14 +4,12 @@ import com.TheatreTracker.TheatreTrackerConfig;
 import com.TheatreTracker.constants.LogID;
 import com.TheatreTracker.utility.DataWriter;
 import lombok.extern.slf4j.Slf4j;
-import net.runelite.api.Client;
-import net.runelite.api.HitsplatID;
-import net.runelite.api.NPC;
-import net.runelite.api.Player;
+import net.runelite.api.*;
 import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.*;
 import com.TheatreTracker.utility.RoomState;
+import net.runelite.api.kit.KitType;
 
 import java.util.ArrayList;
 
@@ -80,6 +78,14 @@ public class VerzikHandler extends RoomHandler {
         }
     }
 
+    public void updateItemSpawned(ItemSpawned event)
+    {
+        if(event.getItem().getId() == 22516)
+        {
+            clog.write(DAWN_DROPPED, client.getTickCount()-verzikEntryTick);
+        }
+    }
+
 
     public void updateAnimationChanged(AnimationChanged event)
     {
@@ -88,7 +94,15 @@ public class VerzikHandler extends RoomHandler {
             if (event.getActor() instanceof Player)
             {
                 Player p = (Player) event.getActor();
-                clog.write(P1_ATTACK, p.getName(), ""+p.getAnimation(), ""+(client.getTickCount()-verzikEntryTick));
+                IterableHashTable<ActorSpotAnim> graphics = p.getSpotAnims();
+                String animations = "";
+                for(ActorSpotAnim anim : graphics)
+                {
+                    animations += String.valueOf(anim.getId());
+                    animations += ":";
+                }
+                int weaponID = p.getPlayerComposition().getEquipmentId(KitType.WEAPON);
+                clog.write(P1_ATTACK, p.getName(), ""+p.getAnimation(), ""+(client.getTickCount()-verzikEntryTick),animations,String.valueOf(weaponID));
             }
 
         }

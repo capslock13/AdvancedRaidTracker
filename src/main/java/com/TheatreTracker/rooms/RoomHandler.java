@@ -103,7 +103,13 @@ public class RoomHandler {
     public void updateOverheadText(OverheadTextChanged event) {
     }
 
-    public void updateGameTick(GameTick event) {
+    public void updateGameTick(GameTick event)
+    {
+    }
+
+    public void updateItemSpawned(ItemSpawned event)
+    {
+
     }
 
     public void updateAnimationChanged(AnimationChanged event) {

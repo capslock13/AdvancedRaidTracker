@@ -141,7 +141,7 @@ public class P1Panel extends JPanel
 
         for(Integer i : data.dawnDrops)
         {
-            g.drawString("X", 6+startX+((i-1)*20), startY+100+fontHeight+3);
+            g.drawString("X", 6+startX+((i)*20), startY+100+fontHeight+3);
         }
 
         g.setColor(oldColor);

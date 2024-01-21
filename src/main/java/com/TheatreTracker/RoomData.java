@@ -535,7 +535,7 @@ public class RoomData {
                     verzikDawnDamage += Integer.parseInt(subData[5]);
                     break;
                 case 80:
-                    verzikRedsProc = Integer.parseInt(subData[4]);
+                    dataManager.set(DataPoint.VERZIK_REDS_SPLIT, Integer.parseInt(subData[4]));
                     break;
                 case 206:
                     verzikStartAccurate = true;

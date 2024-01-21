@@ -54,6 +54,16 @@ public class VerzikHandler extends RoomHandler {
 
     public void updateGameTick(GameTick event)
     {
+        if(roomState == RoomState.VerzikRoomState.PHASE_1)
+        {
+            for(Projectile projectile : client.getProjectiles())
+            {
+                if(projectile.getId() == 1547 || projectile.getId() == 1544)
+                {
+                    log.info("Projectile on tick " + client.getTickCount() + ", " + " game cylce: " + client.getGameCycle() + ", projectile starts: " + projectile.getStartCycle());
+                }
+            }
+        }
         if(webTick != -1)
         {
             webTick++;

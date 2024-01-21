@@ -84,6 +84,7 @@ public enum DataPoint {
     XARP_SCREECH("Xarp screech", types.TIME, rooms.XARPUS),
     XARP_POST_SCREECH("Xarp post screech", types.TIME, rooms.XARPUS),
     VERZIK_P1_SPLIT("Verzik P1 split", types.TIME, rooms.VERZIK),
+    VERZIK_REDS_SPLIT("Verzik reds split", types.TIME, rooms.VERZIK),
     VERZIK_P2_SPLIT("Verzik P2 split", types.TIME, rooms.VERZIK),
     VERZIK_P2_DURATION("Verzik P2 duration", types.TIME, rooms.VERZIK),
     VERZIK_P3_DURATION("Verzik P3 duration", types.TIME, rooms.VERZIK),

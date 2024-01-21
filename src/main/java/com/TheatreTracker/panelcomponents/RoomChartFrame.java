@@ -64,14 +64,17 @@ public class RoomChartFrame extends BaseFrame
             ArrayList<Integer> bloatLines = new ArrayList<>();
             bloatLines.add(data.getValue(DataPoint.BLOAT_FIRST_DOWN_TIME));
 
+            ArrayList<Integer> verzikP2Lines = new ArrayList<>();
+            verzikP2Lines.add(data.getValue(DataPoint.VERZIK_REDS_SPLIT));
+
 
             maidenCharts.add(new RoomChartPanel(data.maidenAttacks, data.players.keySet(), "Maiden",roomData.size(), 1, data.getMaidenTime(), blankSpecific, maidenLines));
             bloatCharts.add(new RoomChartPanel(data.bloatAttacks, data.players.keySet(),"Bloat", roomData.size(), 1, data.getBloatTime(), blankSpecific, bloatLines));
-            nyloCharts.add(new RoomChartPanel(data.nyloAttacks,data.players.keySet(), "Nylocas Boss", roomData.size(), data.getValue(DataPoint.NYLO_BOSS_SPAWN)+1, data.getNyloTime(), blankSpecific, blankLines));
+            nyloCharts.add(new RoomChartPanel(data.nyloAttacks,data.players.keySet(), "Nylocas Boss", roomData.size(), data.getValue(DataPoint.NYLO_BOSS_SPAWN)+3, data.getNyloTime(), blankSpecific, blankLines));
             soteCharts.add(new RoomChartPanel(data.soteAttacks,data.players.keySet(), "Sotetseg", roomData.size(), 1, data.getSoteTime(), blankSpecific, blankLines));
             xarpCharts.add(new RoomChartPanel(data.xarpAttacks,data.players.keySet(), "Xarpus", roomData.size(), 1, data.getXarpTime(), blankSpecific, blankLines));
             verzp1Charts.add(new RoomChartPanel(data.verzAttacks,data.players.keySet(), "Verzik P1", roomData.size(), 1, data.getValue(DataPoint.VERZIK_P1_SPLIT), data.dawnDrops, blankLines));
-            verzp2Charts.add(new RoomChartPanel(data.verzAttacks,data.players.keySet(), "Verzik P2", roomData.size(), data.getValue(DataPoint.VERZIK_P1_SPLIT)+1, data.getValue(DataPoint.VERZIK_P2_SPLIT), blankSpecific, blankLines));
+            verzp2Charts.add(new RoomChartPanel(data.verzAttacks,data.players.keySet(), "Verzik P2", roomData.size(), data.getValue(DataPoint.VERZIK_P1_SPLIT)+1, data.getValue(DataPoint.VERZIK_P2_SPLIT), blankSpecific, verzikP2Lines));
             verzp3Charts.add(new RoomChartPanel(data.verzAttacks,data.players.keySet(), "Verzik P3", roomData.size(), data.getValue(DataPoint.VERZIK_P2_SPLIT)+1, data.getVerzikTime(), blankSpecific, blankLines));
 
         }
@@ -79,28 +82,28 @@ public class RoomChartFrame extends BaseFrame
         RoomChartLegend legendPanel = new RoomChartLegend();
 
         maidenTab.add(new JScrollPane(maidenCharts));
-        maidenTab.add(legendPanel);
+        //maidenTab.add(legendPanel);
 
         bloatTab.add(new JScrollPane(bloatCharts));
-        bloatTab.add(legendPanel);
+        //bloatTab.add(legendPanel);
 
         nyloTab.add(new JScrollPane(nyloCharts));
-        nyloTab.add(legendPanel);
+        //nyloTab.add(legendPanel);
 
         soteTab.add(new JScrollPane(soteCharts));
-        soteTab.add(legendPanel);
+        //soteTab.add(legendPanel);
 
         xarpTab.add(new JScrollPane(xarpCharts));
-        xarpTab.add(legendPanel);
+        //xarpTab.add(legendPanel);
 
         verzP1Tab.add(new JScrollPane(verzp1Charts));
-        verzP1Tab.add(legendPanel);
+        //verzP1Tab.add(legendPanel);
 
         verzP2Tab.add(new JScrollPane(verzp2Charts));
-        verzP2Tab.add(legendPanel);
+        //verzP2Tab.add(legendPanel);
 
         verzP3Tab.add(new JScrollPane(verzp3Charts));
-        verzP3Tab.add(legendPanel);
+        //verzP3Tab.add(legendPanel);
 
         basepane.addTab("Maiden", maidenTab);
         basepane.addTab("Bloat", bloatTab);

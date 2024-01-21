@@ -32,6 +32,11 @@ public class RoomChartPanel extends JPanel
     String room;
     ArrayList<Integer> specific;
     ArrayList<Integer> lines;
+    WeaponAttack[] weaponAttacks;
+    int keyColumns;
+    int keyRows;
+    int keyCount;
+    int keyMargin;
 
     public RoomChartPanel(ArrayList<PlayerDidAttack> attacks, Set<String> players, String room, int size, int start, int end, ArrayList<Integer> specificData, ArrayList<Integer> lines)
     {
@@ -55,9 +60,20 @@ public class RoomChartPanel extends JPanel
                 boxCount = 1;
             }
             boxHeight = (players.size() + 3) * 20;
-            boxWidth = (shouldWrap) ? 1120 : 100 + (length + 1) * scale;
             int height = boxCount * boxHeight;
-            img = new BufferedImage(boxWidth, height, BufferedImage.TYPE_INT_ARGB);
+            boxWidth = (shouldWrap) ? 1120 : 100 + (length + 1) * scale;
+            this.weaponAttacks = WeaponAttack.values();
+            keyCount = weaponAttacks.length;
+            keyRows = (height-20)/30;
+            keyMargin = (((height-20)%keyCount)+20)/2;
+            keyColumns = keyCount/keyRows;
+            if(keyCount%keyRows != 0)
+            {
+                keyColumns++;
+            }
+            log.info("Key count: " + keyCount + ", Key Rows: " + keyRows + ", Key Columns: " + keyColumns + ", Key margin: " + keyMargin + ", height: " + height);
+            int width = boxWidth + (keyColumns*150)+40;
+            img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
             drawGraph();
         }
         else
@@ -101,8 +117,28 @@ public class RoomChartPanel extends JPanel
         g.setColor(new Color(40, 40, 40));
         g.fillRect(0, 0, img.getWidth(), img.getHeight());
 
-        Font f = g.getFont();
         int fontHeight = getStringBounds(g, "a", 0, 0).height;
+
+        g.setColor(Color.WHITE);
+        g.drawRect(boxWidth+(keyMargin/2), keyMargin, (keyColumns*150)-10, (keyRows*30));
+
+        int currentColumn = 0;
+        int currentRow = 0;
+        for(int i = 0; i < keyCount; i++)
+        {
+            WeaponAttack attack = weaponAttacks[i];
+            g.setColor(attack.color);
+            g.fillRect(boxWidth+keyMargin+(currentColumn*150)+2, keyMargin+(currentRow*30)+7, scale, scale);
+            g.setColor(Color.WHITE);
+            g.drawString(attack.shorthand, boxWidth+keyMargin+(currentColumn*150)+3, keyMargin+(currentRow*30)+22);
+            g.drawString(attack.name, boxWidth+keyMargin+(currentColumn*150)+33, keyMargin+(currentRow*30)+22);
+            currentRow++;
+            if(currentRow +1 > keyRows)
+            {
+                currentColumn++;
+                currentRow = 0;
+            }
+        }
 
         for(int i = startTick; i < endTick; i++)
         {
@@ -159,6 +195,8 @@ public class RoomChartPanel extends JPanel
                         case "Verzik P1":
                             g.drawString("Dawn Appear: ", 10, j*boxHeight+((players.size()+2)*scale)+(fontHeight/2));
                             break;
+                        case "Verzik P2":
+                            g.drawString("Healing end: ", 10, j*boxHeight+((players.size()+2)*scale)+(fontHeight/2));
                     }
                 }
             }

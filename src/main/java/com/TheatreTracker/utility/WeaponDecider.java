@@ -67,14 +67,14 @@ public class WeaponDecider
                 weaponUsed = WeaponAttack.SCYTHE;
                 break;
             case 7511:
-                if(spotAnims.stream().anyMatch(p->p.equalsIgnoreCase("1336") || p.equalsIgnoreCase("2623")))
-                {
+                //if(spotAnims.stream().anyMatch(p->p.contains("1336") || p.contains("2623")))
+                //{
+                  //  weaponUsed = WeaponAttack.DINHS_SPEC;
+                //}
+                //else
+                //{
                     weaponUsed = WeaponAttack.DINHS_SPEC;
-                }
-                else
-                {
-                    weaponUsed = WeaponAttack.DINHS_WHACK;
-                }
+                //}
                 break;
             case 7618:
                 weaponUsed = WeaponAttack.CHIN;

@@ -30,7 +30,9 @@ public class XarpusHandler extends RoomHandler {
     private int xarpusScreechTick = -1;
     private int xarpusEndTick = -1;
 
-    public void reset() {
+    public void reset()
+    {
+        super.reset();
         xarpusEntryTick = -1;
         xarpusExhumedsEnd = -1;
         xarpusScreechTick = -1;
@@ -122,9 +124,11 @@ public class XarpusHandler extends RoomHandler {
         this.client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", splitMessage, null, false);
     }
 
-    private void startXarpus() {
+    private void startXarpus()
+    {
         roomState = RoomState.XarpusRoomState.EXHUMEDS;
         xarpusEntryTick = client.getTickCount();
+        roomStartTick = client.getTickCount();
         clog.write(XARPUS_STARTED);
         clog.write(ACCURATE_XARP_START);
     }

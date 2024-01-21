@@ -107,7 +107,7 @@ public class P1Panel extends JPanel
             g.drawString(String.valueOf(tick), i-14, startY-5);
             tick++;
         }
-
+/*
         for(PlayerDidAttack attack : data.attacksP1)
         {
             log.info(attack.player + " attacked with " + attack.weapon + " with animation " + attack.animation + " on tick " + attack.tick);
@@ -143,7 +143,7 @@ public class P1Panel extends JPanel
         {
             g.drawString("X", 6+startX+((i-1)*20), startY+100+fontHeight+3);
         }
-
+*/
         g.setColor(oldColor);
         g.dispose();
         repaint();

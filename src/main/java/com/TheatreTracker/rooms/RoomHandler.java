@@ -22,6 +22,8 @@ public class RoomHandler {
     public static final int FULL_HP = 1000;
 
 
+    public int roomStartTick = -1;
+
     private final TheatreTrackerConfig config;
     protected boolean accurateTimer = true;
     protected boolean accurateEntry = true;
@@ -41,6 +43,7 @@ public class RoomHandler {
         this.client = client;
         this.clog = clog;
         this.config = config;
+        roomStartTick = -1;
     }
 
     private String accuracy() {
@@ -136,6 +139,9 @@ public class RoomHandler {
     public void updateGameObjectDespawned(GameObjectDespawned event) {
     }
 
-    public void reset() {
+    public void reset()
+    {
+        roomStartTick = -1;
+
     }
 }

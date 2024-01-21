@@ -43,7 +43,8 @@ public class NyloHandler extends RoomHandler {
     boolean hard = false;
     boolean story = false;
 
-    public void reset() {
+    public void reset()
+    {
         pillarsSpawnedTick = -1;
         instanceReference = -1;
         instanceStart = -1;
@@ -295,10 +296,12 @@ public class NyloHandler extends RoomHandler {
         }
     }
 
-    private void startNylo() {
+    private void startNylo()
+    {
         clog.write(NYLO_PILLAR_SPAWN);
         roomState = WAVES;
         pillarsSpawnedTick = client.getTickCount();
+        roomStartTick = client.getTickCount();
     }
 
     private void wave1Spawn() {

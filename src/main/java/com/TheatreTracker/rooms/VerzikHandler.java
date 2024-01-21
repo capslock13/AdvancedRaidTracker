@@ -32,10 +32,15 @@ public class VerzikHandler extends RoomHandler {
     private int verzikP2EndTick = -1;
     private int verzikP3EndTick = -1;
 
+    private boolean hasWebbed = false;
+    private int webTick = -1;
+
     private ArrayList<Integer> currentHits;
     private ArrayList<Integer> lastHits;
 
-    public void reset() {
+    public void reset()
+    {
+        super.reset();
         currentHits.clear();
         lastHits.clear();
         verzikEntryTick = -1;
@@ -43,22 +48,49 @@ public class VerzikHandler extends RoomHandler {
         verzikRedsTick = -1;
         verzikP2EndTick = -1;
         verzikP3EndTick = -1;
+        hasWebbed = true;
+        webTick = -1;
     }
 
-    public void updateGameTick(GameTick event) {
-        if (lastHits.size() != 0) {
+    public void updateGameTick(GameTick event)
+    {
+        if(webTick != -1)
+        {
+            webTick++;
+            if(webTick > 50)
+            {
+                hasWebbed = false;
+                webTick = -1;
+            }
+        }
+        if (lastHits.size() != 0)
+        {
 
         }
         lastHits = currentHits;
     }
 
-    public void updateProjectileMoved(ProjectileMoved event) {
-        if (event.getProjectile().getId() == 1587) {
-            if (event.getProjectile().getStartCycle() == client.getGameCycle()) {
+    public void updateProjectileMoved(ProjectileMoved event)
+    {
+        if (event.getProjectile().getId() == 1587)
+        {
+            if (event.getProjectile().getStartCycle() == client.getGameCycle())
+            {
             }
         }
-        if (event.getProjectile().getId() == 1591) {
-            if (event.getProjectile().getRemainingCycles() == 0) {
+        if (event.getProjectile().getId() == 1591)
+        {
+            if (event.getProjectile().getRemainingCycles() == 0)
+            {
+            }
+        }
+        else if(event.getProjectile().getId() == 1601)
+        {
+            if(!hasWebbed)
+            {
+                hasWebbed = true;
+                clog.write(WEBS_STARTED, String.valueOf(client.getTickCount()-verzikEntryTick));
+                webTick = client.getTickCount();
             }
         }
     }
@@ -163,11 +195,13 @@ public class VerzikHandler extends RoomHandler {
         }
     }
 
-    private void startVerzik() {
+    private void startVerzik()
+    {
         roomState = RoomState.VerzikRoomState.PHASE_1;
         verzikEntryTick = client.getTickCount();
         clog.write(VERZIK_P1_START);
         clog.write(ACCURATE_VERZIK_START);
+        roomStartTick = client.getTickCount();
     }
 
     private void endP1() {

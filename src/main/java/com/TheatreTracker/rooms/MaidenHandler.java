@@ -83,10 +83,13 @@ public class MaidenHandler extends RoomHandler {
         bloodHeals = 0;
         npcs.clear();
         dinhsers.clear();
+        super.reset();
     }
 
-    public void startMaiden() {
+    public void startMaiden()
+    {
         maidenStartTick = client.getTickCount();
+        roomStartTick = client.getTickCount();
         deferVarbitCheck = maidenStartTick + 2;
     }
 

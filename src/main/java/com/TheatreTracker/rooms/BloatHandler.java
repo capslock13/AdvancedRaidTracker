@@ -40,6 +40,7 @@ public class BloatHandler extends RoomHandler {
         bloatDeathTick = -1;
         walks.clear();
         downs.clear();
+        super.reset();
     }
 
     public void endBloat() {
@@ -66,6 +67,7 @@ public class BloatHandler extends RoomHandler {
 
     public void start() {
         bloatStartTick = client.getTickCount();
+        roomStartTick = client.getTickCount();
         roomState = WALKING;
     }
 
@@ -85,7 +87,8 @@ public class BloatHandler extends RoomHandler {
         }
     }
 
-    public void down() {
+    public void down()
+    {
         clog.write(BLOAT_DOWN, "" + (client.getTickCount() - bloatStartTick));
         if (downs.size() == 0) {
             int currentBloatHP = client.getVarbitValue(HP_VARBIT);

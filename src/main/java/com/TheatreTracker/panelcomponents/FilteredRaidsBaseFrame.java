@@ -1763,11 +1763,11 @@ public class FilteredRaidsBaseFrame extends BaseFrame
         addToComparison.setOpaque(true);
 
 
-        JMenuItem viewP1 = new JMenuItem("View P1");
-        viewP1.setBackground(Color.BLACK);
-        viewP1.setOpaque(true);
+        JMenuItem viewCharts = new JMenuItem("View Charts");
+        viewCharts.setBackground(Color.BLACK);
+        viewCharts.setOpaque(true);
 
-        viewP1.addActionListener(new ActionListener() {
+        viewCharts.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e)
             {
@@ -1777,11 +1777,8 @@ public class FilteredRaidsBaseFrame extends BaseFrame
                 {
                     rows.add(currentData.get(Integer.parseInt(table.getModel().getValueAt(toRemove[i], 0).toString())));
                 }
-                if(rows.size() == 1)
-                {
-                    ViewP1Frame viewP1 = new ViewP1Frame(rows.get(0));
-                    viewP1.open();
-                }
+                RoomChartFrame roomCharts = new RoomChartFrame(rows);
+                roomCharts.open();
             }
         });
 
@@ -1868,7 +1865,7 @@ public class FilteredRaidsBaseFrame extends BaseFrame
         raidPopup.add(filterRaids);
         raidPopup.add(filterExclusiveRaids);
         raidPopup.add(analyzeSessions);
-        raidPopup.add(viewP1);
+        raidPopup.add(viewCharts);
         table.setComponentPopupMenu(raidPopup);
 
         filterTable = new JTable();

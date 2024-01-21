@@ -182,6 +182,14 @@ public class RoomData {
         MAIDEN, BLOAT, NYLOCAS, SOTETSEG, XARPUS, VERZIK
     }
 
+    public ArrayList<PlayerDidAttack> maidenAttacks;
+    public ArrayList<PlayerDidAttack> bloatAttacks;
+    public ArrayList<PlayerDidAttack> nyloAttacks;
+    public ArrayList<PlayerDidAttack> soteAttacks;
+    public ArrayList<PlayerDidAttack> xarpAttacks;
+    public ArrayList<PlayerDidAttack> verzAttacks;
+
+
     public Date getDate() {
         return raidStarted;
     }
@@ -370,6 +378,13 @@ public class RoomData {
         nyloDefenseAccurate = false;
         soteDefenseAccurate = false;
         xarpDefenseAccurate = false;
+
+        maidenAttacks = new ArrayList<>();
+        bloatAttacks = new ArrayList<>();
+        nyloAttacks = new ArrayList<>();
+        soteAttacks = new ArrayList<>();
+        xarpAttacks = new ArrayList<>();
+        verzAttacks = new ArrayList<>();
         hardMode = false;
         storyMode = false;
         playerSpecificData = new ArrayList<>();
@@ -481,18 +496,6 @@ public class RoomData {
                     dataManager.increment(DataPoint.ATTEMPTED_HAMMERS_VERZIK);
                     dataManager.incrementPlayerSpecific(DataPoint.ATTEMPTED_HAMMERS_VERZIK, subData[4]);
                     break;
-                case 8:
-                    String weapon = "";
-                        try
-                        {
-                            weapon = subData[8];
-                        }
-                        catch (Exception e)
-                        {
-                            log.info("Could not parse attacks p1");
-                        }
-                    attacksP1.add(new PlayerDidAttack(subData[4], Integer.parseInt(subData[5]), Integer.parseInt(subData[6]), weapon));
-                    break;
                 case 800:
                     if(verzikStarted)
                     {
@@ -581,6 +584,27 @@ public class RoomData {
                 case 504:
                     dataManager.increment(DataPoint.CHALLY_POKE);
                     dataManager.incrementPlayerSpecific(DataPoint.CHALLY_POKE, subData[4]);
+                    break;
+                case 801:
+                    int tick;
+                    String player;
+                    String animation;
+                    String weapon;
+                    String projectile;
+                    String spotAnims;
+                    try
+                    {
+                        player = subData[4].split(":")[0];
+                        tick = Integer.parseInt(subData[4].split(":")[1]);
+                        animation = subData[5];
+                        spotAnims = subData[6];
+                        weapon = subData[7];
+                        projectile = subData[8];
+                        verzAttacks.add(new PlayerDidAttack(player, animation, tick, weapon, projectile, spotAnims));
+                    }
+                    catch(Exception e)
+                    {
+                    }
                     break;
 
             }
@@ -773,6 +797,27 @@ public class RoomData {
                     dataManager.increment(DataPoint.CHALLY_POKE);
                     dataManager.incrementPlayerSpecific(DataPoint.CHALLY_POKE, subData[4]);
                     break;
+                case 801:
+                    int tick;
+                    String player;
+                    String animation;
+                    String weapon;
+                    String projectile;
+                    String spotAnims;
+                    try
+                    {
+                        player = subData[4].split(":")[0];
+                        tick = Integer.parseInt(subData[4].split(":")[1]);
+                        animation = subData[5];
+                        spotAnims = subData[6];
+                        weapon = subData[7];
+                        projectile = subData[8];
+                        xarpAttacks.add(new PlayerDidAttack(player, animation, tick, weapon, projectile, spotAnims));
+                    }
+                    catch(Exception e)
+                    {
+                    }
+                    break;
             }
             activeIndex++;
         }
@@ -935,6 +980,27 @@ public class RoomData {
                 case 504:
                     dataManager.increment(DataPoint.CHALLY_POKE);
                     dataManager.incrementPlayerSpecific(DataPoint.CHALLY_POKE, subData[4]);
+                    break;
+                case 801:
+                    int tick;
+                    String player;
+                    String animation;
+                    String weapon;
+                    String projectile;
+                    String spotAnims;
+                    try
+                    {
+                        player = subData[4].split(":")[0];
+                        tick = Integer.parseInt(subData[4].split(":")[1]);
+                        animation = subData[5];
+                        spotAnims = subData[6];
+                        weapon = subData[7];
+                        projectile = subData[8];
+                        soteAttacks.add(new PlayerDidAttack(player, animation, tick, weapon, projectile, spotAnims));
+                    }
+                    catch(Exception e)
+                    {
+                    }
                     break;
 
             }
@@ -1127,6 +1193,27 @@ public class RoomData {
                     dataManager.increment(DataPoint.CHALLY_POKE);
                     dataManager.incrementPlayerSpecific(DataPoint.CHALLY_POKE, subData[4]);
                     break;
+                case 801:
+                    int tick;
+                    String player;
+                    String animation;
+                    String weapon;
+                    String projectile;
+                    String spotAnims;
+                    try
+                    {
+                        player = subData[4].split(":")[0];
+                        tick = Integer.parseInt(subData[4].split(":")[1]);
+                        animation = subData[5];
+                        spotAnims = subData[6];
+                        weapon = subData[7];
+                        projectile = subData[8];
+                        nyloAttacks.add(new PlayerDidAttack(player, animation, tick, weapon, projectile, spotAnims));
+                    }
+                    catch(Exception e)
+                    {
+                    }
+                    break;
 
             }
             activeIndex++;
@@ -1284,6 +1371,27 @@ public class RoomData {
                 case 504:
                     dataManager.increment(DataPoint.CHALLY_POKE);
                     dataManager.incrementPlayerSpecific(DataPoint.CHALLY_POKE, subData[4]);
+                    break;
+                case 801:
+                    int tick;
+                    String player;
+                    String animation;
+                    String weapon;
+                    String projectile;
+                    String spotAnims;
+                    try
+                    {
+                        player = subData[4].split(":")[0];
+                        tick = Integer.parseInt(subData[4].split(":")[1]);
+                        animation = subData[5];
+                        spotAnims = subData[6];
+                        weapon = subData[7];
+                        projectile = subData[8];
+                        bloatAttacks.add(new PlayerDidAttack(player, animation, tick, weapon, projectile, spotAnims));
+                    }
+                    catch(Exception e)
+                    {
+                    }
                     break;
             }
             activeIndex++;
@@ -1604,6 +1712,27 @@ public class RoomData {
                 case 504:
                     dataManager.increment(DataPoint.CHALLY_POKE);
                     dataManager.incrementPlayerSpecific(DataPoint.CHALLY_POKE, subData[4]);
+                    break;
+                case 801:
+                    int tick;
+                    String player;
+                    String animation;
+                    String weapon;
+                    String projectile;
+                    String spotAnims;
+                    try
+                    {
+                        player = subData[4].split(":")[0];
+                        tick = Integer.parseInt(subData[4].split(":")[1]);
+                        animation = subData[5];
+                        spotAnims = subData[6];
+                        weapon = subData[7];
+                        projectile = subData[8];
+                        maidenAttacks.add(new PlayerDidAttack(player, animation, tick, weapon, projectile, spotAnims));
+                    }
+                    catch(Exception e)
+                    {
+                    }
                     break;
             }
             activeIndex++;

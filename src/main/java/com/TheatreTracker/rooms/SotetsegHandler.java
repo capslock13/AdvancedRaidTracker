@@ -29,7 +29,9 @@ public class SotetsegHandler extends RoomHandler {
         super(client, clog, config);
     }
 
-    public void reset() {
+    public void reset()
+    {
+        super.reset();
         accurateTimer = true;
         soteEntryTick = -1;
         roomState = RoomState.SotetsegRoomState.NOT_STARTED;
@@ -60,8 +62,10 @@ public class SotetsegHandler extends RoomHandler {
         }
     }
 
-    public void startSotetseg() {
+    public void startSotetseg()
+    {
         soteEntryTick = client.getTickCount();
+        roomStartTick = client.getTickCount();
         deferTick = soteEntryTick + 2;
         roomState = RoomState.SotetsegRoomState.PHASE_1;
         clog.write(LogID.SOTETSEG_STARTED);

@@ -30,6 +30,7 @@ import com.TheatreTracker.constants.NpcIDs;
 import com.TheatreTracker.constants.TOBRoom;
 import com.TheatreTracker.ui.RaidTrackerPanelPrimary;
 import com.TheatreTracker.utility.DataWriter;
+import com.TheatreTracker.utility.QueuedPlayerAttackLessProjectiles;
 import com.TheatreTracker.utility.thrallvengtracking.*;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -126,6 +127,8 @@ public class TheatreTrackerPlugin extends Plugin
     private ArrayList<DamageQueueShell> queuedThrallDamage;
     private ArrayList<ThrallCurrentDamage> currentThrallDamage;
 
+    private ArrayList<QueuedPlayerAttackLessProjectiles> playersAttacked;
+
 
     private final int LOBBY_REGION = 14642;
     private final int MAIDEN_REGION = 12613;
@@ -148,6 +151,7 @@ public class TheatreTrackerPlugin extends Plugin
     private VengTracker vengTracker;
     private List<PlayerShell> localPlayers;
     private List<ProjectileQueue> activeProjectiles;
+    private ArrayList<Projectile> currentTickProjectiles;
 
     private List<VengDamageQueue> activeVenges;
 
@@ -159,6 +163,8 @@ public class TheatreTrackerPlugin extends Plugin
 
     @Inject
     private WSClient wsClient;
+
+    Map<Player, Integer> activelyPiping;
 
     @Override
     protected void shutDown()
@@ -185,6 +191,7 @@ public class TheatreTrackerPlugin extends Plugin
         currentThrallDamage = new ArrayList<>();
         RaidTrackerPanelPrimary timersPanelPrimary = injector.getInstance(RaidTrackerPanelPrimary.class);
         partyIntact = false;
+        activelyPiping = new LinkedHashMap<>();
 
         playersTextChanged = new ArrayList<>();
         File dirMain = new File(System.getProperty("user.home").replace("\\", "/") + "/.runelite/theatretracker/primary/");
@@ -219,6 +226,8 @@ public class TheatreTrackerPlugin extends Plugin
         wasInTheatre = false;
         deferredTick = 0;
         currentPlayers = new ArrayList<>();
+        currentTickProjectiles = new ArrayList<>();
+        playersAttacked = new ArrayList<>();
     }
 
     /**
@@ -492,6 +501,43 @@ public class TheatreTrackerPlugin extends Plugin
     @Subscribe
     public void onGameTick(GameTick event) throws PluginInstantiationException
     {
+        for(Player p : activelyPiping.keySet())
+        {
+            if(client.getTickCount() > (activelyPiping.get(p)+1) && ((client.getTickCount()-activelyPiping.get(p)-1)%2)==0)
+            {
+                clog.write(PLAYER_ATTACK,
+                        p.getName()+":"+(client.getTickCount() - currentRoom.roomStartTick-1),
+                        String.valueOf(p.getAnimation()),
+                        "",
+                        String.valueOf(p.getPlayerComposition().getEquipmentId(KitType.WEAPON)),
+                        "-1");
+            }
+        }
+        for(QueuedPlayerAttackLessProjectiles playerAttackQueuedItem : playersAttacked)
+        {
+            playerAttackQueuedItem.tick--;
+            if(playerAttackQueuedItem.tick == 0)
+            {
+                for(Projectile projectile : currentTickProjectiles)
+                {
+                    WorldPoint position = WorldPoint.fromLocal(client, new LocalPoint(projectile.getX1(), projectile.getY1()));
+                    if(position.distanceTo(playerAttackQueuedItem.location) == 0)
+                    {
+                        if(projectile.getId() == 1547 || projectile.getId() == 1995 || projectile.getId() == 1468 || projectile.getId() == 1544)
+                        {
+                            clog.write(PLAYER_ATTACK,
+                                    playerAttackQueuedItem.player.getName()+":"+(client.getTickCount()-currentRoom.roomStartTick-2),
+                                    playerAttackQueuedItem.animation,
+                                    playerAttackQueuedItem.spotAnims,
+                                    playerAttackQueuedItem.weapon,
+                                    String.valueOf(projectile.getId()));
+                        }
+                    }
+                }
+            }
+        }
+        playersAttacked.removeIf(p->p.tick ==0);
+        currentTickProjectiles.clear();
         removeDeadProjectiles();
         removeDeadVenges();
         playersTextChanged.clear();
@@ -566,6 +612,7 @@ public class TheatreTrackerPlugin extends Plugin
         currentPlayers.clear();
         clog.write(LEFT_TOB); //todo add region
         currentRoom = null;
+        activelyPiping.clear();
     }
 
     @Subscribe
@@ -655,31 +702,28 @@ public class TheatreTrackerPlugin extends Plugin
     @Subscribe
     public void onProjectileMoved(ProjectileMoved event)
     {
-        int id = event.getProjectile().getId();
-        if(id == THRALL_PROJECTILE_RANGE || id == THRALL_PROJECTILE_MAGE)
-        {
-            if(event.getProjectile().getStartCycle() == client.getGameCycle())
-            {
-                thrallTracker.projectileCreated(event.getProjectile(), WorldPoint.fromLocal(client, new LocalPoint(event.getProjectile().getX1(), event.getProjectile().getY1())), event.getProjectile().getInteracting().getWorldLocation(), client.getTickCount());
-            }
-        }
-        //Thrall hitsplats come before damage hitsplits unless the source is a projectile that was spawned on a tick before the thrall projectile spawned
-        else if(event.getProjectile().getStartCycle() == client.getGameCycle())
-        { //Thrall projectiles move slower and the only time this situation occurs in TOB is max distance TBOW/ZCB during maiden
-            if(id == TBOW_PROJECTILE || id == ZCB_PROJECTILE || id == ZCB_SPEC_PROJECTILE)
-            { //Not sure why 10 is correct instead of 19 (60 - 41 tick delay) but extensive trial and error shows this to be accurate
-                int projectileHitTick = 10+event.getProjectile().getRemainingCycles();
-                projectileHitTick = (projectileHitTick/30);
-                if(event.getProjectile().getInteracting() instanceof NPC)
-                {
-                    int index = ((NPC)event.getProjectile().getInteracting()).getIndex();
-                    activeProjectiles.add(new ProjectileQueue(client.getTickCount(), projectileHitTick+client.getTickCount(), index));
+        if(inTheatre) {
+            int id = event.getProjectile().getId();
+            if (id == THRALL_PROJECTILE_RANGE || id == THRALL_PROJECTILE_MAGE) {
+                if (event.getProjectile().getStartCycle() == client.getGameCycle()) {
+                    thrallTracker.projectileCreated(event.getProjectile(), WorldPoint.fromLocal(client, new LocalPoint(event.getProjectile().getX1(), event.getProjectile().getY1())), event.getProjectile().getInteracting().getWorldLocation(), client.getTickCount());
                 }
             }
-        }
-        if(inTheatre)
-        {
-            currentRoom.updateProjectileMoved(event);
+            //Thrall hitsplats come before damage hitsplits unless the source is a projectile that was spawned on a tick before the thrall projectile spawned
+            else if (event.getProjectile().getStartCycle() == client.getGameCycle()) { //Thrall projectiles move slower and the only time this situation occurs in TOB is max distance TBOW/ZCB during maiden
+                if (id == TBOW_PROJECTILE || id == ZCB_PROJECTILE || id == ZCB_SPEC_PROJECTILE) { //Not sure why 10 is correct instead of 19 (60 - 41 tick delay) but extensive trial and error shows this to be accurate
+                    int projectileHitTick = 10 + event.getProjectile().getRemainingCycles();
+                    projectileHitTick = (projectileHitTick / 30);
+                    if (event.getProjectile().getInteracting() instanceof NPC) {
+                        int index = ((NPC) event.getProjectile().getInteracting()).getIndex();
+                        activeProjectiles.add(new ProjectileQueue(client.getTickCount(), projectileHitTick + client.getTickCount(), index));
+                    }
+                }
+                currentTickProjectiles.add(event.getProjectile());
+            }
+            if (inTheatre) {
+                currentRoom.updateProjectileMoved(event);
+            }
         }
     }
 
@@ -701,7 +745,7 @@ public class TheatreTrackerPlugin extends Plugin
     public void onAnimationChanged(AnimationChanged event)
     {
         Player p;
-        if (event.getActor() instanceof Player)
+        if (event.getActor() instanceof Player && inTheatre)
         {
             p = (Player) event.getActor();
             if(p.getPlayerComposition() != null)
@@ -755,6 +799,47 @@ public class TheatreTrackerPlugin extends Plugin
                     }
                     clog.write(BGS_WHACK, event.getActor().getName());
                 }
+                String animations = "";
+                for(ActorSpotAnim anim : p.getSpotAnims())
+                {
+                    animations += String.valueOf(anim.getId());
+                    animations += ":";
+                }
+                if(p.getAnimation() == 1167 || p.getAnimation() == 9168)
+                {
+                    if(p.getAnimation() != 1167 || p.getPlayerComposition().getEquipmentId(KitType.WEAPON) == 22516)
+                    {
+                        WorldPoint worldPoint = p.getWorldLocation();
+                        playersAttacked.add(new QueuedPlayerAttackLessProjectiles(p, worldPoint, 3, animations, String.valueOf(p.getPlayerComposition().getEquipmentId(KitType.WEAPON)), String.valueOf(p.getAnimation())));
+                    }
+                    else
+                    {
+                        clog.write(PLAYER_ATTACK,
+                                p.getName()+":"+(client.getTickCount() - currentRoom.roomStartTick),
+                                String.valueOf(p.getAnimation()),
+                                animations,
+                                String.valueOf(p.getPlayerComposition().getEquipmentId(KitType.WEAPON)),
+                                "-1");
+                    }
+                }
+                else if(p.getAnimation() != -1)
+                {
+                    clog.write(PLAYER_ATTACK,
+                            p.getName()+":"+(client.getTickCount() - currentRoom.roomStartTick),
+                            String.valueOf(p.getAnimation()),
+                            animations,
+                            String.valueOf(p.getPlayerComposition().getEquipmentId(KitType.WEAPON)),
+                            "-1");
+                    if(p.getAnimation() == 5061 || p.getAnimation() == 10656)
+                    {
+                        activelyPiping.put(p, client.getTickCount());
+                    }
+                }
+                else
+                {
+                    activelyPiping.remove(p);
+                }
+
             }
         }
 

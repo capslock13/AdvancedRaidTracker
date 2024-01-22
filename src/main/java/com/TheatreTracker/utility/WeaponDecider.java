@@ -118,11 +118,17 @@ public class WeaponDecider
                     weaponUsed = WeaponAttack.ZCB_SPEC;
                 }
                 break;
-            case 1067:
+            case 393:
                 weaponUsed = WeaponAttack.CLAW_SCRATCH;
                 break;
             case 7514:
                 weaponUsed = WeaponAttack.CLAW_SPEC;
+                break;
+            case 9493:
+                weaponUsed = WeaponAttack.SHADOW;
+                break;
+            case 7554:
+                weaponUsed = WeaponAttack.DART;
                 break;
         }
         return weaponUsed;

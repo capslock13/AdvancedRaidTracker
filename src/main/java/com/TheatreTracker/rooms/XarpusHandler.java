@@ -1,6 +1,7 @@
 package com.TheatreTracker.rooms;
 
 import com.TheatreTracker.TheatreTrackerConfig;
+import com.TheatreTracker.TheatreTrackerPlugin;
 import com.TheatreTracker.constants.NpcIDs;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.ChatMessageType;
@@ -16,19 +17,35 @@ import static com.TheatreTracker.constants.LogID.*;
 import static com.TheatreTracker.constants.LogID.ACCURATE_XARP_END;
 import static com.TheatreTracker.constants.LogID.XARPUS_STARTED;
 import static com.TheatreTracker.constants.NpcIDs.*;
+import static com.TheatreTracker.utility.RoomState.XarpusRoomState.FINISHED;
+import static com.TheatreTracker.utility.RoomState.XarpusRoomState.NOT_STARTED;
 
 @Slf4j
 public class XarpusHandler extends RoomHandler {
     public RoomState.XarpusRoomState roomState = RoomState.XarpusRoomState.NOT_STARTED;
+    private TheatreTrackerPlugin plugin;
 
-    public XarpusHandler(Client client, DataWriter clog, TheatreTrackerConfig config) {
+    public XarpusHandler(Client client, DataWriter clog, TheatreTrackerConfig config, TheatreTrackerPlugin plugin)
+    {
         super(client, clog, config);
+        roomState = NOT_STARTED;
+        this.plugin = plugin;
     }
 
     private int xarpusEntryTick = -1;
     private int xarpusExhumedsEnd = -1;
     private int xarpusScreechTick = -1;
     private int xarpusEndTick = -1;
+
+    public String getName()
+    {
+        return "Xarpus";
+    }
+
+    public boolean isActive()
+    {
+    return !(roomState == RoomState.XarpusRoomState.NOT_STARTED || roomState == FINISHED);
+    }
 
     public void reset()
     {
@@ -142,7 +159,7 @@ public class XarpusHandler extends RoomHandler {
 
     private void endXarpus() {
 
-        roomState = RoomState.XarpusRoomState.FINISHED;
+        roomState = FINISHED;
         xarpusEndTick = client.getTickCount() + 3;
         clog.write(ACCURATE_XARP_END);
         String splitMessage = "Wave 'Xarpus phase 3' complete. Duration: " + timeColor() + RoomUtil.time(xarpusEndTick - xarpusEntryTick) + " (" + RoomUtil.time(xarpusEndTick - xarpusScreechTick) + ")";

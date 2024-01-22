@@ -1,6 +1,7 @@
 package com.TheatreTracker.rooms;
 
 import com.TheatreTracker.TheatreTrackerConfig;
+import com.TheatreTracker.TheatreTrackerPlugin;
 import com.TheatreTracker.constants.LogID;
 import com.TheatreTracker.utility.DataWriter;
 import lombok.extern.slf4j.Slf4j;
@@ -24,9 +25,22 @@ public class SotetsegHandler extends RoomHandler {
     private int soteDeathTick = -1;
     private int deferTick = -1;
     private int lastRegion = -1;
+    private TheatreTrackerPlugin plugin;
 
-    public SotetsegHandler(Client client, DataWriter clog, TheatreTrackerConfig config) {
+    public SotetsegHandler(Client client, DataWriter clog, TheatreTrackerConfig config, TheatreTrackerPlugin plugin)
+    {
         super(client, clog, config);
+        roomState = RoomState.SotetsegRoomState.NOT_STARTED;
+    }
+
+    public boolean isActive()
+    {
+        return !(roomState == RoomState.SotetsegRoomState.NOT_STARTED || roomState == RoomState.SotetsegRoomState.FINISHED);
+    }
+
+    public String getName()
+    {
+        return "Sotetseg";
     }
 
     public void reset()

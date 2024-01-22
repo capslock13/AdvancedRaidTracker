@@ -139,6 +139,16 @@ public class RoomHandler {
     public void updateGameObjectDespawned(GameObjectDespawned event) {
     }
 
+    public String getName()
+    {
+        return "";
+    }
+
+    public boolean isActive()
+    {
+        return false;
+    }
+
     public void reset()
     {
         roomStartTick = -1;

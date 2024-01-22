@@ -22,7 +22,8 @@ import static com.TheatreTracker.constants.LogID.*;
 import static com.TheatreTracker.constants.NpcIDs.*;
 
 @Slf4j
-public class MaidenHandler extends RoomHandler {
+public class MaidenHandler extends RoomHandler
+{
     public RoomState.MaidenRoomState roomState;
 
     int maidenStartTick;
@@ -49,10 +50,13 @@ public class MaidenHandler extends RoomHandler {
 
 
     TheatreTrackerConfig config;
+    TheatreTrackerPlugin plugin;
 
 
-    public MaidenHandler(Client client, DataWriter clog, TheatreTrackerConfig config) {
+    public MaidenHandler(Client client, DataWriter clog, TheatreTrackerConfig config, TheatreTrackerPlugin plugin) {
         super(client, clog, config);
+        this.plugin = plugin;
+        roomState = RoomState.MaidenRoomState.NOT_STARTED;
         p70 = -1;
         p50 = -1;
         p30 = -1;
@@ -69,7 +73,19 @@ public class MaidenHandler extends RoomHandler {
         this.config = config;
     }
 
-    public void reset() {
+    public boolean isActive()
+    {
+        return !(roomState == RoomState.MaidenRoomState.NOT_STARTED || roomState == RoomState.MaidenRoomState.FINISHED);
+    }
+
+    public String getName()
+    {
+        return "Maiden";
+    }
+
+    public void reset()
+    {
+        roomState = RoomState.MaidenRoomState.NOT_STARTED;
         accurateEntry = true;
         p70 = -1;
         p50 = -1;

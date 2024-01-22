@@ -3,6 +3,7 @@ package com.TheatreTracker.ui;
 import com.TheatreTracker.RoomData;
 import com.TheatreTracker.TheatreTrackerPlugin;
 import com.TheatreTracker.panelcomponents.FilteredRaidsBaseFrame;
+import com.TheatreTracker.panelcomponents.LiveChartFrame;
 import com.TheatreTracker.utility.RaidsArrayWrapper;
 import com.TheatreTracker.utility.RaidsManager;
 import com.google.inject.Inject;
@@ -25,8 +26,12 @@ public class RaidTrackerPanelPrimary extends PluginPanel {
 
     private FilteredRaidsBaseFrame raids;
 
+    private TheatreTrackerPlugin plugin;
+
     @Inject
-    RaidTrackerPanelPrimary(TheatreTrackerPlugin plugin) {
+    RaidTrackerPanelPrimary(TheatreTrackerPlugin plugin)
+    {
+        this.plugin = plugin;
         raidsData = getAllRaids();
         raids = new FilteredRaidsBaseFrame();
         buildComponents();
@@ -75,7 +80,7 @@ public class RaidTrackerPanelPrimary extends PluginPanel {
     private void buildComponents() {
         JPanel container = new JPanel();
         JPanel primaryContainer = new JPanel();
-        primaryContainer.setLayout(new GridLayout(4, 1));
+        primaryContainer.setLayout(new GridLayout(5, 1));
 
         JButton viewRaidsButton = new JButton("View All Raids");
         JButton refreshRaidsButton = new JButton("Refresh");
@@ -120,12 +125,19 @@ public class RaidTrackerPanelPrimary extends PluginPanel {
                 }
         );
 
+        JButton livePanelButton = new JButton("View Live Room");
+        livePanelButton.addActionListener(al->
+        {
+            plugin.openLiveFrame();
+        });
+
         raidCountLabel = new JLabel("", SwingConstants.CENTER);
         updateRaidCountLabel();
         primaryContainer.add(raidCountLabel);
         primaryContainer.add(refreshRaidsButton);
         primaryContainer.add(viewRaidsButton);
         primaryContainer.add(tableRaidsButton);
+        primaryContainer.add(livePanelButton);
 
         Object[] columnNames = {"File Name", "Include?"};
         raidSets = RaidsManager.getRaidsSets();

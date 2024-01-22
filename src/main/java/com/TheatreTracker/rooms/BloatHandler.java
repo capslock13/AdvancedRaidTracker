@@ -1,6 +1,7 @@
 package com.TheatreTracker.rooms;
 
 import com.TheatreTracker.TheatreTrackerConfig;
+import com.TheatreTracker.TheatreTrackerPlugin;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.Player;
@@ -28,12 +29,27 @@ public class BloatHandler extends RoomHandler {
     private int bloatStartTick = -1;
     private int bloatDeferTick = -1;
     private int bloatDeathTick = -1;
+    private TheatreTrackerPlugin plugin;
 
-    public BloatHandler(Client client, DataWriter clog, TheatreTrackerConfig config) {
+    public BloatHandler(Client client, DataWriter clog, TheatreTrackerConfig config, TheatreTrackerPlugin plugin)
+    {
         super(client, clog, config);
+        this.plugin = plugin;
+        roomState = NOT_STARTED;
     }
 
-    public void reset() {
+    public boolean isActive()
+    {
+        return !(roomState == NOT_STARTED || roomState == FINISHED);
+    }
+
+    public String getName()
+    {
+        return "Bloat";
+    }
+    public void reset()
+    {
+        roomState = NOT_STARTED;
         bloatDeferTick = -1;
         accurateEntry = true;
         bloatStartTick = -1;

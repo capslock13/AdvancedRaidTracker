@@ -1,6 +1,7 @@
 package com.TheatreTracker.rooms;
 
 import com.TheatreTracker.TheatreTrackerConfig;
+import com.TheatreTracker.TheatreTrackerPlugin;
 import com.TheatreTracker.constants.LogID;
 import com.TheatreTracker.utility.DataWriter;
 import lombok.extern.slf4j.Slf4j;
@@ -19,11 +20,25 @@ import static com.TheatreTracker.constants.NpcIDs.*;
 @Slf4j
 public class VerzikHandler extends RoomHandler {
     public RoomState.VerzikRoomState roomState;
+    private TheatreTrackerPlugin plugin;
 
-    public VerzikHandler(Client client, DataWriter clog, TheatreTrackerConfig config) {
+    public VerzikHandler(Client client, DataWriter clog, TheatreTrackerConfig config, TheatreTrackerPlugin plugin)
+    {
         super(client, clog, config);
+        this.plugin = plugin;
         currentHits = new ArrayList<>();
         lastHits = new ArrayList<>();
+        roomState = RoomState.VerzikRoomState.NOT_STARTED;
+    }
+
+    public boolean isActive()
+    {
+        return !(roomState == RoomState.VerzikRoomState.NOT_STARTED || roomState == RoomState.VerzikRoomState.FINISHED);
+    }
+
+    public String getName()
+    {
+        return "Verzik";
     }
 
     private int verzikEntryTick = -1;
@@ -41,6 +56,7 @@ public class VerzikHandler extends RoomHandler {
     public void reset()
     {
         super.reset();
+        roomState = RoomState.VerzikRoomState.NOT_STARTED;
         currentHits.clear();
         lastHits.clear();
         verzikEntryTick = -1;

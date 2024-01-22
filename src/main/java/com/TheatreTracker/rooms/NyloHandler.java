@@ -1,6 +1,7 @@
 package com.TheatreTracker.rooms;
 
 import com.TheatreTracker.TheatreTrackerConfig;
+import com.TheatreTracker.TheatreTrackerPlugin;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.NPC;
@@ -25,10 +26,13 @@ public class NyloHandler extends RoomHandler {
     public RoomState.NyloRoomState roomState;
     private final ArrayList<NylocasShell> buildWave;
 
-    public NyloHandler(Client client, DataWriter clog, TheatreTrackerConfig config) {
+    public NyloHandler(Client client, DataWriter clog, TheatreTrackerConfig config, TheatreTrackerPlugin plugin)
+    {
         super(client, clog, config);
+        this.plugin = plugin;
         buildWave = new ArrayList<>();
         nylosAlive = new ArrayList<>();
+        roomState = NOT_STARTED;
     }
 
     public static int instanceStart = -1;
@@ -42,9 +46,11 @@ public class NyloHandler extends RoomHandler {
     int currentWave = 0;
     boolean hard = false;
     boolean story = false;
+    private TheatreTrackerPlugin plugin;
 
     public void reset()
     {
+        roomState = NOT_STARTED;
         pillarsSpawnedTick = -1;
         instanceReference = -1;
         instanceStart = -1;
@@ -56,6 +62,16 @@ public class NyloHandler extends RoomHandler {
         story = false;
         wave31 = -1;
         super.reset();
+    }
+
+    public boolean isActive()
+    {
+        return !(roomState == NOT_STARTED || roomState == FINISHED);
+    }
+
+    public String getName()
+    {
+        return "Nylocas";
     }
 
     private int expectedWaveTick;

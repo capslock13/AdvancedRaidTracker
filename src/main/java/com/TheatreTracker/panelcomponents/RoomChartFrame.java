@@ -3,10 +3,11 @@ package com.TheatreTracker.panelcomponents;
 import com.TheatreTracker.RoomData;
 import com.TheatreTracker.utility.DataPoint;
 import net.runelite.client.plugins.raids.RoomType;
+import sun.awt.image.ImageWatched;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
+import java.util.*;
 
 public class RoomChartFrame extends BaseFrame
 {
@@ -53,61 +54,96 @@ public class RoomChartFrame extends BaseFrame
 
         for(RoomData data : roomData)
         {
-            ArrayList<Integer> blankSpecific = new ArrayList<>();
-            ArrayList<Integer> blankLines = new ArrayList<>();
+            Map<Integer, String> blankSpecific = new HashMap<>();
+            Map<Integer,String> blankLines = new HashMap<>();
 
-            ArrayList<Integer> maidenLines = new ArrayList<>();
-            maidenLines.add(data.getValue(DataPoint.MAIDEN_70_SPLIT));
-            maidenLines.add(data.getValue(DataPoint.MAIDEN_50_SPLIT));
-            maidenLines.add(data.getValue(DataPoint.MAIDEN_30_SPLIT));
+            Map<Integer, String> maidenLines = new LinkedHashMap<>();
+            maidenLines.put(data.getValue(DataPoint.MAIDEN_70_SPLIT), "70s");
+            maidenLines.put(data.getValue(DataPoint.MAIDEN_50_SPLIT), "50s");
+            maidenLines.put(data.getValue(DataPoint.MAIDEN_30_SPLIT), "30s");
 
-            ArrayList<Integer> bloatLines = new ArrayList<>();
-            bloatLines.add(data.getValue(DataPoint.BLOAT_FIRST_DOWN_TIME));
+            Map<Integer, String> bloatLines = new LinkedHashMap<>();
+            bloatLines.put(data.getValue(DataPoint.BLOAT_FIRST_DOWN_TIME), "Down");
 
-            ArrayList<Integer> verzikP2Lines = new ArrayList<>();
-            verzikP2Lines.add(data.getValue(DataPoint.VERZIK_REDS_SPLIT));
+            Map<Integer,String> nyloLines = new LinkedHashMap<>();
+            for(Integer i : data.nyloWaveStalled)
+            {
+                nyloLines.put(i, "Stall");
+            }
+            nyloLines.put(data.getValue(DataPoint.NYLO_LAST_WAVE), "Last Wave");
+            nyloLines.put(data.getValue(DataPoint.NYLO_BOSS_SPAWN), "Boss Spawn");
+            for(int i = data.getValue(DataPoint.NYLO_BOSS_SPAWN)+12; i < data.getNyloTime(); i+= 10)
+            {
+                nyloLines.put(i, "Phase");
+            }
+
+            Map<Integer, String> soteLines = new LinkedHashMap<>();
+            soteLines.put(data.getValue(DataPoint.SOTE_P1_SPLIT), "Maze1 Start");
+            soteLines.put(data.getValue(DataPoint.SOTE_P1_SPLIT)+data.getValue(DataPoint.SOTE_M1_SPLIT), "Maze1 End");
+
+            soteLines.put(data.getValue(DataPoint.SOTE_P2_SPLIT)+data.getValue(DataPoint.SOTE_P1_SPLIT)+data.getValue(DataPoint.SOTE_M1_SPLIT), "Maze2 Start");
+            soteLines.put(data.getValue(DataPoint.SOTE_P2_SPLIT)+data.getValue(DataPoint.SOTE_P1_SPLIT)+data.getValue(DataPoint.SOTE_M1_SPLIT)+data.getValue(DataPoint.SOTE_M2_SPLIT), "Maze2 End");
+
+
+            Map<Integer, String> xarpLines = new LinkedHashMap<>();
+            xarpLines.put(data.getValue(DataPoint.XARP_SCREECH), "SCREECH");
+            for(int i = data.getValue(DataPoint.XARP_SCREECH)+8; i < data.getXarpTime(); i+=8)
+            {
+                xarpLines.put(i, "Turn");
+            }
+
+            Map<Integer, String> verzikP2Lines = new LinkedHashMap<>();
+            for(Integer i : data.redsProc)
+            {
+                verzikP2Lines.put(i, "Reds");
+            }
+
+            for(Integer i : data.p2Crabs)
+            {
+                verzikP2Lines.put(i, "Crabs");
+            }
+
+            Map<Integer, String> verzikP3Lines = new LinkedHashMap<>();
+            for(Integer i : data.websStart)
+            {
+                verzikP3Lines.put(i, "Webs");
+            }
+
+            for(Integer i : data.p3Crabs)
+            {
+                verzikP3Lines.put(i, "Crabs");
+            }
+
+            Map<Integer, String> dawnDropsMap = new LinkedHashMap<>();
+            for(Integer i : data.dawnDrops)
+            {
+                dawnDropsMap.put(i, "X");
+            }
 
 
             maidenCharts.add(new RoomChartPanel(data.maidenAttacks, data.players.keySet(), "Maiden",roomData.size(), 1, data.getMaidenTime(), blankSpecific, maidenLines));
             bloatCharts.add(new RoomChartPanel(data.bloatAttacks, data.players.keySet(),"Bloat", roomData.size(), 1, data.getBloatTime(), blankSpecific, bloatLines));
-            nyloCharts.add(new RoomChartPanel(data.nyloAttacks,data.players.keySet(), "Nylocas Boss", roomData.size(), data.getValue(DataPoint.NYLO_BOSS_SPAWN)+3, data.getNyloTime(), blankSpecific, blankLines));
-            soteCharts.add(new RoomChartPanel(data.soteAttacks,data.players.keySet(), "Sotetseg", roomData.size(), 1, data.getSoteTime(), blankSpecific, blankLines));
-            xarpCharts.add(new RoomChartPanel(data.xarpAttacks,data.players.keySet(), "Xarpus", roomData.size(), 1, data.getXarpTime(), blankSpecific, blankLines));
-            verzp1Charts.add(new RoomChartPanel(data.verzAttacks,data.players.keySet(), "Verzik P1", roomData.size(), 1, data.getValue(DataPoint.VERZIK_P1_SPLIT), data.dawnDrops, blankLines));
+            nyloCharts.add(new RoomChartPanel(data.nyloAttacks,data.players.keySet(), "Nylocas", roomData.size(), 1, data.getNyloTime(), blankSpecific, nyloLines));
+            soteCharts.add(new RoomChartPanel(data.soteAttacks,data.players.keySet(), "Sotetseg", roomData.size(), 1, data.getSoteTime(), blankSpecific, soteLines));
+            xarpCharts.add(new RoomChartPanel(data.xarpAttacks,data.players.keySet(), "Xarpus", roomData.size(), 1, data.getXarpTime(), blankSpecific, xarpLines));
+            verzp1Charts.add(new RoomChartPanel(data.verzAttacks,data.players.keySet(), "Verzik P1", roomData.size(), 1, data.getValue(DataPoint.VERZIK_P1_SPLIT), dawnDropsMap, blankLines));
             verzp2Charts.add(new RoomChartPanel(data.verzAttacks,data.players.keySet(), "Verzik P2", roomData.size(), data.getValue(DataPoint.VERZIK_P1_SPLIT)+1, data.getValue(DataPoint.VERZIK_P2_SPLIT), blankSpecific, verzikP2Lines));
-            verzp3Charts.add(new RoomChartPanel(data.verzAttacks,data.players.keySet(), "Verzik P3", roomData.size(), data.getValue(DataPoint.VERZIK_P2_SPLIT)+1, data.getVerzikTime(), blankSpecific, blankLines));
+            verzp3Charts.add(new RoomChartPanel(data.verzAttacks,data.players.keySet(), "Verzik P3", roomData.size(), data.getValue(DataPoint.VERZIK_P2_SPLIT)+1, data.getVerzikTime(), blankSpecific, verzikP3Lines));
 
         }
 
-        RoomChartLegend legendPanel = new RoomChartLegend();
-
         maidenTab.add(new JScrollPane(maidenCharts));
-        //maidenTab.add(legendPanel);
-
         bloatTab.add(new JScrollPane(bloatCharts));
-        //bloatTab.add(legendPanel);
-
         nyloTab.add(new JScrollPane(nyloCharts));
-        //nyloTab.add(legendPanel);
-
         soteTab.add(new JScrollPane(soteCharts));
-        //soteTab.add(legendPanel);
-
         xarpTab.add(new JScrollPane(xarpCharts));
-        //xarpTab.add(legendPanel);
-
         verzP1Tab.add(new JScrollPane(verzp1Charts));
-        //verzP1Tab.add(legendPanel);
-
         verzP2Tab.add(new JScrollPane(verzp2Charts));
-        //verzP2Tab.add(legendPanel);
-
         verzP3Tab.add(new JScrollPane(verzp3Charts));
-        //verzP3Tab.add(legendPanel);
 
         basepane.addTab("Maiden", maidenTab);
         basepane.addTab("Bloat", bloatTab);
-        basepane.addTab("Nylocas Boss", nyloTab);
+        basepane.addTab("Nylocas", nyloTab);
         basepane.addTab("Sotetseg", soteTab);
         basepane.addTab("Xarpus", xarpTab);
         basepane.addTab("Verzik P1", verzP1Tab);

@@ -1,29 +1,3 @@
-/*
- * Copyright (c) 2022, TheStonedTurtle <https://github.com/TheStonedTurtle>
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- * 1. Redistributions of source code must retain the above copyright notice, this
- *    list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
- * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
- * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
-
 package com.TheatreTracker;
 
 import com.TheatreTracker.constants.NpcIDs;
@@ -337,6 +311,7 @@ public class TheatreTrackerPlugin extends Plugin
         clog.write(ENTERED_TOB);
         deferredTick = client.getTickCount()+2;
         maiden.reset();
+        liveFrame.tabbedPane.setSelectedIndex(0);
     }
 
     private void enteredBloat(RoomHandler old)
@@ -344,6 +319,7 @@ public class TheatreTrackerPlugin extends Plugin
         clog.write(ENTERED_NEW_TOB_REGION, TOBRoom.BLOAT.ordinal());
         maiden.reset();
         bloat.reset();
+        liveFrame.tabbedPane.setSelectedIndex(1);
     }
 
     private void enteredNylo(RoomHandler old)
@@ -351,6 +327,7 @@ public class TheatreTrackerPlugin extends Plugin
         clog.write(ENTERED_NEW_TOB_REGION, NYLO.ordinal());
         bloat.reset();
         nylo.reset();
+        liveFrame.tabbedPane.setSelectedIndex(2);
     }
 
     private void enteredSote(RoomHandler old)
@@ -358,6 +335,7 @@ public class TheatreTrackerPlugin extends Plugin
         clog.write(ENTERED_NEW_TOB_REGION, SOTE.ordinal());
         nylo.reset();
         sote.reset();
+        liveFrame.tabbedPane.setSelectedIndex(3);
     }
 
     private void enteredXarpus(RoomHandler old)
@@ -365,6 +343,7 @@ public class TheatreTrackerPlugin extends Plugin
         clog.write(ENTERED_NEW_TOB_REGION, XARPUS.ordinal());
         sote.reset();
         xarpus.reset();
+        liveFrame.tabbedPane.setSelectedIndex(4);
     }
 
     private void enteredVerzik(RoomHandler old)
@@ -372,6 +351,7 @@ public class TheatreTrackerPlugin extends Plugin
         clog.write(ENTERED_NEW_TOB_REGION, VERZIK.ordinal());
         xarpus.reset();
         verzik.reset();
+        liveFrame.tabbedPane.setSelectedIndex(5);
     }
 
     @Subscribe
@@ -662,7 +642,7 @@ public class TheatreTrackerPlugin extends Plugin
             Actor a = event.getActor();
             if(a instanceof Player)
             {
-                clog.write(PLAYER_DIED, event.getActor().getName());
+                clog.write(PLAYER_DIED, event.getActor().getName(), String.valueOf(client.getTickCount()-currentRoom.roomStartTick));
             }
         }
     }
@@ -854,7 +834,6 @@ public class TheatreTrackerPlugin extends Plugin
                     {
                         WorldPoint worldPoint = p.getWorldLocation();
                         playersAttacked.add(new QueuedPlayerAttackLessProjectiles(p, worldPoint, 1, animations, String.valueOf(p.getPlayerComposition().getEquipmentId(KitType.WEAPON)), String.valueOf(p.getAnimation())));
-                        log.info("queuing this tick DB " + client.getTickCount());
                     }
                     else
                     {

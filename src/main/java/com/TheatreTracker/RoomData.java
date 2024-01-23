@@ -90,6 +90,8 @@ public class RoomData {
     public boolean verzikEndAccurate = false;
     public boolean resetBeforeMaiden;
 
+    public ArrayList<Integer> websStart = new ArrayList<>();
+
     public boolean maidenTimeAccurate;
     public boolean partyComplete;
 
@@ -106,6 +108,9 @@ public class RoomData {
 
     public boolean hardMode;
     public boolean storyMode;
+    public ArrayList<Integer> p2Crabs = new ArrayList<>();
+    public ArrayList<Integer> p3Crabs = new ArrayList<>();
+    public ArrayList<Integer> redsProc = new ArrayList<>();
 
 
     public boolean bloatTimeAccurate;
@@ -130,6 +135,7 @@ public class RoomData {
     public boolean nyloWipe;
     public boolean nyloReset;
     public boolean nyloStarted;
+    public ArrayList<Integer> nyloWaveStalled = new ArrayList<>();
 
 
     public boolean soteTimeAccurate;
@@ -528,6 +534,22 @@ public class RoomData {
                     dataManager.incrementPlayerSpecific(DataPoint.VERZIK_BOUNCES,subData[4]);
                     break;
                 case 78:
+                    if(!subData[4].equalsIgnoreCase(""))
+                    {
+                        if (dataManager.get(DataPoint.VERZIK_P2_SPLIT) > 1)
+                        {
+                            if(!p3Crabs.contains(Integer.parseInt(subData[4])))
+                            {
+                                p3Crabs.add(Integer.parseInt(subData[4]));
+                            }
+                        } else
+                        {
+                            if(!p2Crabs.contains(Integer.parseInt(subData[4])))
+                            {
+                                p2Crabs.add(Integer.parseInt(subData[4]));
+                            }
+                        }
+                    }
                     dataManager.increment(DataPoint.VERZIK_CRABS_SPAWNED);
                     break;
                 case 79:
@@ -535,7 +557,11 @@ public class RoomData {
                     verzikDawnDamage += Integer.parseInt(subData[5]);
                     break;
                 case 80:
-                    dataManager.set(DataPoint.VERZIK_REDS_SPLIT, Integer.parseInt(subData[4]));
+                    if(dataManager.get(DataPoint.VERZIK_REDS_SPLIT) == 0)
+                    {
+                        dataManager.set(DataPoint.VERZIK_REDS_SPLIT, Integer.parseInt(subData[4]));
+                    }
+                    redsProc.add(Integer.parseInt(subData[4]));
                     break;
                 case 206:
                     verzikStartAccurate = true;
@@ -605,6 +631,9 @@ public class RoomData {
                     catch(Exception e)
                     {
                     }
+                    break;
+                case 901:
+                    websStart.add(Integer.parseInt(subData[4]));
                     break;
 
             }
@@ -1087,6 +1116,7 @@ public class RoomData {
                     nyloStarted = true;
                     break;
                 case 31:
+                    nyloWaveStalled.add(Integer.parseInt(subData[5]));
                     dataManager.increment(com.TheatreTracker.utility.DataPoint.NYLO_STALLS_TOTAL);
                     if (Integer.parseInt(subData[4]) > 19) {
                         dataManager.increment(com.TheatreTracker.utility.DataPoint.NYLO_STALLS_POST_20);

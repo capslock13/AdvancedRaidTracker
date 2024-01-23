@@ -25,7 +25,7 @@ public class SaveRaidsBaseFrame extends BaseFrame
         field = new JTextField();
         subPanel.add(new JLabel("Raids Name: "));
         subPanel.add(field);
-        saveButton = new JButton("Save...");
+        saveButton = new JButton("Save");
         saveButton.addActionListener(new ActionListener()
         {
             @Override

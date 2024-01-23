@@ -89,10 +89,10 @@ public enum DataPoint {
     VERZIK_P2_DURATION("Verzik P2 duration", types.TIME, rooms.VERZIK),
     VERZIK_P3_DURATION("Verzik P3 duration", types.TIME, rooms.VERZIK),
 
-    NYLO_ENTRY("Nylo entry", types.TIME, rooms.NYLOCAS),
-    SOTE_ENTRY("Sote entry", types.TIME, rooms.SOTETSEG),
-    XARP_ENTRY("Xarp entry", types.TIME, rooms.XARPUS),
-    VERZIK_ENTRY("Verzik entry", types.TIME, rooms.VERZIK),
+    NYLO_ENTRY("Nylo Entry", types.TIME, rooms.NYLOCAS),
+    SOTE_ENTRY("Sote Entry", types.TIME, rooms.SOTETSEG),
+    XARP_ENTRY("Xarp Entry", types.TIME, rooms.XARPUS),
+    VERZIK_ENTRY("Verzik Entry", types.TIME, rooms.VERZIK),
 
     ATTEMPTED_HAMMERS_MAIDEN("Maiden attempted hammers", types.OTHER_INT, rooms.MAIDEN, true),
     ATTEMPTED_HAMMERS_BLOAT("Bloat attempted hammers", types.OTHER_INT, rooms.BLOAT, true),

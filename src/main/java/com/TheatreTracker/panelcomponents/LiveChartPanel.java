@@ -89,6 +89,11 @@ public class LiveChartPanel extends JPanel
         drawGraph();
     }
 
+    public Rectangle getViewRect()
+    {
+        return new Rectangle(0, (boxCount > 0) ? (boxCount-1)*boxHeight : 0, boxWidth, boxHeight);
+    }
+
     public void addAttack(PlayerDidAttack attack)
     {
         attack.tick = currentTick;

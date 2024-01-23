@@ -3,6 +3,7 @@ package com.TheatreTracker.panelcomponents;
 import com.TheatreTracker.utility.PlayerDidAttack;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -14,6 +15,13 @@ public class LiveChartFrame extends BaseFrame
     LiveChartPanel sotetsegPanel;
     LiveChartPanel xarpPanel;
     LiveChartPanel verzPanel;
+    JScrollPane maidenScroll;
+    JScrollPane bloatScroll;
+    JScrollPane nyloScroll;
+    JScrollPane sotetsegScroll;
+    JScrollPane xarpusScroll;
+    JScrollPane verzikScroll;
+    public JTabbedPane tabbedPane;
 
     public LiveChartFrame()
     {
@@ -24,14 +32,22 @@ public class LiveChartFrame extends BaseFrame
         xarpPanel = new LiveChartPanel("Xarpus");
         verzPanel = new LiveChartPanel("Verzik");
 
-        JTabbedPane tabbedPane = new JTabbedPane();
+        maidenScroll = new JScrollPane(maidenPanel);
+         bloatScroll = new JScrollPane(bloatPanel);
+         nyloScroll = new JScrollPane(nyloPanel);
+         sotetsegScroll = new JScrollPane(sotetsegPanel);
+         xarpusScroll = new JScrollPane(xarpPanel);
+         verzikScroll = new JScrollPane(verzPanel);
 
-        tabbedPane.add("Maiden", maidenPanel);
-        tabbedPane.add("Bloat", bloatPanel);
-        tabbedPane.add("Nylocas", nyloPanel);
-        tabbedPane.add("Sotetseg", sotetsegPanel);
-        tabbedPane.add("Xarpus", xarpPanel);
-        tabbedPane.add("Verzik", verzPanel);
+
+        tabbedPane = new JTabbedPane();
+
+        tabbedPane.add("Maiden", maidenScroll);
+        tabbedPane.add("Bloat", bloatScroll);
+        tabbedPane.add("Nylocas", nyloScroll);
+        tabbedPane.add("Sotetseg", sotetsegScroll);
+        tabbedPane.add("Xarpus", xarpusScroll);
+        tabbedPane.add("Verzik", verzikScroll);
 
         add(tabbedPane);
         pack();
@@ -60,12 +76,19 @@ public class LiveChartFrame extends BaseFrame
     public void incrementTick(String room)
     {
         getPanel(room).incrementTick();
+        maidenScroll.getViewport().setViewPosition(new Point(maidenPanel.getViewRect().x, maidenPanel.getViewRect().y));
+        bloatScroll.getViewport().setViewPosition(new Point(bloatPanel.getViewRect().x, bloatPanel.getViewRect().y));
+        nyloScroll.getViewport().setViewPosition(new Point(nyloPanel.getViewRect().x, nyloPanel.getViewRect().y));
+        sotetsegScroll.getViewport().setViewPosition(new Point(sotetsegPanel.getViewRect().x, sotetsegPanel.getViewRect().y));
+        xarpusScroll.getViewport().setViewPosition(new Point(xarpPanel.getViewRect().x, xarpPanel.getViewRect().y));
+        verzikScroll.getViewport().setViewPosition(new Point(verzPanel.getViewRect().x, verzPanel.getViewRect().y));
     }
 
     public void addAttack(PlayerDidAttack attack, String room)
     {
         getPanel(room).addAttack(attack);
     }
+
 
     public void resetAll()
     {

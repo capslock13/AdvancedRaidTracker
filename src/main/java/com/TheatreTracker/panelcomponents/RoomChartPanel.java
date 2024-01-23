@@ -30,15 +30,15 @@ public class RoomChartPanel extends JPanel
     int endTick;
     ArrayList<String> players;
     String room;
-    ArrayList<Integer> specific;
-    ArrayList<Integer> lines;
+    Map<Integer, String> specific;
+    Map<Integer, String> lines;
     WeaponAttack[] weaponAttacks;
     int keyColumns;
     int keyRows;
     int keyCount;
     int keyMargin;
 
-    public RoomChartPanel(ArrayList<PlayerDidAttack> attacks, Set<String> players, String room, int size, int start, int end, ArrayList<Integer> specificData, ArrayList<Integer> lines)
+    public RoomChartPanel(ArrayList<PlayerDidAttack> attacks, Set<String> players, String room, int size, int start, int end, Map<Integer, String> specificData, Map<Integer,String> lines)
     {
         this.specific = specificData;
         this.lines = lines;
@@ -159,8 +159,11 @@ public class RoomChartPanel extends JPanel
             //g.setColor(new Color(255, 80, 80)); AUTO
             g.setColor(Color.DARK_GRAY);
             g.drawLine(100+xOffset+scale, yOffset-(fontHeight/2), 100+xOffset+scale, yOffset+boxHeight-(2*scale)+10);
-            g.setColor(Color.WHITE);
-            g.drawString(String.valueOf(i), 100+xOffset, yOffset+(fontHeight/2));
+            g.setColor(new Color(220, 220, 220));
+            Font oldFont = g.getFont();
+            g.setFont(oldFont.deriveFont(10.0f));
+            g.drawString(String.valueOf(i), 100+xOffset+3, yOffset+(fontHeight/2));
+            g.setFont(oldFont);
         }
 
         for(int i = 0; i < boxCount; i++)
@@ -201,7 +204,7 @@ public class RoomChartPanel extends JPanel
                 }
             }
         }
-        for(Integer i : specific)
+        for(Integer i : specific.keySet())
         {
             int xOffset = (shouldWrap) ? ((i - startTick) % 50) * scale : i * scale;
             int yOffset = (shouldWrap) ? ((i - startTick) / 50) * boxHeight : 0;
@@ -234,7 +237,7 @@ public class RoomChartPanel extends JPanel
             }
         }
 
-        for(Integer i : lines)
+        for(Integer i : lines.keySet())
         {
             int xOffset = (shouldWrap) ? ((i - startTick) % 50) * scale : i * scale;
             int yOffset = (shouldWrap) ? ((i- startTick) / 50) * boxHeight : 0;
@@ -242,6 +245,9 @@ public class RoomChartPanel extends JPanel
             yOffset += 10;
             g.setColor(new Color(255, 0, 0));
             g.drawLine(xOffset, yOffset, xOffset, yOffset+boxHeight-20);
+            int stringLength = getStringBounds(g, lines.get(i), 0, 0).width;
+            g.setColor(Color.WHITE);
+            g.drawString(lines.get(i), xOffset-(stringLength/2), yOffset-1);
         }
 
         g.setColor(oldColor);

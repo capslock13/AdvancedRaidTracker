@@ -46,6 +46,7 @@ public class VerzikHandler extends RoomHandler {
     private int verzikRedsTick = -1;
     private int verzikP2EndTick = -1;
     private int verzikP3EndTick = -1;
+    private boolean redsThisTick = false;
 
     private boolean hasWebbed = false;
     private int webTick = -1;
@@ -64,12 +65,14 @@ public class VerzikHandler extends RoomHandler {
         verzikRedsTick = -1;
         verzikP2EndTick = -1;
         verzikP3EndTick = -1;
-        hasWebbed = true;
+        redsThisTick = false;
+        hasWebbed = false;
         webTick = -1;
     }
 
     public void updateGameTick(GameTick event)
     {
+        redsThisTick = false;
         if(roomState == RoomState.VerzikRoomState.PHASE_1)
         {
             for(Projectile projectile : client.getProjectiles())
@@ -175,12 +178,20 @@ public class VerzikHandler extends RoomHandler {
 
     public void updateNpcSpawned(NpcSpawned event) {
         int id = event.getNpc().getId();
-        if (id == VERZIK_MATOMENOS || id == VERZIK_MATOMENOS_HM || id == VERZIK_MATOMENOS_SM) {
-            if (roomState != RoomState.VerzikRoomState.PHASE_2_REDS) {
+        if (id == VERZIK_MATOMENOS || id == VERZIK_MATOMENOS_HM || id == VERZIK_MATOMENOS_SM)
+        {
+            if(!redsThisTick)
+            {
+                clog.write(VERZIK_P2_REDS_PROC, (client.getTickCount() - verzikEntryTick) + "");
+                redsThisTick = true;
+            }
+            if (roomState != RoomState.VerzikRoomState.PHASE_2_REDS)
+            {
                 procReds();
             }
         }
-        switch (id) {
+        switch (id)
+        {
             case VERZIK_MELEE_NYLO:
             case VERZIK_RANGE_NYLO:
             case VERZIK_MAGE_NYLO:
@@ -190,7 +201,7 @@ public class VerzikHandler extends RoomHandler {
             case VERZIK_MELEE_NYLO_SM:
             case VERZIK_RANGE_NYLO_SM:
             case VERZIK_MAGE_NYLO_SM:
-                clog.write(VERZIK_CRAB_SPAWNED);
+                clog.write(VERZIK_CRAB_SPAWNED, client.getTickCount()-roomStartTick);
                 break;
         }
     }
@@ -241,7 +252,6 @@ public class VerzikHandler extends RoomHandler {
         roomState = RoomState.VerzikRoomState.PHASE_2_REDS;
         verzikRedsTick = client.getTickCount();
         sendTimeMessage("Red Crabs Spawned. Duration: ", verzikRedsTick - verzikEntryTick);
-        clog.write(VERZIK_P2_REDS_PROC, (verzikRedsTick - verzikEntryTick) + "");
     }
 
     private void endP2() {

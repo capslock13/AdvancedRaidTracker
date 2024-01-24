@@ -130,6 +130,9 @@ public class WeaponDecider
             case 7554:
                 weaponUsed = WeaponAttack.DART;
                 break;
+            case 6299:
+                weaponUsed = WeaponAttack.SBS;
+                break;
         }
         return weaponUsed;
     }

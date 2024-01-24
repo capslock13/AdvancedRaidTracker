@@ -29,7 +29,8 @@ public enum WeaponAttack
     CLAW_SCRATCH("Claw Scratch", "c", new Color(76, 89, 1)),
     CLAW_SPEC("Claw Spec", "C", new Color(76,89,1)),
     SHADOW("Shadow", "Sh", new Color(20, 20, 60)),
-    DART("Dart", "Da", new Color(10, 60, 60));
+    DART("Dart", "Da", new Color(10, 60, 60)),
+    SBS("Spellbook Swap", "SS", new Color(10,100,60));
 
     ;
 

@@ -72,7 +72,7 @@ public class RoomChartFrame extends BaseFrame
             }
             nyloLines.put(data.getValue(DataPoint.NYLO_LAST_WAVE), "Last Wave");
             nyloLines.put(data.getValue(DataPoint.NYLO_BOSS_SPAWN), "Boss Spawn");
-            for(int i = data.getValue(DataPoint.NYLO_BOSS_SPAWN)+12; i < data.getNyloTime(); i+= 10)
+            for(int i = data.getValue(DataPoint.NYLO_BOSS_SPAWN)+11; i < data.getNyloTime(); i+= 10)
             {
                 nyloLines.put(i, "Phase");
             }

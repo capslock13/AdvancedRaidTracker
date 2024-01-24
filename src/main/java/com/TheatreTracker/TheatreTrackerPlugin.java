@@ -256,6 +256,7 @@ public class TheatreTrackerPlugin extends Plugin
             {
                 currentRoom = maiden;
                 enteredMaiden(previous);
+                liveFrame.resetAll();
             }
             activeState = true;
         }

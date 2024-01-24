@@ -248,6 +248,7 @@ public class TheatreTrackerPlugin extends Plugin
             clog.write(ENTERED_TOB);
             clog.write(SPECTATE);
             clog.write(LATE_START, String.valueOf(currentRegion));
+            liveFrame.resetAll();
         }
         if(inRegion(MAIDEN_REGION))
         {
@@ -656,7 +657,6 @@ public class TheatreTrackerPlugin extends Plugin
         clog.write(LEFT_TOB); //todo add region
         currentRoom = null;
         activelyPiping.clear();
-        liveFrame.resetAll();
     }
 
     @Subscribe

@@ -192,7 +192,7 @@ public class VerzikHandler extends RoomHandler {
             if(!redsThisTick)
             {
                 clog.write(VERZIK_P2_REDS_PROC, (client.getTickCount() - verzikEntryTick) + "");
-                plugin.addLiveLine(5, client.getTickCount()-verzikEntryTick, "Reds");
+                //plugin.addLiveLine(5, client.getTickCount()-verzikEntryTick, "Reds");
                 healingEndTick = client.getTickCount()+11;
                 redsThisTick = true;
             }

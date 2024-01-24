@@ -99,6 +99,7 @@ public class NyloHandler extends RoomHandler {
         }
         if (client.getTickCount() == expectedWaveTick && currentWave != 31) {
             clog.write(NYLO_STALL, "" + currentWave, "" + (client.getTickCount() - pillarsSpawnedTick), "" + nylosAlive.size());
+            plugin.addLiveLine(2, client.getTickCount()-pillarsSpawnedTick, "Stall");
             expectedWaveTick += 4;
         }
     }

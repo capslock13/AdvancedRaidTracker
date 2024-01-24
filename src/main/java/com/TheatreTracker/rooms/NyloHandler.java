@@ -93,6 +93,7 @@ public class NyloHandler extends RoomHandler {
                     }
                 }
                 currentWave = wave.getWave();
+                plugin.addLiveLine(2, client.getTickCount()-pillarsSpawnedTick, "W" + currentWave);
             }
             buildWave.clear();
         }
@@ -292,22 +293,26 @@ public class NyloHandler extends RoomHandler {
      *
      * @param id ID of new form
      */
-    public void handleNPCChanged(int id) {
+    public void handleNPCChanged(int id)
+    {
         switch (id) {
             case NYLO_BOSS_MELEE:
             case NYLO_BOSS_MELEE_HM:
             case NYLO_BOSS_MELEE_SM:
                 clog.write(MELEE_PHASE, "" + (client.getTickCount() - pillarsSpawnedTick));
+                plugin.addLiveLine(2, client.getTickCount()-pillarsSpawnedTick, "Phase");
                 break;
             case NYLO_BOSS_MAGE:
             case NYLO_BOSS_MAGE_HM:
             case NYLO_BOSS_MAGE_SM:
                 clog.write(MAGE_PHASE, "" + (client.getTickCount() - pillarsSpawnedTick));
+                plugin.addLiveLine(2, client.getTickCount()-pillarsSpawnedTick, "Phase");
                 break;
             case NYLO_BOSS_RANGE:
             case NYLO_BOSS_RANGE_HM:
             case NYLO_BOSS_RANGE_SM:
                 clog.write(RANGE_PHASE, "" + (client.getTickCount() - pillarsSpawnedTick));
+                plugin.addLiveLine(2, client.getTickCount()-pillarsSpawnedTick, "Phase");
                 break;
         }
     }
@@ -349,6 +354,7 @@ public class NyloHandler extends RoomHandler {
         clog.write(BOSS_SPAWN, "" + (client.getTickCount() - pillarsSpawnedTick));
         roomState = BOSS;
         bossSpawn = client.getTickCount() - 2;
+        plugin.addLiveLine(2, client.getTickCount()-pillarsSpawnedTick-2, "W" + currentWave);
         sendTimeMessage("Wave 'Nylocas boss spawn' complete! Duration: ", bossSpawn - pillarsSpawnedTick, bossSpawn - lastDead);
     }
 

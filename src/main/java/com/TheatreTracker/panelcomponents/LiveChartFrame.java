@@ -76,17 +76,50 @@ public class LiveChartFrame extends BaseFrame
     public void incrementTick(String room)
     {
         getPanel(room).incrementTick();
-        maidenScroll.getViewport().setViewPosition(new Point(maidenPanel.getViewRect().x, maidenPanel.getViewRect().y));
-        bloatScroll.getViewport().setViewPosition(new Point(bloatPanel.getViewRect().x, bloatPanel.getViewRect().y));
-        nyloScroll.getViewport().setViewPosition(new Point(nyloPanel.getViewRect().x, nyloPanel.getViewRect().y));
-        sotetsegScroll.getViewport().setViewPosition(new Point(sotetsegPanel.getViewRect().x, sotetsegPanel.getViewRect().y));
-        xarpusScroll.getViewport().setViewPosition(new Point(xarpPanel.getViewRect().x, xarpPanel.getViewRect().y));
-        verzikScroll.getViewport().setViewPosition(new Point(verzPanel.getViewRect().x, verzPanel.getViewRect().y));
+        if(getPanel(room).currentTick % 50 == 0)
+        {
+            maidenScroll.getViewport().setViewPosition(new Point(maidenPanel.getViewRect().x, maidenPanel.getViewRect().y));
+            bloatScroll.getViewport().setViewPosition(new Point(bloatPanel.getViewRect().x, bloatPanel.getViewRect().y));
+            nyloScroll.getViewport().setViewPosition(new Point(nyloPanel.getViewRect().x, nyloPanel.getViewRect().y));
+            sotetsegScroll.getViewport().setViewPosition(new Point(sotetsegPanel.getViewRect().x, sotetsegPanel.getViewRect().y));
+            xarpusScroll.getViewport().setViewPosition(new Point(xarpPanel.getViewRect().x, xarpPanel.getViewRect().y));
+            verzikScroll.getViewport().setViewPosition(new Point(verzPanel.getViewRect().x, verzPanel.getViewRect().y));
+        }
     }
 
     public void addAttack(PlayerDidAttack attack, String room)
     {
         getPanel(room).addAttack(attack);
+    }
+
+    public void addMaidenLine(int value, String description)
+    {
+        maidenPanel.addLine(value, description);
+    }
+
+    public void addBloatLine(int value, String description)
+    {
+        bloatPanel.addLine(value, description);
+    }
+
+    public void addNyloLine(int value, String description)
+    {
+        nyloPanel.addLine(value, description);
+    }
+
+    public void addSoteLine(int value, String description)
+    {
+        sotetsegPanel.addLine(value, description);
+    }
+
+    public void addXarpLine(int value, String description)
+    {
+        xarpPanel.addLine(value, description);
+    }
+
+    public void addVerzikLine(int value, String description)
+    {
+        verzPanel.addLine(value, description);
     }
 
 

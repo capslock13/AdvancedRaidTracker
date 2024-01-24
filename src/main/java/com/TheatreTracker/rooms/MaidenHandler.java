@@ -115,6 +115,7 @@ public class MaidenHandler extends RoomHandler
         if (maidenStartTick != -1)
             sendTimeMessage("Wave 'Maiden phase 1' complete! Duration: ", p70 - maidenStartTick);
         clog.write(MAIDEN_70S, "" + (p70 - maidenStartTick));
+        plugin.addLiveLine(0, p70-maidenStartTick, "70s");
 
     }
 
@@ -124,6 +125,7 @@ public class MaidenHandler extends RoomHandler
         if (maidenStartTick != -1)
             sendTimeMessage("Wave 'Maiden phase 2' complete! Duration: ", p50 - maidenStartTick, p50 - p70);
         clog.write(MAIDEN_50S, "" + (p50 - maidenStartTick));
+        plugin.addLiveLine(0, p50-maidenStartTick, "50s");
     }
 
     public void proc30() {
@@ -132,6 +134,7 @@ public class MaidenHandler extends RoomHandler
         if (maidenStartTick != -1)
             sendTimeMessage("Wave 'Maiden phase 3' complete! Duration: ", p30 - maidenStartTick, p30 - p50);
         clog.write(MAIDEN_30S, "" + (p30 - maidenStartTick));
+        plugin.addLiveLine(0, p30-maidenStartTick, "30s");
     }
 
     public void endMaiden() {
@@ -141,6 +144,7 @@ public class MaidenHandler extends RoomHandler
             sendTimeMessage("Wave 'Maiden Skip' complete! Duration: ", maidenDeathTick - maidenStartTick, maidenDeathTick - p30, false);
         clog.write(301);
         clog.write(MAIDEN_0HP, "" + (client.getTickCount() - maidenStartTick));
+        plugin.addLiveLine(0, p70-maidenStartTick, "Dead");
     }
 
 

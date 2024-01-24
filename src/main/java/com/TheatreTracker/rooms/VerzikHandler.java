@@ -21,6 +21,7 @@ import static com.TheatreTracker.constants.NpcIDs.*;
 public class VerzikHandler extends RoomHandler {
     public RoomState.VerzikRoomState roomState;
     private TheatreTrackerPlugin plugin;
+    private int healingEndTick = -1;
 
     public VerzikHandler(Client client, DataWriter clog, TheatreTrackerConfig config, TheatreTrackerPlugin plugin)
     {
@@ -67,11 +68,17 @@ public class VerzikHandler extends RoomHandler {
         verzikP3EndTick = -1;
         redsThisTick = false;
         hasWebbed = false;
+        healingEndTick = -1;
         webTick = -1;
     }
 
     public void updateGameTick(GameTick event)
     {
+        if(healingEndTick == client.getTickCount())
+        {
+            plugin.addLiveLine(5, client.getTickCount()-verzikEntryTick, "Healing Ended");
+            healingEndTick = -1;
+        }
         redsThisTick = false;
         if(roomState == RoomState.VerzikRoomState.PHASE_1)
         {
@@ -79,7 +86,6 @@ public class VerzikHandler extends RoomHandler {
             {
                 if(projectile.getId() == 1547 || projectile.getId() == 1544)
                 {
-                    log.info("Projectile on tick " + client.getTickCount() + ", " + " game cylce: " + client.getGameCycle() + ", projectile starts: " + projectile.getStartCycle());
                 }
             }
         }
@@ -120,6 +126,8 @@ public class VerzikHandler extends RoomHandler {
                 hasWebbed = true;
                 clog.write(WEBS_STARTED, String.valueOf(client.getTickCount()-verzikEntryTick));
                 webTick = client.getTickCount();
+                if(webTick-verzikEntryTick % 2 == 0)
+                    plugin.addLiveLine(5, webTick-verzikEntryTick, "Webs");
             }
         }
     }
@@ -183,6 +191,8 @@ public class VerzikHandler extends RoomHandler {
             if(!redsThisTick)
             {
                 clog.write(VERZIK_P2_REDS_PROC, (client.getTickCount() - verzikEntryTick) + "");
+                plugin.addLiveLine(5, client.getTickCount()-verzikEntryTick, "Reds");
+                healingEndTick = client.getTickCount()+11;
                 redsThisTick = true;
             }
             if (roomState != RoomState.VerzikRoomState.PHASE_2_REDS)

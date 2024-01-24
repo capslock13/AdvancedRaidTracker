@@ -78,7 +78,8 @@ public class XarpusHandler extends RoomHandler {
         if (event.getActor() instanceof NPC) {
             NPC npc = (NPC) event.getActor();
             int id = npc.getId();
-            if (id == XARPUS_P23 || id == XARPUS_P23_HM || id == XARPUS_P23_SM) {
+            if (id == XARPUS_P23 || id == XARPUS_P23_HM || id == XARPUS_P23_SM)
+            {
                 startScreech();
             }
         }
@@ -126,10 +127,15 @@ public class XarpusHandler extends RoomHandler {
     }
 
     public void updateGameTick(GameTick event) {
-        if (roomState == RoomState.XarpusRoomState.NOT_STARTED) {
+        if (roomState == RoomState.XarpusRoomState.NOT_STARTED)
+        {
             if (RoomUtil.crossedLine(RoomUtil.XARPUS_REGION, new Point(25, 12), new Point(27, 12), false, client)) {
                 startXarpus();
             }
+        }
+        if(xarpusScreechTick != -1 && xarpusScreechTick != 0 && client.getTickCount() != xarpusScreechTick && (client.getTickCount()-xarpusScreechTick)%8==0)
+        {
+            plugin.addLiveLine(4, xarpusScreechTick-xarpusEntryTick, "Turn");
         }
     }
 
@@ -139,6 +145,7 @@ public class XarpusHandler extends RoomHandler {
         xarpusScreechTick = client.getTickCount();
         String splitMessage = "Wave 'Xarpus phase 2' complete. Duration: " + timeColor() + RoomUtil.time(xarpusScreechTick - xarpusEntryTick) + " (" + RoomUtil.time(xarpusScreechTick - xarpusExhumedsEnd) + ")";
         this.client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", splitMessage, null, false);
+        plugin.addLiveLine(4, xarpusScreechTick-xarpusEntryTick, "SCREECH");
     }
 
     private void startXarpus()
@@ -155,6 +162,7 @@ public class XarpusHandler extends RoomHandler {
         xarpusExhumedsEnd = client.getTickCount();
         String splitMessage = "Wave 'Xarpus phase 1' complete. Duration: " + timeColor() + RoomUtil.time(xarpusExhumedsEnd - xarpusEntryTick);
         this.client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", splitMessage, null, false);
+        plugin.addLiveLine(4, xarpusScreechTick-xarpusEntryTick, "Exhumeds End");
     }
 
     private void endXarpus() {

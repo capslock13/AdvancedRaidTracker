@@ -106,7 +106,8 @@ public class RoomChartFrame extends BaseFrame
             Map<Integer, String> verzikP3Lines = new LinkedHashMap<>();
             for(Integer i : data.websStart)
             {
-                verzikP3Lines.put(i, "Webs");
+                if(i%2==0)
+                    verzikP3Lines.put(i, "Webs");
             }
 
             for(Integer i : data.p3Crabs)

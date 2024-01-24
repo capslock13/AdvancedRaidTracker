@@ -486,6 +486,31 @@ public class TheatreTrackerPlugin extends Plugin
         activeVenges.removeIf(vengDamageQueue -> vengDamageQueue.appliedTick <= client.getTickCount());
     }
 
+    public void addLiveLine(int room, int value, String description)
+    {
+        switch(room)
+        {
+            case 0:
+                liveFrame.addMaidenLine(value, description);
+                break;
+            case 1:
+                liveFrame.addBloatLine(value, description);
+                break;
+            case 2:
+                liveFrame.addNyloLine(value, description);
+                break;
+            case 3:
+                liveFrame.addSoteLine(value, description);
+                break;
+            case 4:
+                liveFrame.addXarpLine(value, description);
+                break;
+            case 5:
+                liveFrame.addVerzikLine(value, description);
+                break;
+        }
+    }
+
     @Subscribe
     public void onGameTick(GameTick event) throws PluginInstantiationException
     {

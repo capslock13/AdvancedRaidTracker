@@ -93,13 +93,11 @@ public class NyloHandler extends RoomHandler {
                     }
                 }
                 currentWave = wave.getWave();
-                plugin.addLiveLine(2, client.getTickCount()-pillarsSpawnedTick, "W" + currentWave);
             }
             buildWave.clear();
         }
         if (client.getTickCount() == expectedWaveTick && currentWave != 31) {
             clog.write(NYLO_STALL, "" + currentWave, "" + (client.getTickCount() - pillarsSpawnedTick), "" + nylosAlive.size());
-            plugin.addLiveLine(2, client.getTickCount()-pillarsSpawnedTick, "Stall");
             expectedWaveTick += 4;
         }
     }

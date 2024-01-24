@@ -76,7 +76,6 @@ public class VerzikHandler extends RoomHandler {
     {
         if(healingEndTick == client.getTickCount())
         {
-            plugin.addLiveLine(5, client.getTickCount()-verzikEntryTick, "Shield End");
             healingEndTick = -1;
         }
         redsThisTick = false;

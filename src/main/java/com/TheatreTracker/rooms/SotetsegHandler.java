@@ -30,6 +30,7 @@ public class SotetsegHandler extends RoomHandler {
     public SotetsegHandler(Client client, DataWriter clog, TheatreTrackerConfig config, TheatreTrackerPlugin plugin)
     {
         super(client, clog, config);
+        this.plugin = plugin;
         roomState = RoomState.SotetsegRoomState.NOT_STARTED;
     }
 

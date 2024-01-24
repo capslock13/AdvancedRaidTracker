@@ -131,6 +131,13 @@ public class LiveChartFrame extends BaseFrame
         sotetsegPanel.resetGraph();
         xarpPanel.resetGraph();
         verzPanel.resetGraph();
+
+        maidenScroll.getVerticalScrollBar().setValue(0);
+        bloatScroll.getVerticalScrollBar().setValue(0);
+        nyloScroll.getVerticalScrollBar().setValue(0);
+        sotetsegScroll.getVerticalScrollBar().setValue(0);
+        xarpusScroll.getVerticalScrollBar().setValue(0);
+        verzikScroll.getVerticalScrollBar().setValue(0);
     }
     public void setPlayers(ArrayList<String> players)
     {

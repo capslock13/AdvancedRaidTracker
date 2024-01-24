@@ -135,7 +135,7 @@ public class XarpusHandler extends RoomHandler {
         }
         if(xarpusScreechTick != -1 && xarpusScreechTick != 0 && client.getTickCount() != xarpusScreechTick && (client.getTickCount()-xarpusScreechTick)%8==0)
         {
-            plugin.addLiveLine(4, xarpusScreechTick-xarpusEntryTick, "Turn");
+            plugin.addLiveLine(4, client.getTickCount()-xarpusEntryTick, "Turn");
         }
     }
 
@@ -162,7 +162,7 @@ public class XarpusHandler extends RoomHandler {
         xarpusExhumedsEnd = client.getTickCount();
         String splitMessage = "Wave 'Xarpus phase 1' complete. Duration: " + timeColor() + RoomUtil.time(xarpusExhumedsEnd - xarpusEntryTick);
         this.client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", splitMessage, null, false);
-        plugin.addLiveLine(4, xarpusScreechTick-xarpusEntryTick, "Exhumeds End");
+        plugin.addLiveLine(4, client.getTickCount()-xarpusEntryTick, "Exhumeds End");
     }
 
     private void endXarpus() {

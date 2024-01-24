@@ -76,7 +76,7 @@ public class VerzikHandler extends RoomHandler {
     {
         if(healingEndTick == client.getTickCount())
         {
-            plugin.addLiveLine(5, client.getTickCount()-verzikEntryTick, "Healing Ended");
+            plugin.addLiveLine(5, client.getTickCount()-verzikEntryTick, "Shield End");
             healingEndTick = -1;
         }
         redsThisTick = false;
@@ -126,8 +126,10 @@ public class VerzikHandler extends RoomHandler {
                 hasWebbed = true;
                 clog.write(WEBS_STARTED, String.valueOf(client.getTickCount()-verzikEntryTick));
                 webTick = client.getTickCount();
-                if(webTick-verzikEntryTick % 2 == 0)
-                    plugin.addLiveLine(5, webTick-verzikEntryTick, "Webs");
+                if((webTick-verzikEntryTick) % 2 == 0)
+                {
+                    plugin.addLiveLine(5, webTick - verzikEntryTick, "Webs");
+                }
             }
         }
     }
@@ -256,6 +258,8 @@ public class VerzikHandler extends RoomHandler {
         verzikP1EndTick = client.getTickCount();
         sendTimeMessage("Wave 'Verzik phase 1' complete. Duration: ", verzikP1EndTick - verzikEntryTick);
         clog.write(VERZIK_P1_DESPAWNED, (verzikP1EndTick - verzikEntryTick) + "");
+        plugin.addLiveLine(5, verzikP1EndTick-verzikEntryTick, "P1 End");
+
     }
 
     private void procReds() {
@@ -269,6 +273,8 @@ public class VerzikHandler extends RoomHandler {
         verzikP2EndTick = client.getTickCount();
         sendTimeMessage("Wave 'Verzik phase 2' complete. Duration: ", verzikP2EndTick - verzikEntryTick, verzikP2EndTick - verzikP1EndTick);
         clog.write(VERZIK_P2_END, (verzikP2EndTick - verzikEntryTick) + "");
+        plugin.addLiveLine(5, verzikP2EndTick-verzikEntryTick, "P2 End");
+
     }
 
     private void endP3() {
@@ -277,5 +283,7 @@ public class VerzikHandler extends RoomHandler {
         clog.write(ACCURATE_VERZIK_END);
         sendTimeMessage("Wave 'Verzik phase 3' complete. Duration: ", verzikP3EndTick - verzikEntryTick, verzikP3EndTick - verzikP2EndTick);
         clog.write(VERZIK_P3_DESPAWNED, (verzikP3EndTick - verzikEntryTick) + "");
+        plugin.addLiveLine(5, client.getTickCount()-verzikEntryTick, "Dead");
+
     }
 }

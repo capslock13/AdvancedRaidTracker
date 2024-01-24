@@ -127,7 +127,7 @@ public class VerzikHandler extends RoomHandler {
                 webTick = client.getTickCount();
                 if((webTick-verzikEntryTick) % 2 == 0)
                 {
-                    plugin.addLiveLine(5, webTick - verzikEntryTick, "Webs");
+                    //plugin.addLiveLine(5, webTick - verzikEntryTick, "Webs");
                 }
             }
         }

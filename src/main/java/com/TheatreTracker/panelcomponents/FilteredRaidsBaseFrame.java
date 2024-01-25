@@ -1762,6 +1762,10 @@ public class FilteredRaidsBaseFrame extends BaseFrame
         addToComparison.setBackground(Color.BLACK);
         addToComparison.setOpaque(true);
 
+        JMenuItem viewGraphs = new JMenuItem("View Graphs");
+        viewGraphs.setBackground(Color.BLACK);
+        viewGraphs.setOpaque(true);
+
 
         JMenuItem viewCharts = new JMenuItem("View Charts");
         viewCharts.setBackground(Color.BLACK);
@@ -1779,6 +1783,33 @@ public class FilteredRaidsBaseFrame extends BaseFrame
                 }
                 RoomChartFrame roomCharts = new RoomChartFrame(rows);
                 roomCharts.open();
+            }
+        });
+
+        viewGraphs.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                ArrayList<String> labels = new ArrayList<>();
+                ArrayList<RoomData> rows = new ArrayList<>();
+                int[] toRemove = table.getSelectedRows();
+                for(int i = 0; i < toRemove.length; i++)
+                {
+                    rows.add(currentData.get(Integer.parseInt(table.getModel().getValueAt(toRemove[i], 0).toString())));
+                }
+                if(rows.size() == 0)
+                {
+                    new NoDataPopUp().open();
+                }
+                else
+                {
+                    labels.add("");
+                    ArrayList<ArrayList<RoomData>> data = new ArrayList<>();
+                    data.add(rows);
+                    ComparisonViewFrame graphView = new ComparisonViewFrame(data, labels);
+                    graphView.open();
+                }
             }
         });
 
@@ -1866,6 +1897,7 @@ public class FilteredRaidsBaseFrame extends BaseFrame
         raidPopup.add(filterExclusiveRaids);
         raidPopup.add(analyzeSessions);
         raidPopup.add(viewCharts);
+        raidPopup.add(viewGraphs);
         table.setComponentPopupMenu(raidPopup);
 
         filterTable = new JTable();
@@ -1994,7 +2026,7 @@ public class FilteredRaidsBaseFrame extends BaseFrame
         rightContainer.add(rightBottomBottomContainer);
         rightContainer.add(rightBottomMostContainer);
         splitLeftRight.add(rightContainer);
-
+        sortOrderBox.setSelectedIndex(1);
         add(splitLeftRight);
         pack();
         built = true;

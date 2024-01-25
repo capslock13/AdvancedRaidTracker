@@ -4,6 +4,7 @@ import com.TheatreTracker.TheatreTrackerConfig;
 import com.TheatreTracker.TheatreTrackerPlugin;
 import com.TheatreTracker.constants.LogID;
 import com.TheatreTracker.utility.DataWriter;
+import com.TheatreTracker.utility.PlayerDidAttack;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.coords.LocalPoint;
@@ -127,7 +128,7 @@ public class VerzikHandler extends RoomHandler {
                 webTick = client.getTickCount();
                 if((webTick-verzikEntryTick) % 2 == 0)
                 {
-                    //plugin.addLiveLine(5, webTick - verzikEntryTick, "Webs");
+                    plugin.addLiveLine(5, webTick - verzikEntryTick, "Webs");
                 }
             }
         }
@@ -144,7 +145,9 @@ public class VerzikHandler extends RoomHandler {
     public void updateGraphicChanged(GraphicChanged event) {
         if (event.getActor().hasSpotAnim(VERZIK_BOUNCE_SPOT_ANIMATION))
         {
-            clog.write(LogID.VERZIK_BOUNCE, event.getActor().getName());
+            clog.write(LogID.VERZIK_BOUNCE, event.getActor().getName(), String.valueOf(client.getTickCount()-verzikEntryTick));
+            plugin.liveFrame.addAttack(new PlayerDidAttack(event.getActor().getName(), "100000", client.getTickCount()-verzikEntryTick, "-1","-1","-1",-1,-1), "Verzik");
+
         }
     }
 
@@ -192,8 +195,9 @@ public class VerzikHandler extends RoomHandler {
             if(!redsThisTick)
             {
                 clog.write(VERZIK_P2_REDS_PROC, (client.getTickCount() - verzikEntryTick) + "");
-                //plugin.addLiveLine(5, client.getTickCount()-verzikEntryTick, "Reds");
+                plugin.addLiveLine(5, client.getTickCount()-verzikEntryTick, "Reds");
                 healingEndTick = client.getTickCount()+11;
+                plugin.addLiveLine(5, healingEndTick-verzikEntryTick, "Shield End");
                 redsThisTick = true;
             }
             if (roomState != RoomState.VerzikRoomState.PHASE_2_REDS)
@@ -276,13 +280,15 @@ public class VerzikHandler extends RoomHandler {
 
     }
 
-    private void endP3() {
+    private void endP3()
+    {
         roomState = RoomState.VerzikRoomState.FINISHED;
         verzikP3EndTick = client.getTickCount() + 6;
         clog.write(ACCURATE_VERZIK_END);
         sendTimeMessage("Wave 'Verzik phase 3' complete. Duration: ", verzikP3EndTick - verzikEntryTick, verzikP3EndTick - verzikP2EndTick);
         clog.write(VERZIK_P3_DESPAWNED, (verzikP3EndTick - verzikEntryTick) + "");
         plugin.addLiveLine(5, client.getTickCount()-verzikEntryTick, "Dead");
+        plugin.liveFrame.setVerzFinished();
 
     }
 }

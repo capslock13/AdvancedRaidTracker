@@ -133,6 +133,9 @@ public class WeaponDecider
             case 6299:
                 weaponUsed = WeaponAttack.SBS;
                 break;
+            case 100000:
+                weaponUsed = WeaponAttack.BOUNCE;
+                break;
         }
         return weaponUsed;
     }

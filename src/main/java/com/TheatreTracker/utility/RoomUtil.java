@@ -1,10 +1,14 @@
 package com.TheatreTracker.utility;
 
+import com.TheatreTracker.constants.NpcIDs;
 import net.runelite.api.Client;
+import net.runelite.api.NPC;
 import net.runelite.api.Player;
 import net.runelite.api.coords.WorldPoint;
 import com.TheatreTracker.Point;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.Arrays;
 
 
 public class RoomUtil {
@@ -27,6 +31,55 @@ public class RoomUtil {
         {
             return ticks;
         }
+    }
+
+    public static boolean isPrimaryBoss(int ID)
+    {
+        int[] bosses = {
+                NpcIDs.MAIDEN_P0,
+                NpcIDs.MAIDEN_P1,
+                NpcIDs.MAIDEN_P2,
+                NpcIDs.MAIDEN_P3,
+                NpcIDs.MAIDEN_PRE_DEAD,
+                NpcIDs.MAIDEN_P0_HM,
+                NpcIDs.MAIDEN_P1_HM,
+                NpcIDs.MAIDEN_P2_HM,
+                NpcIDs.MAIDEN_P3_HM,
+                NpcIDs.MAIDEN_PRE_DEAD_HM,
+                NpcIDs.MAIDEN_P0_SM,
+                NpcIDs.MAIDEN_P1_SM,
+                NpcIDs.MAIDEN_P2_SM,
+                NpcIDs.MAIDEN_P3_SM,
+                NpcIDs.MAIDEN_PRE_DEAD_SM,
+                NpcIDs.BLOAT,
+                NpcIDs.BLOAT_HM,
+                NpcIDs.BLOAT_SM,
+                NpcIDs.NYLO_BOSS_MELEE,
+                NpcIDs.NYLO_BOSS_RANGE,
+                NpcIDs.NYLO_BOSS_MAGE,
+                NpcIDs.NYLO_BOSS_MELEE_HM,
+                NpcIDs.NYLO_BOSS_RANGE_HM,
+                NpcIDs.NYLO_BOSS_MAGE_HM,
+                NpcIDs.NYLO_BOSS_MELEE_SM,
+                NpcIDs.NYLO_BOSS_RANGE_SM,
+                NpcIDs.NYLO_BOSS_MAGE_SM,
+                NpcIDs.SOTETSEG_ACTIVE,
+                NpcIDs.SOTETSEG_ACTIVE_HM,
+                NpcIDs.SOTETSEG_ACTIVE_SM,
+                NpcIDs.XARPUS_P23,
+                NpcIDs.XARPUS_P23_HM,
+                NpcIDs.XARPUS_P23_SM,
+                NpcIDs.VERZIK_P1,
+                NpcIDs.VERZIK_P2,
+                NpcIDs.VERZIK_P3,
+                NpcIDs.VERZIK_P1_HM,
+                NpcIDs.VERZIK_P2_HM,
+                NpcIDs.VERZIK_P3_HM,
+                NpcIDs.VERZIK_P1_SM,
+                NpcIDs.VERZIK_P2_SM,
+                NpcIDs.VERZIK_P3_SM,
+        };
+        return (Arrays.stream(bosses).anyMatch(p->p==ID));
     }
 
     public static String time(int ticks)

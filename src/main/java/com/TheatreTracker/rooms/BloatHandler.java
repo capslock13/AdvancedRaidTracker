@@ -64,6 +64,7 @@ public class BloatHandler extends RoomHandler {
         bloatDeathTick = client.getTickCount() + 3;
         plugin.addLiveLine(1, client.getTickCount()-bloatStartTick, "Dead");
         clog.write(ACCURATE_BLOAT_END);
+        plugin.liveFrame.setBloatFinished();
         if (bloatStartTick != -1)
             sendTimeMessage("Wave 'Bloat last down' complete! Duration: ", splitLastDown(), " Room time: ", bloatDeathTick - bloatStartTick, true);
     }

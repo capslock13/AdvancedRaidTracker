@@ -1,6 +1,7 @@
 package com.TheatreTracker.panelcomponents;
 
 import com.TheatreTracker.utility.PlayerDidAttack;
+import com.TheatreTracker.utility.RoomUtil;
 import com.TheatreTracker.utility.WeaponAttack;
 import com.TheatreTracker.utility.WeaponDecider;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +30,7 @@ public class LiveChartPanel extends JPanel
     ArrayList<Integer> specific;
     Map<Integer, String> lines;
     WeaponAttack[] weaponAttacks;
+    private boolean finished;
     int keyColumns;
     int keyRows;
     int keyCount;
@@ -43,15 +45,21 @@ public class LiveChartPanel extends JPanel
         startTick = 0;
         currentTick = 0;
         attacks = new ArrayList<>();
+        finished = false;
 
         recalculateSize();
         drawGraph();
 
     }
 
-    public void addLine(Integer value, String description)
+    public void addDelayedLine(Integer value, String description)
     {
         lines.put(value, description);
+    }
+
+    public void setRoomFinished()
+    {
+        finished = true;
     }
 
     public void setPlayers(ArrayList<String> players)
@@ -99,8 +107,8 @@ public class LiveChartPanel extends JPanel
 
     public void addAttack(PlayerDidAttack attack)
     {
-        attack.tick = currentTick;
-        attacks.add(new PlayerDidAttack(attack.player, attack.animation, currentTick, attack.weapon, attack.projectile, attack.spotAnims));
+        attack.tick += currentTick;
+        attacks.add(new PlayerDidAttack(attack.player, attack.animation, attack.tick, attack.weapon, attack.projectile, attack.spotAnims, attack.targetedIndex, attack.targetedID));
         drawGraph();
     }
 
@@ -123,6 +131,7 @@ public class LiveChartPanel extends JPanel
         attacks.clear();
         players.clear();
         lines.clear();
+        finished = false;
         recalculateSize();
     }
 
@@ -283,25 +292,35 @@ public class LiveChartPanel extends JPanel
                             return;
                         }
                         g.setColor(color);
-                        g.fillRect(xOffset, yOffset, scale - 1, scale - 1);
+                        g.fillRect(xOffset+1, yOffset+1, scale - 1, scale - 1);
                         g.setColor(Color.WHITE);
-                        g.drawString(letter, xOffset, yOffset + (fontHeight / 2) + 10);
+                        if(!RoomUtil.isPrimaryBoss(attack.targetedID))
+                        {
+                            if(attack.targetedID != -1)
+                            {
+                                g.setColor(new Color(0, 190, 255));
+                            }
+                        }
+                        int textOffset = (scale/2)-(getStringBounds(g, letter, 0, 0).width)/2;
+                        g.drawString(letter, xOffset+textOffset, yOffset + (fontHeight / 2) + 10);
                     }
                 }
             }
         }
-
-        for(Integer i : lines.keySet())
+        if(finished)
         {
-            int xOffset = (shouldWrap) ? ((i - startTick) % 50) * scale : i * scale;
-            int yOffset = (shouldWrap) ? ((i- startTick) / 50) * boxHeight : 0;
-            xOffset += 100;
-            yOffset += 10;
-            g.setColor(new Color(255, 0, 0));
-            g.drawLine(xOffset, yOffset, xOffset, yOffset+boxHeight-20);
-            int stringLength = getStringBounds(g, lines.get(i), 0, 0).width;
-            g.setColor(Color.WHITE);
-            g.drawString(lines.get(i), xOffset-(stringLength/2), yOffset-1);
+            for (Integer i : lines.keySet())
+            {
+                int xOffset = (shouldWrap) ? ((i - startTick) % 50) * scale : i * scale;
+                int yOffset = (shouldWrap) ? ((i - startTick) / 50) * boxHeight : 0;
+                xOffset += 100;
+                yOffset += 10;
+                g.setColor(new Color(255, 0, 0));
+                g.drawLine(xOffset, yOffset, xOffset, yOffset + boxHeight - 20);
+                int stringLength = getStringBounds(g, lines.get(i), 0, 0).width;
+                g.setColor(Color.WHITE);
+                g.drawString(lines.get(i), xOffset - (stringLength / 2), yOffset - 1);
+            }
         }
 
         g.setColor(oldColor);

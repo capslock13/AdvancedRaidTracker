@@ -111,6 +111,8 @@ public class RoomData {
     public ArrayList<Integer> p2Crabs = new ArrayList<>();
     public ArrayList<Integer> p3Crabs = new ArrayList<>();
     public ArrayList<Integer> redsProc = new ArrayList<>();
+    public ArrayList<PlayerBounce> bounces = new ArrayList<>();
+    public Map<Integer, Integer> waveSpawns = new HashMap<>();
 
 
     public boolean bloatTimeAccurate;
@@ -532,6 +534,10 @@ public class RoomData {
                 case 77:
                     dataManager.increment(com.TheatreTracker.utility.DataPoint.VERZIK_BOUNCES);
                     dataManager.incrementPlayerSpecific(DataPoint.VERZIK_BOUNCES,subData[4]);
+                    if(!subData[5].equalsIgnoreCase(""))
+                    {
+                        verzAttacks.add(new PlayerDidAttack(subData[4], "100000", Integer.parseInt(subData[5]), "-1", "-1", "-1", -1, -1));
+                    }
                     break;
                 case 78:
                     if(!subData[4].equalsIgnoreCase(""))
@@ -624,9 +630,17 @@ public class RoomData {
                         tick = Integer.parseInt(subData[4].split(":")[1]);
                         animation = subData[5];
                         spotAnims = subData[6];
-                        weapon = subData[7];
+                        String[] subsubData = subData[7].split(":");
+                        weapon = subsubData[0];
+                        int interactedIndex = -1;
+                        int interactedID = -1;
+                        if(subsubData.length > 2)
+                        {
+                            interactedIndex = Integer.parseInt(subsubData[1]);
+                            interactedID = Integer.parseInt(subsubData[2]);
+                        }
                         projectile = subData[8];
-                        verzAttacks.add(new PlayerDidAttack(player, animation, tick, weapon, projectile, spotAnims));
+                        verzAttacks.add(new PlayerDidAttack(player, animation, tick, weapon, projectile, spotAnims, interactedIndex, interactedID));
                     }
                     catch(Exception e)
                     {
@@ -839,9 +853,17 @@ public class RoomData {
                         tick = Integer.parseInt(subData[4].split(":")[1]);
                         animation = subData[5];
                         spotAnims = subData[6];
-                        weapon = subData[7];
+                        String[] subsubData = subData[7].split(":");
+                        weapon = subsubData[0];
+                        int interactedIndex = -1;
+                        int interactedID = -1;
+                        if(subsubData.length > 2)
+                        {
+                            interactedIndex = Integer.parseInt(subsubData[1]);
+                            interactedID = Integer.parseInt(subsubData[2]);
+                        }
                         projectile = subData[8];
-                        xarpAttacks.add(new PlayerDidAttack(player, animation, tick, weapon, projectile, spotAnims));
+                        xarpAttacks.add(new PlayerDidAttack(player, animation, tick, weapon, projectile, spotAnims, interactedIndex, interactedID));
                     }
                     catch(Exception e)
                     {
@@ -1023,9 +1045,17 @@ public class RoomData {
                         tick = Integer.parseInt(subData[4].split(":")[1]);
                         animation = subData[5];
                         spotAnims = subData[6];
-                        weapon = subData[7];
+                        String[] subsubData = subData[7].split(":");
+                        weapon = subsubData[0];
+                        int interactedIndex = -1;
+                        int interactedID = -1;
+                        if(subsubData.length > 2)
+                        {
+                            interactedIndex = Integer.parseInt(subsubData[1]);
+                            interactedID = Integer.parseInt(subsubData[2]);
+                        }
                         projectile = subData[8];
-                        soteAttacks.add(new PlayerDidAttack(player, animation, tick, weapon, projectile, spotAnims));
+                        soteAttacks.add(new PlayerDidAttack(player, animation, tick, weapon, projectile, spotAnims, interactedIndex, interactedID));
                     }
                     catch(Exception e)
                     {
@@ -1142,6 +1172,9 @@ public class RoomData {
                     dataManager.set(DataPoint.NYLO_BOSS_SPAWN, nyloLastDead+offset);
                     dataManager.set(com.TheatreTracker.utility.DataPoint.NYLO_CLEANUP, nyloLastDead - dataManager.get(com.TheatreTracker.utility.DataPoint.NYLO_LAST_WAVE));
                     break;
+                case 37:
+                    waveSpawns.put(Integer.parseInt(subData[4]), Integer.parseInt(subData[5]));
+                    break;
                 case 40:
                     dataManager.set(com.TheatreTracker.utility.DataPoint.NYLO_BOSS_SPAWN, Integer.parseInt(subData[4]) - 2);
                     if (partyComplete) {
@@ -1236,9 +1269,17 @@ public class RoomData {
                         tick = Integer.parseInt(subData[4].split(":")[1]);
                         animation = subData[5];
                         spotAnims = subData[6];
-                        weapon = subData[7];
+                        String[] subsubData = subData[7].split(":");
+                        weapon = subsubData[0];
+                        int interactedIndex = -1;
+                        int interactedID = -1;
+                        if(subsubData.length > 2)
+                        {
+                            interactedIndex = Integer.parseInt(subsubData[1]);
+                            interactedID = Integer.parseInt(subsubData[2]);
+                        }
                         projectile = subData[8];
-                        nyloAttacks.add(new PlayerDidAttack(player, animation, tick, weapon, projectile, spotAnims));
+                        nyloAttacks.add(new PlayerDidAttack(player, animation, tick, weapon, projectile, spotAnims, interactedIndex, interactedID));
                     }
                     catch(Exception e)
                     {
@@ -1415,9 +1456,17 @@ public class RoomData {
                         tick = Integer.parseInt(subData[4].split(":")[1]);
                         animation = subData[5];
                         spotAnims = subData[6];
-                        weapon = subData[7];
+                        String[] subsubData = subData[7].split(":");
+                        weapon = subsubData[0];
+                        int interactedIndex = -1;
+                        int interactedID = -1;
+                        if(subsubData.length > 2)
+                        {
+                            interactedIndex = Integer.parseInt(subsubData[1]);
+                            interactedID = Integer.parseInt(subsubData[2]);
+                        }
                         projectile = subData[8];
-                        bloatAttacks.add(new PlayerDidAttack(player, animation, tick, weapon, projectile, spotAnims));
+                        bloatAttacks.add(new PlayerDidAttack(player, animation, tick, weapon, projectile, spotAnims, interactedIndex, interactedID));
                     }
                     catch(Exception e)
                     {
@@ -1756,9 +1805,17 @@ public class RoomData {
                         tick = Integer.parseInt(subData[4].split(":")[1]);
                         animation = subData[5];
                         spotAnims = subData[6];
-                        weapon = subData[7];
+                        String[] subsubData = subData[7].split(":");
+                        weapon = subsubData[0];
+                        int interactedIndex = -1;
+                        int interactedID = -1;
+                        if(subsubData.length > 2)
+                        {
+                            interactedIndex = Integer.parseInt(subsubData[1]);
+                            interactedID = Integer.parseInt(subsubData[2]);
+                        }
                         projectile = subData[8];
-                        maidenAttacks.add(new PlayerDidAttack(player, animation, tick, weapon, projectile, spotAnims));
+                        maidenAttacks.add(new PlayerDidAttack(player, animation, tick, weapon, projectile, spotAnims, interactedIndex, interactedID));
                     }
                     catch(Exception e)
                     {

@@ -144,7 +144,8 @@ public class MaidenHandler extends RoomHandler
             sendTimeMessage("Wave 'Maiden Skip' complete! Duration: ", maidenDeathTick - maidenStartTick, maidenDeathTick - p30, false);
         clog.write(301);
         clog.write(MAIDEN_0HP, "" + (client.getTickCount() - maidenStartTick));
-        plugin.addLiveLine(0, p70-maidenStartTick, "Dead");
+        plugin.addLiveLine(0, maidenDeathTick-maidenStartTick, "Dead");
+        plugin.liveFrame.setMaidenFinished();
     }
 
 

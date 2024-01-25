@@ -170,6 +170,7 @@ public class XarpusHandler extends RoomHandler {
         roomState = FINISHED;
         xarpusEndTick = client.getTickCount() + 3;
         clog.write(ACCURATE_XARP_END);
+        plugin.liveFrame.setXarpFinished();
         String splitMessage = "Wave 'Xarpus phase 3' complete. Duration: " + timeColor() + RoomUtil.time(xarpusEndTick - xarpusEntryTick) + " (" + RoomUtil.time(xarpusEndTick - xarpusScreechTick) + ")";
         this.client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", splitMessage, null, false);
     }

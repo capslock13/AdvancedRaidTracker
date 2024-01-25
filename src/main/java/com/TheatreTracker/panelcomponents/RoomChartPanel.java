@@ -2,6 +2,7 @@ package com.TheatreTracker.panelcomponents;
 
 import com.TheatreTracker.rooms.RoomHandler;
 import com.TheatreTracker.utility.PlayerDidAttack;
+import com.TheatreTracker.utility.RoomUtil;
 import com.TheatreTracker.utility.WeaponAttack;
 import com.TheatreTracker.utility.WeaponDecider;
 import lombok.extern.slf4j.Slf4j;
@@ -230,9 +231,17 @@ public class RoomChartPanel extends JPanel
                     xOffset += 100;
                     yOffset += (playerOffsets.get(attack.player) + 2) * scale - 10;
                     g.setColor(color);
-                    g.fillRect(xOffset, yOffset, scale - 1, scale - 1);
+                    g.fillRect(xOffset+1, yOffset+1, scale - 1, scale - 1);
                     g.setColor(Color.WHITE);
-                    g.drawString(letter, xOffset, yOffset + (fontHeight / 2) + 10);
+                    if(!RoomUtil.isPrimaryBoss(attack.targetedID))
+                    {
+                        if(attack.targetedID != -1)
+                        {
+                            g.setColor(new Color(0, 190, 255));
+                        }
+                    }
+                    int textOffset = (scale/2)-(getStringBounds(g, letter, 0, 0).width)/2;
+                    g.drawString(letter, xOffset+textOffset, yOffset + (fontHeight / 2) + 10);
                 }
             }
         }

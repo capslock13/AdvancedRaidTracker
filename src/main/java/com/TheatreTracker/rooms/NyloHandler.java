@@ -93,11 +93,14 @@ public class NyloHandler extends RoomHandler {
                     }
                 }
                 currentWave = wave.getWave();
+                plugin.addLiveLine(2, client.getTickCount()-pillarsSpawnedTick, "W" + currentWave);
+                clog.write(NYLO_WAVE, String.valueOf(currentWave), String.valueOf(client.getTickCount()-pillarsSpawnedTick));
             }
             buildWave.clear();
         }
         if (client.getTickCount() == expectedWaveTick && currentWave != 31) {
             clog.write(NYLO_STALL, "" + currentWave, "" + (client.getTickCount() - pillarsSpawnedTick), "" + nylosAlive.size());
+            plugin.addLiveLine(2, client.getTickCount()-pillarsSpawnedTick, "Stall");
             expectedWaveTick += 4;
         }
     }
@@ -365,6 +368,7 @@ public class NyloHandler extends RoomHandler {
         if ((4 - ((deathTick - instanceReference) % 4) == 4)) {
             offset1 = 0;
         }
+        plugin.liveFrame.setNyloFinished();
         sendTimeMessage("Wave 'Nylocas boss' complete! Duration: ", deathTick - pillarsSpawnedTick + offset1, deathTick + offset1 - bossSpawn, false);
         clog.write(NYLO_DESPAWNED, "" + (deathTick - pillarsSpawnedTick + offset1));
     }

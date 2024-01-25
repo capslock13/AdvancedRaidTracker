@@ -44,6 +44,8 @@ public enum LogID {
     MAGE_SPLIT(33),
     MELEE_SPLIT(34),
     LAST_WAVE(35),
+    LAST_DEAD(36),
+    NYLO_WAVE(37),
     BOSS_SPAWN(40),
     MELEE_PHASE(41),
     MAGE_PHASE(42),

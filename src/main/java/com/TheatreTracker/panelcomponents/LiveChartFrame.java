@@ -5,7 +5,6 @@ import com.TheatreTracker.utility.PlayerDidAttack;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class LiveChartFrame extends BaseFrame
 {
@@ -94,34 +93,58 @@ public class LiveChartFrame extends BaseFrame
 
     public void addMaidenLine(int value, String description)
     {
-        maidenPanel.addLine(value, description);
+        maidenPanel.addDelayedLine(value, description);
     }
 
     public void addBloatLine(int value, String description)
     {
-        bloatPanel.addLine(value, description);
+        bloatPanel.addDelayedLine(value, description);
     }
 
     public void addNyloLine(int value, String description)
     {
-        nyloPanel.addLine(value, description);
+        nyloPanel.addDelayedLine(value, description);
     }
 
     public void addSoteLine(int value, String description)
     {
-        sotetsegPanel.addLine(value, description);
+        sotetsegPanel.addDelayedLine(value, description);
     }
 
     public void addXarpLine(int value, String description)
     {
-        xarpPanel.addLine(value, description);
+        xarpPanel.addDelayedLine(value, description);
     }
 
     public void addVerzikLine(int value, String description)
     {
-        verzPanel.addLine(value, description);
+        verzPanel.addDelayedLine(value, description);
     }
 
+    public void setMaidenFinished()
+    {
+        maidenPanel.setRoomFinished();
+    }
+    public void setBloatFinished()
+    {
+        bloatPanel.setRoomFinished();
+    }
+    public void setNyloFinished()
+    {
+        nyloPanel.setRoomFinished();
+    }
+    public void setSoteFinished()
+    {
+        sotetsegPanel.setRoomFinished();
+    }
+    public void setXarpFinished()
+    {
+        xarpPanel.setRoomFinished();
+    }
+    public void setVerzFinished()
+    {
+        verzPanel.setRoomFinished();
+    }
 
     public void resetAll()
     {

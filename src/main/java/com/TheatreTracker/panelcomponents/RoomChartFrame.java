@@ -77,6 +77,11 @@ public class RoomChartFrame extends BaseFrame
                 nyloLines.put(i, "Phase");
             }
 
+            for(Integer i : data.waveSpawns.keySet())
+            {
+                nyloLines.put(data.waveSpawns.get(i), "W"+i);
+            }
+
             Map<Integer, String> soteLines = new LinkedHashMap<>();
             soteLines.put(data.getValue(DataPoint.SOTE_P1_SPLIT), "Maze1 Start");
             soteLines.put(data.getValue(DataPoint.SOTE_P1_SPLIT)+data.getValue(DataPoint.SOTE_M1_SPLIT), "Maze1 End");
@@ -96,6 +101,7 @@ public class RoomChartFrame extends BaseFrame
             for(Integer i : data.redsProc)
             {
                 verzikP2Lines.put(i, "Reds");
+                verzikP2Lines.put(i+11, "Shield End");
             }
 
             for(Integer i : data.p2Crabs)

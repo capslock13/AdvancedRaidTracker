@@ -525,6 +525,7 @@ public class TheatreTrackerPlugin extends Plugin
         return client.getTickCount()-currentRoom.roomStartTick;
     }
 
+
     @Subscribe
     public void onGameTick(GameTick event) throws PluginInstantiationException
     {

@@ -152,7 +152,7 @@ public class MaidenHandler extends RoomHandler
         plugin.liveFrame.setMaidenFinished();
     }
 
-    public void analyzeHitsplatApplied(HitsplatApplied hitsplatApplied)
+   /* public void analyzeHitsplatApplied(HitsplatApplied hitsplatApplied)
     {
         if(hitsplatApplied.getActor() instanceof NPC)
         {
@@ -199,13 +199,13 @@ public class MaidenHandler extends RoomHandler
                 }
             }
         }
-    }
+    }*/
 
     public void updateAnimationChanged(AnimationChanged event)
     {
         if(event.getActor().getAnimation() == 8056)
         {
-            analyzeScytheOnReds(event);
+            //analyzeScytheOnReds(event);
         }
         if (event.getActor().getAnimation() == 8093)
         {
@@ -587,7 +587,7 @@ public class MaidenHandler extends RoomHandler
      */
     public void updateHitsplatApplied(HitsplatApplied event)
     {
-        analyzeHitsplatApplied(event);
+       // analyzeHitsplatApplied(event);
         if (maidenCrabs.stream().map(x -> x.crab).collect(Collectors.toList()).contains(event.getActor()))
         {
             MaidenCrab crab = maidenCrabs.stream().filter(x -> x.crab.equals(event.getActor())).collect(Collectors.toList()).get(0);

@@ -240,6 +240,7 @@ public class RoomData {
     public String getPlayerList(ArrayList<Map<String, ArrayList<String>>> aliases)
     {
         String list = "";
+        ArrayList<String> names = new ArrayList<>();
         for(String s : players.keySet())
         {
             String name = s;
@@ -256,7 +257,12 @@ public class RoomData {
                     }
                 }
             }
-            list += name;
+            names.add(name);
+        }
+        names.sort(String::compareToIgnoreCase);
+        for(String s : names)
+        {
+            list += s;
             list += ",";
         }
         if(list.length() != 0)

@@ -585,8 +585,11 @@ public class MaidenHandler extends RoomHandler
     /**
      * Tracks crab hps
      */
-    public void updateHitsplatApplied(HitsplatApplied event) {
-        if (maidenCrabs.stream().map(x -> x.crab).collect(Collectors.toList()).contains(event.getActor())) {
+    public void updateHitsplatApplied(HitsplatApplied event)
+    {
+        analyzeHitsplatApplied(event);
+        if (maidenCrabs.stream().map(x -> x.crab).collect(Collectors.toList()).contains(event.getActor()))
+        {
             MaidenCrab crab = maidenCrabs.stream().filter(x -> x.crab.equals(event.getActor())).collect(Collectors.toList()).get(0);
             crab.health -= event.getHitsplat().getAmount();
         }

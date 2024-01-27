@@ -847,36 +847,6 @@ public class TheatreTrackerPlugin extends Plugin
                             sendChatMessage(event.getActor().getName() + " is using an uncharged scythe");
                         }
                     }
-                    for(String player : playerStrengthStatus.keySet())
-                    {
-                        if(player.equalsIgnoreCase(event.getActor().getName()))
-                        {
-                            if(playerStrengthStatus.get(player) != 118)
-                            {
-                                sendChatMessage(player + " scythed at " + playerStrengthStatus.get(player) + " strength");
-                                clog.write(NOT_118, String.valueOf(client.getTickCount()-currentRoom.roomStartTick), player, String.valueOf(playerStrengthStatus.get(player)));
-
-                            }
-                            if(!playerPrayerStatus.get(player))
-                            {
-                                sendChatMessage(player + " scythed without piety");
-                                clog.write(NO_PIETY, String.valueOf(client.getTickCount()-currentRoom.roomStartTick), player);
-                            }
-                        }
-                    }
-                   if(event.getActor().getName().equalsIgnoreCase(client.getLocalPlayer().getName()))
-                   {
-                       if(client.getBoostedSkillLevel(Skill.STRENGTH) != 118)
-                       {
-                           sendChatMessage(client.getLocalPlayer().getName() + " scythed at " + client.getBoostedSkillLevel(Skill.STRENGTH) + " strength");
-                           clog.write(NOT_118, String.valueOf(client.getTickCount()-currentRoom.roomStartTick), client.getLocalPlayer().getName(), String.valueOf(client.getBoostedSkillLevel(Skill.STRENGTH)));
-                       }
-                       if(client.getServerVarbitValue(Prayer.PIETY.getVarbit()) != 1)
-                       {
-                           sendChatMessage(client.getLocalPlayer().getName() + " scythed without piety");
-                           clog.write(NO_PIETY, String.valueOf(client.getTickCount()-currentRoom.roomStartTick), client.getLocalPlayer().getName());
-                       }
-                   }
                 } else if (event.getActor().getAnimation() == 401)
                 {
                     if (id == 13576 || id == 20785)

@@ -1,11 +1,13 @@
 package com.TheatreTracker.panelcomponents;
 
 import com.TheatreTracker.utility.PlayerDidAttack;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
+@Slf4j
 public class LiveChartFrame extends BaseFrame
 {
     LiveChartPanel maidenPanel;

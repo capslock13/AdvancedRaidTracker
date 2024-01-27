@@ -2,15 +2,28 @@ package com.TheatreTracker.panelcomponents;
 
 import com.TheatreTracker.RoomData;
 import com.TheatreTracker.utility.DataPoint;
-import net.runelite.client.plugins.raids.RoomType;
-import sun.awt.image.ImageWatched;
+import com.TheatreTracker.utility.PlayerDidAttack;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.*;
-
+@Slf4j
 public class RoomChartFrame extends BaseFrame
 {
+
+    public int getHighestTick(ArrayList<PlayerDidAttack> attacks, int start)
+    {
+        int max = start;
+        for(PlayerDidAttack attack : attacks)
+        {
+            if(attack.tick > max)
+            {
+                max = attack.tick;
+            }
+        }
+        return max;
+    }
     public RoomChartFrame(ArrayList<RoomData> roomData)
     {
         JTabbedPane basepane = new JTabbedPane();
@@ -101,7 +114,7 @@ public class RoomChartFrame extends BaseFrame
             for(Integer i : data.redsProc)
             {
                 verzikP2Lines.put(i, "Reds");
-                verzikP2Lines.put(i+11, "Shield End");
+                verzikP2Lines.put(i+10, "Shield End");
             }
 
             for(Integer i : data.p2Crabs)
@@ -126,16 +139,103 @@ public class RoomChartFrame extends BaseFrame
             {
                 dawnDropsMap.put(i, "X");
             }
+            ArrayList<Integer> p2autos = new ArrayList<>();
+            int lastreset = data.getValue(DataPoint.VERZIK_P1_SPLIT)+11;
+            for(int i = lastreset; i < data.getValue(DataPoint.VERZIK_P2_SPLIT); i++)
+            {
+                boolean wasNextTick = false;
+                for(Integer j : data.redsProc)
+                {
+                    if(i == j)
+                    {
+                        lastreset = i+15;
+                    }
+                    else if(i == (j-1))
+                    {
+                        wasNextTick = true;
+                    }
+                }
+                if((i-lastreset) % 4 == 0 && i >= lastreset && !wasNextTick)
+                {
+                    p2autos.add(i);
+                }
+            }
+
+            int maidenTime = data.getMaidenTime();
+            int bloatTime = data.getBloatTime();
+            int nyloTime = data.getNyloTime();
+            int soteTime = data.getSoteTime();
+            int xarpTime = data.getXarpTime();
+            int verzP1Time = data.getValue(DataPoint.VERZIK_P1_SPLIT);
+            int verzP2Start = data.getValue(DataPoint.VERZIK_P1_SPLIT)+1;
+            int verzP2Time = data.getValue(DataPoint.VERZIK_P2_SPLIT);
+            int verzP3Start = verzP2Time+1;
+            int verzP3Time  = data.getVerzikTime();
+
+            if(maidenTime  < 1)
+            {
+                maidenTime = getHighestTick(data.maidenAttacks, 0);
+            }
+            if(bloatTime  < 1)
+            {
+                bloatTime = getHighestTick(data.bloatAttacks, 0);
+            }
+            if(nyloTime  < 1)
+            {
+                nyloTime = getHighestTick(data.nyloAttacks, 0);
+            }
+            if(soteTime  < 1)
+            {
+                soteTime = getHighestTick(data.soteAttacks, 0);
+            }
+            if(xarpTime  < 1)
+            {
+                xarpTime = getHighestTick(data.xarpAttacks, 0);
+            }
+            if(verzP1Time  < 1)
+            {
+                verzP1Time = getHighestTick(data.verzAttacks, 0);
+            }
+            if(verzP2Time < 1)
+            {
+                verzP2Time = getHighestTick(data.verzAttacks, verzP1Time);
+            }
+            if(verzP3Time < 1)
+            {
+                verzP3Time = getHighestTick(data.verzAttacks, verzP2Time);
+            }
+
+            RoomChartPanel maidenRCP = new RoomChartPanel(data.maidenAttacks, data.players.keySet(), "Maiden",roomData.size(), 1, maidenTime, blankSpecific, maidenLines);
+            RoomChartPanel bloatRCP = new RoomChartPanel(data.bloatAttacks, data.players.keySet(),"Bloat", roomData.size(), 1, bloatTime, blankSpecific, bloatLines);
+            RoomChartPanel nyloRCP = new RoomChartPanel(data.nyloAttacks,data.players.keySet(), "Nylocas", roomData.size(), 1, nyloTime, blankSpecific, nyloLines);
+            RoomChartPanel soteRCP = new RoomChartPanel(data.soteAttacks,data.players.keySet(), "Sotetseg", roomData.size(), 1, soteTime, blankSpecific, soteLines);
+            RoomChartPanel xarpRCP = new RoomChartPanel(data.xarpAttacks,data.players.keySet(), "Xarpus", roomData.size(), 1, xarpTime, blankSpecific, xarpLines);
+            RoomChartPanel verzP1RCP = new RoomChartPanel(data.verzAttacks,data.players.keySet(), "Verzik P1", roomData.size(), 1, verzP1Time, dawnDropsMap, blankLines);
+            RoomChartPanel verzP2RCP = new RoomChartPanel(data.verzAttacks,data.players.keySet(), "Verzik P2", roomData.size(), verzP2Start, verzP2Time, blankSpecific, verzikP2Lines);
+            RoomChartPanel verzP3RCP = new RoomChartPanel(data.verzAttacks,data.players.keySet(), "Verzik P3", roomData.size(), verzP3Start, verzP3Time, blankSpecific, verzikP3Lines);
+
+            verzP2RCP.setAutos(p2autos);
+
+            maidenRCP.setThrallSpawns(data.maidenThrallSpawns);
+            bloatRCP.setThrallSpawns(data.bloatThrallSpawns);
+            nyloRCP.setThrallSpawns(data.nyloThrallSpawns);
+            soteRCP.setThrallSpawns(data.soteThrallSpawns);
+            xarpRCP.setThrallSpawns(data.xarpusThrallSpawns);
+            verzP1RCP.setThrallSpawns(data.verzikThrallSpawns);
+            verzP2RCP.setThrallSpawns(data.verzikThrallSpawns);
+            verzP3RCP.setThrallSpawns(data.verzikThrallSpawns);
+
+            verzP1RCP.setDawnSpecs(data.dawnSpecs);
 
 
-            maidenCharts.add(new RoomChartPanel(data.maidenAttacks, data.players.keySet(), "Maiden",roomData.size(), 1, data.getMaidenTime(), blankSpecific, maidenLines));
-            bloatCharts.add(new RoomChartPanel(data.bloatAttacks, data.players.keySet(),"Bloat", roomData.size(), 1, data.getBloatTime(), blankSpecific, bloatLines));
-            nyloCharts.add(new RoomChartPanel(data.nyloAttacks,data.players.keySet(), "Nylocas", roomData.size(), 1, data.getNyloTime(), blankSpecific, nyloLines));
-            soteCharts.add(new RoomChartPanel(data.soteAttacks,data.players.keySet(), "Sotetseg", roomData.size(), 1, data.getSoteTime(), blankSpecific, soteLines));
-            xarpCharts.add(new RoomChartPanel(data.xarpAttacks,data.players.keySet(), "Xarpus", roomData.size(), 1, data.getXarpTime(), blankSpecific, xarpLines));
-            verzp1Charts.add(new RoomChartPanel(data.verzAttacks,data.players.keySet(), "Verzik P1", roomData.size(), 1, data.getValue(DataPoint.VERZIK_P1_SPLIT), dawnDropsMap, blankLines));
-            verzp2Charts.add(new RoomChartPanel(data.verzAttacks,data.players.keySet(), "Verzik P2", roomData.size(), data.getValue(DataPoint.VERZIK_P1_SPLIT)+1, data.getValue(DataPoint.VERZIK_P2_SPLIT), blankSpecific, verzikP2Lines));
-            verzp3Charts.add(new RoomChartPanel(data.verzAttacks,data.players.keySet(), "Verzik P3", roomData.size(), data.getValue(DataPoint.VERZIK_P2_SPLIT)+1, data.getVerzikTime(), blankSpecific, verzikP3Lines));
+            maidenCharts.add(maidenRCP);
+            bloatCharts.add(bloatRCP);
+            nyloCharts.add(nyloRCP);
+            soteCharts.add(soteRCP);
+            xarpCharts.add(xarpRCP);
+            verzp1Charts.add(verzP1RCP);
+            verzp2Charts.add(verzP2RCP);
+            verzp3Charts.add(verzP3RCP);
 
         }
 

@@ -4,9 +4,10 @@ import net.runelite.api.Actor;
 import net.runelite.api.NPC;
 import net.runelite.api.Player;
 
+import java.awt.*;
 import java.util.ArrayList;
 
-import static com.TheatreTracker.constants.NpcIDs.MELEE_THRALL;
+import static com.TheatreTracker.constants.NpcIDs.*;
 
 public class Thrall {
     NPC npc;
@@ -15,11 +16,14 @@ public class Thrall {
 
     public Actor lastParentInteraction;
     boolean isMelee;
+    public int spawnTick;
 
-    public Thrall(NPC npc, ArrayList<PlayerShell> potentialPlayers) {
+    public Thrall(NPC npc, ArrayList<PlayerShell> potentialPlayers, int spawnTick)
+    {
         this.potentialPlayers = potentialPlayers;
         this.npc = npc;
         isMelee = npc.getId() == MELEE_THRALL;
+        this.spawnTick = spawnTick;
     }
 
     public boolean matchesGraphic(int animationID) {
@@ -28,14 +32,18 @@ public class Thrall {
                 || (animationID == 1875 && npc.getId() == 10886);
     }
 
-    public void setOwner(PlayerShell player) {
+    public void setOwner(PlayerShell player)
+    {
         this.player = player;
     }
 
-    public String getOwner() {
-        if (player != null) {
+    public String getOwner()
+    {
+        if (player != null)
+        {
             return player.name;
-        } else {
+        } else
+        {
             return ".unassigned";
         }
     }

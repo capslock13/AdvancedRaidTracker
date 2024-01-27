@@ -303,7 +303,7 @@ public class ViewRaidBaseFrame extends BaseFrame
         verzikSubPanel.add(new JLabel(verzikBodyColor+RoomUtil.time(data.getValue(DataPoint.VERZIK_P1_SPLIT))));
 
         verzikSubPanel.add(new JLabel(verzikBodyColor+"Reds Proc"));
-        verzikSubPanel.add(new JLabel(verzikBodyColor+RoomUtil.time(data.verzikRedsProc) + " (" + RoomUtil.time(data.verzikRedsProc-data.getValue(DataPoint.VERZIK_P1_SPLIT)) + ")"));
+        verzikSubPanel.add(new JLabel(verzikBodyColor+RoomUtil.time(data.getValue(DataPoint.VERZIK_REDS_SPLIT)) + " (" + RoomUtil.time(data.getValue(DataPoint.VERZIK_REDS_SPLIT)-data.getValue(DataPoint.VERZIK_P1_SPLIT)) + ")"));
 
         verzikSubPanel.add(new JLabel(verzikBodyColor+"Phase 2"));
         verzikSubPanel.add(new JLabel(verzikBodyColor+RoomUtil.time(data.getValue(DataPoint.VERZIK_P2_SPLIT)) + " (" + RoomUtil.time(data.getValue(DataPoint.VERZIK_P2_SPLIT)-data.getValue(DataPoint.VERZIK_P1_SPLIT)) + ")"));

@@ -109,47 +109,104 @@ public class MaidenHandler extends RoomHandler
         deferVarbitCheck = maidenStartTick + 2;
     }
 
-    public void proc70() {
+    public void proc70()
+    {
         p70 = super.client.getTickCount();
         roomState = RoomState.MaidenRoomState.PHASE_2;
         if (maidenStartTick != -1)
             sendTimeMessage("Wave 'Maiden phase 1' complete! Duration: ", p70 - maidenStartTick);
         clog.write(MAIDEN_70S, "" + (p70 - maidenStartTick));
-        plugin.addLiveLine(0, p70-maidenStartTick, "70s");
+        plugin.addLiveLine(0, p70-maidenStartTick-2, "70s");
 
     }
 
-    public void proc50() {
+    public void proc50()
+    {
         p50 = super.client.getTickCount();
         roomState = RoomState.MaidenRoomState.PHASE_3;
         if (maidenStartTick != -1)
             sendTimeMessage("Wave 'Maiden phase 2' complete! Duration: ", p50 - maidenStartTick, p50 - p70);
         clog.write(MAIDEN_50S, "" + (p50 - maidenStartTick));
-        plugin.addLiveLine(0, p50-maidenStartTick, "50s");
+        plugin.addLiveLine(0, p50-maidenStartTick-2, "50s");
     }
 
-    public void proc30() {
+    public void proc30()
+    {
         p30 = super.client.getTickCount();
         roomState = RoomState.MaidenRoomState.PHASE_4;
         if (maidenStartTick != -1)
             sendTimeMessage("Wave 'Maiden phase 3' complete! Duration: ", p30 - maidenStartTick, p30 - p50);
         clog.write(MAIDEN_30S, "" + (p30 - maidenStartTick));
-        plugin.addLiveLine(0, p30-maidenStartTick, "30s");
+        plugin.addLiveLine(0, p30-maidenStartTick-2, "30s");
     }
 
-    public void endMaiden() {
+    public void endMaiden()
+    {
         roomState = RoomState.MaidenRoomState.FINISHED;
         maidenDeathTick = client.getTickCount() + 7;
         if (maidenStartTick != -1)
             sendTimeMessage("Wave 'Maiden Skip' complete! Duration: ", maidenDeathTick - maidenStartTick, maidenDeathTick - p30, false);
         clog.write(301);
         clog.write(MAIDEN_0HP, "" + (client.getTickCount() - maidenStartTick));
-        plugin.addLiveLine(0, maidenDeathTick-maidenStartTick, "Dead");
+        plugin.addLiveLine(0, client.getTickCount()-maidenStartTick, "Dead");
         plugin.liveFrame.setMaidenFinished();
     }
 
+    public void analyzeHitsplatApplied(HitsplatApplied hitsplatApplied)
+    {
+        if(hitsplatApplied.getActor() instanceof NPC)
+        {
+            NPC npc = (NPC) hitsplatApplied.getActor();
+            clog.write(RANDOM_TRACKER_2, npc.getName(), String.valueOf(client.getTickCount()), String.valueOf(hitsplatApplied.getHitsplat().getAmount()), String.valueOf(npc.getIndex()));
+        }
+    }
 
-    public void updateAnimationChanged(AnimationChanged event) {
+    public void analyzeScytheOnReds(AnimationChanged event)
+    {
+        if(event.getActor() instanceof Player)
+        {
+            Player player = (Player) event.getActor();
+            if(player.getInteracting() != null)
+            {
+                if(player.getInteracting() instanceof NPC)
+                {
+                    NPC npc = (NPC) player.getInteracting();
+                    if(npc.getName().toLowerCase().contains("matomenos"))
+                    {
+                        int tick = client.getTickCount();
+                        int targetRegionX = npc.getWorldLocation().getRegionX();
+                        int targetRegionY = npc.getWorldLocation().getRegionY();
+                        int targetSize = npc.getComposition().getSize();
+                        int playerX = player.getWorldLocation().getRegionX();
+                        int playerY = player.getWorldLocation().getRegionY();
+                        ArrayList<NPC> nearbyNPCs = new ArrayList<>();
+                        for(NPC otherNPCs : client.getNpcs())
+                        {
+                            if(otherNPCs.getWorldArea().distanceTo(player.getWorldLocation()) < 5)
+                            {
+                                nearbyNPCs.add(otherNPCs);
+                            }
+                        }
+                        String npcString = "";
+                        for(NPC near : nearbyNPCs)
+                        {
+                            npcString += near.getIndex() + ":" + near.getName() + ":" + near.getWorldLocation().getRegionX() + ":" + near.getWorldLocation().getRegionY();
+                            npcString += "-";
+                        }
+                        String detailString = tick + ":" + targetRegionX + ":" + targetRegionY + ":" + targetSize + ":" + playerX + ":" + playerY + ":" + npc.getIndex();
+                        clog.write(RANDOM_TRACKER, detailString, npcString);
+                    }
+                }
+            }
+        }
+    }
+
+    public void updateAnimationChanged(AnimationChanged event)
+    {
+        if(event.getActor().getAnimation() == 8056)
+        {
+            analyzeScytheOnReds(event);
+        }
         if (event.getActor().getAnimation() == 8093)
         {
             endMaiden();
@@ -168,9 +225,12 @@ public class MaidenHandler extends RoomHandler
                     {
                         client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", player.getName() + " chinned from " + distance + " tiles away.", null, false);
                     }
-                    }
-                //log.info(player.getName() + " chinned from " + distance + " tiles away.");
+                }
             }
+        }
+        else if(event.getActor().getAnimation() == 7511)
+        {
+            dinhsers.add((Player)event.getActor());
         }
     }
 
@@ -443,7 +503,6 @@ public class MaidenHandler extends RoomHandler
                 }
                 String value3 = primaryTarget.getName() + "(" + whichCrab + ")" + ":" + primaryHP;
                 String value4 = "";
-                log.info(p.getName() + " dinhs spec targeted " + primaryTarget.getName() + "(" + whichCrab + ") and " + targets.size() + " additional npcs: ");
                 if(targets.size() < 9)
                 {
                     if(config.showMistakesInChat())
@@ -469,7 +528,6 @@ public class MaidenHandler extends RoomHandler
                             healths.add(hp);
                         }
                     }
-                    log.info(npc.getName() + " (" + additionalDescription+ ") HP: " + hp);
                     value4 += npc.getName() + "~" + additionalDescription+ "~" + hp +":";
                 }
                 double total = 0;
@@ -484,11 +542,6 @@ public class MaidenHandler extends RoomHandler
                     }
                 }
                 double average = total/healths.size();
-                log.info("Average HP of dinhs target (crabs only): " + average);
-                log.info("Number of crabs under 27 HP targeted: " + belowThreshold + "(" + ((belowThreshold/count)*100) + "%)");
-                log.info("Number of crabs targeted compared to total targets: " + count + "/" + targets.size() + " (" + ((count/targets.size())*100) + "%)");
-                log.info("Primary target HP: " + primaryHP);
-                log.info("Did primary target receive two hits? " + didDoubleHit);
                 String value5 = ((int)average) +":" + belowThreshold+":"+((int)count)+":"+targets.size()+":"+didDoubleHit;
                 clog.write(MAIDEN_DINHS_SPEC, p.getName(),value3, value4, value5);
             }
@@ -577,13 +630,13 @@ public class MaidenHandler extends RoomHandler
 
     public void updateGraphicChanged(GraphicChanged event)
     {
-        if(event.getActor() instanceof Player)
+        /*if(event.getActor() instanceof Player)
         {
             if(event.getActor().hasSpotAnim(1336) || event.getActor().hasSpotAnim(2623)) //1336 dinhs spec graphic , 7511 is animation
             {
                 dinhsers.add((Player)event.getActor());
             }
-        }
+        }*/
     }
 
     /**

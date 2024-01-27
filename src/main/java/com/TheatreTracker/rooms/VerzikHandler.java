@@ -134,10 +134,21 @@ public class VerzikHandler extends RoomHandler {
         }
     }
 
-    public void updateHitsplatApplied(HitsplatApplied event) {
-        if (event.getActor().getName() != null) {
-            if (event.getActor().getName().contains("Verzik") && event.getHitsplat().getHitsplatType() == HitsplatID.HEAL) {
+    public void updateHitsplatApplied(HitsplatApplied event)
+    {
+        if (event.getActor().getName() != null)
+        {
+            if (event.getActor().getName().contains("Verzik") && event.getHitsplat().getHitsplatType() == HitsplatID.HEAL)
+            {
                 currentHits.add(event.getHitsplat().getAmount());
+            }
+            if(roomState == RoomState.VerzikRoomState.PHASE_1 && event.getActor().getName().contains("Verzik"))
+            {
+                if(event.getHitsplat().getAmount() > 74)
+                {
+                    log.info("dawn hit on tick " + client.getTickCount());
+                    clog.write(DAWN_DAMAGE, String.valueOf(event.getHitsplat().getAmount()), String.valueOf(client.getTickCount()-roomStartTick));
+                }
             }
         }
     }

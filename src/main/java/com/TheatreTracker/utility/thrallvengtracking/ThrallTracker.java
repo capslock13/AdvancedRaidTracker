@@ -2,6 +2,7 @@ package com.TheatreTracker.utility.thrallvengtracking;
 
 import com.TheatreTracker.TheatreTrackerPlugin;
 import com.TheatreTracker.constants.LogID;
+import com.TheatreTracker.utility.ThrallOutlineBox;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Actor;
 import net.runelite.api.NPC;
@@ -42,14 +43,19 @@ public class ThrallTracker {
         activeThralls.removeIf(thrall -> thrall.npc.getIndex() == npc.getIndex());
     }
 
-    public void handleCasts() {
-        if (queuedThrallSpawn.size() == 0) {
+    public void handleCasts()
+    {
+        if (queuedThrallSpawn.size() == 0)
+        {
             return;
         }
         ArrayList<PlayerShell> assignedPlayers = new ArrayList<>();
-        for (Thrall thrall : queuedThrallSpawn) {
-            if (thrall.potentialPlayers.size() == 1) {
+        for (Thrall thrall : queuedThrallSpawn)
+        {
+            if (thrall.potentialPlayers.size() == 1)
+            {
                 thrall.setOwner(thrall.potentialPlayers.get(0));
+                plugin.addThrallOutlineBox(new ThrallOutlineBox(thrall.potentialPlayers.get(0).name, thrall.spawnTick, thrall.npc.getId()));
                 activeThralls.add(thrall);
 
                 assignedPlayers.add(new PlayerShell(thrall.player.worldLocation, thrall.player.name));
@@ -61,10 +67,13 @@ public class ThrallTracker {
         queuedRangeCastGraphic.removeIf(p -> assignedPlayers.stream().anyMatch(p2 -> Objects.equals(p2.name, p.getName())));
         queuedMageCastGraphic.removeIf(p -> assignedPlayers.stream().anyMatch(p2 -> Objects.equals(p2.name, p.getName())));
 
-        for (Thrall thrall : queuedThrallSpawn) {
+        for (Thrall thrall : queuedThrallSpawn)
+        {
             thrall.potentialPlayers.removeIf(p1 -> queuedCastAnimation.stream().noneMatch(p2 -> Objects.equals(p2.getName(), p1.name)));
-            if (thrall.potentialPlayers.size() == 1) {
+            if (thrall.potentialPlayers.size() == 1)
+            {
                 thrall.setOwner(thrall.potentialPlayers.get(0));
+                plugin.addThrallOutlineBox(new ThrallOutlineBox(thrall.potentialPlayers.get(0).name, thrall.spawnTick, thrall.npc.getId()));
                 activeThralls.add(thrall);
             }
         }
@@ -74,13 +83,16 @@ public class ThrallTracker {
         queuedRangeCastGraphic.removeIf(p -> assignedPlayers.stream().anyMatch(p2 -> Objects.equals(p2.name, p.getName())));
         queuedMageCastGraphic.removeIf(p -> assignedPlayers.stream().anyMatch(p2 -> Objects.equals(p2.name, p.getName())));
 
-        for (Thrall thrall : queuedThrallSpawn) {
+        for (Thrall thrall : queuedThrallSpawn)
+        {
             thrall.potentialPlayers.removeIf(p1 ->
                     queuedMageCastGraphic.stream().noneMatch(p2 -> thrall.matchesGraphic(THRALL_CAST_GRAPHIC_MAGE))
                             && queuedRangeCastGraphic.stream().noneMatch(p2 -> thrall.matchesGraphic(THRALL_CAST_GRAPHIC_RANGE))
                             && queuedMeleeCastGraphic.stream().noneMatch(p2 -> thrall.matchesGraphic(THRALL_CAST_GRAPHIC_MELEE)));
-            if (thrall.potentialPlayers.size() == 1) {
+            if (thrall.potentialPlayers.size() == 1)
+            {
                 thrall.setOwner(thrall.potentialPlayers.get(0));
+                plugin.addThrallOutlineBox(new ThrallOutlineBox(thrall.potentialPlayers.get(0).name, thrall.spawnTick, thrall.npc.getId()));
                 activeThralls.add(thrall);
             }
         }
@@ -90,17 +102,22 @@ public class ThrallTracker {
         queuedRangeCastGraphic.removeIf(p -> assignedPlayers.stream().anyMatch(p2 -> Objects.equals(p2.name, p.getName())));
         queuedMageCastGraphic.removeIf(p -> assignedPlayers.stream().anyMatch(p2 -> Objects.equals(p2.name, p.getName())));
 
-        for (Thrall thrall : queuedThrallSpawn) {
+        for (Thrall thrall : queuedThrallSpawn)
+        {
             activeThralls.add(thrall);
         }
         queuedThrallSpawn.clear();
 
     }
 
-    public void updatePlayerInteracting(String playerName, Actor interacting) {
-        for (Thrall thrall : activeThralls) {
-            if (thrall.getOwner().equals(playerName)) {
-                if (interacting != null) {
+    public void updatePlayerInteracting(String playerName, Actor interacting)
+    {
+        for (Thrall thrall : activeThralls)
+        {
+            if (thrall.getOwner().equals(playerName))
+            {
+                if (interacting != null)
+                {
                     thrall.lastParentInteraction = interacting;
                 }
             }
@@ -115,11 +132,15 @@ public class ThrallTracker {
         queuedCastAnimation.add(player);
     }
 
-    public void meleeThrallAttacked(NPC npc) {
+    public void meleeThrallAttacked(NPC npc)
+    {
         for (Thrall thrall : activeThralls) {
-            if (npc.getIndex() == thrall.npc.getIndex() && thrall.isMelee && thrall.npc.getAnimation() == MELEE_THRALL_ATTACK_ANIMATION) {
-                if (thrall.lastParentInteraction instanceof NPC) {
-                    if (thrall.lastParentInteraction.getWorldArea().distanceTo(thrall.npc.getWorldLocation()) < 2) {
+            if (npc.getIndex() == thrall.npc.getIndex() && thrall.isMelee && thrall.npc.getAnimation() == MELEE_THRALL_ATTACK_ANIMATION)
+            {
+                if (thrall.lastParentInteraction instanceof NPC)
+                {
+                    if (thrall.lastParentInteraction.getWorldArea().distanceTo(thrall.npc.getWorldLocation()) < 2)
+                    {
                         plugin.clog.write(LogID.THRALL_ATTACKED, thrall.getOwner(), "melee");
                         plugin.addQueuedThrallDamage(((((NPC) thrall.lastParentInteraction).getIndex())), thrall.npc.getIndex(), 1, thrall.getOwner());
                     }
@@ -128,17 +149,23 @@ public class ThrallTracker {
         }
     }
 
-    public void projectileCreated(Projectile projectile, WorldPoint origin, WorldPoint target, int tick) {
-        if (projectile.getInteracting() instanceof NPC) {
+    public void projectileCreated(Projectile projectile, WorldPoint origin, WorldPoint target, int tick)
+    {
+        if (projectile.getInteracting() instanceof NPC)
+        {
             int hitOffset = -1;
 
-            if (projectile.getId() == THRALL_PROJECTILE_RANGE) {
+            if (projectile.getId() == THRALL_PROJECTILE_RANGE)
+            {
                 hitOffset = (projectile.getRemainingCycles() > 30) ? (projectile.getRemainingCycles() > 60) ? 2 : 1 : 0;
-            } else if (projectile.getId() == THRALL_PROJECTILE_MAGE) {
+            } else if (projectile.getId() == THRALL_PROJECTILE_MAGE)
+            {
                 hitOffset = (projectile.getRemainingCycles() > 40) ? 1 : 0;
             }
-            for (Thrall t : activeThralls) {
-                if (t.npc.getWorldLocation().distanceTo(origin) == 0 && hitOffset != -1) {
+            for (Thrall t : activeThralls)
+            {
+                if (t.npc.getWorldLocation().distanceTo(origin) == 0 && hitOffset != -1)
+                {
                     plugin.clog.write(LogID.THRALL_ATTACKED, t.getOwner(), String.valueOf(projectile.getId()));
                     plugin.addQueuedThrallDamage(((NPC) (projectile.getInteracting())).getIndex(), t.npc.getIndex(), hitOffset, t.getOwner());
                     break;
@@ -161,8 +188,9 @@ public class ThrallTracker {
         }
     }
 
-    public void thrallSpawned(NPC thrall, ArrayList<PlayerShell> adjacentPlayers) {
-        queuedThrallSpawn.add(new Thrall(thrall, adjacentPlayers));
+    public void thrallSpawned(NPC thrall, ArrayList<PlayerShell> adjacentPlayers)
+    {
+        queuedThrallSpawn.add(new Thrall(thrall, adjacentPlayers, plugin.getRoomTick()));
     }
 
     public void thrallDespawned(NPC thrall) {

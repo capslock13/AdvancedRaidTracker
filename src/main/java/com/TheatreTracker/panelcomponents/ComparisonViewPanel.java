@@ -7,13 +7,15 @@ import com.TheatreTracker.utility.StatisticGatherer;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
+import javax.swing.border.MatteBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Objects;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.*;
 
 @Slf4j
 public class ComparisonViewPanel extends JPanel
@@ -200,7 +202,116 @@ public class ComparisonViewPanel extends JPanel
             switchGraphData();
             updateOtherPanels();
         });
-        compareByComboBox = new JComboBox(DataPoint.getByNames());
+
+        comboPopupData = new LinkedHashMap<>();
+        comboPopupData.put("Room Times", DataPoint.getRoomTimes());
+        comboPopupData.put("Maiden", DataPoint.getMaidenNames());
+        comboPopupData.put("Bloat", DataPoint.getBloatNames());
+        comboPopupData.put("Nylocas", DataPoint.getNyloNames());
+        comboPopupData.put("Sotetseg", DataPoint.getSoteNames());
+        comboPopupData.put("Xarpus", DataPoint.getXarpNames());
+        comboPopupData.put("Verzik", DataPoint.getVerzikNames());
+        comboPopupData.put("Any", DataPoint.getAnyRoomNames());
+
+        comboPopupMenu = new JPopupMenu();
+        comboPopupMenu.setBorder(new MatteBorder(1, 1, 1, 1, Color.DARK_GRAY));
+
+        ArrayList<String> allComboValues = new ArrayList<String>(comboPopupData.keySet());
+
+        comboStrictData = new ArrayList<String>();
+
+        for(String category : allComboValues)
+        {
+            JMenu menu = new JMenu(category);
+            menu.setBackground(Color.BLACK);
+            menu.setOpaque(true);
+            if(!category.equals("Room Times") && !category.equals("Any"))
+            {
+                JMenu timeMenu = new JMenu("Time");
+                timeMenu.setBackground(Color.BLACK);
+                timeMenu.setOpaque(true);
+                for (String itemName : DataPoint.filterTimes(comboPopupData.get(category))) {
+                    timeMenu.add(createMenuItem(itemName));
+                    comboStrictData.add(itemName);
+                }
+                JMenu countMenu = new JMenu("Misc");
+                countMenu.setBackground(Color.BLACK);
+                countMenu.setOpaque(true);
+                for (String itemName : DataPoint.filterInt(comboPopupData.get(category))) {
+                    countMenu.add(createMenuItem(itemName));
+                    comboStrictData.add(itemName);
+                }
+                JMenu thrallMenu = new JMenu("Thrall");
+                thrallMenu.setBackground(Color.BLACK);
+                thrallMenu.setOpaque(true);
+                for (String itemName : DataPoint.filterThrall(comboPopupData.get(category))) {
+                    thrallMenu.add(createMenuItem(itemName));
+                    comboStrictData.add(itemName);
+                }
+                JMenu vengMenu = new JMenu("Veng");
+                vengMenu.setBackground(Color.BLACK);
+                vengMenu.setOpaque(true);
+                for (String itemName : DataPoint.filterVeng(comboPopupData.get(category)))
+                {
+                    vengMenu.add(createMenuItem(itemName));
+                    comboStrictData.add(itemName);
+                }
+
+                JMenu specMenu = new JMenu("Spec");
+                specMenu.setBackground(Color.BLACK);
+                specMenu.setOpaque(true);
+                for (String itemName : DataPoint.filterSpecs(comboPopupData.get(category)))
+                {
+                    specMenu.add(createMenuItem(itemName));
+                    comboStrictData.add(itemName);
+                }
+
+                menu.add(timeMenu);
+                menu.add(countMenu);
+                menu.add(thrallMenu);
+                menu.add(vengMenu);
+                menu.add(specMenu);
+            }
+            else
+            {
+                for(String itemName : comboPopupData.get(category))
+                {
+                    menu.add(createMenuItem(itemName));
+                    comboStrictData.add(itemName);
+                }
+            }
+            comboPopupMenu.add(menu);
+        }
+        compareByComboBox = new JComboBox<>();
+        compareByComboBox.setEditable(true);
+        compareByComboBox.setPrototypeDisplayValue("Maiden Time");
+        compareByComboBox.setSelectedItem("Maiden Time");
+        compareByComboBox.setEditable(false);
+        for(Component comp : compareByComboBox.getComponents())
+        {
+            if(comp instanceof AbstractButton)
+            {
+                arrowButton = (AbstractButton) comp;
+                arrowButton.setBackground(Color.BLACK);
+            }
+        }
+
+        arrowButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                setPopupVisible(!comboPopupMenu.isVisible());
+            }
+        });
+
+        compareByComboBox.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e)
+            {
+                setPopupVisible(!comboPopupMenu.isVisible());
+            }
+        });
+
         compareByComboBox.addActionListener(al->
         {
             switchGraphData();
@@ -229,6 +340,60 @@ public class ComparisonViewPanel extends JPanel
 
     private int valX = 0;
 
+    private Map<String, String[]> comboPopupData;
+    private JPopupMenu comboPopupMenu;
+    private ArrayList<String> comboStrictData;
+    private AbstractButton arrowButton;
+
+    private void setComboSelection(String name)
+    {
+        Vector<String> items = new Vector<String>();
+
+        for (String item : comboStrictData)
+        {
+            if (item.endsWith(name))
+            {
+                items.add(item);
+                break;
+            }
+        }
+
+        compareByComboBox.setModel(new DefaultComboBoxModel<String>(items));
+
+        if (items.size() == 1)
+        {
+            compareByComboBox.setSelectedIndex(0);
+        }
+    }
+
+    private JMenuItem createMenuItem(final String name)
+    {
+        JMenuItem item = new JMenuItem(name);
+        item.setBackground(Color.BLACK);
+        item.setOpaque(true);
+
+        item.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent event)
+            {
+                setComboSelection(name);
+            }
+        });
+        return item;
+    }
+
+    private void setPopupVisible(boolean visible)
+    {
+        if (visible)
+        {
+            comboPopupMenu.show(compareByComboBox, 0, compareByComboBox.getSize().height);
+        }
+        else
+        {
+            comboPopupMenu.setVisible(false);
+        }
+    }
+
     private void switchGraphData()
     {
         if(topGraphs.size() != bottomGraphs.size())
@@ -238,12 +403,19 @@ public class ComparisonViewPanel extends JPanel
         int xHigh = 0;
         int xLow = Integer.MAX_VALUE;
         int yHigh = 0;
-        time = DataPoint.values()[compareByComboBox.getSelectedIndex()].type == DataPoint.types.TIME;
-        //time = compareByComboBox.getSelectedIndex() > 29; //TODO shouldn't be needed
+        if(!compareByComboBox.getSelectedItem().toString().contains("Player:"))
+        {
+            time = Objects.requireNonNull(DataPoint.getValue(Objects.requireNonNull(compareByComboBox.getSelectedItem()).toString())).type == DataPoint.types.TIME;
+        }
+        else
+        {
+            time = false;
+        }
+
         for(int i = 0; i < topGraphs.size(); i++)
         {
-            topGraphs.get(i).switchKey(compareByComboBox.getSelectedIndex());
-            bottomGraphs.get(i).switchKey(compareByComboBox.getSelectedIndex());
+            topGraphs.get(i).switchKey(Objects.requireNonNull(DataPoint.getValue(Objects.requireNonNull(compareByComboBox.getSelectedItem()).toString())));
+            bottomGraphs.get(i).switchKey(Objects.requireNonNull(DataPoint.getValue(Objects.requireNonNull(compareByComboBox.getSelectedItem()).toString())));
 
             topGraphs.get(i).generateScales();
             bottomGraphs.get(i).generateScales();
@@ -342,7 +514,7 @@ public class ComparisonViewPanel extends JPanel
         rightCutOff.setExtent(rightExtent);
         leftCutOff.setExtent(leftExtent);
 
-        //For some unbelievably bizarre reasons extents can only by set for the upper bound so we have to inverse it
+        //For some unbelievably bizarre reasons extents can only be set for the upper bound so we have to inverse it
 
         leftLabel.setText("Min cutoff: " + ((time) ? RoomUtil.time(leftCutOff.getValue()) : leftCutOff.getValue()));
         rightLabel.setText("Max cutoff: " + ((time) ? RoomUtil.time(rightCutOff.getMaximum()-rightCutOff.getValue()+rightCutOff.getMinimum()) : rightCutOff.getMaximum()-rightCutOff.getValue()+rightCutOff.getMinimum()));

@@ -79,6 +79,10 @@ public enum LogID {
 
     LATE_START(98),
     SPECTATE(99),
+    NOT_118(998),
+    NO_PIETY(999),
+    RANDOM_TRACKER(1000),
+    RANDOM_TRACKER_2(1001),
 
     PARTY_COMPLETE(100),
     PARTY_INCOMPLETE(101),
@@ -121,6 +125,9 @@ public enum LogID {
     DWH_BOP(502),
     BGS_WHACK(503),
     CHALLY_POKE(504),
+    THRALL_SPAWN(410),
+    DAWN_SPEC(487),
+    DAWN_DAMAGE(488)
 
     ;
 

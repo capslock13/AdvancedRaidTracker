@@ -7,10 +7,9 @@ import com.TheatreTracker.ui.RaidTrackerPanelPrimary;
 import com.TheatreTracker.utility.DataWriter;
 import com.TheatreTracker.utility.PlayerDidAttack;
 import com.TheatreTracker.utility.QueuedPlayerAttackLessProjectiles;
+import com.TheatreTracker.utility.ThrallOutlineBox;
 import com.TheatreTracker.utility.thrallvengtracking.*;
 import com.google.inject.Inject;
-import com.google.inject.Injector;
-import com.google.inject.Key;
 import com.google.inject.Provides;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
@@ -44,7 +43,9 @@ import net.runelite.client.util.Text;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.lang.reflect.Field;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.TheatreTracker.constants.LogID.*;
@@ -513,6 +514,18 @@ public class TheatreTrackerPlugin extends Plugin
         }
     }
 
+    public void addThrallOutlineBox(ThrallOutlineBox outlineBox)
+    {
+        clog.write(THRALL_SPAWN, outlineBox.owner, String.valueOf(outlineBox.spawnTick), String.valueOf(outlineBox.id));
+        liveFrame.getPanel(currentRoom.getName()).addThrallOutlineBox(outlineBox);
+    }
+
+    public int getRoomTick()
+    {
+        return client.getTickCount()-currentRoom.roomStartTick;
+    }
+
+
     @Subscribe
     public void onGameTick(GameTick event) throws PluginInstantiationException
     {
@@ -563,8 +576,15 @@ public class TheatreTrackerPlugin extends Plugin
                     if(projectile.getStartCycle() == client.getGameCycle()+offset)
                     {
                         WorldPoint position = WorldPoint.fromLocal(client, new LocalPoint(projectile.getX1(), projectile.getY1()));
-                        if (position.distanceTo(playerAttackQueuedItem.location) == 0)
+                        if (position.distanceTo(playerAttackQueuedItem.player.getWorldLocation()) == 0)
                         {
+                            if(projectile.getId() == 1547 || projectile.getId() == 1544)
+                            {
+                                int projectileHitTick = projectile.getRemainingCycles();
+                                projectileHitTick = (projectileHitTick / 30);
+                                clog.write(DAWN_SPEC, playerAttackQueuedItem.player.getName(), String.valueOf(client.getTickCount()-currentRoom.roomStartTick+projectileHitTick+1));
+
+                            }
                             if (projectile.getId() == 1547 || projectile.getId() == 1995 || projectile.getId() == 1468 || projectile.getId() == 1544)
                             {
                                 int interactedIndex = -1;
@@ -782,8 +802,10 @@ public class TheatreTrackerPlugin extends Plugin
                 }
             }
             //Thrall hitsplats come before damage hitsplits unless the source is a projectile that was spawned on a tick before the thrall projectile spawned
-            else if (event.getProjectile().getStartCycle() == client.getGameCycle()) { //Thrall projectiles move slower and the only time this situation occurs in TOB is max distance TBOW/ZCB during maiden
-                if (id == TBOW_PROJECTILE || id == ZCB_PROJECTILE || id == ZCB_SPEC_PROJECTILE) { //Not sure why 10 is correct instead of 19 (60 - 41 tick delay) but extensive trial and error shows this to be accurate
+            else if (event.getProjectile().getStartCycle() == client.getGameCycle())
+            { //Thrall projectiles move slower and the only time this situation occurs in TOB is max distance TBOW/ZCB during maiden
+                if (id == TBOW_PROJECTILE || id == ZCB_PROJECTILE || id == ZCB_SPEC_PROJECTILE)
+                { //Not sure why 10 is correct instead of 19 (60 - 41 tick delay) but extensive trial and error shows this to be accurate
                     int projectileHitTick = 10 + event.getProjectile().getRemainingCycles();
                     projectileHitTick = (projectileHitTick / 30);
                     if (event.getProjectile().getInteracting() instanceof NPC) {
@@ -792,18 +814,12 @@ public class TheatreTrackerPlugin extends Plugin
                     }
                 }
             }
-            if (inTheatre) {
+            if (inTheatre)
+            {
                 currentRoom.updateProjectileMoved(event);
             }
         }
     }
-
-    public int getTicks()
-    {
-        return client.getTickCount();
-    }
-
-    //DO NOT INCLUDE
 
     private void sendChatMessage(String msg)
     {
@@ -831,6 +847,36 @@ public class TheatreTrackerPlugin extends Plugin
                             sendChatMessage(event.getActor().getName() + " is using an uncharged scythe");
                         }
                     }
+                    for(String player : playerStrengthStatus.keySet())
+                    {
+                        if(player.equalsIgnoreCase(event.getActor().getName()))
+                        {
+                            if(playerStrengthStatus.get(player) != 118)
+                            {
+                                sendChatMessage(player + " scythed at " + playerStrengthStatus.get(player) + " strength");
+                                clog.write(NOT_118, String.valueOf(client.getTickCount()-currentRoom.roomStartTick), player, String.valueOf(playerStrengthStatus.get(player)));
+
+                            }
+                            if(!playerPrayerStatus.get(player))
+                            {
+                                sendChatMessage(player + " scythed without piety");
+                                clog.write(NO_PIETY, String.valueOf(client.getTickCount()-currentRoom.roomStartTick), player);
+                            }
+                        }
+                    }
+                   if(event.getActor().getName().equalsIgnoreCase(client.getLocalPlayer().getName()))
+                   {
+                       if(client.getBoostedSkillLevel(Skill.STRENGTH) != 118)
+                       {
+                           sendChatMessage(client.getLocalPlayer().getName() + " scythed at " + client.getBoostedSkillLevel(Skill.STRENGTH) + " strength");
+                           clog.write(NOT_118, String.valueOf(client.getTickCount()-currentRoom.roomStartTick), client.getLocalPlayer().getName(), String.valueOf(client.getBoostedSkillLevel(Skill.STRENGTH)));
+                       }
+                       if(client.getServerVarbitValue(Prayer.PIETY.getVarbit()) != 1)
+                       {
+                           sendChatMessage(client.getLocalPlayer().getName() + " scythed without piety");
+                           clog.write(NO_PIETY, String.valueOf(client.getTickCount()-currentRoom.roomStartTick), client.getLocalPlayer().getName());
+                       }
+                   }
                 } else if (event.getActor().getAnimation() == 401)
                 {
                     if (id == 13576 || id == 20785)

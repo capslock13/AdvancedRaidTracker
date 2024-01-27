@@ -24,7 +24,6 @@ public class ComparisonViewFrame extends BaseFrame
         int index = 0;
         for(Integer i : dataSets.keySet())
         {
-            log.info("trying scale: " + i);
             String tabName = "";
             if(i == 1)
                 tabName = "Solo";

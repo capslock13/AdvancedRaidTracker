@@ -347,7 +347,8 @@ public class FilteredRaidsBaseFrame extends BaseFrame
         {
             if(sortOrderBox.getSelectedIndex() == 0)
             {
-                for (RoomData data : tableData) {
+                for (RoomData data : tableData)
+                {
                     data.activeValue = viewByRaidComboBox.getSelectedItem().toString();
                 }
                 tableData.sort(Comparator.comparing(RoomData::getSpecificTime));
@@ -704,9 +705,9 @@ public class FilteredRaidsBaseFrame extends BaseFrame
         overallPanelVerzikMaximum.setText(RoomUtil.time(StatisticGatherer.getGenericMax(data, DataPoint.VERZIK_TOTAL_TIME)));
         overallPanelOverallMaximum.setText(RoomUtil.time(StatisticGatherer.getOverallMax(data)));
     }
-    private Map<String, String[]> testMenuData;
-    private JPopupMenu testPopupMenu;
-    private List<String> testFlattenedData;
+    private Map<String, String[]> comboPopupData;
+    private JPopupMenu comboPopupMenu;
+    private ArrayList<String> comboStrictData;
     private AbstractButton arrowButton;
     private boolean writing = false;
 
@@ -739,18 +740,18 @@ public class FilteredRaidsBaseFrame extends BaseFrame
     {
         if (visible)
         {
-            testPopupMenu.show(viewByRaidComboBox, 0, viewByRaidComboBox.getSize().height);
+            comboPopupMenu.show(viewByRaidComboBox, 0, viewByRaidComboBox.getSize().height);
         }
         else
         {
-            testPopupMenu.setVisible(false);
+            comboPopupMenu.setVisible(false);
         }
     }
     private void setComboSelection(String name)
     {
         Vector<String> items = new Vector<String>();
 
-        for (String item : testFlattenedData)
+        for (String item : comboStrictData)
         {
             if (item.endsWith(name))
             {
@@ -773,7 +774,6 @@ public class FilteredRaidsBaseFrame extends BaseFrame
         item.setBackground(Color.BLACK);
         item.setOpaque(true);
 
-
         item.addActionListener(new ActionListener()
         {
             public void actionPerformed(ActionEvent event)
@@ -786,24 +786,24 @@ public class FilteredRaidsBaseFrame extends BaseFrame
 
     public void createFrame(ArrayList<RoomData> data)
     {
-        testMenuData = new LinkedHashMap<String, String[]>();
-        testMenuData.put("Room Times", DataPoint.getRoomTimes());
-        testMenuData.put("Maiden", DataPoint.getMaidenNames());
-        testMenuData.put("Bloat", DataPoint.getBloatNames());
-        testMenuData.put("Nylocas", DataPoint.getNyloNames());
-        testMenuData.put("Sotetseg", DataPoint.getSoteNames());
-        testMenuData.put("Xarpus", DataPoint.getXarpNames());
-        testMenuData.put("Verzik", DataPoint.getVerzikNames());
-        testMenuData.put("Any", DataPoint.getAnyRoomNames());
+        comboPopupData = new LinkedHashMap<String, String[]>();
+        comboPopupData.put("Room Times", DataPoint.getRoomTimes());
+        comboPopupData.put("Maiden", DataPoint.getMaidenNames());
+        comboPopupData.put("Bloat", DataPoint.getBloatNames());
+        comboPopupData.put("Nylocas", DataPoint.getNyloNames());
+        comboPopupData.put("Sotetseg", DataPoint.getSoteNames());
+        comboPopupData.put("Xarpus", DataPoint.getXarpNames());
+        comboPopupData.put("Verzik", DataPoint.getVerzikNames());
+        comboPopupData.put("Any", DataPoint.getAnyRoomNames());
 
-        testPopupMenu = new JPopupMenu();
-        testPopupMenu.setBorder(new MatteBorder(1, 1, 1, 1, Color.DARK_GRAY));
+        comboPopupMenu = new JPopupMenu();
+        comboPopupMenu.setBorder(new MatteBorder(1, 1, 1, 1, Color.DARK_GRAY));
 
-        List<String> testCategories = new ArrayList<String>(testMenuData.keySet());
+        List<String> allComboValues = new ArrayList<String>(comboPopupData.keySet());
 
-        testFlattenedData = new ArrayList<String>();
+        comboStrictData = new ArrayList<String>();
 
-        for(String category : testCategories)
+        for(String category : allComboValues)
         {
             JMenu menu = new JMenu(category);
             menu.setBackground(Color.BLACK);
@@ -813,40 +813,40 @@ public class FilteredRaidsBaseFrame extends BaseFrame
                 JMenu timeMenu = new JMenu("Time");
                 timeMenu.setBackground(Color.BLACK);
                 timeMenu.setOpaque(true);
-                for (String itemName : DataPoint.filterTimes(testMenuData.get(category))) {
+                for (String itemName : DataPoint.filterTimes(comboPopupData.get(category))) {
                     timeMenu.add(createMenuItem(itemName));
-                    testFlattenedData.add(itemName);
+                    comboStrictData.add(itemName);
                 }
                 JMenu countMenu = new JMenu("Misc");
                 countMenu.setBackground(Color.BLACK);
                 countMenu.setOpaque(true);
-                for (String itemName : DataPoint.filterInt(testMenuData.get(category))) {
+                for (String itemName : DataPoint.filterInt(comboPopupData.get(category))) {
                     countMenu.add(createMenuItem(itemName));
-                    testFlattenedData.add(itemName);
+                    comboStrictData.add(itemName);
                 }
                 JMenu thrallMenu = new JMenu("Thrall");
                 thrallMenu.setBackground(Color.BLACK);
                 thrallMenu.setOpaque(true);
-                for (String itemName : DataPoint.filterThrall(testMenuData.get(category))) {
+                for (String itemName : DataPoint.filterThrall(comboPopupData.get(category))) {
                     thrallMenu.add(createMenuItem(itemName));
-                    testFlattenedData.add(itemName);
+                    comboStrictData.add(itemName);
                 }
                 JMenu vengMenu = new JMenu("Veng");
                 vengMenu.setBackground(Color.BLACK);
                 vengMenu.setOpaque(true);
-                for (String itemName : DataPoint.filterVeng(testMenuData.get(category)))
+                for (String itemName : DataPoint.filterVeng(comboPopupData.get(category)))
                 {
                     vengMenu.add(createMenuItem(itemName));
-                    testFlattenedData.add(itemName);
+                    comboStrictData.add(itemName);
                 }
 
                 JMenu specMenu = new JMenu("Spec");
                 specMenu.setBackground(Color.BLACK);
                 specMenu.setOpaque(true);
-                for (String itemName : DataPoint.filterSpecs(testMenuData.get(category)))
+                for (String itemName : DataPoint.filterSpecs(comboPopupData.get(category)))
                 {
                     specMenu.add(createMenuItem(itemName));
-                    testFlattenedData.add(itemName);
+                    comboStrictData.add(itemName);
                 }
 
                 menu.add(timeMenu);
@@ -857,13 +857,13 @@ public class FilteredRaidsBaseFrame extends BaseFrame
             }
             else
             {
-                for(String itemName : testMenuData.get(category))
+                for(String itemName : comboPopupData.get(category))
                 {
                     menu.add(createMenuItem(itemName));
-                    testFlattenedData.add(itemName);
+                    comboStrictData.add(itemName);
                 }
             }
-            testPopupMenu.add(menu);
+            comboPopupMenu.add(menu);
         }
         JMenu playerSpecificMenu = new JMenu("Player Specific");
         playerSpecificMenu.setBackground(Color.BLACK);
@@ -880,7 +880,7 @@ public class FilteredRaidsBaseFrame extends BaseFrame
                 if(qualified.contains(s))
                 {
                     room.add(createMenuItem("Player: " + qualified));
-                    testFlattenedData.add("Player: " + qualified);
+                    comboStrictData.add("Player: " + qualified);
                 }
             }
             playerSpecificMenu.add(room);
@@ -901,12 +901,12 @@ public class FilteredRaidsBaseFrame extends BaseFrame
             if(!anyFlagged)
             {
                 room.add(createMenuItem("Player: " + qualified));
-                testFlattenedData.add("Player: " + qualified);
+                comboStrictData.add("Player: " + qualified);
             }
         }
         playerSpecificMenu.add(room);
 
-        testPopupMenu.add(playerSpecificMenu);
+        comboPopupMenu.add(playerSpecificMenu);
 
         viewByRaidComboBox = new JComboBox<>();
         viewByRaidComboBox.setEditable(true);
@@ -926,7 +926,7 @@ public class FilteredRaidsBaseFrame extends BaseFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                setPopupVisible(!testPopupMenu.isVisible());
+                setPopupVisible(!comboPopupMenu.isVisible());
             }
         });
 
@@ -934,14 +934,10 @@ public class FilteredRaidsBaseFrame extends BaseFrame
             @Override
             public void mouseClicked(MouseEvent e)
             {
-                setPopupVisible(!testPopupMenu.isVisible());
+                setPopupVisible(!comboPopupMenu.isVisible());
             }
         });
 
-        //FIX TIMER OPTIONS
-
-        //viewByRaidComboBox = new JComboBox(new String[]{"Overall Time", "Maiden Time", "Bloat Time", "Nylocas Time", "Sotetseg Time", "Xarpus Time", "Verzik Time"});
-        //viewByRaidComboBox = new JComboBox<>(DataPoint.getByNames());
         timeFollowsTab = new JCheckBox("Time Follows Tab");
         timeFollowsTab.setSelected(true);
 
@@ -1569,6 +1565,7 @@ public class FilteredRaidsBaseFrame extends BaseFrame
         dateTopRow.add(dateFilterAdd);
         dateTextField = new JTextField();
         dateBottomRow.add(dateTextField);
+        dateBottomRow.add(Box.createRigidArea(new Dimension(5, 5)));
         dateBottomRow.add(new JLabel("YYYY/MM/DD"));
         filterDatePanel.setLayout(new BoxLayout(filterDatePanel, BoxLayout.Y_AXIS));
         filterDatePanel.add(dateTopRow);
@@ -1951,6 +1948,10 @@ public class FilteredRaidsBaseFrame extends BaseFrame
 
         JPanel rightBottomMostContainer = new JPanel();
         rightBottomMostContainer.setBorder(BorderFactory.createTitledBorder("Alias Options"));
+
+        aliasText.setToolTipText("This applies to the tab names when you use the analyze sessions features. Syntax- Name to be displayed:oldname1,oldname2,oldname3");
+
+
 
         aliasText.getDocument().addDocumentListener(new DocumentListener()
         {

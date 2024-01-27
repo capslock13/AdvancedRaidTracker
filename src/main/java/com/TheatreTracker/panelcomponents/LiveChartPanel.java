@@ -1,9 +1,6 @@
 package com.TheatreTracker.panelcomponents;
 
-import com.TheatreTracker.utility.PlayerDidAttack;
-import com.TheatreTracker.utility.RoomUtil;
-import com.TheatreTracker.utility.WeaponAttack;
-import com.TheatreTracker.utility.WeaponDecider;
+import com.TheatreTracker.utility.*;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
@@ -51,6 +48,12 @@ public class LiveChartPanel extends JPanel
         drawGraph();
 
     }
+    private ArrayList<ThrallOutlineBox> thrallOutlineBoxes = new ArrayList<>();
+
+    public void addThrallOutlineBox(ThrallOutlineBox outlineBox)
+    {
+        thrallOutlineBoxes.add(outlineBox);
+    }
 
     public void addDelayedLine(Integer value, String description)
     {
@@ -60,6 +63,7 @@ public class LiveChartPanel extends JPanel
     public void setRoomFinished()
     {
         finished = true;
+        drawGraph();
     }
 
     public void setPlayers(ArrayList<String> players)
@@ -132,6 +136,7 @@ public class LiveChartPanel extends JPanel
         players.clear();
         lines.clear();
         finished = false;
+        thrallOutlineBoxes.clear();
         recalculateSize();
     }
 
@@ -321,6 +326,53 @@ public class LiveChartPanel extends JPanel
                 g.setColor(Color.WHITE);
                 g.drawString(lines.get(i), xOffset - (stringLength / 2), yOffset - 1);
             }
+        }
+
+        for(ThrallOutlineBox box : thrallOutlineBoxes)
+        {
+            int xOffset = (shouldWrap) ? ((box.spawnTick - startTick) % 50) * scale : box.spawnTick * scale;
+            int yOffset = (shouldWrap) ? ((box.spawnTick - startTick) / 50) * boxHeight : 0;
+            xOffset += 100;
+            try
+            {
+                yOffset += (playerOffsets.get(box.owner) + 2) * scale - 10;
+            }
+            catch(Exception e)
+            {
+                for(String s : playerOffsets.keySet())
+                {
+                }
+                return;
+            }
+            g.setColor(box.getColor());
+
+            int maxTick = box.spawnTick+99;
+            for(ThrallOutlineBox boxCompare : thrallOutlineBoxes)
+            {
+                if(box.owner.equalsIgnoreCase(boxCompare.owner))
+                {
+                    if(boxCompare.spawnTick > box.spawnTick && boxCompare.spawnTick < (box.spawnTick+99))
+                    {
+                        maxTick = boxCompare.spawnTick;
+                    }
+                }
+            }
+            if(currentTick < maxTick)
+            {
+                maxTick = currentTick;
+            }
+            int lastEndTick = box.spawnTick;
+            while(lastEndTick < maxTick)
+            {
+                int currentEndTick = lastEndTick + (50-(lastEndTick%50));
+                int xOffsetStart = (shouldWrap) ? ((lastEndTick - startTick) % 50) * scale : (lastEndTick-1) * scale;
+                xOffsetStart += 100;
+                int xOffsetEnd = (shouldWrap) ? ((currentEndTick - startTick-1) % 50) * scale : (currentEndTick-1) * scale;
+                xOffsetEnd += 100;
+                lastEndTick = currentEndTick;
+                g.drawRect(xOffsetStart, yOffset+1, xOffsetEnd-xOffsetStart, scale-2);
+            }
+           // g.drawRect(xOffset, yOffset+1, scale, scale-2);
         }
 
         g.setColor(oldColor);

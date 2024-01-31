@@ -4,12 +4,13 @@ import com.TheatreTracker.RoomData;
 import com.TheatreTracker.utility.RoomUtil;
 import com.TheatreTracker.utility.DataPoint;
 import com.TheatreTracker.utility.StatisticGatherer;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Objects;
-
+@Slf4j
 public class StatisticRoomPanel extends JPanel
 {
     public static enum stat
@@ -101,7 +102,7 @@ public class StatisticRoomPanel extends JPanel
                     statistic = StatisticGatherer.getGenericMode(collectedData);
                     break;
                 case MINIMUM:
-                    statistic = StatisticGatherer.getGenericMin(collectedData);
+                    statistic = StatisticGatherer.getGenericMin(collectedData, true);
                     break;
                 case MAXIMUM:
                     statistic = StatisticGatherer.getGenericMax(collectedData);

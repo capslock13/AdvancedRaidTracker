@@ -149,15 +149,22 @@ public class StatisticGatherer {
         return -1;
     }
 
-    public static double getGenericMin(ArrayList<Integer> data) {
+    public static double getGenericMin(ArrayList<Integer> data, boolean isTime)
+    {
         int minValue = Integer.MAX_VALUE;
-        for (int d : data) {
-            if (d < minValue && d != -1)
+        for (int d : data)
+        {
+            if (d < minValue && d != -1 && (!isTime || d != 0))
             {
                 minValue = d;
             }
         }
         return minValue;
+    }
+
+    public static double getGenericMin(ArrayList<Integer> data)
+    {
+        return getGenericMin(data, false);
     }
 
     public static double getGenericMin(ArrayList<RoomData> data, DataPoint parameter)

@@ -111,7 +111,8 @@ public class RoomUtil {
     }
 
     public static String time(double ticks) {
-        if (ticks == 0 || ticks == Integer.MAX_VALUE || ticks == -1) {
+        if (ticks == Integer.MAX_VALUE || ticks < 1)
+        {
             return "-";
         }
         String timeStr = "";
@@ -121,11 +122,13 @@ public class RoomUtil {
         String secondsString = String.format("%.1f", ticks * .6);
         if (minutes != 0)
             timeStr += minutes + ":";
-        if (onlySeconds < 10 && minutes != 0) {
+        if (onlySeconds < 10 && minutes != 0)
+        {
             timeStr += "0";
         }
         timeStr += onlySeconds;
-        if (StringUtils.split(secondsString, ".").length == 2) {
+        if (StringUtils.split(secondsString, ".").length == 2)
+        {
             String[] subStr = StringUtils.split(secondsString, ".");
             timeStr += "." + subStr[1];
         } else {

@@ -130,6 +130,7 @@ public enum LogID {
     BGS_WHACK(503),
     CHALLY_POKE(504),
     THRALL_SPAWN(410),
+    THRALL_DESPAWN(498),
     DAWN_SPEC(487),
     DAWN_DAMAGE(488)
 

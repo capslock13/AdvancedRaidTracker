@@ -1778,7 +1778,7 @@ public class FilteredRaidsBaseFrame extends BaseFrame
                 {
                     rows.add(currentData.get(Integer.parseInt(table.getModel().getValueAt(toRemove[i], 0).toString())));
                 }
-                RoomChartFrame roomCharts = new RoomChartFrame(rows);
+                ChartFrame roomCharts = new ChartFrame(rows);
                 roomCharts.open();
             }
         });

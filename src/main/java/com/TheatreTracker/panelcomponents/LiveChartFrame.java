@@ -10,12 +10,12 @@ import java.util.ArrayList;
 @Slf4j
 public class LiveChartFrame extends BaseFrame
 {
-    LiveChartPanel maidenPanel;
-    LiveChartPanel bloatPanel;
-    LiveChartPanel nyloPanel;
-    LiveChartPanel sotetsegPanel;
-    LiveChartPanel xarpPanel;
-    LiveChartPanel verzPanel;
+    ChartPanel maidenPanel;
+    ChartPanel bloatPanel;
+    ChartPanel nyloPanel;
+    ChartPanel sotetsegPanel;
+    ChartPanel xarpPanel;
+    ChartPanel verzPanel;
     JScrollPane maidenScroll;
     JScrollPane bloatScroll;
     JScrollPane nyloScroll;
@@ -26,12 +26,12 @@ public class LiveChartFrame extends BaseFrame
 
     public LiveChartFrame()
     {
-        maidenPanel = new LiveChartPanel("Maiden");
-        bloatPanel = new LiveChartPanel("Bloat");
-        nyloPanel = new LiveChartPanel("Nylocas");
-        sotetsegPanel = new LiveChartPanel("Sotetseg");
-        xarpPanel = new LiveChartPanel("Xarpus");
-        verzPanel = new LiveChartPanel("Verzik");
+        maidenPanel = new ChartPanel("Maiden", true);
+        bloatPanel = new ChartPanel("Bloat", true);
+        nyloPanel = new ChartPanel("Nylocas", true);
+        sotetsegPanel = new ChartPanel("Sotetseg", true);
+        xarpPanel = new ChartPanel("Xarpus", true);
+        verzPanel = new ChartPanel("Verzik", true);
 
         maidenScroll = new JScrollPane(maidenPanel);
          bloatScroll = new JScrollPane(bloatPanel);
@@ -54,7 +54,7 @@ public class LiveChartFrame extends BaseFrame
         pack();
     }
 
-    public LiveChartPanel getPanel(String room)
+    public ChartPanel getPanel(String room)
     {
         switch(room)
         {
@@ -71,13 +71,13 @@ public class LiveChartFrame extends BaseFrame
             case "Verzik":
                 return verzPanel;
         }
-        return new LiveChartPanel("");
+        return new ChartPanel("", true);
     }
 
     public void incrementTick(String room)
     {
         getPanel(room).incrementTick();
-        if(getPanel(room).currentTick % 50 == 0)
+        if(getPanel(room).endTick % 50 == 0)
         {
             maidenScroll.getViewport().setViewPosition(new Point(maidenPanel.getViewRect().x, maidenPanel.getViewRect().y));
             bloatScroll.getViewport().setViewPosition(new Point(bloatPanel.getViewRect().x, bloatPanel.getViewRect().y));
@@ -90,37 +90,37 @@ public class LiveChartFrame extends BaseFrame
 
     public void addAttack(PlayerDidAttack attack, String room)
     {
-        getPanel(room).addAttack(attack);
+        getPanel(room).addLiveAttack(attack);
     }
 
     public void addMaidenLine(int value, String description)
     {
-        maidenPanel.addDelayedLine(value, description);
+        maidenPanel.addLine(value, description);
     }
 
     public void addBloatLine(int value, String description)
     {
-        bloatPanel.addDelayedLine(value, description);
+        bloatPanel.addLine(value, description);
     }
 
     public void addNyloLine(int value, String description)
     {
-        nyloPanel.addDelayedLine(value, description);
+        nyloPanel.addLine(value, description);
     }
 
     public void addSoteLine(int value, String description)
     {
-        sotetsegPanel.addDelayedLine(value, description);
+        sotetsegPanel.addLine(value, description);
     }
 
     public void addXarpLine(int value, String description)
     {
-        xarpPanel.addDelayedLine(value, description);
+        xarpPanel.addLine(value, description);
     }
 
     public void addVerzikLine(int value, String description)
     {
-        verzPanel.addDelayedLine(value, description);
+        verzPanel.addLine(value, description);
     }
 
     public void setMaidenFinished()

@@ -539,10 +539,16 @@ public class TheatreTrackerPlugin extends Plugin
         }
     }
 
+    public void removeThrallBox(Thrall thrall)
+    {
+        clog.write(THRALL_DESPAWN, thrall.getOwner(), String.valueOf(client.getTickCount()-currentRoom.roomStartTick));
+        liveFrame.getPanel(currentRoom.getName()).removeThrall(thrall.getOwner());
+    }
+
     public void addThrallOutlineBox(ThrallOutlineBox outlineBox)
     {
         clog.write(THRALL_SPAWN, outlineBox.owner, String.valueOf(outlineBox.spawnTick), String.valueOf(outlineBox.id));
-        liveFrame.getPanel(currentRoom.getName()).addThrallOutlineBox(outlineBox);
+        liveFrame.getPanel(currentRoom.getName()).addThrallBox(outlineBox);
     }
 
     public int getRoomTick()

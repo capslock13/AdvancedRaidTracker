@@ -7,7 +7,7 @@ import java.util.Arrays;
 
 public class BaseFrame extends JFrame {
     public BaseFrame() {
-        setIconImages(Arrays.asList(ClientUI.ICON_128, ClientUI.ICON_16));
+        //setIconImages(Arrays.asList(ClientUI.ICON_128, ClientUI.ICON_16));
     }
 
     public void open() {

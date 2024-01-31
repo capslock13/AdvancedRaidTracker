@@ -12,6 +12,7 @@ import net.runelite.api.coords.WorldPoint;
 
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.Optional;
 
 import static com.TheatreTracker.constants.NpcIDs.*;
 
@@ -39,7 +40,14 @@ public class ThrallTracker {
         activeThralls = new ArrayList<>();
     }
 
-    public void removeThrall(NPC npc) {
+    public void removeThrall(NPC npc)
+    {
+        Optional<Thrall> thrall2 = activeThralls.stream().filter(thrall1 -> thrall1.npc.getIndex() == npc.getIndex()).findAny();
+        if(thrall2.isPresent())
+        {
+            Thrall t = thrall2.get();
+            plugin.removeThrallBox(t);
+        }
         activeThralls.removeIf(thrall -> thrall.npc.getIndex() == npc.getIndex());
     }
 

@@ -15,7 +15,7 @@ public class LiveChartPanel extends JPanel
 {
     private boolean shouldWrap = true;
     private BufferedImage img;
-    int scale = 20;
+    int scale = 26;
     int boxCount;
     int boxHeight;
     int boxWidth;
@@ -32,6 +32,7 @@ public class LiveChartPanel extends JPanel
     int keyRows;
     int keyCount;
     int keyMargin;
+
 
     public LiveChartPanel(String room)
     {
@@ -83,13 +84,13 @@ public class LiveChartPanel extends JPanel
         {
             boxCount = 1;
         }
-        boxHeight = (players.size() + 3) * 20;
+        boxHeight = (players.size() + 3) * scale;
         int height = boxCount * boxHeight;
         if(height < 600)
         {
             height = 600;
         }
-        boxWidth = 1120;
+        boxWidth = 100+(scale*51);
         this.weaponAttacks = WeaponAttack.values();
         keyCount = weaponAttacks.length;
         keyRows = 9;
@@ -219,7 +220,8 @@ public class LiveChartPanel extends JPanel
             g.setColor(new Color(220, 220, 220));
             Font oldFont = g.getFont();
             g.setFont(oldFont.deriveFont(10.0f));
-            g.drawString(String.valueOf(i), 100+xOffset+3, yOffset+(fontHeight/2));
+            int strWidth = getStringBounds(g, String.valueOf(i), 0, 0).width;
+            g.drawString(String.valueOf(i), 100+xOffset+(scale/2)-(strWidth/2), yOffset+(fontHeight/2));
             g.setFont(oldFont);
         }
 
@@ -245,7 +247,7 @@ public class LiveChartPanel extends JPanel
             for(int j = 0; j < boxCount; j++)
             {
                 g.setColor(Color.DARK_GRAY);
-                g.drawLine(100, 10+(j*boxHeight)+((i+2)*scale), boxWidth-20, 10+(j*boxHeight)+((i+2)*scale));
+                g.drawLine(100, 10+(j*boxHeight)+((i+2)*scale), boxWidth-scale, 10+(j*boxHeight)+((i+2)*scale));
                 g.setColor(Color.WHITE);
                 g.drawString(players.get(i), 10, (j*boxHeight)+((i+2)*scale)+(fontHeight)/2);
                 if(i == 0)
@@ -268,7 +270,8 @@ public class LiveChartPanel extends JPanel
             xOffset += 100;
             yOffset += (playerOffsets.size() + 2) * scale - 10;
             g.setColor(Color.WHITE);
-            g.drawString("X", xOffset, yOffset + (fontHeight / 2) + 10);
+            int strWidth = getStringBounds(g, "X", 0, 0).width;
+            g.drawString("X", xOffset+(scale/2)-(strWidth/2), yOffset + (fontHeight / 2) + 10);
         }
         if(playerOffsets.size() != 0)
         {
@@ -287,7 +290,7 @@ public class LiveChartPanel extends JPanel
                         xOffset += 100;
                         try
                         {
-                            yOffset += (playerOffsets.get(attack.player) + 2) * scale - 10;
+                            yOffset += (playerOffsets.get(attack.player) + 1) * scale + 10;
                         }
                         catch(Exception e)
                         {
@@ -321,7 +324,7 @@ public class LiveChartPanel extends JPanel
                 xOffset += 100;
                 yOffset += 10;
                 g.setColor(new Color(255, 0, 0));
-                g.drawLine(xOffset, yOffset, xOffset, yOffset + boxHeight - 20);
+                g.drawLine(xOffset, yOffset, xOffset, yOffset + boxHeight - scale);
                 int stringLength = getStringBounds(g, lines.get(i), 0, 0).width;
                 g.setColor(Color.WHITE);
                 g.drawString(lines.get(i), xOffset - (stringLength / 2), yOffset - 1);
@@ -335,7 +338,7 @@ public class LiveChartPanel extends JPanel
             xOffset += 100;
             try
             {
-                yOffset += (playerOffsets.get(box.owner) + 2) * scale - 10;
+                yOffset += (playerOffsets.get(box.owner) + 1) * scale +10;
             }
             catch(Exception e)
             {

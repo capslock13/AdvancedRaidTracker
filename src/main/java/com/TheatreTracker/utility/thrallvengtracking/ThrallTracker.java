@@ -124,7 +124,8 @@ public class ThrallTracker {
         }
     }
 
-    public void updateTick() {
+    public void updateTick()
+    {
         handleCasts();
     }
 
@@ -168,6 +169,18 @@ public class ThrallTracker {
                 {
                     plugin.clog.write(LogID.THRALL_ATTACKED, t.getOwner(), String.valueOf(projectile.getId()));
                     plugin.addQueuedThrallDamage(((NPC) (projectile.getInteracting())).getIndex(), t.npc.getIndex(), hitOffset, t.getOwner());
+                    if(plugin.isVerzP2())
+                    {
+                        if(plugin.verzShieldActive)
+                        {
+                            NPC npc = (NPC) projectile.getInteracting();
+                            if(npc.getId() == VERZIK_P2 || npc.getId() == VERZIK_P2_HM || npc.getId() == VERZIK_P2_SM)
+                            {
+                                log.info("Thrall attacked during shield, expected on tick " + (hitOffset+plugin.getTick()));
+                                plugin.thrallAttackedP2VerzikShield(hitOffset);
+                            }
+                        }
+                    }
                     break;
                 }
             }

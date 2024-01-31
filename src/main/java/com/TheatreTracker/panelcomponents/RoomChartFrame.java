@@ -76,7 +76,11 @@ public class RoomChartFrame extends BaseFrame
             maidenLines.put(data.getValue(DataPoint.MAIDEN_30_SPLIT), "30s");
 
             Map<Integer, String> bloatLines = new LinkedHashMap<>();
-            bloatLines.put(data.getValue(DataPoint.BLOAT_FIRST_DOWN_TIME), "Down");
+            for(Integer i : data.bloatDowns)
+            {
+                bloatLines.put(i, "Down");
+                bloatLines.put(i+33, "Moving");
+            }
 
             Map<Integer,String> nyloLines = new LinkedHashMap<>();
             for(Integer i : data.nyloWaveStalled)
@@ -227,6 +231,11 @@ public class RoomChartFrame extends BaseFrame
 
             verzP1RCP.setDawnSpecs(data.dawnSpecs);
 
+            maidenRCP.setOutlineBoxes(data.maidenOutlineBoxes);
+            bloatRCP.setOutlineBoxes(data.bloatOutlineBoxes);
+            nyloRCP.setOutlineBoxes(data.nyloOutlineBoxes);
+            soteRCP.setOutlineBoxes(data.soteOutlineBoxes);
+            xarpRCP.setOutlineBoxes(data.xarpOutlineBoxes);
 
             maidenCharts.add(maidenRCP);
             bloatCharts.add(bloatRCP);

@@ -1,9 +1,11 @@
 package com.TheatreTracker;
 
+import com.TheatreTracker.panelcomponents.DefenseReductionOutlineBox;
 import com.TheatreTracker.utility.*;
 import com.TheatreTracker.utility.nyloutility.DawnSpec;
 import lombok.extern.slf4j.Slf4j;
 
+import java.awt.*;
 import java.util.*;
 
 import static com.TheatreTracker.RoomData.TobRoom.*;
@@ -13,67 +15,6 @@ import static com.TheatreTracker.RoomData.TobRoom.*;
 public class RoomData {
 
     private static final String EXIT_FLAG = "4";
-    /* public static String[] DataPoint =
-             {
-             "Maiden bloods spawned",
-             "Maiden crabs leaked",
-             "Maiden def reduction",
-             "Maiden deaths",
-             "Bloat Downs",
-             "Bloat 1st walk deaths",
-             "Bloat first walk BGS",
-             "Bloat deaths",
-             "Nylo stalls pre 20",
-             "Nylo stalls post 20",
-             "Nylo total stalls",
-             "Nylo range splits",
-             "Nylo mage splits",
-             "Nylo melee splits",
-             "Nylo range rotations",
-             "Nylo mage rotations",
-             "Nylo melee roations",
-             "Nylo def reduction",
-             "Nylo deaths",
-             "Sote specs p1",
-             "Sote specs p2",
-             "Sote specs p3",
-             "Sote deaths",
-             "Sote total specs hit",
-             "Xarp def reduction",
-             "Xarp deaths",
-             "Xarpus healing",
-             "Verzik bounces",
-             "Verzik deaths",
-             "Raid team size",
-             "Maiden total time",
-             "Maiden 70 split",
-             "Maiden 50 split",
-             "Maiden 30 split",
-             "Maiden 70-50 split",
-             "Maiden 50-30 split",
-             "Maiden skip split",
-             "Bloat total time",
-             "Bloat first down split",
-             "Nylocas total time",
-             "Nylo boss spawn",
-             "Nylo boss duration",
-             "Nylo last wave",
-             "Nylo cleanup",
-             "Sotetseg total time",
-             "Sote p1 split",
-             "Sote p2 split",
-             "Sote p3 split",
-             "Sote maze1 split",
-             "Sote maze2 split",
-             "Xarpus total time",
-             "Xarpus screech",
-             "Xarpus post screech",
-             "Verzik total time",
-             "Verzik p1 split",
-             "Verzik p2 split",
-             "Verzik p2 duration",
-             "Verzik p3 duration"
-     };*/
     public boolean spectated = false;
     public boolean maidenStartAccurate = false;
     public boolean bloatStartAccurate = false;
@@ -113,6 +54,8 @@ public class RoomData {
     public ArrayList<Integer> redsProc = new ArrayList<>();
     public ArrayList<PlayerBounce> bounces = new ArrayList<>();
     public Map<Integer, Integer> waveSpawns = new HashMap<>();
+
+    public ArrayList<Integer> bloatDowns = new ArrayList<>();
 
 
     public boolean bloatTimeAccurate;
@@ -185,6 +128,13 @@ public class RoomData {
     public String[] raidDataRaw;
 
     public String activeValue = "";
+
+    public ArrayList<DefenseReductionOutlineBox> maidenOutlineBoxes = new ArrayList<>();
+    public ArrayList<DefenseReductionOutlineBox> bloatOutlineBoxes = new ArrayList<>();
+    public ArrayList<DefenseReductionOutlineBox> nyloOutlineBoxes = new ArrayList<>();
+    public ArrayList<DefenseReductionOutlineBox> soteOutlineBoxes = new ArrayList<>();
+    public ArrayList<DefenseReductionOutlineBox> xarpOutlineBoxes = new ArrayList<>();
+    public ArrayList<DefenseReductionOutlineBox> verzikOutlineBoxes = new ArrayList<>();
 
 
     enum TobRoom {
@@ -505,10 +455,26 @@ public class RoomData {
                 case 2:
                     dataManager.increment(DataPoint.HIT_HAMMERS_VERZIK);
                     dataManager.incrementPlayerSpecific(DataPoint.HIT_HAMMERS_VERZIK, subData[4]);
+                    try
+                    {
+                        verzikOutlineBoxes.add(new DefenseReductionOutlineBox(subData[4], Integer.parseInt(subData[5]), new Color(0, 255, 0)));
+                    }
+                    catch(Exception e)
+                    {
+
+                    }
                     break;
                 case 3:
                     dataManager.increment(DataPoint.ATTEMPTED_BGS_VERZ);
                     dataManager.increment(DataPoint.BGS_DAMAGE_VERZ, Integer.parseInt(subData[5]));
+                    try
+                    {
+                        verzikOutlineBoxes.add(new DefenseReductionOutlineBox(subData[4], Integer.parseInt(subData[6]), new Color(0, 255, 0, Integer.parseInt(subData[5])*3)));
+                    }
+                    catch(Exception e)
+                    {
+
+                    }
                     break;
                 case 4:
                     if (dataManager.get(com.TheatreTracker.utility.DataPoint.VERZIK_TOTAL_TIME) == 0) {
@@ -767,12 +733,27 @@ public class RoomData {
                     dataManager.hammer(com.TheatreTracker.utility.DataPoint.XARP_DEFENSE);
                     dataManager.increment(DataPoint.HIT_HAMMERS_XARP);
                     dataManager.incrementPlayerSpecific(DataPoint.HIT_HAMMERS_XARP, subData[4]);
+                    try
+                    {
+                        xarpOutlineBoxes.add(new DefenseReductionOutlineBox(subData[4], Integer.parseInt(subData[5]), new Color(0, 255, 0)));
+                    }
+                    catch(Exception e)
+                    {
 
+                    }
                     break;
                 case 3:
                     dataManager.increment(DataPoint.ATTEMPTED_BGS_XARP);
                     dataManager.increment(DataPoint.BGS_DAMAGE_XARP, Integer.parseInt(subData[5]));
                     dataManager.bgs(com.TheatreTracker.utility.DataPoint.XARP_DEFENSE, Integer.parseInt(subData[5]));
+                    try
+                    {
+                        xarpOutlineBoxes.add(new DefenseReductionOutlineBox(subData[4], Integer.parseInt(subData[6]), new Color(0, 255, 0, Integer.parseInt(subData[5])*3)));
+                    }
+                    catch(Exception e)
+                    {
+
+                    }
                     break;
                 case 4:
                     if (dataManager.get(com.TheatreTracker.utility.DataPoint.XARP_TOTAL_TIME) != 0) {
@@ -973,11 +954,26 @@ public class RoomData {
                     }
                     dataManager.increment(DataPoint.HIT_HAMMERS_SOTE);
                     dataManager.incrementPlayerSpecific(DataPoint.HIT_HAMMERS_SOTE, subData[4]);
+                    try
+                    {
+                        soteOutlineBoxes.add(new DefenseReductionOutlineBox(subData[4], Integer.parseInt(subData[5]), new Color(0, 255, 0)));
+                    }
+                    catch(Exception e)
+                    {
 
+                    }
                     break;
                 case 3:
                     dataManager.increment(DataPoint.ATTEMPTED_BGS_SOTE);
                     dataManager.increment(DataPoint.BGS_DAMAGE_SOTE, Integer.parseInt(subData[5]));
+                    try
+                    {
+                        soteOutlineBoxes.add(new DefenseReductionOutlineBox(subData[4], Integer.parseInt(subData[6]), new Color(0, 255, 0, Integer.parseInt(subData[5])*3)));
+                    }
+                    catch(Exception e)
+                    {
+
+                    }
                     break;
                 case 6:
                     break;
@@ -1171,7 +1167,14 @@ public class RoomData {
                 case 2:
                     dataManager.increment(DataPoint.HIT_HAMMERS_NYLO);
                     dataManager.incrementPlayerSpecific(DataPoint.HIT_HAMMERS_NYLO, subData[4]);
+                    try
+                    {
+                        nyloOutlineBoxes.add(new DefenseReductionOutlineBox(subData[4], Integer.parseInt(subData[5]), new Color(0, 255, 0)));
+                    }
+                    catch(Exception e)
+                    {
 
+                    }
                     break;
                 case 44:
                 case 6:
@@ -1181,6 +1184,14 @@ public class RoomData {
                     dataManager.increment(DataPoint.BGS_DAMAGE_NYLO, Integer.parseInt(subData[5]));
                     if (dataManager.get(com.TheatreTracker.utility.DataPoint.NYLO_BOSS_SPAWN) != 0) {
                         dataManager.bgs(com.TheatreTracker.utility.DataPoint.NYLO_DEFENSE, Integer.parseInt(subData[5]));
+                    }
+                    try
+                    {
+                        nyloOutlineBoxes.add(new DefenseReductionOutlineBox(subData[4], Integer.parseInt(subData[6]), new Color(0, 255, 0, Integer.parseInt(subData[5])*3)));
+                    }
+                    catch(Exception e)
+                    {
+
                     }
                     break;
                 case 4:
@@ -1410,6 +1421,14 @@ public class RoomData {
                 case 2:
                     dataManager.increment(DataPoint.HIT_HAMMERS_BLOAT);
                     dataManager.incrementPlayerSpecific(DataPoint.HIT_HAMMERS_BLOAT, subData[4]);
+                    try
+                    {
+                        bloatOutlineBoxes.add(new DefenseReductionOutlineBox(subData[4], Integer.parseInt(subData[5]), new Color(0, 255, 0)));
+                    }
+                    catch(Exception e)
+                    {
+
+                    }
                     break;
                 case 6:
                     break;
@@ -1425,11 +1444,20 @@ public class RoomData {
                     }
                     break;
                 case 3:
-                    if (dataManager.get(com.TheatreTracker.utility.DataPoint.BLOAT_DOWNS) == 0) {
+                    if (dataManager.get(com.TheatreTracker.utility.DataPoint.BLOAT_DOWNS) == 0)
+                    {
                         dataManager.bgs(com.TheatreTracker.utility.DataPoint.BLOAT_DEFENSE, 2 * Integer.parseInt(subData[5]));
                     }
                     dataManager.increment(DataPoint.ATTEMPTED_BGS_BLOAT);
                     dataManager.increment(DataPoint.BGS_DAMAGE_BLOAT, Integer.parseInt(subData[5]));
+                    try
+                    {
+                        bloatOutlineBoxes.add(new DefenseReductionOutlineBox(subData[4], Integer.parseInt(subData[6]), new Color(0, 255, 0, Integer.parseInt(subData[5])*3)));
+                    }
+                    catch(Exception e)
+                    {
+
+                    }
                     break;
                 case 4:
                     if (bloatEndAccurate) {
@@ -1470,10 +1498,12 @@ public class RoomData {
                     }
                     break;
                 case 21:
-                    if (dataManager.get(com.TheatreTracker.utility.DataPoint.BLOAT_DOWNS) == 0) {
+                    if (dataManager.get(com.TheatreTracker.utility.DataPoint.BLOAT_DOWNS) == 0)
+                    {
                         dataManager.set(com.TheatreTracker.utility.DataPoint.BLOAT_FIRST_DOWN_TIME, Integer.parseInt(subData[4]));
                     }
                     dataManager.increment(com.TheatreTracker.utility.DataPoint.BLOAT_DOWNS);
+                    bloatDowns.add(Integer.parseInt(subData[4]));
                     break;
                 case 23:
                     dataManager.set(com.TheatreTracker.utility.DataPoint.BLOAT_TOTAL_TIME, Integer.parseInt(subData[4]));
@@ -1602,11 +1632,27 @@ public class RoomData {
                     dataManager.hammer(com.TheatreTracker.utility.DataPoint.MAIDEN_DEFENSE);
                     dataManager.increment(DataPoint.HIT_HAMMERS_MAIDEN);
                     dataManager.incrementPlayerSpecific(DataPoint.HIT_HAMMERS_MAIDEN, subData[4]);
+                    try
+                    {
+                        maidenOutlineBoxes.add(new DefenseReductionOutlineBox(subData[4], Integer.parseInt(subData[5]), new Color(0, 255, 0)));
+                    }
+                    catch(Exception e)
+                    {
+
+                    }
                     break;
                 case 3:
                     dataManager.bgs(com.TheatreTracker.utility.DataPoint.MAIDEN_DEFENSE, Integer.parseInt(subData[5]));
                     dataManager.increment(DataPoint.ATTEMPTED_BGS_MAIDEN);
                     dataManager.increment(DataPoint.BGS_DAMAGE_MAIDEN, Integer.parseInt(subData[5]));
+                    try
+                    {
+                        maidenOutlineBoxes.add(new DefenseReductionOutlineBox(subData[4], Integer.parseInt(subData[6]), new Color(0, 255, 0, Integer.parseInt(subData[5])*3)));
+                    }
+                    catch(Exception e)
+                    {
+
+                    }
                     break;
                 case 4:
                     int percent = 100;

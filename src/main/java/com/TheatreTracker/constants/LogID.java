@@ -120,6 +120,10 @@ public enum LogID {
     PLAYER_STOOD_IN_THROWN_BLOOD(411), //player, damage, blood tick
     PLAYER_STOOD_IN_SPAWNED_BLOOD(412),  //player, damage
     CRAB_HEALED_MAIDEN(413), //damage
+    VERZIK_PURPLE_HEAL(701),
+    VERZIK_RED_AUTO(702),
+    VERZIK_THRALL_HEAL(703),
+    VERZIK_PLAYER_HEAL(704),
 
     KODAI_BOP(501),
     DWH_BOP(502),

@@ -14,7 +14,7 @@ public enum WeaponAttack
     CHALLY_WHACK("Chally whack", "ch", new Color(150, 50, 50)),
     SWIFT_BLADE("Swift Blade", "SB", new Color(225, 50, 50)),
     BGS_WHACK("BGS whack", "bg", new Color(170, 20, 20)),
-    BGS_SPEC("BGS spec", "BG", new Color(170, 20, 20)),
+    BGS_SPEC("BGS spec", "BG", new Color(170, 20, 20, 0)),
     TBOW("Tbow", "TB", new Color(30, 120, 30)),
     ZCB_AUTO("ZCB Auto", "zc", new Color(10, 170, 50)),
     ZCB_SPEC("ZCB Spec", "ZC", new Color(10, 170, 50)),

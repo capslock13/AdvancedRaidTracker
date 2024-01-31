@@ -4,10 +4,7 @@ import com.TheatreTracker.constants.NpcIDs;
 import com.TheatreTracker.constants.TOBRoom;
 import com.TheatreTracker.panelcomponents.LiveChartFrame;
 import com.TheatreTracker.ui.RaidTrackerPanelPrimary;
-import com.TheatreTracker.utility.DataWriter;
-import com.TheatreTracker.utility.PlayerDidAttack;
-import com.TheatreTracker.utility.QueuedPlayerAttackLessProjectiles;
-import com.TheatreTracker.utility.ThrallOutlineBox;
+import com.TheatreTracker.utility.*;
 import com.TheatreTracker.utility.thrallvengtracking.*;
 import com.google.inject.Inject;
 import com.google.inject.Provides;
@@ -44,6 +41,7 @@ import net.runelite.client.util.Text;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -123,6 +121,7 @@ public class TheatreTrackerPlugin extends Plugin
     private ArrayList<String> currentPlayers;
     private boolean checkDefer = false;
     public static int scale = -1;
+    public boolean verzShieldActive = false;
 
     private ThrallTracker thrallTracker;
     private VengTracker vengTracker;
@@ -159,6 +158,23 @@ public class TheatreTrackerPlugin extends Plugin
     public void openLiveFrame()
     {
         liveFrame.open();
+    }
+
+    public int getTick()
+    {
+        return client.getTickCount();
+    }
+    public boolean isVerzP2()
+    {
+        if(currentRoom instanceof VerzikHandler)
+        {
+            VerzikHandler room = (VerzikHandler) currentRoom;
+            if(room.roomState == RoomState.VerzikRoomState.PHASE_2 || room.roomState == RoomState.VerzikRoomState.PHASE_2_REDS)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -388,11 +404,11 @@ public class TheatreTrackerPlugin extends Plugin
             {
                 if(event.getWeapon().equals(SpecialWeapon.BANDOS_GODSWORD))
                 {
-                    clog.write(BGS, name, ""+event.getHit());
+                    clog.write(BGS, name, ""+event.getHit(), String.valueOf(client.getTickCount()-currentRoom.roomStartTick));
                 }
                 if(event.getWeapon().equals(SpecialWeapon.DRAGON_WARHAMMER))
                 {
-                    clog.write(DWH, name);
+                    clog.write(DWH, name, String.valueOf(client.getTickCount()-currentRoom.roomStartTick));
                 }
             }
         }
@@ -511,6 +527,15 @@ public class TheatreTrackerPlugin extends Plugin
             case 5:
                 liveFrame.addVerzikLine(value, description);
                 break;
+        }
+    }
+
+    public void thrallAttackedP2VerzikShield(int tickOffset)
+    {
+        if(currentRoom instanceof VerzikHandler)
+        {
+            VerzikHandler room = (VerzikHandler) currentRoom;
+            room.thrallAttackedShield(client.getTickCount()+tickOffset);
         }
     }
 
@@ -1234,10 +1259,12 @@ public class TheatreTrackerPlugin extends Plugin
                         {
                             if (event.getHitsplat().getAmount() > 3)
                             {
-                            } else
+                            }
+                            else
                             {
                                 index = i;
                                 clog.write(THRALL_DAMAGED, queuedThrallDamage.get(i).source, String.valueOf(event.getHitsplat().getAmount()));
+
                             }
                         }
                         if (index != -1)

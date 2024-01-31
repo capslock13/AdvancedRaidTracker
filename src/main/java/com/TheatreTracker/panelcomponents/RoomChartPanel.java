@@ -20,7 +20,7 @@ public class RoomChartPanel extends JPanel
 {
     private boolean shouldWrap;
     private BufferedImage img;
-    int scale = 20;
+    int scale = 26;
     int boxCount;
     int boxHeight;
     int boxWidth;
@@ -40,6 +40,18 @@ public class RoomChartPanel extends JPanel
     private ArrayList<Integer> autos = new ArrayList<>();
     private ArrayList<DawnSpec> dawnSpecs = new ArrayList<>();
     private ArrayList<ThrallOutlineBox> thrallOutlineBoxes = new ArrayList<>();
+
+    private ArrayList<DefenseReductionOutlineBox> outlineBoxes = new ArrayList<>();
+
+    public void setOutlineBoxes(ArrayList<DefenseReductionOutlineBox> outlineBoxes)
+    {
+        this.outlineBoxes = outlineBoxes;
+        if(shouldStart)
+        {
+            drawGraph();
+        }
+    }
+
     public void setAutos(ArrayList<Integer> autos)
     {
         this.autos = autos;
@@ -85,20 +97,21 @@ public class RoomChartPanel extends JPanel
             int length = end-start;
             shouldWrap = (size == 1);
             boxCount = (length / 50);
-            if (boxCount % 50 != 0) {
+            if (boxCount % 50 != 0)
+            {
                 boxCount++;
             }
             if (!shouldWrap)
             {
                 boxCount = 1;
             }
-            boxHeight = (players.size() + 3) * 20;
-            int height = boxCount * boxHeight+20;
-            boxWidth = (shouldWrap) ? 1120 : 100 + (length + 1) * scale;
+            boxHeight = (players.size() + 3) * scale;
+            int height = boxCount * boxHeight+scale;
+            boxWidth = (shouldWrap) ? ((51*scale)+100) : 100 + (length + 1) * scale;
             this.weaponAttacks = WeaponAttack.values();
             keyCount = weaponAttacks.length;
-            keyRows = (height-20)/30;
-            keyMargin = (((height-20)%keyCount)+20)/2;
+            keyRows = (height-scale)/(scale+10);
+            keyMargin = (((height-scale)%keyCount)+scale)/2;
             keyColumns = keyCount/keyRows;
             if(keyCount%keyRows != 0)
             {
@@ -184,7 +197,7 @@ public class RoomChartPanel extends JPanel
                     g.setColor(new Color(255, 80, 80, 100));
                     if ((i - 19) % 14 == 0 && i > 10)
                     {
-                        g.fillRect(xOffset + 100, yOffset - scale + 10, scale, boxHeight - 20);
+                        g.fillRect(xOffset + 100, yOffset - scale + 10, scale, boxHeight - scale);
                     }
             }
             g.setColor(Color.DARK_GRAY);
@@ -192,7 +205,8 @@ public class RoomChartPanel extends JPanel
             g.setColor(new Color(220, 220, 220));
             Font oldFont = g.getFont();
             g.setFont(oldFont.deriveFont(10.0f));
-            g.drawString(String.valueOf(i), 100 + xOffset + 3, yOffset + (fontHeight / 2));
+            int strWidth = getStringBounds(g, String.valueOf(i), 0, 0).width;
+            g.drawString(String.valueOf(i), 100 + xOffset + (scale/2)-(strWidth/2), yOffset + (fontHeight / 2));
             g.setFont(oldFont);
         }
 
@@ -201,7 +215,7 @@ public class RoomChartPanel extends JPanel
             g.setColor(new Color(255, 80, 80, 100));
             int xOffset = (shouldWrap) ? ((i - startTick) % 50) * scale : i * scale;
             int yOffset = (shouldWrap) ? ((i - startTick) / 50) * boxHeight : 0;
-            g.fillRect(xOffset + 100, yOffset + 10, scale, boxHeight - 20 - scale);
+            g.fillRect(xOffset + 100, yOffset + 10, scale, boxHeight - scale);
         }
 
         for (int i = 0; i < boxCount; i++)
@@ -226,7 +240,7 @@ public class RoomChartPanel extends JPanel
             for (int j = 0; j < boxCount; j++)
             {
                 g.setColor(Color.DARK_GRAY);
-                g.drawLine(100, 10 + (j * boxHeight) + ((i + 2) * scale), boxWidth - 20, 10 + (j * boxHeight) + ((i + 2) * scale));
+                g.drawLine(100, 10 + (j * boxHeight) + ((i + 2) * scale), boxWidth - scale, 10 + (j * boxHeight) + ((i + 2) * scale));
                 g.setColor(Color.WHITE);
                 g.drawString(players.get(i), 10, (j * boxHeight) + ((i + 2) * scale) + (fontHeight) / 2);
                 if (i == 0)
@@ -236,8 +250,6 @@ public class RoomChartPanel extends JPanel
                         case "Verzik P1":
                             g.drawString("Dawn Appear: ", 10, j * boxHeight + ((players.size() + 2) * scale) + (fontHeight / 2));
                             break;
-                        case "Verzik P2":
-                            g.drawString("Healing end: ", 10, j * boxHeight + ((players.size() + 2) * scale) + (fontHeight / 2));
                     }
                 }
             }
@@ -249,7 +261,8 @@ public class RoomChartPanel extends JPanel
             xOffset += 100;
             yOffset += (playerOffsets.size() + 2) * scale - 10;
             g.setColor(Color.WHITE);
-            g.drawString("X", xOffset, yOffset + (fontHeight / 2) + 10);
+            int strWidth = getStringBounds(g, "X", 0, 0).width;
+            g.drawString("X", xOffset+(scale/2)-(strWidth/2), yOffset + (fontHeight / 2) + 10);
         }
 
         for(DawnSpec dawnSpec : dawnSpecs)
@@ -268,6 +281,29 @@ public class RoomChartPanel extends JPanel
             }
         }
 
+        for(DefenseReductionOutlineBox outlineBox : outlineBoxes)
+        {
+            if(outlineBox.tick-2 >= startTick && outlineBox.tick-2 <= endTick)
+            {
+                int xOffset = (shouldWrap) ? ((outlineBox.tick - startTick-2) % 50) * scale : outlineBox.tick * scale;
+                int yOffset = (shouldWrap) ? ((outlineBox.tick - startTick-2) / 50) * boxHeight : 0;
+                xOffset += 100;
+                yOffset += (playerOffsets.get(outlineBox.player) + 1) * (scale) + 10;
+                if(outlineBox.color.getAlpha() > 254)
+                {
+                    g.setColor(outlineBox.color);
+                    g.drawRect(xOffset, yOffset, scale, scale);
+                }
+                else
+                {
+                    g.setColor(new Color(0, 255, 0, 100));
+                    double percent = (outlineBox.color.getAlpha()) / 260.0;
+                    int height = (int) (percent * scale);
+                    g.fillRect(xOffset + 1, yOffset+(scale-height)+1, scale - 1, height - 1);
+                }
+            }
+        }
+
 
         for (PlayerDidAttack attack : attacks)
         {
@@ -282,7 +318,7 @@ public class RoomChartPanel extends JPanel
                     int xOffset = (shouldWrap) ? ((attack.tick - startTick) % 50) * scale : attack.tick * scale;
                     int yOffset = (shouldWrap) ? ((attack.tick - startTick) / 50) * boxHeight : 0;
                     xOffset += 100;
-                    yOffset += (playerOffsets.get(attack.player) + 2) * scale - 10;
+                    yOffset += (playerOffsets.get(attack.player) + 1) * (scale) +10;
                     g.setColor(color);
                     g.fillRect(xOffset + 1, yOffset + 1, scale - 1, scale - 1);
                     g.setColor(Color.WHITE);
@@ -294,7 +330,7 @@ public class RoomChartPanel extends JPanel
                         }
                     }
                     int textOffset = (scale / 2) - (getStringBounds(g, letter, 0, 0).width) / 2;
-                    g.drawString(letter, xOffset + textOffset, yOffset + (fontHeight / 2) + 10);
+                    g.drawString(letter, xOffset + textOffset, yOffset + (fontHeight / 2) + (scale/2));
                 }
             }
         }
@@ -305,7 +341,7 @@ public class RoomChartPanel extends JPanel
             int xOffset = (shouldWrap) ? ((i - startTick) % 50) * scale : i * scale;
             int yOffset = (shouldWrap) ? ((i - startTick) / 50) * boxHeight : 0;
             xOffset += 100;
-            yOffset += 10;
+            yOffset += (scale/2);
             g.setColor(new Color(255, 0, 0));
             g.drawLine(xOffset, yOffset, xOffset, yOffset + boxHeight - 20);
             int stringLength = getStringBounds(g, lines.get(i), 0, 0).width;
@@ -315,7 +351,7 @@ public class RoomChartPanel extends JPanel
 
         for (ThrallOutlineBox box : thrallOutlineBoxes)
         {
-            g.setColor(box.getColor());
+            g.setColor(new Color(box.getColor().getRed(), box.getColor().getGreen(), box.getColor().getBlue(), 30));
 
             int maxTick = box.spawnTick + 99;
             for (ThrallOutlineBox boxCompare : thrallOutlineBoxes)
@@ -340,7 +376,7 @@ public class RoomChartPanel extends JPanel
                 int yOffset = (shouldWrap) ? ((lastEndTick - startTick) / 50) * boxHeight : 0;
                 try
                 {
-                    yOffset += (playerOffsets.get(box.owner) + 2) * scale - 10;
+                    yOffset += (playerOffsets.get(box.owner) + 1) * scale + 10;
                 } catch (Exception e)
                 {
                     break;
@@ -358,7 +394,7 @@ public class RoomChartPanel extends JPanel
                 xOffsetEnd += 100;
               //  log.info("xstart: " + xOffsetStart + ", xend: " + xOffsetEnd);
                 lastEndTick = currentEndTick;
-                g.drawRect(xOffsetStart, yOffset + 1, xOffsetEnd - xOffsetStart+scale, scale - 2);
+                g.fillRect(xOffsetStart, yOffset + 1, xOffsetEnd - xOffsetStart+scale, scale - 2);
             }
           //  log.info("done drawing boxes");
 

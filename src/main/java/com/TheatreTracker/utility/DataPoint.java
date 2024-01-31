@@ -58,7 +58,7 @@ public enum DataPoint {
     SOTE_SPECS_P3("Sote specs p3", types.OTHER_INT, rooms.SOTETSEG),
     SOTE_SPECS_TOTAL("Sote specs total", types.OTHER_INT, rooms.SOTETSEG),
     SOTE_DEATHS("Sote deaths", types.OTHER_INT, rooms.SOTETSEG, true),
-    XARP_HEALING("Xarp Healing", types.OTHER_INT, rooms.SOTETSEG),
+    XARP_HEALING("Xarp Healing", types.OTHER_INT, rooms.XARPUS),
     XARP_DEFENSE("Xarp defense", types.OTHER_INT, rooms.XARPUS, 250),
     XARP_DEATHS("Xarp Deaths", types.OTHER_INT, rooms.XARPUS, true),
     VERZIK_BOUNCES("Verzik bounces", types.OTHER_INT, rooms.VERZIK, true),

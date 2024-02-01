@@ -135,6 +135,7 @@ public enum LogID {
     DAWN_DAMAGE(488),
 
     UPDATE_HP(576),
+    ADD_NPC_MAPPING(587),
 
     ;
 

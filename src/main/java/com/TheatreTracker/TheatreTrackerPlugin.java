@@ -146,6 +146,7 @@ public class TheatreTrackerPlugin extends Plugin
     protected void shutDown()
     {
         partyIntact = false;
+        clog.write(LEFT_TOB, String.valueOf(client.getTickCount()-currentRoom.roomStartTick), currentRoom.getName());
         clientToolbar.removeNavigation(navButtonPrimary);
     }
 
@@ -226,6 +227,15 @@ public class TheatreTrackerPlugin extends Plugin
         currentPlayers = new ArrayList<>();
         currentTickProjectiles = new ArrayList<>();
         playersAttacked = new ArrayList<>();
+        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                clog.write(LEFT_TOB, String.valueOf(client.getTickCount()-currentRoom.roomStartTick), currentRoom.getName());
+            }
+        }));
+
     }
 
     /**
@@ -729,7 +739,7 @@ public class TheatreTrackerPlugin extends Plugin
     {
         partyIntact = false;
         currentPlayers.clear();
-        clog.write(LEFT_TOB); //todo add region
+        clog.write(LEFT_TOB, String.valueOf(client.getTickCount()-currentRoom.roomStartTick), currentRoom.getName()); //todo add region
         currentRoom = null;
         activelyPiping.clear();
     }

@@ -3,16 +3,13 @@ package com.TheatreTracker.rooms;
 import com.TheatreTracker.TheatreTrackerConfig;
 import com.TheatreTracker.TheatreTrackerPlugin;
 import com.TheatreTracker.constants.LogID;
-import com.TheatreTracker.constants.NpcIDs;
 import com.TheatreTracker.utility.DataWriter;
 import com.TheatreTracker.utility.PlayerDidAttack;
+import com.TheatreTracker.utility.DawnSpec;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
-import net.runelite.api.coords.LocalPoint;
-import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.*;
 import com.TheatreTracker.utility.RoomState;
-import net.runelite.api.kit.KitType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -202,8 +199,10 @@ public class VerzikHandler extends RoomHandler {
             {
                 if(event.getHitsplat().getAmount() > 74)
                 {
-                    log.info("dawn hit on tick " + client.getTickCount());
                     clog.write(DAWN_DAMAGE, String.valueOf(event.getHitsplat().getAmount()), String.valueOf(client.getTickCount()-roomStartTick));
+                    DawnSpec dawnSpec = new DawnSpec("", client.getTickCount()-roomStartTick);
+                    dawnSpec.setDamage(event.getHitsplat().getAmount());
+                    plugin.liveFrame.getPanel(getName()).addDawnSpec(dawnSpec);
                 }
             }
         }
@@ -223,6 +222,7 @@ public class VerzikHandler extends RoomHandler {
         if(event.getItem().getId() == 22516)
         {
             clog.write(DAWN_DROPPED, client.getTickCount()-verzikEntryTick);
+            plugin.liveFrame.getPanel(getName()).addRoomSpecificData(client.getTickCount()-verzikEntryTick, "X");
         }
     }
 

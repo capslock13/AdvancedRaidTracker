@@ -246,7 +246,10 @@ public class MaidenHandler extends RoomHandler
             case MAIDEN_MATOMENOS:
             case MAIDEN_MATOMENOS_HM:
             case MAIDEN_MATOMENOS_SM:
-                MaidenCrab crab = new MaidenCrab(npc, TheatreTrackerPlugin.scale, identifySpawn(npc));
+                String crabName = identifySpawn(npc);
+                clog.write(ADD_NPC_MAPPING, String.valueOf(npc.getIndex()), crabName);
+                plugin.liveFrame.getPanel(getName()).addNPCMapping(npc.getIndex(), crabName);
+                MaidenCrab crab = new MaidenCrab(npc, TheatreTrackerPlugin.scale, crabName);
                 logCrabSpawn(crab.description);
                 maidenCrabs.add(crab);
                 break;

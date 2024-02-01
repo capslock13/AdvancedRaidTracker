@@ -2,7 +2,7 @@ package com.TheatreTracker.panelcomponents;
 
 import com.TheatreTracker.constants.NpcIDs;
 import com.TheatreTracker.utility.*;
-import com.TheatreTracker.utility.nyloutility.DawnSpec;
+import com.TheatreTracker.utility.DawnSpec;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
@@ -47,6 +47,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     public boolean finished = false;
     private boolean live = false;
     private ArrayList<Integer> autos = new ArrayList<>();
+    private Map<Integer, String> NPCMap = new HashMap<>();
     private ArrayList<DawnSpec> dawnSpecs = new ArrayList<>();
     private ArrayList<ThrallOutlineBox> thrallOutlineBoxes = new ArrayList<>();
     private ArrayList<OutlineBox> outlineBoxes = new ArrayList<>();
@@ -146,8 +147,20 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         players.clear();
         playerOffsets.clear();
         actions.clear();
+        roomHP.clear();
+        NPCMap.clear();
         finished = false;
         recalculateSize();
+    }
+
+    public void addNPCMapping(int index, String name)
+    {
+        NPCMap.put(index, name);
+    }
+
+    public void setNPCMappings(Map<Integer, String> mapping)
+    {
+        this.NPCMap = mapping;
     }
 
     public void redraw()
@@ -264,11 +277,6 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                 img.flush();
             }
             img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-            if(width*height == 408295316)
-            {
-                log.info(width +"," + height + ","+boxWidth+","+boxHeight+","+room);
-            }
-            log.info("new image of size " + (width*height));
             drawGraph();
 
     }
@@ -324,7 +332,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         {
             WeaponAttack attack = weaponAttacks[i];
             g.setColor(attack.color);
-            g.fillRect(boxWidth + keyMargin + (currentColumn * 150) + 2, keyMargin + (currentRow * 30) + 7, scale, scale);
+            g.fillRect(boxWidth + keyMargin + (currentColumn * 150) + 2, keyMargin + (currentRow * (scale+10)) + 7, scale, scale);
             g.setColor(Color.WHITE);
             g.drawString(attack.shorthand, boxWidth + keyMargin + (currentColumn * 150) + 3, keyMargin + (currentRow * 30) + 22);
             g.drawString(attack.name, boxWidth + keyMargin + (currentColumn * 150) + 33, keyMargin + (currentRow * 30) + 22);
@@ -735,6 +743,13 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                 case NpcIDs.VERZIK_P2_SM:
                 case NpcIDs.VERZIK_P3_SM:
                     return "Verzik (" + RoomUtil.varbitHPtoReadable(roomHP.get(tick)) + ")";
+            }
+            for(Integer i : NPCMap.keySet())
+            {
+                if(i == index)
+                {
+                    return NPCMap.get(i) + "(Boss: " + RoomUtil.varbitHPtoReadable(roomHP.get(tick)) + ")";
+                }
             }
             return "(?) -> " + id + "," + index;
         }

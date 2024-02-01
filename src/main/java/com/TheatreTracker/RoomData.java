@@ -1,9 +1,8 @@
 package com.TheatreTracker;
 
-import com.TheatreTracker.constants.NpcIDs;
 import com.TheatreTracker.panelcomponents.DefenseReductionOutlineBox;
 import com.TheatreTracker.utility.*;
-import com.TheatreTracker.utility.nyloutility.DawnSpec;
+import com.TheatreTracker.utility.DawnSpec;
 import lombok.extern.slf4j.Slf4j;
 
 import java.awt.*;
@@ -162,6 +161,11 @@ public class RoomData {
     public Map<Integer, Integer> soteHP = new HashMap<>();
     public Map<Integer, Integer> xarpHP = new HashMap<>();
     public Map<Integer, Integer> verzikHP = new HashMap<>();
+
+    public Map<Integer, String> maidenNPCMapping = new HashMap<>();
+    public Map<Integer, String> nyloNPCMapping = new HashMap<>();
+    public Map<Integer, String> verzikNPCMapping = new HashMap<>();
+
 
 
     public Date getDate() {
@@ -660,6 +664,9 @@ public class RoomData {
                     break;
                 case 576:
                     verzikHP.put(Integer.parseInt(subData[5]), Integer.parseInt(subData[4]));
+                    break;
+                case 587:
+                    verzikNPCMapping.put(Integer.parseInt(subData[4]), subData[5]);
                     break;
                 case 801:
                     int tick;
@@ -1389,6 +1396,9 @@ public class RoomData {
                 case 576:
                     nyloHP.put(Integer.parseInt(subData[5]), Integer.parseInt(subData[4]));
                     break;
+                case 587:
+                    nyloNPCMapping.put(Integer.parseInt(subData[4]), subData[5]);
+                    break;
                 case 801:
                     int tick;
                     String player;
@@ -1985,6 +1995,9 @@ public class RoomData {
                     break;
                 case 576:
                     maidenHP.put(Integer.parseInt(subData[5]), Integer.parseInt(subData[4]));
+                    break;
+                case 587:
+                    maidenNPCMapping.put(Integer.parseInt(subData[4]), subData[5]);
                     break;
                 case 801:
                     int tick;

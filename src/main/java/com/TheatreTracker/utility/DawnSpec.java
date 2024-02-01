@@ -1,4 +1,4 @@
-package com.TheatreTracker.utility.nyloutility;
+package com.TheatreTracker.utility;
 
 public class DawnSpec
 {

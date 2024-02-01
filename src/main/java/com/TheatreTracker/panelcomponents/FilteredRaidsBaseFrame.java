@@ -559,6 +559,21 @@ public class FilteredRaidsBaseFrame extends BaseFrame
                 raidStatusString += "*";
             }
         }
+        String red = "<html><font color='#FF0000'>";
+        String green = "<html><font color='#44AF33'>";
+        String yellow = "<html><font color='#EEEE44'>";
+        if(raidStatusString.contains("Completion"))
+        {
+            raidStatusString = green + raidStatusString;
+        }
+        else if(raidStatusString.contains("Reset"))
+        {
+            raidStatusString = yellow + raidStatusString;
+        }
+        else if(raidStatusString.contains("Wipe"))
+        {
+            raidStatusString = red + raidStatusString;
+        }
         return raidStatusString;
     }
 

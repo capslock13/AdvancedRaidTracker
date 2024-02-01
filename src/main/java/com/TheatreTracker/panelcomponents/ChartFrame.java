@@ -183,6 +183,8 @@ public class ChartFrame extends BaseFrame
             }
 
             ChartPanel maidenRCP = new ChartPanel("Maiden", false);
+            maidenRCP.setNPCMappings(data.maidenNPCMapping);
+            maidenRCP.setRoomHP(data.maidenHP);
             maidenRCP.addAttacks(data.maidenAttacks);
             maidenRCP.setPlayers(new ArrayList<>(data.players.keySet()));
             if(roomData.size() == 1)
@@ -193,9 +195,9 @@ public class ChartFrame extends BaseFrame
             maidenRCP.setTick(maidenTime);
             maidenRCP.addLines(maidenLines);
             maidenRCP.addThrallBoxes(data.maidenThrallSpawns);
-            maidenRCP.setRoomHP(data.maidenHP);
 
             ChartPanel bloatRCP = new ChartPanel("Bloat", false);
+            bloatRCP.setRoomHP(data.bloatHP);
             bloatRCP.addAttacks(data.bloatAttacks);
             bloatRCP.setPlayers(new ArrayList<>(data.players.keySet()));
             if(roomData.size() == 1)
@@ -206,9 +208,10 @@ public class ChartFrame extends BaseFrame
             bloatRCP.setTick(bloatTime);
             bloatRCP.addLines(bloatLines);
             bloatRCP.addThrallBoxes(data.bloatThrallSpawns);
-            bloatRCP.setRoomHP(data.bloatHP);
 
             ChartPanel nyloRCP = new ChartPanel("Nylocas", false);
+            nyloRCP.setNPCMappings(data.nyloNPCMapping);
+            nyloRCP.setRoomHP(data.nyloHP);
             nyloRCP.addAttacks(data.nyloAttacks);
             nyloRCP.setPlayers(new ArrayList<>(data.players.keySet()));
             if(roomData.size() == 1)
@@ -219,9 +222,9 @@ public class ChartFrame extends BaseFrame
             nyloRCP.setTick(nyloTime);
             nyloRCP.addLines(nyloLines);
             nyloRCP.addThrallBoxes(data.nyloThrallSpawns);
-            nyloRCP.setRoomHP(data.nyloHP);
 
             ChartPanel soteRCP = new ChartPanel("Sotetseg", false);
+            soteRCP.setRoomHP(data.soteHP);
             soteRCP.addAttacks(data.soteAttacks);
             soteRCP.setPlayers(new ArrayList<>(data.players.keySet()));
             if(roomData.size() == 1)
@@ -232,9 +235,9 @@ public class ChartFrame extends BaseFrame
             soteRCP.setTick(soteTime);
             soteRCP.addLines(soteLines);
             soteRCP.addThrallBoxes(data.soteThrallSpawns);
-            soteRCP.setRoomHP(data.soteHP);
 
             ChartPanel xarpRCP = new ChartPanel("Xarpus", false);
+            xarpRCP.setRoomHP(data.xarpHP);
             xarpRCP.addAttacks(data.xarpAttacks);
             xarpRCP.setPlayers(new ArrayList<>(data.players.keySet()));
             if(roomData.size() == 1)
@@ -245,9 +248,10 @@ public class ChartFrame extends BaseFrame
             xarpRCP.setTick(xarpTime);
             xarpRCP.addLines(xarpLines);
             xarpRCP.addThrallBoxes(data.xarpusThrallSpawns);
-            xarpRCP.setRoomHP(data.xarpHP);
 
             ChartPanel verzP1RCP = new ChartPanel("Verzik P1", false);
+            verzP1RCP.setNPCMappings(data.verzikNPCMapping);
+            verzP1RCP.setRoomHP(data.verzikHP);
             verzP1RCP.addAttacks(data.verzAttacks);
             verzP1RCP.setPlayers(new ArrayList<>(data.players.keySet()));
             if(roomData.size() == 1)
@@ -260,9 +264,10 @@ public class ChartFrame extends BaseFrame
             verzP1RCP.addThrallBoxes(data.verzikThrallSpawns);
             verzP1RCP.setRoomSpecificText("Dawn Appears: ");
             verzP1RCP.addAutos(p1autos);
-            verzP1RCP.setRoomHP(data.verzikHP);
 
             ChartPanel verzP2RCP = new ChartPanel("Verzik P2", false);
+            verzP2RCP.setNPCMappings(data.verzikNPCMapping);
+            verzP2RCP.setRoomHP(data.verzikHP);
             verzP2RCP.addAttacks(data.verzAttacks);
             verzP2RCP.setPlayers(new ArrayList<>(data.players.keySet()));
             if(roomData.size() == 1)
@@ -273,9 +278,11 @@ public class ChartFrame extends BaseFrame
             verzP2RCP.setTick(verzP2Time);
             verzP2RCP.addLines(verzikP2Lines);
             verzP2RCP.addThrallBoxes(data.verzikThrallSpawns);
-            verzP2RCP.setRoomHP(data.verzikHP);
 
             ChartPanel verzP3RCP = new ChartPanel("Verzik P3", false);
+            verzP3RCP.setNPCMappings(data.verzikNPCMapping);
+            verzP3RCP.setRoomHP(data.verzikHP);
+
             verzP3RCP.addAttacks(data.verzAttacks);
             verzP3RCP.setPlayers(new ArrayList<>(data.players.keySet()));
             if(roomData.size() == 1)
@@ -286,8 +293,6 @@ public class ChartFrame extends BaseFrame
             verzP3RCP.setTick(verzP3Time);
             verzP3RCP.addLines(verzikP3Lines);
             verzP3RCP.addThrallBoxes(data.verzikThrallSpawns);
-            verzP3RCP.setRoomHP(data.verzikHP);
-
             verzP2RCP.addAutos(p2autos);
             verzP1RCP.addDawnSpecs(data.dawnSpecs);
 

@@ -154,7 +154,7 @@ public class NyloHandler extends RoomHandler {
             case NYLO_MAGE_BIG_AGRO:
                 NylocasShell cShell = new NylocasShell(event.getNpc().getId(), event.getNpc().getWorldLocation().getRegionX(), event.getNpc().getWorldLocation().getRegionY());
 
-                if (cShell.position != NylocasData.cNyloPosition.ROOM) {
+                if (cShell.position != NylocasData.NyloPosition.ROOM) {
                     buildWave.add(cShell);
                 } else {
                     switch (event.getNpc().getId()) {

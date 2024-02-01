@@ -132,7 +132,9 @@ public enum LogID {
     THRALL_SPAWN(410),
     THRALL_DESPAWN(498),
     DAWN_SPEC(487),
-    DAWN_DAMAGE(488)
+    DAWN_DAMAGE(488),
+
+    UPDATE_HP(576),
 
     ;
 

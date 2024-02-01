@@ -40,8 +40,6 @@ import net.runelite.client.util.Text;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -105,6 +103,7 @@ public class TheatreTrackerPlugin extends Plugin
     private ArrayList<QueuedPlayerAttackLessProjectiles> playersAttacked;
 
 
+    private final int HP_VARBIT = 6448;
     private final int LOBBY_REGION = 14642;
     private final int MAIDEN_REGION = 12613;
     private final int BLOAT_REGION = 13125;
@@ -674,6 +673,8 @@ public class TheatreTrackerPlugin extends Plugin
             if(currentRoom.isActive())
             {
                 liveFrame.incrementTick(currentRoom.getName());
+                liveFrame.getPanel(currentRoom.getName()).addRoomHP(client.getTickCount()-currentRoom.roomStartTick, client.getVarbitValue(HP_VARBIT));
+                clog.write(UPDATE_HP, String.valueOf(client.getVarbitValue(HP_VARBIT)), String.valueOf(client.getTickCount()-currentRoom.roomStartTick), currentRoom.getName());
             }
 
             if(client.getTickCount() == deferredTick)
@@ -1230,7 +1231,7 @@ public class TheatreTrackerPlugin extends Plugin
         {
             if (event.getActor() instanceof Player && inTheatre)
             {
-                playersTextChanged.add(new vengpair(event.getActor().getName(), event.getHitsplat().getAmount()));
+                playersTextChanged.add(new VengPair(event.getActor().getName(), event.getHitsplat().getAmount()));
             }
             queuedThrallDamage.sort(Comparator.comparing(DamageQueueShell::getSourceIndex));
             int index = -1;
@@ -1306,7 +1307,7 @@ public class TheatreTrackerPlugin extends Plugin
         }
     }
 
-    private ArrayList<vengpair> playersTextChanged;
+    private ArrayList<VengPair> playersTextChanged;
 
     @Subscribe
     public void onOverheadTextChanged(OverheadTextChanged event)
@@ -1315,7 +1316,7 @@ public class TheatreTrackerPlugin extends Plugin
         {
             if (event.getOverheadText().equals("Taste vengeance!"))
             {
-                for (vengpair vp : playersTextChanged)
+                for (VengPair vp : playersTextChanged)
                 {
                     if (vp.player.equals(event.getActor().getName()))
                     {

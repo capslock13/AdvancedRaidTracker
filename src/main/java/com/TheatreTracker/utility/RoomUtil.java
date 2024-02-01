@@ -33,6 +33,12 @@ public class RoomUtil {
         }
     }
 
+    public static String varbitHPtoReadable(int varbitHP)
+    {
+        return (varbitHP/10) + "." + (varbitHP%10) + "%";
+    }
+
+
     public static boolean isPrimaryBoss(int ID)
     {
         int[] bosses = {
@@ -94,14 +100,17 @@ public class RoomUtil {
         String secondsString = String.format("%.1f", ticks * .6);
         if (minutes != 0)
             timeStr += minutes + ":";
-        if (onlySeconds < 10 && minutes != 0) {
+        if (onlySeconds < 10 && minutes != 0)
+        {
             timeStr += "0";
         }
         timeStr += onlySeconds;
-        if (StringUtils.split(secondsString, ".").length == 2) {
+        if (StringUtils.split(secondsString, ".").length == 2)
+        {
             String[] subStr = StringUtils.split(secondsString, ".");
             timeStr += "." + subStr[1];
-        } else {
+        } else
+        {
             timeStr += ".0";
         }
         if (minutes == 0) {

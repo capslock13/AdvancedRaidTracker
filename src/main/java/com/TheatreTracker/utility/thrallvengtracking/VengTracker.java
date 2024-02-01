@@ -41,7 +41,7 @@ public class VengTracker {
         }
     }
 
-    public void vengProcced(vengpair veng) {
+    public void vengProcced(VengPair veng) {
         int amount = Math.max(1, ((int) (veng.hitsplat * .75)));
     }
 

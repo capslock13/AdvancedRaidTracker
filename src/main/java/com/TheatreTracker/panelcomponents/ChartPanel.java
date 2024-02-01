@@ -1,5 +1,6 @@
 package com.TheatreTracker.panelcomponents;
 
+import com.TheatreTracker.constants.NpcIDs;
 import com.TheatreTracker.utility.*;
 import com.TheatreTracker.utility.nyloutility.DawnSpec;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +31,8 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     int selectedTick = -1;
     String selectedPlayer = "";
 
+    int selectedRow = -1;
+
     int startTick;
     int endTick;
     ArrayList<String> players = new ArrayList<>();
@@ -49,7 +52,10 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     private ArrayList<OutlineBox> outlineBoxes = new ArrayList<>();
     private Map<Integer, String> specific = new HashMap<>();
     private Map<Integer, String> lines = new HashMap<>();
+
+    private Map<Integer, Integer> roomHP = new HashMap<>();
     Map<String, Integer> playerOffsets = new LinkedHashMap<>();
+    private ArrayList<PlayerTick> actions = new ArrayList<>();
 
     public void enableWrap()
     {
@@ -74,8 +80,17 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
     public void addLines(Map<Integer, String> lineData)
     {
-        log.info(room + " adding " + lineData.size() + " lines");
         lines.putAll(lineData);
+    }
+
+    public void setRoomHP(Map<Integer, Integer> hps)
+    {
+        this.roomHP = hps;
+    }
+
+    public void addRoomHP(int tick, int hp)
+    {
+        roomHP.put(tick, hp);
     }
 
     public void addAuto(int autoTick)
@@ -119,6 +134,9 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     {
         endTick = 0;
         startTick = 0;
+        selectedRow = -1;
+        selectedTick = -1;
+        selectedPlayer = "";
         outlineBoxes.clear();
         autos.clear();
         lines.clear();
@@ -127,6 +145,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         thrallOutlineBoxes.clear();
         players.clear();
         playerOffsets.clear();
+        actions.clear();
         finished = false;
         recalculateSize();
     }
@@ -143,7 +162,13 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         {
             boolean isTarget = RoomUtil.isPrimaryBoss(attack.targetedID) && attack.targetedID != -1;
             outlineBoxes.add(new OutlineBox(attack.player, attack.tick, weaponAttack.shorthand, weaponAttack.color, isTarget));
+            actions.add(new PlayerTick(attack.player, attack.tick, "Target: " + getBossName(attack.targetedID, attack.targetedIndex, attack.tick)));
         }
+    }
+
+    public String getTarget(int id, int index)
+    {
+        return "";
     }
 
     public void addLiveAttack(PlayerDidAttack attack)
@@ -234,7 +259,16 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                 keyColumns++;
             }
             int width = boxWidth + (keyColumns * 150) + 40;
+            if(img != null)
+            {
+                img.flush();
+            }
             img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+            if(width*height == 408295316)
+            {
+                log.info(width +"," + height + ","+boxWidth+","+boxHeight+","+room);
+            }
+            log.info("new image of size " + (width*height));
             drawGraph();
 
     }
@@ -495,12 +529,48 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     {
         if(selectedTick != -1 && !selectedPlayer.equalsIgnoreCase(""))
         {
-            g.setColor(new Color(160, 160, 255));
+            g.setColor(new Color(255, 255, 255));
             int xOffset = 100 + ((shouldWrap) ? ((selectedTick - startTick) % 50) * scale : selectedTick * scale);
             int yOffset = ((playerOffsets.get(selectedPlayer) + 1) * scale + 10) + ((shouldWrap) ? ((selectedTick - startTick) / 50) * boxHeight : 0);
             g.drawRect(xOffset, yOffset, scale, scale);
         }
     }
+
+    private com.TheatreTracker.Point getPoint(int tick, String player)
+    {
+        return new com.TheatreTracker.Point(
+                100 + ((shouldWrap) ? ((tick - startTick) % 50) * scale : tick * scale),
+                ((playerOffsets.get(player) + 1) * scale + 10) + ((shouldWrap) ? ((tick - startTick) / 50) * boxHeight : 0));
+    }
+
+    private void drawSelectedRow(Graphics2D g)
+    {
+        if(selectedRow != -1)
+        {
+            g.setColor(new Color(255, 255, 255));
+            int xOffset = 100 + ((shouldWrap) ? ((selectedRow - startTick) % 50) * scale : selectedRow * scale);
+            int yOffset = (10) + ((shouldWrap) ? ((selectedRow - startTick) / 50) * boxHeight : 0);
+            g.drawRect(xOffset, yOffset, scale, scale*(players.size()+2));
+        }
+    }
+
+    private void drawHoverBox(Graphics2D g)
+    {
+        for(PlayerTick action : actions)
+        {
+            if(action.tick == selectedTick && action.player.equals(selectedPlayer))
+            {
+                com.TheatreTracker.Point location = getPoint(action.tick, action.player);
+                int stringLength = getStringWidth(g, action.action);
+                g.setColor(new Color(0, 0, 0, 220));
+                g.fillRect(location.getX()+10, location.getY()-30, stringLength+10, 20);
+                g.setColor(Color.WHITE);
+                g.drawRect(location.getX()+10, location.getY()-30, stringLength+10, 20);
+                g.drawString(action.action, location.getX()+15, location.getY()-15);
+            }
+        }
+    }
+
     private void drawGraph()
     {
         //if(players.size() != 0 && endTick != 0)
@@ -530,6 +600,8 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             drawMarkerLines(g);
             drawThrallBoxes(g);
             drawSelectedOutlineBox(g);
+            drawSelectedRow(g);
+            drawHoverBox(g);
 
             g.setColor(oldColor);
             g.dispose();
@@ -548,17 +620,26 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             {
                 selectedTick = tick;
                 selectedPlayer = players.get(playerOffsetPosition);
+                selectedRow = -1;
+            }
+            else if(y%boxHeight < 10+scale)
+            {
+                selectedRow = tick;
+                selectedPlayer = "";
+                selectedTick = -1;
             }
             else
             {
                 selectedPlayer = "";
                 selectedTick = -1;
+                selectedRow = -1;
             }
         }
         else
         {
             selectedPlayer = "";
             selectedTick = -1;
+            selectedRow = -1;
         }
         drawGraph();
     }
@@ -602,5 +683,64 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     public void mouseMoved(MouseEvent e)
     {
         getTickHovered(e.getX(), e.getY());
+    }
+
+    public String getBossName(int id, int index, int tick)
+    {
+        try
+        {
+            switch (id)
+            {
+                case NpcIDs.MAIDEN_P0:
+                case NpcIDs.MAIDEN_P1:
+                case NpcIDs.MAIDEN_P2:
+                case NpcIDs.MAIDEN_P3:
+                case NpcIDs.MAIDEN_PRE_DEAD:
+                case NpcIDs.MAIDEN_P0_HM:
+                case NpcIDs.MAIDEN_P1_HM:
+                case NpcIDs.MAIDEN_P2_HM:
+                case NpcIDs.MAIDEN_P3_HM:
+                case NpcIDs.MAIDEN_PRE_DEAD_HM:
+                case NpcIDs.MAIDEN_P0_SM:
+                case NpcIDs.MAIDEN_P1_SM:
+                case NpcIDs.MAIDEN_P2_SM:
+                case NpcIDs.MAIDEN_P3_SM:
+                case NpcIDs.MAIDEN_PRE_DEAD_SM:
+                    return "Maiden (" + RoomUtil.varbitHPtoReadable(roomHP.get(tick)) + ")";
+                case NpcIDs.BLOAT:
+                case NpcIDs.BLOAT_HM:
+                case NpcIDs.BLOAT_SM:
+                    return "Bloat (" + RoomUtil.varbitHPtoReadable(roomHP.get(tick)) + ")";
+                case NpcIDs.NYLO_BOSS_MELEE:
+                case NpcIDs.NYLO_BOSS_RANGE:
+                case NpcIDs.NYLO_BOSS_MAGE:
+                case NpcIDs.NYLO_BOSS_MELEE_HM:
+                case NpcIDs.NYLO_BOSS_RANGE_HM:
+                case NpcIDs.NYLO_BOSS_MAGE_HM:
+                case NpcIDs.NYLO_BOSS_MELEE_SM:
+                case NpcIDs.NYLO_BOSS_RANGE_SM:
+                case NpcIDs.NYLO_BOSS_MAGE_SM:
+                    return "Nylo Boss (" + RoomUtil.varbitHPtoReadable(roomHP.get(tick)) + ")";
+                case NpcIDs.XARPUS_P23:
+                case NpcIDs.XARPUS_P23_HM:
+                case NpcIDs.XARPUS_P23_SM:
+                    return "Xarpus (" + RoomUtil.varbitHPtoReadable(roomHP.get(tick)) + ")";
+                case NpcIDs.VERZIK_P1:
+                case NpcIDs.VERZIK_P2:
+                case NpcIDs.VERZIK_P3:
+                case NpcIDs.VERZIK_P1_HM:
+                case NpcIDs.VERZIK_P2_HM:
+                case NpcIDs.VERZIK_P3_HM:
+                case NpcIDs.VERZIK_P1_SM:
+                case NpcIDs.VERZIK_P2_SM:
+                case NpcIDs.VERZIK_P3_SM:
+                    return "Verzik (" + RoomUtil.varbitHPtoReadable(roomHP.get(tick)) + ")";
+            }
+            return "(?) -> " + id + "," + index;
+        }
+        catch(Exception e)
+        {
+            return "?";
+        }
     }
 }

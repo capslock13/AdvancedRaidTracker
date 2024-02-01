@@ -1,10 +1,11 @@
 package com.TheatreTracker.utility.thrallvengtracking;
 
-public class vengpair {
+public class VengPair
+{
     public String player;
     public int hitsplat;
 
-    public vengpair(String player, int hitsplat) {
+    public VengPair(String player, int hitsplat) {
         this.player = player;
         this.hitsplat = hitsplat;
     }

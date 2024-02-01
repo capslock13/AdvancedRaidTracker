@@ -152,61 +152,8 @@ public class MaidenHandler extends RoomHandler
         plugin.liveFrame.setMaidenFinished();
     }
 
-   /* public void analyzeHitsplatApplied(HitsplatApplied hitsplatApplied)
-    {
-        if(hitsplatApplied.getActor() instanceof NPC)
-        {
-            NPC npc = (NPC) hitsplatApplied.getActor();
-            clog.write(RANDOM_TRACKER_2, npc.getName(), String.valueOf(client.getTickCount()), String.valueOf(hitsplatApplied.getHitsplat().getAmount()), String.valueOf(npc.getIndex()));
-        }
-    }
-
-    public void analyzeScytheOnReds(AnimationChanged event)
-    {
-        if(event.getActor() instanceof Player)
-        {
-            Player player = (Player) event.getActor();
-            if(player.getInteracting() != null)
-            {
-                if(player.getInteracting() instanceof NPC)
-                {
-                    NPC npc = (NPC) player.getInteracting();
-                    if(npc.getName().toLowerCase().contains("matomenos"))
-                    {
-                        int tick = client.getTickCount();
-                        int targetRegionX = npc.getWorldLocation().getRegionX();
-                        int targetRegionY = npc.getWorldLocation().getRegionY();
-                        int targetSize = npc.getComposition().getSize();
-                        int playerX = player.getWorldLocation().getRegionX();
-                        int playerY = player.getWorldLocation().getRegionY();
-                        ArrayList<NPC> nearbyNPCs = new ArrayList<>();
-                        for(NPC otherNPCs : client.getNpcs())
-                        {
-                            if(otherNPCs.getWorldArea().distanceTo(player.getWorldLocation()) < 5)
-                            {
-                                nearbyNPCs.add(otherNPCs);
-                            }
-                        }
-                        String npcString = "";
-                        for(NPC near : nearbyNPCs)
-                        {
-                            npcString += near.getIndex() + ":" + near.getName() + ":" + near.getWorldLocation().getRegionX() + ":" + near.getWorldLocation().getRegionY();
-                            npcString += "-";
-                        }
-                        String detailString = tick + ":" + targetRegionX + ":" + targetRegionY + ":" + targetSize + ":" + playerX + ":" + playerY + ":" + npc.getIndex();
-                        clog.write(RANDOM_TRACKER, detailString, npcString);
-                    }
-                }
-            }
-        }
-    }*/
-
     public void updateAnimationChanged(AnimationChanged event)
     {
-        if(event.getActor().getAnimation() == 8056)
-        {
-            //analyzeScytheOnReds(event);
-        }
         if (event.getActor().getAnimation() == 8093)
         {
             endMaiden();
@@ -560,11 +507,14 @@ public class MaidenHandler extends RoomHandler
         hitsplatsPerPlayer.clear();
         maidenHeals.clear();
 
-        if (client.getTickCount() == deferVarbitCheck) {
+        if (client.getTickCount() == deferVarbitCheck)
+        {
             deferVarbitCheck = -1;
-            if (client.getVarbitValue(HP_VARBIT) != FULL_HP) {
+            if (client.getVarbitValue(HP_VARBIT) != FULL_HP)
+            {
                 accurateEntry = false;
-            } else {
+            } else
+            {
                 accurateEntry = true;
                 roomState = RoomState.MaidenRoomState.PHASE_1;
                 clog.write(ACCURATE_MAIDEN_START);
@@ -572,7 +522,8 @@ public class MaidenHandler extends RoomHandler
         }
         // Check for crabs that are leaking on this game tick
         List<MaidenCrab> leaked_crabs = maidenCrabs.stream().filter(crab -> (crab.getCrab().getWorldArea().distanceTo2D(maidenNPC.getWorldArea()) - 1 == 0) && (crab.health > 0)).collect(Collectors.toList());
-        for (MaidenCrab crab : leaked_crabs) {
+        for (MaidenCrab crab : leaked_crabs)
+        {
             { // TODO replace with distance method in MaidenCrab
                 clog.write(CRAB_LEAK, crab.description, String.valueOf(crab.health));
                 // TODO add mising parameters (room time, current maiden health)
@@ -587,7 +538,6 @@ public class MaidenHandler extends RoomHandler
      */
     public void updateHitsplatApplied(HitsplatApplied event)
     {
-       // analyzeHitsplatApplied(event);
         if (maidenCrabs.stream().map(x -> x.crab).collect(Collectors.toList()).contains(event.getActor()))
         {
             MaidenCrab crab = maidenCrabs.stream().filter(x -> x.crab.equals(event.getActor())).collect(Collectors.toList()).get(0);
@@ -595,51 +545,53 @@ public class MaidenHandler extends RoomHandler
         }
         if (event.getActor() instanceof Player) //Heal tracking
         {
-            if (hitsplatsPerPlayer.stream().noneMatch(playerHPWrapper -> playerHPWrapper.name.equals(event.getActor().getName()))) {
+            if (hitsplatsPerPlayer.stream().noneMatch(playerHPWrapper -> playerHPWrapper.name.equals(event.getActor().getName())))
+            {
                 hitsplatsPerPlayer.add(new PlayerHitsWrapper(event.getActor().getName(), event.getHitsplat().getAmount()));
-            } else {
-                for (int i = 0; i < hitsplatsPerPlayer.size(); i++) {
-                    if (hitsplatsPerPlayer.get(i).name.equals(event.getActor().getName())) {
+            } else
+            {
+                for (int i = 0; i < hitsplatsPerPlayer.size(); i++)
+                {
+                    if (hitsplatsPerPlayer.get(i).name.equals(event.getActor().getName()))
+                    {
                         hitsplatsPerPlayer.get(i).hitsplats.add(event.getHitsplat().getAmount());
                     }
                 }
             }
-        } else if (event.getActor().getName() != null && event.getActor().getName().contains("Maiden")) {
-            if (event.getHitsplat().getHitsplatType() == HitsplatID.HEAL) {
+        }
+        else if (event.getActor().getName() != null && event.getActor().getName().contains("Maiden"))
+        {
+            if (event.getHitsplat().getHitsplatType() == HitsplatID.HEAL)
+            {
                 maidenHeals.add(event.getHitsplat().getAmount());
             }
         }
     }
 
-    public void updateGameObjectSpawned(GameObjectSpawned event) {
-        if (event.getGameObject().getId() == 32984) {
+    public void updateGameObjectSpawned(GameObjectSpawned event)
+    {
+        if (event.getGameObject().getId() == 32984)
+        {
             spawnedBloodLocations.add(event.getGameObject().getWorldLocation());
         }
     }
 
-    public void updateGameObjectDespawned(GameObjectDespawned event) {
-        if (event.getGameObject().getId() == 32984) {
+    public void updateGameObjectDespawned(GameObjectDespawned event)
+    {
+        if (event.getGameObject().getId() == 32984)
+        {
             spawnedBloodLocations.removeIf(worldPoint -> worldPoint.getRegionX() == event.getGameObject().getWorldLocation().getRegionX() &&
                     worldPoint.getRegionY() == event.getGameObject().getWorldLocation().getRegionY());
 
         }
     }
 
-    public void updateGraphicsObjectCreated(GraphicsObjectCreated event) {
-        if (event.getGraphicsObject().getId() == MAIDEN_THROWN_BLOOD_GRAPHIC_OBJECT) {
+    public void updateGraphicsObjectCreated(GraphicsObjectCreated event)
+    {
+        if (event.getGraphicsObject().getId() == MAIDEN_THROWN_BLOOD_GRAPHIC_OBJECT)
+        {
             thrownBloodLocations.add(new BloodPositionWrapper(WorldPoint.fromLocal(client, event.getGraphicsObject().getLocation()), ((((event.getGraphicsObject().getStartCycle() - client.getGameCycle() + 1) / 30)) + client.getTickCount() - 1)));
         }
-    }
-
-    public void updateGraphicChanged(GraphicChanged event)
-    {
-        /*if(event.getActor() instanceof Player)
-        {
-            if(event.getActor().hasSpotAnim(1336) || event.getActor().hasSpotAnim(2623)) //1336 dinhs spec graphic , 7511 is animation
-            {
-                dinhsers.add((Player)event.getActor());
-            }
-        }*/
     }
 
     /**
@@ -739,15 +691,18 @@ public class MaidenHandler extends RoomHandler
         } else throw new InvalidParameterException("Impossible crab spawn data at maiden");
     }
 
-    private class MaidenCrab {
+    private class MaidenCrab
+    {
         @Getter
         NPC crab;
         int maxHealth;
         int health;
         String description;
 
-        public MaidenCrab(NPC crab, int scale, String description) {
-            switch (scale) {
+        public MaidenCrab(NPC crab, int scale, String description)
+        {
+            switch (scale)
+            {
                 case 5:
                     maxHealth = 100;
                     break;

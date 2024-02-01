@@ -69,16 +69,22 @@ public class BloatHandler extends RoomHandler {
             sendTimeMessage("Wave 'Bloat last down' complete! Duration: ", splitLastDown(), " Room time: ", bloatDeathTick - bloatStartTick, true);
     }
 
-    public int splitLastDown() {
-        if (bloatDeathTick != -1) {
-            if (walks.size() == downs.size() + 1) {
+    public int splitLastDown()
+    {
+        if (bloatDeathTick != -1)
+        {
+            if (walks.size() == downs.size() + 1)
+            {
                 return bloatDeathTick - walks.get(walks.size() - 1);
-            } else if (walks.size() == downs.size()) {
+            } else if (walks.size() == downs.size())
+            {
                 return bloatDeathTick - downs.get(walks.size() - 1);
-            } else {
+            } else
+            {
                 return -1;
             }
-        } else {
+        } else
+        {
             return -1;
         }
     }
@@ -90,17 +96,24 @@ public class BloatHandler extends RoomHandler {
     }
 
     private int getLastWalk() {
-        if (downs.size() != 0 && walks.size() != 0 && downs.size() == walks.size()) {
+        if (downs.size() != 0 && walks.size() != 0 && downs.size() == walks.size())
+        {
             return downs.get(downs.size() - 1) - walks.get(walks.size() - 1);
-        } else {
+        }
+        else
+        {
             return -1;
         }
     }
 
-    private int getLastDownTime() {
-        if (downs.size() != 0) {
+    private int getLastDownTime()
+    {
+        if (downs.size() != 0)
+        {
             return downs.get(downs.size() - 1) - bloatStartTick;
-        } else {
+        }
+        else
+        {
             return -1;
         }
     }
@@ -108,7 +121,8 @@ public class BloatHandler extends RoomHandler {
     public void down()
     {
         clog.write(BLOAT_DOWN, "" + (client.getTickCount() - bloatStartTick));
-        if (downs.size() == 0) {
+        if (downs.size() == 0)
+        {
             int currentBloatHP = client.getVarbitValue(HP_VARBIT);
             clog.write(BLOAT_HP_1ST_DOWN, "" + currentBloatHP);
         }

@@ -182,40 +182,6 @@ public class ChartFrame extends BaseFrame
                 }
             }
 
-
-            if(maidenTime  < 1)
-            {
-                maidenTime = getHighestTick(data.maidenAttacks, 0);
-            }
-            if(bloatTime  < 1)
-            {
-                bloatTime = getHighestTick(data.bloatAttacks, 0);
-            }
-            if(nyloTime  < 1)
-            {
-                nyloTime = getHighestTick(data.nyloAttacks, 0);
-            }
-            if(soteTime  < 1)
-            {
-                soteTime = getHighestTick(data.soteAttacks, 0);
-            }
-            if(xarpTime  < 1)
-            {
-                xarpTime = getHighestTick(data.xarpAttacks, 0);
-            }
-            if(verzP1Time  < 1)
-            {
-                verzP1Time = getHighestTick(data.verzAttacks, 0);
-            }
-            if(verzP2Time < 1)
-            {
-                verzP2Time = getHighestTick(data.verzAttacks, verzP1Time);
-            }
-            if(verzP3Time < 1)
-            {
-                verzP3Time = getHighestTick(data.verzAttacks, verzP2Time);
-            }
-
             ChartPanel maidenRCP = new ChartPanel("Maiden", false);
             maidenRCP.addAttacks(data.maidenAttacks);
             maidenRCP.setPlayers(new ArrayList<>(data.players.keySet()));
@@ -227,6 +193,7 @@ public class ChartFrame extends BaseFrame
             maidenRCP.setTick(maidenTime);
             maidenRCP.addLines(maidenLines);
             maidenRCP.addThrallBoxes(data.maidenThrallSpawns);
+            maidenRCP.setRoomHP(data.maidenHP);
 
             ChartPanel bloatRCP = new ChartPanel("Bloat", false);
             bloatRCP.addAttacks(data.bloatAttacks);
@@ -239,6 +206,7 @@ public class ChartFrame extends BaseFrame
             bloatRCP.setTick(bloatTime);
             bloatRCP.addLines(bloatLines);
             bloatRCP.addThrallBoxes(data.bloatThrallSpawns);
+            bloatRCP.setRoomHP(data.bloatHP);
 
             ChartPanel nyloRCP = new ChartPanel("Nylocas", false);
             nyloRCP.addAttacks(data.nyloAttacks);
@@ -251,6 +219,7 @@ public class ChartFrame extends BaseFrame
             nyloRCP.setTick(nyloTime);
             nyloRCP.addLines(nyloLines);
             nyloRCP.addThrallBoxes(data.nyloThrallSpawns);
+            nyloRCP.setRoomHP(data.nyloHP);
 
             ChartPanel soteRCP = new ChartPanel("Sotetseg", false);
             soteRCP.addAttacks(data.soteAttacks);
@@ -263,6 +232,7 @@ public class ChartFrame extends BaseFrame
             soteRCP.setTick(soteTime);
             soteRCP.addLines(soteLines);
             soteRCP.addThrallBoxes(data.soteThrallSpawns);
+            soteRCP.setRoomHP(data.soteHP);
 
             ChartPanel xarpRCP = new ChartPanel("Xarpus", false);
             xarpRCP.addAttacks(data.xarpAttacks);
@@ -275,6 +245,7 @@ public class ChartFrame extends BaseFrame
             xarpRCP.setTick(xarpTime);
             xarpRCP.addLines(xarpLines);
             xarpRCP.addThrallBoxes(data.xarpusThrallSpawns);
+            xarpRCP.setRoomHP(data.xarpHP);
 
             ChartPanel verzP1RCP = new ChartPanel("Verzik P1", false);
             verzP1RCP.addAttacks(data.verzAttacks);
@@ -289,6 +260,7 @@ public class ChartFrame extends BaseFrame
             verzP1RCP.addThrallBoxes(data.verzikThrallSpawns);
             verzP1RCP.setRoomSpecificText("Dawn Appears: ");
             verzP1RCP.addAutos(p1autos);
+            verzP1RCP.setRoomHP(data.verzikHP);
 
             ChartPanel verzP2RCP = new ChartPanel("Verzik P2", false);
             verzP2RCP.addAttacks(data.verzAttacks);
@@ -301,6 +273,7 @@ public class ChartFrame extends BaseFrame
             verzP2RCP.setTick(verzP2Time);
             verzP2RCP.addLines(verzikP2Lines);
             verzP2RCP.addThrallBoxes(data.verzikThrallSpawns);
+            verzP2RCP.setRoomHP(data.verzikHP);
 
             ChartPanel verzP3RCP = new ChartPanel("Verzik P3", false);
             verzP3RCP.addAttacks(data.verzAttacks);
@@ -313,6 +286,7 @@ public class ChartFrame extends BaseFrame
             verzP3RCP.setTick(verzP3Time);
             verzP3RCP.addLines(verzikP3Lines);
             verzP3RCP.addThrallBoxes(data.verzikThrallSpawns);
+            verzP3RCP.setRoomHP(data.verzikHP);
 
             verzP2RCP.addAutos(p2autos);
             verzP1RCP.addDawnSpecs(data.dawnSpecs);

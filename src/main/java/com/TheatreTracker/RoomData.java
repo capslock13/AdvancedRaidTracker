@@ -1,5 +1,6 @@
 package com.TheatreTracker;
 
+import com.TheatreTracker.constants.NpcIDs;
 import com.TheatreTracker.panelcomponents.DefenseReductionOutlineBox;
 import com.TheatreTracker.utility.*;
 import com.TheatreTracker.utility.nyloutility.DawnSpec;
@@ -154,6 +155,13 @@ public class RoomData {
     public ArrayList<ThrallOutlineBox> soteThrallSpawns;
     public ArrayList<ThrallOutlineBox> xarpusThrallSpawns;
     public ArrayList<ThrallOutlineBox> verzikThrallSpawns;
+
+    public Map<Integer, Integer> maidenHP = new HashMap<>();
+    public Map<Integer, Integer> bloatHP = new HashMap<>();
+    public Map<Integer, Integer> nyloHP = new HashMap<>();
+    public Map<Integer, Integer> soteHP = new HashMap<>();
+    public Map<Integer, Integer> xarpHP = new HashMap<>();
+    public Map<Integer, Integer> verzikHP = new HashMap<>();
 
 
     public Date getDate() {
@@ -389,8 +397,10 @@ public class RoomData {
                 spectated = true;
             }
         }
-        if (room > 0) {
-            switch (room) {
+        if (room > 0)
+        {
+            switch (room)
+            {
                 case 1:
                     if (!(checkExit(MAIDEN) && parseBloat()))
                         break;
@@ -404,18 +414,27 @@ public class RoomData {
                     if (!(checkExit(SOTETSEG) && parseXarpus()))
                         break;
                 case 5:
-                    if (checkExit(XARPUS) && parseVerzik()) {
+                    if (checkExit(XARPUS) && parseVerzik())
+                    {
                         finishRaid();
                     }
             }
-        } else {
-            try {
-                if (parseMaiden()) {
-                    if (checkExit(MAIDEN) && parseBloat()) {
-                        if (checkExit(BLOAT) && parseNylo()) {
-                            if (checkExit(NYLOCAS) && parseSotetseg()) {
-                                if (checkExit(SOTETSEG) && parseXarpus()) {
-                                    if (checkExit(XARPUS) && parseVerzik()) {
+        } else
+        {
+            try
+            {
+                if (parseMaiden())
+                {
+                    if (checkExit(MAIDEN) && parseBloat())
+                    {
+                        if (checkExit(BLOAT) && parseNylo())
+                        {
+                            if (checkExit(NYLOCAS) && parseSotetseg())
+                            {
+                                if (checkExit(SOTETSEG) && parseXarpus())
+                                {
+                                    if (checkExit(XARPUS) && parseVerzik())
+                                    {
                                         finishRaid();
                                     }
                                 }
@@ -638,6 +657,9 @@ public class RoomData {
                 case 504:
                     dataManager.increment(DataPoint.CHALLY_POKE);
                     dataManager.incrementPlayerSpecific(DataPoint.CHALLY_POKE, subData[4]);
+                    break;
+                case 576:
+                    verzikHP.put(Integer.parseInt(subData[5]), Integer.parseInt(subData[4]));
                     break;
                 case 801:
                     int tick;
@@ -887,6 +909,9 @@ public class RoomData {
                     dataManager.increment(DataPoint.CHALLY_POKE);
                     dataManager.incrementPlayerSpecific(DataPoint.CHALLY_POKE, subData[4]);
                     break;
+                case 576:
+                    xarpHP.put(Integer.parseInt(subData[5]), Integer.parseInt(subData[4]));
+                    break;
                 case 801:
                     int tick;
                     String player;
@@ -1108,6 +1133,9 @@ public class RoomData {
                 case 504:
                     dataManager.increment(DataPoint.CHALLY_POKE);
                     dataManager.incrementPlayerSpecific(DataPoint.CHALLY_POKE, subData[4]);
+                    break;
+                case 576:
+                    soteHP.put(Integer.parseInt(subData[5]), Integer.parseInt(subData[4]));
                     break;
                 case 801:
                     int tick;
@@ -1358,6 +1386,9 @@ public class RoomData {
                     dataManager.increment(DataPoint.CHALLY_POKE);
                     dataManager.incrementPlayerSpecific(DataPoint.CHALLY_POKE, subData[4]);
                     break;
+                case 576:
+                    nyloHP.put(Integer.parseInt(subData[5]), Integer.parseInt(subData[4]));
+                    break;
                 case 801:
                     int tick;
                     String player;
@@ -1573,6 +1604,9 @@ public class RoomData {
                 case 504:
                     dataManager.increment(DataPoint.CHALLY_POKE);
                     dataManager.incrementPlayerSpecific(DataPoint.CHALLY_POKE, subData[4]);
+                    break;
+                case 576:
+                    bloatHP.put(Integer.parseInt(subData[5]), Integer.parseInt(subData[4]));
                     break;
                 case 801:
                     int tick;
@@ -1949,6 +1983,9 @@ public class RoomData {
                     dataManager.increment(DataPoint.CHALLY_POKE);
                     dataManager.incrementPlayerSpecific(DataPoint.CHALLY_POKE, subData[4]);
                     break;
+                case 576:
+                    maidenHP.put(Integer.parseInt(subData[5]), Integer.parseInt(subData[4]));
+                    break;
                 case 801:
                     int tick;
                     String player;
@@ -1988,5 +2025,6 @@ public class RoomData {
     private void finishRaid() {
         raidCompleted = true;
     }
+
 }
 

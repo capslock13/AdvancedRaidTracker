@@ -1,5 +1,6 @@
 package com.TheatreTracker.utility;
 
+import com.TheatreTracker.RoomData;
 import com.TheatreTracker.constants.NpcIDs;
 import net.runelite.api.Client;
 import net.runelite.api.NPC;
@@ -11,7 +12,8 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.Arrays;
 
 
-public class RoomUtil {
+public class RoomUtil
+{
     public final static int MAIDEN_REGION = 12613;
     public final static int BLOAT_REGION = 13125;
     public final static int NYLO_REGION = 13122;

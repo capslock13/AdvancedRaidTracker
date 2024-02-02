@@ -78,9 +78,11 @@ public class DataManager {
         return data[point.ordinal()].value;
     }
 
-    public int get(String point) {
+    public int get(String point)
+    {
         DataPoint dataPoint = DataPoint.getValue(point);
-        if (dataPoint != null) {
+        if (dataPoint != null)
+        {
             return data[dataPoint.ordinal()].value;
         }
         return 0;

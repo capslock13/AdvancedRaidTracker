@@ -748,7 +748,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             {
                 if(i == index)
                 {
-                    return NPCMap.get(i) + "(Boss: " + RoomUtil.varbitHPtoReadable(roomHP.get(tick)) + ")";
+                    return NPCMap.get(i) + " (Boss: " + RoomUtil.varbitHPtoReadable(roomHP.get(tick)) + ")";
                 }
             }
             return "(?) -> " + id + "," + index;

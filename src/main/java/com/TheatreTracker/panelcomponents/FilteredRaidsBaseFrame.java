@@ -182,7 +182,6 @@ public class FilteredRaidsBaseFrame extends BaseFrame
 
     public void updateTable()
     {
-
         String timeToDisplay = "0";
         int completions = 0;
         ArrayList<RoomData> tableData = new ArrayList<>();
@@ -308,10 +307,7 @@ public class FilteredRaidsBaseFrame extends BaseFrame
                 shouldDataBeIncluded = filterComboBoxScale.getSelectedIndex()+1 == data.raidTeamSize;
             }
             timeToDisplay = String.valueOf(data.getSpecificTimeInactive(viewByRaidComboBox.getSelectedItem().toString()));
-            if(timeToDisplay == "0")
-            {
-                //shouldDataBeIncluded = false;
-            }
+
             for(Integer i : filteredIndices)
             {
                 if(data.index == i)
@@ -382,41 +378,15 @@ public class FilteredRaidsBaseFrame extends BaseFrame
         ArrayList<Object[]> tableBuilder = new ArrayList<>();
         for(RoomData raid : tableData)
         {
-            String players = "";
+            StringBuilder players = new StringBuilder();
             for(String s : raid.players.keySet())
             {
-                players += s + ", ";
+                players.append(s).append(", ");
             }
             Calendar cal = Calendar.getInstance();
             cal.setTime(raid.raidStarted);
             String dateString = (cal.get(Calendar.MONTH)+1) + "-" + cal.get(Calendar.DAY_OF_MONTH) + "-" + cal.get(Calendar.YEAR);
-            String scaleString = "";
-            switch(raid.players.size())
-            {
-                case 1:
-                    scaleString = "Solo";
-                    break;
-                case 2:
-                    scaleString = "Duo";
-                    break;
-                case 3:
-                    scaleString = "Trio";
-                    break;
-                case 4:
-                    scaleString = "4 Man";
-                    break;
-                case 5:
-                    scaleString = "5 Man";
-                    break;
-            }
-            if(raid.storyMode)
-            {
-                scaleString += " (Story)";
-            }
-            if(raid.hardMode)
-            {
-                scaleString += " (Hard)";
-            }
+            String scaleString = raid.getScaleString();
             PlayerCorrelatedPointData pointData = raid.getSpecificTimeInactiveCorrelated(viewByRaidComboBox.getSelectedItem().toString());
             if(pointData == null)
             {
@@ -438,7 +408,7 @@ public class FilteredRaidsBaseFrame extends BaseFrame
                             raid.index,
                             dateString,
                             scaleString,
-                            getRoomStatus(raid),
+                            raid.getRoomStatus(),
                             (isTime())? RoomUtil.time(timeToDisplay) : timeToDisplay,
                             (players.length() > 2) ? players.substring(0, players.length()-2) : "",
                             (raid.spectated) ? "Yes" : "No",
@@ -468,8 +438,6 @@ public class FilteredRaidsBaseFrame extends BaseFrame
         setLabels(tableData);
         container.validate();
         container.repaint();
-
-
     }
 
     boolean isTime()
@@ -484,98 +452,6 @@ public class FilteredRaidsBaseFrame extends BaseFrame
         }
     }
 
-    public String getRoomStatus(RoomData data)
-    {
-        String raidStatusString = "";
-        if(data.maidenWipe)
-        {
-            raidStatusString = "Maiden Wipe";
-        }
-        else if(data.maidenReset)
-        {
-            raidStatusString = "Maiden Reset";
-            if(!data.maidenSpawned)
-            {
-                raidStatusString += "*";
-            }
-        }
-        else if(data.bloatWipe)
-        {
-            raidStatusString = "Bloat Wipe";
-        }
-        else if(data.bloatReset)
-        {
-            raidStatusString = "Bloat Reset";
-            if(data.getBloatTime() == 0)
-            {
-                raidStatusString += "*";
-            }
-        }
-        else if(data.nyloWipe)
-        {
-            raidStatusString = "Nylo Wipe";
-        }
-        else if(data.nyloReset)
-        {
-            raidStatusString = "Nylo Reset";
-            if(data.getNyloTime() == 0)
-            {
-                raidStatusString += "*";
-            }
-        }
-        else if(data.soteWipe)
-        {
-            raidStatusString = "Sotetseg Wipe";
-        }
-        else if(data.soteReset)
-        {
-            raidStatusString = "Sotetseg Reset";
-            if(data.getSoteTime() == 0)
-            {
-                raidStatusString += "*";
-            }
-        }
-        else if(data.xarpWipe)
-        {
-            raidStatusString = "Xarpus Wipe";
-        }
-        else if(data.xarpReset)
-        {
-            raidStatusString = "Xarpus Reset";
-            if(data.getXarpTime() == 0)
-            {
-                raidStatusString += "*";
-            }
-        }
-        else if(data.verzikWipe)
-        {
-            raidStatusString = "Verzik Wipe";
-        }
-        else
-        {
-            raidStatusString = "Completion";
-            if(!data.getOverallTimeAccurate())
-            {
-                raidStatusString += "*";
-            }
-        }
-        String red = "<html><font color='#FF0000'>";
-        String green = "<html><font color='#44AF33'>";
-        String yellow = "<html><font color='#EEEE44'>";
-        if(raidStatusString.contains("Completion"))
-        {
-            raidStatusString = green + raidStatusString;
-        }
-        else if(raidStatusString.contains("Reset"))
-        {
-            raidStatusString = yellow + raidStatusString;
-        }
-        else if(raidStatusString.contains("Wipe"))
-        {
-            raidStatusString = red + raidStatusString;
-        }
-        return raidStatusString;
-    }
 
     private void updateTabNames(ArrayList<RoomData> data)
     {
@@ -720,7 +596,6 @@ public class FilteredRaidsBaseFrame extends BaseFrame
         overallPanelVerzikMaximum.setText(RoomUtil.time(StatisticGatherer.getGenericMax(data, DataPoint.VERZIK_TOTAL_TIME)));
         overallPanelOverallMaximum.setText(RoomUtil.time(StatisticGatherer.getOverallMax(data)));
     }
-    private Map<String, String[]> comboPopupData;
     private JPopupMenu comboPopupMenu;
     private ArrayList<String> comboStrictData;
     private AbstractButton arrowButton;
@@ -741,7 +616,7 @@ public class FilteredRaidsBaseFrame extends BaseFrame
             }
             String name = split[0];
             ArrayList<String> names = new ArrayList<String>(Arrays.asList(split[1].split(",")));
-            if(names.size() != 0)
+            if(!names.isEmpty())
             {
                 Map<String,ArrayList<String>> map = new LinkedHashMap<>();
                 map.put(name, names);
@@ -764,7 +639,7 @@ public class FilteredRaidsBaseFrame extends BaseFrame
     }
     private void setComboSelection(String name)
     {
-        Vector<String> items = new Vector<String>();
+        Vector<String> items = new Vector<>();
 
         for (String item : comboStrictData)
         {
@@ -788,7 +663,6 @@ public class FilteredRaidsBaseFrame extends BaseFrame
         JMenuItem item = new JMenuItem(name);
         item.setBackground(Color.BLACK);
         item.setOpaque(true);
-
         item.addActionListener(new ActionListener()
         {
             public void actionPerformed(ActionEvent event)
@@ -801,7 +675,7 @@ public class FilteredRaidsBaseFrame extends BaseFrame
 
     public void createFrame(ArrayList<RoomData> data)
     {
-        comboPopupData = new LinkedHashMap<String, String[]>();
+        Map<String, String[]> comboPopupData = new LinkedHashMap<String, String[]>();
         comboPopupData.put("Room Times", DataPoint.getRoomTimes());
         comboPopupData.put("Maiden", DataPoint.getMaidenNames());
         comboPopupData.put("Bloat", DataPoint.getBloatNames());
@@ -964,13 +838,19 @@ public class FilteredRaidsBaseFrame extends BaseFrame
         int completions = 0;
         currentData = data;
         setTitle("Raids");
+
+        JPopupMenu tstMenu = getjPopupMenu();
+
+
         table = new JTable();
+        table.getTableHeader().setComponentPopupMenu(tstMenu);
         JScrollPane pane = new JScrollPane(table);
 
         JPanel tablePanel = new JPanel();
         tablePanel.setLayout(new BorderLayout());
         tablePanel.setBorder(BorderFactory.createTitledBorder("Raids"));
         tablePanel.add(pane);
+
 
 
         container = new JPanel();
@@ -2046,6 +1926,63 @@ public class FilteredRaidsBaseFrame extends BaseFrame
         add(splitLeftRight);
         pack();
         built = true;
+    }
+
+    private static JPopupMenu getjPopupMenu() {
+        JPopupMenu tstMenu = new JPopupMenu();
+        tstMenu.setOpaque(true);
+        tstMenu.setBackground(Color.BLACK);
+        JCheckBoxMenuItem testItem = new JCheckBoxMenuItem("Date");
+        testItem.setState(true);
+        JCheckBoxMenuItem testItem8 = new JCheckBoxMenuItem("Time");
+        testItem8.setState(false);
+        JCheckBoxMenuItem testItem2 = new JCheckBoxMenuItem("Scale");
+        testItem2.setState(true);
+        JCheckBoxMenuItem testItem3 = new JCheckBoxMenuItem("Status");
+        testItem3.setState(true);
+        JCheckBoxMenuItem testItem4 = new JCheckBoxMenuItem("Raid Time");
+        testItem4.setState(true);
+        JCheckBoxMenuItem testItem5 = new JCheckBoxMenuItem("Players");
+        testItem5.setState(true);
+        JCheckBoxMenuItem testItem6 = new JCheckBoxMenuItem("Spectate");
+        testItem6.setState(true);
+        JCheckBoxMenuItem testItem7 = new JCheckBoxMenuItem("View");
+        testItem7.setState(true);
+
+        testItem.setOpaque(true);
+        testItem.setBackground(Color.BLACK);
+
+        testItem2.setOpaque(true);
+        testItem2.setBackground(Color.BLACK);
+
+        testItem3.setOpaque(true);
+        testItem3.setBackground(Color.BLACK);
+
+        testItem4.setOpaque(true);
+        testItem4.setBackground(Color.BLACK);
+
+        testItem5.setOpaque(true);
+        testItem5.setBackground(Color.BLACK);
+
+        testItem6.setOpaque(true);
+        testItem6.setBackground(Color.BLACK);
+
+        testItem7.setOpaque(true);
+        testItem7.setBackground(Color.BLACK);
+
+        testItem8.setOpaque(true);
+        testItem8.setBackground(Color.BLACK);
+
+
+        tstMenu.add(testItem);
+        tstMenu.add(testItem8);
+        tstMenu.add(testItem2);
+        tstMenu.add(testItem3);
+        tstMenu.add(testItem4);
+        tstMenu.add(testItem5);
+        tstMenu.add(testItem6);
+        tstMenu.add(testItem7);
+        return tstMenu;
     }
 
     private String validateTime(String text)

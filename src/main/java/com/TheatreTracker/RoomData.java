@@ -342,7 +342,8 @@ public class RoomData {
 
     private final DataManager dataManager;
 
-    public int getValue(String name) {
+    public int getValue(String name)
+    {
         return dataManager.get(name);
     }
 
@@ -2037,6 +2038,182 @@ public class RoomData {
 
     private void finishRaid() {
         raidCompleted = true;
+    }
+
+
+    public String getScaleString()
+    {
+        String scaleString = "";
+        switch(players.size())
+        {
+            case 1:
+                scaleString = "Solo";
+                break;
+            case 2:
+                scaleString = "Duo";
+                break;
+            case 3:
+                scaleString = "Trio";
+                break;
+            case 4:
+                scaleString = "4 Man";
+                break;
+            case 5:
+                scaleString = "5 Man";
+                break;
+        }
+        if(storyMode)
+        {
+            scaleString += " (Story)";
+        }
+        if(hardMode)
+        {
+            scaleString += " (Hard)";
+        }
+        return scaleString;
+    }
+
+    public String getRoomStatus()
+    {
+        String raidStatusString = "";
+        if(maidenWipe)
+        {
+            raidStatusString = "Maiden Wipe";
+        }
+        else if(maidenReset)
+        {
+            raidStatusString = "Maiden Reset";
+            if(!maidenSpawned)
+            {
+                raidStatusString += "*";
+            }
+        }
+        else if(bloatWipe)
+        {
+            raidStatusString = "Bloat Wipe";
+        }
+        else if(bloatReset)
+        {
+            raidStatusString = "Bloat Reset";
+            if(getBloatTime() == 0)
+            {
+                raidStatusString += "*";
+            }
+        }
+        else if(nyloWipe)
+        {
+            raidStatusString = "Nylo Wipe";
+        }
+        else if(nyloReset)
+        {
+            raidStatusString = "Nylo Reset";
+            if(getNyloTime() == 0)
+            {
+                raidStatusString += "*";
+            }
+        }
+        else if(soteWipe)
+        {
+            raidStatusString = "Sotetseg Wipe";
+        }
+        else if(soteReset)
+        {
+            raidStatusString = "Sotetseg Reset";
+            if(getSoteTime() == 0)
+            {
+                raidStatusString += "*";
+            }
+        }
+        else if(xarpWipe)
+        {
+            raidStatusString = "Xarpus Wipe";
+        }
+        else if(xarpReset)
+        {
+            raidStatusString = "Xarpus Reset";
+            if(getXarpTime() == 0)
+            {
+                raidStatusString += "*";
+            }
+        }
+        else if(verzikWipe)
+        {
+            raidStatusString = "Verzik Wipe";
+        }
+        else
+        {
+            raidStatusString = "Completion";
+            if(!getOverallTimeAccurate())
+            {
+                raidStatusString += "*";
+            }
+        }
+        String red = "<html><font color='#FF0000'>";
+        String green = "<html><font color='#44AF33'>";
+        String yellow = "<html><font color='#EEEE44'>";
+        if(raidStatusString.contains("Completion"))
+        {
+            raidStatusString = green + raidStatusString;
+        }
+        else if(raidStatusString.contains("Reset"))
+        {
+            raidStatusString = yellow + raidStatusString;
+        }
+        else
+        {
+            raidStatusString = red + raidStatusString;
+        }
+        return raidStatusString;
+    }
+
+    public String getPlayerString()
+    {
+        StringBuilder playerString = new StringBuilder();
+        for(String s : players.keySet())
+        {
+            playerString.append(s).append(", ");
+        }
+        return (playerString.length() > 2) ? playerString.substring(0, playerString.length()-2) : "";
+    }
+
+    public String getRowData(String column)
+    {
+        switch(column)
+        {
+            case "":
+                return String.valueOf(index);
+            case "Date":
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(raidStarted);
+                return (cal.get(Calendar.MONTH)+1) + "-" + cal.get(Calendar.DAY_OF_MONTH) + "-" + cal.get(Calendar.YEAR);
+            case "Time":
+                Calendar cal2 = Calendar.getInstance();
+                cal2.setTime(raidStarted);
+                int hour = cal2.get(Calendar.HOUR_OF_DAY);
+                int minute = cal2.get(Calendar.MINUTE);
+                String period = (hour > 11) ? " PM" : " AM";
+                if(hour == 0)
+                {
+                    hour = 12;
+                }
+                else if(hour != 12)
+                {
+                    hour -= 12;
+                }
+                return hour + ":" + minute + period;
+            case "Scale":
+                return getScaleString();
+            case "Status":
+                return getRoomStatus();
+            case "Players":
+                return getPlayerString();
+            case "Spectate":
+                return (spectated) ? "Yes" : "No";
+            case "View":
+                return "View";
+            default:
+                return String.valueOf(getValue(column));
+        }
     }
 
 }

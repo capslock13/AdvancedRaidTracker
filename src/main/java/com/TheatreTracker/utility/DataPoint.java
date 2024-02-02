@@ -5,7 +5,9 @@ import java.util.Arrays;
 
 public enum DataPoint {
 
-    RAID_TIME("Overall Time", types.TIME, rooms.ANY),
+    CHALLENGE_TIME("Challenge Time", types.TIME, rooms.ANY),
+    OVERALL_TIME("Overall Time", types.TIME, rooms.ANY),
+    TIME_OUTSIDE_ROOMS("Time Outside Rooms", types.TIME, rooms.ANY),
     MAIDEN_TOTAL_TIME("Maiden Time", types.TIME, rooms.MAIDEN),
     BLOAT_TOTAL_TIME("Bloat Time", types.TIME, rooms.BLOAT),
     NYLO_TOTAL_TIME("Nylo Time", types.TIME, rooms.NYLOCAS),
@@ -434,7 +436,7 @@ public enum DataPoint {
 
     public static String[] getRoomTimes()
     {
-        return new String[]{"Overall Time", "Maiden Time", "Bloat Time", "Nylo Time", "Sote Time", "Xarp Time", "Verzik Time"};
+        return new String[]{"Challenge Time", "Overall Time", "Time Outside Rooms", "Maiden Time", "Bloat Time", "Nylo Time", "Sote Time", "Xarp Time", "Verzik Time"};
     }
 
     public static ArrayList<String> getTimeNamesByRoom(rooms room) {

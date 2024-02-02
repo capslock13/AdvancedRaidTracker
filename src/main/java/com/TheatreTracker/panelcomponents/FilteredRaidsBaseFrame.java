@@ -258,7 +258,7 @@ public class FilteredRaidsBaseFrame extends BaseFrame
             {
                 switch(viewByRaidComboBox.getSelectedItem().toString())
                 {
-                    case "Overall Time":
+                    case "Challenge Time":
                         if(!data.getOverallTimeAccurate())
                         {
                             shouldDataBeIncluded = false;
@@ -799,8 +799,8 @@ public class FilteredRaidsBaseFrame extends BaseFrame
 
         viewByRaidComboBox = new JComboBox<>();
         viewByRaidComboBox.setEditable(true);
-        viewByRaidComboBox.setPrototypeDisplayValue("Overall Time");
-        viewByRaidComboBox.setSelectedItem("Overall Time");
+        viewByRaidComboBox.setPrototypeDisplayValue("Challenge Time");
+        viewByRaidComboBox.setSelectedItem("Challenge Time");
         viewByRaidComboBox.setEditable(false);
         for(Component comp : viewByRaidComboBox.getComponents())
         {
@@ -869,7 +869,7 @@ public class FilteredRaidsBaseFrame extends BaseFrame
                         switch(tabbedPane.getSelectedIndex())
                         {
                             case 0:
-                                viewByRaidComboBox.setSelectedItem("Overall Time");
+                                viewByRaidComboBox.setSelectedItem("Challenge Time");
                                 break;
                             case 1:
                                 viewByRaidComboBox.setSelectedItem("Maiden Time");

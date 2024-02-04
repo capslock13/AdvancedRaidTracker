@@ -37,7 +37,8 @@ public class RaidTrackerPanelPrimary extends PluginPanel {
         buildComponents();
     }
 
-    private ArrayList<RoomData> getAllRaids() {
+    private ArrayList<RoomData> getAllRaids()
+    {
         ArrayList<RoomData> raids = new ArrayList<>();
         try {
             String path = "/.runelite/theatretracker/primary/tobdata.log";
@@ -45,39 +46,53 @@ public class RaidTrackerPanelPrimary extends PluginPanel {
             Scanner logReader = new Scanner(Files.newInputStream(logFile.toPath()));
             ArrayList<String> raid = new ArrayList<>();
             boolean raidActive = false;
-            while (logReader.hasNextLine()) {
+            while (logReader.hasNextLine())
+            {
                 String line = logReader.nextLine();
                 String[] lineSplit = line.split(",");
-                if (!raidActive) {
-                    if (lineSplit.length > 3) {
-                        if (Integer.parseInt(lineSplit[3]) == 0) {
+                if (!raidActive)
+                {
+                    if (lineSplit.length > 3)
+                    {
+                        if (Integer.parseInt(lineSplit[3]) == 0)
+                        {
                             raid.add(line);
                             raidActive = true;
                         }
                     }
-                } else {
-                    if (lineSplit.length > 3) {
-                        if (Integer.parseInt(lineSplit[3]) == 99) {
+                } else
+                {
+                    if (lineSplit.length > 3)
+                    {
+                        if (Integer.parseInt(lineSplit[3]) == 99)
+                        {
                             raid.add(line);
-                        } else if (Integer.parseInt(lineSplit[3]) == 4) {
+                        }
+                        else if (Integer.parseInt(lineSplit[3]) == 4)
+                        {
                             raid.add(line);
                             raidActive = false;
                             raids.add(new RoomData(raid.toArray(new String[raid.size()])));
                             raid.clear();
-                        } else {
+                        }
+                        else
+                        {
                             raid.add(line);
                         }
                     }
                 }
             }
             logReader.close();
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             e.printStackTrace();
         }
         return raids;
     }
 
-    private void buildComponents() {
+    private void buildComponents()
+    {
         JPanel container = new JPanel();
         JPanel primaryContainer = new JPanel();
         primaryContainer.setLayout(new GridLayout(5, 1));

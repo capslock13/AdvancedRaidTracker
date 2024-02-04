@@ -116,7 +116,6 @@ public class VerzikHandler extends RoomHandler {
             log.info("Heal: " + heal);
         }
         currentHits.clear();
-        log.info("End tick " + client.getTickCount());
         if(healingEndTick == client.getTickCount())
         {
             healingEndTick = -1;

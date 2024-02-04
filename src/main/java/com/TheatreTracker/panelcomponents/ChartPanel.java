@@ -559,6 +559,26 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             int xOffset = 100 + ((shouldWrap) ? ((selectedRow - startTick) % 50) * scale : selectedRow * scale);
             int yOffset = (10) + ((shouldWrap) ? ((selectedRow - startTick) / 50) * boxHeight : 0);
             g.drawRect(xOffset, yOffset, scale, scale*(players.size()+2));
+
+            int selectedTickHP = -1;
+            try
+            {
+                selectedTickHP = roomHP.get(selectedRow+1);
+            }
+            catch (Exception e)
+            {
+
+            }
+            if(selectedTickHP != -1)
+            {
+                String HPString = "Boss HP: " + RoomUtil.varbitHPtoReadable(selectedTickHP);
+                int stringLength = getStringWidth(g, HPString);
+                g.setColor(new Color(0, 0, 0, 220));
+                g.fillRect(xOffset+5+scale, yOffset, stringLength+10, 20);
+                g.setColor(Color.WHITE);
+                g.drawRect(xOffset+5+scale, yOffset, stringLength+10, 20);
+                g.drawString(HPString, xOffset+10+scale, yOffset+15);
+            }
         }
     }
 
@@ -592,8 +612,8 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             g.setColor(new Color(40, 40, 40));
             g.fillRect(0, 0, img.getWidth(), img.getHeight());
 
-            fontHeight = getStringBounds(g, "a", 0, 0).height;
 
+            fontHeight = getStringBounds(g, "a", 0, 0).height;
             g.setColor(Color.WHITE);
             g.drawRect(boxWidth + (keyMargin / 2), keyMargin, (keyColumns * 150) - 10, (keyRows * 30));
 
@@ -714,7 +734,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                 case NpcIDs.MAIDEN_P2_SM:
                 case NpcIDs.MAIDEN_P3_SM:
                 case NpcIDs.MAIDEN_PRE_DEAD_SM:
-                    return "Maiden (" + RoomUtil.varbitHPtoReadable(roomHP.get(tick)) + ")";
+                    return "Maiden (" + RoomUtil.varbitHPtoReadable(roomHP.get(tick+1)) + ")";
                 case NpcIDs.BLOAT:
                 case NpcIDs.BLOAT_HM:
                 case NpcIDs.BLOAT_SM:
@@ -748,7 +768,14 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             {
                 if(i == index)
                 {
-                    return NPCMap.get(i) + " (Boss: " + RoomUtil.varbitHPtoReadable(roomHP.get(tick)) + ")";
+                    String hp = "-1";
+                    try
+                    {
+                        hp = RoomUtil.varbitHPtoReadable(roomHP.get(tick));
+                    }
+                    catch(Exception e
+                    ) {}
+                    return NPCMap.get(i) + " (Boss: " + hp + ")";
                 }
             }
             return "(?) -> " + id + "," + index;

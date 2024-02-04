@@ -562,7 +562,16 @@ public class RoomData {
                 case 74:
                     dataManager.set(DataPoint.VERZIK_P2_SPLIT, Integer.parseInt(subData[4]));
                     dataManager.set(DataPoint.VERZIK_P2_DURATION, dataManager.get(DataPoint.VERZIK_P2_SPLIT) - dataManager.get(DataPoint.VERZIK_P1_SPLIT));
+                    try
+                    {
+                        int hp = verzikHP.get(dataManager.get(DataPoint.VERZIK_REDS_SPLIT));
+                        dataManager.set(DataPoint.VERZIK_REDS_PROC_PERCENT, (hp));
+                    }
+                    catch
+                    (Exception e)
+                    {
 
+                    }
                     break;
                 case 75:
                     break;
@@ -726,7 +735,8 @@ public class RoomData {
         return true;
     }
 
-    private boolean isTimeAccurateThroughRoom(TobRoom room) {
+    private boolean isTimeAccurateThroughRoom(TobRoom room)
+    {
         switch (room) {
             case VERZIK:
                 if (!verzikTimeAccurate) {

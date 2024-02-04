@@ -136,6 +136,12 @@ public class WeaponDecider
             case 100000:
                 weaponUsed = WeaponAttack.BOUNCE;
                 break;
+            case 4411:
+                weaponUsed = WeaponAttack.AID_OTHER;
+                break;
+            case 8316:
+                weaponUsed = WeaponAttack.VENG_SELF;
+                break;
         }
         return weaponUsed;
     }

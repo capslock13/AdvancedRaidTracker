@@ -10,9 +10,9 @@ public enum DataPoint {
     TIME_OUTSIDE_ROOMS("Time Outside Rooms", types.TIME, rooms.ANY),
     MAIDEN_TOTAL_TIME("Maiden Time", types.TIME, rooms.MAIDEN),
     BLOAT_TOTAL_TIME("Bloat Time", types.TIME, rooms.BLOAT),
-    NYLO_TOTAL_TIME("Nylo Time", types.TIME, rooms.NYLOCAS),
-    XARP_TOTAL_TIME("Xarp Time", types.TIME, rooms.XARPUS),
-    SOTE_TOTAL_TIME("Sote Time", types.TIME, rooms.SOTETSEG),
+    NYLO_TOTAL_TIME("Nylocas Time", types.TIME, rooms.NYLOCAS),
+    XARP_TOTAL_TIME("Xarpus Time", types.TIME, rooms.XARPUS),
+    SOTE_TOTAL_TIME("Sotetseg Time", types.TIME, rooms.SOTETSEG),
     VERZIK_TOTAL_TIME("Verzik Time", types.TIME, rooms.VERZIK),
     MAIDEN_BLOOD_SPAWNED("Maiden blood spawned", types.OTHER_INT, rooms.MAIDEN),
     MAIDEN_BLOOD_THROWN("Maiden blood thrown", types.OTHER_INT, rooms.MAIDEN),
@@ -66,6 +66,7 @@ public enum DataPoint {
     VERZIK_BOUNCES("Verzik bounces", types.OTHER_INT, rooms.VERZIK, true),
     VERZIK_CRABS_SPAWNED("Verzik crabs spawned", types.OTHER_INT, rooms.VERZIK),
     VERZIK_REDS_SETS("Verzik Red Sets", types.OTHER_INT, rooms.VERZIK),
+    VERZIK_REDS_PROC_PERCENT("Verzik Red Proc Percent", types.OTHER_INT, rooms.VERZIK),
     VERZIK_DEATHS("Verzik deaths", types.OTHER_INT, rooms.VERZIK, true),
     MAIDEN_70_SPLIT("Maiden 70s split", types.TIME, rooms.MAIDEN),
     MAIDEN_7050_SPLIT("Maiden 70-50s split", types.TIME, rooms.MAIDEN),
@@ -436,7 +437,7 @@ public enum DataPoint {
 
     public static String[] getRoomTimes()
     {
-        return new String[]{"Challenge Time", "Overall Time", "Time Outside Rooms", "Maiden Time", "Bloat Time", "Nylo Time", "Sote Time", "Xarp Time", "Verzik Time"};
+        return new String[]{"Challenge Time", "Overall Time", "Time Outside Rooms", "Maiden Time", "Bloat Time", "Nylocas Time", "Sotetseg Time", "Xarpus Time", "Verzik Time"};
     }
 
     public static ArrayList<String> getTimeNamesByRoom(rooms room) {

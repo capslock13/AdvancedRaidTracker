@@ -96,7 +96,7 @@ public class BloatHandler extends RoomHandler {
     }
 
     private int getLastWalk() {
-        if (downs.size() != 0 && walks.size() != 0 && downs.size() == walks.size())
+        if (!downs.isEmpty() && !walks.isEmpty() && downs.size() == walks.size())
         {
             return downs.get(downs.size() - 1) - walks.get(walks.size() - 1);
         }
@@ -108,7 +108,7 @@ public class BloatHandler extends RoomHandler {
 
     private int getLastDownTime()
     {
-        if (downs.size() != 0)
+        if (!downs.isEmpty())
         {
             return downs.get(downs.size() - 1) - bloatStartTick;
         }
@@ -121,7 +121,7 @@ public class BloatHandler extends RoomHandler {
     public void down()
     {
         clog.write(BLOAT_DOWN, "" + (client.getTickCount() - bloatStartTick));
-        if (downs.size() == 0)
+        if (downs.isEmpty())
         {
             int currentBloatHP = client.getVarbitValue(HP_VARBIT);
             clog.write(BLOAT_HP_1ST_DOWN, "" + currentBloatHP);
@@ -186,9 +186,11 @@ public class BloatHandler extends RoomHandler {
                     clog.write(IS_HARD_MODE);
             case BLOAT:
                 clog.write(BLOAT_SPAWNED);
-                if (client.getVarbitValue(ROOM_ACTIVE_VARBIT) != 0) {
+                if (client.getVarbitValue(ROOM_ACTIVE_VARBIT) != 0)
+                {
                     accurateEntry = false;
-                } else {
+                } else
+                {
                     clog.write(ACCURATE_BLOAT_START);
                 }
                 break;

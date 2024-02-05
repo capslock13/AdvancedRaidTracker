@@ -345,8 +345,8 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             g.setColor(attack.color);
             g.fillRect(boxWidth + keyMargin + (currentColumn * 150) + 2, keyMargin + (currentRow * (scale+10)) + 7, scale, scale);
             g.setColor(Color.WHITE);
-            g.drawString(attack.shorthand, boxWidth + keyMargin + (currentColumn * 150) + 3, keyMargin + (currentRow * 30) + scale+2);
-            g.drawString(attack.name, boxWidth + keyMargin + (currentColumn * 150) + 33, keyMargin + (currentRow * 30) + scale+2);
+            g.drawString(attack.shorthand, boxWidth + keyMargin + (currentColumn * 150) + 3, keyMargin + (currentRow * (scale+10)) + scale+2);
+            g.drawString(attack.name, boxWidth + keyMargin + (currentColumn * 150) + 33, keyMargin + (currentRow * (scale+10)) + scale+2);
             currentRow++;
             if (currentRow + 1 > keyRows)
             {

@@ -215,7 +215,7 @@ public class VerzikHandler extends RoomHandler {
         if (event.getActor().hasSpotAnim(VERZIK_BOUNCE_SPOT_ANIMATION))
         {
             clog.write(LogID.VERZIK_BOUNCE, event.getActor().getName(), String.valueOf(client.getTickCount()-verzikEntryTick));
-            plugin.liveFrame.addAttack(new PlayerDidAttack(event.getActor().getName(), "100000", client.getTickCount()-verzikEntryTick, "-1","-1","-1",-1,-1), "Verzik");
+            plugin.liveFrame.addAttack(new PlayerDidAttack(event.getActor().getName(), "100000", client.getTickCount()-verzikEntryTick, "-1","-1","-1",-1,-1, ""), "Verzik");
 
         }
     }

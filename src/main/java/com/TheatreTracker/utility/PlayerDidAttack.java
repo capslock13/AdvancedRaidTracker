@@ -10,8 +10,9 @@ public class PlayerDidAttack
     public String spotAnims;
     public int targetedIndex;
     public int targetedID;
+    public String targetName;
 
-    public PlayerDidAttack(String player, String animation, int tick, String weapon, String projectile, String spotAnims, int targetedIndex, int targetedID)
+    public PlayerDidAttack(String player, String animation, int tick, String weapon, String projectile, String spotAnims, int targetedIndex, int targetedID, String targetName)
     {
         this.player = player;
         this.animation = animation;
@@ -21,5 +22,6 @@ public class PlayerDidAttack
         this.spotAnims = spotAnims;
         this.targetedIndex = targetedIndex;
         this.targetedID = targetedID;
+        this.targetName = targetName;
     }
 }

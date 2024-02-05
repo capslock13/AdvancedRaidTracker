@@ -97,9 +97,11 @@ public class NyloHandler extends RoomHandler {
                 if (wave.getWave() == 31)
                 {
                     wave31Spawn();
-                } else {
+                } else
+                {
                     expectedWaveTick = client.getTickCount() + ((hard && wave.getWave() % 10 == 0) ? 16 : NylocasWave.waves[wave.getWave()].getDelay());
-                    if (hard && wave.getWave() % 10 == 0) {
+                    if (hard && (wave.getWave() % 10 == 0))
+                    {
                         expectedWaveTick = client.getTickCount() + 16;
                     }
                 }
@@ -169,6 +171,7 @@ public class NyloHandler extends RoomHandler {
                 if(cShell.isBig())
                 {
                     bigDescription.put(event.getNpc().getIndex(), "W" + (currentWave+1) + " " + cShell.getDescription());
+                    log.info("adding big description to index " + event.getNpc().getIndex() + " as " + cShell.getDescription());
                 }
                 if (cShell.position != NylocasData.NyloPosition.ROOM)
                 {
@@ -178,17 +181,24 @@ public class NyloHandler extends RoomHandler {
                 }
                 else
                 {
-                    log.info("little spawning tick " + client.getTickCount());
                     int matches = 0;
                     String lastMatchedDescription = "";
                     int lastMatchedIndex = -1;
                     for(NPC npc : bigsDeadThisTick)
                     {
-                        if(event.getNpc().getWorldArea().distanceTo(npc.getWorldArea()) == 0)
+                        int bigX = npc.getWorldLocation().getRegionX();
+                        int bigY = npc.getWorldLocation().getRegionY();
+                        int littleX = event.getNpc().getWorldLocation().getRegionX();
+                        int littleY = event.getNpc().getWorldLocation().getRegionY();
+                        if((bigX == littleX && bigY == littleY) || (littleX-1 == bigX || littleY-1 == bigY))
                         {
                             matches++;
                             lastMatchedDescription = bigDescription.get(npc.getIndex());
                             lastMatchedIndex = npc.getIndex();
+                            if(bigDescription.get(npc.getIndex()) == null)
+                            {
+                                log.info("Null for " + npc.getIndex());
+                            }
                             log.info("matched big " + bigDescription.get(npc.getIndex()));
                         }
                     }
@@ -196,7 +206,9 @@ public class NyloHandler extends RoomHandler {
                     {
                         clog.write(ADD_NPC_MAPPING, String.valueOf(event.getNpc().getIndex()), NylocasShell.getTypeName(event.getNpc().getId()) + " split from " + lastMatchedDescription);
                         plugin.liveFrame.getPanel(getName()).addNPCMapping(event.getNpc().getIndex(), NylocasShell.getTypeName(event.getNpc().getId()) + " split from " + lastMatchedDescription);
-                        bigDescription.remove(lastMatchedIndex);
+                    }
+                    else {
+                        log.info("could not match little on tick " + (client.getTickCount()-roomStartTick));
                     }
                     switch (event.getNpc().getId())
                     {
@@ -290,31 +302,31 @@ public class NyloHandler extends RoomHandler {
             case NYLO_MAGE_BIG_AGRO:
             case NYLO_RANGE_BIG:
             case NYLO_RANGE_BIG_AGRO:
+            case NYLO_MELEE_BIG_HM:
+            case NYLO_MELEE_BIG_AGRO_HM:
+            case NYLO_RANGE_BIG_HM:
+            case NYLO_RANGE_BIG_AGRO_HM:
+            case NYLO_MAGE_BIG_HM:
+            case NYLO_MAGE_BIG_AGRO_HM:
+            case NYLO_MELEE_BIG_SM:
+            case NYLO_MELEE_BIG_AGRO_SM:
+            case NYLO_RANGE_BIG_SM:
+            case NYLO_RANGE_BIG_AGRO_SM:
+            case NYLO_MAGE_BIG_SM:
+            case NYLO_MAGE_BIG_AGRO_SM:
                 bigsDeadThisTick.add(event.getNpc());
             case NYLO_MELEE_SMALL_HM:
             case NYLO_MELEE_SMALL_AGRO_HM:
-            case NYLO_MELEE_BIG_HM:
-            case NYLO_MELEE_BIG_AGRO_HM:
             case NYLO_RANGE_SMALL_HM:
             case NYLO_RANGE_SMALL_AGRO_HM:
-            case NYLO_RANGE_BIG_HM:
-            case NYLO_RANGE_BIG_AGRO_HM:
             case NYLO_MAGE_SMALL_HM:
             case NYLO_MAGE_SMALL_AGRO_HM:
-            case NYLO_MAGE_BIG_HM:
-            case NYLO_MAGE_BIG_AGRO_HM:
             case NYLO_MELEE_SMALL_SM:
             case NYLO_MELEE_SMALL_AGRO_SM:
-            case NYLO_MELEE_BIG_SM:
-            case NYLO_MELEE_BIG_AGRO_SM:
             case NYLO_RANGE_SMALL_SM:
             case NYLO_RANGE_SMALL_AGRO_SM:
-            case NYLO_RANGE_BIG_SM:
-            case NYLO_RANGE_BIG_AGRO_SM:
             case NYLO_MAGE_SMALL_SM:
             case NYLO_MAGE_SMALL_AGRO_SM:
-            case NYLO_MAGE_BIG_SM:
-            case NYLO_MAGE_BIG_AGRO_SM:
             case NYLO_MELEE_SMALL:
             case NYLO_MELEE_SMALL_AGRO:
             case NYLO_RANGE_SMALL:

@@ -585,7 +585,7 @@ public class RoomData {
                     dataManager.incrementPlayerSpecific(DataPoint.VERZIK_BOUNCES,subData[4]);
                     if(!subData[5].equalsIgnoreCase(""))
                     {
-                        verzAttacks.add(new PlayerDidAttack(subData[4], "100000", Integer.parseInt(subData[5]), "-1", "-1", "-1", -1, -1));
+                        verzAttacks.add(new PlayerDidAttack(subData[4], "100000", Integer.parseInt(subData[5]), "-1", "-1", "-1", -1, -1, ""));
                     }
                     break;
                 case 78:
@@ -717,8 +717,14 @@ public class RoomData {
                             interactedIndex = Integer.parseInt(subsubData[1]);
                             interactedID = Integer.parseInt(subsubData[2]);
                         }
-                        projectile = subData[8];
-                        verzAttacks.add(new PlayerDidAttack(player, animation, tick, weapon, projectile, spotAnims, interactedIndex, interactedID));
+                        String[] projectileAndTargetData = subData[8].split(":");
+                        projectile = projectileAndTargetData[0];
+                        String targetName = "";
+                        if(projectileAndTargetData.length > 1)
+                        {
+                            targetName = projectileAndTargetData[1];
+                        }
+                        verzAttacks.add(new PlayerDidAttack(player, animation, tick, weapon, projectile, spotAnims, interactedIndex, interactedID, targetName));
                     }
                     catch(Exception e)
                     {
@@ -973,8 +979,14 @@ public class RoomData {
                             interactedIndex = Integer.parseInt(subsubData[1]);
                             interactedID = Integer.parseInt(subsubData[2]);
                         }
-                        projectile = subData[8];
-                        xarpAttacks.add(new PlayerDidAttack(player, animation, tick, weapon, projectile, spotAnims, interactedIndex, interactedID));
+                        String[] projectileAndTargetData = subData[8].split(":");
+                        projectile = projectileAndTargetData[0];
+                        String targetName = "";
+                        if(projectileAndTargetData.length > 1)
+                        {
+                            targetName = projectileAndTargetData[1];
+                        }
+                        xarpAttacks.add(new PlayerDidAttack(player, animation, tick, weapon, projectile, spotAnims, interactedIndex, interactedID, targetName));
                     }
                     catch(Exception e)
                     {
@@ -1209,8 +1221,14 @@ public class RoomData {
                             interactedIndex = Integer.parseInt(subsubData[1]);
                             interactedID = Integer.parseInt(subsubData[2]);
                         }
-                        projectile = subData[8];
-                        soteAttacks.add(new PlayerDidAttack(player, animation, tick, weapon, projectile, spotAnims, interactedIndex, interactedID));
+                        String[] projectileAndTargetData = subData[8].split(":");
+                        projectile = projectileAndTargetData[0];
+                        String targetName = "";
+                        if(projectileAndTargetData.length > 1)
+                        {
+                            targetName = projectileAndTargetData[1];
+                        }
+                        soteAttacks.add(new PlayerDidAttack(player, animation, tick, weapon, projectile, spotAnims, interactedIndex, interactedID, targetName));
                     }
                     catch(Exception e)
                     {
@@ -1468,8 +1486,14 @@ public class RoomData {
                             interactedIndex = Integer.parseInt(subsubData[1]);
                             interactedID = Integer.parseInt(subsubData[2]);
                         }
-                        projectile = subData[8];
-                        nyloAttacks.add(new PlayerDidAttack(player, animation, tick, weapon, projectile, spotAnims, interactedIndex, interactedID));
+                        String[] projectileAndTargetData = subData[8].split(":");
+                        projectile = projectileAndTargetData[0];
+                        String targetName = "";
+                        if(projectileAndTargetData.length > 1)
+                        {
+                            targetName = projectileAndTargetData[1];
+                        }
+                        nyloAttacks.add(new PlayerDidAttack(player, animation, tick, weapon, projectile, spotAnims, interactedIndex, interactedID, targetName));
                     }
                     catch(Exception e)
                     {
@@ -1691,8 +1715,14 @@ public class RoomData {
                             interactedIndex = Integer.parseInt(subsubData[1]);
                             interactedID = Integer.parseInt(subsubData[2]);
                         }
-                        projectile = subData[8];
-                        bloatAttacks.add(new PlayerDidAttack(player, animation, tick, weapon, projectile, spotAnims, interactedIndex, interactedID));
+                        String[] projectileAndTargetData = subData[8].split(":");
+                        projectile = projectileAndTargetData[0];
+                        String targetName = "";
+                        if(projectileAndTargetData.length > 1)
+                        {
+                            targetName = projectileAndTargetData[1];
+                        }
+                        bloatAttacks.add(new PlayerDidAttack(player, animation, tick, weapon, projectile, spotAnims, interactedIndex, interactedID, targetName));
                     }
                     catch(Exception e)
                     {
@@ -2076,8 +2106,14 @@ public class RoomData {
                             interactedIndex = Integer.parseInt(subsubData[1]);
                             interactedID = Integer.parseInt(subsubData[2]);
                         }
-                        projectile = subData[8];
-                        maidenAttacks.add(new PlayerDidAttack(player, animation, tick, weapon, projectile, spotAnims, interactedIndex, interactedID));
+                        String[] projectileAndTargetData = subData[8].split(":");
+                        projectile = projectileAndTargetData[0];
+                        String targetName = "";
+                        if(projectileAndTargetData.length > 1)
+                        {
+                            targetName = projectileAndTargetData[1];
+                        }
+                        maidenAttacks.add(new PlayerDidAttack(player, animation, tick, weapon, projectile, spotAnims, interactedIndex, interactedID, targetName));
                     }
                     catch(Exception e)
                     {

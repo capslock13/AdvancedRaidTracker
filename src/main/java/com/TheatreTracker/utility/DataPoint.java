@@ -74,7 +74,7 @@ public enum DataPoint {
     MAIDEN_5030_SPLIT("Maiden 50-30s split", types.TIME, rooms.MAIDEN),
     MAIDEN_30_SPLIT("Maiden 30s split", types.TIME, rooms.MAIDEN),
     MAIDEN_SKIP_SPLIT("Maiden Skip split", types.TIME, rooms.MAIDEN),
-    BLOAT_FIRST_DOWN_TIME("Bloat 1st down time", types.TIME, rooms.BLOAT),
+    BLOAT_FIRST_DOWN_TIME("Bloat 1st down time", types.OTHER_INT, rooms.BLOAT),
     NYLO_BOSS_SPAWN("Nylo boss spawn", types.TIME, rooms.NYLOCAS),
     NYLO_BOSS_DURATION("Nylo boss duration", types.TIME, rooms.NYLOCAS),
     NYLO_LAST_WAVE("Nylo last wave", types.TIME, rooms.NYLOCAS),
@@ -191,8 +191,15 @@ public enum DataPoint {
         return null;
     }
 
-    public static enum rooms {
-        MAIDEN, BLOAT, NYLOCAS, SOTETSEG, XARPUS, VERZIK, ANY
+    public static enum rooms
+    {
+        ANY,
+        MAIDEN,
+        BLOAT,
+        NYLOCAS,
+        SOTETSEG,
+        XARPUS,
+        VERZIK
     }
 
     ;

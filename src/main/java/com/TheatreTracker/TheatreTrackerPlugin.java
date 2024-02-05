@@ -575,19 +575,26 @@ public class TheatreTrackerPlugin extends Plugin
             {//
                 int interactedIndex = -1;
                 int interactedID = -1;
+                String targetName = "";
                 Actor interacted = p.getInteracting();
                 if(interacted instanceof NPC)
                 {
                     NPC npc = (NPC) interacted;
                     interactedID = npc.getId();
                     interactedIndex = npc.getIndex();
+                    targetName = npc.getName();
+                }
+                if(interacted instanceof Player)
+                {
+                    Player player = (Player) interacted;
+                    targetName = player.getName();
                 }
                 clog.write(PLAYER_ATTACK,
                         p.getName()+":"+(client.getTickCount() - currentRoom.roomStartTick-1),
                         String.valueOf(p.getAnimation()),
                         "",
                         p.getPlayerComposition().getEquipmentId(KitType.WEAPON)+":"+interactedIndex+":"+interactedID,
-                        "-1");
+                        "-1:"+targetName);
                 liveFrame.addAttack(new PlayerDidAttack(
                         String.valueOf(p.getName()),
                         String.valueOf(p.getAnimation()),
@@ -596,7 +603,8 @@ public class TheatreTrackerPlugin extends Plugin
                         "-1",
                         "",
                         interactedIndex,
-                        interactedID
+                        interactedID,
+                        targetName
                 ), currentRoom.getName());
             }
         }
@@ -630,18 +638,25 @@ public class TheatreTrackerPlugin extends Plugin
                                 int interactedIndex = -1;
                                 int interactedID = -1;
                                 Actor interacted = playerAttackQueuedItem.player.getInteracting();
+                                String targetName = "";
                                 if(interacted instanceof NPC)
                                 {
                                     NPC npc = (NPC) interacted;
                                     interactedID = npc.getId();
                                     interactedIndex = npc.getIndex();
+                                    targetName = npc.getName();
+                                }
+                                if(interacted instanceof Player)
+                                {
+                                    Player player = (Player) interacted;
+                                    targetName = player.getName();
                                 }
                                 clog.write(PLAYER_ATTACK,
                                         playerAttackQueuedItem.player.getName() + ":" + (client.getTickCount() - currentRoom.roomStartTick),
                                         playerAttackQueuedItem.animation,
                                         playerAttackQueuedItem.spotAnims,
                                         playerAttackQueuedItem.weapon+":"+interactedIndex+":"+interactedID,
-                                        String.valueOf(projectile.getId()));
+                                        projectile.getId()+":"+targetName);
                                 liveFrame.addAttack(new PlayerDidAttack(
                                         playerAttackQueuedItem.player.getName(),
                                         playerAttackQueuedItem.animation,
@@ -650,7 +665,8 @@ public class TheatreTrackerPlugin extends Plugin
                                         String.valueOf(projectile.getId()),
                                         playerAttackQueuedItem.spotAnims,
                                         interactedIndex,
-                                        interactedID)
+                                        interactedID,
+                                        targetName)
                                 , currentRoom.getName());
                             }
                         }
@@ -946,28 +962,15 @@ public class TheatreTrackerPlugin extends Plugin
                         int interactedIndex = -1;
                         int interactedID = -1;
                         Actor interacted = p.getInteracting();
+                        String targetName = "";
                         if(interacted instanceof NPC)
                         {
                             NPC npc = (NPC) interacted;
                             interactedID = npc.getId();
                             interactedIndex = npc.getIndex();
+                            targetName = npc.getName();
                         }
-                        clog.write(PLAYER_ATTACK,
-                                p.getName()+":"+(client.getTickCount() - currentRoom.roomStartTick),
-                                String.valueOf(p.getAnimation()),
-                                animations,
-                                p.getPlayerComposition().getEquipmentId(KitType.WEAPON)+":"+interactedIndex+":"+interactedID,
-                                "-1");
-                        liveFrame.addAttack(new PlayerDidAttack(
-                                String.valueOf(p.getName()),
-                                String.valueOf(p.getAnimation()),
-                                0,
-                                String.valueOf(p.getPlayerComposition().getEquipmentId(KitType.WEAPON)),
-                                "-1",
-                                animations,
-                                interactedIndex,
-                                interactedID
-                        ), currentRoom.getName());
+                        generatePlayerAttackInfo(p, animations, interactedIndex, interactedID, interacted, targetName);
                     }
                 }
                 else if(p.getAnimation() != -1)
@@ -975,28 +978,14 @@ public class TheatreTrackerPlugin extends Plugin
                     int interactedIndex = -1;
                     int interactedID = -1;
                     Actor interacted = p.getInteracting();
+                    String targetName = "";
                     if(interacted instanceof NPC)
                     {
                         NPC npc = (NPC) interacted;
                         interactedID = npc.getId();
                         interactedIndex = npc.getIndex();
                     }
-                    clog.write(PLAYER_ATTACK,
-                            p.getName()+":"+(client.getTickCount() - currentRoom.roomStartTick),
-                            String.valueOf(p.getAnimation()),
-                            animations,
-                            p.getPlayerComposition().getEquipmentId(KitType.WEAPON)+":"+interactedIndex+":"+interactedID,
-                            "-1");
-                    liveFrame.addAttack(new PlayerDidAttack(
-                            String.valueOf(p.getName()),
-                            String.valueOf(p.getAnimation()),
-                            0,
-                            String.valueOf(p.getPlayerComposition().getEquipmentId(KitType.WEAPON)),
-                            "-1",
-                            animations,
-                            interactedIndex,
-                            interactedID
-                    ), currentRoom.getName());
+                    generatePlayerAttackInfo(p, animations, interactedIndex, interactedID, interacted, targetName);
                     if(p.getAnimation() == 5061 || p.getAnimation() == 10656)
                     {
                         activelyPiping.put(p, client.getTickCount());
@@ -1036,6 +1025,31 @@ public class TheatreTrackerPlugin extends Plugin
                 currentRoom.updateAnimationChanged(event);
             }
         }
+    }
+
+    private void generatePlayerAttackInfo(Player p, String animations, int interactedIndex, int interactedID, Actor interacted, String targetName) {
+        if(interacted instanceof Player)
+        {
+            Player player = (Player) interacted;
+            targetName = player.getName();
+        }
+        clog.write(PLAYER_ATTACK,
+                p.getName()+":"+(client.getTickCount() - currentRoom.roomStartTick),
+                String.valueOf(p.getAnimation()),
+                animations,
+                p.getPlayerComposition().getEquipmentId(KitType.WEAPON)+":"+interactedIndex+":"+interactedID,
+                "-1:"+targetName);
+        liveFrame.addAttack(new PlayerDidAttack(
+                String.valueOf(p.getName()),
+                String.valueOf(p.getAnimation()),
+                0,
+                String.valueOf(p.getPlayerComposition().getEquipmentId(KitType.WEAPON)),
+                "-1",
+                animations,
+                interactedIndex,
+                interactedID,
+                targetName
+        ), currentRoom.getName());
     }
 
     @Subscribe

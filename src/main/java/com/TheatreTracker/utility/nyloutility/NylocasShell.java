@@ -9,7 +9,7 @@ public class NylocasShell {
 
     public boolean isBig()
     {
-        return position.equals(NylocasData.NyloPosition.EAST_BIG) || position.equals(NylocasData.NyloPosition.SOUTH_BIG) || position.equals(NylocasData.NyloPosition.WEST_BIG);
+        return (style > 2);
     }
 
     public static String getTypeName(int id)
@@ -60,14 +60,20 @@ public class NylocasShell {
                 type = "mage";
                 break;
         }
+        if(style > 2)
+        {
+            switch(position) //spawn position for bigs is shared with littles on south/west, but southwest tile of east big is in unique spot
+            {
+                case EAST_BIG:
+                    return "east big " + type;
+                case SOUTH_WEST:
+                    return "south big " + type;
+                case WEST_SOUTH:
+                    return "west big " + type;
+            }
+        }
         switch (position)
         {
-            case EAST_BIG:
-                return "east big " + type;
-            case SOUTH_BIG:
-                return "south big " + type;
-            case WEST_BIG:
-                return "west big " + type;
             case EAST_NORTH:
                 return "east small " + type + " (N)";
             case EAST_SOUTH:

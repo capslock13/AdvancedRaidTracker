@@ -1,6 +1,7 @@
 package com.TheatreTracker.viewraid;
 
 import com.TheatreTracker.RoomData;
+import com.TheatreTracker.utility.DataPoint;
 import com.TheatreTracker.utility.RoomUtil;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.FontTypeFace;
@@ -140,14 +141,39 @@ public class ViewRaidPanel extends JPanel implements MouseListener, MouseMotionL
                 g.setColor(Color.WHITE);
                 g.drawRect(offsetX+2, offsetY+(90*i)+1, 297, 89);
             }
+        }
 
-            drawTwoLevelBorder(g, offsetX + 300 + 50, offsetY, 530, 633);
+        drawTwoLevelBorder(g, offsetX + 300 + 50, offsetY, 530, 633);
 
-            g.setFont(FontManager.getRunescapeBoldFont().deriveFont(36.0f));
-            g.setColor(primaryText);
-            drawShadowedString(g, roomNames[selectedRoom]+ " summary", 360+265-
-                    (getStringBounds(g, roomNames[selectedRoom] + " summary", 0, 0).width)/2, offsetY+50);
+        g.setFont(FontManager.getRunescapeBoldFont().deriveFont(36.0f));
 
+
+        drawTwoLevelBorder(g, 360+265-((getStringBounds(g, roomNames[selectedRoom] + " summary", 0, 0).width)/2)-7, offsetY+50-10-25, (getStringBounds(g, roomNames[selectedRoom] + " summary", 0, 0).width)+20, 44);
+        g.setColor(primaryText);
+
+        drawShadowedString(g, roomNames[selectedRoom]+ " summary", 360+265-
+                (getStringBounds(g, roomNames[selectedRoom] + " summary", 0, 0).width)/2, offsetY+50);
+        int incrementingOffset = offsetY+50+40;
+        g.setFont(FontManager.getRunescapeFont().deriveFont(24.0f));
+
+        for(int i = offsetY+50+15; i < offsetY+633; i+= 30)
+        {
+            g.setColor(alternating[((i-offsetY+50+15)/30)%2]);
+            g.fillRect(360+2, i, 528, 30);
+        }
+        for(DataPoint point : DataPoint.values())
+        {
+            if(point.room == DataPoint.rooms.values()[selectedRoom])
+            {
+                String name = (selectedRoom == 0) ? point.name : point.name.substring(point.name.indexOf(" ")+1);
+                name = name.substring(0, 1).toUpperCase() + name.substring(1);
+                g.setColor(primaryText);
+                drawShadowedString(g, name, 360+10, incrementingOffset);
+                g.setColor(Color.WHITE);
+                String value = (point.type == DataPoint.types.TIME) ? RoomUtil.time(roomData.getValue(point)) : String.valueOf(roomData.getValue(point));
+                drawShadowedString(g, value, 760+10, incrementingOffset);
+                incrementingOffset+= 30;
+            }
         }
 
         g.setColor(oldColor);

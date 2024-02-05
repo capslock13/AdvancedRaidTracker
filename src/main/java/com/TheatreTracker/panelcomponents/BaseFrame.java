@@ -1,9 +1,7 @@
 package com.TheatreTracker.panelcomponents;
 
-import net.runelite.client.ui.ClientUI;
 
 import javax.swing.*;
-import java.util.Arrays;
 
 public class BaseFrame extends JFrame
 {

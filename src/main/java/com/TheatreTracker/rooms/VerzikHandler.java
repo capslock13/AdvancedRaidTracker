@@ -24,6 +24,10 @@ public class VerzikHandler extends RoomHandler {
     private TheatreTrackerPlugin plugin;
     private int healingEndTick = -1;
 
+    int p2Damage = 0;
+    int p2Heal = 0;
+    int p3Damage = 0;
+    int p3Heal = 0;
     public VerzikHandler(Client client, DataWriter clog, TheatreTrackerConfig config, TheatreTrackerPlugin plugin)
     {
         super(client, clog, config);

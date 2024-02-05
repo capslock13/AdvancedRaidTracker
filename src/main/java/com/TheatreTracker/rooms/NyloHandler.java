@@ -241,11 +241,13 @@ public class NyloHandler extends RoomHandler {
             case NYLO_PILLAR:
             case NYLO_PILLAR_HM:
             case NYLO_PILLAR_SM:
-                if (pillarsSpawnedTick == -1) {
+                if (pillarsSpawnedTick == -1)
+                {
                     startNylo();
                     if (client.getNpcs().stream().anyMatch(p -> p.getName().toLowerCase().contains("nylo"))) {
                         accurateEntry = false;
-                    } else {
+                    } else
+                    {
                         clog.write(ACCURATE_NYLO_START);
                     }
                 }

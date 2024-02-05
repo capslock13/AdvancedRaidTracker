@@ -1125,6 +1125,13 @@ public class RoomData {
                 case 304:
                     soteEndAccurate = true;
                     soteTimeAccurate = soteStartAccurate;
+                    if(soteTimeAccurate && bloatTimeAccurate && !spectated)
+                    {
+                        nyloStartAccurate = true;
+                        nyloEndAccurate = true;
+                        nyloTimeAccurate = true;
+                    }
+
                     break;
                 case 401:
                     hardMode = true;

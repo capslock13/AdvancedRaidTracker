@@ -32,6 +32,10 @@ public class ViewRaidPanel extends JPanel implements MouseListener, MouseMotionL
     int hoveredRoom = -1;
     int selectedRoom = 0;
 
+    int offsetY = 67;
+    int offsetX = 10;
+
+
     Color[] alternating = new Color[] {primaryLight, primaryDark};
 
     private BufferedImage img;
@@ -82,6 +86,16 @@ public class ViewRaidPanel extends JPanel implements MouseListener, MouseMotionL
         return gv.getPixelBounds(null, x, y);
     }
 
+    private void drawTwoLevelBorder(Graphics2D g, int x, int y, int width, int height)
+    {
+        g.setColor(darkOutline);
+        g.drawRect(x, y, width, height);
+        g.setColor(lightOutline);
+        g.drawRect(x+1, y + 2, width-2, height-3);
+        g.setColor(primaryDarkest);
+        g.fillRect(x+2, y+3, width-4, height-5);
+    }
+
     private void drawPanel()
     {
         Graphics2D g = (Graphics2D) img.getGraphics();
@@ -95,14 +109,11 @@ public class ViewRaidPanel extends JPanel implements MouseListener, MouseMotionL
 
         g.setColor(primaryText);
         drawShadowedString(g,"Performance Details", 300, 40);
-        int offsetY = 67;
-        int offsetX = 10;
-        g.setColor(darkOutline);
-        g.drawRect(offsetX+1, offsetY, 300, 633);
-        g.setColor(lightOutline);
-        g.drawRect(offsetX+2, offsetY + 1, 298, 630);
+
+        drawTwoLevelBorder(g, offsetX+1, offsetY+1, 300, 633);
+
         g.setFont(FontManager.getRunescapeFont().deriveFont(24.0f));
-        int fontHeight = getStringBounds(g, "a", 0, 0).height;
+        int fontHeight;
         for(int i = 0; i < roomNames.length; i++)
         {
             g.setColor(alternating[(i + 1) % 2]);
@@ -129,6 +140,14 @@ public class ViewRaidPanel extends JPanel implements MouseListener, MouseMotionL
                 g.setColor(Color.WHITE);
                 g.drawRect(offsetX+2, offsetY+(90*i)+1, 297, 89);
             }
+
+            drawTwoLevelBorder(g, offsetX + 300 + 50, offsetY, 530, 633);
+
+            g.setFont(FontManager.getRunescapeBoldFont().deriveFont(36.0f));
+            g.setColor(primaryText);
+            drawShadowedString(g, roomNames[selectedRoom]+ " summary", 360+265-
+                    (getStringBounds(g, roomNames[selectedRoom] + " summary", 0, 0).width)/2, offsetY+50);
+
         }
 
         g.setColor(oldColor);

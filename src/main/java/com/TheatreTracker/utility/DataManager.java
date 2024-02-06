@@ -5,7 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.ArrayList;
 
 @Slf4j
-public class DataManager {
+public class DataManager
+{
 
     private DataPointWrapper data[];
     private DataPointPlayerData playerSpecificData[];
@@ -20,7 +21,7 @@ public class DataManager {
         }
 
         playerSpecificData = new DataPointPlayerData[DataPoint.getPlayerSpecific().length];
-        for(int i = 0; i < DataPoint.getPlayerSpecific().length; i++)
+        for (int i = 0; i < DataPoint.getPlayerSpecific().length; i++)
         {
             playerSpecificData[i] = new DataPointPlayerData(DataPoint.getValue(DataPoint.getPlayerSpecific()[i]));
         }
@@ -31,9 +32,9 @@ public class DataManager {
         int highest = 0;
         String name = "";
         int index = getPlayerSpecificIndex(point);
-        for(String player : playerSpecificData[index].specificPlayerData.keySet())
+        for (String player : playerSpecificData[index].specificPlayerData.keySet())
         {
-            if(playerSpecificData[index].specificPlayerData.get(player) > highest)
+            if (playerSpecificData[index].specificPlayerData.get(player) > highest)
             {
                 highest = playerSpecificData[index].specificPlayerData.get(player);
                 name = player;
@@ -45,9 +46,9 @@ public class DataManager {
     int getPlayerSpecificIndex(DataPoint point)
     {
         int index = 0;
-        for(String datapoint : DataPoint.getPlayerSpecific())
+        for (String datapoint : DataPoint.getPlayerSpecific())
         {
-            if(datapoint.equalsIgnoreCase(point.name))
+            if (datapoint.equalsIgnoreCase(point.name))
             {
                 return index;
             }
@@ -55,6 +56,7 @@ public class DataManager {
         }
         return index;
     }
+
     public void incrementPlayerSpecific(DataPoint dataPoint, String player)
     {
         playerSpecificData[getPlayerSpecificIndex(dataPoint)].increment(player);
@@ -70,11 +72,13 @@ public class DataManager {
         return playerSpecificData[getPlayerSpecificIndex(point)].specificPlayerData.get(player);
     }
 
-    public void set(DataPoint point, int value) {
+    public void set(DataPoint point, int value)
+    {
         data[point.ordinal()].setValue(value);
     }
 
-    public int get(DataPoint point) {
+    public int get(DataPoint point)
+    {
         return data[point.ordinal()].value;
     }
 
@@ -88,19 +92,23 @@ public class DataManager {
         return 0;
     }
 
-    public void increment(DataPoint point, int valueAdded) {
+    public void increment(DataPoint point, int valueAdded)
+    {
         data[point.ordinal()].increment(valueAdded);
     }
 
-    public void increment(DataPoint point) {
+    public void increment(DataPoint point)
+    {
         data[point.ordinal()].increment();
     }
 
-    public void hammer(DataPoint point) {
+    public void hammer(DataPoint point)
+    {
         data[point.ordinal()].setValue((int) (data[point.ordinal()].value * 0.7));
     }
 
-    public void bgs(DataPoint point, int damage) {
+    public void bgs(DataPoint point, int damage)
+    {
         data[point.ordinal()].setValue(Math.max(0, data[point.ordinal()].value - damage));
     }
 }

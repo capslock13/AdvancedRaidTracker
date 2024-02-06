@@ -21,7 +21,8 @@ import static com.TheatreTracker.utility.RoomState.XarpusRoomState.FINISHED;
 import static com.TheatreTracker.utility.RoomState.XarpusRoomState.NOT_STARTED;
 
 @Slf4j
-public class XarpusHandler extends RoomHandler {
+public class XarpusHandler extends RoomHandler
+{
     public RoomState.XarpusRoomState roomState = RoomState.XarpusRoomState.NOT_STARTED;
     private TheatreTrackerPlugin plugin;
 
@@ -44,7 +45,7 @@ public class XarpusHandler extends RoomHandler {
 
     public boolean isActive()
     {
-    return !(roomState == RoomState.XarpusRoomState.NOT_STARTED || roomState == FINISHED);
+        return !(roomState == RoomState.XarpusRoomState.NOT_STARTED || roomState == FINISHED);
     }
 
     public void reset()
@@ -57,25 +58,33 @@ public class XarpusHandler extends RoomHandler {
         roomState = RoomState.XarpusRoomState.NOT_STARTED;
     }
 
-    public void updateAnimationChanged(AnimationChanged event) {
-        if (event.getActor().getAnimation() == XARPUS_AWAKENS) {
+    public void updateAnimationChanged(AnimationChanged event)
+    {
+        if (event.getActor().getAnimation() == XARPUS_AWAKENS)
+        {
             endExhumeds();
         }
-        if (event.getActor().getAnimation() == XARPUS_DEATH_ANIMATION) {
+        if (event.getActor().getAnimation() == XARPUS_DEATH_ANIMATION)
+        {
             endXarpus();
         }
     }
 
-    public void updateProjectileMoved(ProjectileMoved event) {
-        if (event.getProjectile().getEndCycle() - event.getProjectile().getStartCycle() == event.getProjectile().getRemainingCycles()) {
-            if (event.getProjectile().getId() == XARPUS_EXHUMED_PROJECTILE) {
+    public void updateProjectileMoved(ProjectileMoved event)
+    {
+        if (event.getProjectile().getEndCycle() - event.getProjectile().getStartCycle() == event.getProjectile().getRemainingCycles())
+        {
+            if (event.getProjectile().getId() == XARPUS_EXHUMED_PROJECTILE)
+            {
                 clog.write(XARPUS_HEAL);
             }
         }
     }
 
-    public void updateOverheadText(OverheadTextChanged event) {
-        if (event.getActor() instanceof NPC) {
+    public void updateOverheadText(OverheadTextChanged event)
+    {
+        if (event.getActor() instanceof NPC)
+        {
             NPC npc = (NPC) event.getActor();
             int id = npc.getId();
             if (id == XARPUS_P23 || id == XARPUS_P23_HM || id == XARPUS_P23_SM)
@@ -85,8 +94,10 @@ public class XarpusHandler extends RoomHandler {
         }
     }
 
-    public void updateNpcDespawned(NpcDespawned event) {
-        switch (event.getNpc().getId()) {
+    public void updateNpcDespawned(NpcDespawned event)
+    {
+        switch (event.getNpc().getId())
+        {
             case XARPUS_INACTIVE:
             case XARPUS_P1:
             case XARPUS_P23:
@@ -103,9 +114,11 @@ public class XarpusHandler extends RoomHandler {
         }
     }
 
-    public void updateNpcSpawned(NpcSpawned event) {
+    public void updateNpcSpawned(NpcSpawned event)
+    {
         boolean story = false;
-        switch (event.getNpc().getId()) {
+        switch (event.getNpc().getId())
+        {
             case NpcIDs.XARPUS_INACTIVE_SM:
             case NpcIDs.XARPUS_P1_SM:
             case NpcIDs.XARPUS_P23_SM:
@@ -126,26 +139,29 @@ public class XarpusHandler extends RoomHandler {
         }
     }
 
-    public void updateGameTick(GameTick event) {
+    public void updateGameTick(GameTick event)
+    {
         if (roomState == RoomState.XarpusRoomState.NOT_STARTED)
         {
-            if (RoomUtil.crossedLine(RoomUtil.XARPUS_REGION, new Point(25, 12), new Point(27, 12), false, client)) {
+            if (RoomUtil.crossedLine(RoomUtil.XARPUS_REGION, new Point(25, 12), new Point(27, 12), false, client))
+            {
                 startXarpus();
             }
         }
-        if(xarpusScreechTick != -1 && xarpusScreechTick != 0 && client.getTickCount() != xarpusScreechTick && (client.getTickCount()-xarpusScreechTick)%8==0 && isActive())
+        if (xarpusScreechTick != -1 && xarpusScreechTick != 0 && client.getTickCount() != xarpusScreechTick && (client.getTickCount() - xarpusScreechTick) % 8 == 0 && isActive())
         {
-            plugin.addLiveLine(4, client.getTickCount()-xarpusEntryTick, "Turn");
+            plugin.addLiveLine(4, client.getTickCount() - xarpusEntryTick, "Turn");
         }
     }
 
-    private void startScreech() {
+    private void startScreech()
+    {
         clog.write(XARPUS_SCREECH, "" + (client.getTickCount() - xarpusEntryTick));
         roomState = RoomState.XarpusRoomState.POSTSCREECH;
         xarpusScreechTick = client.getTickCount();
         String splitMessage = "Wave 'Xarpus phase 2' complete. Duration: " + timeColor() + RoomUtil.time(xarpusScreechTick - xarpusEntryTick) + " (" + RoomUtil.time(xarpusScreechTick - xarpusExhumedsEnd) + ")";
         this.client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", splitMessage, null, false);
-        plugin.addLiveLine(4, xarpusScreechTick-xarpusEntryTick, "SCREECH");
+        plugin.addLiveLine(4, xarpusScreechTick - xarpusEntryTick, "SCREECH");
     }
 
     private void startXarpus()
@@ -157,15 +173,17 @@ public class XarpusHandler extends RoomHandler {
         clog.write(ACCURATE_XARP_START);
     }
 
-    private void endExhumeds() {
+    private void endExhumeds()
+    {
         roomState = RoomState.XarpusRoomState.PRESCREECH;
         xarpusExhumedsEnd = client.getTickCount();
         String splitMessage = "Wave 'Xarpus phase 1' complete. Duration: " + timeColor() + RoomUtil.time(xarpusExhumedsEnd - xarpusEntryTick);
         this.client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", splitMessage, null, false);
-        plugin.addLiveLine(4, client.getTickCount()-xarpusEntryTick+1, "Exhumeds End");
+        plugin.addLiveLine(4, client.getTickCount() - xarpusEntryTick + 1, "Exhumeds End");
     }
 
-    private void endXarpus() {
+    private void endXarpus()
+    {
 
         roomState = FINISHED;
         xarpusEndTick = client.getTickCount() + 3;

@@ -34,11 +34,11 @@ public class LiveChartFrame extends BaseFrame
         verzPanel = new ChartPanel("Verzik", true);
 
         maidenScroll = new JScrollPane(maidenPanel);
-         bloatScroll = new JScrollPane(bloatPanel);
-         nyloScroll = new JScrollPane(nyloPanel);
-         sotetsegScroll = new JScrollPane(sotetsegPanel);
-         xarpusScroll = new JScrollPane(xarpPanel);
-         verzikScroll = new JScrollPane(verzPanel);
+        bloatScroll = new JScrollPane(bloatPanel);
+        nyloScroll = new JScrollPane(nyloPanel);
+        sotetsegScroll = new JScrollPane(sotetsegPanel);
+        xarpusScroll = new JScrollPane(xarpPanel);
+        verzikScroll = new JScrollPane(verzPanel);
 
 
         tabbedPane = new JTabbedPane();
@@ -56,7 +56,7 @@ public class LiveChartFrame extends BaseFrame
 
     public ChartPanel getPanel(String room)
     {
-        switch(room)
+        switch (room)
         {
             case "Maiden":
                 return maidenPanel;
@@ -77,7 +77,7 @@ public class LiveChartFrame extends BaseFrame
     public void incrementTick(String room)
     {
         getPanel(room).incrementTick();
-        if(getPanel(room).endTick % 50 == 0)
+        if (getPanel(room).endTick % 50 == 0)
         {
             maidenScroll.getViewport().setViewPosition(new Point(maidenPanel.getViewRect().x, maidenPanel.getViewRect().y));
             bloatScroll.getViewport().setViewPosition(new Point(bloatPanel.getViewRect().x, bloatPanel.getViewRect().y));
@@ -127,22 +127,27 @@ public class LiveChartFrame extends BaseFrame
     {
         maidenPanel.setRoomFinished();
     }
+
     public void setBloatFinished()
     {
         bloatPanel.setRoomFinished();
     }
+
     public void setNyloFinished()
     {
         nyloPanel.setRoomFinished();
     }
+
     public void setSoteFinished()
     {
         sotetsegPanel.setRoomFinished();
     }
+
     public void setXarpFinished()
     {
         xarpPanel.setRoomFinished();
     }
+
     public void setVerzFinished()
     {
         verzPanel.setRoomFinished();
@@ -164,10 +169,11 @@ public class LiveChartFrame extends BaseFrame
         xarpusScroll.getVerticalScrollBar().setValue(0);
         verzikScroll.getVerticalScrollBar().setValue(0);
     }
+
     public void setPlayers(ArrayList<String> players)
     {
         ArrayList<String> cleanedPlayers = new ArrayList<>();
-        for(String s : players)
+        for (String s : players)
         {
             cleanedPlayers.add(s.replaceAll(String.valueOf((char) 160), String.valueOf((char) 32)));
         }

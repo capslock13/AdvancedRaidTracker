@@ -77,7 +77,8 @@ public class NylocasWaveMatcher
         return false;
     }
 
-    public static NylocasWave getWave() {
+    public static NylocasWave getWave()
+    {
         return lastWave;
     }
 

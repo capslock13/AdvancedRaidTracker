@@ -5,29 +5,34 @@ import com.TheatreTracker.RoomData;
 import java.util.Calendar;
 import java.util.Date;
 
-public class FilterDate extends FilterCondition {
+public class FilterDate extends FilterCondition
+{
     private Date date;
     private int qualifier;
     private String stringValue;
 
-    public FilterDate(Date date, int qualifier, String val) {
+    public FilterDate(Date date, int qualifier, String val)
+    {
         this.date = date;
         this.qualifier = qualifier;
         stringValue = val;
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return stringValue;
     }
 
     @Override
-    public boolean evaluate(RoomData data) {
+    public boolean evaluate(RoomData data)
+    {
         Calendar cal = Calendar.getInstance();
         Calendar cal2 = Calendar.getInstance();
         cal.setTime(data.raidStarted);
         cal2.setTime(date);
-        switch (qualifier) {
+        switch (qualifier)
+        {
             case 0:
                 return (cal.get(Calendar.MONTH) == cal2.get(Calendar.MONTH) &&
                         cal.get(Calendar.DAY_OF_MONTH) == cal2.get(Calendar.DAY_OF_MONTH) &&
@@ -41,7 +46,8 @@ public class FilterDate extends FilterCondition {
         }
     }
 
-    public String getFilterCSV() {
+    public String getFilterCSV()
+    {
         return "4-" + date.getTime() + "-" + qualifier + "-" + stringValue;
     }
 }

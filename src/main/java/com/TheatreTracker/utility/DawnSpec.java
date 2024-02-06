@@ -4,6 +4,7 @@ public class DawnSpec
 {
     public String player;
     public int tick;
+
     public DawnSpec(String player, int tick)
     {
         this.player = player;
@@ -11,6 +12,7 @@ public class DawnSpec
     }
 
     int damage = -1;
+
     public void setDamage(int damage)
     {
         this.damage = damage;

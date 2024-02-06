@@ -3,7 +3,8 @@ package com.TheatreTracker.utility;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public enum DataPoint {
+public enum DataPoint
+{
 
     CHALLENGE_TIME("Challenge Time", types.TIME, rooms.ANY),
     OVERALL_TIME("Overall Time", types.TIME, rooms.ANY),
@@ -32,7 +33,7 @@ public enum DataPoint {
     MAIDEN_DINHS_TARGETS_HIT("Maiden dinhs targets hit", types.OTHER_INT, rooms.MAIDEN, true),
     MAIDEN_DINHS_AVERAGE_HP_HIT("Maiden dinhs average HP crab", types.OTHER_INT, rooms.MAIDEN, true),
     MAIDEN_DINHS_PERCENT_TARGETS_CRAB("Maiden dinhs % crabs targeted", types.OTHER_INT, rooms.MAIDEN, true),
-    MAIDEN_DINHS_CRABS_UNDER_27_TARGETED("Maiden dinhs crab < 27hp targeted" , types.OTHER_INT, rooms.MAIDEN, true),
+    MAIDEN_DINHS_CRABS_UNDER_27_TARGETED("Maiden dinhs crab < 27hp targeted", types.OTHER_INT, rooms.MAIDEN, true),
     MAIDEN_DINHS_CRABS_UNDER_27_TARGETED_PERCENT("Maiden dinhs crabs <27hp targeted %", types.OTHER_INT, rooms.MAIDEN, true),
     MAIDEN_CHINS_THROWN("Maiden chins thrown", types.OTHER_INT, rooms.MAIDEN, true),
     MAIDEN_CHINS_THROWN_WRONG_DISTANCE("Maiden chins thrown wrong distance", types.OTHER_INT, rooms.MAIDEN, true),
@@ -182,9 +183,12 @@ public enum DataPoint {
     ;
 
 
-    public static DataPoint getValue(String s) {
-        for (DataPoint point : values()) {
-            if (point.name.equals(s)) {
+    public static DataPoint getValue(String s)
+    {
+        for (DataPoint point : values())
+        {
+            if (point.name.equals(s))
+            {
                 return point;
             }
         }
@@ -204,7 +208,8 @@ public enum DataPoint {
 
     ;
 
-    public static enum types {
+    public static enum types
+    {
         OTHER_INT, OTHER_BOOL, TIME
     }
 
@@ -215,7 +220,8 @@ public enum DataPoint {
     public final boolean playerSpecific;
 
 
-    DataPoint(String name, types type, rooms room) {
+    DataPoint(String name, types type, rooms room)
+    {
         this.name = name;
         this.value = 0;
         this.type = type;
@@ -254,28 +260,36 @@ public enum DataPoint {
         return Arrays.copyOf(valuesToGather.toArray(), valuesToGather.size(), String[].class);
     }
 
-    public static String[] getOtherIntNames() {
+    public static String[] getOtherIntNames()
+    {
         ArrayList<String> valuesToGather = new ArrayList<>();
-        for (DataPoint point : DataPoint.values()) {
-            if (point.type.equals(types.OTHER_INT)) {
+        for (DataPoint point : DataPoint.values())
+        {
+            if (point.type.equals(types.OTHER_INT))
+            {
                 valuesToGather.add(point.name);
             }
         }
         return Arrays.copyOf(valuesToGather.toArray(), valuesToGather.size(), String[].class);
     }
 
-    public static String[] getByNames() {
+    public static String[] getByNames()
+    {
         ArrayList<String> valuesToGather = new ArrayList<>();
-        for (DataPoint point : DataPoint.values()) {
+        for (DataPoint point : DataPoint.values())
+        {
             valuesToGather.add(point.name);
         }
         return Arrays.copyOf(valuesToGather.toArray(), valuesToGather.size(), String[].class);
     }
 
-    public static String[] getTimeNames() {
+    public static String[] getTimeNames()
+    {
         ArrayList<String> valuesToGather = new ArrayList<>();
-        for (DataPoint point : DataPoint.values()) {
-            if (point.type.equals(types.TIME)) {
+        for (DataPoint point : DataPoint.values())
+        {
+            if (point.type.equals(types.TIME))
+            {
                 valuesToGather.add(point.name);
             }
         }
@@ -285,9 +299,9 @@ public enum DataPoint {
     public static String[] filterTimes(String[] data)
     {
         ArrayList<String> filtered = new ArrayList<>();
-        for(String s : data)
+        for (String s : data)
         {
-            if(DataPoint.getValue(s).type == types.TIME)
+            if (DataPoint.getValue(s).type == types.TIME)
             {
                 filtered.add(s);
             }
@@ -298,11 +312,11 @@ public enum DataPoint {
     public static String[] filterInt(String[] data)
     {
         ArrayList<String> filtered = new ArrayList<>();
-        for(String s : data)
+        for (String s : data)
         {
             DataPoint dp = DataPoint.getValue(s);
-            if(dp.type == types.OTHER_INT && !dp.name.contains("thrall") && !dp.name.contains("veng")
-            && !dp.name.contains("BGS") && !dp.name.contains("hammers") && !dp.name.contains("dinhs"))
+            if (dp.type == types.OTHER_INT && !dp.name.contains("thrall") && !dp.name.contains("veng")
+                    && !dp.name.contains("BGS") && !dp.name.contains("hammers") && !dp.name.contains("dinhs"))
             {
                 filtered.add(s);
             }
@@ -313,9 +327,9 @@ public enum DataPoint {
     public static String[] filterThrall(String[] data)
     {
         ArrayList<String> filtered = new ArrayList<>();
-        for(String s : data)
+        for (String s : data)
         {
-            if(DataPoint.getValue(s).name.contains("thrall"))
+            if (DataPoint.getValue(s).name.contains("thrall"))
             {
                 filtered.add(s);
             }
@@ -326,9 +340,9 @@ public enum DataPoint {
     public static String[] filterVeng(String[] data)
     {
         ArrayList<String> filtered = new ArrayList<>();
-        for(String s : data)
+        for (String s : data)
         {
-            if(DataPoint.getValue(s).name.contains("veng"))
+            if (DataPoint.getValue(s).name.contains("veng"))
             {
                 filtered.add(s);
             }
@@ -339,10 +353,10 @@ public enum DataPoint {
     public static String[] filterSpecs(String[] data)
     {
         ArrayList<String> filtered = new ArrayList<>();
-        for(String s : data)
+        for (String s : data)
         {
             String name = DataPoint.getValue(s).name;
-            if(name.contains("BGS") || name.contains("hammers") || name.contains("dinhs"))
+            if (name.contains("BGS") || name.contains("hammers") || name.contains("dinhs"))
             {
                 filtered.add(s);
             }
@@ -447,10 +461,13 @@ public enum DataPoint {
         return new String[]{"Challenge Time", "Overall Time", "Time Outside Rooms", "Maiden Time", "Bloat Time", "Nylocas Time", "Sotetseg Time", "Xarpus Time", "Verzik Time"};
     }
 
-    public static ArrayList<String> getTimeNamesByRoom(rooms room) {
+    public static ArrayList<String> getTimeNamesByRoom(rooms room)
+    {
         ArrayList<String> timesToGather = new ArrayList<>();
-        for (DataPoint point : DataPoint.values()) {
-            if (point.room.equals(room) && point.type.equals(types.TIME)) {
+        for (DataPoint point : DataPoint.values())
+        {
+            if (point.room.equals(room) && point.type.equals(types.TIME))
+            {
                 timesToGather.add(point.name);
             }
         }

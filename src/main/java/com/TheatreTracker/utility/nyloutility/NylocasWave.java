@@ -5,7 +5,8 @@ import lombok.Getter;
 import java.util.Arrays;
 import java.util.List;
 
-public class NylocasWave {
+public class NylocasWave
+{
     @Getter
     private final int wave;
     @Getter
@@ -237,11 +238,13 @@ public class NylocasWave {
         this.nylos = nylos;
     }
 
-    public int count() {
+    public int count()
+    {
         return this.nylos.length;
     }
 
-    public List<NylocasData> getNylos() {
+    public List<NylocasData> getNylos()
+    {
         return Arrays.asList(nylos);
     }
 }

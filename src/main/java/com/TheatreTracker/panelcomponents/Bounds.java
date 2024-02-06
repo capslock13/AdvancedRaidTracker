@@ -4,7 +4,8 @@ import com.TheatreTracker.RoomData;
 
 import java.util.ArrayList;
 
-public class Bounds {
+public class Bounds
+{
     private int left;
     private int right;
     private int bottom;
@@ -12,7 +13,8 @@ public class Bounds {
 
     public ArrayList<RoomData> raids;
 
-    public Bounds(int l, int r, int b, int t, ArrayList<RoomData> raids) {
+    public Bounds(int l, int r, int b, int t, ArrayList<RoomData> raids)
+    {
         this.raids = raids;
         left = l;
         right = r;
@@ -20,30 +22,36 @@ public class Bounds {
         top = t;
     }
 
-    public void reset() {
+    public void reset()
+    {
         left = -1;
         bottom = -1;
         top = -1;
         right = -1;
     }
 
-    public boolean matches(Bounds match) {
+    public boolean matches(Bounds match)
+    {
         return (match.getLeft() == left && match.getRight() == right && match.getTop() == top && match.getBottom() == bottom);
     }
 
-    public int getLeft() {
+    public int getLeft()
+    {
         return left;
     }
 
-    public int getRight() {
+    public int getRight()
+    {
         return right;
     }
 
-    public int getBottom() {
+    public int getBottom()
+    {
         return bottom;
     }
 
-    public int getTop() {
+    public int getTop()
+    {
         return top;
     }
 }

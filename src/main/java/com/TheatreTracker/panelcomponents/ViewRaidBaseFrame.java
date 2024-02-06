@@ -8,10 +8,12 @@ import lombok.extern.slf4j.Slf4j;
 import javax.swing.*;
 import java.awt.*;
 import java.util.Calendar;
+
 @Slf4j
 public class ViewRaidBaseFrame extends BaseFrame
 {
     String INCOMPLETE_MARKER = "-";
+
     public ViewRaidBaseFrame(RoomData data)
     {
         String red = "<html><font color='#FF0000'>";
@@ -47,19 +49,19 @@ public class ViewRaidBaseFrame extends BaseFrame
         int maidenEntry = 0;
         int maidenSplit = data.getMaidenTime();
 
-        int bloatEntry = maidenEntry+maidenSplit;
+        int bloatEntry = maidenEntry + maidenSplit;
         int bloatSplit = data.getBloatTime();
 
-        int nyloEntry = bloatEntry+bloatSplit;
+        int nyloEntry = bloatEntry + bloatSplit;
         int nyloSplit = data.getNyloTime();
 
-        int soteEntry = nyloEntry+nyloSplit;
+        int soteEntry = nyloEntry + nyloSplit;
         int soteSplit = data.getSoteTime();
 
-        int xarpEntry = soteEntry+soteSplit;
+        int xarpEntry = soteEntry + soteSplit;
         int xarpSplit = data.getXarpTime();
 
-        int verzikEntry = xarpEntry+xarpSplit;
+        int verzikEntry = xarpEntry + xarpSplit;
         int verzikSplit = data.getVerzikTime();
 
         String maidenEntryStr = RoomUtil.time(maidenEntry);
@@ -107,107 +109,105 @@ public class ViewRaidBaseFrame extends BaseFrame
         maidenSubPanel.setLayout(gl);
 
         maidenSubPanel.add(new JLabel(maidenBodyColor + "Blood Spawned (thrown)"));
-        maidenSubPanel.add(new JLabel(maidenBodyColor+data.getValue(DataPoint.MAIDEN_BLOOD_SPAWNED)+" (" + data.getValue(DataPoint.MAIDEN_BLOOD_THROWN)+")"));
+        maidenSubPanel.add(new JLabel(maidenBodyColor + data.getValue(DataPoint.MAIDEN_BLOOD_SPAWNED) + " (" + data.getValue(DataPoint.MAIDEN_BLOOD_THROWN) + ")"));
 
 
-        maidenSubPanel.add(new JLabel(maidenBodyColor+"Defense"));
-        maidenSubPanel.add(new JLabel(maidenBodyColor+((data.maidenDefenseAccurate) ? data.getValue(DataPoint.MAIDEN_DEFENSE) : INCOMPLETE_MARKER)));
+        maidenSubPanel.add(new JLabel(maidenBodyColor + "Defense"));
+        maidenSubPanel.add(new JLabel(maidenBodyColor + ((data.maidenDefenseAccurate) ? data.getValue(DataPoint.MAIDEN_DEFENSE) : INCOMPLETE_MARKER)));
 
-        maidenSubPanel.add(new JLabel(maidenBodyColor+"Crabs leaked"));
-        maidenSubPanel.add(new JLabel(maidenBodyColor+data.getValue(DataPoint.MAIDEN_CRABS_LEAKED) + ", HP: " + data.getValue(DataPoint.MAIDEN_HP_HEALED)));
+        maidenSubPanel.add(new JLabel(maidenBodyColor + "Crabs leaked"));
+        maidenSubPanel.add(new JLabel(maidenBodyColor + data.getValue(DataPoint.MAIDEN_CRABS_LEAKED) + ", HP: " + data.getValue(DataPoint.MAIDEN_HP_HEALED)));
 
-        maidenSubPanel.add(new JLabel(maidenBodyColor+"100% leaked"));
-        maidenSubPanel.add(new JLabel(maidenBodyColor+data.getValue(DataPoint.MAIDEN_CRABS_LEAKED_FULL_HP)));
+        maidenSubPanel.add(new JLabel(maidenBodyColor + "100% leaked"));
+        maidenSubPanel.add(new JLabel(maidenBodyColor + data.getValue(DataPoint.MAIDEN_CRABS_LEAKED_FULL_HP)));
 
-        maidenSubPanel.add(new JLabel(maidenBodyColor+"Scuffed?"));
-        maidenSubPanel.add(new JLabel(maidenBodyColor+ ((data.maidenScuffed) ? data.firstMaidenCrabScuffed : "No")));
+        maidenSubPanel.add(new JLabel(maidenBodyColor + "Scuffed?"));
+        maidenSubPanel.add(new JLabel(maidenBodyColor + ((data.maidenScuffed) ? data.firstMaidenCrabScuffed : "No")));
 
-        maidenSubPanel.add(new JLabel(maidenBodyColor+"Deaths"));
-        maidenSubPanel.add(new JLabel(maidenBodyColor+data.getValue(DataPoint.MAIDEN_DEATHS)));
+        maidenSubPanel.add(new JLabel(maidenBodyColor + "Deaths"));
+        maidenSubPanel.add(new JLabel(maidenBodyColor + data.getValue(DataPoint.MAIDEN_DEATHS)));
 
-        maidenSubPanel.add(new JLabel(maidenBodyColor+"70s"));
-        maidenSubPanel.add(new JLabel(maidenBodyColor+RoomUtil.time(data.getValue(DataPoint.MAIDEN_70_SPLIT))));
+        maidenSubPanel.add(new JLabel(maidenBodyColor + "70s"));
+        maidenSubPanel.add(new JLabel(maidenBodyColor + RoomUtil.time(data.getValue(DataPoint.MAIDEN_70_SPLIT))));
 
-        maidenSubPanel.add(new JLabel(maidenBodyColor+"50s"));
-        maidenSubPanel.add(new JLabel(maidenBodyColor+RoomUtil.time(data.getValue(DataPoint.MAIDEN_50_SPLIT)) + " (" + RoomUtil.time(data.getValue(DataPoint.MAIDEN_50_SPLIT)-data.getValue(DataPoint.MAIDEN_70_SPLIT)) + ")"));
+        maidenSubPanel.add(new JLabel(maidenBodyColor + "50s"));
+        maidenSubPanel.add(new JLabel(maidenBodyColor + RoomUtil.time(data.getValue(DataPoint.MAIDEN_50_SPLIT)) + " (" + RoomUtil.time(data.getValue(DataPoint.MAIDEN_50_SPLIT) - data.getValue(DataPoint.MAIDEN_70_SPLIT)) + ")"));
 
-        maidenSubPanel.add(new JLabel(maidenBodyColor+"30s"));
-        maidenSubPanel.add(new JLabel(maidenBodyColor+RoomUtil.time(data.getValue(DataPoint.MAIDEN_30_SPLIT)) + " (" + RoomUtil.time(data.getValue(DataPoint.MAIDEN_30_SPLIT)-data.getValue(DataPoint.MAIDEN_50_SPLIT))+")"));
+        maidenSubPanel.add(new JLabel(maidenBodyColor + "30s"));
+        maidenSubPanel.add(new JLabel(maidenBodyColor + RoomUtil.time(data.getValue(DataPoint.MAIDEN_30_SPLIT)) + " (" + RoomUtil.time(data.getValue(DataPoint.MAIDEN_30_SPLIT) - data.getValue(DataPoint.MAIDEN_50_SPLIT)) + ")"));
 
-        maidenSubPanel.add(new JLabel(maidenBodyColor+"Room time"));
-        maidenSubPanel.add(new JLabel(maidenBodyColor+RoomUtil.time(data.getMaidenTime()) + " (" + RoomUtil.time(data.getMaidenTime()-data.getValue(DataPoint.MAIDEN_30_SPLIT)) + ")"));
+        maidenSubPanel.add(new JLabel(maidenBodyColor + "Room time"));
+        maidenSubPanel.add(new JLabel(maidenBodyColor + RoomUtil.time(data.getMaidenTime()) + " (" + RoomUtil.time(data.getMaidenTime() - data.getValue(DataPoint.MAIDEN_30_SPLIT)) + ")"));
 
         JPanel bloatSubPanel = new JPanel();
         bloatSubPanel.setLayout(new GridLayout(8, 2));
 
-        bloatSubPanel.add(new JLabel(bloatBodyColor+"Downs"));
-        bloatSubPanel.add(new JLabel(bloatBodyColor+data.getValue(DataPoint.BLOAT_DOWNS)));
+        bloatSubPanel.add(new JLabel(bloatBodyColor + "Downs"));
+        bloatSubPanel.add(new JLabel(bloatBodyColor + data.getValue(DataPoint.BLOAT_DOWNS)));
 
-        bloatSubPanel.add(new JLabel(bloatBodyColor+"Deaths (1st walk)"));
-        bloatSubPanel.add(new JLabel(bloatBodyColor+data.getValue(DataPoint.BLOAT_FIRST_WALK_DEATHS)));
+        bloatSubPanel.add(new JLabel(bloatBodyColor + "Deaths (1st walk)"));
+        bloatSubPanel.add(new JLabel(bloatBodyColor + data.getValue(DataPoint.BLOAT_FIRST_WALK_DEATHS)));
 
-        bloatSubPanel.add(new JLabel(bloatBodyColor+"Deaths (Total)"));
-        bloatSubPanel.add(new JLabel(bloatBodyColor+data.getValue(DataPoint.BLOAT_DEATHS)));
+        bloatSubPanel.add(new JLabel(bloatBodyColor + "Deaths (Total)"));
+        bloatSubPanel.add(new JLabel(bloatBodyColor + data.getValue(DataPoint.BLOAT_DEATHS)));
 
-        bloatSubPanel.add(new JLabel(bloatBodyColor+"Defense (1st walk)"));
-        bloatSubPanel.add(new JLabel(bloatBodyColor+((data.bloatDefenseAccurate) ? "" +data.getValue(DataPoint.BLOAT_DEFENSE) : INCOMPLETE_MARKER)));
+        bloatSubPanel.add(new JLabel(bloatBodyColor + "Defense (1st walk)"));
+        bloatSubPanel.add(new JLabel(bloatBodyColor + ((data.bloatDefenseAccurate) ? "" + data.getValue(DataPoint.BLOAT_DEFENSE) : INCOMPLETE_MARKER)));
 
-        bloatSubPanel.add(new JLabel(bloatBodyColor+"Scythes 1st walk"));
-        bloatSubPanel.add(new JLabel(bloatBodyColor+data.bloatScytheBeforeFirstDown));
+        bloatSubPanel.add(new JLabel(bloatBodyColor + "Scythes 1st walk"));
+        bloatSubPanel.add(new JLabel(bloatBodyColor + data.bloatScytheBeforeFirstDown));
 
-        bloatSubPanel.add(new JLabel(bloatBodyColor+"HP % 1st down"));
+        bloatSubPanel.add(new JLabel(bloatBodyColor + "HP % 1st down"));
 
-        bloatSubPanel.add(new JLabel(bloatBodyColor+(((double)data.getValue(DataPoint.BLOAT_HP_FIRST_DOWN))/10.0)+"%"));
+        bloatSubPanel.add(new JLabel(bloatBodyColor + (((double) data.getValue(DataPoint.BLOAT_HP_FIRST_DOWN)) / 10.0) + "%"));
 
-        bloatSubPanel.add(new JLabel(bloatBodyColor+"1st down time"));
-        bloatSubPanel.add(new JLabel(bloatBodyColor+data.getValue(DataPoint.BLOAT_FIRST_DOWN_TIME)));
+        bloatSubPanel.add(new JLabel(bloatBodyColor + "1st down time"));
+        bloatSubPanel.add(new JLabel(bloatBodyColor + data.getValue(DataPoint.BLOAT_FIRST_DOWN_TIME)));
 
-        bloatSubPanel.add(new JLabel(bloatBodyColor+"Room time"));
-        bloatSubPanel.add(new JLabel(bloatBodyColor+RoomUtil.time(data.getBloatTime())));
+        bloatSubPanel.add(new JLabel(bloatBodyColor + "Room time"));
+        bloatSubPanel.add(new JLabel(bloatBodyColor + RoomUtil.time(data.getBloatTime())));
 
 
         JPanel nylocasSubPanel = new JPanel();
         nylocasSubPanel.setLayout(new GridLayout(9, 2));
 
-        nylocasSubPanel.add(new JLabel(nyloBodyColor+"Stalls"));
-        nylocasSubPanel.add(new JLabel(nyloBodyColor+data.getValue(DataPoint.NYLO_STALLS_PRE_20) + " " + data.getValue(DataPoint.NYLO_STALLS_POST_20) + " (" + (data.getValue(DataPoint.NYLO_STALLS_TOTAL)) + ")"));
+        nylocasSubPanel.add(new JLabel(nyloBodyColor + "Stalls"));
+        nylocasSubPanel.add(new JLabel(nyloBodyColor + data.getValue(DataPoint.NYLO_STALLS_PRE_20) + " " + data.getValue(DataPoint.NYLO_STALLS_POST_20) + " (" + (data.getValue(DataPoint.NYLO_STALLS_TOTAL)) + ")"));
 
         String nyloSplits = "<html><font color='#999999'>"
                 + data.getValue(DataPoint.NYLO_SPLITS_MELEE)
-                +"<font color='#00AA00'> "
+                + "<font color='#00AA00'> "
                 + data.getValue(DataPoint.NYLO_SPLITS_RANGE)
-                +"<font color ='#2299FF'> "
+                + "<font color ='#2299FF'> "
                 + data.getValue(DataPoint.NYLO_SPLITS_MAGE);
-        if(nyloBodyColor.equals(dark))
+        if (nyloBodyColor.equals(dark))
         {
             nyloSplits = nyloBodyColor
                     + data.getValue(DataPoint.NYLO_SPLITS_MELEE) + " "
                     + data.getValue(DataPoint.NYLO_SPLITS_RANGE) + " "
                     + data.getValue(DataPoint.NYLO_SPLITS_MAGE);
-        }
-        else if(nyloBodyColor.equals(soft))
+        } else if (nyloBodyColor.equals(soft))
         {
             nyloSplits = "<html><font color='#444444'>"
                     + data.getValue(DataPoint.NYLO_SPLITS_MELEE) + "<font color='#008800'> "
                     + data.getValue(DataPoint.NYLO_SPLITS_RANGE) + "<font color ='#0066CC'> "
                     + data.getValue(DataPoint.NYLO_SPLITS_MAGE);
         }
-        nylocasSubPanel.add(new JLabel(nyloBodyColor+"Splits"));
+        nylocasSubPanel.add(new JLabel(nyloBodyColor + "Splits"));
         nylocasSubPanel.add(new JLabel(nyloSplits));
 
         String nyloRotations = "<html><font color='#999999'>"
-                + data.getValue(DataPoint.NYLO_ROTATIONS_MELEE) +"<font color='#00AA00'> "
-                + data.getValue(DataPoint.NYLO_ROTATIONS_RANGE)+"<font color ='#2299FF'> "
+                + data.getValue(DataPoint.NYLO_ROTATIONS_MELEE) + "<font color='#00AA00'> "
+                + data.getValue(DataPoint.NYLO_ROTATIONS_RANGE) + "<font color ='#2299FF'> "
                 + data.getValue(DataPoint.NYLO_ROTATIONS_MAGE);
 
-        if(nyloBodyColor.equals(dark))
+        if (nyloBodyColor.equals(dark))
         {
             nyloRotations = nyloBodyColor
                     + data.getValue(DataPoint.NYLO_ROTATIONS_MELEE) + " "
                     + data.getValue(DataPoint.NYLO_ROTATIONS_RANGE) + " "
                     + data.getValue(DataPoint.NYLO_ROTATIONS_MAGE);
-        }
-        else if(nyloBodyColor.equals(soft))
+        } else if (nyloBodyColor.equals(soft))
         {
             nyloRotations = "<html><font color='#444444'>"
                     + data.getValue(DataPoint.NYLO_ROTATIONS_MELEE) + "<font color='#008800'> "
@@ -215,68 +215,68 @@ public class ViewRaidBaseFrame extends BaseFrame
                     + data.getValue(DataPoint.NYLO_ROTATIONS_MAGE);
         }
 
-        nylocasSubPanel.add(new JLabel(nyloBodyColor+"Rotations"));
+        nylocasSubPanel.add(new JLabel(nyloBodyColor + "Rotations"));
         nylocasSubPanel.add(new JLabel(nyloRotations));
 
-        nylocasSubPanel.add(new JLabel(nyloBodyColor+"Defense"));
-        nylocasSubPanel.add(new JLabel(nyloBodyColor+((data.nyloDefenseAccurate) ? "" + data.getValue(DataPoint.NYLO_DEFENSE) : INCOMPLETE_MARKER)));
+        nylocasSubPanel.add(new JLabel(nyloBodyColor + "Defense"));
+        nylocasSubPanel.add(new JLabel(nyloBodyColor + ((data.nyloDefenseAccurate) ? "" + data.getValue(DataPoint.NYLO_DEFENSE) : INCOMPLETE_MARKER)));
 
-        nylocasSubPanel.add(new JLabel(nyloBodyColor+"Deaths"));
-        nylocasSubPanel.add(new JLabel(nyloBodyColor+data.nyloDeaths));
+        nylocasSubPanel.add(new JLabel(nyloBodyColor + "Deaths"));
+        nylocasSubPanel.add(new JLabel(nyloBodyColor + data.nyloDeaths));
 
-        nylocasSubPanel.add(new JLabel(nyloBodyColor+"Last wave"));
-        nylocasSubPanel.add(new JLabel(nyloBodyColor+RoomUtil.time(data.getValue(DataPoint.NYLO_LAST_WAVE))));
+        nylocasSubPanel.add(new JLabel(nyloBodyColor + "Last wave"));
+        nylocasSubPanel.add(new JLabel(nyloBodyColor + RoomUtil.time(data.getValue(DataPoint.NYLO_LAST_WAVE))));
 
-        nylocasSubPanel.add(new JLabel(nyloBodyColor+"Clean up"));
-        nylocasSubPanel.add(new JLabel(nyloBodyColor+RoomUtil.time(data.nyloLastDead) + " (" + RoomUtil.time(data.nyloLastDead-data.getValue(DataPoint.NYLO_LAST_WAVE)) + ")"));
+        nylocasSubPanel.add(new JLabel(nyloBodyColor + "Clean up"));
+        nylocasSubPanel.add(new JLabel(nyloBodyColor + RoomUtil.time(data.nyloLastDead) + " (" + RoomUtil.time(data.nyloLastDead - data.getValue(DataPoint.NYLO_LAST_WAVE)) + ")"));
 
-        nylocasSubPanel.add(new JLabel(nyloBodyColor+"Boss Spawn"));
-        nylocasSubPanel.add(new JLabel(nyloBodyColor+RoomUtil.time(data.getValue(DataPoint.NYLO_BOSS_SPAWN)) + " (" + RoomUtil.time(data.getValue(DataPoint.NYLO_BOSS_SPAWN)-data.nyloLastDead) + ")"));
+        nylocasSubPanel.add(new JLabel(nyloBodyColor + "Boss Spawn"));
+        nylocasSubPanel.add(new JLabel(nyloBodyColor + RoomUtil.time(data.getValue(DataPoint.NYLO_BOSS_SPAWN)) + " (" + RoomUtil.time(data.getValue(DataPoint.NYLO_BOSS_SPAWN) - data.nyloLastDead) + ")"));
 
-        nylocasSubPanel.add(new JLabel(nyloBodyColor+"Time"));
-        nylocasSubPanel.add(new JLabel(nyloBodyColor+RoomUtil.time(data.getNyloTime()) + " (" + RoomUtil.time(data.getNyloTime()-data.getValue(DataPoint.NYLO_BOSS_SPAWN)) + ")"));
+        nylocasSubPanel.add(new JLabel(nyloBodyColor + "Time"));
+        nylocasSubPanel.add(new JLabel(nyloBodyColor + RoomUtil.time(data.getNyloTime()) + " (" + RoomUtil.time(data.getNyloTime() - data.getValue(DataPoint.NYLO_BOSS_SPAWN)) + ")"));
 
         JPanel sotetsegSubPanel = new JPanel();
         sotetsegSubPanel.setLayout(new GridLayout(8, 2));
 
-        sotetsegSubPanel.add(new JLabel(soteBodyColor+"Hammers hit"));
-        sotetsegSubPanel.add(new JLabel(soteBodyColor+((data.soteDefenseAccurate) ? ""  + data.getValue(DataPoint.SOTE_SPECS_P1) + " " + data.getValue(DataPoint.SOTE_SPECS_P2) + " " + data.getValue(DataPoint.SOTE_SPECS_P3) + " (" +(data.getValue(DataPoint.SOTE_SPECS_TOTAL))+")" : INCOMPLETE_MARKER)));
+        sotetsegSubPanel.add(new JLabel(soteBodyColor + "Hammers hit"));
+        sotetsegSubPanel.add(new JLabel(soteBodyColor + ((data.soteDefenseAccurate) ? "" + data.getValue(DataPoint.SOTE_SPECS_P1) + " " + data.getValue(DataPoint.SOTE_SPECS_P2) + " " + data.getValue(DataPoint.SOTE_SPECS_P3) + " (" + (data.getValue(DataPoint.SOTE_SPECS_TOTAL)) + ")" : INCOMPLETE_MARKER)));
 
-        sotetsegSubPanel.add(new JLabel(soteBodyColor+"Deaths"));
-        sotetsegSubPanel.add(new JLabel(soteBodyColor+data.getValue(DataPoint.SOTE_DEATHS)));
+        sotetsegSubPanel.add(new JLabel(soteBodyColor + "Deaths"));
+        sotetsegSubPanel.add(new JLabel(soteBodyColor + data.getValue(DataPoint.SOTE_DEATHS)));
 
-        sotetsegSubPanel.add(new JLabel(soteBodyColor+"First Maze Start"));
-        sotetsegSubPanel.add(new JLabel(soteBodyColor+RoomUtil.time(data.getValue(DataPoint.SOTE_P1_SPLIT))));
+        sotetsegSubPanel.add(new JLabel(soteBodyColor + "First Maze Start"));
+        sotetsegSubPanel.add(new JLabel(soteBodyColor + RoomUtil.time(data.getValue(DataPoint.SOTE_P1_SPLIT))));
 
-        sotetsegSubPanel.add(new JLabel(soteBodyColor+"First Maze End"));
-        sotetsegSubPanel.add(new JLabel(soteBodyColor+RoomUtil.time(data.getValue(DataPoint.SOTE_M1_SPLIT)) + " (" + RoomUtil.time(data.getValue(DataPoint.SOTE_M1_SPLIT)-data.getValue(DataPoint.SOTE_P1_SPLIT)) + ")"));
+        sotetsegSubPanel.add(new JLabel(soteBodyColor + "First Maze End"));
+        sotetsegSubPanel.add(new JLabel(soteBodyColor + RoomUtil.time(data.getValue(DataPoint.SOTE_M1_SPLIT)) + " (" + RoomUtil.time(data.getValue(DataPoint.SOTE_M1_SPLIT) - data.getValue(DataPoint.SOTE_P1_SPLIT)) + ")"));
 
-        sotetsegSubPanel.add(new JLabel(soteBodyColor+"Second Maze Start"));
-        sotetsegSubPanel.add(new JLabel(soteBodyColor+RoomUtil.time(data.getValue(DataPoint.SOTE_P2_SPLIT)) + " (" + RoomUtil.time(data.getValue(DataPoint.SOTE_P2_SPLIT)-data.getValue(DataPoint.SOTE_M1_SPLIT)) + ")"));
+        sotetsegSubPanel.add(new JLabel(soteBodyColor + "Second Maze Start"));
+        sotetsegSubPanel.add(new JLabel(soteBodyColor + RoomUtil.time(data.getValue(DataPoint.SOTE_P2_SPLIT)) + " (" + RoomUtil.time(data.getValue(DataPoint.SOTE_P2_SPLIT) - data.getValue(DataPoint.SOTE_M1_SPLIT)) + ")"));
 
-        sotetsegSubPanel.add(new JLabel(soteBodyColor+"Second Maze End"));
-        sotetsegSubPanel.add(new JLabel(soteBodyColor+RoomUtil.time(data.getValue(DataPoint.SOTE_M2_SPLIT)) + " (" + RoomUtil.time(data.getValue(DataPoint.SOTE_M2_SPLIT)-data.getValue(DataPoint.SOTE_P2_SPLIT)) + ")"));
+        sotetsegSubPanel.add(new JLabel(soteBodyColor + "Second Maze End"));
+        sotetsegSubPanel.add(new JLabel(soteBodyColor + RoomUtil.time(data.getValue(DataPoint.SOTE_M2_SPLIT)) + " (" + RoomUtil.time(data.getValue(DataPoint.SOTE_M2_SPLIT) - data.getValue(DataPoint.SOTE_P2_SPLIT)) + ")"));
 
-        sotetsegSubPanel.add(new JLabel(soteBodyColor+"Time"));
-        sotetsegSubPanel.add(new JLabel(soteBodyColor+RoomUtil.time(data.getSoteTime()) + " (" + RoomUtil.time(data.getSoteTime()-data.getValue(DataPoint.SOTE_M2_SPLIT)) + ")"));
+        sotetsegSubPanel.add(new JLabel(soteBodyColor + "Time"));
+        sotetsegSubPanel.add(new JLabel(soteBodyColor + RoomUtil.time(data.getSoteTime()) + " (" + RoomUtil.time(data.getSoteTime() - data.getValue(DataPoint.SOTE_M2_SPLIT)) + ")"));
 
         JPanel xarpusSubPanel = new JPanel();
         xarpusSubPanel.setLayout(new GridLayout(8, 2));
 
-        xarpusSubPanel.add(new JLabel(xarpBodyColor+"Defense"));
-        xarpusSubPanel.add(new JLabel(xarpBodyColor+((data.xarpDefenseAccurate) ? data.getValue(DataPoint.XARP_DEFENSE) : INCOMPLETE_MARKER)));
+        xarpusSubPanel.add(new JLabel(xarpBodyColor + "Defense"));
+        xarpusSubPanel.add(new JLabel(xarpBodyColor + ((data.xarpDefenseAccurate) ? data.getValue(DataPoint.XARP_DEFENSE) : INCOMPLETE_MARKER)));
 
-        xarpusSubPanel.add(new JLabel(xarpBodyColor+"Deaths"));
-        xarpusSubPanel.add(new JLabel(xarpBodyColor+data.getValue(DataPoint.XARP_DEATHS)));
+        xarpusSubPanel.add(new JLabel(xarpBodyColor + "Deaths"));
+        xarpusSubPanel.add(new JLabel(xarpBodyColor + data.getValue(DataPoint.XARP_DEATHS)));
 
-        xarpusSubPanel.add(new JLabel(xarpBodyColor+"Healing"));
-        xarpusSubPanel.add(new JLabel(xarpBodyColor+data.getValue(DataPoint.XARP_HEALING)));
+        xarpusSubPanel.add(new JLabel(xarpBodyColor + "Healing"));
+        xarpusSubPanel.add(new JLabel(xarpBodyColor + data.getValue(DataPoint.XARP_HEALING)));
 
-        xarpusSubPanel.add(new JLabel(xarpBodyColor+"Screech"));
-        xarpusSubPanel.add(new JLabel(xarpBodyColor+RoomUtil.time(data.getValue(DataPoint.XARP_SCREECH))));
+        xarpusSubPanel.add(new JLabel(xarpBodyColor + "Screech"));
+        xarpusSubPanel.add(new JLabel(xarpBodyColor + RoomUtil.time(data.getValue(DataPoint.XARP_SCREECH))));
 
-        xarpusSubPanel.add(new JLabel(xarpBodyColor+"Time"));
-        xarpusSubPanel.add(new JLabel(xarpBodyColor+RoomUtil.time(data.getXarpTime()) + " (" + RoomUtil.time(data.getXarpTime()-data.getValue(DataPoint.XARP_SCREECH)) + ")"));
+        xarpusSubPanel.add(new JLabel(xarpBodyColor + "Time"));
+        xarpusSubPanel.add(new JLabel(xarpBodyColor + RoomUtil.time(data.getXarpTime()) + " (" + RoomUtil.time(data.getXarpTime() - data.getValue(DataPoint.XARP_SCREECH)) + ")"));
 
         xarpusSubPanel.add(new JLabel(""));
         xarpusSubPanel.add(new JLabel(""));
@@ -290,26 +290,26 @@ public class ViewRaidBaseFrame extends BaseFrame
         JPanel verzikSubPanel = new JPanel();
         verzikSubPanel.setLayout(new GridLayout(8, 2));
 
-        verzikSubPanel.add(new JLabel(verzikBodyColor+"Bounces"));
-        verzikSubPanel.add(new JLabel(verzikBodyColor+data.getValue(DataPoint.VERZIK_BOUNCES)));
+        verzikSubPanel.add(new JLabel(verzikBodyColor + "Bounces"));
+        verzikSubPanel.add(new JLabel(verzikBodyColor + data.getValue(DataPoint.VERZIK_BOUNCES)));
 
-        verzikSubPanel.add(new JLabel(verzikBodyColor+"Deaths"));
-        verzikSubPanel.add(new JLabel(verzikBodyColor+data.getValue(DataPoint.VERZIK_DEATHS)));
+        verzikSubPanel.add(new JLabel(verzikBodyColor + "Deaths"));
+        verzikSubPanel.add(new JLabel(verzikBodyColor + data.getValue(DataPoint.VERZIK_DEATHS)));
 
-        verzikSubPanel.add(new JLabel(verzikBodyColor+"Crabs Spawned"));
-        verzikSubPanel.add(new JLabel(verzikBodyColor+data.getValue(DataPoint.VERZIK_CRABS_SPAWNED)+""));
+        verzikSubPanel.add(new JLabel(verzikBodyColor + "Crabs Spawned"));
+        verzikSubPanel.add(new JLabel(verzikBodyColor + data.getValue(DataPoint.VERZIK_CRABS_SPAWNED) + ""));
 
-        verzikSubPanel.add(new JLabel(verzikBodyColor+"Phase 1"));
-        verzikSubPanel.add(new JLabel(verzikBodyColor+RoomUtil.time(data.getValue(DataPoint.VERZIK_P1_SPLIT))));
+        verzikSubPanel.add(new JLabel(verzikBodyColor + "Phase 1"));
+        verzikSubPanel.add(new JLabel(verzikBodyColor + RoomUtil.time(data.getValue(DataPoint.VERZIK_P1_SPLIT))));
 
-        verzikSubPanel.add(new JLabel(verzikBodyColor+"Reds Proc"));
-        verzikSubPanel.add(new JLabel(verzikBodyColor+RoomUtil.time(data.getValue(DataPoint.VERZIK_REDS_SPLIT)) + " (" + RoomUtil.time(data.getValue(DataPoint.VERZIK_REDS_SPLIT)-data.getValue(DataPoint.VERZIK_P1_SPLIT)) + ")"));
+        verzikSubPanel.add(new JLabel(verzikBodyColor + "Reds Proc"));
+        verzikSubPanel.add(new JLabel(verzikBodyColor + RoomUtil.time(data.getValue(DataPoint.VERZIK_REDS_SPLIT)) + " (" + RoomUtil.time(data.getValue(DataPoint.VERZIK_REDS_SPLIT) - data.getValue(DataPoint.VERZIK_P1_SPLIT)) + ")"));
 
-        verzikSubPanel.add(new JLabel(verzikBodyColor+"Phase 2"));
-        verzikSubPanel.add(new JLabel(verzikBodyColor+RoomUtil.time(data.getValue(DataPoint.VERZIK_P2_SPLIT)) + " (" + RoomUtil.time(data.getValue(DataPoint.VERZIK_P2_SPLIT)-data.getValue(DataPoint.VERZIK_P1_SPLIT)) + ")"));
+        verzikSubPanel.add(new JLabel(verzikBodyColor + "Phase 2"));
+        verzikSubPanel.add(new JLabel(verzikBodyColor + RoomUtil.time(data.getValue(DataPoint.VERZIK_P2_SPLIT)) + " (" + RoomUtil.time(data.getValue(DataPoint.VERZIK_P2_SPLIT) - data.getValue(DataPoint.VERZIK_P1_SPLIT)) + ")"));
 
-        verzikSubPanel.add(new JLabel(verzikBodyColor+"Time"));
-        verzikSubPanel.add(new JLabel(verzikBodyColor+RoomUtil.time(data.getVerzikTime()) + " (" + RoomUtil.time(data.getVerzikTime()-data.getValue(DataPoint.VERZIK_P2_SPLIT)) + ")"));
+        verzikSubPanel.add(new JLabel(verzikBodyColor + "Time"));
+        verzikSubPanel.add(new JLabel(verzikBodyColor + RoomUtil.time(data.getVerzikTime()) + " (" + RoomUtil.time(data.getVerzikTime() - data.getValue(DataPoint.VERZIK_P2_SPLIT)) + ")"));
 
         maidenPanel.add(maidenSubPanel);
         bloatPanel.add(bloatSubPanel);
@@ -331,11 +331,11 @@ public class ViewRaidBaseFrame extends BaseFrame
         summaryPanel.setMinimumSize(new Dimension(100, 30));
         Calendar cal = Calendar.getInstance();
         cal.setTime(data.raidStarted);
-        String dateString = (cal.get(Calendar.MONTH)+1) + "-" + cal.get(Calendar.DAY_OF_MONTH) + "-" + cal.get(Calendar.YEAR);
+        String dateString = (cal.get(Calendar.MONTH) + 1) + "-" + cal.get(Calendar.DAY_OF_MONTH) + "-" + cal.get(Calendar.YEAR);
         JPanel summarySubPanel = new JPanel(new GridLayout(10, 1));
         summarySubPanel.add(new JLabel("Date: " + dateString));
         String scaleString = "";
-        switch(data.raidTeamSize)
+        switch (data.raidTeamSize)
         {
             case 1:
                 scaleString = "Solo";
@@ -355,58 +355,47 @@ public class ViewRaidBaseFrame extends BaseFrame
         }
         summarySubPanel.add(new JLabel("Scale: " + scaleString));
         String raidStatusString = "";
-        if(data.maidenWipe)
+        if (data.maidenWipe)
         {
             raidStatusString = "Maiden Wipe";
-        }
-        else if(data.maidenReset)
+        } else if (data.maidenReset)
         {
             raidStatusString = "Maiden Reset";
-        }
-        else if(data.bloatWipe)
+        } else if (data.bloatWipe)
         {
             raidStatusString = "Bloat Wipe";
-        }
-        else if(data.bloatReset)
+        } else if (data.bloatReset)
         {
             raidStatusString = "Bloat Reset";
-        }
-        else if(data.nyloWipe)
+        } else if (data.nyloWipe)
         {
             raidStatusString = "Nylo Wipe";
-        }
-        else if(data.nyloReset)
+        } else if (data.nyloReset)
         {
             raidStatusString = "Nylo Reset";
-        }
-        else if(data.soteWipe)
+        } else if (data.soteWipe)
         {
             raidStatusString = "Sotetseg Wipe";
-        }
-        else if(data.soteReset)
+        } else if (data.soteReset)
         {
             raidStatusString = "Sotetseg Reset";
-        }
-        else if(data.xarpWipe)
+        } else if (data.xarpWipe)
         {
             raidStatusString = "Xarpus Wipe";
-        }
-        else if(data.xarpReset)
+        } else if (data.xarpReset)
         {
             raidStatusString = "Xarpus Reset";
-        }
-        else if(data.verzikWipe)
+        } else if (data.verzikWipe)
         {
             raidStatusString = "Verzik Wipe";
-        }
-        else
+        } else
         {
             raidStatusString = "Completion";
         }
         summarySubPanel.add(new JLabel("Raid Status: " + raidStatusString));
         summarySubPanel.add(new JLabel("Time: " + RoomUtil.time(data.getTimeSum())));
-        summarySubPanel.add(new JLabel("Players:" ));
-        for(String player : data.players.keySet())
+        summarySubPanel.add(new JLabel("Players:"));
+        for (String player : data.players.keySet())
         {
             summarySubPanel.add(new JLabel("        " + player + " (" + data.players.get(player) + ")"));
         }
@@ -443,34 +432,33 @@ public class ViewRaidBaseFrame extends BaseFrame
         thrallsPanel.add(new JLabel(data.getValue(DataPoint.THRALL_ATTACKS_VERZIK) + "", SwingConstants.RIGHT));
 
 
-
         JPanel vengPanel = new JPanel();
         vengPanel.setBorder(BorderFactory.createTitledBorder("Venges"));
-        vengPanel.setLayout(new GridLayout(8,2));
+        vengPanel.setLayout(new GridLayout(8, 2));
 
         vengPanel.add(new JLabel("Venges"));
         vengPanel.add(new JLabel("(Procced/Cast): Damage"));
 
         vengPanel.add(new JLabel("All Rooms"));
-        vengPanel.add(new JLabel("("+data.getValue(DataPoint.VENG_PROCS_TOTAL) + "/" + data.getValue(DataPoint.VENG_CASTS_TOTAL) + "): " + data.getValue(DataPoint.VENG_DAMAGE_TOTAL), SwingConstants.RIGHT));
+        vengPanel.add(new JLabel("(" + data.getValue(DataPoint.VENG_PROCS_TOTAL) + "/" + data.getValue(DataPoint.VENG_CASTS_TOTAL) + "): " + data.getValue(DataPoint.VENG_DAMAGE_TOTAL), SwingConstants.RIGHT));
 
         vengPanel.add(new JLabel("Maiden"));
-        vengPanel.add(new JLabel("("+data.getValue(DataPoint.VENG_PROCS_MAIDEN) + "/" + data.getValue(DataPoint.VENG_CASTS_MAIDEN) + "): " + data.getValue(DataPoint.VENG_DAMAGE_MAIDEN), SwingConstants.RIGHT));
+        vengPanel.add(new JLabel("(" + data.getValue(DataPoint.VENG_PROCS_MAIDEN) + "/" + data.getValue(DataPoint.VENG_CASTS_MAIDEN) + "): " + data.getValue(DataPoint.VENG_DAMAGE_MAIDEN), SwingConstants.RIGHT));
 
         vengPanel.add(new JLabel("Bloat"));
-        vengPanel.add(new JLabel("("+data.getValue(DataPoint.VENG_PROCS_BLOAT) + "/" + data.getValue(DataPoint.VENG_CASTS_BLOAT) + "): " + data.getValue(DataPoint.VENG_DAMAGE_BLOAT), SwingConstants.RIGHT));
+        vengPanel.add(new JLabel("(" + data.getValue(DataPoint.VENG_PROCS_BLOAT) + "/" + data.getValue(DataPoint.VENG_CASTS_BLOAT) + "): " + data.getValue(DataPoint.VENG_DAMAGE_BLOAT), SwingConstants.RIGHT));
 
         vengPanel.add(new JLabel("Nylo"));
-        vengPanel.add(new JLabel("("+data.getValue(DataPoint.VENG_PROCS_NYLO) + "/" + data.getValue(DataPoint.VENG_CASTS_NYLO) + "): " + data.getValue(DataPoint.VENG_DAMAGE_NYLO), SwingConstants.RIGHT));
+        vengPanel.add(new JLabel("(" + data.getValue(DataPoint.VENG_PROCS_NYLO) + "/" + data.getValue(DataPoint.VENG_CASTS_NYLO) + "): " + data.getValue(DataPoint.VENG_DAMAGE_NYLO), SwingConstants.RIGHT));
 
         vengPanel.add(new JLabel("Sote"));
-        vengPanel.add(new JLabel("("+data.getValue(DataPoint.VENG_PROCS_SOTE) + "/" + data.getValue(DataPoint.VENG_CASTS_SOTE) + "): " + data.getValue(DataPoint.VENG_DAMAGE_SOTE), SwingConstants.RIGHT));
+        vengPanel.add(new JLabel("(" + data.getValue(DataPoint.VENG_PROCS_SOTE) + "/" + data.getValue(DataPoint.VENG_CASTS_SOTE) + "): " + data.getValue(DataPoint.VENG_DAMAGE_SOTE), SwingConstants.RIGHT));
 
         vengPanel.add(new JLabel("Xarp"));
-        vengPanel.add(new JLabel("("+data.getValue(DataPoint.VENG_PROCS_XARP) + "/" + data.getValue(DataPoint.VENG_CASTS_XARP) + "): " + data.getValue(DataPoint.VENG_DAMAGE_XARP), SwingConstants.RIGHT));
+        vengPanel.add(new JLabel("(" + data.getValue(DataPoint.VENG_PROCS_XARP) + "/" + data.getValue(DataPoint.VENG_CASTS_XARP) + "): " + data.getValue(DataPoint.VENG_DAMAGE_XARP), SwingConstants.RIGHT));
 
         vengPanel.add(new JLabel("Verzik"));
-        vengPanel.add(new JLabel("("+data.getValue(DataPoint.VENG_PROCS_VERZIK) + "/" + data.getValue(DataPoint.VENG_CASTS_VERZIK) + "): " + data.getValue(DataPoint.VENG_DAMAGE_VERZIK), SwingConstants.RIGHT));
+        vengPanel.add(new JLabel("(" + data.getValue(DataPoint.VENG_PROCS_VERZIK) + "/" + data.getValue(DataPoint.VENG_CASTS_VERZIK) + "): " + data.getValue(DataPoint.VENG_DAMAGE_VERZIK), SwingConstants.RIGHT));
 
         topPanel.add(thrallsPanel);
         topPanel.add(vengPanel);

@@ -2,25 +2,30 @@ package com.TheatreTracker.filters;
 
 import com.TheatreTracker.RoomData;
 
-public class FilterOtherBool extends FilterCondition {
+public class FilterOtherBool extends FilterCondition
+{
     boolean value;
     int param;
     String stringValue;
 
-    public FilterOtherBool(int param, boolean value, String val) {
+    public FilterOtherBool(int param, boolean value, String val)
+    {
         this.param = param;
         this.value = value;
         stringValue = val;
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return stringValue;
     }
 
     @Override
-    public boolean evaluate(RoomData data) {
-        switch (param) {
+    public boolean evaluate(RoomData data)
+    {
+        switch (param)
+        {
             case 0:
                 return data.maidenSkip == value;
             case 1:
@@ -49,7 +54,8 @@ public class FilterOtherBool extends FilterCondition {
         return false;
     }
 
-    public String getFilterCSV() {
+    public String getFilterCSV()
+    {
         return "3-" + param + "-" + ((value) ? 1 : 0) + "-" + stringValue;
     }
 }

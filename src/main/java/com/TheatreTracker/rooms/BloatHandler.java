@@ -21,7 +21,8 @@ import static com.TheatreTracker.utility.RoomState.*;
 import static com.TheatreTracker.utility.RoomState.BloatRoomState.*;
 
 @Slf4j
-public class BloatHandler extends RoomHandler {
+public class BloatHandler extends RoomHandler
+{
     public BloatRoomState roomState;
 
     private final ArrayList<Integer> walks = new ArrayList<>();
@@ -47,6 +48,7 @@ public class BloatHandler extends RoomHandler {
     {
         return "Bloat";
     }
+
     public void reset()
     {
         roomState = NOT_STARTED;
@@ -59,10 +61,11 @@ public class BloatHandler extends RoomHandler {
         super.reset();
     }
 
-    public void endBloat() {
+    public void endBloat()
+    {
         roomState = FINISHED;
         bloatDeathTick = client.getTickCount() + 3;
-        plugin.addLiveLine(1, client.getTickCount()-bloatStartTick, "Dead");
+        plugin.addLiveLine(1, client.getTickCount() - bloatStartTick, "Dead");
         clog.write(ACCURATE_BLOAT_END);
         plugin.liveFrame.setBloatFinished();
         if (bloatStartTick != -1)
@@ -89,18 +92,19 @@ public class BloatHandler extends RoomHandler {
         }
     }
 
-    public void start() {
+    public void start()
+    {
         bloatStartTick = client.getTickCount();
         roomStartTick = client.getTickCount();
         roomState = WALKING;
     }
 
-    private int getLastWalk() {
+    private int getLastWalk()
+    {
         if (!downs.isEmpty() && !walks.isEmpty() && downs.size() == walks.size())
         {
             return downs.get(downs.size() - 1) - walks.get(walks.size() - 1);
-        }
-        else
+        } else
         {
             return -1;
         }
@@ -111,8 +115,7 @@ public class BloatHandler extends RoomHandler {
         if (!downs.isEmpty())
         {
             return downs.get(downs.size() - 1) - bloatStartTick;
-        }
-        else
+        } else
         {
             return -1;
         }
@@ -128,56 +131,70 @@ public class BloatHandler extends RoomHandler {
         }
         downs.add(client.getTickCount());
         roomState = DOWN;
-        if (bloatStartTick != -1) {
+        if (bloatStartTick != -1)
+        {
             bloatDeferTick = client.getTickCount() + 5;
         }
-        plugin.addLiveLine(1, client.getTickCount()-bloatStartTick, "Down");
+        plugin.addLiveLine(1, client.getTickCount() - bloatStartTick, "Down");
     }
 
-    public void walk() {
+    public void walk()
+    {
         walks.add(client.getTickCount());
-        plugin.addLiveLine(1, client.getTickCount()-bloatStartTick, "Moving");
+        plugin.addLiveLine(1, client.getTickCount() - bloatStartTick, "Moving");
         roomState = WALKING;
     }
 
-    public void updateGameTick(GameTick event) {
-        if (bloatDeferTick != -1 && bloatDeferTick == client.getTickCount()) {
+    public void updateGameTick(GameTick event)
+    {
+        if (bloatDeferTick != -1 && bloatDeferTick == client.getTickCount())
+        {
             sendTimeMessage("Wave 'Bloat walk' complete! Duration: ", getLastWalk(), getLastDownTime(), true);
             bloatDeferTick = -1;
         }
-        if (bloatStartTick == -1 && RoomUtil.crossedLine(RoomUtil.BLOAT_REGION, new Point(39, 30), new Point(39, 33), true, client)) {
+        if (bloatStartTick == -1 && RoomUtil.crossedLine(RoomUtil.BLOAT_REGION, new Point(39, 30), new Point(39, 33), true, client))
+        {
             start();
             walk();
         }
 
-        if (RoomUtil.crossedLine(RoomUtil.BLOAT_REGION, new Point(4, 31), new Point(4, 32), true, client)) {
-            if (NyloHandler.instanceStart == -1) {
+        if (RoomUtil.crossedLine(RoomUtil.BLOAT_REGION, new Point(4, 31), new Point(4, 32), true, client))
+        {
+            if (NyloHandler.instanceStart == -1)
+            {
                 NyloHandler.instanceStart = client.getTickCount();
             }
         }
     }
 
-    public void updateAnimationChanged(AnimationChanged event) {
-        if (event.getActor().getAnimation() == BLOAT_DOWN_ANIMATION) {
+    public void updateAnimationChanged(AnimationChanged event)
+    {
+        if (event.getActor().getAnimation() == BLOAT_DOWN_ANIMATION)
+        {
             down();
-        } else if (event.getActor().getAnimation() == -1 && event.getActor().getCombatLevel() > 400) {
+        } else if (event.getActor().getAnimation() == -1 && event.getActor().getCombatLevel() > 400)
+        {
             walk();
         }
-        if (event.getActor().getAnimation() == BLOAT_DEATH_ANIMATION) {
+        if (event.getActor().getAnimation() == BLOAT_DEATH_ANIMATION)
+        {
             endBloat();
         }
         if (event.getActor().getAnimation() == 8056) //Player scythed
         {
-            if (event.getActor() instanceof Player) {
+            if (event.getActor() instanceof Player)
+            {
                 Player p = (Player) event.getActor();
                 clog.write(25, p.getName(), (client.getTickCount() - bloatStartTick) + "");
             }
         }
     }
 
-    public void updateNpcSpawned(NpcSpawned event) {
+    public void updateNpcSpawned(NpcSpawned event)
+    {
         boolean story = false;
-        switch (event.getNpc().getId()) {
+        switch (event.getNpc().getId())
+        {
             case BLOAT_SM:
                 story = true;
                 clog.write(IS_STORY_MODE);
@@ -197,9 +214,11 @@ public class BloatHandler extends RoomHandler {
         }
     }
 
-    public void updateNpcDespawned(NpcDespawned event) {
+    public void updateNpcDespawned(NpcDespawned event)
+    {
         int id = event.getNpc().getId();
-        if (id == BLOAT || id == BLOAT_HM || id == BLOAT_SM) {
+        if (id == BLOAT || id == BLOAT_HM || id == BLOAT_SM)
+        {
             clog.write(BLOAT_DESPAWN, "" + (client.getTickCount() - bloatStartTick));
         }
     }

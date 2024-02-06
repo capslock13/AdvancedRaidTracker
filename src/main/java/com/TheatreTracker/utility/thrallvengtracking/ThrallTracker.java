@@ -17,7 +17,8 @@ import java.util.Optional;
 import static com.TheatreTracker.constants.NpcIDs.*;
 
 @Slf4j
-public class ThrallTracker {
+public class ThrallTracker
+{
     private ArrayList<Player> queuedCastAnimation;
     private ArrayList<Player> queuedMageCastGraphic;
     private ArrayList<Player> queuedRangeCastGraphic;
@@ -29,7 +30,8 @@ public class ThrallTracker {
 
     private TheatreTrackerPlugin plugin;
 
-    public ThrallTracker(TheatreTrackerPlugin plugin) {
+    public ThrallTracker(TheatreTrackerPlugin plugin)
+    {
         this.plugin = plugin;
         queuedCastAnimation = new ArrayList<>();
         queuedMageCastGraphic = new ArrayList<>();
@@ -43,7 +45,7 @@ public class ThrallTracker {
     public void removeThrall(NPC npc)
     {
         Optional<Thrall> thrall2 = activeThralls.stream().filter(thrall1 -> thrall1.npc.getIndex() == npc.getIndex()).findAny();
-        if(thrall2.isPresent())
+        if (thrall2.isPresent())
         {
             Thrall t = thrall2.get();
             plugin.removeThrallBox(t);
@@ -137,13 +139,15 @@ public class ThrallTracker {
         handleCasts();
     }
 
-    public void castThrallAnimation(Player player) {
+    public void castThrallAnimation(Player player)
+    {
         queuedCastAnimation.add(player);
     }
 
     public void meleeThrallAttacked(NPC npc)
     {
-        for (Thrall thrall : activeThralls) {
+        for (Thrall thrall : activeThralls)
+        {
             if (npc.getIndex() == thrall.npc.getIndex() && thrall.isMelee && thrall.npc.getAnimation() == MELEE_THRALL_ATTACK_ANIMATION)
             {
                 if (thrall.lastParentInteraction instanceof NPC)
@@ -177,14 +181,14 @@ public class ThrallTracker {
                 {
                     plugin.clog.write(LogID.THRALL_ATTACKED, t.getOwner(), String.valueOf(projectile.getId()));
                     plugin.addQueuedThrallDamage(((NPC) (projectile.getInteracting())).getIndex(), t.npc.getIndex(), hitOffset, t.getOwner());
-                    if(plugin.isVerzP2())
+                    if (plugin.isVerzP2())
                     {
-                        if(plugin.verzShieldActive)
+                        if (plugin.verzShieldActive)
                         {
                             NPC npc = (NPC) projectile.getInteracting();
-                            if(npc.getId() == VERZIK_P2 || npc.getId() == VERZIK_P2_HM || npc.getId() == VERZIK_P2_SM)
+                            if (npc.getId() == VERZIK_P2 || npc.getId() == VERZIK_P2_HM || npc.getId() == VERZIK_P2_SM)
                             {
-                                log.info("Thrall attacked during shield, expected on tick " + (hitOffset+plugin.getTick()));
+                                log.info("Thrall attacked during shield, expected on tick " + (hitOffset + plugin.getTick()));
                                 plugin.thrallAttackedP2VerzikShield(hitOffset);
                             }
                         }
@@ -195,8 +199,10 @@ public class ThrallTracker {
         }
     }
 
-    public void playerHasThrallCastSpotAnim(Player player, int id) {
-        switch (id) {
+    public void playerHasThrallCastSpotAnim(Player player, int id)
+    {
+        switch (id)
+        {
             case THRALL_CAST_GRAPHIC_MELEE:
                 queuedMeleeCastGraphic.add(player);
                 break;
@@ -214,7 +220,8 @@ public class ThrallTracker {
         queuedThrallSpawn.add(new Thrall(thrall, adjacentPlayers, plugin.getRoomTick()));
     }
 
-    public void thrallDespawned(NPC thrall) {
+    public void thrallDespawned(NPC thrall)
+    {
 
     }
 

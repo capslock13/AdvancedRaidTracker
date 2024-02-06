@@ -28,8 +28,7 @@ public class RoomUtil
         try
         {
             return time(Integer.parseInt(ticks));
-        }
-        catch (Exception e)
+        } catch (Exception e)
         {
             return ticks;
         }
@@ -37,7 +36,7 @@ public class RoomUtil
 
     public static String varbitHPtoReadable(int varbitHP)
     {
-        return (varbitHP/10) + "." + (varbitHP%10) + "%";
+        return (varbitHP / 10) + "." + (varbitHP % 10) + "%";
     }
 
 
@@ -87,12 +86,13 @@ public class RoomUtil
                 NpcIDs.VERZIK_P2_SM,
                 NpcIDs.VERZIK_P3_SM,
         };
-        return (Arrays.stream(bosses).anyMatch(p->p==ID));
+        return (Arrays.stream(bosses).anyMatch(p -> p == ID));
     }
 
     public static String time(int ticks)
     {
-        if (ticks == 0 || ticks == Integer.MAX_VALUE || ticks == -1) {
+        if (ticks == 0 || ticks == Integer.MAX_VALUE || ticks == -1)
+        {
             return "-";
         }
         String timeStr = "";
@@ -115,13 +115,15 @@ public class RoomUtil
         {
             timeStr += ".0";
         }
-        if (minutes == 0) {
+        if (minutes == 0)
+        {
             timeStr += "s";
         }
         return timeStr;
     }
 
-    public static String time(double ticks) {
+    public static String time(double ticks)
+    {
         if (ticks == Integer.MAX_VALUE || ticks < 1)
         {
             return "-";
@@ -142,28 +144,39 @@ public class RoomUtil
         {
             String[] subStr = StringUtils.split(secondsString, ".");
             timeStr += "." + subStr[1];
-        } else {
+        } else
+        {
             timeStr += ".0";
         }
-        if (minutes == 0) {
+        if (minutes == 0)
+        {
             timeStr += "s";
         }
         return timeStr;
     }
 
-    public static boolean crossedLine(int region, Point start, Point end, boolean vertical, Client client) {
-        if (inRegion(client, region)) {
-            for (Player p : client.getPlayers()) {
+    public static boolean crossedLine(int region, Point start, Point end, boolean vertical, Client client)
+    {
+        if (inRegion(client, region))
+        {
+            for (Player p : client.getPlayers())
+            {
                 WorldPoint wp = p.getWorldLocation();
-                if (vertical) {
-                    for (int i = start.getY(); i < end.getY() + 1; i++) {
-                        if (wp.getRegionY() == i && wp.getRegionX() == start.getX()) {
+                if (vertical)
+                {
+                    for (int i = start.getY(); i < end.getY() + 1; i++)
+                    {
+                        if (wp.getRegionY() == i && wp.getRegionX() == start.getX())
+                        {
                             return true;
                         }
                     }
-                } else {
-                    for (int i = start.getX(); i < end.getX() + 1; i++) {
-                        if (wp.getRegionX() == i && wp.getRegionY() == start.getY()) {
+                } else
+                {
+                    for (int i = start.getX(); i < end.getX() + 1; i++)
+                    {
+                        if (wp.getRegionX() == i && wp.getRegionY() == start.getY())
+                        {
                             return true;
                         }
                     }
@@ -173,11 +186,16 @@ public class RoomUtil
         return false;
     }
 
-    public static boolean inRegion(Client client, int... regions) {
-        if (client.getMapRegions() != null) {
-            for (int i : client.getMapRegions()) {
-                for (int j : regions) {
-                    if (i == j) {
+    public static boolean inRegion(Client client, int... regions)
+    {
+        if (client.getMapRegions() != null)
+        {
+            for (int i : client.getMapRegions())
+            {
+                for (int j : regions)
+                {
+                    if (i == j)
+                    {
                         return true;
                     }
                 }

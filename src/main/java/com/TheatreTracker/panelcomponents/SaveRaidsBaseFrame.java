@@ -31,12 +31,11 @@ public class SaveRaidsBaseFrame extends BaseFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                if(RaidsManager.doesRaidExist(field.getText()))
+                if (RaidsManager.doesRaidExist(field.getText()))
                 {
-                    ConfirmationDialog dialog = new ConfirmationDialog(field.getText(), raids, (JFrame)(SwingUtilities.getRoot((Component) e.getSource())), 1);
+                    ConfirmationDialog dialog = new ConfirmationDialog(field.getText(), raids, (JFrame) (SwingUtilities.getRoot((Component) e.getSource())), 1);
                     dialog.open();
-                }
-                else
+                } else
                 {
                     RaidsManager.saveRaids(field.getText(), raids);
                     close();

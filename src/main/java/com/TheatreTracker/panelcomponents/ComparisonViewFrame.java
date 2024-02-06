@@ -7,6 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Map;
+
 @Slf4j
 public class ComparisonViewFrame extends BaseFrame
 {
@@ -22,18 +23,18 @@ public class ComparisonViewFrame extends BaseFrame
         pane.setBackground(Color.BLACK);
         pane.setOpaque(true);
         int index = 0;
-        for(Integer i : dataSets.keySet())
+        for (Integer i : dataSets.keySet())
         {
             String tabName = "";
-            if(i == 1)
+            if (i == 1)
                 tabName = "Solo";
-            if(i == 2)
+            if (i == 2)
                 tabName = "Duo";
-            if(i == 3)
+            if (i == 3)
                 tabName = "Trio";
-            if(i == 4)
+            if (i == 4)
                 tabName = "4-Man";
-            if(i == 5)
+            if (i == 5)
                 tabName = "5-Man";
             pane.addTab(tabName, new ComparisonViewPanel(dataSets.get(i), labelSets.get(index)));
             index++;

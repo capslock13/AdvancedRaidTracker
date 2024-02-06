@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import javax.swing.*;
 import java.awt.*;
 import java.util.*;
+
 @Slf4j
 public class ChartFrame extends BaseFrame
 {
@@ -15,15 +16,16 @@ public class ChartFrame extends BaseFrame
     public int getHighestTick(ArrayList<PlayerDidAttack> attacks, int start)
     {
         int max = start;
-        for(PlayerDidAttack attack : attacks)
+        for (PlayerDidAttack attack : attacks)
         {
-            if(attack.tick > max)
+            if (attack.tick > max)
             {
                 max = attack.tick;
             }
         }
         return max;
     }
+
     public ChartFrame(ArrayList<RoomData> roomData)
     {
         JTabbedPane basepane = new JTabbedPane();
@@ -65,7 +67,7 @@ public class ChartFrame extends BaseFrame
         verzp3Charts.setLayout(new BoxLayout(verzp3Charts, BoxLayout.Y_AXIS));
 
 
-        for(RoomData data : roomData)
+        for (RoomData data : roomData)
         {
             Map<Integer, String> maidenLines = new LinkedHashMap<>();
             maidenLines.put(data.getValue(DataPoint.MAIDEN_70_SPLIT), "70s");
@@ -73,90 +75,89 @@ public class ChartFrame extends BaseFrame
             maidenLines.put(data.getValue(DataPoint.MAIDEN_30_SPLIT), "30s");
 
             Map<Integer, String> bloatLines = new LinkedHashMap<>();
-            for(Integer i : data.bloatDowns)
+            for (Integer i : data.bloatDowns)
             {
                 bloatLines.put(i, "Down");
-                bloatLines.put(i+33, "Moving");
+                bloatLines.put(i + 33, "Moving");
             }
 
-            Map<Integer,String> nyloLines = new LinkedHashMap<>();
-            for(Integer i : data.nyloWaveStalled)
+            Map<Integer, String> nyloLines = new LinkedHashMap<>();
+            for (Integer i : data.nyloWaveStalled)
             {
                 nyloLines.put(i, "Stall");
             }
             nyloLines.put(data.getValue(DataPoint.NYLO_LAST_WAVE), "Last Wave");
             nyloLines.put(data.getValue(DataPoint.NYLO_BOSS_SPAWN), "Boss Spawn");
-            for(int i = data.getValue(DataPoint.NYLO_BOSS_SPAWN)+11; i < data.getNyloTime(); i+= 10)
+            for (int i = data.getValue(DataPoint.NYLO_BOSS_SPAWN) + 11; i < data.getNyloTime(); i += 10)
             {
                 nyloLines.put(i, "Phase");
             }
 
-            for(Integer i : data.waveSpawns.keySet())
+            for (Integer i : data.waveSpawns.keySet())
             {
-                nyloLines.put(data.waveSpawns.get(i), "W"+i);
+                nyloLines.put(data.waveSpawns.get(i), "W" + i);
             }
 
             Map<Integer, String> soteLines = new LinkedHashMap<>();
             soteLines.put(data.getValue(DataPoint.SOTE_P1_SPLIT), "Maze1 Start");
-            soteLines.put(data.getValue(DataPoint.SOTE_P1_SPLIT)+data.getValue(DataPoint.SOTE_M1_SPLIT), "Maze1 End");
+            soteLines.put(data.getValue(DataPoint.SOTE_P1_SPLIT) + data.getValue(DataPoint.SOTE_M1_SPLIT), "Maze1 End");
 
-            soteLines.put(data.getValue(DataPoint.SOTE_P2_SPLIT)+data.getValue(DataPoint.SOTE_P1_SPLIT)+data.getValue(DataPoint.SOTE_M1_SPLIT), "Maze2 Start");
-            soteLines.put(data.getValue(DataPoint.SOTE_P2_SPLIT)+data.getValue(DataPoint.SOTE_P1_SPLIT)+data.getValue(DataPoint.SOTE_M1_SPLIT)+data.getValue(DataPoint.SOTE_M2_SPLIT), "Maze2 End");
+            soteLines.put(data.getValue(DataPoint.SOTE_P2_SPLIT) + data.getValue(DataPoint.SOTE_P1_SPLIT) + data.getValue(DataPoint.SOTE_M1_SPLIT), "Maze2 Start");
+            soteLines.put(data.getValue(DataPoint.SOTE_P2_SPLIT) + data.getValue(DataPoint.SOTE_P1_SPLIT) + data.getValue(DataPoint.SOTE_M1_SPLIT) + data.getValue(DataPoint.SOTE_M2_SPLIT), "Maze2 End");
 
 
             Map<Integer, String> xarpLines = new LinkedHashMap<>();
             xarpLines.put(data.getValue(DataPoint.XARP_SCREECH), "SCREECH");
-            for(int i = data.getValue(DataPoint.XARP_SCREECH)+8; i < data.getXarpTime(); i+=8)
+            for (int i = data.getValue(DataPoint.XARP_SCREECH) + 8; i < data.getXarpTime(); i += 8)
             {
                 xarpLines.put(i, "Turn");
             }
 
             Map<Integer, String> verzikP2Lines = new LinkedHashMap<>();
-            for(Integer i : data.redsProc)
+            for (Integer i : data.redsProc)
             {
                 verzikP2Lines.put(i, "Reds");
-                verzikP2Lines.put(i+10, "Shield End");
+                verzikP2Lines.put(i + 10, "Shield End");
             }
 
-            for(Integer i : data.p2Crabs)
+            for (Integer i : data.p2Crabs)
             {
                 verzikP2Lines.put(i, "Crabs");
             }
 
             Map<Integer, String> verzikP3Lines = new LinkedHashMap<>();
-            for(Integer i : data.websStart)
+            for (Integer i : data.websStart)
             {
-                if(i%2==0)
+                if (i % 2 == 0)
                     verzikP3Lines.put(i, "Webs");
             }
 
-            for(Integer i : data.p3Crabs)
+            for (Integer i : data.p3Crabs)
             {
                 verzikP3Lines.put(i, "Crabs");
             }
 
             Map<Integer, String> dawnDropsMap = new LinkedHashMap<>();
-            for(Integer i : data.dawnDrops)
+            for (Integer i : data.dawnDrops)
             {
                 dawnDropsMap.put(i, "X");
             }
             ArrayList<Integer> p2autos = new ArrayList<>();
-            int lastreset = data.getValue(DataPoint.VERZIK_P1_SPLIT)+11;
-            for(int i = lastreset; i < data.getValue(DataPoint.VERZIK_P2_SPLIT); i++)
+            int lastreset = data.getValue(DataPoint.VERZIK_P1_SPLIT) + 11;
+            for (int i = lastreset; i < data.getValue(DataPoint.VERZIK_P2_SPLIT); i++)
             {
                 boolean wasNextTick = false;
-                for(Integer j : data.redsProc)
+                for (Integer j : data.redsProc)
                 {
-                    if(i == j)
+                    if (i == j)
                     {
-                        lastreset = i+11;
-                    }
-                    else if(i == (j-5) || i == (j-1))
+                        lastreset = i + 11;
+                    } else if (i == (j - 5) || i == (j - 1))
                     {
                         wasNextTick = true;
                     }
                 }
-                if((i-lastreset) % 4 == 0 && i >= lastreset && !wasNextTick)
+                if ((i - lastreset) % 4 == 0 && i >= lastreset && !wasNextTick)
                 {
                     p2autos.add(i);
                 }
@@ -167,16 +168,16 @@ public class ChartFrame extends BaseFrame
             int soteTime = data.getSoteTime();
             int xarpTime = data.getXarpTime();
             int verzP1Time = data.getValue(DataPoint.VERZIK_P1_SPLIT);
-            int verzP2Start = data.getValue(DataPoint.VERZIK_P1_SPLIT)+1;
+            int verzP2Start = data.getValue(DataPoint.VERZIK_P1_SPLIT) + 1;
             int verzP2Time = data.getValue(DataPoint.VERZIK_P2_SPLIT);
-            int verzP3Start = verzP2Time+1;
-            int verzP3Time  = data.getVerzikTime();
+            int verzP3Start = verzP2Time + 1;
+            int verzP3Time = data.getVerzikTime();
 
 
             ArrayList<Integer> p1autos = new ArrayList<>();
-            for(int i = 19; i < verzP1Time; i++)
+            for (int i = 19; i < verzP1Time; i++)
             {
-                if(i == 19 || (i-19)%14 == 0)
+                if (i == 19 || (i - 19) % 14 == 0)
                 {
                     p1autos.add(i);
                 }
@@ -187,7 +188,7 @@ public class ChartFrame extends BaseFrame
             maidenRCP.setRoomHP(data.maidenHP);
             maidenRCP.addAttacks(data.maidenAttacks);
             maidenRCP.setPlayers(new ArrayList<>(data.players.keySet()));
-            if(roomData.size() == 1)
+            if (roomData.size() == 1)
             {
                 maidenRCP.enableWrap();
             }
@@ -200,7 +201,7 @@ public class ChartFrame extends BaseFrame
             bloatRCP.setRoomHP(data.bloatHP);
             bloatRCP.addAttacks(data.bloatAttacks);
             bloatRCP.setPlayers(new ArrayList<>(data.players.keySet()));
-            if(roomData.size() == 1)
+            if (roomData.size() == 1)
             {
                 bloatRCP.enableWrap();
             }
@@ -214,7 +215,7 @@ public class ChartFrame extends BaseFrame
             nyloRCP.setRoomHP(data.nyloHP);
             nyloRCP.addAttacks(data.nyloAttacks);
             nyloRCP.setPlayers(new ArrayList<>(data.players.keySet()));
-            if(roomData.size() == 1)
+            if (roomData.size() == 1)
             {
                 nyloRCP.enableWrap();
             }
@@ -227,7 +228,7 @@ public class ChartFrame extends BaseFrame
             soteRCP.setRoomHP(data.soteHP);
             soteRCP.addAttacks(data.soteAttacks);
             soteRCP.setPlayers(new ArrayList<>(data.players.keySet()));
-            if(roomData.size() == 1)
+            if (roomData.size() == 1)
             {
                 soteRCP.enableWrap();
             }
@@ -240,7 +241,7 @@ public class ChartFrame extends BaseFrame
             xarpRCP.setRoomHP(data.xarpHP);
             xarpRCP.addAttacks(data.xarpAttacks);
             xarpRCP.setPlayers(new ArrayList<>(data.players.keySet()));
-            if(roomData.size() == 1)
+            if (roomData.size() == 1)
             {
                 xarpRCP.enableWrap();
             }
@@ -254,7 +255,7 @@ public class ChartFrame extends BaseFrame
             verzP1RCP.setRoomHP(data.verzikHP);
             verzP1RCP.addAttacks(data.verzAttacks);
             verzP1RCP.setPlayers(new ArrayList<>(data.players.keySet()));
-            if(roomData.size() == 1)
+            if (roomData.size() == 1)
             {
                 verzP1RCP.enableWrap();
             }
@@ -270,7 +271,7 @@ public class ChartFrame extends BaseFrame
             verzP2RCP.setRoomHP(data.verzikHP);
             verzP2RCP.addAttacks(data.verzAttacks);
             verzP2RCP.setPlayers(new ArrayList<>(data.players.keySet()));
-            if(roomData.size() == 1)
+            if (roomData.size() == 1)
             {
                 verzP2RCP.enableWrap();
             }
@@ -285,7 +286,7 @@ public class ChartFrame extends BaseFrame
 
             verzP3RCP.addAttacks(data.verzAttacks);
             verzP3RCP.setPlayers(new ArrayList<>(data.players.keySet()));
-            if(roomData.size() == 1)
+            if (roomData.size() == 1)
             {
                 verzP3RCP.enableWrap();
             }

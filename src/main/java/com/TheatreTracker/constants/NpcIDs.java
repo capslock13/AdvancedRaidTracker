@@ -1,6 +1,7 @@
 package com.TheatreTracker.constants;
 
-public class NpcIDs {
+public class NpcIDs
+{
 
     public final static int MAIDEN_BLOOD_PROJECTILE = 1578;
     public final static int MAIDEN_THROWN_BLOOD_GRAPHIC_OBJECT = 1579;

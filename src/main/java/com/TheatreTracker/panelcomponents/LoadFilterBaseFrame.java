@@ -9,6 +9,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.util.ArrayList;
+
 @Slf4j
 public class LoadFilterBaseFrame extends BaseFrame
 {
@@ -22,9 +23,9 @@ public class LoadFilterBaseFrame extends BaseFrame
             {
                 TableCellRenderer renderer = table.getCellRenderer(row, column);
                 Component comp = table.prepareRenderer(renderer, row, column);
-                width = Math.max(comp.getPreferredSize().width +1 , width);
+                width = Math.max(comp.getPreferredSize().width + 1, width);
             }
-            if(width > 400)
+            if (width > 400)
             {
                 width = 400;
             }
@@ -42,7 +43,7 @@ public class LoadFilterBaseFrame extends BaseFrame
         ArrayList<Object[]> tableBuilder = new ArrayList<>();
 
         ArrayList<Filter> filters = FilterManager.getFilters();
-        for(Filter filter : filters)
+        for (Filter filter : filters)
         {
             Object[] row =
                     {
@@ -55,7 +56,7 @@ public class LoadFilterBaseFrame extends BaseFrame
         }
         Object[][] tableObject = new Object[filters.size()][4];
         int count = 0;
-        for(Object[] row : tableBuilder)
+        for (Object[] row : tableBuilder)
         {
             tableObject[count] = row;
             count++;

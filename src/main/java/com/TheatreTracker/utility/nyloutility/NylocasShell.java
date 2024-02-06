@@ -3,7 +3,8 @@ package com.TheatreTracker.utility.nyloutility;
 import static com.TheatreTracker.constants.NpcIDs.*;
 import static com.TheatreTracker.constants.NpcIDs.NYLO_MELEE_SMALL_AGRO_SM;
 
-public class NylocasShell {
+public class NylocasShell
+{
     public int style;
     public NylocasData.NyloPosition position;
 
@@ -14,7 +15,7 @@ public class NylocasShell {
 
     public static String getTypeName(int id)
     {
-        switch(id)
+        switch (id)
         {
             case NYLO_MELEE_SMALL:
             case NYLO_MELEE_SMALL_AGRO:
@@ -60,9 +61,9 @@ public class NylocasShell {
                 type = "mage";
                 break;
         }
-        if(style > 2)
+        if (style > 2)
         {
-            switch(position) //spawn position for bigs is shared with littles on south/west, but southwest tile of east big is in unique spot
+            switch (position) //spawn position for bigs is shared with littles on south/west, but southwest tile of east big is in unique spot
             {
                 case EAST_BIG:
                     return "east big " + type;
@@ -125,32 +126,25 @@ public class NylocasShell {
         if (x == 9 && y == 25)
         {
             position = NylocasData.NyloPosition.WEST_NORTH;
-        }
-        else if (x == 9 && y == 24)
+        } else if (x == 9 && y == 24)
         {
             position = NylocasData.NyloPosition.WEST_SOUTH;
-        }
-        else if (x == 23 && y == 9)
+        } else if (x == 23 && y == 9)
         {
             position = NylocasData.NyloPosition.SOUTH_WEST;
-        }
-        else if (x == 24 && y == 9)
+        } else if (x == 24 && y == 9)
         {
             position = NylocasData.NyloPosition.SOUTH_EAST;
-        }
-        else if (x == 38 && y == 24)
+        } else if (x == 38 && y == 24)
         {
             position = NylocasData.NyloPosition.EAST_SOUTH;
-        }
-        else if (x == 38 && y == 25)
+        } else if (x == 38 && y == 25)
         {
             position = NylocasData.NyloPosition.EAST_NORTH;
-        }
-        else if (x == 37 && y == 24)
+        } else if (x == 37 && y == 24)
         {
             position = NylocasData.NyloPosition.EAST_BIG;
-        }
-        else
+        } else
         {
             position = NylocasData.NyloPosition.ROOM;
         }

@@ -18,43 +18,38 @@ public class WeaponDecider
             projectile = Integer.parseInt(projectileS);
             weapon = Integer.parseInt(weaponS);
             animation = Integer.parseInt(animationS);
-        }
-        catch (Exception e)
+        } catch (Exception e)
         {
             return weaponUsed;
         }
-        switch(animation)
+        switch (animation)
         {
             case 5061:
             case 10656:
-                if(projectile == 1043 || projectile == 2599)
+                if (projectile == 1043 || projectile == 2599)
                 {
                     weaponUsed = WeaponAttack.BLOWPIPE_SPEC;
-                }
-                else
+                } else
                 {
                     weaponUsed = WeaponAttack.BLOWPIPE;
                 }
                 break;
             case 1167:
-                if(spotAnims.stream().anyMatch(p->p.equalsIgnoreCase("1540")))
+                if (spotAnims.stream().anyMatch(p -> p.equalsIgnoreCase("1540")))
                 {
                     weaponUsed = WeaponAttack.SANG;
-                }
-                else
+                } else
                 {
-                    if(weapon == 22516)
+                    if (weapon == 22516)
                     {
-                        if(projectile == 1547)
+                        if (projectile == 1547)
                         {
                             weaponUsed = WeaponAttack.DAWN_SPEC;
-                        }
-                        else
+                        } else
                         {
                             weaponUsed = WeaponAttack.DAWN_AUTO;
                         }
-                    }
-                    else
+                    } else
                     {
                         weaponUsed = WeaponAttack.SANG;
                     }
@@ -69,11 +64,11 @@ public class WeaponDecider
             case 7511:
                 //if(spotAnims.stream().anyMatch(p->p.contains("1336") || p.contains("2623")))
                 //{
-                  //  weaponUsed = WeaponAttack.DINHS_SPEC;
+                //  weaponUsed = WeaponAttack.DINHS_SPEC;
                 //}
                 //else
                 //{
-                    weaponUsed = WeaponAttack.DINHS_SPEC;
+                weaponUsed = WeaponAttack.DINHS_SPEC;
                 //}
                 break;
             case 7618:
@@ -100,7 +95,7 @@ public class WeaponDecider
                 break;
             case 7642:
             case 7643:
-                weaponUsed= WeaponAttack.BGS_SPEC;
+                weaponUsed = WeaponAttack.BGS_SPEC;
                 break;
             case 7045:
                 weaponUsed = WeaponAttack.BGS_WHACK;
@@ -109,11 +104,10 @@ public class WeaponDecider
                 weaponUsed = WeaponAttack.TBOW;
                 break;
             case 9168:
-                if(projectile == 1468)
+                if (projectile == 1468)
                 {
                     weaponUsed = WeaponAttack.ZCB_AUTO;
-                }
-                else if(projectile == 1995)
+                } else if (projectile == 1995)
                 {
                     weaponUsed = WeaponAttack.ZCB_SPEC;
                 }

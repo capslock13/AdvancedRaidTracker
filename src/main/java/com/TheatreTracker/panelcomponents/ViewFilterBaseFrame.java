@@ -5,6 +5,7 @@ import com.TheatreTracker.filters.Filter;
 
 import javax.swing.*;
 import java.awt.*;
+
 @Slf4j
 public class ViewFilterBaseFrame extends BaseFrame
 {
@@ -17,12 +18,12 @@ public class ViewFilterBaseFrame extends BaseFrame
         mainPanel.setBorder(BorderFactory.createTitledBorder("Filter Details"));
         JPanel pane = new JPanel();
         pane.setLayout(new GridLayout(10, 1));
-        for(String s : filter.getFilters())
+        for (String s : filter.getFilters())
         {
             String[] splitString = s.split("-");
-            if(splitString.length != 0)
+            if (splitString.length != 0)
             {
-                JLabel label = new JLabel(splitString[splitString.length-1]);
+                JLabel label = new JLabel(splitString[splitString.length - 1]);
                 pane.add(label);
             }
         }

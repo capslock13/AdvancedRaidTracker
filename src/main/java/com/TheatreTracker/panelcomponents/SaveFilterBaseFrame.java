@@ -31,12 +31,11 @@ public class SaveFilterBaseFrame extends BaseFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                if(FilterManager.doesFilterExist(field.getText()))
+                if (FilterManager.doesFilterExist(field.getText()))
                 {
-                    ConfirmationDialog dialog = new ConfirmationDialog(field.getText(), filters, (JFrame)(SwingUtilities.getRoot((Component) e.getSource())));
+                    ConfirmationDialog dialog = new ConfirmationDialog(field.getText(), filters, (JFrame) (SwingUtilities.getRoot((Component) e.getSource())));
                     dialog.open();
-                }
-                else
+                } else
                 {
                     FilterManager.saveFilter(field.getText(), filters);
                     close();

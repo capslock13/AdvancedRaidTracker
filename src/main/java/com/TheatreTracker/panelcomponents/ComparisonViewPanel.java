@@ -71,6 +71,7 @@ public class ComparisonViewPanel extends JPanel
     JSpinner groupOffsetSpinner;
 
     JCheckBox groupingEnabled;
+
     public ComparisonViewPanel(ArrayList<ArrayList<RoomData>> raidData, ArrayList<String> names)
     {
         leftLabel = new JTextField("Min cutoff: ");
@@ -103,27 +104,29 @@ public class ComparisonViewPanel extends JPanel
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                for(GraphPanel panel : topGraphs)
+                for (GraphPanel panel : topGraphs)
                 {
                     panel.setGraphType(graphTypeComboBox.getSelectedIndex());
                 }
-                for(GraphPanel panel : bottomGraphs)
+                for (GraphPanel panel : bottomGraphs)
                 {
                     panel.setGraphType(graphTypeComboBox.getSelectedIndex());
                 }
             }
         });
-        groupingEnabled.addActionListener(new ActionListener() {
+        groupingEnabled.addActionListener(new ActionListener()
+        {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                for(GraphPanel panel : topGraphs)
+            public void actionPerformed(ActionEvent e)
+            {
+                for (GraphPanel panel : topGraphs)
                 {
                     panel.setGroupingEnabled(groupingEnabled.isSelected());
                     panel.updateGroupOffset((Integer) groupOffsetSpinner.getValue());
                     panel.updateGroupSize((Integer) groupSizeSpinner.getValue());
 
                 }
-                for(GraphPanel panel : bottomGraphs)
+                for (GraphPanel panel : bottomGraphs)
                 {
                     panel.setGroupingEnabled(groupingEnabled.isSelected());
                     panel.updateGroupOffset((Integer) groupOffsetSpinner.getValue());
@@ -137,33 +140,37 @@ public class ComparisonViewPanel extends JPanel
             }
         });
 
-        groupSizeSpinner.addChangeListener(new ChangeListener() {
+        groupSizeSpinner.addChangeListener(new ChangeListener()
+        {
             @Override
-            public void stateChanged(ChangeEvent e) {
-                for(GraphPanel panel : topGraphs)
+            public void stateChanged(ChangeEvent e)
+            {
+                for (GraphPanel panel : topGraphs)
                 {
-                    panel.updateGroupSize((int)groupSizeSpinner.getValue());
+                    panel.updateGroupSize((int) groupSizeSpinner.getValue());
                 }
-                for(GraphPanel panel : bottomGraphs)
+                for (GraphPanel panel : bottomGraphs)
                 {
-                    panel.updateGroupSize((int)groupSizeSpinner.getValue());
+                    panel.updateGroupSize((int) groupSizeSpinner.getValue());
                 }
-                spinnerOffsetModel.setMaximum((int)groupSizeSpinner.getValue()-1);
+                spinnerOffsetModel.setMaximum((int) groupSizeSpinner.getValue() - 1);
             }
         });
 
-        groupOffsetSpinner.addChangeListener(new ChangeListener() {
+        groupOffsetSpinner.addChangeListener(new ChangeListener()
+        {
             @Override
-            public void stateChanged(ChangeEvent e) {
-                for(GraphPanel panel : topGraphs)
+            public void stateChanged(ChangeEvent e)
+            {
+                for (GraphPanel panel : topGraphs)
                 {
-                    panel.updateGroupOffset((int)groupOffsetSpinner.getValue());
+                    panel.updateGroupOffset((int) groupOffsetSpinner.getValue());
                 }
-                for(GraphPanel panel : bottomGraphs)
+                for (GraphPanel panel : bottomGraphs)
                 {
-                    panel.updateGroupOffset((int)groupOffsetSpinner.getValue());
+                    panel.updateGroupOffset((int) groupOffsetSpinner.getValue());
                 }
-                spinnerSizeModel.setMinimum((int)groupOffsetSpinner.getValue()+1);
+                spinnerSizeModel.setMinimum((int) groupOffsetSpinner.getValue() + 1);
             }
         });
 
@@ -197,7 +204,7 @@ public class ComparisonViewPanel extends JPanel
         });
         bottomGraphTabs = new JTabbedPane();
         bottomGraphTabs.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
-        bottomGraphTabs.addChangeListener(cl->
+        bottomGraphTabs.addChangeListener(cl ->
         {
             switchGraphData();
             updateOtherPanels();
@@ -220,31 +227,34 @@ public class ComparisonViewPanel extends JPanel
 
         comboStrictData = new ArrayList<String>();
 
-        for(String category : allComboValues)
+        for (String category : allComboValues)
         {
             JMenu menu = new JMenu(category);
             menu.setBackground(Color.BLACK);
             menu.setOpaque(true);
-            if(!category.equals("Room Times") && !category.equals("Any"))
+            if (!category.equals("Room Times") && !category.equals("Any"))
             {
                 JMenu timeMenu = new JMenu("Time");
                 timeMenu.setBackground(Color.BLACK);
                 timeMenu.setOpaque(true);
-                for (String itemName : DataPoint.filterTimes(comboPopupData.get(category))) {
+                for (String itemName : DataPoint.filterTimes(comboPopupData.get(category)))
+                {
                     timeMenu.add(createMenuItem(itemName));
                     comboStrictData.add(itemName);
                 }
                 JMenu countMenu = new JMenu("Misc");
                 countMenu.setBackground(Color.BLACK);
                 countMenu.setOpaque(true);
-                for (String itemName : DataPoint.filterInt(comboPopupData.get(category))) {
+                for (String itemName : DataPoint.filterInt(comboPopupData.get(category)))
+                {
                     countMenu.add(createMenuItem(itemName));
                     comboStrictData.add(itemName);
                 }
                 JMenu thrallMenu = new JMenu("Thrall");
                 thrallMenu.setBackground(Color.BLACK);
                 thrallMenu.setOpaque(true);
-                for (String itemName : DataPoint.filterThrall(comboPopupData.get(category))) {
+                for (String itemName : DataPoint.filterThrall(comboPopupData.get(category)))
+                {
                     thrallMenu.add(createMenuItem(itemName));
                     comboStrictData.add(itemName);
                 }
@@ -271,10 +281,9 @@ public class ComparisonViewPanel extends JPanel
                 menu.add(thrallMenu);
                 menu.add(vengMenu);
                 menu.add(specMenu);
-            }
-            else
+            } else
             {
-                for(String itemName : comboPopupData.get(category))
+                for (String itemName : comboPopupData.get(category))
                 {
                     menu.add(createMenuItem(itemName));
                     comboStrictData.add(itemName);
@@ -287,16 +296,17 @@ public class ComparisonViewPanel extends JPanel
         compareByComboBox.setPrototypeDisplayValue("Maiden Time");
         compareByComboBox.setSelectedItem("Maiden Time");
         compareByComboBox.setEditable(false);
-        for(Component comp : compareByComboBox.getComponents())
+        for (Component comp : compareByComboBox.getComponents())
         {
-            if(comp instanceof AbstractButton)
+            if (comp instanceof AbstractButton)
             {
                 arrowButton = (AbstractButton) comp;
                 arrowButton.setBackground(Color.BLACK);
             }
         }
 
-        arrowButton.addActionListener(new ActionListener() {
+        arrowButton.addActionListener(new ActionListener()
+        {
             @Override
             public void actionPerformed(ActionEvent e)
             {
@@ -304,7 +314,8 @@ public class ComparisonViewPanel extends JPanel
             }
         });
 
-        compareByComboBox.addMouseListener(new MouseAdapter() {
+        compareByComboBox.addMouseListener(new MouseAdapter()
+        {
             @Override
             public void mouseClicked(MouseEvent e)
             {
@@ -312,18 +323,18 @@ public class ComparisonViewPanel extends JPanel
             }
         });
 
-        compareByComboBox.addActionListener(al->
+        compareByComboBox.addActionListener(al ->
         {
             switchGraphData();
             updateOtherPanels();
         });
 
-        matchYScales.addActionListener(al->
+        matchYScales.addActionListener(al ->
         {
             switchGraphData();
         });
 
-        matchXScales.addActionListener(al->
+        matchXScales.addActionListener(al ->
         {
             switchGraphData();
             leftCutOff.setEnabled(matchXScales.isSelected());
@@ -387,8 +398,7 @@ public class ComparisonViewPanel extends JPanel
         if (visible)
         {
             comboPopupMenu.show(compareByComboBox, 0, compareByComboBox.getSize().height);
-        }
-        else
+        } else
         {
             comboPopupMenu.setVisible(false);
         }
@@ -396,23 +406,22 @@ public class ComparisonViewPanel extends JPanel
 
     private void switchGraphData()
     {
-        if(topGraphs.size() != bottomGraphs.size())
+        if (topGraphs.size() != bottomGraphs.size())
         {
             return;
         }
         int xHigh = 0;
         int xLow = Integer.MAX_VALUE;
         int yHigh = 0;
-        if(!compareByComboBox.getSelectedItem().toString().contains("Player:"))
+        if (!compareByComboBox.getSelectedItem().toString().contains("Player:"))
         {
             time = Objects.requireNonNull(DataPoint.getValue(Objects.requireNonNull(compareByComboBox.getSelectedItem()).toString())).type == DataPoint.types.TIME;
-        }
-        else
+        } else
         {
             time = false;
         }
 
-        for(int i = 0; i < topGraphs.size(); i++)
+        for (int i = 0; i < topGraphs.size(); i++)
         {
             topGraphs.get(i).switchKey(Objects.requireNonNull(DataPoint.getValue(Objects.requireNonNull(compareByComboBox.getSelectedItem()).toString())));
             bottomGraphs.get(i).switchKey(Objects.requireNonNull(DataPoint.getValue(Objects.requireNonNull(compareByComboBox.getSelectedItem()).toString())));
@@ -442,11 +451,11 @@ public class ComparisonViewPanel extends JPanel
         updateSliders();
         container.repaint();
         valX = xHigh;
-        if(matchYScales.isSelected())
+        if (matchYScales.isSelected())
         {
             setYScales(yHigh);
         }
-        if(matchXScales.isSelected())
+        if (matchXScales.isSelected())
         {
             setXScales(xLow, xHigh);
         }
@@ -457,7 +466,7 @@ public class ComparisonViewPanel extends JPanel
 
     private void setXScales(int xLow, int xHigh)
     {
-        for(int i = 0; i < topGraphs.size(); i++)
+        for (int i = 0; i < topGraphs.size(); i++)
         {
             topGraphs.get(i).setScales(xLow, xHigh, topGraphs.get(i).getScaleYHigh());
             bottomGraphs.get(i).setScales(xLow, xHigh, bottomGraphs.get(i).getScaleYHigh());
@@ -466,7 +475,7 @@ public class ComparisonViewPanel extends JPanel
 
     private void setYScales(int yHigh)
     {
-        for(int i = 0; i < topGraphs.size(); i++)
+        for (int i = 0; i < topGraphs.size(); i++)
         {
             topGraphs.get(i).setScales(topGraphs.get(i).getScaleXLow(), topGraphs.get(i).getScaleXHigh(), yHigh);
             bottomGraphs.get(i).setScales(bottomGraphs.get(i).getScaleXLow(), bottomGraphs.get(i).getScaleXHigh(), yHigh);
@@ -475,7 +484,7 @@ public class ComparisonViewPanel extends JPanel
 
     private void redrawGraphs(int xLow, int xHigh)
     {
-        for(int i = 0; i < topGraphs.size(); i++)
+        for (int i = 0; i < topGraphs.size(); i++)
         {
             topGraphs.get(i).setScales(xLow, xHigh, topGraphs.get(i).getScaleYHigh());
             bottomGraphs.get(i).setScales(xLow, xHigh, bottomGraphs.get(i).getScaleYHigh());
@@ -489,7 +498,7 @@ public class ComparisonViewPanel extends JPanel
 
     private void redrawGraphs()
     {
-        for(int i = 0; i < topGraphs.size(); i++)
+        for (int i = 0; i < topGraphs.size(); i++)
         {
             topGraphs.get(i).setBounds();
             topGraphs.get(i).drawGraph();
@@ -500,7 +509,7 @@ public class ComparisonViewPanel extends JPanel
 
     private void updateCutoffs()
     {
-        if(matchXScales.isSelected())
+        if (matchXScales.isSelected())
         {
             redrawGraphs(leftCutOff.getValue(), rightCutOff.getMaximum() - rightCutOff.getValue() + rightCutOff.getMinimum());
 
@@ -509,15 +518,15 @@ public class ComparisonViewPanel extends JPanel
 
     private void updateSliders()
     {
-        int leftExtent = rightCutOff.getValue()-rightCutOff.getMinimum();
-        int rightExtent = leftCutOff.getValue()-leftCutOff.getMinimum();
+        int leftExtent = rightCutOff.getValue() - rightCutOff.getMinimum();
+        int rightExtent = leftCutOff.getValue() - leftCutOff.getMinimum();
         rightCutOff.setExtent(rightExtent);
         leftCutOff.setExtent(leftExtent);
 
         //For some unbelievably bizarre reasons extents can only be set for the upper bound so we have to inverse it
 
         leftLabel.setText("Min cutoff: " + ((time) ? RoomUtil.time(leftCutOff.getValue()) : leftCutOff.getValue()));
-        rightLabel.setText("Max cutoff: " + ((time) ? RoomUtil.time(rightCutOff.getMaximum()-rightCutOff.getValue()+rightCutOff.getMinimum()) : rightCutOff.getMaximum()-rightCutOff.getValue()+rightCutOff.getMinimum()));
+        rightLabel.setText("Max cutoff: " + ((time) ? RoomUtil.time(rightCutOff.getMaximum() - rightCutOff.getValue() + rightCutOff.getMinimum()) : rightCutOff.getMaximum() - rightCutOff.getValue() + rightCutOff.getMinimum()));
         updateCutoffs();
     }
 
@@ -530,47 +539,47 @@ public class ComparisonViewPanel extends JPanel
     private ArrayList<Integer> getArrayForStatistics(ArrayList<RoomData> data)
     {
         ArrayList<Integer> arrayToPass = new ArrayList<>();
-        for(RoomData raidData : data)
+        for (RoomData raidData : data)
         {
             int value = raidData.getValue(DataPoint.getValue(String.valueOf(compareByComboBox.getSelectedItem())));
-            if(value > -1)
+            if (value > -1)
             {
-                if(!time || value != 0)
+                if (!time || value != 0)
                 {
-                    switch((Objects.requireNonNull(DataPoint.getValue(String.valueOf(compareByComboBox.getSelectedItem())))).room)
+                    switch ((Objects.requireNonNull(DataPoint.getValue(String.valueOf(compareByComboBox.getSelectedItem())))).room)
                     {
                         case MAIDEN:
-                            if(!raidData.maidenStartAccurate || !raidData.maidenEndAccurate)
+                            if (!raidData.maidenStartAccurate || !raidData.maidenEndAccurate)
                             {
                                 continue;
                             }
                             break;
                         case BLOAT:
-                            if(!raidData.bloatStartAccurate || !raidData.bloatEndAccurate)
+                            if (!raidData.bloatStartAccurate || !raidData.bloatEndAccurate)
                             {
                                 continue;
                             }
                             break;
                         case NYLOCAS:
-                            if(!raidData.nyloStartAccurate || !raidData.nyloEndAccurate)
+                            if (!raidData.nyloStartAccurate || !raidData.nyloEndAccurate)
                             {
                                 continue;
                             }
                             break;
                         case SOTETSEG:
-                            if(!raidData.soteStartAccurate || !raidData.soteEndAccurate)
+                            if (!raidData.soteStartAccurate || !raidData.soteEndAccurate)
                             {
                                 continue;
                             }
                             break;
                         case XARPUS:
-                            if(!raidData.xarpStartAccurate || !raidData.xarpEndAccurate)
+                            if (!raidData.xarpStartAccurate || !raidData.xarpEndAccurate)
                             {
                                 continue;
                             }
                             break;
                         case VERZIK:
-                            if(!raidData.verzikStartAccurate || !raidData.verzikEndAccurate)
+                            if (!raidData.verzikStartAccurate || !raidData.verzikEndAccurate)
                             {
                                 continue;
                             }
@@ -585,13 +594,14 @@ public class ComparisonViewPanel extends JPanel
 
     private String getString(double val)
     {
-        return (time) ? RoomUtil.time(val) : ""+Math.round(val*100.0)/100.0;
+        return (time) ? RoomUtil.time(val) : "" + Math.round(val * 100.0) / 100.0;
     }
+
     private void updateOtherPanels()
     {
         panelName = "Other - " + compareByComboBox.getSelectedItem();
         otherPanel.setBorder(BorderFactory.createTitledBorder(panelName));
-        if(topGraphTabs.getSelectedIndex() != -1 && bottomGraphTabs.getSelectedIndex() != -1 && built)
+        if (topGraphTabs.getSelectedIndex() != -1 && bottomGraphTabs.getSelectedIndex() != -1 && built)
         {
             otherTopLeft.setBorder(BorderFactory.createTitledBorder(topGraphTabs.getTitleAt(topGraphTabs.getSelectedIndex())));
             otherTopRight.setBorder(BorderFactory.createTitledBorder(bottomGraphTabs.getTitleAt(bottomGraphTabs.getSelectedIndex())));
@@ -618,30 +628,30 @@ public class ComparisonViewPanel extends JPanel
             double g2max = StatisticGatherer.getGenericMax(getArrayForStatistics(bottomGraphData));
             double g2min = StatisticGatherer.getGenericMin(getArrayForStatistics(bottomGraphData));
 
-            String g1as = (g1a<g2a) ? better : g2a==g1a ? even : worse;
-            String g1meds = (g1med<g2med) ? better : g2med==g1med ? even : worse;
-            String g1mods = (g1mod<g2mod) ? better : g2mod==g1mod ? even : worse;
-            String g1maxs = (g1max<g2max) ? better : g2max==g1max ? even : worse;
-            String g1mins = (g1min<g2min) ? better : g2min==g1min ? even : worse;
+            String g1as = (g1a < g2a) ? better : g2a == g1a ? even : worse;
+            String g1meds = (g1med < g2med) ? better : g2med == g1med ? even : worse;
+            String g1mods = (g1mod < g2mod) ? better : g2mod == g1mod ? even : worse;
+            String g1maxs = (g1max < g2max) ? better : g2max == g1max ? even : worse;
+            String g1mins = (g1min < g2min) ? better : g2min == g1min ? even : worse;
 
-            String g2as = (g1a>g2a) ? better : g2a==g1a ? even : worse;
-            String g2meds = (g1med>g2med) ? better : g2med==g1med ? even : worse;
-            String g2mods = (g1mod>g2mod) ? better : g2mod==g1mod ? even : worse;
-            String g2maxs = (g1max>g2max) ? better : g2max==g1max ? even : worse;
-            String g2mins = (g1min>g2min) ? better : g2min==g1min ? even : worse;
+            String g2as = (g1a > g2a) ? better : g2a == g1a ? even : worse;
+            String g2meds = (g1med > g2med) ? better : g2med == g1med ? even : worse;
+            String g2mods = (g1mod > g2mod) ? better : g2mod == g1mod ? even : worse;
+            String g2maxs = (g1max > g2max) ? better : g2max == g1max ? even : worse;
+            String g2mins = (g1min > g2min) ? better : g2min == g1min ? even : worse;
 
 
-            graph1Average.setText(g1as+getString(g1a));
-            graph1Median.setText(g1meds+getString(g1med));
-            graph1Mode.setText(g1mods+getString(g1mod));
-            graph1Maximum.setText(g1maxs+getString(g1max));
-            graph1Minimum.setText(g1mins+getString(g1min));
+            graph1Average.setText(g1as + getString(g1a));
+            graph1Median.setText(g1meds + getString(g1med));
+            graph1Mode.setText(g1mods + getString(g1mod));
+            graph1Maximum.setText(g1maxs + getString(g1max));
+            graph1Minimum.setText(g1mins + getString(g1min));
 
-            graph2Average.setText(g2as+getString(g2a));
-            graph2Median.setText(g2meds+getString(g2med));
-            graph2Mode.setText(g2mods+getString(g2mod));
-            graph2Maximum.setText(g2maxs+getString(g2max));
-            graph2Minimum.setText(g2mins+getString(g2min));
+            graph2Average.setText(g2as + getString(g2a));
+            graph2Median.setText(g2meds + getString(g2med));
+            graph2Mode.setText(g2mods + getString(g2mod));
+            graph2Maximum.setText(g2maxs + getString(g2max));
+            graph2Minimum.setText(g2mins + getString(g2min));
 
             ArrayList<Integer> topSet = GraphPanel.getCounts(getArrayForStatistics(topGraphData), valX);
             ArrayList<Integer> bottomSet = GraphPanel.getCounts(getArrayForStatistics(bottomGraphData), valX);
@@ -654,11 +664,11 @@ public class ComparisonViewPanel extends JPanel
 
             int total = GraphPanel.getCountedTotal(topSet);
             int count = 0;
-            for(int i = 0; i < topSet.size(); i++)
+            for (int i = 0; i < topSet.size(); i++)
             {
-                if(topSet.get(i) > 0)
+                if (topSet.get(i) > 0)
                 {
-                    String percent = Math.round((100.0 * topSet.get(i) / (double) total)*100.0)/100.0 + "%";
+                    String percent = Math.round((100.0 * topSet.get(i) / (double) total) * 100.0) / 100.0 + "%";
                     scrollTopPanel.add(new JLabel(getString(i), SwingConstants.LEFT));
                     scrollTopPanel.add(new JLabel(topSet.get(i) + " (" + percent + ")", SwingConstants.RIGHT));
                     count++;
@@ -666,13 +676,13 @@ public class ComparisonViewPanel extends JPanel
             }
 
             int altCount = 0;
-            for(int i = count; i < 16; i++)
+            for (int i = count; i < 16; i++)
             {
                 scrollTopPanel.add(new JLabel());
                 scrollTopPanel.add(new JLabel());
                 altCount++;
             }
-            scrollTopPanel.setLayout(new GridLayout(count+1+altCount, 2));
+            scrollTopPanel.setLayout(new GridLayout(count + 1 + altCount, 2));
             count = 0;
 
             scrollBottomPanel.add(new JLabel("Value", SwingConstants.LEFT));
@@ -680,35 +690,36 @@ public class ComparisonViewPanel extends JPanel
 
             total = GraphPanel.getCountedTotal(bottomSet);
 
-            for(int i = 0; i < bottomSet.size(); i++)
+            for (int i = 0; i < bottomSet.size(); i++)
             {
-                if(bottomSet.get(i) > 0)
+                if (bottomSet.get(i) > 0)
                 {
-                    String percent = Math.round((100.0 * bottomSet.get(i) / (double) total)*100.0)/100.0 + "%";
+                    String percent = Math.round((100.0 * bottomSet.get(i) / (double) total) * 100.0) / 100.0 + "%";
                     scrollBottomPanel.add(new JLabel(getString(i), SwingConstants.LEFT));
                     scrollBottomPanel.add(new JLabel(bottomSet.get(i) + " (" + percent + ")", SwingConstants.RIGHT));
                     count++;
                 }
             }
             altCount = 0;
-            for(int i = count; i < 16; i++)
+            for (int i = count; i < 16; i++)
             {
                 scrollBottomPanel.add(new JLabel());
                 scrollBottomPanel.add(new JLabel());
                 altCount++;
             }
-            scrollBottomPanel.setLayout(new GridLayout(count+1+altCount, 2));
+            scrollBottomPanel.setLayout(new GridLayout(count + 1 + altCount, 2));
 
             scrollTopPanel.validate();
             scrollBottomPanel.validate();
         }
         container.repaint();
     }
+
     private boolean built = false;
 
     private void buildUI()
     {
-        for(int i = 0; i < data.size(); i++)
+        for (int i = 0; i < data.size(); i++)
         {
             GraphPanel topGraph = getGraphPanel(data.get(i));
             GraphPanel bottomGraph = getGraphPanel(data.get(i));
@@ -738,27 +749,29 @@ public class ComparisonViewPanel extends JPanel
         leftCutOff.setPaintTicks(true);
         leftCutOff.setPaintTrack(true);
 
-        leftCutOff.addChangeListener(cl->
+        leftCutOff.addChangeListener(cl ->
         {
             Object source = cl.getSource();
-            if(source instanceof JSlider)
-            {
-                if(((JSlider) source).getValueIsAdjusting())
-                {
-                    updateSliders();
-                }
-            }});
-
-        rightCutOff.addChangeListener(cl->
-        {
-            Object source = cl.getSource();
-            if(source instanceof JSlider)
+            if (source instanceof JSlider)
             {
                 if (((JSlider) source).getValueIsAdjusting())
                 {
                     updateSliders();
                 }
-            }});
+            }
+        });
+
+        rightCutOff.addChangeListener(cl ->
+        {
+            Object source = cl.getSource();
+            if (source instanceof JSlider)
+            {
+                if (((JSlider) source).getValueIsAdjusting())
+                {
+                    updateSliders();
+                }
+            }
+        });
 
         leftCutOff.setPreferredSize(new Dimension(180, leftCutOff.getPreferredSize().height));
 
@@ -797,8 +810,6 @@ public class ComparisonViewPanel extends JPanel
         compareByPanel.add(compareByComboBox);
 
 
-
-
         otherPanel.setBorder(BorderFactory.createTitledBorder(panelName));
         otherPanel.setPreferredSize(new Dimension(190, 430));
         otherPanel.setLayout(new BoxLayout(otherPanel, BoxLayout.Y_AXIS));
@@ -826,7 +837,6 @@ public class ComparisonViewPanel extends JPanel
 
         otherTopLeft.setLayout(new GridLayout(5, 2));
         otherTopRight.setLayout(new GridLayout(5, 2));
-
 
 
         otherTopLeft.add(new JLabel("Average ", SwingConstants.LEFT));

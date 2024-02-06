@@ -11,10 +11,11 @@ import java.util.ArrayList;
 public class GraphRightClickContextMenu extends JPopupMenu
 {
     JMenuItem item;
+
     public GraphRightClickContextMenu(ArrayList<RoomData> raids)
     {
         item = new JMenuItem("Show Represented Raids In New Window");
-        item.addActionListener(al->
+        item.addActionListener(al ->
         {
             FilteredRaidsBaseFrame raidFrame = new FilteredRaidsBaseFrame();
             raidFrame.createFrame(raids);

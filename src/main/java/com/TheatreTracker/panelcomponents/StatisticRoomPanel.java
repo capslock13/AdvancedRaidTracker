@@ -10,6 +10,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Objects;
+
 @Slf4j
 public class StatisticRoomPanel extends JPanel
 {
@@ -25,6 +26,7 @@ public class StatisticRoomPanel extends JPanel
     private final ArrayList<JLabel> timeLabels;
     private final ArrayList<String> labelNames;
     private final stat type;
+
     public StatisticRoomPanel(ArrayList<RoomData> data, stat type, DataPoint.rooms room)
     {
         super();
@@ -33,13 +35,13 @@ public class StatisticRoomPanel extends JPanel
         timeLabels = new ArrayList<>();
         ArrayList<JLabel> nameLabels = new ArrayList<>();
         labelNames = DataPoint.getTimeNamesByRoom(room);
-        for(String s : labelNames)
+        for (String s : labelNames)
         {
-            nameLabels.add(new JLabel(s.substring(s.indexOf(' ')+1), SwingConstants.LEFT));
+            nameLabels.add(new JLabel(s.substring(s.indexOf(' ') + 1), SwingConstants.LEFT));
             timeLabels.add(new JLabel("-", SwingConstants.RIGHT));
         }
         String borderString = "";
-        switch(type)
+        switch (type)
         {
             case AVERAGE:
                 borderString = "Average";
@@ -60,12 +62,12 @@ public class StatisticRoomPanel extends JPanel
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createTitledBorder(borderString));
         subPanel.setLayout(new GridLayout(7, 2));
-        for(int i = 0; i < labelNames.size(); i++)
+        for (int i = 0; i < labelNames.size(); i++)
         {
             subPanel.add(nameLabels.get(i));
             subPanel.add(timeLabels.get(i));
         }
-        for(int i = labelNames.size(); i < 7; i++)
+        for (int i = labelNames.size(); i < 7; i++)
         {
             subPanel.add(new JLabel(""));
             subPanel.add(new JLabel(""));
@@ -76,21 +78,21 @@ public class StatisticRoomPanel extends JPanel
 
     public void updateLabels(ArrayList<RoomData> data)
     {
-        for(int i = 0; i < labelNames.size(); i++)
+        for (int i = 0; i < labelNames.size(); i++)
         {
             ArrayList<Integer> collectedData = new ArrayList<>();
             for (RoomData d : data)
             {
-                if(d.getTimeAccurate(Objects.requireNonNull(DataPoint.getValue(labelNames.get(i)))))
+                if (d.getTimeAccurate(Objects.requireNonNull(DataPoint.getValue(labelNames.get(i)))))
                 {
-                    if(Objects.requireNonNull(DataPoint.getValue(labelNames.get(i))).type != DataPoint.types.TIME || d.getValue(labelNames.get(i)) != 0)
+                    if (Objects.requireNonNull(DataPoint.getValue(labelNames.get(i))).type != DataPoint.types.TIME || d.getValue(labelNames.get(i)) != 0)
                     {
                         collectedData.add(d.getValue(labelNames.get(i)));
                     }
                 }
             }
             double statistic = 0;
-            switch(type)
+            switch (type)
             {
                 case AVERAGE:
                     statistic = StatisticGatherer.getGenericAverage(collectedData);

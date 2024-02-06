@@ -1,6 +1,7 @@
 package com.TheatreTracker.utility;
 
-public class DataPointWrapper {
+public class DataPointWrapper
+{
     int value = 0;
     DataPoint dataPoint;
 
@@ -22,19 +23,23 @@ public class DataPointWrapper {
         }
     }
 
-    public void setValue(int value) {
+    public void setValue(int value)
+    {
         this.value = value;
     }
 
-    public int getValue() {
+    public int getValue()
+    {
         return this.value;
     }
 
-    public void increment(int valueAdded) {
+    public void increment(int valueAdded)
+    {
         value += valueAdded;
     }
 
-    public void increment() {
+    public void increment()
+    {
         value++;
     }
 }

@@ -9,7 +9,8 @@ import java.util.ArrayList;
 
 import static com.TheatreTracker.constants.NpcIDs.*;
 
-public class Thrall {
+public class Thrall
+{
     NPC npc;
     PlayerShell player;
     ArrayList<PlayerShell> potentialPlayers;
@@ -26,7 +27,8 @@ public class Thrall {
         this.spawnTick = spawnTick;
     }
 
-    public boolean matchesGraphic(int animationID) {
+    public boolean matchesGraphic(int animationID)
+    {
         return (animationID == 1873 && npc.getId() == 10880)
                 || (animationID == 1874 && npc.getId() == 10883)
                 || (animationID == 1875 && npc.getId() == 10886);

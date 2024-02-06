@@ -9,6 +9,7 @@ public class ThrallOutlineBox
     public int spawnTick;
     public String owner;
     public int id;
+
     public ThrallOutlineBox(String owner, int spawnTick, int id)
     {
         this.spawnTick = spawnTick;
@@ -18,7 +19,7 @@ public class ThrallOutlineBox
 
     public Color getColor()
     {
-        switch(id)
+        switch (id)
         {
             case MELEE_THRALL:
                 return new Color(240, 30, 30);

@@ -6,7 +6,8 @@ import lombok.Getter;
  * Convenience class for the possible keys used to log events. The parameters each of these events should include can be found in
  * RoomData.
  */
-public enum LogID {
+public enum LogID
+{
     ENTERED_TOB(0),
     PARTY_MEMBERS(1),
     DWH(2),
@@ -218,7 +219,8 @@ public enum LogID {
     @Getter
     int id;
 
-    LogID(int id) {
+    LogID(int id)
+    {
         this.id = id;
     }
 }

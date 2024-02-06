@@ -171,21 +171,56 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     public void addAttack(PlayerDidAttack attack)
     {
         WeaponAttack weaponAttack = WeaponDecider.getWeapon(attack.animation, attack.spotAnims, attack.projectile, attack.weapon);
-        if(weaponAttack != WeaponAttack.UNDECIDED)
+        if (weaponAttack != WeaponAttack.UNDECIDED)
         {
             boolean isTarget = RoomUtil.isPrimaryBoss(attack.targetedID) && attack.targetedID != -1;
-            outlineBoxes.add(new OutlineBox(attack.player, attack.tick, weaponAttack.shorthand, weaponAttack.color, isTarget));
             String targetString = "Target: ";
             String targetName = getBossName(attack.targetedID, attack.targetedIndex, attack.tick);
-            if(targetName.equals("?"))
+            if (targetName.equals("?"))
             {
                 targetString += attack.targetName;
-            }
-            else
+            } else
             {
                 targetString += targetName;
             }
             actions.add(new PlayerTick(attack.player, attack.tick, targetString));
+            String additionalText = "";
+            if(targetString.contains("(on w"))
+            {
+                additionalText = targetString.substring(targetString.indexOf("(on w")+5);
+                additionalText = "s" + additionalText.substring(0, additionalText.indexOf(")"));
+            }
+            else if(targetString.contains("small") || targetString.contains("big"))
+            {
+                String shortenedString = targetString.substring(9);
+                shortenedString = shortenedString.substring(0, shortenedString.indexOf(" "));
+                if(targetString.contains("east small"))
+                {
+                    shortenedString += "e";
+                }
+                else if(targetString.contains("south small"))
+                {
+                    shortenedString += "s";
+                }
+                else if(targetString.contains("west small"))
+                {
+                    shortenedString += "w";
+                }
+                else if(targetString.contains("east big"))
+                {
+                    shortenedString += "E";
+                }
+                else if(targetString.contains("south big"))
+                {
+                    shortenedString += "S";
+                }
+                else if(targetString.contains("west big"))
+                {
+                    shortenedString += "W";
+                }
+                additionalText = shortenedString;
+            }
+            outlineBoxes.add(new OutlineBox(attack.player, attack.tick, weaponAttack.shorthand, weaponAttack.color, isTarget, additionalText));
         }
     }
 
@@ -202,7 +237,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
     public void addAttacks(ArrayList<PlayerDidAttack> attacks)
     {
-        for(PlayerDidAttack attack : attacks)
+        for (PlayerDidAttack attack : attacks)
         {
             addAttack(attack);
         }
@@ -220,17 +255,16 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
     public Rectangle getViewRect()
     {
-        return new Rectangle(0, (boxCount > 0) ? (boxCount-1)*boxHeight : 0, boxWidth, boxHeight);
+        return new Rectangle(0, (boxCount > 0) ? (boxCount - 1) * boxHeight : 0, boxWidth, boxHeight);
     }
 
     public void incrementTick()
     {
         endTick++;
-        if(endTick % 50 == 0 || endTick == 1)
+        if (endTick % 50 == 0 || endTick == 1)
         {
             recalculateSize();
-        }
-        else
+        } else
         {
             drawGraph();
         }
@@ -255,39 +289,39 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
     public void recalculateSize()
     {
-            int length = endTick - startTick;
-            boxCount = (length / 50);
-            if (boxCount % 50 != 0)
-            {
-                boxCount++;
-            }
-            if (boxCount < 1)
-            {
-                boxCount = 1;
-            }
-            boxHeight = (players.size() + 3) * scale;
-            int height = boxCount * boxHeight+scale;
-            if (height < 600)
-            {
-                height = 600;
-            }
-            boxWidth = (shouldWrap) ? (100 + (scale * 51)) : 100 + (length + 1) * scale;
-            this.weaponAttacks = WeaponAttack.values();
-            keyCount = weaponAttacks.length;
-            keyRows = 9;
-            keyMargin = 10;
-            keyColumns = keyCount / keyRows;
-            if (keyCount % keyRows != 0)
-            {
-                keyColumns++;
-            }
-            int width = boxWidth + (keyColumns * 150) + 40;
-            if(img != null)
-            {
-                img.flush();
-            }
-            img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-            drawGraph();
+        int length = endTick - startTick;
+        boxCount = (length / 50);
+        if (boxCount % 50 != 0)
+        {
+            boxCount++;
+        }
+        if (boxCount < 1)
+        {
+            boxCount = 1;
+        }
+        boxHeight = (players.size() + 3) * scale;
+        int height = boxCount * boxHeight + scale;
+        if (height < 600)
+        {
+            height = 600;
+        }
+        boxWidth = (shouldWrap) ? (100 + (scale * 51)) : 100 + (length + 1) * scale;
+        this.weaponAttacks = WeaponAttack.values();
+        keyCount = weaponAttacks.length;
+        keyRows = 9;
+        keyMargin = 10;
+        keyColumns = keyCount / keyRows;
+        if (keyCount % keyRows != 0)
+        {
+            keyColumns++;
+        }
+        int width = boxWidth + (keyColumns * 150) + 40;
+        if (img != null)
+        {
+            img.flush();
+        }
+        img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        drawGraph();
 
     }
 
@@ -307,7 +341,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     protected void paintComponent(Graphics g)
     {
         super.paintComponent(g);
-        if(img != null)
+        if (img != null)
         {
             g.drawImage(img, 0, 0, null);
         }
@@ -336,17 +370,17 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
     private void drawKey(Graphics2D g)
     {
-        g.drawRect(boxWidth + (keyMargin / 2), keyMargin, (keyColumns * 150) - 10, (keyRows * (scale+10)));
+        g.drawRect(boxWidth + (keyMargin / 2), keyMargin, (keyColumns * 150) - 10, (keyRows * (scale + 10)));
         int currentColumn = 0;
         int currentRow = 0;
         for (int i = 0; i < keyCount; i++)
         {
             WeaponAttack attack = weaponAttacks[i];
             g.setColor(attack.color);
-            g.fillRect(boxWidth + keyMargin + (currentColumn * 150) + 2, keyMargin + (currentRow * (scale+10)) + 7, scale, scale);
+            g.fillRect(boxWidth + keyMargin + (currentColumn * 150) + 2, keyMargin + (currentRow * (scale + 10)) + 7, scale, scale);
             g.setColor(Color.WHITE);
-            g.drawString(attack.shorthand, boxWidth + keyMargin + (currentColumn * 150) + 3, keyMargin + (currentRow * (scale+10)) + scale+2);
-            g.drawString(attack.name, boxWidth + keyMargin + (currentColumn * 150) + 33, keyMargin + (currentRow * (scale+10)) + scale+2);
+            g.drawString(attack.shorthand, boxWidth + keyMargin + (currentColumn * 150) + 3, keyMargin + (currentRow * (scale + 10)) + scale + 2);
+            g.drawString(attack.name, boxWidth + keyMargin + (currentColumn * 150) + 33, keyMargin + (currentRow * (scale + 10)) + scale + 2);
             currentRow++;
             if (currentRow + 1 > keyRows)
             {
@@ -369,7 +403,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             Font oldFont = g.getFont();
             g.setFont(oldFont.deriveFont(10.0f));
             int strWidth = getStringBounds(g, String.valueOf(i), 0, 0).width;
-            g.drawString(String.valueOf(i), 100 + xOffset + (scale/2)-(strWidth/2), yOffset + (fontHeight / 2));
+            g.drawString(String.valueOf(i), 100 + xOffset + (scale / 2) - (strWidth / 2), yOffset + (fontHeight / 2));
             g.setFont(oldFont);
         }
     }
@@ -433,48 +467,58 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             yOffset += (playerOffsets.size() + 2) * scale - 10;
             g.setColor(Color.WHITE);
             int strWidth = getStringBounds(g, "X", 0, 0).width;
-            g.drawString("X", xOffset+(scale/2)-(strWidth/2), yOffset + (fontHeight / 2) + 10);
+            g.drawString("X", xOffset + (scale / 2) - (strWidth / 2), yOffset + (fontHeight / 2) + 10);
         }
     }
 
     private void drawDawnSpecs(Graphics2D g)
     {
-        for(DawnSpec dawnSpec : dawnSpecs)
+        for (DawnSpec dawnSpec : dawnSpecs)
         {
             String damage = String.valueOf(dawnSpec.getDamage());
-            if(dawnSpec.getDamage() != -1)
+            if (dawnSpec.getDamage() != -1)
             {
-                int xOffset = (shouldWrap) ? ((dawnSpec.tick - startTick-2) % 50) * scale : (dawnSpec.tick+2) * scale;
-                int yOffset = (shouldWrap) ? ((dawnSpec.tick - startTick-2) / 50) * boxHeight : 0;
+                int xOffset = (shouldWrap) ? ((dawnSpec.tick - startTick - 2) % 50) * scale : (dawnSpec.tick + 2) * scale;
+                int yOffset = (shouldWrap) ? ((dawnSpec.tick - startTick - 2) / 50) * boxHeight : 0;
                 xOffset += 100;
                 yOffset += (playerOffsets.size() + 3) * scale - 10;
                 g.setColor(Color.WHITE);
                 int textOffset = (scale / 2) - (getStringBounds(g, damage, 0, 0).width) / 2;
-                g.drawString(damage, xOffset+textOffset, yOffset + (fontHeight/2) + 10);
+                g.drawString(damage, xOffset + textOffset, yOffset + (fontHeight / 2) + 10);
             }
         }
     }
 
     private void drawPrimaryBoxes(Graphics2D g)
     {
-        for(OutlineBox box : outlineBoxes)
+        for (OutlineBox box : outlineBoxes)
         {
-            if(box.tick >= startTick && box.tick <= endTick)
+            if (box.tick >= startTick && box.tick <= endTick)
             {
                 int xOffset = 100 + ((shouldWrap) ? ((box.tick - startTick) % 50) * scale : box.tick * scale);
                 int yOffset = ((playerOffsets.get(box.player) + 1) * scale + 10) + ((shouldWrap) ? ((box.tick - startTick) / 50) * boxHeight : 0);
                 g.setColor(box.color);
                 g.fillRect(xOffset + 1, yOffset + 1, scale - 1, scale - 1);
                 g.setColor((box.primaryTarget) ? Color.WHITE : new Color(0, 190, 255));
-                int textOffset = (scale/2) - (getStringWidth(g, box.letter) / 2);
-                g.drawString(box.letter, xOffset + textOffset, yOffset + (fontHeight/2) + (scale/2));
+                int textOffset = (scale / 2) - (getStringWidth(g, box.letter) / 2);
+                int primaryOffset = yOffset + (box.additionalText.equals("") ? (fontHeight/2) : 0);
+                g.drawString(box.letter, xOffset + textOffset, primaryOffset+ (scale / 2));
+                if(!box.additionalText.equals(""))
+                {
+                    Font f = g.getFont();
+                    g.setFont(f.deriveFont(10.0f));
+                    textOffset = (scale / 2) - (getStringWidth(g, box.additionalText) / 2);
+                    g.setColor(Color.WHITE);
+                    g.drawString(box.additionalText, xOffset + textOffset, yOffset + scale - 3);
+                    g.setFont(f);
+                }
             }
         }
     }
 
     private void drawMarkerLines(Graphics2D g)
     {
-        if(!live || finished)
+        if (!live || finished)
         {
             for (Integer i : lines.keySet())
             {
@@ -540,7 +584,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
     private void drawSelectedOutlineBox(Graphics2D g)
     {
-        if(selectedTick != -1 && !selectedPlayer.equalsIgnoreCase(""))
+        if (selectedTick != -1 && !selectedPlayer.equalsIgnoreCase(""))
         {
             g.setColor(new Color(255, 255, 255));
             int xOffset = 100 + ((shouldWrap) ? ((selectedTick - startTick) % 50) * scale : selectedTick * scale);
@@ -558,48 +602,47 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
     private void drawSelectedRow(Graphics2D g)
     {
-        if(selectedRow != -1)
+        if (selectedRow != -1)
         {
             g.setColor(new Color(255, 255, 255));
             int xOffset = 100 + ((shouldWrap) ? ((selectedRow - startTick) % 50) * scale : selectedRow * scale);
             int yOffset = (10) + ((shouldWrap) ? ((selectedRow - startTick) / 50) * boxHeight : 0);
-            g.drawRect(xOffset, yOffset, scale, scale*(players.size()+2));
+            g.drawRect(xOffset, yOffset, scale, scale * (players.size() + 2));
 
             int selectedTickHP = -1;
             try
             {
-                selectedTickHP = roomHP.get(selectedRow+1);
-            }
-            catch (Exception e)
+                selectedTickHP = roomHP.get(selectedRow + 1);
+            } catch (Exception e)
             {
 
             }
-            if(selectedTickHP != -1)
+            if (selectedTickHP != -1)
             {
                 String HPString = "Boss HP: " + RoomUtil.varbitHPtoReadable(selectedTickHP);
                 int stringLength = getStringWidth(g, HPString);
                 g.setColor(new Color(0, 0, 0, 220));
-                g.fillRect(xOffset+5+scale, yOffset, stringLength+10, 20);
+                g.fillRect(xOffset + 5 + scale, yOffset, stringLength + 10, 20);
                 g.setColor(Color.WHITE);
-                g.drawRect(xOffset+5+scale, yOffset, stringLength+10, 20);
-                g.drawString(HPString, xOffset+10+scale, yOffset+15);
+                g.drawRect(xOffset + 5 + scale, yOffset, stringLength + 10, 20);
+                g.drawString(HPString, xOffset + 10 + scale, yOffset + 15);
             }
         }
     }
 
     private void drawHoverBox(Graphics2D g)
     {
-        for(PlayerTick action : actions)
+        for (PlayerTick action : actions)
         {
-            if(action.tick == selectedTick && action.player.equals(selectedPlayer))
+            if (action.tick == selectedTick && action.player.equals(selectedPlayer))
             {
                 com.TheatreTracker.Point location = getPoint(action.tick, action.player);
                 int stringLength = getStringWidth(g, action.action);
                 g.setColor(new Color(0, 0, 0, 220));
-                g.fillRect(location.getX()+10, location.getY()-30, stringLength+10, 20);
+                g.fillRect(location.getX() + 10, location.getY() - 30, stringLength + 10, 20);
                 g.setColor(Color.WHITE);
-                g.drawRect(location.getX()+10, location.getY()-30, stringLength+10, 20);
-                g.drawString(action.action, location.getX()+15, location.getY()-15);
+                g.drawRect(location.getX() + 10, location.getY() - 30, stringLength + 10, 20);
+                g.drawString(action.action, location.getX() + 15, location.getY() - 15);
             }
         }
     }
@@ -643,31 +686,28 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
     public void getTickHovered(int x, int y)
     {
-        int boxNumber = y/boxHeight;
-        if(x > 100)
+        int boxNumber = y / boxHeight;
+        if (x > 100)
         {
-            int tick = startTick+(50*boxNumber + ((x-100)/scale));
-            int playerOffsetPosition = (((y-10-scale)%boxHeight)/scale);
-            if(playerOffsetPosition >= 0 && playerOffsetPosition < players.size() && (y-10-scale > 0))
+            int tick = startTick + (50 * boxNumber + ((x - 100) / scale));
+            int playerOffsetPosition = (((y - 10 - scale) % boxHeight) / scale);
+            if (playerOffsetPosition >= 0 && playerOffsetPosition < players.size() && (y - 10 - scale > 0))
             {
                 selectedTick = tick;
                 selectedPlayer = players.get(playerOffsetPosition);
                 selectedRow = -1;
-            }
-            else if(y%boxHeight < 10+scale)
+            } else if (y % boxHeight < 10 + scale)
             {
                 selectedRow = tick;
                 selectedPlayer = "";
                 selectedTick = -1;
-            }
-            else
+            } else
             {
                 selectedPlayer = "";
                 selectedTick = -1;
                 selectedRow = -1;
             }
-        }
-        else
+        } else
         {
             selectedPlayer = "";
             selectedTick = -1;
@@ -738,7 +778,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                 case NpcIDs.MAIDEN_P2_SM:
                 case NpcIDs.MAIDEN_P3_SM:
                 case NpcIDs.MAIDEN_PRE_DEAD_SM:
-                    return "Maiden (" + RoomUtil.varbitHPtoReadable(roomHP.get(tick+1)) + ")";
+                    return "Maiden (" + RoomUtil.varbitHPtoReadable(roomHP.get(tick + 1)) + ")";
                 case NpcIDs.BLOAT:
                 case NpcIDs.BLOAT_HM:
                 case NpcIDs.BLOAT_SM:
@@ -768,23 +808,23 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                 case NpcIDs.VERZIK_P3_SM:
                     return "Verzik (" + RoomUtil.varbitHPtoReadable(roomHP.get(tick)) + ")";
             }
-            for(Integer i : NPCMap.keySet())
+            for (Integer i : NPCMap.keySet())
             {
-                if(i == index)
+                if (i == index)
                 {
                     String hp = "-1";
                     try
                     {
                         hp = RoomUtil.varbitHPtoReadable(roomHP.get(tick));
+                    } catch (Exception e
+                    )
+                    {
                     }
-                    catch(Exception e
-                    ) {}
                     return NPCMap.get(i) + " (Boss: " + hp + ")";
                 }
             }
             return "?";
-        }
-        catch(Exception e)
+        } catch (Exception e)
         {
             return "?";
         }

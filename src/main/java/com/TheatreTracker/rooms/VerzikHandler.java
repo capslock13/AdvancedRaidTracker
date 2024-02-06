@@ -19,7 +19,8 @@ import static com.TheatreTracker.constants.LogID.*;
 import static com.TheatreTracker.constants.NpcIDs.*;
 
 @Slf4j
-public class VerzikHandler extends RoomHandler {
+public class VerzikHandler extends RoomHandler
+{
     public RoomState.VerzikRoomState roomState;
     private TheatreTrackerPlugin plugin;
     private int healingEndTick = -1;
@@ -28,6 +29,7 @@ public class VerzikHandler extends RoomHandler {
     int p2Heal = 0;
     int p3Damage = 0;
     int p3Heal = 0;
+
     public VerzikHandler(Client client, DataWriter clog, TheatreTrackerConfig config, TheatreTrackerPlugin plugin)
     {
         super(client, clog, config);
@@ -88,25 +90,25 @@ public class VerzikHandler extends RoomHandler {
 
     public void updateGameTick(GameTick event)
     {
-        for(Projectile projectile : client.getProjectiles())
+        for (Projectile projectile : client.getProjectiles())
         {
             if (projectile.getId() == 1587)
             {
                 log.info("Expecting purple heal on tick: " + client.getTickCount());
             }
         }
-        if(client.getTickCount() == healingEndTick)
+        if (client.getTickCount() == healingEndTick)
         {
             plugin.verzShieldActive = false;
         }
         int playersHit = 1;
-        for(Player p : queuedAutoHits.keySet())
+        for (Player p : queuedAutoHits.keySet())
         {
-            if(queuedAutoHits.get(p) == client.getTickCount())
+            if (queuedAutoHits.get(p) == client.getTickCount())
             {
-                for(Player p2 : client.getPlayers())
+                for (Player p2 : client.getPlayers())
                 {
-                    if(p2.getWorldLocation().distanceTo(p.getWorldLocation()) <= 1)
+                    if (p2.getWorldLocation().distanceTo(p.getWorldLocation()) <= 1)
                     {
                         log.info(p2.getName() + " is also in target of verz auto AOE");
                         playersHit++;
@@ -115,29 +117,29 @@ public class VerzikHandler extends RoomHandler {
             }
         }
         queuedAutoHits.clear();
-        for(Integer heal : currentHits)
+        for (Integer heal : currentHits)
         {
             log.info("Heal: " + heal);
         }
         currentHits.clear();
-        if(healingEndTick == client.getTickCount())
+        if (healingEndTick == client.getTickCount())
         {
             healingEndTick = -1;
         }
         redsThisTick = false;
-        if(roomState == RoomState.VerzikRoomState.PHASE_1)
+        if (roomState == RoomState.VerzikRoomState.PHASE_1)
         {
-            for(Projectile projectile : client.getProjectiles())
+            for (Projectile projectile : client.getProjectiles())
             {
-                if(projectile.getId() == 1547 || projectile.getId() == 1544)
+                if (projectile.getId() == 1547 || projectile.getId() == 1544)
                 {
                 }
             }
         }
-        if(webTick != -1)
+        if (webTick != -1)
         {
             webTick++;
-            if(webTick > 50)
+            if (webTick > 50)
             {
                 hasWebbed = false;
                 webTick = -1;
@@ -165,24 +167,23 @@ public class VerzikHandler extends RoomHandler {
         {
             if (event.getProjectile().getRemainingCycles() == 0)
             {
-                log.info("Expecting auto heal on tick " + (client.getTickCount()+2));
-                if(verzNPC.getInteracting() instanceof Player)
+                log.info("Expecting auto heal on tick " + (client.getTickCount() + 2));
+                if (verzNPC.getInteracting() instanceof Player)
                 {
                     Player p = (Player) verzNPC;
                     log.info("Verz targeting: " + p.getName());
                     log.info("");
-                    queuedAutoHits.put(p, client.getTickCount()+2);
+                    queuedAutoHits.put(p, client.getTickCount() + 2);
                 }
             }
-        }
-        else if(event.getProjectile().getId() == 1601)
+        } else if (event.getProjectile().getId() == 1601)
         {
-            if(!hasWebbed)
+            if (!hasWebbed)
             {
                 hasWebbed = true;
-                clog.write(WEBS_STARTED, String.valueOf(client.getTickCount()-verzikEntryTick));
+                clog.write(WEBS_STARTED, String.valueOf(client.getTickCount() - verzikEntryTick));
                 webTick = client.getTickCount();
-                if((webTick-verzikEntryTick) % 2 == 0)
+                if ((webTick - verzikEntryTick) % 2 == 0)
                 {
                     plugin.addLiveLine(5, webTick - verzikEntryTick, "Webs");
                 }
@@ -198,12 +199,12 @@ public class VerzikHandler extends RoomHandler {
             {
                 currentHits.add(event.getHitsplat().getAmount());
             }
-            if(roomState == RoomState.VerzikRoomState.PHASE_1 && event.getActor().getName().contains("Verzik"))
+            if (roomState == RoomState.VerzikRoomState.PHASE_1 && event.getActor().getName().contains("Verzik"))
             {
-                if(event.getHitsplat().getAmount() > 74)
+                if (event.getHitsplat().getAmount() > 74)
                 {
-                    clog.write(DAWN_DAMAGE, String.valueOf(event.getHitsplat().getAmount()), String.valueOf(client.getTickCount()-roomStartTick));
-                    DawnSpec dawnSpec = new DawnSpec("", client.getTickCount()-roomStartTick);
+                    clog.write(DAWN_DAMAGE, String.valueOf(event.getHitsplat().getAmount()), String.valueOf(client.getTickCount() - roomStartTick));
+                    DawnSpec dawnSpec = new DawnSpec("", client.getTickCount() - roomStartTick);
                     dawnSpec.setDamage(event.getHitsplat().getAmount());
                     plugin.liveFrame.getPanel(getName()).addDawnSpec(dawnSpec);
                 }
@@ -211,21 +212,22 @@ public class VerzikHandler extends RoomHandler {
         }
     }
 
-    public void updateGraphicChanged(GraphicChanged event) {
+    public void updateGraphicChanged(GraphicChanged event)
+    {
         if (event.getActor().hasSpotAnim(VERZIK_BOUNCE_SPOT_ANIMATION))
         {
-            clog.write(LogID.VERZIK_BOUNCE, event.getActor().getName(), String.valueOf(client.getTickCount()-verzikEntryTick));
-            plugin.liveFrame.addAttack(new PlayerDidAttack(event.getActor().getName(), "100000", client.getTickCount()-verzikEntryTick, "-1","-1","-1",-1,-1, ""), "Verzik");
+            clog.write(LogID.VERZIK_BOUNCE, event.getActor().getName(), String.valueOf(client.getTickCount() - verzikEntryTick));
+            plugin.liveFrame.addAttack(new PlayerDidAttack(event.getActor().getName(), "100000", client.getTickCount() - verzikEntryTick, "-1", "-1", "-1", -1, -1, ""), "Verzik");
 
         }
     }
 
     public void updateItemSpawned(ItemSpawned event)
     {
-        if(event.getItem().getId() == 22516)
+        if (event.getItem().getId() == 22516)
         {
-            clog.write(DAWN_DROPPED, client.getTickCount()-verzikEntryTick);
-            plugin.liveFrame.getPanel(getName()).addRoomSpecificData(client.getTickCount()-verzikEntryTick, "X");
+            clog.write(DAWN_DROPPED, client.getTickCount() - verzikEntryTick);
+            plugin.liveFrame.getPanel(getName()).addRoomSpecificData(client.getTickCount() - verzikEntryTick, "X");
         }
     }
 
@@ -233,22 +235,22 @@ public class VerzikHandler extends RoomHandler {
     public void updateAnimationChanged(AnimationChanged event)
     {
         int id = event.getActor().getAnimation();
-        if(roomState == RoomState.VerzikRoomState.PHASE_2 || roomState == RoomState.VerzikRoomState.PHASE_2_REDS)
+        if (roomState == RoomState.VerzikRoomState.PHASE_2 || roomState == RoomState.VerzikRoomState.PHASE_2_REDS)
         {
-            if(plugin.verzShieldActive)
+            if (plugin.verzShieldActive)
             {
-                if(event.getActor() instanceof Player)
+                if (event.getActor() instanceof Player)
                 {
                     Player p = (Player) event.getActor();
-                    if(p.getInteracting() instanceof NPC)
+                    if (p.getInteracting() instanceof NPC)
                     {
                         NPC interacting = (NPC) p.getInteracting();
-                        if(interacting.getId() == VERZIK_P2 || interacting.getId() == VERZIK_P2_HM || interacting.getId() == VERZIK_P2_SM)
+                        if (interacting.getId() == VERZIK_P2 || interacting.getId() == VERZIK_P2_HM || interacting.getId() == VERZIK_P2_SM)
                         {
-                            switch(p.getAnimation())
+                            switch (p.getAnimation())
                             {
                                 case 8056:
-                                    log.info("expecting 3 heals from scy by " + p.getName() + " on tick " + (client.getTickCount()+1));
+                                    log.info("expecting 3 heals from scy by " + p.getName() + " on tick " + (client.getTickCount() + 1));
                                     break;
                             }
                         }
@@ -263,16 +265,17 @@ public class VerzikHandler extends RoomHandler {
         }
     }
 
-    public void updateNpcSpawned(NpcSpawned event) {
+    public void updateNpcSpawned(NpcSpawned event)
+    {
         int id = event.getNpc().getId();
         if (id == VERZIK_MATOMENOS || id == VERZIK_MATOMENOS_HM || id == VERZIK_MATOMENOS_SM)
         {
-            if(!redsThisTick)
+            if (!redsThisTick)
             {
                 clog.write(VERZIK_P2_REDS_PROC, (client.getTickCount() - verzikEntryTick) + "");
-                plugin.addLiveLine(5, client.getTickCount()-verzikEntryTick, "Reds");
-                healingEndTick = client.getTickCount()+11;
-                plugin.addLiveLine(5, healingEndTick-verzikEntryTick, "Shield End");
+                plugin.addLiveLine(5, client.getTickCount() - verzikEntryTick, "Reds");
+                healingEndTick = client.getTickCount() + 11;
+                plugin.addLiveLine(5, healingEndTick - verzikEntryTick, "Shield End");
                 redsThisTick = true;
                 plugin.verzShieldActive = true;
             }
@@ -292,7 +295,7 @@ public class VerzikHandler extends RoomHandler {
             case VERZIK_MELEE_NYLO_SM:
             case VERZIK_RANGE_NYLO_SM:
             case VERZIK_MAGE_NYLO_SM:
-                clog.write(VERZIK_CRAB_SPAWNED, client.getTickCount()-roomStartTick);
+                clog.write(VERZIK_CRAB_SPAWNED, client.getTickCount() - roomStartTick);
                 break;
             case VERZIK_P1_INACTIVE:
             case VERZIK_P1_INACTIVE_SM:
@@ -311,11 +314,14 @@ public class VerzikHandler extends RoomHandler {
         }
     }
 
-    public void updateNpcDespawned(NpcDespawned event) {
+    public void updateNpcDespawned(NpcDespawned event)
+    {
         int id = event.getNpc().getId();
-        if (id == VERZIK_P1 || id == VERZIK_P1_HM || id == VERZIK_P1_SM) {
+        if (id == VERZIK_P1 || id == VERZIK_P1_HM || id == VERZIK_P1_SM)
+        {
             endP1();
-        } else if (id == VERZIK_P2 || id == VERZIK_P2_HM || id == VERZIK_P2_SM) {
+        } else if (id == VERZIK_P2 || id == VERZIK_P2_HM || id == VERZIK_P2_SM)
+        {
             endP2();
         }
     }
@@ -332,11 +338,14 @@ public class VerzikHandler extends RoomHandler {
                 clog.write(IS_STORY_MODE);
             }
             startVerzik();
-        } else if (id == VERZIK_P2 || id == VERZIK_P2_HM || id == VERZIK_P2_SM) {
+        } else if (id == VERZIK_P2 || id == VERZIK_P2_HM || id == VERZIK_P2_SM)
+        {
             endP1();
-        } else if (id == VERZIK_P3 || id == VERZIK_P3_HM || id == VERZIK_P3_SM) {
+        } else if (id == VERZIK_P3 || id == VERZIK_P3_HM || id == VERZIK_P3_SM)
+        {
             endP2();
-        } else if (id == VERZIK_DEAD || id == VERZIK_DEAD_HM || id == VERZIK_DEAD_SM) {
+        } else if (id == VERZIK_DEAD || id == VERZIK_DEAD_HM || id == VERZIK_DEAD_SM)
+        {
             endP3();
         }
     }
@@ -350,27 +359,30 @@ public class VerzikHandler extends RoomHandler {
         roomStartTick = client.getTickCount();
     }
 
-    private void endP1() {
+    private void endP1()
+    {
         roomState = RoomState.VerzikRoomState.PHASE_2;
         verzikP1EndTick = client.getTickCount();
         sendTimeMessage("Wave 'Verzik phase 1' complete. Duration: ", verzikP1EndTick - verzikEntryTick);
         clog.write(VERZIK_P1_DESPAWNED, (verzikP1EndTick - verzikEntryTick) + "");
-        plugin.addLiveLine(5, verzikP1EndTick-verzikEntryTick, "P1 End");
+        plugin.addLiveLine(5, verzikP1EndTick - verzikEntryTick, "P1 End");
 
     }
 
-    private void procReds() {
+    private void procReds()
+    {
         roomState = RoomState.VerzikRoomState.PHASE_2_REDS;
         verzikRedsTick = client.getTickCount();
         sendTimeMessage("Red Crabs Spawned. Duration: ", verzikRedsTick - verzikEntryTick);
     }
 
-    private void endP2() {
+    private void endP2()
+    {
         roomState = RoomState.VerzikRoomState.PHASE_3;
         verzikP2EndTick = client.getTickCount();
         sendTimeMessage("Wave 'Verzik phase 2' complete. Duration: ", verzikP2EndTick - verzikEntryTick, verzikP2EndTick - verzikP1EndTick);
         clog.write(VERZIK_P2_END, (verzikP2EndTick - verzikEntryTick) + "");
-        plugin.addLiveLine(5, verzikP2EndTick-verzikEntryTick, "P2 End");
+        plugin.addLiveLine(5, verzikP2EndTick - verzikEntryTick, "P2 End");
 
     }
 
@@ -381,7 +393,7 @@ public class VerzikHandler extends RoomHandler {
         clog.write(ACCURATE_VERZIK_END);
         sendTimeMessage("Wave 'Verzik phase 3' complete. Duration: ", verzikP3EndTick - verzikEntryTick, verzikP3EndTick - verzikP2EndTick);
         clog.write(VERZIK_P3_DESPAWNED, (verzikP3EndTick - verzikEntryTick) + "");
-        plugin.addLiveLine(5, client.getTickCount()-verzikEntryTick, "Dead");
+        plugin.addLiveLine(5, client.getTickCount() - verzikEntryTick, "Dead");
         plugin.liveFrame.setVerzFinished();
 
     }

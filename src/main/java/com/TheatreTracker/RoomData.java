@@ -12,7 +12,8 @@ import static com.TheatreTracker.RoomData.TobRoom.*;
 
 @Slf4j
 
-public class RoomData {
+public class RoomData
+{
 
     private static final String EXIT_FLAG = "4";
     public boolean spectated = false;
@@ -137,7 +138,8 @@ public class RoomData {
     public ArrayList<DefenseReductionOutlineBox> verzikOutlineBoxes = new ArrayList<>();
 
 
-    enum TobRoom {
+    enum TobRoom
+    {
         MAIDEN, BLOAT, NYLOCAS, SOTETSEG, XARPUS, VERZIK
     }
 
@@ -167,12 +169,13 @@ public class RoomData {
     public Map<Integer, String> verzikNPCMapping = new HashMap<>();
 
 
-
-    public Date getDate() {
+    public Date getDate()
+    {
         return raidStarted;
     }
 
-    public int getScale() {
+    public int getScale()
+    {
         return raidTeamSize;
     }
 
@@ -203,16 +206,16 @@ public class RoomData {
     {
         String list = "";
         ArrayList<String> names = new ArrayList<>();
-        for(String s : players.keySet())
+        for (String s : players.keySet())
         {
             String name = s;
-            for(Map<String, ArrayList<String>> alternateNames : aliases)
+            for (Map<String, ArrayList<String>> alternateNames : aliases)
             {
-                for(String alias : alternateNames.keySet())
+                for (String alias : alternateNames.keySet())
                 {
-                    for(String potentialName : alternateNames.get(alias))
+                    for (String potentialName : alternateNames.get(alias))
                     {
-                        if(name.equalsIgnoreCase(potentialName))
+                        if (name.equalsIgnoreCase(potentialName))
                         {
                             name = alias;
                         }
@@ -222,16 +225,15 @@ public class RoomData {
             names.add(name);
         }
         names.sort(String::compareToIgnoreCase);
-        for(String s : names)
+        for (String s : names)
         {
             list += s;
             list += ",";
         }
-        if(list.length() != 0)
+        if (list.length() != 0)
         {
-            return list.substring(0,list.length()-1);
-        }
-        else
+            return list.substring(0, list.length() - 1);
+        } else
         {
             return "";
         }
@@ -239,11 +241,10 @@ public class RoomData {
 
     public PlayerCorrelatedPointData getSpecificTimeInactiveCorrelated(String inactive)
     {
-        if(inactive.contains("Player: "))
+        if (inactive.contains("Player: "))
         {
             return dataManager.getHighest(DataPoint.getValue(inactive.substring(8)));
-        }
-        else
+        } else
         {
             return null;
         }
@@ -251,23 +252,24 @@ public class RoomData {
 
     public int getSpecificTimeInactive(String inactive)
     {
-        if(inactive.contains("Player: "))
+        if (inactive.contains("Player: "))
         {
             return dataManager.getHighest(DataPoint.getValue(inactive.substring(8))).value;
         }
-        if(inactive.equals("Challenge Time"))
+        if (inactive.equals("Challenge Time"))
         {
             return getMaidenTime() + getBloatTime() + getNyloTime() + getSoteTime() + getXarpTime() + getVerzikTime();
         }
         return getValue(DataPoint.getValue(inactive));
     }
+
     public int getSpecificTime()
     {
-        if(activeValue.contains("Player: "))
+        if (activeValue.contains("Player: "))
         {
             return dataManager.getHighest(DataPoint.getValue(activeValue.substring(8))).value;
         }
-        if(activeValue.equals("Challenge Time"))
+        if (activeValue.equals("Challenge Time"))
         {
             return getMaidenTime() + getBloatTime() + getNyloTime() + getSoteTime() + getXarpTime() + getVerzikTime();
         }
@@ -276,34 +278,42 @@ public class RoomData {
 
     public void setOverallTime()
     {
-        int overallTime = getMaidenTime()+getBloatTime()+getNyloTime()+getSoteTime()+getXarpTime()+getVerzikTime();
+        int overallTime = getMaidenTime() + getBloatTime() + getNyloTime() + getSoteTime() + getXarpTime() + getVerzikTime();
         dataManager.set(DataPoint.CHALLENGE_TIME, overallTime);
     }
-    public int getMaidenTime() {
+
+    public int getMaidenTime()
+    {
         return (maidenStartAccurate && maidenEndAccurate) ? getValue(DataPoint.MAIDEN_TOTAL_TIME) : 0;
     }
 
-    public int getBloatTime() {
+    public int getBloatTime()
+    {
         return (bloatStartAccurate && bloatEndAccurate) ? getValue(DataPoint.BLOAT_TOTAL_TIME) : 0;
     }
 
-    public int getNyloTime() {
+    public int getNyloTime()
+    {
         return (nyloStartAccurate && nyloEndAccurate) ? getValue(DataPoint.NYLO_TOTAL_TIME) : 0;
     }
 
-    public int getSoteTime() {
+    public int getSoteTime()
+    {
         return (soteStartAccurate && soteEndAccurate) ? getValue(DataPoint.SOTE_TOTAL_TIME) : 0;
     }
 
-    public int getXarpTime() {
+    public int getXarpTime()
+    {
         return (xarpStartAccurate && xarpEndAccurate) ? getValue(DataPoint.XARP_TOTAL_TIME) : 0;
     }
 
-    public int getVerzikTime() {
+    public int getVerzikTime()
+    {
         return (verzikStartAccurate && verzikEndAccurate) ? getValue(DataPoint.VERZIK_TOTAL_TIME) : 0;
     }
 
-    public boolean getOverallTimeAccurate() {
+    public boolean getOverallTimeAccurate()
+    {
         return maidenStartAccurate && maidenEndAccurate
                 && bloatStartAccurate && bloatEndAccurate
                 && nyloStartAccurate && nyloEndAccurate
@@ -312,16 +322,21 @@ public class RoomData {
                 && verzikStartAccurate && verzikEndAccurate;
     }
 
-    public boolean checkExit(TobRoom room) {
-        if (globalData.size() == 0 || globalData.get(0).split(",", -1)[3].equals(EXIT_FLAG)) {
-            switch (room) {
+    public boolean checkExit(TobRoom room)
+    {
+        if (globalData.size() == 0 || globalData.get(0).split(",", -1)[3].equals(EXIT_FLAG))
+        {
+            switch (room)
+            {
                 case MAIDEN:
                     maidenReset = true;
                     break;
                 case BLOAT:
-                    if (!bloatEndAccurate) {
+                    if (!bloatEndAccurate)
+                    {
                         bloatWipe = true;
-                    } else {
+                    } else
+                    {
                         bloatReset = true;
                     }
                     break;
@@ -401,7 +416,7 @@ public class RoomData {
                 room = Integer.parseInt(subData[4]);
                 spectated = true;
             }
-            if(key == 4)
+            if (key == 4)
             {
                 endTime = new Date(Long.parseLong(subData[1]));
             }
@@ -457,12 +472,12 @@ public class RoomData {
             }
         }
         setOverallTime();
-        if(raidStarted != null)
+        if (raidStarted != null)
         {
             long difference = endTime.getTime() - raidStarted.getTime();
-            int ticks = (int) (difference/600);
+            int ticks = (int) (difference / 600);
             dataManager.set(DataPoint.OVERALL_TIME, ticks);
-            dataManager.set(DataPoint.TIME_OUTSIDE_ROOMS, dataManager.get(DataPoint.OVERALL_TIME)-dataManager.get(DataPoint.CHALLENGE_TIME));
+            dataManager.set(DataPoint.TIME_OUTSIDE_ROOMS, dataManager.get(DataPoint.OVERALL_TIME) - dataManager.get(DataPoint.CHALLENGE_TIME));
         }
     }
 
@@ -493,8 +508,7 @@ public class RoomData {
                     try
                     {
                         verzikOutlineBoxes.add(new DefenseReductionOutlineBox(subData[4], Integer.parseInt(subData[5]), new Color(0, 255, 0)));
-                    }
-                    catch(Exception e)
+                    } catch (Exception e)
                     {
 
                     }
@@ -504,16 +518,17 @@ public class RoomData {
                     dataManager.increment(DataPoint.BGS_DAMAGE_VERZ, Integer.parseInt(subData[5]));
                     try
                     {
-                        verzikOutlineBoxes.add(new DefenseReductionOutlineBox(subData[4], Integer.parseInt(subData[6]), new Color(0, 255, 0, Integer.parseInt(subData[5])*3)));
-                    }
-                    catch(Exception e)
+                        verzikOutlineBoxes.add(new DefenseReductionOutlineBox(subData[4], Integer.parseInt(subData[6]), new Color(0, 255, 0, Integer.parseInt(subData[5]) * 3)));
+                    } catch (Exception e)
                     {
 
                     }
                     break;
                 case 4:
-                    if (dataManager.get(DataPoint.VERZIK_TOTAL_TIME) == 0) {
-                        if (!verzikStarted) {
+                    if (dataManager.get(DataPoint.VERZIK_TOTAL_TIME) == 0)
+                    {
+                        if (!verzikStarted)
+                        {
                             xarpReset = true;
                         } else
                         {
@@ -526,15 +541,15 @@ public class RoomData {
                     globalData = new ArrayList<>(globalData.subList(activeIndex + 1, globalData.size()));
                     Date endTime = new Date(Long.parseLong(subData[1]));
                     long difference = endTime.getTime() - raidStarted.getTime();
-                    int ticks = (int) (difference/600);
+                    int ticks = (int) (difference / 600);
                     dataManager.set(DataPoint.OVERALL_TIME, ticks);
                     return false;
                 case 5:
                     dataManager.increment(DataPoint.VERZIK_DEATHS);
                     dataManager.increment(DataPoint.TOTAL_DEATHS);
-                    dataManager.incrementPlayerSpecific(DataPoint.VERZIK_DEATHS,subData[4]);
+                    dataManager.incrementPlayerSpecific(DataPoint.VERZIK_DEATHS, subData[4]);
                     dataManager.incrementPlayerSpecific(DataPoint.TOTAL_DEATHS, subData[4]);
-                    if(players.get(subData[4]) != null)
+                    if (players.get(subData[4]) != null)
                     {
                         players.put(subData[4], players.get(subData[4]) + 1);
                     }
@@ -545,7 +560,7 @@ public class RoomData {
                     dataManager.incrementPlayerSpecific(DataPoint.ATTEMPTED_HAMMERS_VERZIK, subData[4]);
                     break;
                 case 800:
-                    if(verzikStarted)
+                    if (verzikStarted)
                     {
                         dawnDrops.add(Integer.parseInt(subData[4]));
                     }
@@ -557,7 +572,7 @@ public class RoomData {
                 case 72:
                     break;
                 case 73:
-                    dataManager.set(DataPoint.VERZIK_P1_SPLIT, Integer.parseInt(subData[4])-13);
+                    dataManager.set(DataPoint.VERZIK_P1_SPLIT, Integer.parseInt(subData[4]) - 13);
                     break;
                 case 74:
                     dataManager.set(DataPoint.VERZIK_P2_SPLIT, Integer.parseInt(subData[4]));
@@ -566,8 +581,7 @@ public class RoomData {
                     {
                         int hp = verzikHP.get(dataManager.get(DataPoint.VERZIK_REDS_SPLIT));
                         dataManager.set(DataPoint.VERZIK_REDS_PROC_PERCENT, (hp));
-                    }
-                    catch
+                    } catch
                     (Exception e)
                     {
 
@@ -578,28 +592,28 @@ public class RoomData {
                 case 76:
                     dataManager.set(DataPoint.VERZIK_TOTAL_TIME, Integer.parseInt(subData[4]));
                     dataManager.set(DataPoint.VERZIK_P3_DURATION, dataManager.get(DataPoint.VERZIK_TOTAL_TIME) - dataManager.get(DataPoint.VERZIK_P2_SPLIT));
-                    dataManager.set(DataPoint.CHALLENGE_TIME, (Integer.parseInt(subData[4])+dataManager.get(DataPoint.VERZIK_ENTRY)));
+                    dataManager.set(DataPoint.CHALLENGE_TIME, (Integer.parseInt(subData[4]) + dataManager.get(DataPoint.VERZIK_ENTRY)));
                     break;
                 case 77:
                     dataManager.increment(DataPoint.VERZIK_BOUNCES);
-                    dataManager.incrementPlayerSpecific(DataPoint.VERZIK_BOUNCES,subData[4]);
-                    if(!subData[5].equalsIgnoreCase(""))
+                    dataManager.incrementPlayerSpecific(DataPoint.VERZIK_BOUNCES, subData[4]);
+                    if (!subData[5].equalsIgnoreCase(""))
                     {
                         verzAttacks.add(new PlayerDidAttack(subData[4], "100000", Integer.parseInt(subData[5]), "-1", "-1", "-1", -1, -1, ""));
                     }
                     break;
                 case 78:
-                    if(!subData[4].equalsIgnoreCase(""))
+                    if (!subData[4].equalsIgnoreCase(""))
                     {
                         if (dataManager.get(DataPoint.VERZIK_P2_SPLIT) > 1)
                         {
-                            if(!p3Crabs.contains(Integer.parseInt(subData[4])))
+                            if (!p3Crabs.contains(Integer.parseInt(subData[4])))
                             {
                                 p3Crabs.add(Integer.parseInt(subData[4]));
                             }
                         } else
                         {
-                            if(!p2Crabs.contains(Integer.parseInt(subData[4])))
+                            if (!p2Crabs.contains(Integer.parseInt(subData[4])))
                             {
                                 p2Crabs.add(Integer.parseInt(subData[4]));
                             }
@@ -612,7 +626,7 @@ public class RoomData {
                     verzikDawnDamage += Integer.parseInt(subData[5]);
                     break;
                 case 80:
-                    if(dataManager.get(DataPoint.VERZIK_REDS_SPLIT) == 0)
+                    if (dataManager.get(DataPoint.VERZIK_REDS_SPLIT) == 0)
                     {
                         dataManager.set(DataPoint.VERZIK_REDS_SPLIT, Integer.parseInt(subData[4]));
                     }
@@ -655,8 +669,7 @@ public class RoomData {
                     try
                     {
                         verzikThrallSpawns.add(new ThrallOutlineBox(subData[4], Integer.parseInt(subData[5]), Integer.parseInt(subData[6])));
-                    }
-                    catch (Exception e)
+                    } catch (Exception e)
                     {
 
                     }
@@ -665,9 +678,9 @@ public class RoomData {
                     dawnSpecs.add(new DawnSpec(subData[4], Integer.parseInt(subData[5])));
                     break;
                 case 488:
-                    for(DawnSpec dawnSpec : dawnSpecs)
+                    for (DawnSpec dawnSpec : dawnSpecs)
                     {
-                        if(dawnSpec.tick == Integer.parseInt(subData[5]))
+                        if (dawnSpec.tick == Integer.parseInt(subData[5]))
                         {
                             dawnSpec.setDamage(Integer.parseInt(subData[4]));
                         }
@@ -712,7 +725,7 @@ public class RoomData {
                         weapon = subsubData[0];
                         int interactedIndex = -1;
                         int interactedID = -1;
-                        if(subsubData.length > 2)
+                        if (subsubData.length > 2)
                         {
                             interactedIndex = Integer.parseInt(subsubData[1]);
                             interactedID = Integer.parseInt(subsubData[2]);
@@ -720,13 +733,12 @@ public class RoomData {
                         String[] projectileAndTargetData = subData[8].split(":");
                         projectile = projectileAndTargetData[0];
                         String targetName = "";
-                        if(projectileAndTargetData.length > 1)
+                        if (projectileAndTargetData.length > 1)
                         {
                             targetName = projectileAndTargetData[1];
                         }
                         verzAttacks.add(new PlayerDidAttack(player, animation, tick, weapon, projectile, spotAnims, interactedIndex, interactedID, targetName));
-                    }
-                    catch(Exception e)
+                    } catch (Exception e)
                     {
                     }
                     break;
@@ -743,50 +755,63 @@ public class RoomData {
 
     private boolean isTimeAccurateThroughRoom(TobRoom room)
     {
-        switch (room) {
+        switch (room)
+        {
             case VERZIK:
-                if (!verzikTimeAccurate) {
+                if (!verzikTimeAccurate)
+                {
                     return false;
                 }
             case XARPUS:
-                if (!xarpTimeAccurate) {
+                if (!xarpTimeAccurate)
+                {
                     return false;
                 }
             case SOTETSEG:
-                if (!soteTimeAccurate) {
+                if (!soteTimeAccurate)
+                {
                     return false;
                 }
             case NYLOCAS:
-                if (!nyloTimeAccurate) {
+                if (!nyloTimeAccurate)
+                {
                     return false;
                 }
             case BLOAT:
-                if (!bloatTimeAccurate) {
+                if (!bloatTimeAccurate)
+                {
                     return false;
                 }
             case MAIDEN:
-                if (!maidenTimeAccurate) {
+                if (!maidenTimeAccurate)
+                {
                     return false;
-                } else {
+                } else
+                {
                     return true;
                 }
         }
         return false;
     }
 
-    private boolean parseXarpus() {
+    private boolean parseXarpus()
+    {
 
         int activeIndex = 0;
         loop:
-        for (String s : globalData) {
+        for (String s : globalData)
+        {
             String[] subData = s.split(",", -1);
-            switch (Integer.parseInt(subData[3])) {
+            switch (Integer.parseInt(subData[3]))
+            {
                 case 0:
                     raidStarted = new Date(Long.parseLong(subData[1]));
                     break;
                 case 1:
-                    for (int i = 4; i < 9; i++) {
-                        if (!subData[i].equals("")) {
+                    for (int i = 4; i < 9; i++)
+                    {
+                        if (!subData[i].equals(""))
+                        {
                             raidTeamSize++;
                             players.put(subData[i].replaceAll("[^\\p{ASCII}]", " ").replaceAll(" +", " "), 0);
                         }
@@ -799,8 +824,7 @@ public class RoomData {
                     try
                     {
                         xarpOutlineBoxes.add(new DefenseReductionOutlineBox(subData[4], Integer.parseInt(subData[5]), new Color(0, 255, 0)));
-                    }
-                    catch(Exception e)
+                    } catch (Exception e)
                     {
 
                     }
@@ -811,35 +835,38 @@ public class RoomData {
                     dataManager.bgs(DataPoint.XARP_DEFENSE, Integer.parseInt(subData[5]));
                     try
                     {
-                        xarpOutlineBoxes.add(new DefenseReductionOutlineBox(subData[4], Integer.parseInt(subData[6]), new Color(0, 255, 0, Integer.parseInt(subData[5])*3)));
-                    }
-                    catch(Exception e)
+                        xarpOutlineBoxes.add(new DefenseReductionOutlineBox(subData[4], Integer.parseInt(subData[6]), new Color(0, 255, 0, Integer.parseInt(subData[5]) * 3)));
+                    } catch (Exception e)
                     {
 
                     }
                     break;
                 case 4:
-                    if (dataManager.get(DataPoint.XARP_TOTAL_TIME) != 0) {
+                    if (dataManager.get(DataPoint.XARP_TOTAL_TIME) != 0)
+                    {
                         xarpReset = true;
-                    } else {
-                        if (!xarpStarted) {
+                    } else
+                    {
+                        if (!xarpStarted)
+                        {
                             soteReset = true;
-                        } else {
+                        } else
+                        {
                             xarpWipe = true;
                         }
                     }
                     globalData = new ArrayList(globalData.subList(activeIndex + 1, globalData.size()));
                     Date endTime = new Date(Long.parseLong(subData[1]));
                     long difference = endTime.getTime() - raidStarted.getTime();
-                    int ticks = (int) (difference/600);
+                    int ticks = (int) (difference / 600);
                     dataManager.set(DataPoint.OVERALL_TIME, ticks);
                     return false;
                 case 5:
                     dataManager.increment(DataPoint.XARP_DEATHS);
                     dataManager.increment(DataPoint.TOTAL_DEATHS);
-                    dataManager.incrementPlayerSpecific(DataPoint.XARP_DEATHS,subData[4]);
+                    dataManager.incrementPlayerSpecific(DataPoint.XARP_DEATHS, subData[4]);
                     dataManager.incrementPlayerSpecific(DataPoint.TOTAL_DEATHS, subData[4]);
-                    if(players.get(subData[4]) != null)
+                    if (players.get(subData[4]) != null)
                     {
                         players.put(subData[4], players.get(subData[4]) + 1);
                     }
@@ -855,13 +882,15 @@ public class RoomData {
                     break;
                 case 61:
                     xarpStarted = true;
-                    if (partyComplete) {
+                    if (partyComplete)
+                    {
                         xarpDefenseAccurate = true;
                     }
                     break;
                 case 62:
                     int amount = 0;
-                    switch (raidTeamSize) {
+                    switch (raidTeamSize)
+                    {
                         case 5:
                             amount = 8;
                             break;
@@ -932,8 +961,7 @@ public class RoomData {
                     try
                     {
                         xarpusThrallSpawns.add(new ThrallOutlineBox(subData[4], Integer.parseInt(subData[5]), Integer.parseInt(subData[6])));
-                    }
-                    catch (Exception e)
+                    } catch (Exception e)
                     {
 
                     }
@@ -974,7 +1002,7 @@ public class RoomData {
                         weapon = subsubData[0];
                         int interactedIndex = -1;
                         int interactedID = -1;
-                        if(subsubData.length > 2)
+                        if (subsubData.length > 2)
                         {
                             interactedIndex = Integer.parseInt(subsubData[1]);
                             interactedID = Integer.parseInt(subsubData[2]);
@@ -982,13 +1010,12 @@ public class RoomData {
                         String[] projectileAndTargetData = subData[8].split(":");
                         projectile = projectileAndTargetData[0];
                         String targetName = "";
-                        if(projectileAndTargetData.length > 1)
+                        if (projectileAndTargetData.length > 1)
                         {
                             targetName = projectileAndTargetData[1];
                         }
                         xarpAttacks.add(new PlayerDidAttack(player, animation, tick, weapon, projectile, spotAnims, interactedIndex, interactedID, targetName));
-                    }
-                    catch(Exception e)
+                    } catch (Exception e)
                     {
                     }
                     break;
@@ -999,20 +1026,25 @@ public class RoomData {
         return true;
     }
 
-    private boolean parseSotetseg() {
+    private boolean parseSotetseg()
+    {
         int activeIndex = 0;
         loop:
-        for (String s : globalData) {
+        for (String s : globalData)
+        {
             String[] subData = s.split(",", -1);
-            switch (Integer.parseInt(subData[3])) {
+            switch (Integer.parseInt(subData[3]))
+            {
                 case 0:
                     raidStarted = new Date(Long.parseLong(subData[1]));
                     break;
                 case 1:
-                    for (int i = 4; i < 9; i++) {
-                        if (!subData[i].equals("")) {
+                    for (int i = 4; i < 9; i++)
+                    {
+                        if (!subData[i].equals(""))
+                        {
                             raidTeamSize++;
-                            players.put(subData[i].replaceAll("[^\\p{ASCII}]", " ").replaceAll(" +", " "),0);
+                            players.put(subData[i].replaceAll("[^\\p{ASCII}]", " ").replaceAll(" +", " "), 0);
                         }
                     }
                     break;
@@ -1021,10 +1053,12 @@ public class RoomData {
                     {
                         dataManager.increment(DataPoint.SOTE_SPECS_P1);
                         dataManager.increment(DataPoint.SOTE_SPECS_TOTAL);
-                    } else if (dataManager.get(DataPoint.SOTE_P2_SPLIT) == 0) {
+                    } else if (dataManager.get(DataPoint.SOTE_P2_SPLIT) == 0)
+                    {
                         dataManager.increment(DataPoint.SOTE_SPECS_P2);
                         dataManager.increment(DataPoint.SOTE_SPECS_TOTAL);
-                    } else {
+                    } else
+                    {
                         dataManager.increment(DataPoint.SOTE_SPECS_P3);
                         dataManager.increment(DataPoint.SOTE_SPECS_TOTAL);
                     }
@@ -1033,8 +1067,7 @@ public class RoomData {
                     try
                     {
                         soteOutlineBoxes.add(new DefenseReductionOutlineBox(subData[4], Integer.parseInt(subData[5]), new Color(0, 255, 0)));
-                    }
-                    catch(Exception e)
+                    } catch (Exception e)
                     {
 
                     }
@@ -1044,9 +1077,8 @@ public class RoomData {
                     dataManager.increment(DataPoint.BGS_DAMAGE_SOTE, Integer.parseInt(subData[5]));
                     try
                     {
-                        soteOutlineBoxes.add(new DefenseReductionOutlineBox(subData[4], Integer.parseInt(subData[6]), new Color(0, 255, 0, Integer.parseInt(subData[5])*3)));
-                    }
-                    catch(Exception e)
+                        soteOutlineBoxes.add(new DefenseReductionOutlineBox(subData[4], Integer.parseInt(subData[6]), new Color(0, 255, 0, Integer.parseInt(subData[5]) * 3)));
+                    } catch (Exception e)
                     {
 
                     }
@@ -1054,19 +1086,23 @@ public class RoomData {
                 case 6:
                     break;
                 case 4:
-                    if (dataManager.get(DataPoint.SOTE_TOTAL_TIME) != 0) {
+                    if (dataManager.get(DataPoint.SOTE_TOTAL_TIME) != 0)
+                    {
                         soteReset = true;
-                    } else {
-                        if (!soteStarted) {
+                    } else
+                    {
+                        if (!soteStarted)
+                        {
                             nyloReset = true;
-                        } else {
+                        } else
+                        {
                             soteWipe = true;
                         }
                     }
                     globalData = new ArrayList(globalData.subList(activeIndex + 1, globalData.size()));
                     Date endTime = new Date(Long.parseLong(subData[1]));
                     long difference = endTime.getTime() - raidStarted.getTime();
-                    int ticks = (int) (difference/600);
+                    int ticks = (int) (difference / 600);
                     dataManager.set(DataPoint.OVERALL_TIME, ticks);
                     return false;
                 case 7:
@@ -1077,9 +1113,9 @@ public class RoomData {
                 case 5:
                     dataManager.increment(DataPoint.TOTAL_DEATHS);
                     dataManager.increment(DataPoint.SOTE_DEATHS);
-                    dataManager.incrementPlayerSpecific(DataPoint.SOTE_DEATHS,subData[4]);
+                    dataManager.incrementPlayerSpecific(DataPoint.SOTE_DEATHS, subData[4]);
                     dataManager.incrementPlayerSpecific(DataPoint.TOTAL_DEATHS, subData[4]);
-                    if(players.get(subData[4]) != null)
+                    if (players.get(subData[4]) != null)
                     {
                         players.put(subData[4], players.get(subData[4]) + 1);
                     }
@@ -1088,7 +1124,8 @@ public class RoomData {
                     break;
                 case 51:
                     soteStarted = true;
-                    if (partyComplete) {
+                    if (partyComplete)
+                    {
                         soteDefenseAccurate = true;
                     }
                     break;
@@ -1096,19 +1133,19 @@ public class RoomData {
                     dataManager.set(DataPoint.SOTE_P1_SPLIT, Integer.parseInt(subData[4]));
                     break;
                 case 53:
-                    dataManager.set(DataPoint.SOTE_M1_DURATION, Integer.parseInt(subData[4])-dataManager.get(DataPoint.SOTE_P1_SPLIT));
+                    dataManager.set(DataPoint.SOTE_M1_DURATION, Integer.parseInt(subData[4]) - dataManager.get(DataPoint.SOTE_P1_SPLIT));
                     dataManager.set(DataPoint.SOTE_M1_SPLIT, Integer.parseInt(subData[4]));
 
                     break;
                 case 54:
-                    dataManager.set(DataPoint.SOTE_P2_DURATION, Integer.parseInt(subData[4])-dataManager.get(DataPoint.SOTE_M1_SPLIT));
+                    dataManager.set(DataPoint.SOTE_P2_DURATION, Integer.parseInt(subData[4]) - dataManager.get(DataPoint.SOTE_M1_SPLIT));
                     dataManager.set(DataPoint.SOTE_P2_SPLIT, Integer.parseInt(subData[4]));
 
                     break;
                 case 55:
-                    dataManager.set(DataPoint.SOTE_M2_DURATION, Integer.parseInt(subData[4])-dataManager.get(DataPoint.SOTE_P2_SPLIT));
+                    dataManager.set(DataPoint.SOTE_M2_DURATION, Integer.parseInt(subData[4]) - dataManager.get(DataPoint.SOTE_P2_SPLIT));
                     dataManager.set(DataPoint.SOTE_M2_SPLIT, Integer.parseInt(subData[4]));
-                    dataManager.set(DataPoint.SOTE_MAZE_SUM, dataManager.get(DataPoint.SOTE_M1_DURATION)+ dataManager.get(DataPoint.SOTE_M2_DURATION));
+                    dataManager.set(DataPoint.SOTE_MAZE_SUM, dataManager.get(DataPoint.SOTE_M1_DURATION) + dataManager.get(DataPoint.SOTE_M2_DURATION));
                     break;
                 case 56:
                     break;
@@ -1119,9 +1156,11 @@ public class RoomData {
                         dataManager.set(DataPoint.XARP_ENTRY, Integer.parseInt(subData[4]) + dataManager.get(DataPoint.SOTE_ENTRY));
                     break loop;
                 case 58:
-                    if (soteCyclesLost != -1) {
+                    if (soteCyclesLost != -1)
+                    {
                         soteCyclesLost += Integer.parseInt(subData[4]);
-                    } else {
+                    } else
+                    {
                         soteCyclesLost = Integer.parseInt(subData[4]);
                     }
                     break;
@@ -1137,7 +1176,7 @@ public class RoomData {
                 case 304:
                     soteEndAccurate = true;
                     soteTimeAccurate = soteStartAccurate;
-                    if(soteTimeAccurate && bloatTimeAccurate && !spectated)
+                    if (soteTimeAccurate && bloatTimeAccurate && !spectated)
                     {
                         nyloStartAccurate = true;
                         nyloEndAccurate = true;
@@ -1174,8 +1213,7 @@ public class RoomData {
                     try
                     {
                         soteThrallSpawns.add(new ThrallOutlineBox(subData[4], Integer.parseInt(subData[5]), Integer.parseInt(subData[6])));
-                    }
-                    catch (Exception e)
+                    } catch (Exception e)
                     {
 
                     }
@@ -1216,7 +1254,7 @@ public class RoomData {
                         weapon = subsubData[0];
                         int interactedIndex = -1;
                         int interactedID = -1;
-                        if(subsubData.length > 2)
+                        if (subsubData.length > 2)
                         {
                             interactedIndex = Integer.parseInt(subsubData[1]);
                             interactedID = Integer.parseInt(subsubData[2]);
@@ -1224,13 +1262,12 @@ public class RoomData {
                         String[] projectileAndTargetData = subData[8].split(":");
                         projectile = projectileAndTargetData[0];
                         String targetName = "";
-                        if(projectileAndTargetData.length > 1)
+                        if (projectileAndTargetData.length > 1)
                         {
                             targetName = projectileAndTargetData[1];
                         }
                         soteAttacks.add(new PlayerDidAttack(player, animation, tick, weapon, projectile, spotAnims, interactedIndex, interactedID, targetName));
-                    }
-                    catch(Exception e)
+                    } catch (Exception e)
                     {
                     }
                     break;
@@ -1246,15 +1283,19 @@ public class RoomData {
     {
         int activeIndex = 0;
         loop:
-        for (String s : globalData) {
+        for (String s : globalData)
+        {
             String[] subData = s.split(",", -1);
-            switch (Integer.parseInt(subData[3])) {
+            switch (Integer.parseInt(subData[3]))
+            {
                 case 0:
                     raidStarted = new Date(Long.parseLong(subData[1]));
                     break;
                 case 1:
-                    for (int i = 4; i < 9; i++) {
-                        if (!subData[i].equals("")) {
+                    for (int i = 4; i < 9; i++)
+                    {
+                        if (!subData[i].equals(""))
+                        {
                             raidTeamSize++;
                             players.put(subData[i].replaceAll("[^\\p{ASCII}]", " ").replaceAll(" +", " "), 0);
                         }
@@ -1266,8 +1307,7 @@ public class RoomData {
                     try
                     {
                         nyloOutlineBoxes.add(new DefenseReductionOutlineBox(subData[4], Integer.parseInt(subData[5]), new Color(0, 255, 0)));
-                    }
-                    catch(Exception e)
+                    } catch (Exception e)
                     {
 
                     }
@@ -1278,20 +1318,20 @@ public class RoomData {
                 case 3:
                     dataManager.increment(DataPoint.ATTEMPTED_BGS_NYLO);
                     dataManager.increment(DataPoint.BGS_DAMAGE_NYLO, Integer.parseInt(subData[5]));
-                    if (dataManager.get(DataPoint.NYLO_BOSS_SPAWN) != 0) {
+                    if (dataManager.get(DataPoint.NYLO_BOSS_SPAWN) != 0)
+                    {
                         dataManager.bgs(DataPoint.NYLO_DEFENSE, Integer.parseInt(subData[5]));
                     }
                     try
                     {
-                        nyloOutlineBoxes.add(new DefenseReductionOutlineBox(subData[4], Integer.parseInt(subData[6]), new Color(0, 255, 0, Integer.parseInt(subData[5])*3)));
-                    }
-                    catch(Exception e)
+                        nyloOutlineBoxes.add(new DefenseReductionOutlineBox(subData[4], Integer.parseInt(subData[6]), new Color(0, 255, 0, Integer.parseInt(subData[5]) * 3)));
+                    } catch (Exception e)
                     {
 
                     }
                     break;
                 case 4:
-                    if(pillarDespawnTick-5 < dataManager.get(DataPoint.NYLO_BOSS_SPAWN))
+                    if (pillarDespawnTick - 5 < dataManager.get(DataPoint.NYLO_BOSS_SPAWN))
                     {
                         dataManager.set(DataPoint.NYLO_BOSS_SPAWN, 0);
                         dataManager.set(DataPoint.NYLO_TOTAL_TIME, 0);
@@ -1306,25 +1346,27 @@ public class RoomData {
                             if (!bloatEndAccurate)
                             {
                                 bloatWipe = true;
-                            } else {
+                            } else
+                            {
                                 bloatReset = true;
                             }
-                        } else {
+                        } else
+                        {
                             nyloWipe = true;
                         }
                     }
                     globalData = new ArrayList(globalData.subList(activeIndex + 1, globalData.size()));
                     Date endTime = new Date(Long.parseLong(subData[1]));
                     long difference = endTime.getTime() - raidStarted.getTime();
-                    int ticks = (int) (difference/600);
+                    int ticks = (int) (difference / 600);
                     dataManager.set(DataPoint.OVERALL_TIME, ticks);
                     return false;
                 case 5:
                     nyloDeaths++;
                     dataManager.increment(DataPoint.TOTAL_DEATHS);
-                    dataManager.incrementPlayerSpecific(DataPoint.NYLO_DEATHS,subData[4]);
+                    dataManager.incrementPlayerSpecific(DataPoint.NYLO_DEATHS, subData[4]);
                     dataManager.incrementPlayerSpecific(DataPoint.TOTAL_DEATHS, subData[4]);
-                    if(players.get(subData[4]) != null)
+                    if (players.get(subData[4]) != null)
                     {
                         players.put(subData[4], players.get(subData[4]) + 1);
                     }
@@ -1340,9 +1382,11 @@ public class RoomData {
                 case 31:
                     nyloWaveStalled.add(Integer.parseInt(subData[5]));
                     dataManager.increment(DataPoint.NYLO_STALLS_TOTAL);
-                    if (Integer.parseInt(subData[4]) > 19) {
+                    if (Integer.parseInt(subData[4]) > 19)
+                    {
                         dataManager.increment(DataPoint.NYLO_STALLS_POST_20);
-                    } else {
+                    } else
+                    {
                         dataManager.increment(DataPoint.NYLO_STALLS_PRE_20);
                     }
                     break;
@@ -1360,8 +1404,8 @@ public class RoomData {
                     break;
                 case 36:
                     nyloLastDead = Integer.parseInt(subData[4]);
-                    int offset = 20-(nyloLastDead%4);
-                    dataManager.set(DataPoint.NYLO_BOSS_SPAWN, nyloLastDead+offset);
+                    int offset = 20 - (nyloLastDead % 4);
+                    dataManager.set(DataPoint.NYLO_BOSS_SPAWN, nyloLastDead + offset);
                     dataManager.set(DataPoint.NYLO_CLEANUP, nyloLastDead - dataManager.get(DataPoint.NYLO_LAST_WAVE));
                     break;
                 case 37:
@@ -1369,7 +1413,8 @@ public class RoomData {
                     break;
                 case 40:
                     dataManager.set(DataPoint.NYLO_BOSS_SPAWN, Integer.parseInt(subData[4]) - 2);
-                    if (partyComplete) {
+                    if (partyComplete)
+                    {
                         nyloDefenseAccurate = true;
                     }
                     break;
@@ -1383,7 +1428,7 @@ public class RoomData {
                     dataManager.increment(DataPoint.NYLO_ROTATIONS_RANGE);
                     break;
                 case 45:
-                    if(Integer.parseInt(subData[4])-dataManager.get(DataPoint.NYLO_BOSS_SPAWN) > 30)
+                    if (Integer.parseInt(subData[4]) - dataManager.get(DataPoint.NYLO_BOSS_SPAWN) > 30)
                     {
                         dataManager.set(DataPoint.NYLO_TOTAL_TIME, Integer.parseInt(subData[4]));
                         dataManager.set(DataPoint.NYLO_BOSS_DURATION, dataManager.get(DataPoint.NYLO_TOTAL_TIME) - dataManager.get(DataPoint.NYLO_BOSS_SPAWN));
@@ -1436,8 +1481,7 @@ public class RoomData {
                     try
                     {
                         nyloThrallSpawns.add(new ThrallOutlineBox(subData[4], Integer.parseInt(subData[5]), Integer.parseInt(subData[6])));
-                    }
-                    catch (Exception e)
+                    } catch (Exception e)
                     {
 
                     }
@@ -1481,7 +1525,7 @@ public class RoomData {
                         weapon = subsubData[0];
                         int interactedIndex = -1;
                         int interactedID = -1;
-                        if(subsubData.length > 2)
+                        if (subsubData.length > 2)
                         {
                             interactedIndex = Integer.parseInt(subsubData[1]);
                             interactedID = Integer.parseInt(subsubData[2]);
@@ -1489,13 +1533,12 @@ public class RoomData {
                         String[] projectileAndTargetData = subData[8].split(":");
                         projectile = projectileAndTargetData[0];
                         String targetName = "";
-                        if(projectileAndTargetData.length > 1)
+                        if (projectileAndTargetData.length > 1)
                         {
                             targetName = projectileAndTargetData[1];
                         }
                         nyloAttacks.add(new PlayerDidAttack(player, animation, tick, weapon, projectile, spotAnims, interactedIndex, interactedID, targetName));
-                    }
-                    catch(Exception e)
+                    } catch (Exception e)
                     {
                     }
                     break;
@@ -1536,8 +1579,7 @@ public class RoomData {
                     try
                     {
                         bloatOutlineBoxes.add(new DefenseReductionOutlineBox(subData[4], Integer.parseInt(subData[5]), new Color(0, 255, 0)));
-                    }
-                    catch(Exception e)
+                    } catch (Exception e)
                     {
 
                     }
@@ -1545,7 +1587,7 @@ public class RoomData {
                 case 6:
                     break;
                 case 24:
-                    dataManager.set(DataPoint.BLOAT_HP_FIRST_DOWN, Integer.parseInt(subData[4])/10);
+                    dataManager.set(DataPoint.BLOAT_HP_FIRST_DOWN, Integer.parseInt(subData[4]) / 10);
                     break;
                 case 25:
                     if (dataManager.get(DataPoint.BLOAT_DOWNS) == 0)
@@ -1564,35 +1606,38 @@ public class RoomData {
                     dataManager.increment(DataPoint.BGS_DAMAGE_BLOAT, Integer.parseInt(subData[5]));
                     try
                     {
-                        bloatOutlineBoxes.add(new DefenseReductionOutlineBox(subData[4], Integer.parseInt(subData[6]), new Color(0, 255, 0, Integer.parseInt(subData[5])*3)));
-                    }
-                    catch(Exception e)
+                        bloatOutlineBoxes.add(new DefenseReductionOutlineBox(subData[4], Integer.parseInt(subData[6]), new Color(0, 255, 0, Integer.parseInt(subData[5]) * 3)));
+                    } catch (Exception e)
                     {
 
                     }
                     break;
                 case 4:
-                    if (bloatEndAccurate) {
+                    if (bloatEndAccurate)
+                    {
                         bloatReset = true;
-                    } else {
-                        if (!bloatStarted) {
+                    } else
+                    {
+                        if (!bloatStarted)
+                        {
                             maidenReset = true;
-                        } else {
+                        } else
+                        {
                             bloatWipe = true;
                         }
                     }
                     globalData = new ArrayList(globalData.subList(activeIndex + 1, globalData.size()));
                     Date endTime = new Date(Long.parseLong(subData[1]));
                     long difference = endTime.getTime() - raidStarted.getTime();
-                    int ticks = (int) (difference/600);
+                    int ticks = (int) (difference / 600);
                     dataManager.set(DataPoint.OVERALL_TIME, ticks);
                     return false;
                 case 5:
                     dataManager.increment(DataPoint.BLOAT_DEATHS);
-                    dataManager.incrementPlayerSpecific(DataPoint.BLOAT_DEATHS,subData[4]);
+                    dataManager.incrementPlayerSpecific(DataPoint.BLOAT_DEATHS, subData[4]);
                     dataManager.incrementPlayerSpecific(DataPoint.TOTAL_DEATHS, subData[4]);
                     dataManager.increment(DataPoint.TOTAL_DEATHS);
-                    if(players.get(subData[4]) != null)
+                    if (players.get(subData[4]) != null)
                     {
                         players.put(subData[4], players.get(subData[4]) + 1);
                     }
@@ -1609,7 +1654,8 @@ public class RoomData {
                     break;
                 case 20:
                     bloatStarted = true;
-                    if (partyComplete) {
+                    if (partyComplete)
+                    {
                         bloatDefenseAccurate = true;
                     }
                     break;
@@ -1668,8 +1714,7 @@ public class RoomData {
                     try
                     {
                         bloatThrallSpawns.add(new ThrallOutlineBox(subData[4], Integer.parseInt(subData[5]), Integer.parseInt(subData[6])));
-                    }
-                    catch (Exception e)
+                    } catch (Exception e)
                     {
 
                     }
@@ -1710,7 +1755,7 @@ public class RoomData {
                         weapon = subsubData[0];
                         int interactedIndex = -1;
                         int interactedID = -1;
-                        if(subsubData.length > 2)
+                        if (subsubData.length > 2)
                         {
                             interactedIndex = Integer.parseInt(subsubData[1]);
                             interactedID = Integer.parseInt(subsubData[2]);
@@ -1718,13 +1763,12 @@ public class RoomData {
                         String[] projectileAndTargetData = subData[8].split(":");
                         projectile = projectileAndTargetData[0];
                         String targetName = "";
-                        if(projectileAndTargetData.length > 1)
+                        if (projectileAndTargetData.length > 1)
                         {
                             targetName = projectileAndTargetData[1];
                         }
                         bloatAttacks.add(new PlayerDidAttack(player, animation, tick, weapon, projectile, spotAnims, interactedIndex, interactedID, targetName));
-                    }
-                    catch(Exception e)
+                    } catch (Exception e)
                     {
                     }
                     break;
@@ -1735,19 +1779,24 @@ public class RoomData {
         return true;
     }
 
-    private boolean parseMaiden() throws Exception {
+    private boolean parseMaiden() throws Exception
+    {
         int activeIndex = 0;
         String lastProc = " 70s";
         loop:
-        for (String s : globalData) {
+        for (String s : globalData)
+        {
             String[] subData = s.split(",", -1);
-            switch (Integer.parseInt(subData[3])) {
+            switch (Integer.parseInt(subData[3]))
+            {
                 case 0:
                     raidStarted = new Date(Long.parseLong(subData[1]));
                     break;
                 case 1:
-                    for (int i = 4; i < 9; i++) {
-                        if (!subData[i].equals("")) {
+                    for (int i = 4; i < 9; i++)
+                    {
+                        if (!subData[i].equals(""))
+                        {
                             raidTeamSize++;
                             players.put(subData[i].replaceAll("[^\\p{ASCII}]", " ").replaceAll(" +", " "), 0);
                         }
@@ -1760,8 +1809,7 @@ public class RoomData {
                     try
                     {
                         maidenOutlineBoxes.add(new DefenseReductionOutlineBox(subData[4], Integer.parseInt(subData[5]), new Color(0, 255, 0)));
-                    }
-                    catch(Exception e)
+                    } catch (Exception e)
                     {
 
                     }
@@ -1772,24 +1820,25 @@ public class RoomData {
                     dataManager.increment(DataPoint.BGS_DAMAGE_MAIDEN, Integer.parseInt(subData[5]));
                     try
                     {
-                        maidenOutlineBoxes.add(new DefenseReductionOutlineBox(subData[4], Integer.parseInt(subData[6]), new Color(0, 255, 0, Integer.parseInt(subData[5])*3)));
-                    }
-                    catch(Exception e)
+                        maidenOutlineBoxes.add(new DefenseReductionOutlineBox(subData[4], Integer.parseInt(subData[6]), new Color(0, 255, 0, Integer.parseInt(subData[5]) * 3)));
+                    } catch (Exception e)
                     {
 
                     }
                     break;
                 case 4:
                     int percent = 100;
-                    if(dataManager.get(DataPoint.MAIDEN_CHINS_THROWN) != 0)
+                    if (dataManager.get(DataPoint.MAIDEN_CHINS_THROWN) != 0)
                     {
-                        double percentDouble = ((double)(dataManager.get(DataPoint.MAIDEN_CHINS_THROWN_WRONG_DISTANCE))/dataManager.get(DataPoint.MAIDEN_CHINS_THROWN))*100;
+                        double percentDouble = ((double) (dataManager.get(DataPoint.MAIDEN_CHINS_THROWN_WRONG_DISTANCE)) / dataManager.get(DataPoint.MAIDEN_CHINS_THROWN)) * 100;
                         percent = (int) percentDouble;
                     }
                     dataManager.set(DataPoint.MAIDEN_CHIN_CORRECT_DISTANCE_PERCENT, percent);
-                    if (dataManager.get(DataPoint.MAIDEN_TOTAL_TIME) != 0) {
+                    if (dataManager.get(DataPoint.MAIDEN_TOTAL_TIME) != 0)
+                    {
                         maidenReset = true;
-                    } else {
+                    } else
+                    {
                         if (!maidenSpawned)
                         {
                             maidenReset = true;
@@ -1802,14 +1851,14 @@ public class RoomData {
                     globalData = new ArrayList(globalData.subList(activeIndex + 1, globalData.size()));
                     Date endTime = new Date(Long.parseLong(subData[1]));
                     long difference = endTime.getTime() - raidStarted.getTime();
-                    int ticks = (int) (difference/600);
+                    int ticks = (int) (difference / 600);
                     dataManager.set(DataPoint.OVERALL_TIME, ticks);
                     return false;
                 case 5:
                     dataManager.increment(DataPoint.MAIDEN_DEATHS);
                     dataManager.increment(DataPoint.TOTAL_DEATHS);
                     dataManager.incrementPlayerSpecific(DataPoint.TOTAL_DEATHS, subData[4]);
-                    if(players.get(subData[4]) != null)
+                    if (players.get(subData[4]) != null)
                     {
                         players.put(subData[4], players.get(subData[4]) + 1);
                     }
@@ -1832,14 +1881,17 @@ public class RoomData {
                     {
                         dataManager.increment(DataPoint.MAIDEN_CRABS_LEAKED);
                         int crabHP = -1;
-                        try {
+                        try
+                        {
                             crabHP = Integer.parseInt(subData[5]);
-                        } catch (Exception e) {
+                        } catch (Exception e)
+                        {
                             e.printStackTrace();
                         }
                         dataManager.increment(DataPoint.MAIDEN_HP_HEALED, crabHP * 2);
                         int maxCrabHP = 100;
-                        switch (players.size()) {
+                        switch (players.size())
+                        {
                             case 1:
                             case 2:
                             case 3:
@@ -1849,17 +1901,20 @@ public class RoomData {
                                 maxCrabHP = 87;
                                 break;
                         }
-                        if (crabHP == maxCrabHP) {
+                        if (crabHP == maxCrabHP)
+                        {
                             dataManager.increment(DataPoint.MAIDEN_CRABS_LEAKED_FULL_HP);
                         }
 
-                        if (subData[4].contains("30")) {
+                        if (subData[4].contains("30"))
+                        {
                             maidenSkip = false;
                         }
                     }
                 case 12:
                     maidenSpawned = true;
-                    if (partyComplete) {
+                    if (partyComplete)
+                    {
                         maidenDefenseAccurate = true;
                     }
                     break;
@@ -1890,7 +1945,8 @@ public class RoomData {
                         maidenReset = true;
                     break loop;
                 case 19:
-                    if (!maidenScuffed) {
+                    if (!maidenScuffed)
+                    {
                         firstMaidenCrabScuffed = lastProc;
                     }
                     maidenScuffed = true;
@@ -1915,20 +1971,20 @@ public class RoomData {
                     int targetCountThisSpec = 0;
                     int crabCountThisSpec = 0;
                     String[] specData = subData[7].split(":");
-                    if(specData.length != 5)
+                    if (specData.length != 5)
                     {
                         break;
                     }
-                    for(String target : targets)
+                    for (String target : targets)
                     {
                         String[] targetData = target.split("~");
-                        if(targetData.length == 3)
+                        if (targetData.length == 3)
                         {
                             targetCountThisSpec++;
                             String npcName = targetData[0];
                             String spawnID = targetData[1];
                             int hp = Integer.parseInt(targetData[2]);
-                            if(!spawnID.equals("^")) //Target is crab
+                            if (!spawnID.equals("^")) //Target is crab
                             {
                                 crabCountThisSpec++;
                             }
@@ -1940,10 +1996,10 @@ public class RoomData {
                     boolean didDoubleHit = Boolean.parseBoolean(specData[4]);
 
 
-                    if(dataManager.get(DataPoint.MAIDEN_DINHS_SPECS) == 0)
+                    if (dataManager.get(DataPoint.MAIDEN_DINHS_SPECS) == 0)
                     {
-                        int percentCrabsTargeted = (int) ((((double)crabCountThisSpec)/targetCountThisSpec)*100);
-                        int percentCrabsUnder27Targeted = (int) ((((double)belowThreshold)/crabCountThisSpec)*100);
+                        int percentCrabsTargeted = (int) ((((double) crabCountThisSpec) / targetCountThisSpec) * 100);
+                        int percentCrabsUnder27Targeted = (int) ((((double) belowThreshold) / crabCountThisSpec) * 100);
 
                         dataManager.set(DataPoint.MAIDEN_DINHS_TARGETS_HIT, targetCountThisSpec);
                         dataManager.set(DataPoint.MAIDEN_DINHS_CRABS_HIT, crabCountThisSpec);
@@ -1951,28 +2007,27 @@ public class RoomData {
                         dataManager.set(DataPoint.MAIDEN_DINHS_CRABS_UNDER_27_TARGETED, belowThreshold);
                         dataManager.set(DataPoint.MAIDEN_DINHS_PERCENT_TARGETS_CRAB, percentCrabsTargeted);
                         dataManager.set(DataPoint.MAIDEN_DINHS_CRABS_UNDER_27_TARGETED_PERCENT, percentCrabsUnder27Targeted);
-                    }
-                    else
+                    } else
                     {
                         int previousAverage = dataManager.get(DataPoint.MAIDEN_DINHS_AVERAGE_HP_HIT);
                         int previousCrabsHit = dataManager.get(DataPoint.MAIDEN_DINHS_CRABS_HIT);
                         int previousTotalHit = dataManager.get(DataPoint.MAIDEN_DINHS_TARGETS_HIT);
                         int previousBelow27Hit = dataManager.get(DataPoint.MAIDEN_DINHS_CRABS_UNDER_27_TARGETED);
 
-                        dataManager.set(DataPoint.MAIDEN_DINHS_TARGETS_HIT, previousTotalHit+targetCountThisSpec);
-                        dataManager.set(DataPoint.MAIDEN_DINHS_CRABS_HIT, previousCrabsHit+crabCountThisSpec);
-                        dataManager.set(DataPoint.MAIDEN_DINHS_CRABS_UNDER_27_TARGETED, previousBelow27Hit+belowThreshold);
+                        dataManager.set(DataPoint.MAIDEN_DINHS_TARGETS_HIT, previousTotalHit + targetCountThisSpec);
+                        dataManager.set(DataPoint.MAIDEN_DINHS_CRABS_HIT, previousCrabsHit + crabCountThisSpec);
+                        dataManager.set(DataPoint.MAIDEN_DINHS_CRABS_UNDER_27_TARGETED, previousBelow27Hit + belowThreshold);
 
-                        int roundedAverageSum = ((previousAverage*previousCrabsHit)+(averageHP*crabCountThisSpec));
-                        int roundedAverageCumulative = (int)(((double)roundedAverageSum)/(previousCrabsHit+crabCountThisSpec));
+                        int roundedAverageSum = ((previousAverage * previousCrabsHit) + (averageHP * crabCountThisSpec));
+                        int roundedAverageCumulative = (int) (((double) roundedAverageSum) / (previousCrabsHit + crabCountThisSpec));
 
                         dataManager.set(DataPoint.MAIDEN_DINHS_AVERAGE_HP_HIT, roundedAverageCumulative);
 
-                        int percentTargetedCumulative = (int)(((double)(previousCrabsHit+crabCountThisSpec)/(previousTotalHit+targetCountThisSpec))*100);
+                        int percentTargetedCumulative = (int) (((double) (previousCrabsHit + crabCountThisSpec) / (previousTotalHit + targetCountThisSpec)) * 100);
 
                         dataManager.set(DataPoint.MAIDEN_DINHS_PERCENT_TARGETS_CRAB, percentTargetedCumulative);
 
-                        int percentBelow27Cumulative = (int)((double)(previousBelow27Hit+belowThreshold)/(previousCrabsHit+crabCountThisSpec));
+                        int percentBelow27Cumulative = (int) ((double) (previousBelow27Hit + belowThreshold) / (previousCrabsHit + crabCountThisSpec));
 
                         dataManager.set(DataPoint.MAIDEN_DINHS_CRABS_UNDER_27_TARGETED_PERCENT, percentBelow27Cumulative);
                     }
@@ -1982,13 +2037,12 @@ public class RoomData {
                     dataManager.incrementPlayerSpecific(DataPoint.MAIDEN_CHINS_THROWN, subData[4]);
                     try
                     {
-                        if(Integer.parseInt(subData[5]) < 4 || Integer.parseInt(subData[5]) > 6)
+                        if (Integer.parseInt(subData[5]) < 4 || Integer.parseInt(subData[5]) > 6)
                         {
                             dataManager.increment(DataPoint.MAIDEN_CHINS_THROWN_WRONG_DISTANCE);
                             dataManager.incrementPlayerSpecific(DataPoint.MAIDEN_CHINS_THROWN_WRONG_DISTANCE, subData[4]);
                         }
-                    }
-                    catch
+                    } catch
                     (Exception e)
                     {
 
@@ -2030,8 +2084,7 @@ public class RoomData {
                     try
                     {
                         maidenThrallSpawns.add(new ThrallOutlineBox(subData[4], Integer.parseInt(subData[5]), Integer.parseInt(subData[6])));
-                    }
-                    catch (Exception e)
+                    } catch (Exception e)
                     {
 
                     }
@@ -2101,7 +2154,7 @@ public class RoomData {
                         weapon = subsubData[0];
                         int interactedIndex = -1;
                         int interactedID = -1;
-                        if(subsubData.length > 2)
+                        if (subsubData.length > 2)
                         {
                             interactedIndex = Integer.parseInt(subsubData[1]);
                             interactedID = Integer.parseInt(subsubData[2]);
@@ -2109,13 +2162,12 @@ public class RoomData {
                         String[] projectileAndTargetData = subData[8].split(":");
                         projectile = projectileAndTargetData[0];
                         String targetName = "";
-                        if(projectileAndTargetData.length > 1)
+                        if (projectileAndTargetData.length > 1)
                         {
                             targetName = projectileAndTargetData[1];
                         }
                         maidenAttacks.add(new PlayerDidAttack(player, animation, tick, weapon, projectile, spotAnims, interactedIndex, interactedID, targetName));
-                    }
-                    catch(Exception e)
+                    } catch (Exception e)
                     {
                     }
                     break;
@@ -2135,7 +2187,7 @@ public class RoomData {
     public String getScaleString()
     {
         String scaleString = "";
-        switch(players.size())
+        switch (players.size())
         {
             case 1:
                 scaleString = "Solo";
@@ -2153,11 +2205,11 @@ public class RoomData {
                 scaleString = "5 Man";
                 break;
         }
-        if(storyMode)
+        if (storyMode)
         {
             scaleString += " (Story)";
         }
-        if(hardMode)
+        if (hardMode)
         {
             scaleString += " (Hard)";
         }
@@ -2167,74 +2219,63 @@ public class RoomData {
     public String getRoomStatus()
     {
         String raidStatusString = "";
-        if(maidenWipe)
+        if (maidenWipe)
         {
             raidStatusString = "Maiden Wipe";
-        }
-        else if(maidenReset)
+        } else if (maidenReset)
         {
             raidStatusString = "Maiden Reset";
-            if(!maidenSpawned)
+            if (!maidenSpawned)
             {
                 raidStatusString += "*";
             }
-        }
-        else if(bloatWipe)
+        } else if (bloatWipe)
         {
             raidStatusString = "Bloat Wipe";
-        }
-        else if(bloatReset)
+        } else if (bloatReset)
         {
             raidStatusString = "Bloat Reset";
-            if(getBloatTime() == 0)
+            if (getBloatTime() == 0)
             {
                 raidStatusString += "*";
             }
-        }
-        else if(nyloWipe)
+        } else if (nyloWipe)
         {
             raidStatusString = "Nylo Wipe";
-        }
-        else if(nyloReset)
+        } else if (nyloReset)
         {
             raidStatusString = "Nylo Reset";
-            if(getNyloTime() == 0)
+            if (getNyloTime() == 0)
             {
                 raidStatusString += "*";
             }
-        }
-        else if(soteWipe)
+        } else if (soteWipe)
         {
             raidStatusString = "Sotetseg Wipe";
-        }
-        else if(soteReset)
+        } else if (soteReset)
         {
             raidStatusString = "Sotetseg Reset";
-            if(getSoteTime() == 0)
+            if (getSoteTime() == 0)
             {
                 raidStatusString += "*";
             }
-        }
-        else if(xarpWipe)
+        } else if (xarpWipe)
         {
             raidStatusString = "Xarpus Wipe";
-        }
-        else if(xarpReset)
+        } else if (xarpReset)
         {
             raidStatusString = "Xarpus Reset";
-            if(getXarpTime() == 0)
+            if (getXarpTime() == 0)
             {
                 raidStatusString += "*";
             }
-        }
-        else if(verzikWipe)
+        } else if (verzikWipe)
         {
             raidStatusString = "Verzik Wipe";
-        }
-        else
+        } else
         {
             raidStatusString = "Completion";
-            if(!getOverallTimeAccurate())
+            if (!getOverallTimeAccurate())
             {
                 raidStatusString += "*";
             }
@@ -2242,15 +2283,13 @@ public class RoomData {
         String red = "<html><font color='#FF0000'>";
         String green = "<html><font color='#44AF33'>";
         String yellow = "<html><font color='#EEEE44'>";
-        if(raidStatusString.contains("Completion"))
+        if (raidStatusString.contains("Completion"))
         {
             raidStatusString = green + raidStatusString;
-        }
-        else if(raidStatusString.contains("Reset"))
+        } else if (raidStatusString.contains("Reset"))
         {
             raidStatusString = yellow + raidStatusString;
-        }
-        else
+        } else
         {
             raidStatusString = red + raidStatusString;
         }
@@ -2260,34 +2299,33 @@ public class RoomData {
     public String getPlayerString()
     {
         StringBuilder playerString = new StringBuilder();
-        for(String s : players.keySet())
+        for (String s : players.keySet())
         {
             playerString.append(s).append(", ");
         }
-        return (playerString.length() > 2) ? playerString.substring(0, playerString.length()-2) : "";
+        return (playerString.length() > 2) ? playerString.substring(0, playerString.length() - 2) : "";
     }
 
     public String getRowData(String column)
     {
-        switch(column)
+        switch (column)
         {
             case "":
                 return String.valueOf(index);
             case "Date":
                 Calendar cal = Calendar.getInstance();
                 cal.setTime(raidStarted);
-                return (cal.get(Calendar.MONTH)+1) + "-" + cal.get(Calendar.DAY_OF_MONTH) + "-" + cal.get(Calendar.YEAR);
+                return (cal.get(Calendar.MONTH) + 1) + "-" + cal.get(Calendar.DAY_OF_MONTH) + "-" + cal.get(Calendar.YEAR);
             case "Time":
                 Calendar cal2 = Calendar.getInstance();
                 cal2.setTime(raidStarted);
                 int hour = cal2.get(Calendar.HOUR_OF_DAY);
                 int minute = cal2.get(Calendar.MINUTE);
                 String period = (hour > 11) ? " PM" : " AM";
-                if(hour == 0)
+                if (hour == 0)
                 {
                     hour = 12;
-                }
-                else if(hour != 12)
+                } else if (hour != 12)
                 {
                     hour -= 12;
                 }

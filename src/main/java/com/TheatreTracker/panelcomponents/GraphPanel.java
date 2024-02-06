@@ -20,7 +20,8 @@ import java.util.Comparator;
 import java.util.Objects;
 
 @Slf4j
-public class GraphPanel extends JPanel implements MouseMotionListener, MouseListener, KeyListener {
+public class GraphPanel extends JPanel implements MouseMotionListener, MouseListener, KeyListener
+{
     public static final int IMG_WIDTH = 600;
     public static final int IMG_HEIGHT = 300;
 
@@ -79,7 +80,8 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
 
     private ArrayList<RoomData> internalData;
 
-    public GraphPanel(ArrayList<RoomData> data) {
+    public GraphPanel(ArrayList<RoomData> data)
+    {
 
         selectedBounds = new ArrayList<>();
         gradientStart = new Color(100, 170, 230, 90);
@@ -104,15 +106,18 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
     }
 
     @Override
-    protected void paintComponent(Graphics g) {
+    protected void paintComponent(Graphics g)
+    {
         super.paintComponent(g);
-        if (img != null) {
+        if (img != null)
+        {
             g.drawImage(img, 0, 0, null);
         }
     }
 
     @Override
-    public Dimension getPreferredSize() {
+    public Dimension getPreferredSize()
+    {
         return new Dimension(IMG_WIDTH, IMG_HEIGHT);
     }
 
@@ -124,10 +129,13 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
     }
 
 
-    private ArrayList<Integer> filterForTime(ArrayList<Integer> data) {
+    private ArrayList<Integer> filterForTime(ArrayList<Integer> data)
+    {
         ArrayList<Integer> arrayToPass = new ArrayList<>();
-        for (Integer i : data) {
-            if (!time || i != 0) {
+        for (Integer i : data)
+        {
+            if (!time || i != 0)
+            {
                 arrayToPass.add(i);
             }
         }
@@ -164,21 +172,27 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
         return count;
     }
 
-    boolean isBarSelected(int left, int right, int top, int bottom) {
-        for (Bounds b : selectedBounds) {
-            if (b.getLeft() == left && b.getRight() == right && b.getTop() == top && b.getBottom() == bottom) {
+    boolean isBarSelected(int left, int right, int top, int bottom)
+    {
+        for (Bounds b : selectedBounds)
+        {
+            if (b.getLeft() == left && b.getRight() == right && b.getTop() == top && b.getBottom() == bottom)
+            {
                 return true;
             }
         }
         return false;
     }
 
-    private void drawBar(Graphics2D g, int width, int height, int left, int count, int total, String value) {
+    private void drawBar(Graphics2D g, int width, int height, int left, int count, int total, String value)
+    {
         Color oldColor = g.getColor();
-        if (height == 0) {
+        if (height == 0)
+        {
             return;
         }
-        if (width == 1) {
+        if (width == 1)
+        {
             g.drawLine(left, GRAPH_HEIGHT - GRAPH_YS, left, GRAPH_HEIGHT - GRAPH_YS - height);
         }
 
@@ -202,7 +216,8 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
         g.setPaint(gradient);
         g.fillRect(left, top, width, height);
 
-        if (highlight && selectedBounds.size() == 0) {
+        if (highlight && selectedBounds.size() == 0)
+        {
             String percent = Math.round((100.0 * count / (double) total) * 100.0) / 100.0 + "%";
             String message = value + ": " + count + "/" + total + " (" + percent + ")";
             int msgWidth = g.getFontMetrics().stringWidth(message);
@@ -218,15 +233,19 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
         g.setColor(oldColor);
     }
 
-    private int getHighestCount(ArrayList<Integer> data) {
+    private int getHighestCount(ArrayList<Integer> data)
+    {
         int max = 0;
         int index = 0;
-        for (Integer i : data) {
-            if (time && index == 0) {
+        for (Integer i : data)
+        {
+            if (time && index == 0)
+            {
                 index++;
                 continue;
             }
-            if (i > max) {
+            if (i > max)
+            {
                 max = i;
             }
             index++;
@@ -234,7 +253,8 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
         return max;
     }
 
-    public BufferedImage createStringImage(Graphics g, String s) {
+    public BufferedImage createStringImage(Graphics g, String s)
+    {
         int w = g.getFontMetrics().stringWidth(s) + 5;
         int h = g.getFontMetrics().getHeight();
         BufferedImage image = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
@@ -248,7 +268,8 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
         return image;
     }
 
-    private void drawStringRotated(Graphics g, String s, int tx, int ty) {
+    private void drawStringRotated(Graphics g, String s, int tx, int ty)
+    {
         int angle = (s.length() == 1) ? 0 : -45;
         AffineTransform aff = AffineTransform.getRotateInstance(Math.toRadians(angle), tx, ty);
         aff.translate(tx, ty);
@@ -259,7 +280,8 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
         g2D.drawImage(createStringImage(g, s), aff, this);
     }
 
-    private String getString(int s) {
+    private String getString(int s)
+    {
         return (time) ? RoomUtil.time(s) : s + "";
     }
 
@@ -267,15 +289,18 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
     private int xScaleHigh = 0;
     private int yScaleHigh = 0;
 
-    public int getScaleXLow() {
+    public int getScaleXLow()
+    {
         return xScaleLow;
     }
 
-    public int getScaleXHigh() {
+    public int getScaleXHigh()
+    {
         return xScaleHigh;
     }
 
-    public int getScaleYHigh() {
+    public int getScaleYHigh()
+    {
         return yScaleHigh;
     }
 
@@ -308,7 +333,8 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
         yScaleHigh = highestCount;
     }
 
-    public void setScales(int xl, int xh, int yh) {
+    public void setScales(int xl, int xh, int yh)
+    {
         xScaleLow = xl;
         xScaleHigh = xh;
         yScaleHigh = yh;
@@ -335,25 +361,32 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
         return new GraphInternalBoundMatchedContainer(countedFullData, countedIntData);
     }
 
-    private int getAlternateYScale(GraphInternalBoundMatchedContainer sets) {
+    private int getAlternateYScale(GraphInternalBoundMatchedContainer sets)
+    {
         int max = 0;
-        for (int i = 0; i < sets.intData.size(); i++) {
+        for (int i = 0; i < sets.intData.size(); i++)
+        {
             int partialSum = 0;
-            for (int j = i; j < i + groupSize; j++) {
-                if (j < sets.intData.size()) {
+            for (int j = i; j < i + groupSize; j++)
+            {
+                if (j < sets.intData.size())
+                {
                     partialSum += sets.intData.get(j);
                 }
             }
-            if (partialSum > max) {
+            if (partialSum > max)
+            {
                 max = partialSum;
             }
         }
         return max;
     }
 
-    public void setBounds() {
+    public void setBounds()
+    {
         bounds.clear();
-        if (graphType == 0) {
+        if (graphType == 0)
+        {
             GraphInternalDataContainer graphData = getInternalDataSet(activeKey);
             GraphInternalBoundMatchedContainer countedDataSet = getCounts(graphData, xScaleHigh);
             int highestCount = (groupingEnabled) ? getAlternateYScale(countedDataSet) : yScaleHigh;
@@ -364,11 +397,15 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
             int startX = GRAPH_XS + (GRAPH_WIDTH / 2) - (usedWidth / 2);
             double scale = (highestCount == 0) ? (GRAPH_HEIGHT * .75) : ((GRAPH_HEIGHT * .75) / highestCount);
 
-            for (int i = Math.max(0, xScaleLow); i < xScaleHigh + 1; i++) {
-                if (groupingEnabled) {
-                    if ((i - xScaleLow) % groupSize == groupOffset || i == xScaleLow + groupOffset || i == xScaleLow) {
+            for (int i = Math.max(0, xScaleLow); i < xScaleHigh + 1; i++)
+            {
+                if (groupingEnabled)
+                {
+                    if ((i - xScaleLow) % groupSize == groupOffset || i == xScaleLow + groupOffset || i == xScaleLow)
+                    {
                         int barOffset = 0;
-                        if (i != xScaleLow && groupOffset != 0) {
+                        if (i != xScaleLow && groupOffset != 0)
+                        {
                             barOffset = 1;
                         }
                         int summedRegion = (groupOffset == 0 || i != xScaleLow) ? sumRegion(countedDataSet, i, groupSize) : sumRegion(countedDataSet, i - groupSize + groupOffset, groupSize);
@@ -379,14 +416,17 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
                         int top = GRAPH_HEIGHT - GRAPH_YS - height;
                         int bottom = GRAPH_HEIGHT - GRAPH_YS;
                         ArrayList<RoomData> summedRegionData;
-                        if (groupOffset == 0 || i != xScaleLow) {
+                        if (groupOffset == 0 || i != xScaleLow)
+                        {
                             summedRegionData = sumRegionRaidData(countedDataSet, i, groupSize);
-                        } else {
+                        } else
+                        {
                             summedRegionData = sumRegionRaidData(countedDataSet, i - groupSize + groupOffset, groupSize);
                         }
                         bounds.add(new Bounds(left, right, bottom, top, summedRegionData));
                     }
-                } else {
+                } else
+                {
                     int height = (int) (countedDataSet.intData.get(i) * scale);
                     int left = startX + ((i - xScaleLow) * (barWidth));
                     int right = left + barWidth;
@@ -395,53 +435,66 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
                     bounds.add(new Bounds(left, right, bottom, top, countedDataSet.fullData.get(i)));
                 }
             }
-        } else if (graphType == 1) {
+        } else if (graphType == 1)
+        {
             //pie chart bounds
 
-        } else if (graphType == 2) {
+        } else if (graphType == 2)
+        {
             //line plot bounds
         }
     }
 
-    public void setGroupingEnabled(boolean enabled) {
+    public void setGroupingEnabled(boolean enabled)
+    {
         groupingEnabled = enabled;
         setBounds();
         drawGraph();
     }
 
-    public void setGraphType(int type) {
+    public void setGraphType(int type)
+    {
         graphType = type;
         setBounds();
         drawGraph();
     }
 
-    public void updateGroupSize(int groupSize) {
+    public void updateGroupSize(int groupSize)
+    {
         this.groupSize = groupSize;
         setBounds();
         drawGraph();
     }
 
-    public void updateGroupOffset(int groupOffset) {
+    public void updateGroupOffset(int groupOffset)
+    {
         this.groupOffset = groupOffset;
         setBounds();
         drawGraph();
     }
 
-    private int sumRegion(GraphInternalBoundMatchedContainer data, int index, int length) {
+    private int sumRegion(GraphInternalBoundMatchedContainer data, int index, int length)
+    {
         int sum = 0;
-        for (int i = index; i < index + length; i++) {
-            if (i < data.intData.size() && i > -1) {
+        for (int i = index; i < index + length; i++)
+        {
+            if (i < data.intData.size() && i > -1)
+            {
                 sum += data.intData.get(i);
             }
         }
         return sum;
     }
 
-    private ArrayList<RoomData> sumRegionRaidData(GraphInternalBoundMatchedContainer data, int index, int length) {
+    private ArrayList<RoomData> sumRegionRaidData(GraphInternalBoundMatchedContainer data, int index, int length)
+    {
         ArrayList<RoomData> summedData = new ArrayList<>();
-        for (int i = index; i < index + length; i++) {
-            if (i < data.fullData.size() && i > -1) {
-                for (RoomData tempData : data.fullData.get(i)) {
+        for (int i = index; i < index + length; i++)
+        {
+            if (i < data.fullData.size() && i > -1)
+            {
+                for (RoomData tempData : data.fullData.get(i))
+                {
                     summedData.add(tempData);
                 }
             }
@@ -452,8 +505,10 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
     private int groupSize = 1;
     private int groupOffset = 0;
 
-    private void drawDragArea() {
-        if (dragCurrentX != -1 && dragCurrentY != -1) {
+    private void drawDragArea()
+    {
+        if (dragCurrentX != -1 && dragCurrentY != -1)
+        {
             int startX = Math.min(dragStartX, dragCurrentX);
             int startY = Math.min(dragStartY, dragCurrentY);
             int endX = Math.max(dragStartX, dragCurrentX);
@@ -469,8 +524,10 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
 
     }
 
-    private void drawToolTip() {
-        if (shouldDrawToolTip && selectedBounds.size() == 0) {
+    private void drawToolTip()
+    {
+        if (shouldDrawToolTip && selectedBounds.size() == 0)
+        {
             shouldDrawToolTip = false;
             Graphics2D g = (Graphics2D) img.getGraphics();
             Font oldFont = g.getFont();
@@ -495,17 +552,21 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
         }
     }
 
-    public static ArrayList<Integer> filterInvalid(ArrayList<Integer> data) {
+    public static ArrayList<Integer> filterInvalid(ArrayList<Integer> data)
+    {
         ArrayList<Integer> filteredData = new ArrayList<>();
-        for (Integer i : data) {
-            if (i > -1) {
+        for (Integer i : data)
+        {
+            if (i > -1)
+            {
                 filteredData.add(i);
             }
         }
         return filteredData;
     }
 
-    public void drawGraphTitle(Graphics2D g, int totalCount) {
+    public void drawGraphTitle(Graphics2D g, int totalCount)
+    {
         g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         Font oldFont = g.getFont();
         Font font = new Font("SansSerif", Font.PLAIN, 14);
@@ -548,12 +609,15 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
             }
 
             int verticalScaleToUse = (highestCount > 250) ? 50 : (highestCount > 100) ? 25 : (highestCount > 50) ? 10 : (highestCount > 10) ? 5 : 1;
-            if (groupingEnabled) {
+            if (groupingEnabled)
+            {
 
-                for (int i = 0; i < highestCount + 1; i++) {
+                for (int i = 0; i < highestCount + 1; i++)
+                {
                     {
                         int stringOffset = (int) (500 - GRAPH_HEIGHT - GRAPH_YS - scale * i + 8);
-                        if (i == 0 || i % verticalScaleToUse == 0) {
+                        if (i == 0 || i % verticalScaleToUse == 0)
+                        {
                             Color oldColor = g.getColor();
                             g.setColor(new Color(100, 100, 100, 100));
                             g.drawLine(GRAPH_XS, stringOffset - 8, GRAPH_XE, stringOffset - 8);
@@ -563,10 +627,13 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
                     }
                 }
 
-                for (int i = Math.max(lowestValue, 0); i < highestValue + 1; i++) {
-                    if ((i - lowestValue) % groupSize == groupOffset || i == lowestValue + groupOffset || i == lowestValue) {
+                for (int i = Math.max(lowestValue, 0); i < highestValue + 1; i++)
+                {
+                    if ((i - lowestValue) % groupSize == groupOffset || i == lowestValue + groupOffset || i == lowestValue)
+                    {
                         int barOffset = 0;
-                        if (i != lowestValue && groupOffset != 0) {
+                        if (i != lowestValue && groupOffset != 0)
+                        {
                             barOffset = 1;
                         }
                         int currentBarCenter = startX + (((i - Math.max(0, xScaleLow)) / groupSize) + barOffset) * (barWidth);
@@ -574,12 +641,16 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
                         int height = (int) (summedRegion * scale);
                         int stringOffset = 16 + barWidth / 2 - 8;
                         String axisValue = "";
-                        if (i == lowestValue || i == highestValue || i % horizontalScaleToUse == 0) {
+                        if (i == lowestValue || i == highestValue || i % horizontalScaleToUse == 0)
+                        {
                             axisValue = (i == lowestValue && groupOffset != 0) ? getString(i - groupSize + groupOffset) : getString(i);
-                            if (groupSize != 1) {
-                                if (i != lowestValue || groupOffset == 0) {
+                            if (groupSize != 1)
+                            {
+                                if (i != lowestValue || groupOffset == 0)
+                                {
                                     axisValue += "-" + getString(i + groupSize - 1);
-                                } else {
+                                } else
+                                {
                                     axisValue += "-" + getString(i);
                                 }
                             }
@@ -592,15 +663,18 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
                     }
                 }
 
-            } else {
+            } else
+            {
                 ArrayList<Integer> data = filterForTime(filterInvalid(getInternalDataSet(activeKey).intData));
 
                 ArrayList<Integer> intCountedDataSet = getCounts(data, highestValue);
                 totalCount = getCountedTotal(intCountedDataSet);
 
-                for (int i = 0; i < highestCount + 1; i++) {
+                for (int i = 0; i < highestCount + 1; i++)
+                {
                     int stringOffset = (int) (500 - GRAPH_HEIGHT - GRAPH_YS - scale * i + 8);
-                    if (i == 0 || i % verticalScaleToUse == 0) {
+                    if (i == 0 || i % verticalScaleToUse == 0)
+                    {
                         Color oldColor = g.getColor();
                         g.setColor(new Color(100, 100, 100, 100));
                         g.drawLine(GRAPH_XS, stringOffset - 8, GRAPH_XE, stringOffset - 8);
@@ -609,12 +683,14 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
                     }
                 }
 
-                for (int i = Math.max(lowestValue, 0); i < highestValue + 1; i++) {
+                for (int i = Math.max(lowestValue, 0); i < highestValue + 1; i++)
+                {
                     int currentBarCenter = startX + ((i - lowestValue) * (barWidth));
                     int height = (int) (intCountedDataSet.get(i) * scale);
                     drawBar(g, barWidth, height, currentBarCenter, intCountedDataSet.get(i), totalCount, getString(i));
                     int stringOffset = 16 + barWidth / 2 - 8;
-                    if (i == lowestValue || i == highestValue || i % horizontalScaleToUse == 0) {
+                    if (i == lowestValue || i == highestValue || i % horizontalScaleToUse == 0)
+                    {
                         FontMetrics m = g.getFontMetrics();
                         int yOffset = (int) (500 - GRAPH_HEIGHT - GRAPH_YS + 10 + (.5 * m.stringWidth(getString(i))));
                         stringOffset -= (int) (m.stringWidth(getString(i))) - 5;
@@ -628,7 +704,8 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
             g.setStroke(oldStroke);
             g.dispose();
             repaint();
-        } else if (graphType == 1) {
+        } else if (graphType == 1)
+        {
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
             ArrayList<Integer> data = filterForTime(filterInvalid(getInternalDataSet(activeKey).intData));
@@ -636,7 +713,8 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
             ArrayList<Integer> intCountedDataSet = getCounts(data, highestValue);
             totalCount = getCountedTotal(intCountedDataSet);
             int nonZeroCount = getNonZeroCount(intCountedDataSet);
-            if (nonZeroCount > 9) {
+            if (nonZeroCount > 9)
+            {
                 g.setColor(Color.WHITE);
                 g.drawString("Cannot draw pie chart for this data due to too many values", 50, 50);
                 return;
@@ -644,7 +722,8 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
             ArrayList<PieChartData> sortedData = createSortedPieChartData(intCountedDataSet, totalCount);
 
             int position = 90;
-            for (int i = 0; i < sortedData.size(); i++) {
+            for (int i = 0; i < sortedData.size(); i++)
+            {
                 Color c = pieChartColors[i];
                 Color opacityAdjusted = new Color(c.getRed(), c.getGreen(), c.getBlue(), 150);
                 g.setColor(opacityAdjusted);
@@ -655,7 +734,8 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
             //Draw Plot
 
             int offset = 50;
-            for (int i = 0; i < sortedData.size(); i++) {
+            for (int i = 0; i < sortedData.size(); i++)
+            {
                 Color c = pieChartColors[i];
                 Color opacityAdjusted = new Color(c.getRed(), c.getGreen(), c.getBlue(), 150);
                 g.setColor(opacityAdjusted);
@@ -670,19 +750,24 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
                 offset += 28;
             }
 
-        } else if (graphType == 2) {
+        } else if (graphType == 2)
+        {
             drawBlankBarGraph();
             int yMax = 0;
             int yMin = Integer.MAX_VALUE;
             ArrayList<Integer> data = filterForTime(filterInvalid(getInternalDataSet(activeKey).intData));
 
             ArrayList<Integer> intCountedDataSet = getCounts(data, highestValue);
-            for (int i = 0; i < intCountedDataSet.size(); i++) {
-                if (intCountedDataSet.get(i) != 0) {
-                    if (i < yMin) {
+            for (int i = 0; i < intCountedDataSet.size(); i++)
+            {
+                if (intCountedDataSet.get(i) != 0)
+                {
+                    if (i < yMin)
+                    {
                         yMin = i;
                     }
-                    if (i > yMax) {
+                    if (i > yMax)
+                    {
                         yMax = i;
                     }
                 }
@@ -693,9 +778,12 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
 
             //draw horizontal lines
             g.setColor(new Color(100, 100, 100, 150));
-            for (int i = 0; i < yMax - yMin; i++) {
-                if (yMax - yMin > 6) {
-                    if (i % ((yMax - yMin) / 6) == 0) {
+            for (int i = 0; i < yMax - yMin; i++)
+            {
+                if (yMax - yMin > 6)
+                {
+                    if (i % ((yMax - yMin) / 6) == 0)
+                    {
                         g.drawLine(GRAPH_XS, GRAPH_YE - (i * verticalScale), GRAPH_XE, GRAPH_YE - (i * verticalScale));
 
                         Color oldColor = g.getColor();
@@ -703,16 +791,19 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
                         g.drawString(getString(i + yMin), GRAPH_XS - g.getFontMetrics().stringWidth(getString(i + yMin)) - 10, GRAPH_YE - (i * verticalScale));
                         g.setColor(oldColor);
                     }
-                } else {
+                } else
+                {
                     g.drawLine(GRAPH_XS, GRAPH_YE - (i * verticalScale), GRAPH_XE, GRAPH_YE - (i * verticalScale));
                 }
             }
 
             g.setColor(new Color(120, 120, 240, 200));
-            for (int i = 0; i < data.size(); i++) {
+            for (int i = 0; i < data.size(); i++)
+            {
                 g.fillOval(GRAPH_XS + (i * horizontalScale) - 1, GRAPH_YE - ((data.get(i) - yMin) * verticalScale) - 2, 4, 4);
                 //log.info("X: " + i + ", Y: " + getString(data.get(i)) + " postion: " + (GRAPH_XS + (i * horizontalScale)) + ", " + (GRAPH_YE - ((data.get(i) - yMin) * verticalScale)));
-                if (i != 0) {
+                if (i != 0)
+                {
                     int previousX = GRAPH_XS + ((i - 1) * horizontalScale) + 1;
                     int previousY = GRAPH_YE - ((data.get(i - 1) - yMin) * verticalScale);
                     g.drawLine(GRAPH_XS + (i * horizontalScale) + 1, GRAPH_YE - ((data.get(i) - yMin) * verticalScale), previousX, previousY);
@@ -723,15 +814,20 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
         }
     }
 
-    private ArrayList<PieChartData> createSortedPieChartData(ArrayList<Integer> data, int total) {
+    private ArrayList<PieChartData> createSortedPieChartData(ArrayList<Integer> data, int total)
+    {
         ArrayList<PieChartData> fixedData = new ArrayList<>();
-        for (int i = 0; i < data.size(); i++) {
-            if (data.get(i) != 0) {
+        for (int i = 0; i < data.size(); i++)
+        {
+            if (data.get(i) != 0)
+            {
                 fixedData.add(new PieChartData(i, data.get(i), total));
             }
         }
-        fixedData.sort((o1, o2) -> {
-            if (Objects.equals(o1.occurrences, o2.occurrences)) {
+        fixedData.sort((o1, o2) ->
+        {
+            if (Objects.equals(o1.occurrences, o2.occurrences))
+            {
                 return 0;
             }
             return o1.occurrences > o2.occurrences ? -1 : 1;
@@ -739,10 +835,13 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
         return fixedData;
     }
 
-    private int getNonZeroCount(ArrayList<Integer> data) {
+    private int getNonZeroCount(ArrayList<Integer> data)
+    {
         int count = 0;
-        for (Integer i : data) {
-            if (i != 0) {
+        for (Integer i : data)
+        {
+            if (i != 0)
+            {
                 count++;
             }
         }
@@ -767,7 +866,8 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
         return new GraphInternalDataContainer(fullDataSet, intDataSet);
     }
 
-    private void drawGridLines() {
+    private void drawGridLines()
+    {
         Graphics g = img.getGraphics();
         g.setColor(gridColor);
 
@@ -779,7 +879,8 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
         g.dispose();
     }
 
-    public void drawBlankPanel() {
+    public void drawBlankPanel()
+    {
         Graphics g = img.getGraphics();
         g.setColor(new Color(40, 40, 40));
         g.fillRect(0, 0, img.getWidth(), img.getHeight());
@@ -788,14 +889,18 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
         repaint();
     }
 
-    public void drawBlankBarGraph() {
+    public void drawBlankBarGraph()
+    {
         drawGridLines();
         repaint();
     }
 
-    private boolean checkContains(Bounds bound) {
-        for (Bounds b : selectedBounds) {
-            if (b.getBottom() == bound.getBottom() && b.getTop() == bound.getTop() && b.getLeft() == bound.getLeft() && b.getRight() == bound.getRight()) {
+    private boolean checkContains(Bounds bound)
+    {
+        for (Bounds b : selectedBounds)
+        {
+            if (b.getBottom() == bound.getBottom() && b.getTop() == bound.getTop() && b.getLeft() == bound.getLeft() && b.getRight() == bound.getRight())
+            {
                 return true;
             }
         }
@@ -809,16 +914,20 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
     private int dragCurrentX = -1;
     private int dragCurrentY = -1;
 
-    private Bounds getBound(int x, int y) {
-        for (Bounds bound : bounds) {
-            if (x >= bound.getLeft() && x <= bound.getRight() && y <= bound.getBottom() && y >= bound.getTop()) {
+    private Bounds getBound(int x, int y)
+    {
+        for (Bounds bound : bounds)
+        {
+            if (x >= bound.getLeft() && x <= bound.getRight() && y <= bound.getBottom() && y >= bound.getTop())
+            {
                 return bound;
             }
         }
         return null;
     }
 
-    private boolean checkOverlap(int left1, int top1, int right1, int bottom1, int left2, int top2, int right2, int bottom2) {
+    private boolean checkOverlap(int left1, int top1, int right1, int bottom1, int left2, int top2, int right2, int bottom2)
+    {
         int leftA = Math.min(left1, right1);
         int rightA = Math.max(left1, right1);
         int bottomA = Math.min(top1, bottom1);
@@ -832,10 +941,13 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
         return (leftA < rightB && rightA > leftB && topA > bottomB && bottomA < topB);
     }
 
-    private void checkIntersectingBounds() {
+    private void checkIntersectingBounds()
+    {
         ArrayList<Bounds> currentlyIntersecting = new ArrayList<>();
-        for (Bounds b : bounds) {
-            if (checkOverlap(dragStartX, dragStartY, dragCurrentX, dragCurrentY, b.getLeft(), b.getTop(), b.getRight(), b.getBottom())) {
+        for (Bounds b : bounds)
+        {
+            if (checkOverlap(dragStartX, dragStartY, dragCurrentX, dragCurrentY, b.getLeft(), b.getTop(), b.getRight(), b.getBottom()))
+            {
                 currentlyIntersecting.add(b);
             }
         }
@@ -843,9 +955,12 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
         selectedBounds.addAll(currentlyIntersecting);
     }
 
-    private boolean checkBounds(int x, int y) {
-        for (Bounds bound : bounds) {
-            if (x >= bound.getLeft() && x <= bound.getRight() && y <= bound.getBottom() && y >= bound.getTop()) {
+    private boolean checkBounds(int x, int y)
+    {
+        for (Bounds bound : bounds)
+        {
+            if (x >= bound.getLeft() && x <= bound.getRight() && y <= bound.getBottom() && y >= bound.getTop())
+            {
                 return true;
             }
         }
@@ -904,26 +1019,34 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
     }
 
     @Override
-    public void mouseMoved(MouseEvent e) {
+    public void mouseMoved(MouseEvent e)
+    {
         checkBoundsAndHighlight(e.getX(), e.getY());
     }
 
     @Override
-    public void mouseClicked(MouseEvent e) {
-        if (e.isShiftDown() && SwingUtilities.isLeftMouseButton(e) && selectedBounds.size() == 0) {
-            if (checkBounds(e.getX(), e.getY())) {
+    public void mouseClicked(MouseEvent e)
+    {
+        if (e.isShiftDown() && SwingUtilities.isLeftMouseButton(e) && selectedBounds.size() == 0)
+        {
+            if (checkBounds(e.getX(), e.getY()))
+            {
                 selectedBounds.add(getBound(e.getX(), e.getY()));
                 drawGraph();
             }
-        } else if (e.isShiftDown() && SwingUtilities.isLeftMouseButton(e)) {
-            if (checkBounds(e.getX(), e.getY())) {
+        } else if (e.isShiftDown() && SwingUtilities.isLeftMouseButton(e))
+        {
+            if (checkBounds(e.getX(), e.getY()))
+            {
                 Bounds lastBound = selectedBounds.get(selectedBounds.size() - 1);
                 addAllBoundsBetween(lastBound, getBound(e.getX(), e.getY()));
                 drawGraph();
             }
-        } else if (SwingUtilities.isLeftMouseButton(e) && !e.isControlDown()) {
+        } else if (SwingUtilities.isLeftMouseButton(e) && !e.isControlDown())
+        {
             selectedBounds.clear();
-            if (checkBounds(e.getX(), e.getY())) {
+            if (checkBounds(e.getX(), e.getY()))
+            {
                 selectedBounds.add(getBound(e.getX(), e.getY()));
 
                 drawGraph();
@@ -931,10 +1054,14 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
         }
     }
 
-    private void addAllBoundsBetween(Bounds lastBound, Bounds bound) {
-        for (Bounds b : bounds) {
-            if ((b.getLeft() > lastBound.getLeft() && b.getLeft() < bound.getLeft()) || (b.getLeft() < lastBound.getLeft() && b.getLeft() > bound.getLeft())) {
-                if (!checkContains(b)) {
+    private void addAllBoundsBetween(Bounds lastBound, Bounds bound)
+    {
+        for (Bounds b : bounds)
+        {
+            if ((b.getLeft() > lastBound.getLeft() && b.getLeft() < bound.getLeft()) || (b.getLeft() < lastBound.getLeft() && b.getLeft() > bound.getLeft()))
+            {
+                if (!checkContains(b))
+                {
                     selectedBounds.add(b);
                 }
             }
@@ -943,23 +1070,30 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
     }
 
     @Override
-    public void mousePressed(MouseEvent e) {
-        if (SwingUtilities.isRightMouseButton(e)) {
-            if (selectedBounds.size() == 0) {
-                for (Bounds bound : bounds) {
-                    if (e.getX() >= bound.getLeft() && e.getX() <= bound.getRight() && e.getY() <= bound.getBottom() && e.getY() >= bound.getTop()) {
+    public void mousePressed(MouseEvent e)
+    {
+        if (SwingUtilities.isRightMouseButton(e))
+        {
+            if (selectedBounds.size() == 0)
+            {
+                for (Bounds bound : bounds)
+                {
+                    if (e.getX() >= bound.getLeft() && e.getX() <= bound.getRight() && e.getY() <= bound.getBottom() && e.getY() >= bound.getTop())
+                    {
                         GraphRightClickContextMenu menu = new GraphRightClickContextMenu(bound.raids);
                         menu.show(e.getComponent(), e.getX(), e.getY());
                     }
                 }
-            } else {
+            } else
+            {
                 GraphRightClickContextMenu menu = new GraphRightClickContextMenu(mergeSelectedData());
                 menu.show(e.getComponent(), e.getX(), e.getY());
             }
         }
         if (SwingUtilities.isLeftMouseButton(e) && e.isShiftDown())
         {
-            if (!currentlyDragging) {
+            if (!currentlyDragging)
+            {
                 dragStartX = e.getX();
                 dragStartY = e.getY();
                 currentlyDragging = true;

@@ -10,7 +10,7 @@ public class PieChartData
     {
         this.value = value;
         this.occurrences = occurrences;
-        double percent = (double)occurrences/total;
-        this.sections = (int)(percent*360);
+        double percent = (double) occurrences / total;
+        this.sections = (int) (percent * 360);
     }
 }

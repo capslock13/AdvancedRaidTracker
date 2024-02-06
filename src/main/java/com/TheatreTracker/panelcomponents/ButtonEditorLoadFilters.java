@@ -9,6 +9,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+
 @Slf4j
 class ButtonEditorLoadFilters extends DefaultCellEditor
 {
@@ -83,13 +84,14 @@ class ButtonEditorLoadFilters extends DefaultCellEditor
 
 
     @Override
-    public Object getCellEditorValue() {
+    public Object getCellEditorValue()
+    {
         if (isPushed)
         {
 
-            if(replace)
+            if (replace)
                 filteredRaidsFrame.activeFilters.clear();
-            for(String s : data.get(row).getFilters())
+            for (String s : data.get(row).getFilters())
             {
                 filteredRaidsFrame.activeFilters.add(new ImplicitFilter(s));
             }
@@ -101,7 +103,8 @@ class ButtonEditorLoadFilters extends DefaultCellEditor
     }
 
     @Override
-    public boolean stopCellEditing() {
+    public boolean stopCellEditing()
+    {
         isPushed = false;
         return super.stopCellEditing();
     }

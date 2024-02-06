@@ -54,7 +54,8 @@ class ButtonEditorViewFilters extends DefaultCellEditor
 
 
     @Override
-    public Object getCellEditorValue() {
+    public Object getCellEditorValue()
+    {
         if (isPushed)
         {
             ViewFilterBaseFrame frame = new ViewFilterBaseFrame(data.get(row));
@@ -65,7 +66,8 @@ class ButtonEditorViewFilters extends DefaultCellEditor
     }
 
     @Override
-    public boolean stopCellEditing() {
+    public boolean stopCellEditing()
+    {
         isPushed = false;
         return super.stopCellEditing();
     }

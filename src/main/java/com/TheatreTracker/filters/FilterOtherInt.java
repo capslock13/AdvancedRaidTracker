@@ -3,13 +3,15 @@ package com.TheatreTracker.filters;
 import com.TheatreTracker.RoomData;
 import com.TheatreTracker.utility.DataPoint;
 
-public class FilterOtherInt extends FilterCondition {
+public class FilterOtherInt extends FilterCondition
+{
     DataPoint param;
     int qualifier;
     int value;
     public String stringValue;
 
-    public FilterOtherInt(DataPoint param, int qualifier, int value, String val) {
+    public FilterOtherInt(DataPoint param, int qualifier, int value, String val)
+    {
         this.param = param;
         this.qualifier = qualifier;
         this.value = value;
@@ -17,15 +19,19 @@ public class FilterOtherInt extends FilterCondition {
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return stringValue;
     }
 
     @Override
-    public boolean evaluate(RoomData data) {
+    public boolean evaluate(RoomData data)
+    {
         int checkValue = data.getValue(param);
-        if (data.getTimeAccurate(param) && value != -1) {
-            switch (qualifier) {
+        if (data.getTimeAccurate(param) && value != -1)
+        {
+            switch (qualifier)
+            {
                 case 0:
                     return checkValue == value;
                 case 1:
@@ -39,12 +45,14 @@ public class FilterOtherInt extends FilterCondition {
                 default:
                     return false;
             }
-        } else {
+        } else
+        {
             return false;
         }
     }
 
-    public String getFilterCSV() {
+    public String getFilterCSV()
+    {
         return "1-" + param.name + "-" + qualifier + "-" + value + "-" + stringValue;
     }
 }

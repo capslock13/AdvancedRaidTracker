@@ -456,7 +456,7 @@ public class FilteredRaidsBaseFrame extends BaseFrame
                 {
                     players.append(s).append(", ");
                 }
-                return players.toString();
+                return (players.length() > 2) ? players.substring(0, players.length() - 2) : "";
             case "Spectate":
                 return (raid.spectated) ? "Yes" : "No";
             case "View":

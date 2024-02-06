@@ -58,8 +58,8 @@ class ButtonEditorRoomData extends DefaultCellEditor
     {
         if (isPushed)
         {
-            //ViewRaidBaseFrame raid = new ViewRaidBaseFrame(data.get(row));
-            ViewRaidFrame raid = new ViewRaidFrame(data.get(row));
+            ViewRaidBaseFrame raid = new ViewRaidBaseFrame(data.get(row));
+            //ViewRaidFrame raid = new ViewRaidFrame(data.get(row));
             raid.open();
         }
         isPushed = false;

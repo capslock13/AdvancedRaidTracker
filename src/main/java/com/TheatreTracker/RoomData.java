@@ -143,6 +143,7 @@ public class RoomData
         MAIDEN, BLOAT, NYLOCAS, SOTETSEG, XARPUS, VERZIK
     }
 
+    public ArrayList<String> maidenCrabSpawn = new ArrayList<>();
     public ArrayList<PlayerDidAttack> maidenAttacks;
     public ArrayList<PlayerDidAttack> bloatAttacks;
     public ArrayList<PlayerDidAttack> nyloAttacks;
@@ -1944,6 +1945,9 @@ public class RoomData
                     if (globalData.get(activeIndex + 1).split(",", -1)[3].equals("4"))
                         maidenReset = true;
                     break loop;
+                case 18:
+                    maidenCrabSpawn.add(subData[4]);
+                    break;
                 case 19:
                     if (!maidenScuffed)
                     {

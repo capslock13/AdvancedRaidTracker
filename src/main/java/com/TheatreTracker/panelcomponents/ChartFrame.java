@@ -187,6 +187,7 @@ public class ChartFrame extends BaseFrame
             maidenRCP.setNPCMappings(data.maidenNPCMapping);
             maidenRCP.setRoomHP(data.maidenHP);
             maidenRCP.addAttacks(data.maidenAttacks);
+            maidenRCP.addMaidenCrabs(data.maidenCrabSpawn);
             maidenRCP.setPlayers(new ArrayList<>(data.players.keySet()));
             if (roomData.size() == 1)
             {

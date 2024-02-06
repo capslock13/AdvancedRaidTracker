@@ -53,6 +53,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     private ArrayList<OutlineBox> outlineBoxes = new ArrayList<>();
     private Map<Integer, String> specific = new HashMap<>();
     private Map<Integer, String> lines = new HashMap<>();
+    private ArrayList<String> crabDescriptions = new ArrayList<>();
 
     private Map<Integer, Integer> roomHP = new HashMap<>();
     Map<String, Integer> playerOffsets = new LinkedHashMap<>();
@@ -146,11 +147,22 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         thrallOutlineBoxes.clear();
         players.clear();
         playerOffsets.clear();
+        crabDescriptions.clear();
         actions.clear();
         roomHP.clear();
         NPCMap.clear();
         finished = false;
         recalculateSize();
+    }
+
+    public void addMaidenCrabs(ArrayList<String> crabDescriptions)
+    {
+        this.crabDescriptions.addAll(crabDescriptions);
+    }
+
+    public void addMaidenCrab(String description)
+    {
+        crabDescriptions.add(description);
     }
 
     public void addNPCMapping(int index, String name)
@@ -219,6 +231,14 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                     shortenedString += "W";
                 }
                 additionalText = shortenedString;
+            }
+            else if(targetString.contains("70s") || targetString.contains("50s") || targetString.contains("30s"))
+            {
+                String shortenedString = targetString.substring(8);
+                shortenedString = shortenedString.substring(0,2);
+                String proc = targetString.substring(targetString.indexOf("0s")-1, targetString.indexOf("0s")+1);
+
+                additionalText = proc+shortenedString;
             }
             outlineBoxes.add(new OutlineBox(attack.player, attack.tick, weaponAttack.shorthand, weaponAttack.color, isTarget, additionalText));
         }
@@ -299,7 +319,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         {
             boxCount = 1;
         }
-        boxHeight = (players.size() + 3) * scale;
+        boxHeight = ((players.size() + 3) * scale);
         int height = boxCount * boxHeight + scale;
         if (height < 600)
         {
@@ -390,12 +410,22 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         }
     }
 
+    int getYOffset(int tick)
+    {
+        return (shouldWrap) ? (((tick - startTick) / 50) * boxHeight)+20 : 10;
+    }
+
+    int getXOffset(int tick)
+    {
+        return (shouldWrap) ? ((tick - startTick) % 50) * scale : tick * scale;
+    }
+
     private void drawTicks(Graphics2D g)
     {
         for (int i = startTick; i < endTick; i++)
         {
-            int xOffset = (shouldWrap) ? ((i - startTick) % 50) * scale : i * scale;
-            int yOffset = (shouldWrap) ? ((i - startTick) / 50) * boxHeight : 0;
+            int xOffset = getXOffset(i);
+            int yOffset = getYOffset(i);
             yOffset += scale;
             g.setColor(Color.DARK_GRAY);
             g.drawLine(100 + xOffset + scale, yOffset - (fontHeight / 2), 100 + xOffset + scale, yOffset + boxHeight - (2 * scale) + 10);
@@ -413,8 +443,8 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         for (Integer i : autos)
         {
             g.setColor(new Color(255, 80, 80, 100));
-            int xOffset = (shouldWrap) ? ((i - startTick) % 50) * scale : i * scale;
-            int yOffset = (shouldWrap) ? ((i - startTick) / 50) * boxHeight : 0;
+            int xOffset = getXOffset(i);
+            int yOffset = getYOffset(i);
             g.fillRect(xOffset + 100, yOffset + 10, scale, boxHeight - scale);
         }
     }
@@ -424,7 +454,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         for (int i = 0; i < boxCount; i++)
         {
             int startX = 100;
-            int startY = boxHeight * i + 10;
+            int startY = boxHeight * i + 30;
             int endX = boxWidth - scale;
             int endY = startY + boxHeight;
             g.setColor(new Color(100, 100, 100));
@@ -445,12 +475,12 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             for (int j = 0; j < boxCount; j++)
             {
                 g.setColor(Color.DARK_GRAY);
-                g.drawLine(100, 10 + (j * boxHeight) + ((i + 2) * scale), boxWidth - scale, 10 + (j * boxHeight) + ((i + 2) * scale));
+                g.drawLine(100, 30 + (j * boxHeight) + ((i + 2) * scale), boxWidth - scale, 30 + (j * boxHeight) + ((i + 2) * scale));
                 g.setColor(Color.WHITE);
-                g.drawString(players.get(i), 10, (j * boxHeight) + ((i + 2) * scale) + (fontHeight) / 2);
+                g.drawString(players.get(i), 10, ((j * boxHeight) + ((i + 2) * scale) + (fontHeight) / 2)+20);
                 if (i == 0)
                 {
-                    g.drawString(roomSpecificText, 10, j * boxHeight + ((players.size() + 2) * scale) + (fontHeight / 2));
+                    g.drawString(roomSpecificText, 10, j * boxHeight + ((players.size() + 2) * scale) + (fontHeight / 2)+20);
                 }
             }
         }
@@ -461,8 +491,8 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     {
         for (Integer i : specific.keySet())
         {
-            int xOffset = (shouldWrap) ? ((i - startTick) % 50) * scale : i * scale;
-            int yOffset = (shouldWrap) ? ((i - startTick) / 50) * boxHeight : 0;
+            int xOffset = getXOffset(i);
+            int yOffset = getYOffset(i);
             xOffset += 100;
             yOffset += (playerOffsets.size() + 2) * scale - 10;
             g.setColor(Color.WHITE);
@@ -479,7 +509,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             if (dawnSpec.getDamage() != -1)
             {
                 int xOffset = (shouldWrap) ? ((dawnSpec.tick - startTick - 2) % 50) * scale : (dawnSpec.tick + 2) * scale;
-                int yOffset = (shouldWrap) ? ((dawnSpec.tick - startTick - 2) / 50) * boxHeight : 0;
+                int yOffset = (shouldWrap) ? ((dawnSpec.tick - startTick - 2) / 50) * boxHeight +20 : 20;
                 xOffset += 100;
                 yOffset += (playerOffsets.size() + 3) * scale - 10;
                 g.setColor(Color.WHITE);
@@ -496,7 +526,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             if (box.tick >= startTick && box.tick <= endTick)
             {
                 int xOffset = 100 + ((shouldWrap) ? ((box.tick - startTick) % 50) * scale : box.tick * scale);
-                int yOffset = ((playerOffsets.get(box.player) + 1) * scale + 10) + ((shouldWrap) ? ((box.tick - startTick) / 50) * boxHeight : 0);
+                int yOffset = ((playerOffsets.get(box.player) + 1) * scale + 30) + ((shouldWrap) ? ((box.tick - startTick) / 50) * boxHeight : 30);
                 g.setColor(box.color);
                 g.fillRect(xOffset + 1, yOffset + 1, scale - 1, scale - 1);
                 g.setColor((box.primaryTarget) ? Color.WHITE : new Color(0, 190, 255));
@@ -522,8 +552,8 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         {
             for (Integer i : lines.keySet())
             {
-                int xOffset = (shouldWrap) ? ((i - startTick) % 50) * scale : i * scale;
-                int yOffset = (shouldWrap) ? ((i - startTick) / 50) * boxHeight : 0;
+                int xOffset = getXOffset(i);
+                int yOffset = getYOffset(i);
                 xOffset += 100;
                 yOffset += (scale / 2);
                 g.setColor(new Color(255, 0, 0));
@@ -559,7 +589,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             int lastEndTick = box.spawnTick;
             while (lastEndTick < maxTick)
             {
-                int yOffset = (shouldWrap) ? ((lastEndTick - startTick) / 50) * boxHeight : 0;
+                int yOffset = getYOffset(lastEndTick);
                 try
                 {
                     yOffset += (playerOffsets.get(box.owner) + 1) * scale + 10;
@@ -588,7 +618,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         {
             g.setColor(new Color(255, 255, 255));
             int xOffset = 100 + ((shouldWrap) ? ((selectedTick - startTick) % 50) * scale : selectedTick * scale);
-            int yOffset = ((playerOffsets.get(selectedPlayer) + 1) * scale + 10) + ((shouldWrap) ? ((selectedTick - startTick) / 50) * boxHeight : 0);
+            int yOffset = ((playerOffsets.get(selectedPlayer) + 1) * scale + 30) + ((shouldWrap) ? ((selectedTick - startTick) / 50) * boxHeight : 30);
             g.drawRect(xOffset, yOffset, scale, scale);
         }
     }
@@ -605,8 +635,8 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         if (selectedRow != -1)
         {
             g.setColor(new Color(255, 255, 255));
-            int xOffset = 100 + ((shouldWrap) ? ((selectedRow - startTick) % 50) * scale : selectedRow * scale);
-            int yOffset = (10) + ((shouldWrap) ? ((selectedRow - startTick) / 50) * boxHeight : 0);
+            int xOffset = 100+getXOffset(selectedRow);
+            int yOffset = 10+getYOffset(selectedRow);
             g.drawRect(xOffset, yOffset, scale, scale * (players.size() + 2));
 
             int selectedTickHP = -1;
@@ -639,10 +669,128 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                 com.TheatreTracker.Point location = getPoint(action.tick, action.player);
                 int stringLength = getStringWidth(g, action.action);
                 g.setColor(new Color(0, 0, 0, 220));
-                g.fillRect(location.getX() + 10, location.getY() - 30, stringLength + 10, 20);
+                g.fillRect(location.getX() + 10, location.getY() - 10, stringLength + 10, 20);
                 g.setColor(Color.WHITE);
-                g.drawRect(location.getX() + 10, location.getY() - 30, stringLength + 10, 20);
-                g.drawString(action.action, location.getX() + 15, location.getY() - 15);
+                g.drawRect(location.getX() + 10, location.getY() - 10, stringLength + 10, 20);
+                g.drawString(action.action, location.getX() + 15, location.getY()+5);
+            }
+        }
+    }
+
+    private void drawMaidenCrabs(Graphics2D g)
+    {
+        g.setColor(Color.BLACK);
+        if(room.equals("Maiden"))
+        {
+            for (Integer tick : lines.keySet())
+            {
+                String proc = lines.get(tick);
+                int xOffset = 100 + getXOffset(tick+1);
+                int yOffset = 10 + getYOffset(tick+1);
+                yOffset -= scale;
+                int crabOffsetX = 0;
+                int crabOffsetY;
+
+                crabOffsetY = 11;
+                g.drawOval(xOffset+crabOffsetX, yOffset+crabOffsetY, 7, 7);
+
+                crabOffsetY = 20;
+                g.drawOval(xOffset+crabOffsetX, yOffset+crabOffsetY, 7, 7);
+
+                crabOffsetX = 9;
+                crabOffsetY = 11;
+                g.drawOval(xOffset+crabOffsetX, yOffset+crabOffsetY, 7, 7);
+
+                crabOffsetX = 9;
+                crabOffsetY = 20;
+                g.drawOval(xOffset+crabOffsetX, yOffset+crabOffsetY, 7, 7);
+
+                    crabOffsetX = 18;
+                    crabOffsetY = 11;
+                g.drawOval(xOffset+crabOffsetX, yOffset+crabOffsetY, 7, 7);
+
+                    crabOffsetX = 18;
+                    crabOffsetY = 20;
+                g.drawOval(xOffset+crabOffsetX, yOffset+crabOffsetY, 7, 7);
+
+                    crabOffsetX = 27;
+                    crabOffsetY = 2;
+                g.drawOval(xOffset+crabOffsetX, yOffset+crabOffsetY, 7, 7);
+
+                    crabOffsetX = 27;
+                    crabOffsetY = 20;
+                g.drawOval(xOffset+crabOffsetX, yOffset+crabOffsetY, 7, 7);
+
+                    crabOffsetX = 27;
+                    crabOffsetY = 11;
+                g.drawOval(xOffset+crabOffsetX, yOffset+crabOffsetY, 7, 7);
+
+                    crabOffsetX = 27;
+                    crabOffsetY = 29;
+                g.drawOval(xOffset+crabOffsetX, yOffset+crabOffsetY, 7, 7);
+
+
+                for(String crab : crabDescriptions)
+                {
+                    if(crab.contains(proc))
+                    {
+                         xOffset = 100+getXOffset(tick+1);
+                         yOffset = 10+getYOffset(tick+1);
+                        crabOffsetX = 0;
+                        crabOffsetY = 0;
+                        if(crab.contains("N1"))
+                        {
+                            crabOffsetY = 11;
+                        }
+                        else if(crab.contains("S1"))
+                        {
+                            crabOffsetY = 20;
+                        }
+                        else if(crab.contains("N2"))
+                        {
+                            crabOffsetX = 9;
+                            crabOffsetY = 11;
+                        }
+                        else if(crab.contains("S2"))
+                        {
+                            crabOffsetX = 9;
+                            crabOffsetY = 20;
+                        }
+                        else if(crab.contains("N3"))
+                        {
+                            crabOffsetX = 18;
+                            crabOffsetY = 11;
+                        }
+                        else if(crab.contains("S3"))
+                        {
+                            crabOffsetX = 18;
+                            crabOffsetY = 20;
+                        }
+                        else if(crab.contains("N4 (1)"))
+                        {
+                            crabOffsetX = 27;
+                            crabOffsetY = 2;
+                        }
+                        else if(crab.contains("S4 (1)"))
+                        {
+                            crabOffsetX = 27;
+                            crabOffsetY = 20;
+                        }
+                        else if(crab.contains("N4 (2)"))
+                        {
+                            crabOffsetX = 27;
+                            crabOffsetY = 11;
+                        }
+                        else if(crab.contains("S4 (2)"))
+                        {
+                            crabOffsetX = 27;
+                            crabOffsetY = 29;
+                        }
+                        crabOffsetY -= scale;
+                        g.setColor(Color.BLACK);
+                        g.fillOval(xOffset+crabOffsetX, yOffset+crabOffsetY, 7, 7);
+                    }
+                }
             }
         }
     }
@@ -674,6 +822,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             drawPrimaryBoxes(g);
             drawMarkerLines(g);
             drawThrallBoxes(g);
+            drawMaidenCrabs(g);
             drawSelectedOutlineBox(g);
             drawSelectedRow(g);
             drawHoverBox(g);
@@ -686,34 +835,37 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
     public void getTickHovered(int x, int y)
     {
-        int boxNumber = y / boxHeight;
-        if (x > 100)
+        if(y > 20)
         {
-            int tick = startTick + (50 * boxNumber + ((x - 100) / scale));
-            int playerOffsetPosition = (((y - 10 - scale) % boxHeight) / scale);
-            if (playerOffsetPosition >= 0 && playerOffsetPosition < players.size() && (y - 10 - scale > 0))
+            int boxNumber = (y-20) / boxHeight;
+            if (x > 100)
             {
-                selectedTick = tick;
-                selectedPlayer = players.get(playerOffsetPosition);
-                selectedRow = -1;
-            } else if (y % boxHeight < 10 + scale)
-            {
-                selectedRow = tick;
-                selectedPlayer = "";
-                selectedTick = -1;
+                int tick = startTick + (50 * boxNumber + ((x - 100) / scale));
+                int playerOffsetPosition = (((y - 30 - scale) % boxHeight) / scale);
+                if (playerOffsetPosition >= 0 && playerOffsetPosition < players.size() && (y - 30 - scale > 0))
+                {
+                    selectedTick = tick;
+                    selectedPlayer = players.get(playerOffsetPosition);
+                    selectedRow = -1;
+                } else if (y % boxHeight < 30 + scale)
+                {
+                    selectedRow = tick;
+                    selectedPlayer = "";
+                    selectedTick = -1;
+                } else
+                {
+                    selectedPlayer = "";
+                    selectedTick = -1;
+                    selectedRow = -1;
+                }
             } else
             {
                 selectedPlayer = "";
                 selectedTick = -1;
                 selectedRow = -1;
             }
-        } else
-        {
-            selectedPlayer = "";
-            selectedTick = -1;
-            selectedRow = -1;
+            drawGraph();
         }
-        drawGraph();
     }
 
     @Override

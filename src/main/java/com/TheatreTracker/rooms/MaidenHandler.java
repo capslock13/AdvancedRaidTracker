@@ -251,6 +251,7 @@ public class MaidenHandler extends RoomHandler
                 String crabName = identifySpawn(npc);
                 clog.write(ADD_NPC_MAPPING, String.valueOf(npc.getIndex()), crabName);
                 plugin.liveFrame.getPanel(getName()).addNPCMapping(npc.getIndex(), crabName);
+                plugin.liveFrame.getPanel(getName()).addMaidenCrab(crabName);
                 MaidenCrab crab = new MaidenCrab(npc, TheatreTrackerPlugin.scale, crabName);
                 logCrabSpawn(crab.description);
                 maidenCrabs.add(crab);

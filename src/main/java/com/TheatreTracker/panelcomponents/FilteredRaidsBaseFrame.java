@@ -14,6 +14,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.text.BadLocationException;
 import java.awt.*;
@@ -21,6 +22,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.List;
 
@@ -131,6 +133,11 @@ public class FilteredRaidsBaseFrame extends BaseFrame
 
     public FilteredRaidsBaseFrame()
     {
+        columnHeaders = new ArrayList<>();
+        for(String s : columnHeaderNames)
+        {
+            columnHeaders.add(getCheckBoxMenuItem(s));
+        }
         aliases = new ArrayList<>();
         filteredIndices = new ArrayList<>();
         comparisons = new ArrayList<>();
@@ -371,68 +378,147 @@ public class FilteredRaidsBaseFrame extends BaseFrame
         completionsFound.setText("Completions Found: " + completions);
         updateTabNames(tableData);
 
-        String[] columnNames = {"", "Date", "Scale", "Status", viewByRaidComboBox.getSelectedItem().toString(), "Players", "Spectate", "View"};
+        ArrayList<String> columnNamesDynamic = new ArrayList<>();
+        columnNamesDynamic.add("");
+        for(JCheckBoxMenuItem item : columnHeaders)
+        {
+            if(item.getState())
+            {
+                columnNamesDynamic.add(item.getText());
+            }
+            if (item.getText().equals("Status"))
+            {
+                columnNamesDynamic.add(viewByRaidComboBox.getSelectedItem().toString());
+            }
+        }
         ArrayList<Object[]> tableBuilder = new ArrayList<>();
         for (RoomData raid : tableData)
         {
-            StringBuilder players = new StringBuilder();
-            for (String s : raid.players.keySet())
+            ArrayList<Object> rowBuilder = new ArrayList<>();
+            for(String column : columnNamesDynamic)
             {
-                players.append(s).append(", ");
+                rowBuilder.add(getRowData(column, raid));
             }
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(raid.raidStarted);
-            String dateString = (cal.get(Calendar.MONTH) + 1) + "-" + cal.get(Calendar.DAY_OF_MONTH) + "-" + cal.get(Calendar.YEAR);
-            String scaleString = raid.getScaleString();
-            PlayerCorrelatedPointData pointData = raid.getSpecificTimeInactiveCorrelated(viewByRaidComboBox.getSelectedItem().toString());
-            if (pointData == null)
-            {
-                timeToDisplay = String.valueOf(raid.getSpecificTimeInactive(viewByRaidComboBox.getSelectedItem().toString()));
-            } else
-            {
-                if (pointData.value == 0)
-                {
-                    timeToDisplay = "0";
-                } else
-                {
-                    timeToDisplay = pointData.value + " (" + pointData.player + ")";
-                }
-            }
-            Object[] row =
-                    {
-                            raid.index,
-                            dateString,
-                            scaleString,
-                            raid.getRoomStatus(),
-                            (isTime()) ? RoomUtil.time(timeToDisplay) : timeToDisplay,
-                            (players.length() > 2) ? players.substring(0, players.length() - 2) : "",
-                            (raid.spectated) ? "Yes" : "No",
-                            "View"
-                    };
-            tableBuilder.add(row);
+            tableBuilder.add(rowBuilder.toArray());
         }
-        Object[][] tableObject = new Object[tableData.size()][8];
+        int columns = 0;
+        if(tableBuilder.size() != 0)
+        {
+            columns = tableBuilder.get(0).length;
+        }
+        Object[][] tableObject = new Object[tableData.size()][columns];
         int count = 0;
         for (Object[] row : tableBuilder)
         {
             tableObject[count] = row;
             count++;
         }
-        table.setModel(new DefaultTableModel(tableObject, columnNames));
-        table.getColumn("Date").setCellEditor(new NonEditableCell(new JTextField()));
-        table.getColumn("Scale").setCellEditor(new NonEditableCell(new JTextField()));
-        table.getColumn("Status").setCellEditor(new NonEditableCell(new JTextField()));
-        table.getColumn("").setCellEditor(new NonEditableCell(new JTextField()));
-        table.getColumn(viewByRaidComboBox.getSelectedItem().toString()).setCellEditor(new NonEditableCell(new JTextField()));
-        table.getColumn("Players").setCellEditor(new NonEditableCell(new JTextField()));
-        table.getColumn("Spectate").setCellEditor(new NonEditableCell(new JTextField()));
-        table.getColumn("View").setCellRenderer(new ButtonRenderer());
-        table.getColumn("View").setCellEditor(new ButtonEditorRoomData(new JCheckBox(), tableData));
+
+        table.setModel(new DefaultTableModel(tableObject, columnNamesDynamic.toArray()));
+        for(int i = 0; i < table.getColumnCount(); i++)
+        {
+            if(table.getColumnName(i).equals("View"))
+            {
+                table.getColumn(table.getColumnName(i)).setCellEditor(new ButtonEditorRoomData(new JCheckBox(), tableData));
+                table.getColumn(table.getColumnName(i)).setCellRenderer(new ButtonRenderer());
+            }
+            else
+            {
+                table.getColumn(table.getColumnName(i)).setCellEditor(new NonEditableCell(new JTextField()));
+            }
+        }
+
         resizeColumnWidth(table);
         table.setFillsViewportHeight(true);
         setLabels(tableData);
         container.validate();
         container.repaint();
+    }
+
+    public Object getRowData(String column, RoomData raid)
+    {
+        switch(column)
+        {
+            case "":
+                return raid.index;
+            case "Date":
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(raid.raidStarted);
+                String dateString = (cal.get(Calendar.MONTH) + 1) + "-" + cal.get(Calendar.DAY_OF_MONTH) + "-" + cal.get(Calendar.YEAR);
+                return dateString;
+            case "Scale":
+                return raid.getScaleString();
+            case "Status":
+                return raid.getRoomStatus();
+            case "Players":
+                StringBuilder players = new StringBuilder();
+                for (String s : raid.players.keySet())
+                {
+                    players.append(s).append(", ");
+                }
+                return players.toString();
+            case "Spectate":
+                return (raid.spectated) ? "Yes" : "No";
+            case "View":
+                return "View";
+            case "Time":
+                Calendar cal2 = Calendar.getInstance();
+                cal2.setTime(raid.raidStarted);
+                int hour = cal2.get(Calendar.HOUR_OF_DAY);
+                int minute = cal2.get(Calendar.MINUTE);
+                String minuteString = (minute < 10) ? "0"+minute : String.valueOf(minute);
+                String period = (hour > 11) ? " PM" : " AM";
+                if (hour == 0)
+                {
+                    hour = 12;
+                } else if (hour > 12)
+                {
+                    hour -= 12;
+                }
+                return hour + ":" + minuteString + period;
+        }
+        String valueToDisplay = "(?)";
+        try
+        {
+            PlayerCorrelatedPointData pointData = raid.getSpecificTimeInactiveCorrelated(column);
+            if (pointData == null)
+            {
+                valueToDisplay = String.valueOf(raid.getSpecificTimeInactive(column));
+            } else
+            {
+                if (pointData.value == 0)
+                {
+                    valueToDisplay = "0";
+                } else
+                {
+                    valueToDisplay = pointData.value + " (" + pointData.player + ")";
+                }
+            }
+        }
+        catch(Exception e)
+        {
+
+        }
+        return (isTime(column) ? RoomUtil.time(valueToDisplay) : valueToDisplay);
+    }
+
+    boolean isTime(String value)
+    {
+        try
+        {
+            if (!value.contains("Player:"))
+            {
+                return (Objects.requireNonNull(DataPoint.getValue(Objects.requireNonNull(value)).type == DataPoint.types.TIME));
+            }
+            else
+            {
+                return false;
+            }
+        }
+        catch(Exception e)
+        {
+            return false;
+        }
     }
 
     boolean isTime()
@@ -656,6 +742,21 @@ public class FilteredRaidsBaseFrame extends BaseFrame
         }
     }
 
+    private JMenuItem createMenuItemTableHeader(final String name)
+    {
+        JMenuItem item = new JMenuItem(name);
+        item.setBackground(Color.BLACK);
+        item.setOpaque(true);
+        item.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent event)
+            {
+                getUpdatedPopupMenu(name);
+            }
+        });
+        return item;
+    }
+
     private JMenuItem createMenuItem(final String name)
     {
         JMenuItem item = new JMenuItem(name);
@@ -671,9 +772,11 @@ public class FilteredRaidsBaseFrame extends BaseFrame
         return item;
     }
 
+    private Map<String, String[]> comboPopupData = new LinkedHashMap<String, String[]>();
+
+
     public void createFrame(ArrayList<RoomData> data)
     {
-        Map<String, String[]> comboPopupData = new LinkedHashMap<String, String[]>();
         comboPopupData.put("Room Times", DataPoint.getRoomTimes());
         comboPopupData.put("Maiden", DataPoint.getMaidenNames());
         comboPopupData.put("Bloat", DataPoint.getBloatNames());
@@ -682,7 +785,6 @@ public class FilteredRaidsBaseFrame extends BaseFrame
         comboPopupData.put("Xarpus", DataPoint.getXarpNames());
         comboPopupData.put("Verzik", DataPoint.getVerzikNames());
         comboPopupData.put("Any", DataPoint.getAnyRoomNames());
-
         comboPopupMenu = new JPopupMenu();
         comboPopupMenu.setBorder(new MatteBorder(1, 1, 1, 1, Color.DARK_GRAY));
 
@@ -1926,61 +2028,183 @@ public class FilteredRaidsBaseFrame extends BaseFrame
         built = true;
     }
 
-    private static JPopupMenu getjPopupMenu()
+    public String[] columnHeaderNames = new String[]{"Date","Time","Scale","Status", "Players", "Spectate","View"};
+    public ArrayList<JCheckBoxMenuItem> columnHeaders;
+
+    private void getUpdatedPopupMenu(String newItem)
+    {
+        JCheckBoxMenuItem item = new JCheckBoxMenuItem(newItem);
+        item.setOpaque(true);
+        item.setBackground(Color.BLACK);
+        item.setState(true);
+        item.addActionListener(al->
+        {
+            updateTable();
+        });
+        columnHeaders.add(item);
+        table.getTableHeader().setComponentPopupMenu(getjPopupMenu());
+        updateTable();
+    }
+
+    private JCheckBoxMenuItem getCheckBoxMenuItem(String name)
+    {
+        JCheckBoxMenuItem item = new JCheckBoxMenuItem(name);
+        if(!name.equals("Time"))
+        {
+            item.setState(true);
+        }
+        item.setOpaque(true);
+        item.setBackground(Color.BLACK);
+        item.addActionListener(al->
+        {
+            if(built)
+            {
+                updateTable();
+            }
+        });
+        return item;
+    }
+    private JPopupMenu getjPopupMenu()
     {
         JPopupMenu tstMenu = new JPopupMenu();
-        tstMenu.setOpaque(true);
-        tstMenu.setBackground(Color.BLACK);
-        JCheckBoxMenuItem testItem = new JCheckBoxMenuItem("Date");
-        testItem.setState(true);
-        JCheckBoxMenuItem testItem8 = new JCheckBoxMenuItem("Time");
-        testItem8.setState(false);
-        JCheckBoxMenuItem testItem2 = new JCheckBoxMenuItem("Scale");
-        testItem2.setState(true);
-        JCheckBoxMenuItem testItem3 = new JCheckBoxMenuItem("Status");
-        testItem3.setState(true);
-        JCheckBoxMenuItem testItem4 = new JCheckBoxMenuItem("Raid Time");
-        testItem4.setState(true);
-        JCheckBoxMenuItem testItem5 = new JCheckBoxMenuItem("Players");
-        testItem5.setState(true);
-        JCheckBoxMenuItem testItem6 = new JCheckBoxMenuItem("Spectate");
-        testItem6.setState(true);
-        JCheckBoxMenuItem testItem7 = new JCheckBoxMenuItem("View");
-        testItem7.setState(true);
 
-        testItem.setOpaque(true);
-        testItem.setBackground(Color.BLACK);
+        for(JCheckBoxMenuItem item : columnHeaders)
+        {
+            tstMenu.add(item);
+        }
 
-        testItem2.setOpaque(true);
-        testItem2.setBackground(Color.BLACK);
+        List<String> allComboValues = new ArrayList<String>(comboPopupData.keySet());
 
-        testItem3.setOpaque(true);
-        testItem3.setBackground(Color.BLACK);
+        comboStrictData = new ArrayList<String>();
 
-        testItem4.setOpaque(true);
-        testItem4.setBackground(Color.BLACK);
+        JMenu addCustom = new JMenu("Add Custom");
 
-        testItem5.setOpaque(true);
-        testItem5.setBackground(Color.BLACK);
+        JMenuItem resetCustom = new JMenuItem("Reset Custom Columns");
+        resetCustom.setOpaque(true);
+        resetCustom.setBackground(Color.BLACK);
 
-        testItem6.setOpaque(true);
-        testItem6.setBackground(Color.BLACK);
+        resetCustom.addActionListener(al->
+        {
+            columnHeaders.clear();
+            for(String column : columnHeaderNames)
+            {
+                columnHeaders.add(getCheckBoxMenuItem(column));
+            }
+            table.getTableHeader().setComponentPopupMenu(getjPopupMenu());
+            updateTable();
+        });
 
-        testItem7.setOpaque(true);
-        testItem7.setBackground(Color.BLACK);
+        for (String category : allComboValues)
+        {
+            JMenu menu = new JMenu(category);
+            menu.setBackground(Color.BLACK);
+            menu.setOpaque(true);
+            if (!category.equals("Room Times") && !category.equals("Any"))
+            {
+                JMenu timeMenu = new JMenu("Time");
+                timeMenu.setBackground(Color.BLACK);
+                timeMenu.setOpaque(true);
+                for (String itemName : DataPoint.filterTimes(comboPopupData.get(category)))
+                {
+                    timeMenu.add(createMenuItemTableHeader(itemName));
+                    comboStrictData.add(itemName);
+                }
+                JMenu countMenu = new JMenu("Misc");
+                countMenu.setBackground(Color.BLACK);
+                countMenu.setOpaque(true);
+                for (String itemName : DataPoint.filterInt(comboPopupData.get(category)))
+                {
+                    countMenu.add(createMenuItemTableHeader(itemName));
+                    comboStrictData.add(itemName);
+                }
+                JMenu thrallMenu = new JMenu("Thrall");
+                thrallMenu.setBackground(Color.BLACK);
+                thrallMenu.setOpaque(true);
+                for (String itemName : DataPoint.filterThrall(comboPopupData.get(category)))
+                {
+                    thrallMenu.add(createMenuItemTableHeader(itemName));
+                    comboStrictData.add(itemName);
+                }
+                JMenu vengMenu = new JMenu("Veng");
+                vengMenu.setBackground(Color.BLACK);
+                vengMenu.setOpaque(true);
+                for (String itemName : DataPoint.filterVeng(comboPopupData.get(category)))
+                {
+                    vengMenu.add(createMenuItemTableHeader(itemName));
+                    comboStrictData.add(itemName);
+                }
 
-        testItem8.setOpaque(true);
-        testItem8.setBackground(Color.BLACK);
+                JMenu specMenu = new JMenu("Spec");
+                specMenu.setBackground(Color.BLACK);
+                specMenu.setOpaque(true);
+                for (String itemName : DataPoint.filterSpecs(comboPopupData.get(category)))
+                {
+                    specMenu.add(createMenuItemTableHeader(itemName));
+                    comboStrictData.add(itemName);
+                }
 
+                menu.add(timeMenu);
+                menu.add(countMenu);
+                menu.add(thrallMenu);
+                menu.add(vengMenu);
+                menu.add(specMenu);
+            } else
+            {
+                for (String itemName : comboPopupData.get(category))
+                {
+                    menu.add(createMenuItemTableHeader(itemName));
+                    comboStrictData.add(itemName);
+                }
+            }
+            addCustom.add(menu);
+        }
+        JMenu playerSpecificMenu = new JMenu("Player Specific");
+        playerSpecificMenu.setBackground(Color.BLACK);
+        playerSpecificMenu.setOpaque(true);
+        String[] qualifiers = new String[]{"Maiden", "Bloat", "Nylo", "Sote", "Xarp", "Verz", "deaths"};
 
-        tstMenu.add(testItem);
-        tstMenu.add(testItem8);
-        tstMenu.add(testItem2);
-        tstMenu.add(testItem3);
-        tstMenu.add(testItem4);
-        tstMenu.add(testItem5);
-        tstMenu.add(testItem6);
-        tstMenu.add(testItem7);
+        for (String s : qualifiers)
+        {
+            JMenu room = new JMenu(s);
+            room.setBackground(Color.BLACK);
+            room.setOpaque(true);
+            for (String qualified : DataPoint.getPlayerSpecific())
+            {
+                if (qualified.contains(s))
+                {
+                    room.add(createMenuItemTableHeader("Player: " + qualified));
+                    comboStrictData.add("Player: " + qualified);
+                }
+            }
+            playerSpecificMenu.add(room);
+        }
+        JMenu room = new JMenu("Other");
+        room.setBackground(Color.BLACK);
+        room.setOpaque(true);
+        for (String qualified : DataPoint.getPlayerSpecific())
+        {
+            boolean anyFlagged = false;
+            for (String s : qualifiers)
+            {
+                if (qualified.contains(s))
+                {
+                    anyFlagged = true;
+                }
+            }
+            if (!anyFlagged)
+            {
+                room.add(createMenuItemTableHeader("Player: " + qualified));
+                comboStrictData.add("Player: " + qualified);
+            }
+        }
+        playerSpecificMenu.add(room);
+
+        addCustom.setOpaque(true);
+        addCustom.setBackground(Color.BLACK);
+        addCustom.add(playerSpecificMenu);
+        tstMenu.add(addCustom);
+        tstMenu.add(resetCustom);
+
         return tstMenu;
     }
 

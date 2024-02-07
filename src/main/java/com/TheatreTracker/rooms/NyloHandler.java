@@ -196,21 +196,12 @@ public class NyloHandler extends RoomHandler
                         {
                             matches++;
                             lastMatchedDescription = bigDescription.get(npc.getIndex());
-                            lastMatchedIndex = npc.getIndex();
-                            if (bigDescription.get(npc.getIndex()) == null)
-                            {
-                                log.info("Null for " + npc.getIndex());
-                            }
-                            log.info("matched big " + bigDescription.get(npc.getIndex()));
                         }
                     }
                     if (matches == 1)
                     {
                         clog.write(ADD_NPC_MAPPING, String.valueOf(event.getNpc().getIndex()), NylocasShell.getTypeName(event.getNpc().getId()) + " split from " + lastMatchedDescription + "(on w" + currentWave + ")");
                         plugin.liveFrame.getPanel(getName()).addNPCMapping(event.getNpc().getIndex(), NylocasShell.getTypeName(event.getNpc().getId()) + " split from " + lastMatchedDescription + "(on w" + currentWave + ")");
-                    } else
-                    {
-                        log.info("could not match little on tick " + (client.getTickCount() - roomStartTick));
                     }
                     switch (event.getNpc().getId())
                     {

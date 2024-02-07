@@ -94,7 +94,7 @@ public class VerzikHandler extends RoomHandler
         {
             if (projectile.getId() == 1587)
             {
-                log.info("Expecting purple heal on tick: " + client.getTickCount());
+                //log.info("Expecting purple heal on tick: " + client.getTickCount());
             }
         }
         if (client.getTickCount() == healingEndTick)
@@ -110,7 +110,7 @@ public class VerzikHandler extends RoomHandler
                 {
                     if (p2.getWorldLocation().distanceTo(p.getWorldLocation()) <= 1)
                     {
-                        log.info(p2.getName() + " is also in target of verz auto AOE");
+                        //log.info(p2.getName() + " is also in target of verz auto AOE");
                         playersHit++;
                     }
                 }
@@ -119,7 +119,7 @@ public class VerzikHandler extends RoomHandler
         queuedAutoHits.clear();
         for (Integer heal : currentHits)
         {
-            log.info("Heal: " + heal);
+            //log.info("Heal: " + heal);
         }
         currentHits.clear();
         if (healingEndTick == client.getTickCount())
@@ -167,12 +167,12 @@ public class VerzikHandler extends RoomHandler
         {
             if (event.getProjectile().getRemainingCycles() == 0)
             {
-                log.info("Expecting auto heal on tick " + (client.getTickCount() + 2));
+                //log.info("Expecting auto heal on tick " + (client.getTickCount() + 2));
                 if (verzNPC.getInteracting() instanceof Player)
                 {
                     Player p = (Player) verzNPC;
-                    log.info("Verz targeting: " + p.getName());
-                    log.info("");
+                    //log.info("Verz targeting: " + p.getName());
+                    //log.info("");
                     queuedAutoHits.put(p, client.getTickCount() + 2);
                 }
             }
@@ -250,7 +250,7 @@ public class VerzikHandler extends RoomHandler
                             switch (p.getAnimation())
                             {
                                 case 8056:
-                                    log.info("expecting 3 heals from scy by " + p.getName() + " on tick " + (client.getTickCount() + 1));
+                                    //log.info("expecting 3 heals from scy by " + p.getName() + " on tick " + (client.getTickCount() + 1));
                                     break;
                             }
                         }

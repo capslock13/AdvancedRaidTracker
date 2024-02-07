@@ -1318,7 +1318,7 @@ public class TheatreTrackerPlugin extends Plugin
                     if (event.getHitsplat().getAmount() == expectedDamage)
                     {
                         clog.write(VENG_WAS_PROCCED, veng.target, String.valueOf(expectedDamage));
-                        log.info(veng.target + " venged " + expectedDamage);
+                        //log.info(veng.target + " venged " + expectedDamage);
                         if (inTheatre)
                         {
                             currentRoom.updateHitsplatApplied(event);
@@ -1346,7 +1346,7 @@ public class TheatreTrackerPlugin extends Plugin
         {
             if (event.getOverheadText().equals("Taste vengeance!"))
             {
-                log.info(event.getActor().getName() + " procced veng");
+                //log.info(event.getActor().getName() + " procced veng");
                 playersWhoHaveOverheadText.add(event.getActor().getName());
             }
             if (currentRoom instanceof XarpusHandler)

@@ -188,7 +188,7 @@ public class ThrallTracker
                             NPC npc = (NPC) projectile.getInteracting();
                             if (npc.getId() == VERZIK_P2 || npc.getId() == VERZIK_P2_HM || npc.getId() == VERZIK_P2_SM)
                             {
-                                log.info("Thrall attacked during shield, expected on tick " + (hitOffset + plugin.getTick()));
+                                //log.info("Thrall attacked during shield, expected on tick " + (hitOffset + plugin.getTick()));
                                 plugin.thrallAttackedP2VerzikShield(hitOffset);
                             }
                         }

@@ -647,15 +647,45 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             {
 
             }
-            if (selectedTickHP != -1)
+            if (true)
             {
-                String HPString = "Boss HP: " + RoomUtil.varbitHPtoReadable(selectedTickHP);
-                int stringLength = getStringWidth(g, HPString);
+                int offset = -1;
+                switch(room)
+                {
+                    case "Maiden":
+                        offset = 7;
+                        break;
+                    case "Bloat":
+                        offset = 3;
+                        break;
+                    case  "Nylocas":
+                        offset = 5;
+                        offset += (4-((offset+selectedRow)%4));
+                        offset -= 2;
+                        break;
+                    case "Sotetseg":
+                        offset = 3;
+                        break;
+                    case "Xarpus":
+                        offset = 3;
+                        break;
+                    case "Verzik P3":
+                        offset = 7;
+                        break;
+                }
+                int drawHeight = (offset != -1) ? 40 : 20;
+                String bossWouldHaveDied = (offset != -1) ? "Melee attack on this tick killing would result in: " + RoomUtil.time(selectedRow+1+offset+1) + " (Quick death: " + RoomUtil.time(selectedRow+offset+1) + ")" : "";
+                String HPString = "Boss HP: " + ((selectedTickHP == -1) ? "-" : RoomUtil.varbitHPtoReadable(selectedTickHP));
+                int stringLength = Math.max(getStringWidth(g, HPString), getStringWidth(g, bossWouldHaveDied));
                 g.setColor(new Color(0, 0, 0, 220));
-                g.fillRect(xOffset + 5 + scale, yOffset, stringLength + 10, 20);
+                g.fillRect(xOffset + 5 + scale, yOffset, stringLength + 10, drawHeight);
                 g.setColor(Color.WHITE);
-                g.drawRect(xOffset + 5 + scale, yOffset, stringLength + 10, 20);
+                g.drawRect(xOffset + 5 + scale, yOffset, stringLength + 10, drawHeight);
                 g.drawString(HPString, xOffset + 10 + scale, yOffset + 15);
+                if(offset != -1)
+                {
+                    g.drawString(bossWouldHaveDied, xOffset+10+scale, yOffset+35);
+                }
             }
         }
     }

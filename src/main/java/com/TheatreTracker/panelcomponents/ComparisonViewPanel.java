@@ -25,9 +25,11 @@ public class ComparisonViewPanel extends JPanel
 
     private JSlider leftCutOff;
     private JSlider rightCutOff;
+    private JSlider threshold;
 
     private JTextField leftLabel;
     private JTextField rightLabel;
+    private JTextField thresholdLabel;
 
     private JLabel graph1Average;
     private JLabel graph1Median;
@@ -40,6 +42,9 @@ public class ComparisonViewPanel extends JPanel
     private JLabel graph2Maximum;
     private JLabel graph2Minimum;
     private JLabel graph2Mode;
+
+    private JLabel graph1PercentThreshold;
+    private JLabel graph2PercentThreshold;
 
     private String panelName = "Other";
     private JPanel otherTopLeft;
@@ -69,6 +74,8 @@ public class ComparisonViewPanel extends JPanel
     SpinnerNumberModel spinnerSizeModel;
     SpinnerNumberModel spinnerOffsetModel;
     JSpinner groupOffsetSpinner;
+    JLabel leftThresholdLabel;
+    JLabel rightThresholdLabel;
 
     JCheckBox groupingEnabled;
 
@@ -76,10 +83,15 @@ public class ComparisonViewPanel extends JPanel
     {
         leftLabel = new JTextField("Min cutoff: ");
         rightLabel = new JTextField("Max cutoff: ");
+        leftThresholdLabel = new JLabel("% <= ");
+        rightThresholdLabel = new JLabel("% <= ");
+        thresholdLabel = new JTextField("Threshold: ");
+        thresholdLabel.setEditable(false);
         leftLabel.setEditable(false);
         rightLabel.setEditable(false);
         leftCutOff = new JSlider();
         rightCutOff = new JSlider();
+        threshold = new JSlider();
         topGraphs = new ArrayList<>();
         bottomGraphs = new ArrayList<>();
         data = raidData;
@@ -188,12 +200,14 @@ public class ComparisonViewPanel extends JPanel
         graph1Mode = new JLabel("", SwingConstants.RIGHT);
         graph1Maximum = new JLabel("", SwingConstants.RIGHT);
         graph1Minimum = new JLabel("", SwingConstants.RIGHT);
+        graph1PercentThreshold = new JLabel("", SwingConstants.RIGHT);
 
         graph2Average = new JLabel("", SwingConstants.RIGHT);
         graph2Median = new JLabel("", SwingConstants.RIGHT);
         graph2Mode = new JLabel("", SwingConstants.RIGHT);
         graph2Maximum = new JLabel("", SwingConstants.RIGHT);
         graph2Minimum = new JLabel("", SwingConstants.RIGHT);
+        graph2PercentThreshold = new JLabel("", SwingConstants.RIGHT);
 
         topGraphTabs = new JTabbedPane();
         topGraphTabs.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
@@ -342,7 +356,7 @@ public class ComparisonViewPanel extends JPanel
         });
 
         container = new JPanel();
-        container.setPreferredSize(new Dimension(1000, 680));
+        container.setPreferredSize(new Dimension(1000, 730));
         container.setLayout(new BoxLayout(container, BoxLayout.X_AXIS));
 
         buildUI();
@@ -444,6 +458,13 @@ public class ComparisonViewPanel extends JPanel
         leftCutOff.setMinimum(xLow);
         rightCutOff.setMaximum(xHigh);
         rightCutOff.setMinimum(xLow);
+
+        threshold.setMaximum(xHigh);
+        threshold.setMinimum(xLow);
+        threshold.setValue(((xHigh-xLow)/2)+xLow);
+        thresholdLabel.setText("Threshold: " + ((time) ? RoomUtil.time(threshold.getValue()) : threshold.getValue()));
+        leftThresholdLabel.setText("% <= " + ((time) ? RoomUtil.time(threshold.getValue()) : threshold.getValue()));
+        rightThresholdLabel.setText("% <= " + ((time) ? RoomUtil.time(threshold.getValue()) : threshold.getValue()));
 
         leftCutOff.setValue(xLow);
         rightCutOff.setValue(xLow);
@@ -621,24 +642,28 @@ public class ComparisonViewPanel extends JPanel
             double g1mod = StatisticGatherer.getGenericMode(getArrayForStatistics(topGraphData));
             double g1max = StatisticGatherer.getGenericMax(getArrayForStatistics(topGraphData));
             double g1min = StatisticGatherer.getGenericMin(getArrayForStatistics(topGraphData));
+            double g1percent = StatisticGatherer.getGenericPercent(getArrayForStatistics(topGraphData), threshold.getValue());
 
             double g2a = StatisticGatherer.getGenericAverage(getArrayForStatistics(bottomGraphData));
             double g2med = StatisticGatherer.getGenericMedian(getArrayForStatistics(bottomGraphData));
             double g2mod = StatisticGatherer.getGenericMode(getArrayForStatistics(bottomGraphData));
             double g2max = StatisticGatherer.getGenericMax(getArrayForStatistics(bottomGraphData));
             double g2min = StatisticGatherer.getGenericMin(getArrayForStatistics(bottomGraphData));
+            double g2percent = StatisticGatherer.getGenericPercent(getArrayForStatistics(bottomGraphData), threshold.getValue());
 
             String g1as = (g1a < g2a) ? better : g2a == g1a ? even : worse;
             String g1meds = (g1med < g2med) ? better : g2med == g1med ? even : worse;
             String g1mods = (g1mod < g2mod) ? better : g2mod == g1mod ? even : worse;
             String g1maxs = (g1max < g2max) ? better : g2max == g1max ? even : worse;
             String g1mins = (g1min < g2min) ? better : g2min == g1min ? even : worse;
+            String g1perc = (g1percent > g2percent) ? better : g1percent == g2percent ? even : worse;
 
             String g2as = (g1a > g2a) ? better : g2a == g1a ? even : worse;
             String g2meds = (g1med > g2med) ? better : g2med == g1med ? even : worse;
             String g2mods = (g1mod > g2mod) ? better : g2mod == g1mod ? even : worse;
             String g2maxs = (g1max > g2max) ? better : g2max == g1max ? even : worse;
             String g2mins = (g1min > g2min) ? better : g2min == g1min ? even : worse;
+            String g2perc = (g2percent > g1percent) ? better : g1percent == g2percent ? even : worse;
 
 
             graph1Average.setText(g1as + getString(g1a));
@@ -646,12 +671,15 @@ public class ComparisonViewPanel extends JPanel
             graph1Mode.setText(g1mods + getString(g1mod));
             graph1Maximum.setText(g1maxs + getString(g1max));
             graph1Minimum.setText(g1mins + getString(g1min));
+            graph1PercentThreshold.setText(g1perc + (g1percent) + "%");
 
             graph2Average.setText(g2as + getString(g2a));
             graph2Median.setText(g2meds + getString(g2med));
             graph2Mode.setText(g2mods + getString(g2mod));
             graph2Maximum.setText(g2maxs + getString(g2max));
             graph2Minimum.setText(g2mins + getString(g2min));
+            graph2PercentThreshold.setText(g2perc + (g2percent) + "%");
+
 
             ArrayList<Integer> topSet = GraphPanel.getCounts(getArrayForStatistics(topGraphData), valX);
             ArrayList<Integer> bottomSet = GraphPanel.getCounts(getArrayForStatistics(bottomGraphData), valX);
@@ -739,12 +767,30 @@ public class ComparisonViewPanel extends JPanel
         container.add(leftContainer);
 
         JPanel sidebar = new JPanel();
-        sidebar.setPreferredSize(new Dimension(390, 680));
+        sidebar.setPreferredSize(new Dimension(390, 730));
 
         JPanel graphOptionsPanel = new JPanel();
         graphOptionsPanel.setBorder(BorderFactory.createTitledBorder("Graph Options"));
-        graphOptionsPanel.setPreferredSize(new Dimension(210, 190));
+        graphOptionsPanel.setPreferredSize(new Dimension(210, 215));
 
+        threshold.setPaintLabels(true);
+        threshold.setPaintTicks(true);
+        threshold.setPaintTrack(true);
+        threshold.addChangeListener(cl->
+        {
+            Object source = cl.getSource();
+            if (source instanceof JSlider)
+            {
+                if (((JSlider) source).getValueIsAdjusting())
+                {
+                    thresholdLabel.setText("Threshold: " + ((time) ? RoomUtil.time(threshold.getValue()) : threshold.getValue()));
+                    leftThresholdLabel.setText("% <= " + ((time) ? RoomUtil.time(threshold.getValue()) : threshold.getValue()));
+                    rightThresholdLabel.setText("% <= " + ((time) ? RoomUtil.time(threshold.getValue()) : threshold.getValue()));
+                    updateOtherPanels();
+                }
+            }
+        });
+        threshold.setPreferredSize(new Dimension(180, threshold.getPreferredSize().height));
         leftCutOff.setPaintLabels(true);
         leftCutOff.setPaintTicks(true);
         leftCutOff.setPaintTrack(true);
@@ -775,6 +821,8 @@ public class ComparisonViewPanel extends JPanel
 
         leftCutOff.setPreferredSize(new Dimension(180, leftCutOff.getPreferredSize().height));
 
+
+
         rightCutOff.setPaintTrack(true);
         rightCutOff.setPaintTicks(true);
         rightCutOff.setPaintLabels(true);
@@ -804,6 +852,10 @@ public class ComparisonViewPanel extends JPanel
 
         graphOptionsPanel.add(graphTypeComboBox);
 
+        graphOptionsPanel.add(threshold);
+        thresholdLabel.setPreferredSize(new Dimension(140, thresholdLabel.getPreferredSize().height));
+        graphOptionsPanel.add(thresholdLabel);
+
         JPanel compareByPanel = new JPanel();
         compareByPanel.setBorder(BorderFactory.createTitledBorder("Compare by"));
         compareByPanel.setPreferredSize(new Dimension(190, 60));
@@ -811,7 +863,7 @@ public class ComparisonViewPanel extends JPanel
 
 
         otherPanel.setBorder(BorderFactory.createTitledBorder(panelName));
-        otherPanel.setPreferredSize(new Dimension(190, 430));
+        otherPanel.setPreferredSize(new Dimension(190, 455));
         otherPanel.setLayout(new BoxLayout(otherPanel, BoxLayout.Y_AXIS));
 
 
@@ -823,11 +875,11 @@ public class ComparisonViewPanel extends JPanel
 
         otherTopLeft = new JPanel();
         otherTopLeft.setBorder(BorderFactory.createTitledBorder("Set 0"));
-        otherTopLeft.setPreferredSize(new Dimension(100, 100));
+        otherTopLeft.setPreferredSize(new Dimension(100, 125));
 
         otherTopRight = new JPanel();
         otherTopRight.setBorder(BorderFactory.createTitledBorder("Set 1"));
-        otherTopRight.setPreferredSize(new Dimension(100, 100));
+        otherTopRight.setPreferredSize(new Dimension(100, 125));
 
         otherTop.add(otherTopLeft);
         otherTop.add(otherTopRight);
@@ -835,8 +887,8 @@ public class ComparisonViewPanel extends JPanel
         otherBottomLeft = new JPanel();
         otherBottomLeft.setBorder(BorderFactory.createTitledBorder("Values"));
 
-        otherTopLeft.setLayout(new GridLayout(5, 2));
-        otherTopRight.setLayout(new GridLayout(5, 2));
+        otherTopLeft.setLayout(new GridLayout(6, 2));
+        otherTopRight.setLayout(new GridLayout(6, 2));
 
 
         otherTopLeft.add(new JLabel("Average ", SwingConstants.LEFT));
@@ -849,6 +901,8 @@ public class ComparisonViewPanel extends JPanel
         otherTopLeft.add(graph1Maximum);
         otherTopLeft.add(new JLabel("Minimum ", SwingConstants.LEFT));
         otherTopLeft.add(graph1Minimum);
+        otherTopLeft.add(leftThresholdLabel);
+        otherTopLeft.add(graph1PercentThreshold);
 
         otherTopRight.add(new JLabel("Average ", SwingConstants.LEFT));
         otherTopRight.add(graph2Average);
@@ -860,12 +914,14 @@ public class ComparisonViewPanel extends JPanel
         otherTopRight.add(graph2Maximum);
         otherTopRight.add(new JLabel("Minimum ", SwingConstants.LEFT));
         otherTopRight.add(graph2Minimum);
+        otherTopRight.add(rightThresholdLabel);
+        otherTopRight.add(graph2PercentThreshold);
 
         otherBottomRight = new JPanel();
         otherBottomRight.setBorder(BorderFactory.createTitledBorder("Values"));
 
-        scrollTopGraphData.setPreferredSize(new Dimension(150, 275));
-        scrollBottomGraphData.setPreferredSize(new Dimension(150, 275));
+        scrollTopGraphData.setPreferredSize(new Dimension(150, 250));
+        scrollBottomGraphData.setPreferredSize(new Dimension(150, 250));
 
         scrollTopGraphData.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         scrollBottomGraphData.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);

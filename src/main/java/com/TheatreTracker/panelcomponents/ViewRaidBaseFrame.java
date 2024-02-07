@@ -159,7 +159,7 @@ public class ViewRaidBaseFrame extends BaseFrame
 
         bloatSubPanel.add(new JLabel(bloatBodyColor + "HP % 1st down"));
 
-        bloatSubPanel.add(new JLabel(bloatBodyColor + (((double) data.getValue(DataPoint.BLOAT_HP_FIRST_DOWN)) / 10.0) + "%"));
+        bloatSubPanel.add(new JLabel(bloatBodyColor + (((double) data.getValue(DataPoint.BLOAT_HP_FIRST_DOWN))) + "%"));
 
         bloatSubPanel.add(new JLabel(bloatBodyColor + "1st down time"));
         bloatSubPanel.add(new JLabel(bloatBodyColor + data.getValue(DataPoint.BLOAT_FIRST_DOWN_TIME)));

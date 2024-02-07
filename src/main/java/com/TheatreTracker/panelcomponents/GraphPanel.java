@@ -101,7 +101,6 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
         addMouseMotionListener(this);
         addMouseListener(this);
         addKeyListener(this);
-
         bounds = new ArrayList<>();
     }
 

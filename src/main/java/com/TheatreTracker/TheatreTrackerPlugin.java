@@ -568,6 +568,18 @@ public class TheatreTrackerPlugin extends Plugin
     @Subscribe
     public void onGameTick(GameTick event) throws PluginInstantiationException
     {
+        for(String player : playersWhoHaveOverheadText)
+        {
+            for (VengPair vp : playersTextChanged)
+            {;
+                if (vp.player.equals(player))
+                {
+                    vengTracker.vengProcced(vp);
+                    activeVenges.add(new VengDamageQueue(vp.player, vp.hitsplat, client.getTickCount() + 1));
+                }
+            }
+        }
+        playersWhoHaveOverheadText.clear();
         for (Player p : activelyPiping.keySet())
         {
             if (client.getTickCount() > (activelyPiping.get(p) + 1) && ((client.getTickCount() - activelyPiping.get(p) - 1) % 2) == 0)
@@ -1306,6 +1318,7 @@ public class TheatreTrackerPlugin extends Plugin
                     if (event.getHitsplat().getAmount() == expectedDamage)
                     {
                         clog.write(VENG_WAS_PROCCED, veng.target, String.valueOf(expectedDamage));
+                        log.info(veng.target + " venged " + expectedDamage);
                         if (inTheatre)
                         {
                             currentRoom.updateHitsplatApplied(event);
@@ -1324,6 +1337,8 @@ public class TheatreTrackerPlugin extends Plugin
 
     private ArrayList<VengPair> playersTextChanged;
 
+    private ArrayList<String> playersWhoHaveOverheadText = new ArrayList<>();
+
     @Subscribe
     public void onOverheadTextChanged(OverheadTextChanged event)
     {
@@ -1331,14 +1346,8 @@ public class TheatreTrackerPlugin extends Plugin
         {
             if (event.getOverheadText().equals("Taste vengeance!"))
             {
-                for (VengPair vp : playersTextChanged)
-                {
-                    if (vp.player.equals(event.getActor().getName()))
-                    {
-                        vengTracker.vengProcced(vp);
-                        activeVenges.add(new VengDamageQueue(vp.player, vp.hitsplat, client.getTickCount() + 1));
-                    }
-                }
+                log.info(event.getActor().getName() + " procced veng");
+                playersWhoHaveOverheadText.add(event.getActor().getName());
             }
             if (currentRoom instanceof XarpusHandler)
             {

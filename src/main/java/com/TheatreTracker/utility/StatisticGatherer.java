@@ -326,4 +326,20 @@ public class StatisticGatherer
     }
 
 
+    public static double getGenericPercent(ArrayList<Integer> arrayForStatistics, int threshold)
+    {
+        double count = 0;
+        double total = arrayForStatistics.size();
+        for(Integer i : arrayForStatistics)
+        {
+            if(i <= threshold)
+            {
+                count++;
+            }
+        }
+        double percent = count/total;
+        int percentRounded = (int) (percent*1000);
+        percentRounded /= 10;
+        return percentRounded;
+    }
 }

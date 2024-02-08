@@ -123,34 +123,34 @@ public class LiveChartFrame extends BaseFrame
         verzPanel.addLine(value, description);
     }
 
-    public void setMaidenFinished()
+    public void setMaidenFinished(int tick)
     {
-        maidenPanel.setRoomFinished();
+        maidenPanel.setRoomFinished(tick);
     }
 
-    public void setBloatFinished()
+    public void setBloatFinished(int tick)
     {
-        bloatPanel.setRoomFinished();
+        bloatPanel.setRoomFinished(tick);
     }
 
-    public void setNyloFinished()
+    public void setNyloFinished(int tick)
     {
-        nyloPanel.setRoomFinished();
+        nyloPanel.setRoomFinished(tick);
     }
 
-    public void setSoteFinished()
+    public void setSoteFinished(int tick)
     {
-        sotetsegPanel.setRoomFinished();
+        sotetsegPanel.setRoomFinished(tick);
     }
 
-    public void setXarpFinished()
+    public void setXarpFinished(int tick)
     {
-        xarpPanel.setRoomFinished();
+        xarpPanel.setRoomFinished(tick);
     }
 
-    public void setVerzFinished()
+    public void setVerzFinished(int tick)
     {
-        verzPanel.setRoomFinished();
+        verzPanel.setRoomFinished(tick);
     }
 
     public void resetAll()

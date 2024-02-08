@@ -150,7 +150,7 @@ public class MaidenHandler extends RoomHandler
         clog.write(301);
         clog.write(MAIDEN_0HP, "" + (client.getTickCount() - maidenStartTick));
         plugin.addLiveLine(0, client.getTickCount() - maidenStartTick, "Dead");
-        plugin.liveFrame.setMaidenFinished();
+        plugin.liveFrame.setMaidenFinished(maidenDeathTick-maidenStartTick);
     }
 
     public void updateAnimationChanged(AnimationChanged event)

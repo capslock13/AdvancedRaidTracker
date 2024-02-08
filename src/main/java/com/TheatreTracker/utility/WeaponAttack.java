@@ -34,6 +34,7 @@ public enum WeaponAttack
     BOUNCE("Bounce", "VB", new Color(200, 10, 10)),
     AID_OTHER("Aid other", "AO", new Color(100, 100, 100)),
     VENG_SELF("Veng Self", "VS", new Color(160, 89, 13)),
+    HUMIDIFY("Humidify", "HU", new Color(20, 20, 200)),
 
     ;
 

@@ -428,7 +428,7 @@ public class NyloHandler extends RoomHandler
         {
             offset1 = 0;
         }
-        plugin.liveFrame.setNyloFinished();
+        plugin.liveFrame.setNyloFinished(deathTick-pillarsSpawnedTick+offset1);
         sendTimeMessage("Wave 'Nylocas boss' complete! Duration: ", deathTick - pillarsSpawnedTick + offset1, deathTick + offset1 - bossSpawn, false);
         clog.write(NYLO_DESPAWNED, "" + (deathTick - pillarsSpawnedTick + offset1));
     }

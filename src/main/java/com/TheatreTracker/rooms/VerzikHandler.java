@@ -394,7 +394,7 @@ public class VerzikHandler extends RoomHandler
         sendTimeMessage("Wave 'Verzik phase 3' complete. Duration: ", verzikP3EndTick - verzikEntryTick, verzikP3EndTick - verzikP2EndTick);
         clog.write(VERZIK_P3_DESPAWNED, (verzikP3EndTick - verzikEntryTick) + "");
         plugin.addLiveLine(5, client.getTickCount() - verzikEntryTick, "Dead");
-        plugin.liveFrame.setVerzFinished();
+        plugin.liveFrame.setVerzFinished(verzikP3EndTick-verzikEntryTick);
 
     }
 }

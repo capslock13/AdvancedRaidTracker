@@ -136,6 +136,8 @@ public class WeaponDecider
             case 8316:
                 weaponUsed = WeaponAttack.VENG_SELF;
                 break;
+            case 6294:
+                weaponUsed = WeaponAttack.HUMIDIFY;
         }
         return weaponUsed;
     }

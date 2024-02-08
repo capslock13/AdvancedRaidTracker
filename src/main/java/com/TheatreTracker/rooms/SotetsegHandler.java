@@ -101,7 +101,7 @@ public class SotetsegHandler extends RoomHandler
         plugin.addLiveLine(3, client.getTickCount() - soteEntryTick, "Dead");
         soteDeathTick = client.getTickCount() + 3;
         roomState = RoomState.SotetsegRoomState.FINISHED;
-        plugin.liveFrame.setSoteFinished();
+        plugin.liveFrame.setSoteFinished(soteDeathTick-soteEntryTick);
         sendTimeMessage("Wave 'Sotetseg phase 3' complete. Duration: ", soteDeathTick - soteEntryTick, soteDeathTick - soteSecondMazeEnd, false);
     }
 

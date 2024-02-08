@@ -126,9 +126,13 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         drawGraph();
     }
 
-    public void setRoomFinished()
+    public void setRoomFinished(int tick)
     {
         finished = true;
+        if(tick-endTick < 10)
+        {
+            endTick = tick;
+        }
         drawGraph();
     }
 
@@ -825,6 +829,12 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         }
     }
 
+    private void drawRoomTime(Graphics2D g)
+    {
+        g.setColor(Color.WHITE);
+        g.drawString("Time " + RoomUtil.time(endTick) , 10, 30);
+    }
+
     private void drawGraph()
     {
         //if(players.size() != 0 && endTick != 0)
@@ -856,6 +866,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             drawSelectedOutlineBox(g);
             drawSelectedRow(g);
             drawHoverBox(g);
+            drawRoomTime(g);
 
             g.setColor(oldColor);
             g.dispose();

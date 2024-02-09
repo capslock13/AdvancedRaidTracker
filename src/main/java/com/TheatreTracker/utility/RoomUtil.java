@@ -21,6 +21,15 @@ public class RoomUtil
     public final static int XARPUS_REGION = 12612;
     public final static int VERZIK_REGION = 12611;
 
+    public final static String[] MAIDEN_CRAB_NAMES = {
+            "N1 70s", "N2 70s", "N3 70s", "N4 (1) 70s", "N4 (2) 70s",
+            "S1 70s", "S2 70s", "S3 70s", "S4 (1) 70s", "S4 (2) 70s",
+            "N1 50s", "N2 50s", "N3 50s", "N4 (1) 50s", "N4 (2) 50s",
+            "S1 50s", "S2 50s", "S3 50s", "S4 (1) 50s", "S4 (2) 50s",
+            "N1 30s", "N2 30s", "N3 30s", "N4 (1) 30s", "N4 (2) 30s",
+            "S1 30s", "S2 30s", "S3 30s", "S4 (1) 30s", "S4 (2) 30s",
+    };
+
     public static boolean debug = true;
 
     public static String time(String ticks)

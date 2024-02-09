@@ -1750,6 +1750,24 @@ public class FilteredRaidsBaseFrame extends BaseFrame
             }
         });
 
+        JMenuItem summarizeSession = new JMenuItem("Summarize Session");
+        summarizeSession.setBackground(Color.BLACK);
+        summarizeSession.setOpaque(true);
+
+        summarizeSession.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                ArrayList<RoomData> rows = new ArrayList<>();
+                int[] toRemove = table.getSelectedRows();
+                for (int i = 0; i < toRemove.length; i++)
+                {
+                    rows.add(currentData.get(Integer.parseInt(table.getModel().getValueAt(toRemove[i], 0).toString())));
+                }
+            }
+        });
+
         JMenuItem addToComparison = new JMenuItem("Add set to comparison");
         addToComparison.setBackground(Color.BLACK);
         addToComparison.setOpaque(true);
@@ -1885,6 +1903,24 @@ public class FilteredRaidsBaseFrame extends BaseFrame
             }
         });
 
+        JMenuItem analyzeCrabs = new JMenuItem("Analyze selection crab leaks");
+        analyzeCrabs.setOpaque(true);
+        analyzeCrabs.setBackground(Color.BLACK);
+        analyzeCrabs.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                ArrayList<ArrayList<StringInt>> crabData = new ArrayList<>();
+                int[] toRemove = table.getSelectedRows();
+                for (int i = 0; i < toRemove.length; i++)
+                {
+                    crabData.add(currentData.get(Integer.parseInt(table.getModel().getValueAt(toRemove[i], 0).toString())).maidenCrabs);
+                }
+                new CrabLeakStatisticsFrame(crabData);
+            }
+        });
+        raidPopup.add(analyzeCrabs);
         raidPopup.add(exportRaids);
         raidPopup.add(addToComparison);
         raidPopup.add(filterRaids);
@@ -1892,6 +1928,7 @@ public class FilteredRaidsBaseFrame extends BaseFrame
         raidPopup.add(analyzeSessions);
         raidPopup.add(viewCharts);
         raidPopup.add(viewGraphs);
+        raidPopup.add(summarizeSession);
         table.setComponentPopupMenu(raidPopup);
 
         filterTable = new JTable();

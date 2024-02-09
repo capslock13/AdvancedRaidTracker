@@ -138,7 +138,12 @@ public class WeaponDecider
                 break;
             case 6294:
                 weaponUsed = WeaponAttack.HUMIDIFY;
+                break;
+            case 722:
+                weaponUsed = WeaponAttack.MAGIC_IMBUE;
+                break;
         }
         return weaponUsed;
     }
 }
+//graphics todo recieve veng 725, sbs 1062, veng self 726, magic imbue 141, humidify 1061

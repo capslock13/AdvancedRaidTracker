@@ -275,6 +275,7 @@ public class VerzikHandler extends RoomHandler
                 clog.write(VERZIK_P2_REDS_PROC, (client.getTickCount() - verzikEntryTick) + "");
                 plugin.addLiveLine(5, client.getTickCount() - verzikEntryTick, "Reds");
                 healingEndTick = client.getTickCount() + 11;
+                log.info("shield ends on " + (client.getTickCount()+10));
                 plugin.addLiveLine(5, healingEndTick - verzikEntryTick, "Shield End");
                 redsThisTick = true;
                 plugin.verzShieldActive = true;

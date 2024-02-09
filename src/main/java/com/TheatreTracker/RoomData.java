@@ -43,6 +43,7 @@ public class RoomData
     public boolean maidenScuffed = false;
     public String firstMaidenCrabScuffed = "";
 
+    public ArrayList<StringInt> maidenCrabs = new ArrayList<StringInt>();
     public boolean maidenSpawned = false;
     public boolean maidenSkip;
     public boolean maidenReset;
@@ -53,7 +54,7 @@ public class RoomData
     public ArrayList<Integer> p2Crabs = new ArrayList<>();
     public ArrayList<Integer> p3Crabs = new ArrayList<>();
     public ArrayList<Integer> redsProc = new ArrayList<>();
-    public ArrayList<PlayerBounce> bounces = new ArrayList<>();
+    public ArrayList<StringInt> bounces = new ArrayList<>();
     public Map<Integer, Integer> waveSpawns = new HashMap<>();
 
     public ArrayList<Integer> bloatDowns = new ArrayList<>();
@@ -1885,6 +1886,8 @@ public class RoomData
                         try
                         {
                             crabHP = Integer.parseInt(subData[5]);
+
+                            maidenCrabs.add(new StringInt(subData[4], crabHP));
                         } catch (Exception e)
                         {
                             e.printStackTrace();

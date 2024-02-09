@@ -55,6 +55,7 @@ public class NyloHandler extends RoomHandler
 
     public void reset()
     {
+        currentWave = 0;
         roomState = NOT_STARTED;
         pillarsSpawnedTick = -1;
         instanceReference = -1;

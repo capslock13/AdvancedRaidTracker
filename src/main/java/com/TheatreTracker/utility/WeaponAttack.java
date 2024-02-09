@@ -35,6 +35,7 @@ public enum WeaponAttack
     AID_OTHER("Aid other", "AO", new Color(100, 100, 100)),
     VENG_SELF("Veng Self", "VS", new Color(160, 89, 13)),
     HUMIDIFY("Humidify", "HU", new Color(20, 20, 200)),
+    MAGIC_IMBUE("Magic Imbue", "MI", new Color(60, 60, 150)),
 
     ;
 

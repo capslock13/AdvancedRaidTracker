@@ -193,7 +193,7 @@ public class TheatreTrackerPlugin extends Plugin
         RaidTrackerPanelPrimary timersPanelPrimary = injector.getInstance(RaidTrackerPanelPrimary.class);
         partyIntact = false;
         activelyPiping = new LinkedHashMap<>();
-        liveFrame = new LiveChartFrame();
+        liveFrame = new LiveChartFrame(config);
         playersTextChanged = new ArrayList<>();
         File dirMain = new File(System.getProperty("user.home").replace("\\", "/") + "/.runelite/theatretracker/primary/");
         File dirFilters = new File(System.getProperty("user.home").replace("\\", "/") + "/.runelite/theatretracker/filters/");

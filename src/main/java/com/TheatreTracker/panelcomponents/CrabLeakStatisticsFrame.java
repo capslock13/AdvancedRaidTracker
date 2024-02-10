@@ -17,7 +17,6 @@ public class CrabLeakStatisticsFrame extends BaseFrame
     {
         this.crabs = crabs;
         JPanel primary = new JPanel();
-        //primary.setPreferredSize(new Dimension(400, 300));
         Map<String, Integer> crabLeakSums = new LinkedHashMap<>();
         primary.setBorder(BorderFactory.createTitledBorder("Crab Leak Info (Based on " + crabs.size() + " Raids)"));
         for(ArrayList<StringInt> crabData : crabs)
@@ -54,7 +53,7 @@ public class CrabLeakStatisticsFrame extends BaseFrame
             test.setOpaque(true);
             test.setBackground(Color.BLACK);
 
-            JLabel test2 = new JLabel("Average Leak", SwingConstants.RIGHT);
+            JLabel test2 = new JLabel("Average HP", SwingConstants.RIGHT);
             test2.setOpaque(true);
             test2.setBackground(Color.BLACK);
 

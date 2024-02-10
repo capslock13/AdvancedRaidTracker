@@ -2,6 +2,7 @@ package com.TheatreTracker.panelcomponents;
 
 
 import com.TheatreTracker.RoomData;
+import com.TheatreTracker.TheatreTrackerConfig;
 import com.TheatreTracker.filters.*;
 import com.TheatreTracker.utility.*;
 import lombok.extern.slf4j.Slf4j;
@@ -131,7 +132,8 @@ public class FilteredRaidsBaseFrame extends BaseFrame
         return "<html><font color='#" + Integer.toHexString(c.getRGB()).substring(2) + "'>";
     }
 
-    public FilteredRaidsBaseFrame()
+    private TheatreTrackerConfig config;
+    public FilteredRaidsBaseFrame(TheatreTrackerConfig config)
     {
         columnHeaders = new ArrayList<>();
         for(String s : columnHeaderNames)
@@ -143,6 +145,7 @@ public class FilteredRaidsBaseFrame extends BaseFrame
         comparisons = new ArrayList<>();
         activeFilters = new ArrayList<>();
         aliasText = new JTextArea();
+        this.config = config;
         this.setPreferredSize(new Dimension(1200, 820));
     }
 
@@ -1745,7 +1748,7 @@ public class FilteredRaidsBaseFrame extends BaseFrame
                     dataSets.put(scale, scaleData);
                     labelSets.add(labels);
                 }
-                ComparisonViewFrame graphView = new ComparisonViewFrame(dataSets, labelSets);
+                ComparisonViewFrame graphView = new ComparisonViewFrame(dataSets, labelSets, config);
                 graphView.open();
             }
         });
@@ -1765,6 +1768,7 @@ public class FilteredRaidsBaseFrame extends BaseFrame
                 {
                     rows.add(currentData.get(Integer.parseInt(table.getModel().getValueAt(toRemove[i], 0).toString())));
                 }
+                new SummarizeRaidsFrame(rows);
             }
         });
 
@@ -1792,7 +1796,7 @@ public class FilteredRaidsBaseFrame extends BaseFrame
                 {
                     rows.add(currentData.get(Integer.parseInt(table.getModel().getValueAt(toRemove[i], 0).toString())));
                 }
-                ChartFrame roomCharts = new ChartFrame(rows);
+                ChartFrame roomCharts = new ChartFrame(rows, config);
                 roomCharts.open();
             }
         });

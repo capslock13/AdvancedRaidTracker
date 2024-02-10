@@ -133,7 +133,7 @@ public class BloatHandler extends RoomHandler
         roomState = DOWN;
         if (bloatStartTick != -1)
         {
-            bloatDeferTick = client.getTickCount()+5;
+            bloatDeferTick = client.getTickCount() + 5;
         }
         plugin.addLiveLine(1, client.getTickCount() - bloatStartTick, "Down");
     }

@@ -1,6 +1,7 @@
 package com.TheatreTracker.ui;
 
 import com.TheatreTracker.RoomData;
+import com.TheatreTracker.TheatreTrackerConfig;
 import com.TheatreTracker.TheatreTrackerPlugin;
 import com.TheatreTracker.panelcomponents.FilteredRaidsBaseFrame;
 import com.TheatreTracker.panelcomponents.LiveChartFrame;
@@ -28,13 +29,15 @@ public class RaidTrackerPanelPrimary extends PluginPanel
     private FilteredRaidsBaseFrame raids;
 
     private TheatreTrackerPlugin plugin;
+    private TheatreTrackerConfig config;
 
     @Inject
-    RaidTrackerPanelPrimary(TheatreTrackerPlugin plugin)
+    RaidTrackerPanelPrimary(TheatreTrackerPlugin plugin, TheatreTrackerConfig config)
     {
+        this.config = config;
         this.plugin = plugin;
         raidsData = getAllRaids();
-        raids = new FilteredRaidsBaseFrame();
+        raids = new FilteredRaidsBaseFrame(config);
         buildComponents();
     }
 
@@ -104,7 +107,7 @@ public class RaidTrackerPanelPrimary extends PluginPanel
         viewRaidsButton.addActionListener(
                 al ->
                 {
-                    raids = new FilteredRaidsBaseFrame();
+                    raids = new FilteredRaidsBaseFrame(config);
                     raids.createFrame(raidsData);
                     raids.getContentPane().setBackground(Color.BLACK);
                     raids.repaint();
@@ -132,7 +135,7 @@ public class RaidTrackerPanelPrimary extends PluginPanel
         tableRaidsButton.addActionListener(
                 al ->
                 {
-                    raids = new FilteredRaidsBaseFrame();
+                    raids = new FilteredRaidsBaseFrame(config);
                     raids.createFrame(getTableData());
                     raids.getContentPane().setBackground(Color.BLACK);
                     raids.repaint();

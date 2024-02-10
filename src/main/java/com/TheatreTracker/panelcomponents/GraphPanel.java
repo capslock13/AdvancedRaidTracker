@@ -1,6 +1,7 @@
 package com.TheatreTracker.panelcomponents;
 
 import com.TheatreTracker.RoomData;
+import com.TheatreTracker.TheatreTrackerConfig;
 import com.TheatreTracker.utility.RoomUtil;
 import com.TheatreTracker.utility.DataPoint;
 import jdk.internal.net.http.common.Pair;
@@ -79,8 +80,9 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
     private BufferedImage img = new BufferedImage(IMG_WIDTH, IMG_HEIGHT, BufferedImage.TYPE_INT_ARGB);
 
     private ArrayList<RoomData> internalData;
+    private TheatreTrackerConfig config;
 
-    public GraphPanel(ArrayList<RoomData> data)
+    public GraphPanel(ArrayList<RoomData> data, TheatreTrackerConfig config)
     {
 
         selectedBounds = new ArrayList<>();
@@ -101,6 +103,7 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
         addMouseMotionListener(this);
         addMouseListener(this);
         addKeyListener(this);
+        this.config = config;
         bounds = new ArrayList<>();
     }
 
@@ -1079,13 +1082,13 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
                 {
                     if (e.getX() >= bound.getLeft() && e.getX() <= bound.getRight() && e.getY() <= bound.getBottom() && e.getY() >= bound.getTop())
                     {
-                        GraphRightClickContextMenu menu = new GraphRightClickContextMenu(bound.raids);
+                        GraphRightClickContextMenu menu = new GraphRightClickContextMenu(bound.raids, config);
                         menu.show(e.getComponent(), e.getX(), e.getY());
                     }
                 }
             } else
             {
-                GraphRightClickContextMenu menu = new GraphRightClickContextMenu(mergeSelectedData());
+                GraphRightClickContextMenu menu = new GraphRightClickContextMenu(mergeSelectedData(), config);
                 menu.show(e.getComponent(), e.getX(), e.getY());
             }
         }

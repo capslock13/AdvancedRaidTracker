@@ -1,6 +1,7 @@
 package com.TheatreTracker.panelcomponents;
 
 import com.TheatreTracker.RoomData;
+import com.TheatreTracker.TheatreTrackerConfig;
 import com.TheatreTracker.utility.RoomUtil;
 import com.TheatreTracker.utility.DataPoint;
 import com.TheatreTracker.utility.StatisticGatherer;
@@ -79,8 +80,10 @@ public class ComparisonViewPanel extends JPanel
 
     JCheckBox groupingEnabled;
 
-    public ComparisonViewPanel(ArrayList<ArrayList<RoomData>> raidData, ArrayList<String> names)
+    private TheatreTrackerConfig config;
+    public ComparisonViewPanel(ArrayList<ArrayList<RoomData>> raidData, ArrayList<String> names, TheatreTrackerConfig config)
     {
+        this.config = config;
         leftLabel = new JTextField("Min cutoff: ");
         rightLabel = new JTextField("Max cutoff: ");
         leftThresholdLabel = new JLabel("% <= ");
@@ -553,7 +556,7 @@ public class ComparisonViewPanel extends JPanel
 
     GraphPanel getGraphPanel(ArrayList<RoomData> points)
     {
-        GraphPanel graphPanel = new GraphPanel(points);
+        GraphPanel graphPanel = new GraphPanel(points, config);
         return graphPanel;
     }
 

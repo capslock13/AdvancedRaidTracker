@@ -1,5 +1,6 @@
 package com.TheatreTracker.panelcomponents;
 
+import com.TheatreTracker.TheatreTrackerConfig;
 import com.TheatreTracker.utility.PlayerDidAttack;
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,14 +25,16 @@ public class LiveChartFrame extends BaseFrame
     JScrollPane verzikScroll;
     public JTabbedPane tabbedPane;
 
-    public LiveChartFrame()
+    private TheatreTrackerConfig config;
+    public LiveChartFrame(TheatreTrackerConfig config)
     {
-        maidenPanel = new ChartPanel("Maiden", true);
-        bloatPanel = new ChartPanel("Bloat", true);
-        nyloPanel = new ChartPanel("Nylocas", true);
-        sotetsegPanel = new ChartPanel("Sotetseg", true);
-        xarpPanel = new ChartPanel("Xarpus", true);
-        verzPanel = new ChartPanel("Verzik", true);
+        this.config = config;
+        maidenPanel = new ChartPanel("Maiden", true, config);
+        bloatPanel = new ChartPanel("Bloat", true, config);
+        nyloPanel = new ChartPanel("Nylocas", true, config);
+        sotetsegPanel = new ChartPanel("Sotetseg", true, config);
+        xarpPanel = new ChartPanel("Xarpus", true, config);
+        verzPanel = new ChartPanel("Verzik", true, config);
 
         maidenScroll = new JScrollPane(maidenPanel);
         bloatScroll = new JScrollPane(bloatPanel);
@@ -71,7 +74,7 @@ public class LiveChartFrame extends BaseFrame
             case "Verzik":
                 return verzPanel;
         }
-        return new ChartPanel("", true);
+        return new ChartPanel("", true, config);
     }
 
     public void incrementTick(String room)

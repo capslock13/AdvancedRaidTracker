@@ -1,5 +1,6 @@
 package com.TheatreTracker.panelcomponents;
 
+import com.TheatreTracker.TheatreTrackerConfig;
 import com.TheatreTracker.constants.NpcIDs;
 import com.TheatreTracker.utility.*;
 import com.TheatreTracker.utility.DawnSpec;
@@ -23,7 +24,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 {
     private boolean shouldWrap = false;
     private BufferedImage img;
-    int scale = 26;
+    int scale;
     int boxCount;
     int boxHeight;
     int boxWidth;
@@ -64,6 +65,8 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         shouldWrap = true;
         recalculateSize();
     }
+
+    private TheatreTrackerConfig config;
 
     public void addRoomSpecificData(int tick, String data)
     {
@@ -313,6 +316,14 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
     public void recalculateSize()
     {
+        try
+        {
+            scale = config.chartScaleSize();
+        }
+        catch (Exception e)
+        {
+
+        }
         int length = endTick - startTick;
         boxCount = (length / 50);
         if (boxCount % 50 != 0)
@@ -332,7 +343,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         boxWidth = (shouldWrap) ? (100 + (scale * 51)) : 100 + (length + 1) * scale;
         this.weaponAttacks = WeaponAttack.values();
         keyCount = weaponAttacks.length;
-        keyRows = 9;
+        keyRows = 20;
         keyMargin = 10;
         keyColumns = keyCount / keyRows;
         if (keyCount % keyRows != 0)
@@ -349,8 +360,9 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
     }
 
-    public ChartPanel(String room, boolean isLive)
+    public ChartPanel(String room, boolean isLive, TheatreTrackerConfig config)
     {
+        scale = 26;
         live = isLive;
         this.room = room;
         startTick = 0;
@@ -359,6 +371,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         recalculateSize();
         addMouseListener(this);
         addMouseMotionListener(this);
+        this.config = config;
     }
 
     @Override

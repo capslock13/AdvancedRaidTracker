@@ -1,6 +1,7 @@
 package com.TheatreTracker.panelcomponents;
 
 import com.TheatreTracker.RoomData;
+import com.TheatreTracker.TheatreTrackerConfig;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
@@ -13,12 +14,15 @@ public class ComparisonViewFrame extends BaseFrame
 {
     ComparisonViewFrame(ArrayList<ArrayList<RoomData>> data, ArrayList<String> labels)
     {
-        add(new ComparisonViewPanel(data, labels));
+        add(new ComparisonViewPanel(data, labels, config));
         pack();
     }
 
-    ComparisonViewFrame(Map<Integer, ArrayList<ArrayList<RoomData>>> dataSets, ArrayList<ArrayList<String>> labelSets)
+    private TheatreTrackerConfig config;
+
+    ComparisonViewFrame(Map<Integer, ArrayList<ArrayList<RoomData>>> dataSets, ArrayList<ArrayList<String>> labelSets, TheatreTrackerConfig config)
     {
+        this.config = config;
         JTabbedPane pane = new JTabbedPane();
         pane.setBackground(Color.BLACK);
         pane.setOpaque(true);
@@ -36,7 +40,7 @@ public class ComparisonViewFrame extends BaseFrame
                 tabName = "4-Man";
             if (i == 5)
                 tabName = "5-Man";
-            pane.addTab(tabName, new ComparisonViewPanel(dataSets.get(i), labelSets.get(index)));
+            pane.addTab(tabName, new ComparisonViewPanel(dataSets.get(i), labelSets.get(index), config));
             index++;
         }
         add(pane);

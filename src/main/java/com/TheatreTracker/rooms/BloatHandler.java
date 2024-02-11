@@ -133,7 +133,7 @@ public class BloatHandler extends RoomHandler
         roomState = DOWN;
         if (bloatStartTick != -1)
         {
-            bloatDeferTick = client.getTickCount() + 5;
+            bloatDeferTick = client.getTickCount();
         }
         plugin.addLiveLine(1, client.getTickCount() - bloatStartTick, "Down");
     }
@@ -152,15 +152,19 @@ public class BloatHandler extends RoomHandler
             sendTimeMessage("Wave 'Bloat walk' complete! Duration: ", getLastWalk(), getLastDownTime(), true);
             bloatDeferTick = -1;
         }
-        if (bloatStartTick == -1 && RoomUtil.crossedLine(RoomUtil.BLOAT_REGION, new Point(39, 30), new Point(39, 33), true, client))
+        if (bloatStartTick == -1)
         {
-            start();
-            walk();
+            if(RoomUtil.crossedLine(RoomUtil.BLOAT_REGION, new Point(39, 30), new Point(39, 33), true, client)
+            || RoomUtil.crossedLine(RoomUtil.BLOAT_REGION, new Point(24, 30), new Point(24, 33), true, client))
+            {
+                start();
+                walk();
+            }
         }
 
-        if (RoomUtil.crossedLine(RoomUtil.BLOAT_REGION, new Point(4, 31), new Point(4, 32), true, client))
+        if(NyloHandler.instanceStart == -1)
         {
-            if (NyloHandler.instanceStart == -1)
+            if (RoomUtil.crossedLine(RoomUtil.BLOAT_REGION, new Point(4, 31), new Point(4, 32), true, client))
             {
                 NyloHandler.instanceStart = client.getTickCount();
             }

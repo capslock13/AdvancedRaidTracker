@@ -101,10 +101,10 @@ public class ChartFrame extends BaseFrame
 
             Map<Integer, String> soteLines = new LinkedHashMap<>();
             soteLines.put(data.getValue(DataPoint.SOTE_P1_SPLIT), "Maze1 Start");
-            soteLines.put(data.getValue(DataPoint.SOTE_P1_SPLIT) + data.getValue(DataPoint.SOTE_M1_SPLIT), "Maze1 End");
+            soteLines.put(data.getValue(DataPoint.SOTE_M1_SPLIT), "Maze1 End");
 
-            soteLines.put(data.getValue(DataPoint.SOTE_P2_SPLIT) + data.getValue(DataPoint.SOTE_P1_SPLIT) + data.getValue(DataPoint.SOTE_M1_SPLIT), "Maze2 Start");
-            soteLines.put(data.getValue(DataPoint.SOTE_P2_SPLIT) + data.getValue(DataPoint.SOTE_P1_SPLIT) + data.getValue(DataPoint.SOTE_M1_SPLIT) + data.getValue(DataPoint.SOTE_M2_SPLIT), "Maze2 End");
+            soteLines.put(data.getValue(DataPoint.SOTE_P2_SPLIT), "Maze2 Start");
+            soteLines.put(data.getValue(DataPoint.SOTE_M2_SPLIT), "Maze2 End");
 
 
             Map<Integer, String> xarpLines = new LinkedHashMap<>();

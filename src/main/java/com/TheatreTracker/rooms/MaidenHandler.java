@@ -1,15 +1,12 @@
 package com.TheatreTracker.rooms;
 
-import com.TheatreTracker.Point;
 import com.TheatreTracker.TheatreTrackerConfig;
-import com.TheatreTracker.constants.LogID;
+
 import com.TheatreTracker.constants.NpcIDs;
 import com.TheatreTracker.utility.*;
-import com.google.inject.Inject;
-import lombok.Getter;
+
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
-import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.*;
 import com.TheatreTracker.TheatreTrackerPlugin;
@@ -20,6 +17,7 @@ import java.util.stream.Collectors;
 
 import static com.TheatreTracker.constants.LogID.*;
 import static com.TheatreTracker.constants.NpcIDs.*;
+import com.TheatreTracker.utility.MaidenCrab;
 
 @Slf4j
 public class MaidenHandler extends RoomHandler
@@ -36,6 +34,7 @@ public class MaidenHandler extends RoomHandler
 
     public int deferVarbitCheck = -1;
     ArrayList<MaidenCrab> maidenCrabs = new ArrayList<>();
+    ArrayList<MaidenCrab> deferredCrabs = new ArrayList<>();
 
     ArrayList<PlayerHitsWrapper> hitsplatsPerPlayer;
     ArrayList<BloodPositionWrapper> thrownBloodLocations;
@@ -97,6 +96,7 @@ public class MaidenHandler extends RoomHandler
         thrownBloodLocations.clear();
         maidenHeals.clear();
         queuedBloodDamage.clear();
+        deferredCrabs.clear();
         bloodHeals = 0;
         npcs.clear();
         dinhsers.clear();
@@ -402,6 +402,18 @@ public class MaidenHandler extends RoomHandler
         npcs.addAll(merge);
     }
 
+    /*
+    Dinhs spec targets are picked in order of chunk relative to the player where they use the spec at, this grid:
+    7 4 1
+    8 5 2
+    9 6 3
+    is always centered around the player being in chunk 5, and the check starts in chunk 1, then moves to chunk 2, all the way to 9
+    if it will cross over 9 NPCs while checking a chunk, the NPCs are chosen on a last in first selected basis based on when
+    that NPC entered that chunk. The NPC must also be in a 11x11 area centered around the player to be targeted.
+
+    If multiple NPCs enter the chunk on the same tick, they are chosen by lowest NPC index first
+     */
+
     private void analyzeDinhs()
     {
         for (Player p : dinhsers)
@@ -425,7 +437,7 @@ public class MaidenHandler extends RoomHandler
                         for (NPCTimeInChunkShell npc : npcs)
                         {
                             if (npc.chunk == i)
-                            {
+                            { //For some reason Maiden is NEVER targeted by additional dinhs hitsplat. Related to large non-moving NPCs
                                 if (!npc.npc.getName().contains("Maiden") && !npc.npc.getName().contains("null") && npc.npc.getHealthRatio() != 0)
                                 {
                                     if (npc.npc.getWorldLocation().getRegionX() <= centerX + 5 &&
@@ -515,7 +527,7 @@ public class MaidenHandler extends RoomHandler
         dinhsers.clear();
     }
 
-    public void updateGameTick(GameTick event) //TODO: Blood dmg is 1t after being in blood
+    public void updateGameTick(GameTick event)
     {
         trackNPCMovements();
         analyzeDinhs();
@@ -525,6 +537,14 @@ public class MaidenHandler extends RoomHandler
         assessBloodForNextTick();
         hitsplatsPerPlayer.clear();
         maidenHeals.clear();
+
+        for(MaidenCrab crab : deferredCrabs)
+        {
+            log.info(crab.description + " leaked with " + crab.health + " hp");
+            clog.write(CRAB_LEAK, crab.description, String.valueOf(crab.health));
+        }
+        maidenCrabs.removeAll(deferredCrabs);
+        deferredCrabs.clear();
 
         if (client.getTickCount() == deferVarbitCheck)
         {
@@ -539,17 +559,14 @@ public class MaidenHandler extends RoomHandler
                 clog.write(ACCURATE_MAIDEN_START);
             }
         }
-        // Check for crabs that are leaking on this game tick
-        List<MaidenCrab> leaked_crabs = maidenCrabs.stream().filter(crab -> (crab.getCrab().getWorldArea().distanceTo2D(maidenNPC.getWorldArea()) - 1 == 0) && (crab.health > 0)).collect(Collectors.toList());
-        for (MaidenCrab crab : leaked_crabs)
+        for(MaidenCrab crab : maidenCrabs)
         {
-            { // TODO replace with distance method in MaidenCrab
-                clog.write(CRAB_LEAK, crab.description, String.valueOf(crab.health));
-                // TODO add mising parameters (room time, current maiden health)
-                // TODO check what happens if someone hits a crab on the last tick possible - is hp correct? does sthis
+            int distance = crab.crab.getWorldArea().distanceTo2D(maidenNPC.getWorldArea());
+            if(distance == 1 && crab.health > 0)
+            {
+                deferredCrabs.add(crab);
             }
         }
-        maidenCrabs.removeAll(leaked_crabs);
     }
 
     /**
@@ -557,10 +574,13 @@ public class MaidenHandler extends RoomHandler
      */
     public void updateHitsplatApplied(HitsplatApplied event)
     {
-        if (maidenCrabs.stream().map(x -> x.crab).collect(Collectors.toList()).contains(event.getActor()))
+        if(event.getActor() instanceof NPC) //getHealthRatio doesn't give fine enough increments so we manually track the HP
         {
-            MaidenCrab crab = maidenCrabs.stream().filter(x -> x.crab.equals(event.getActor())).collect(Collectors.toList()).get(0);
-            crab.health -= event.getHitsplat().getAmount();
+            if (maidenCrabs.stream().map(x -> x.crab).collect(Collectors.toList()).contains((NPC)event.getActor()))
+            {
+                MaidenCrab crab = maidenCrabs.stream().filter(x -> x.crab.equals(event.getActor())).collect(Collectors.toList()).get(0);
+                crab.health -= event.getHitsplat().getAmount();
+            }
         }
         if (event.getActor() instanceof Player) //Heal tracking
         {
@@ -724,34 +744,7 @@ public class MaidenHandler extends RoomHandler
         {
             clog.write(MAIDEN_SCUFFED, "S4 (2)");
             return "S4 (2)" + proc;
-        } else throw new InvalidParameterException("Impossible crab spawn data at maiden");
+        } else throw new InvalidParameterException("Impossible crab spawn data at maiden. Location: " + x + ", " + y);
     }
 
-    private class MaidenCrab
-    {
-        @Getter
-        NPC crab;
-        int maxHealth;
-        int health;
-        String description;
-
-        public MaidenCrab(NPC crab, int scale, String description)
-        {
-            switch (scale)
-            {
-                case 5:
-                    maxHealth = 100;
-                    break;
-                case 4:
-                    maxHealth = 87;
-                    break;
-                default:
-                    maxHealth = 75;
-                    break;
-            }
-            this.crab = crab;
-            health = maxHealth;
-            this.description = description;
-        }
-    }
 }

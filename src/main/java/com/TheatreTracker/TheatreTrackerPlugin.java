@@ -568,6 +568,35 @@ public class TheatreTrackerPlugin extends Plugin
     @Subscribe
     public void onGameTick(GameTick event) throws PluginInstantiationException
     {
+        for(Player p : deferredStaffAnimationPlayers)
+        {
+            String animations = "";
+            for (ActorSpotAnim anim : p.getSpotAnims())
+            {
+                animations += String.valueOf(anim.getId());
+                animations += ":";
+            }
+            if (p.getAnimation() != 1167 || p.getPlayerComposition().getEquipmentId(KitType.WEAPON) == 22516)
+            {
+                WorldPoint worldPoint = p.getWorldLocation();
+                playersAttacked.add(new QueuedPlayerAttackLessProjectiles(p, worldPoint, 1, animations, String.valueOf(p.getPlayerComposition().getEquipmentId(KitType.WEAPON)), String.valueOf(p.getAnimation())));
+            } else
+            {
+                int interactedIndex = -1;
+                int interactedID = -1;
+                Actor interacted = p.getInteracting();
+                String targetName = "";
+                if (interacted instanceof NPC)
+                {
+                    NPC npc = (NPC) interacted;
+                    interactedID = npc.getId();
+                    interactedIndex = npc.getIndex();
+                    targetName = npc.getName();
+                }
+                generatePlayerAttackInfo(p, animations, interactedIndex, interactedID, interacted, targetName);
+            }
+        }
+        deferredStaffAnimationPlayers.clear();
         for(String player : playersWhoHaveOverheadText)
         {
             for (VengPair vp : playersTextChanged)
@@ -768,6 +797,7 @@ public class TheatreTrackerPlugin extends Plugin
         clog.write(LEFT_TOB, String.valueOf(client.getTickCount() - currentRoom.roomStartTick), currentRoom.getName()); //todo add region
         currentRoom = null;
         activelyPiping.clear();
+        deferredStaffAnimationPlayers.clear();
     }
 
     @Subscribe
@@ -892,6 +922,8 @@ public class TheatreTrackerPlugin extends Plugin
         clientThread.invoke(() -> client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", msg, null, false));
     }
 
+    private ArrayList<Player> deferredStaffAnimationPlayers = new ArrayList<>();
+
 
     @Subscribe
     public void onAnimationChanged(AnimationChanged event)
@@ -958,26 +990,9 @@ public class TheatreTrackerPlugin extends Plugin
                 }
                 if (p.getAnimation() == 1167 || p.getAnimation() == 9168)
                 {
-                    if (p.getAnimation() != 1167 || p.getPlayerComposition().getEquipmentId(KitType.WEAPON) == 22516)
-                    {
-                        WorldPoint worldPoint = p.getWorldLocation();
-                        playersAttacked.add(new QueuedPlayerAttackLessProjectiles(p, worldPoint, 1, animations, String.valueOf(p.getPlayerComposition().getEquipmentId(KitType.WEAPON)), String.valueOf(p.getAnimation())));
-                    } else
-                    {
-                        int interactedIndex = -1;
-                        int interactedID = -1;
-                        Actor interacted = p.getInteracting();
-                        String targetName = "";
-                        if (interacted instanceof NPC)
-                        {
-                            NPC npc = (NPC) interacted;
-                            interactedID = npc.getId();
-                            interactedIndex = npc.getIndex();
-                            targetName = npc.getName();
-                        }
-                        generatePlayerAttackInfo(p, animations, interactedIndex, interactedID, interacted, targetName);
-                    }
-                } else if (p.getAnimation() != -1)
+                    deferredStaffAnimationPlayers.add(p); //defer to game tick because 4t dawn spec the weapon is not equipped when animation changes
+                }
+                else if (p.getAnimation() != -1)
                 {
                     int interactedIndex = -1;
                     int interactedID = -1;

@@ -101,7 +101,14 @@ public class WeaponDecider
                 weaponUsed = WeaponAttack.BGS_WHACK;
                 break;
             case 426:
-                weaponUsed = WeaponAttack.TBOW;
+                if(weapon == 20997)
+                {
+                    weaponUsed = WeaponAttack.TBOW;
+                }
+                else if(weapon == 27655)
+                {
+                    weaponUsed = WeaponAttack.WEB_WEAVER;
+                }
                 break;
             case 9168:
                 if (projectile == 1468)

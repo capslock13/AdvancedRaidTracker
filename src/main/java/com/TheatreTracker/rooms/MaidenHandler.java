@@ -740,7 +740,7 @@ public class MaidenHandler extends RoomHandler
         {
             return "S4 (2)" + proc;
         }
-        if (x == 34 && y == 20)
+        if (x == 34 && y == 21)
         {
             clog.write(MAIDEN_SCUFFED, "S4 (2)");
             return "S4 (2)" + proc;

@@ -69,6 +69,7 @@ public enum DataPoint
     VERZIK_REDS_SETS("Verzik Red Sets", types.OTHER_INT, rooms.VERZIK),
     VERZIK_REDS_PROC_PERCENT("Verzik Red Proc Percent", types.OTHER_INT, rooms.VERZIK),
     VERZIK_DEATHS("Verzik deaths", types.OTHER_INT, rooms.VERZIK, true),
+    VERZIK_HP_AT_WEBS("Verzik HP% at webs", types.OTHER_INT, rooms.VERZIK),
     MAIDEN_70_SPLIT("Maiden 70s split", types.TIME, rooms.MAIDEN),
     MAIDEN_7050_SPLIT("Maiden 70-50s split", types.TIME, rooms.MAIDEN),
     MAIDEN_50_SPLIT("Maiden 50s split", types.TIME, rooms.MAIDEN),

@@ -135,7 +135,7 @@ public class BloatHandler extends RoomHandler
         if (bloatStartTick != -1)
         {
             deferHP = client.getVarbitValue(HP_VARBIT)/10.0;
-            bloatDeferTick = client.getTickCount()+5;
+            bloatDeferTick = client.getTickCount();
         }
         plugin.addLiveLine(1, client.getTickCount() - bloatStartTick, "Down");
     }

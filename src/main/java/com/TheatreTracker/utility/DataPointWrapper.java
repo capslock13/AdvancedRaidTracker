@@ -21,6 +21,10 @@ public class DataPointWrapper
         {
             value = 250;
         }
+        else if(point.equals(DataPoint.VERZIK_HP_AT_WEBS))
+        {
+            value = -1;
+        }
     }
 
     public void setValue(int value)

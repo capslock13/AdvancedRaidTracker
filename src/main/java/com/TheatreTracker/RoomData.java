@@ -746,7 +746,7 @@ public class RoomData
                     break;
                 case 901:
                     websStart.add(Integer.parseInt(subData[4]));
-                    if(dataManager.get(DataPoint.VERZIK_HP_AT_WEBS) == 0)
+                    if(dataManager.get(DataPoint.VERZIK_HP_AT_WEBS) == -1)
                     {
                         int hp = -1;
                         try {

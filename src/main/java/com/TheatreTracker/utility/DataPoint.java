@@ -178,6 +178,7 @@ public enum DataPoint
     CHALLY_POKE("Chally pokes", types.OTHER_INT, rooms.ANY, true),
     BGS_WHACKS("BGS whacks", types.OTHER_INT, rooms.ANY, true),
     TOTAL_DEATHS("Total deaths", types.OTHER_INT, rooms.ANY, true),
+    DEATHS("Alternate Deaths", types.OTHER_INT, rooms.ALL, true)
 
 
     ;
@@ -203,7 +204,8 @@ public enum DataPoint
         NYLOCAS,
         SOTETSEG,
         XARPUS,
-        VERZIK
+        VERZIK,
+        ALL
     }
 
     ;
@@ -245,6 +247,23 @@ public enum DataPoint
         this.value = 0;
         this.type = type;
         this.room = room;
+    }
+
+    public static DataPoint[] getValues() //todo
+    {
+        ArrayList<DataPoint> values = new ArrayList<>();
+        for(DataPoint dataPoint : DataPoint.values())
+        {
+            if(dataPoint.room != rooms.ALL)
+            {
+                values.add(dataPoint);
+            }
+            else
+            {
+
+            }
+        }
+        return DataPoint.values();
     }
 
     public static String[] getPlayerSpecific()

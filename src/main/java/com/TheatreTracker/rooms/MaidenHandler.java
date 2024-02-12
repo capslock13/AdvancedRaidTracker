@@ -540,7 +540,7 @@ public class MaidenHandler extends RoomHandler
 
         for(MaidenCrab crab : deferredCrabs)
         {
-            log.info(crab.description + " leaked with " + crab.health + " hp");
+            //log.info(crab.description + " leaked with " + crab.health + " hp");
             clog.write(CRAB_LEAK, crab.description, String.valueOf(crab.health));
         }
         maidenCrabs.removeAll(deferredCrabs);

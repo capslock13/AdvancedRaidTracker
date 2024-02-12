@@ -94,6 +94,22 @@ public class RoomHandler
         }
     }
 
+    protected void sendTimeMessage(String message, int duration, int split, boolean bloat, String alternate)
+    {
+        if (config.chatSplits())
+        {
+            String splitMessage;
+            if (bloat)
+            {
+                splitMessage = message + timeColor() + duration + entry() + accuracy() + " (" + RoomUtil.time(split) + ")"+ defaultColor() + alternate;
+            } else
+            {
+                splitMessage = message + timeColor() + RoomUtil.time(split) + entry() + accuracy() + defaultColor() + " Room time: " + timeColor() + RoomUtil.time(duration) + defaultColor() + alternate;
+            }
+            client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", splitMessage, null, false);
+        }
+    }
+
     protected void sendTimeMessage(String message, int duration, String alternateText, int alternateNumber)
     {
         if (config.chatSplits())
@@ -102,6 +118,7 @@ public class RoomHandler
             client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", splitMessage, null, false);
         }
     }
+
 
     protected void sendTimeMessage(String message, int duration, String alternateText, int alternateNumber, boolean bloat)
     {

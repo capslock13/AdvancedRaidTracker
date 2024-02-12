@@ -120,6 +120,7 @@ public class BloatHandler extends RoomHandler
             return -1;
         }
     }
+    private double deferHP = -1;
 
     public void down()
     {
@@ -133,6 +134,7 @@ public class BloatHandler extends RoomHandler
         roomState = DOWN;
         if (bloatStartTick != -1)
         {
+            deferHP = client.getVarbitValue(HP_VARBIT)/10.0;
             bloatDeferTick = client.getTickCount();
         }
         plugin.addLiveLine(1, client.getTickCount() - bloatStartTick, "Down");
@@ -149,7 +151,7 @@ public class BloatHandler extends RoomHandler
     {
         if (bloatDeferTick != -1 && bloatDeferTick == client.getTickCount())
         {
-            sendTimeMessage("Wave 'Bloat walk' complete! Duration: ", getLastWalk(), getLastDownTime(), true);
+            sendTimeMessage("Wave 'Bloat walk' complete! Duration: ", getLastWalk(), getLastDownTime(), true, ", HP: " + deferHP + "%");
             bloatDeferTick = -1;
         }
         if (bloatStartTick == -1)

@@ -151,7 +151,9 @@ public class FilteredRaidsBaseFrame extends BaseFrame
 
     public void updateCustomStats(ArrayList<RoomData> raids)
     {
-        DataPoint dataPoint = DataPoint.values()[statisticsBox.getSelectedIndex()];
+        //DataPoint dataPoint = DataPoint.values()[statisticsBox.getSelectedIndex()];
+        //TODO
+        DataPoint dataPoint = DataPoint.ATTEMPTED_BGS_BLOAT;
         boolean time = dataPoint.type == DataPoint.types.TIME;
 
         double avg = StatisticGatherer.getGenericAverage(raids, dataPoint);

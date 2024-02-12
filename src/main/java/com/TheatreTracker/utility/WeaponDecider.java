@@ -109,6 +109,10 @@ public class WeaponDecider
                 {
                     weaponUsed = WeaponAttack.WEB_WEAVER;
                 }
+                else
+                {
+                    weaponUsed = WeaponAttack.TBOW;
+                }
                 break;
             case 9168:
                 if (projectile == 1468)

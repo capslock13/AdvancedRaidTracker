@@ -2,9 +2,15 @@ package com.TheatreTracker.rooms;
 
 import com.TheatreTracker.TheatreTrackerConfig;
 
-import com.TheatreTracker.constants.NpcIDs;
+import com.TheatreTracker.constants.TOBRoom;
+import com.TheatreTracker.constants.TobIDs;
 import com.TheatreTracker.utility.*;
 
+import com.TheatreTracker.utility.datautility.DataWriter;
+import com.TheatreTracker.utility.maidenbloodtracking.BloodDamageToBeApplied;
+import com.TheatreTracker.utility.maidenbloodtracking.BloodPositionWrapper;
+import com.TheatreTracker.utility.wrappers.NPCTimeInChunkShell;
+import com.TheatreTracker.utility.wrappers.PlayerHitsWrapper;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.coords.WorldPoint;
@@ -16,9 +22,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.TheatreTracker.constants.LogID.*;
-import static com.TheatreTracker.constants.NpcIDs.*;
+import static com.TheatreTracker.constants.TobIDs.*;
 
-import com.TheatreTracker.utility.MaidenCrab;
+import com.TheatreTracker.utility.wrappers.MaidenCrab;
 
 @Slf4j
 public class MaidenHandler extends RoomHandler
@@ -118,7 +124,7 @@ public class MaidenHandler extends RoomHandler
         if (maidenStartTick != -1)
             sendTimeMessage("Wave 'Maiden phase 1' complete! Duration: ", p70 - maidenStartTick);
         clog.write(MAIDEN_70S, "" + (p70 - maidenStartTick));
-        plugin.addLiveLine(0, p70 - maidenStartTick - 2, "70s");
+        plugin.addDelayedLine(TOBRoom.MAIDEN, p70 - maidenStartTick - 2, "70s");
 
     }
 
@@ -129,7 +135,7 @@ public class MaidenHandler extends RoomHandler
         if (maidenStartTick != -1)
             sendTimeMessage("Wave 'Maiden phase 2' complete! Duration: ", p50 - maidenStartTick, p50 - p70);
         clog.write(MAIDEN_50S, "" + (p50 - maidenStartTick));
-        plugin.addLiveLine(0, p50 - maidenStartTick - 2, "50s");
+        plugin.addDelayedLine(TOBRoom.MAIDEN, p50 - maidenStartTick - 2, "50s");
     }
 
     public void proc30()
@@ -139,27 +145,27 @@ public class MaidenHandler extends RoomHandler
         if (maidenStartTick != -1)
             sendTimeMessage("Wave 'Maiden phase 3' complete! Duration: ", p30 - maidenStartTick, p30 - p50);
         clog.write(MAIDEN_30S, "" + (p30 - maidenStartTick));
-        plugin.addLiveLine(0, p30 - maidenStartTick - 2, "30s");
+        plugin.addDelayedLine(TOBRoom.MAIDEN, p30 - maidenStartTick - 2, "30s");
     }
 
     public void endMaiden()
     {
         roomState = RoomState.MaidenRoomState.FINISHED;
-        maidenDeathTick = client.getTickCount() + 7;
+        maidenDeathTick = client.getTickCount() + MAIDEN_DEATH_ANIMATION_LENGTH;
         if (maidenStartTick != -1)
             sendTimeMessage("Wave 'Maiden Skip' complete! Duration: ", maidenDeathTick - maidenStartTick, maidenDeathTick - p30, false);
         clog.write(301);
         clog.write(MAIDEN_0HP, "" + (client.getTickCount() - maidenStartTick));
-        plugin.addLiveLine(0, client.getTickCount() - maidenStartTick, "Dead");
+        plugin.addDelayedLine(TOBRoom.MAIDEN, client.getTickCount() - maidenStartTick, "Dead");
         plugin.liveFrame.setMaidenFinished(maidenDeathTick - maidenStartTick);
     }
 
     public void updateAnimationChanged(AnimationChanged event)
     {
-        if (event.getActor().getAnimation() == 8093)
+        if (event.getActor().getAnimation() == MAIDEN_DEATH_ANIMATION)
         {
             endMaiden();
-        } else if (event.getActor().getAnimation() == 7618)
+        } else if (event.getActor().getAnimation() == CHINCHOMPA_THROWN_ANIMATION)
         {
             if (event.getActor() instanceof Player)
             {
@@ -175,7 +181,7 @@ public class MaidenHandler extends RoomHandler
                     }
                 }
             }
-        } else if (event.getActor().getAnimation() == 7511)
+        } else if (event.getActor().getAnimation() == DINHS_BULWARK_ANIMATION)
         {
             dinhsers.add((Player) event.getActor());
         }
@@ -186,24 +192,24 @@ public class MaidenHandler extends RoomHandler
         NPC npc = event.getNpc();
         switch (npc.getId())
         {
-            case NpcIDs.MAIDEN_P0:
-            case NpcIDs.MAIDEN_P1:
-            case NpcIDs.MAIDEN_P2:
-            case NpcIDs.MAIDEN_P3:
-            case NpcIDs.MAIDEN_PRE_DEAD:
-            case NpcIDs.MAIDEN_DEAD:
-            case NpcIDs.MAIDEN_P0_HM:
-            case NpcIDs.MAIDEN_P1_HM:
-            case NpcIDs.MAIDEN_P2_HM:
-            case NpcIDs.MAIDEN_P3_HM:
-            case NpcIDs.MAIDEN_PRE_DEAD_HM:
-            case NpcIDs.MAIDEN_DEAD_HM:
-            case NpcIDs.MAIDEN_P0_SM:
-            case NpcIDs.MAIDEN_P1_SM:
-            case NpcIDs.MAIDEN_P2_SM:
-            case NpcIDs.MAIDEN_P3_SM:
-            case NpcIDs.MAIDEN_PRE_DEAD_SM:
-            case NpcIDs.MAIDEN_DEAD_SM:
+            case TobIDs.MAIDEN_P0:
+            case TobIDs.MAIDEN_P1:
+            case TobIDs.MAIDEN_P2:
+            case TobIDs.MAIDEN_P3:
+            case TobIDs.MAIDEN_PRE_DEAD:
+            case TobIDs.MAIDEN_DEAD:
+            case TobIDs.MAIDEN_P0_HM:
+            case TobIDs.MAIDEN_P1_HM:
+            case TobIDs.MAIDEN_P2_HM:
+            case TobIDs.MAIDEN_P3_HM:
+            case TobIDs.MAIDEN_PRE_DEAD_HM:
+            case TobIDs.MAIDEN_DEAD_HM:
+            case TobIDs.MAIDEN_P0_SM:
+            case TobIDs.MAIDEN_P1_SM:
+            case TobIDs.MAIDEN_P2_SM:
+            case TobIDs.MAIDEN_P3_SM:
+            case TobIDs.MAIDEN_PRE_DEAD_SM:
+            case TobIDs.MAIDEN_DEAD_SM:
                 clog.write(MAIDEN_DESPAWNED, "" + (client.getTickCount() - maidenStartTick));
                 break;
             case MAIDEN_MATOMENOS:
@@ -257,9 +263,9 @@ public class MaidenHandler extends RoomHandler
                 logCrabSpawn(crab.description);
                 maidenCrabs.add(crab);
                 break;
-            case NpcIDs.MAIDEN_BLOOD:
-            case NpcIDs.MAIDEN_BLOOD_HM:
-            case NpcIDs.MAIDEN_BLOOD_SM:
+            case TobIDs.MAIDEN_BLOOD:
+            case TobIDs.MAIDEN_BLOOD_HM:
+            case TobIDs.MAIDEN_BLOOD_SM:
                 clog.write(BLOOD_SPAWNED);
                 break;
         }
@@ -544,7 +550,6 @@ public class MaidenHandler extends RoomHandler
 
         for (MaidenCrab crab : deferredCrabs)
         {
-            //log.info(crab.description + " leaked with " + crab.health + " hp");
             clog.write(CRAB_LEAK, crab.description, String.valueOf(crab.health));
         }
         maidenCrabs.removeAll(deferredCrabs);
@@ -612,7 +617,7 @@ public class MaidenHandler extends RoomHandler
 
     public void updateGameObjectSpawned(GameObjectSpawned event)
     {
-        if (event.getGameObject().getId() == 32984)
+        if (event.getGameObject().getId() == BLOOD_ON_GROUND)
         {
             spawnedBloodLocations.add(event.getGameObject().getWorldLocation());
         }
@@ -620,7 +625,7 @@ public class MaidenHandler extends RoomHandler
 
     public void updateGameObjectDespawned(GameObjectDespawned event)
     {
-        if (event.getGameObject().getId() == 32984)
+        if (event.getGameObject().getId() == BLOOD_ON_GROUND)
         {
             spawnedBloodLocations.removeIf(worldPoint -> worldPoint.getRegionX() == event.getGameObject().getWorldLocation().getRegionX() &&
                     worldPoint.getRegionY() == event.getGameObject().getWorldLocation().getRegionY());
@@ -647,17 +652,7 @@ public class MaidenHandler extends RoomHandler
 
         int x = npc.getWorldLocation().getRegionX();
         int y = npc.getWorldLocation().getRegionY();
-        String proc = "";
-        if (maidenNPC.getId() == MAIDEN_P1 || maidenNPC.getId() == MAIDEN_P1_HM || maidenNPC.getId() == MAIDEN_P1_SM)
-        {
-            proc = " 70s";
-        } else if (maidenNPC.getId() == MAIDEN_P2 || maidenNPC.getId() == MAIDEN_P2_HM || maidenNPC.getId() == MAIDEN_P2_SM)
-        {
-            proc = " 50s";
-        } else if (maidenNPC.getId() == MAIDEN_P3 || maidenNPC.getId() == MAIDEN_P3_HM || maidenNPC.getId() == MAIDEN_P3_SM)
-        {
-            proc = " 30s";
-        }
+        String proc = getProc();
         if (x == 21 && y == 40)
         {
             return "N1" + proc;
@@ -749,6 +744,22 @@ public class MaidenHandler extends RoomHandler
             clog.write(MAIDEN_SCUFFED, "S4 (2)");
             return "S4 (2)" + proc;
         } else throw new InvalidParameterException("Impossible crab spawn data at maiden. Location: " + x + ", " + y);
+    }
+
+    private String getProc()
+    {
+        String proc = "";
+        if (maidenNPC.getId() == MAIDEN_P1 || maidenNPC.getId() == MAIDEN_P1_HM || maidenNPC.getId() == MAIDEN_P1_SM)
+        {
+            proc = " 70s";
+        } else if (maidenNPC.getId() == MAIDEN_P2 || maidenNPC.getId() == MAIDEN_P2_HM || maidenNPC.getId() == MAIDEN_P2_SM)
+        {
+            proc = " 50s";
+        } else if (maidenNPC.getId() == MAIDEN_P3 || maidenNPC.getId() == MAIDEN_P3_HM || maidenNPC.getId() == MAIDEN_P3_SM)
+        {
+            proc = " 30s";
+        }
+        return proc;
     }
 
 }

@@ -1,11 +1,15 @@
 package com.TheatreTracker;
 
-import com.TheatreTracker.constants.NpcIDs;
+import com.TheatreTracker.constants.TobIDs;
 import com.TheatreTracker.constants.TOBRoom;
-import com.TheatreTracker.panelcomponents.LiveChartFrame;
-import com.TheatreTracker.ui.RaidTrackerPanelPrimary;
+import com.TheatreTracker.ui.charts.LiveChart;
+import com.TheatreTracker.ui.RaidTrackerSidePanel;
 import com.TheatreTracker.utility.*;
+import com.TheatreTracker.utility.datautility.DataWriter;
 import com.TheatreTracker.utility.thrallvengtracking.*;
+import com.TheatreTracker.utility.wrappers.PlayerDidAttack;
+import com.TheatreTracker.utility.wrappers.QueuedPlayerAttackLessProjectiles;
+import com.TheatreTracker.utility.wrappers.ThrallOutlineBox;
 import com.google.inject.Inject;
 import com.google.inject.Provides;
 import lombok.extern.slf4j.Slf4j;
@@ -42,8 +46,9 @@ import java.io.File;
 import java.util.*;
 import java.util.List;
 import static com.TheatreTracker.constants.LogID.*;
-import static com.TheatreTracker.constants.NpcIDs.*;
+import static com.TheatreTracker.constants.TobIDs.*;
 import static com.TheatreTracker.constants.TOBRoom.*;
+import static com.TheatreTracker.utility.RoomUtil.inRegion;
 
 
 @Slf4j
@@ -100,15 +105,6 @@ public class TheatreTrackerPlugin extends Plugin
     private ArrayList<QueuedPlayerAttackLessProjectiles> playersAttacked;
 
 
-    private final int LOBBY_REGION = 14642;
-    private final int MAIDEN_REGION = 12613;
-    private final int BLOAT_REGION = 13125;
-    private final int NYLO_REGION = 13122;
-    private final int SOTETSEG_REGION = 13123;
-    private final int SOTETSEG_UNDER_REGION = 13379;
-    private final int XARPUS_REGION = 12612;
-    private final int VERZIK_REGION = 12611;
-
     private boolean inTheatre;
     private boolean wasInTheatre;
     private RoomHandler currentRoom;
@@ -133,7 +129,7 @@ public class TheatreTrackerPlugin extends Plugin
     private WSClient wsClient;
 
     Map<Player, Integer> activelyPiping;
-    public LiveChartFrame liveFrame;
+    public LiveChart liveFrame;
 
     @Override
     protected void shutDown()
@@ -173,10 +169,10 @@ public class TheatreTrackerPlugin extends Plugin
         activeProjectiles = new ArrayList<>();
         activeVenges = new ArrayList<>();
         queuedThrallDamage = new ArrayList<>();
-        RaidTrackerPanelPrimary timersPanelPrimary = injector.getInstance(RaidTrackerPanelPrimary.class);
+        RaidTrackerSidePanel timersPanelPrimary = injector.getInstance(RaidTrackerSidePanel.class);
         partyIntact = false;
         activelyPiping = new LinkedHashMap<>();
-        liveFrame = new LiveChartFrame(config);
+        liveFrame = new LiveChart(config);
         playersTextChanged = new ArrayList<>();
         File dirMain = new File(System.getProperty("user.home").replace("\\", "/") + "/.runelite/theatretracker/primary/");
         File dirFilters = new File(System.getProperty("user.home").replace("\\", "/") + "/.runelite/theatretracker/filters/");
@@ -220,19 +216,19 @@ public class TheatreTrackerPlugin extends Plugin
      */
     private int getRoom()
     {
-        if (inRegion(LOBBY_REGION))
+        if (inRegion(client, LOBBY_REGION))
             return -1;
-        else if (inRegion(MAIDEN_REGION))
+        else if (inRegion(client, MAIDEN_REGION))
             return 0;
-        else if (inRegion(BLOAT_REGION))
+        else if (inRegion(client, BLOAT_REGION))
             return 1;
-        else if (inRegion(NYLO_REGION))
+        else if (inRegion(client, NYLO_REGION))
             return 2;
-        else if (inRegion(SOTETSEG_REGION) || inRegion(SOTETSEG_UNDER_REGION))
+        else if (inRegion(client, SOTETSEG_REGION) || inRegion(client, SOTETSEG_UNDER_REGION))
             return 3;
-        else if (inRegion(XARPUS_REGION))
+        else if (inRegion(client, XARPUS_REGION))
             return 4;
-        else if (inRegion(VERZIK_REGION))
+        else if (inRegion(client, VERZIK_REGION))
             return 5;
         return -1;
     }
@@ -242,10 +238,10 @@ public class TheatreTrackerPlugin extends Plugin
         RoomHandler previous = currentRoom;
         int currentRegion = getRoom();
         boolean activeState = false;
-        if (inRegion(LOBBY_REGION))
+        if (inRegion(client, LOBBY_REGION))
         {
             currentRoom = lobby;
-        } else if (previous == lobby && inRegion(BLOAT_REGION, NYLO_REGION, SOTETSEG_REGION, XARPUS_REGION, VERZIK_REGION))
+        } else if (previous == lobby && inRegion(client, BLOAT_REGION, NYLO_REGION, SOTETSEG_REGION, XARPUS_REGION, VERZIK_REGION))
         {
             deferredTick = client.getTickCount() + 2; //Check two ticks from now for player names in orbs
             clog.write(ENTERED_TOB);
@@ -253,7 +249,7 @@ public class TheatreTrackerPlugin extends Plugin
             clog.write(LATE_START, String.valueOf(currentRegion));
             liveFrame.resetAll();
         }
-        if (inRegion(MAIDEN_REGION))
+        if (inRegion(client, MAIDEN_REGION))
         {
             if (previous != maiden)
             {
@@ -262,7 +258,7 @@ public class TheatreTrackerPlugin extends Plugin
                 liveFrame.resetAll();
             }
             activeState = true;
-        } else if (inRegion(BLOAT_REGION))
+        } else if (inRegion(client, BLOAT_REGION))
         {
             if (previous != bloat)
             {
@@ -270,7 +266,7 @@ public class TheatreTrackerPlugin extends Plugin
                 enteredBloat();
             }
             activeState = true;
-        } else if (inRegion(NYLO_REGION))
+        } else if (inRegion(client, NYLO_REGION))
         {
             if (previous != nylo)
             {
@@ -278,7 +274,7 @@ public class TheatreTrackerPlugin extends Plugin
                 enteredNylo();
             }
             activeState = true;
-        } else if (inRegion(SOTETSEG_REGION, SOTETSEG_UNDER_REGION))
+        } else if (inRegion(client, SOTETSEG_REGION, SOTETSEG_UNDER_REGION))
         {
             if (previous != sote)
             {
@@ -286,7 +282,7 @@ public class TheatreTrackerPlugin extends Plugin
                 enteredSote();
             }
             activeState = true;
-        } else if (inRegion(XARPUS_REGION))
+        } else if (inRegion(client, XARPUS_REGION))
         {
             if (previous != xarpus)
             {
@@ -294,7 +290,7 @@ public class TheatreTrackerPlugin extends Plugin
                 enteredXarpus();
             }
             activeState = true;
-        } else if (inRegion(VERZIK_REGION))
+        } else if (inRegion(client, VERZIK_REGION))
         {
             if (previous != verzik)
             {
@@ -324,7 +320,7 @@ public class TheatreTrackerPlugin extends Plugin
 
     private void enteredNylo()
     {
-        clog.write(ENTERED_NEW_TOB_REGION, NYLO.ordinal());
+        clog.write(ENTERED_NEW_TOB_REGION, NYLOCAS.ordinal());
         bloat.reset();
         nylo.reset();
         liveFrame.tabbedPane.setSelectedIndex(2);
@@ -332,7 +328,7 @@ public class TheatreTrackerPlugin extends Plugin
 
     private void enteredSote()
     {
-        clog.write(ENTERED_NEW_TOB_REGION, SOTE.ordinal());
+        clog.write(ENTERED_NEW_TOB_REGION, SOTETSEG.ordinal());
         nylo.reset();
         sote.reset();
         liveFrame.tabbedPane.setSelectedIndex(3);
@@ -419,11 +415,6 @@ public class TheatreTrackerPlugin extends Plugin
 
     private void checkPartyUpdate()
     {
-        checkPartyUpdate(false);
-    }
-
-    private void checkPartyUpdate(boolean preMaiden)
-    {
         if (inTheatre)
         {
             if (partyIntact)
@@ -479,26 +470,26 @@ public class TheatreTrackerPlugin extends Plugin
         activeVenges.removeIf(vengDamageQueue -> vengDamageQueue.appliedTick <= client.getTickCount());
     }
 
-    public void addLiveLine(int room, int value, String description)
+    public void addDelayedLine(TOBRoom room, int value, String description)
     {
-        switch (room)
+        switch (TOBRoom.valueOf(room.value))
         {
-            case 0:
+            case MAIDEN:
                 liveFrame.addMaidenLine(value, description);
                 break;
-            case 1:
+            case BLOAT:
                 liveFrame.addBloatLine(value, description);
                 break;
-            case 2:
+            case NYLOCAS:
                 liveFrame.addNyloLine(value, description);
                 break;
-            case 3:
+            case SOTETSEG:
                 liveFrame.addSoteLine(value, description);
                 break;
-            case 4:
+            case XARPUS:
                 liveFrame.addXarpLine(value, description);
                 break;
-            case 5:
+            case VERZIK:
                 liveFrame.addVerzikLine(value, description);
                 break;
         }
@@ -534,7 +525,7 @@ public class TheatreTrackerPlugin extends Plugin
     @Subscribe
     public void onGameTick(GameTick event)
     {
-        for (Player p : deferredStaffAnimationPlayers)
+        for (Player p : deferredWeaponAnimationPlayers)
         {
             StringBuilder animations = new StringBuilder();
             for (ActorSpotAnim anim : p.getSpotAnims())
@@ -542,11 +533,13 @@ public class TheatreTrackerPlugin extends Plugin
                 animations.append(anim.getId());
                 animations.append(":");
             }
-            if (p.getAnimation() != 1167 || p.getPlayerComposition().getEquipmentId(KitType.WEAPON) == 22516)
-            {
+            if (p.getAnimation() != POWERED_STAFF_ANIMATION || p.getPlayerComposition().getEquipmentId(KitType.WEAPON) == DAWNBRINGER_ITEM)
+            { //Can be ZCB, Sang, or Dawnbringer. We only care about projectile for dawnbringer or ZCB. Sang & dawnbringer share animation
+                //so this filters powered staves unless it's dawnbringer
                 WorldPoint worldPoint = p.getWorldLocation();
                 playersAttacked.add(new QueuedPlayerAttackLessProjectiles(p, worldPoint, 1, animations.toString(), String.valueOf(p.getPlayerComposition().getEquipmentId(KitType.WEAPON)), String.valueOf(p.getAnimation())));
-            } else
+            }
+            else
             {
                 int interactedIndex = -1;
                 int interactedID = -1;
@@ -562,7 +555,7 @@ public class TheatreTrackerPlugin extends Plugin
                 generatePlayerAttackInfo(p, animations.toString(), interactedIndex, interactedID, interacted, targetName);
             }
         }
-        deferredStaffAnimationPlayers.clear();
+        deferredWeaponAnimationPlayers.clear();
         for (String player : playersWhoHaveOverheadText)
         {
             for (VengPair vp : playersTextChanged)
@@ -623,7 +616,7 @@ public class TheatreTrackerPlugin extends Plugin
                 for (Projectile projectile : client.getProjectiles())
                 {
                     int offset = 41; //zcb
-                    if (projectile.getId() == 1544 || projectile.getId() == 1547)
+                    if (projectile.getId() == DAWNBRINGER_AUTO_PROJECTILE || projectile.getId() == DAWNBRINGER_SPEC_PROJECTILE)
                     {
                         offset = 51; //dawnbringer
                     }
@@ -632,14 +625,14 @@ public class TheatreTrackerPlugin extends Plugin
                         WorldPoint position = WorldPoint.fromLocal(client, new LocalPoint(projectile.getX1(), projectile.getY1()));
                         if (position.distanceTo(playerAttackQueuedItem.player.getWorldLocation()) == 0)
                         {
-                            if (projectile.getId() == 1547 || projectile.getId() == 1544)
+                            if (projectile.getId() == DAWNBRINGER_AUTO_PROJECTILE || projectile.getId() == DAWNBRINGER_SPEC_PROJECTILE)
                             {
                                 int projectileHitTick = projectile.getRemainingCycles();
                                 projectileHitTick = (projectileHitTick / 30);
                                 clog.write(DAWN_SPEC, playerAttackQueuedItem.player.getName(), String.valueOf(client.getTickCount() - currentRoom.roomStartTick + projectileHitTick + 1));
 
                             }
-                            if (projectile.getId() == 1547 || projectile.getId() == 1995 || projectile.getId() == 1468 || projectile.getId() == 1544)
+                            if (projectile.getId() == DAWNBRINGER_AUTO_PROJECTILE || projectile.getId() == ZCB_PROJECTILE || projectile.getId() == ZCB_SPEC_PROJECTILE || projectile.getId() == DAWNBRINGER_SPEC_PROJECTILE)
                             {
                                 int interactedIndex = -1;
                                 int interactedID = -1;
@@ -729,7 +722,7 @@ public class TheatreTrackerPlugin extends Plugin
                     }
                 }
                 liveFrame.setPlayers(currentPlayers);
-                checkPartyUpdate(true);
+                checkPartyUpdate();
                 boolean flag = false;
                 for (String p : players)
                 {
@@ -764,7 +757,7 @@ public class TheatreTrackerPlugin extends Plugin
         clog.write(LEFT_TOB, String.valueOf(client.getTickCount() - currentRoom.roomStartTick), currentRoom.getName()); //todo add region
         currentRoom = null;
         activelyPiping.clear();
-        deferredStaffAnimationPlayers.clear();
+        deferredWeaponAnimationPlayers.clear();
     }
 
     @Subscribe
@@ -889,7 +882,7 @@ public class TheatreTrackerPlugin extends Plugin
         clientThread.invoke(() -> client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", msg, null, false));
     }
 
-    private final ArrayList<Player> deferredStaffAnimationPlayers = new ArrayList<>();
+    private final ArrayList<Player> deferredWeaponAnimationPlayers = new ArrayList<>();
 
 
     @Subscribe
@@ -909,18 +902,18 @@ public class TheatreTrackerPlugin extends Plugin
             if (p.getPlayerComposition() != null)
             {
                 int id = p.getPlayerComposition().getEquipmentId(KitType.WEAPON);
-                if (event.getActor().getAnimation() == 8056)
+                if (event.getActor().getAnimation() == SCYTHE_ANIMATION)
                 {
-                    if (id == 22486 || id == 25738 || id == 25741)
+                    if (id == UNCHARGED_SCYTHE || id == UNCHARGED_BLOOD_SCYTHE || id == UNCHARGED_HOLY_SCYTHE)
                     {
                         if (config.showMistakesInChat())
                         {
                             sendChatMessage(event.getActor().getName() + " is using an uncharged scythe");
                         }
                     }
-                } else if (event.getActor().getAnimation() == 401)
+                } else if (event.getActor().getAnimation() == BOP_ANIMATION)
                 {
-                    if (id == 13576 || id == 20785)
+                    if (id == DRAGON_WARHAMMER || id == DRAGON_WARHAMMER_ALTERNATE)
                     {
                         if (config.showMistakesInChat())
                         {
@@ -928,9 +921,9 @@ public class TheatreTrackerPlugin extends Plugin
                         }
                         clog.write(DWH_BOP, event.getActor().getName());
                     }
-                } else if (event.getActor().getAnimation() == 414)
+                } else if (event.getActor().getAnimation() == WHACK_ANIMATION)
                 {
-                    if (id == 21006 || id == 23626)
+                    if (id == KODAI_WAND || id == KODAI_WAND_ALTERNATE)
                     {
                         if (config.showMistakesInChat())
                         {
@@ -938,9 +931,9 @@ public class TheatreTrackerPlugin extends Plugin
                         }
                         clog.write(KODAI_BOP, event.getActor().getName());
                     }
-                } else if (event.getActor().getAnimation() == 440)
+                } else if (event.getActor().getAnimation() == STAB_ANIMATION)
                 {
-                    if (id == 23987)
+                    if (id == CHALLY)
                     {
                         if (config.showMistakesInChat())
                         {
@@ -948,13 +941,16 @@ public class TheatreTrackerPlugin extends Plugin
                         }
                         clog.write(CHALLY_POKE, event.getActor().getName());
                     }
-                } else if (event.getActor().getAnimation() == 7045)
+                } else if (event.getActor().getAnimation() == TWO_HAND_SWORD_SWING)
                 {
-                    if (config.showMistakesInChat())
+                    if(id == BANDOS_GODSWORD || id == BANDOS_GODSWORD_OR)
                     {
-                        sendChatMessage(event.getActor().getName() + " swung BGS without speccing");
+                        if (config.showMistakesInChat())
+                        {
+                            sendChatMessage(event.getActor().getName() + " swung BGS without speccing");
+                        }
+                        clog.write(BGS_WHACK, event.getActor().getName());
                     }
-                    clog.write(BGS_WHACK, event.getActor().getName());
                 }
                 StringBuilder animations = new StringBuilder();
                 for (ActorSpotAnim anim : p.getSpotAnims())
@@ -962,10 +958,11 @@ public class TheatreTrackerPlugin extends Plugin
                     animations.append(anim.getId());
                     animations.append(":");
                 }
-                if (p.getAnimation() == 1167 || p.getAnimation() == 9168)
+                if (p.getAnimation() == POWERED_STAFF_ANIMATION || p.getAnimation() == CROSSBOW_ANIMATION)
                 {
-                    deferredStaffAnimationPlayers.add(p); //defer to game tick because 4t dawn spec the weapon is not equipped when animation changes
-                } else if (p.getAnimation() != -1)
+                    deferredWeaponAnimationPlayers.add(p); //defer to game tick because 4t dawn spec the weapon is not equipped when animation changes
+                }
+                else if (p.getAnimation() != -1)
                 {
                     int interactedIndex = -1;
                     int interactedID = -1;
@@ -978,7 +975,7 @@ public class TheatreTrackerPlugin extends Plugin
                         interactedIndex = npc.getIndex();
                     }
                     generatePlayerAttackInfo(p, animations.toString(), interactedIndex, interactedID, interacted, targetName);
-                    if (p.getAnimation() == 5061 || p.getAnimation() == 10656)
+                    if (p.getAnimation() == BLOWPIPE_ANIMATION || p.getAnimation() == BLOWPIPE_ANIMATION_OR)
                     {
                         activelyPiping.put(p, client.getTickCount());
                     }
@@ -1085,136 +1082,136 @@ public class TheatreTrackerPlugin extends Plugin
         }
         switch (event.getNpc().getId())
         {
-            case NpcIDs.MAIDEN_P0:
-            case NpcIDs.MAIDEN_P1:
-            case NpcIDs.MAIDEN_P2:
-            case NpcIDs.MAIDEN_P3:
-            case NpcIDs.MAIDEN_PRE_DEAD:
-            case NpcIDs.MAIDEN_DEAD:
-            case NpcIDs.MAIDEN_MATOMENOS:
-            case NpcIDs.MAIDEN_P0_HM:
-            case NpcIDs.MAIDEN_P1_HM:
-            case NpcIDs.MAIDEN_P2_HM:
-            case NpcIDs.MAIDEN_P3_HM:
-            case NpcIDs.MAIDEN_PRE_DEAD_HM:
-            case NpcIDs.MAIDEN_DEAD_HM:
-            case NpcIDs.MAIDEN_MATOMENOS_HM:
-            case NpcIDs.MAIDEN_P0_SM:
-            case NpcIDs.MAIDEN_P1_SM:
-            case NpcIDs.MAIDEN_P2_SM:
-            case NpcIDs.MAIDEN_P3_SM:
-            case NpcIDs.MAIDEN_PRE_DEAD_SM:
-            case NpcIDs.MAIDEN_DEAD_SM:
-            case NpcIDs.MAIDEN_MATOMENOS_SM:
-            case NpcIDs.MAIDEN_BLOOD:
-            case NpcIDs.MAIDEN_BLOOD_HM:
-            case NpcIDs.MAIDEN_BLOOD_SM:
+            case TobIDs.MAIDEN_P0:
+            case TobIDs.MAIDEN_P1:
+            case TobIDs.MAIDEN_P2:
+            case TobIDs.MAIDEN_P3:
+            case TobIDs.MAIDEN_PRE_DEAD:
+            case TobIDs.MAIDEN_DEAD:
+            case TobIDs.MAIDEN_MATOMENOS:
+            case TobIDs.MAIDEN_P0_HM:
+            case TobIDs.MAIDEN_P1_HM:
+            case TobIDs.MAIDEN_P2_HM:
+            case TobIDs.MAIDEN_P3_HM:
+            case TobIDs.MAIDEN_PRE_DEAD_HM:
+            case TobIDs.MAIDEN_DEAD_HM:
+            case TobIDs.MAIDEN_MATOMENOS_HM:
+            case TobIDs.MAIDEN_P0_SM:
+            case TobIDs.MAIDEN_P1_SM:
+            case TobIDs.MAIDEN_P2_SM:
+            case TobIDs.MAIDEN_P3_SM:
+            case TobIDs.MAIDEN_PRE_DEAD_SM:
+            case TobIDs.MAIDEN_DEAD_SM:
+            case TobIDs.MAIDEN_MATOMENOS_SM:
+            case TobIDs.MAIDEN_BLOOD:
+            case TobIDs.MAIDEN_BLOOD_HM:
+            case TobIDs.MAIDEN_BLOOD_SM:
             {
                 maiden.updateNpcSpawned(event);
             }
             break;
-            case NpcIDs.BLOAT:
-            case NpcIDs.BLOAT_HM:
-            case NpcIDs.BLOAT_SM:
+            case TobIDs.BLOAT:
+            case TobIDs.BLOAT_HM:
+            case TobIDs.BLOAT_SM:
                 bloat.updateNpcSpawned(event);
                 break;
-            case NpcIDs.NYLO_MELEE_SMALL:
-            case NpcIDs.NYLO_MELEE_SMALL_AGRO:
-            case NpcIDs.NYLO_RANGE_SMALL:
-            case NpcIDs.NYLO_RANGE_SMALL_AGRO:
-            case NpcIDs.NYLO_MAGE_SMALL:
-            case NpcIDs.NYLO_MAGE_SMALL_AGRO:
-            case NpcIDs.NYLO_MELEE_BIG:
-            case NpcIDs.NYLO_MELEE_BIG_AGRO:
-            case NpcIDs.NYLO_RANGE_BIG:
-            case NpcIDs.NYLO_RANGE_BIG_AGRO:
-            case NpcIDs.NYLO_MAGE_BIG:
-            case NpcIDs.NYLO_MAGE_BIG_AGRO:
-            case NpcIDs.NYLO_MELEE_SMALL_HM:
-            case NpcIDs.NYLO_MELEE_SMALL_AGRO_HM:
-            case NpcIDs.NYLO_RANGE_SMALL_HM:
-            case NpcIDs.NYLO_RANGE_SMALL_AGRO_HM:
-            case NpcIDs.NYLO_MAGE_SMALL_HM:
-            case NpcIDs.NYLO_MAGE_SMALL_AGRO_HM:
-            case NpcIDs.NYLO_MELEE_BIG_HM:
-            case NpcIDs.NYLO_MELEE_BIG_AGRO_HM:
-            case NpcIDs.NYLO_RANGE_BIG_HM:
-            case NpcIDs.NYLO_RANGE_BIG_AGRO_HM:
-            case NpcIDs.NYLO_MAGE_BIG_HM:
-            case NpcIDs.NYLO_MAGE_BIG_AGRO_HM:
-            case NpcIDs.NYLO_MELEE_SMALL_SM:
-            case NpcIDs.NYLO_MELEE_SMALL_AGRO_SM:
-            case NpcIDs.NYLO_RANGE_SMALL_SM:
-            case NpcIDs.NYLO_RANGE_SMALL_AGRO_SM:
-            case NpcIDs.NYLO_MAGE_SMALL_SM:
-            case NpcIDs.NYLO_MAGE_SMALL_AGRO_SM:
-            case NpcIDs.NYLO_MELEE_BIG_SM:
-            case NpcIDs.NYLO_MELEE_BIG_AGRO_SM:
-            case NpcIDs.NYLO_RANGE_BIG_SM:
-            case NpcIDs.NYLO_RANGE_BIG_AGRO_SM:
-            case NpcIDs.NYLO_MAGE_BIG_SM:
-            case NpcIDs.NYLO_MAGE_BIG_AGRO_SM:
-            case NpcIDs.NYLO_BOSS_DROPPING:
-            case NpcIDs.NYLO_BOSS_DROPPING_HM:
-            case NpcIDs.NYLO_BOSS_DROPING_SM:
-            case NpcIDs.NYLO_BOSS_MELEE:
-            case NpcIDs.NYLO_BOSS_MELEE_HM:
-            case NpcIDs.NYLO_BOSS_MELEE_SM:
-            case NpcIDs.NYLO_BOSS_MAGE:
-            case NpcIDs.NYLO_BOSS_MAGE_HM:
-            case NpcIDs.NYLO_BOSS_MAGE_SM:
-            case NpcIDs.NYLO_BOSS_RANGE:
-            case NpcIDs.NYLO_BOSS_RANGE_HM:
-            case NpcIDs.NYLO_BOSS_RANGE_SM:
-            case NpcIDs.NYLO_PRINKIPAS_DROPPING:
-            case NpcIDs.NYLO_PRINKIPAS_MELEE:
-            case NpcIDs.NYLO_PRINKIPAS_MAGIC:
-            case NpcIDs.NYLO_PRINKIPAS_RANGE:
+            case TobIDs.NYLO_MELEE_SMALL:
+            case TobIDs.NYLO_MELEE_SMALL_AGRO:
+            case TobIDs.NYLO_RANGE_SMALL:
+            case TobIDs.NYLO_RANGE_SMALL_AGRO:
+            case TobIDs.NYLO_MAGE_SMALL:
+            case TobIDs.NYLO_MAGE_SMALL_AGRO:
+            case TobIDs.NYLO_MELEE_BIG:
+            case TobIDs.NYLO_MELEE_BIG_AGRO:
+            case TobIDs.NYLO_RANGE_BIG:
+            case TobIDs.NYLO_RANGE_BIG_AGRO:
+            case TobIDs.NYLO_MAGE_BIG:
+            case TobIDs.NYLO_MAGE_BIG_AGRO:
+            case TobIDs.NYLO_MELEE_SMALL_HM:
+            case TobIDs.NYLO_MELEE_SMALL_AGRO_HM:
+            case TobIDs.NYLO_RANGE_SMALL_HM:
+            case TobIDs.NYLO_RANGE_SMALL_AGRO_HM:
+            case TobIDs.NYLO_MAGE_SMALL_HM:
+            case TobIDs.NYLO_MAGE_SMALL_AGRO_HM:
+            case TobIDs.NYLO_MELEE_BIG_HM:
+            case TobIDs.NYLO_MELEE_BIG_AGRO_HM:
+            case TobIDs.NYLO_RANGE_BIG_HM:
+            case TobIDs.NYLO_RANGE_BIG_AGRO_HM:
+            case TobIDs.NYLO_MAGE_BIG_HM:
+            case TobIDs.NYLO_MAGE_BIG_AGRO_HM:
+            case TobIDs.NYLO_MELEE_SMALL_SM:
+            case TobIDs.NYLO_MELEE_SMALL_AGRO_SM:
+            case TobIDs.NYLO_RANGE_SMALL_SM:
+            case TobIDs.NYLO_RANGE_SMALL_AGRO_SM:
+            case TobIDs.NYLO_MAGE_SMALL_SM:
+            case TobIDs.NYLO_MAGE_SMALL_AGRO_SM:
+            case TobIDs.NYLO_MELEE_BIG_SM:
+            case TobIDs.NYLO_MELEE_BIG_AGRO_SM:
+            case TobIDs.NYLO_RANGE_BIG_SM:
+            case TobIDs.NYLO_RANGE_BIG_AGRO_SM:
+            case TobIDs.NYLO_MAGE_BIG_SM:
+            case TobIDs.NYLO_MAGE_BIG_AGRO_SM:
+            case TobIDs.NYLO_BOSS_DROPPING:
+            case TobIDs.NYLO_BOSS_DROPPING_HM:
+            case TobIDs.NYLO_BOSS_DROPING_SM:
+            case TobIDs.NYLO_BOSS_MELEE:
+            case TobIDs.NYLO_BOSS_MELEE_HM:
+            case TobIDs.NYLO_BOSS_MELEE_SM:
+            case TobIDs.NYLO_BOSS_MAGE:
+            case TobIDs.NYLO_BOSS_MAGE_HM:
+            case TobIDs.NYLO_BOSS_MAGE_SM:
+            case TobIDs.NYLO_BOSS_RANGE:
+            case TobIDs.NYLO_BOSS_RANGE_HM:
+            case TobIDs.NYLO_BOSS_RANGE_SM:
+            case TobIDs.NYLO_PRINKIPAS_DROPPING:
+            case TobIDs.NYLO_PRINKIPAS_MELEE:
+            case TobIDs.NYLO_PRINKIPAS_MAGIC:
+            case TobIDs.NYLO_PRINKIPAS_RANGE:
                 nylo.updateNpcSpawned(event);
                 break;
-            case NpcIDs.SOTETSEG_ACTIVE:
-            case NpcIDs.SOTETSEG_ACTIVE_HM:
-            case NpcIDs.SOTETSEG_ACTIVE_SM:
-            case NpcIDs.SOTETSEG_INACTIVE:
-            case NpcIDs.SOTETSEG_INACTIVE_HM:
-            case NpcIDs.SOTETSEG_INACTIVE_SM:
+            case TobIDs.SOTETSEG_ACTIVE:
+            case TobIDs.SOTETSEG_ACTIVE_HM:
+            case TobIDs.SOTETSEG_ACTIVE_SM:
+            case TobIDs.SOTETSEG_INACTIVE:
+            case TobIDs.SOTETSEG_INACTIVE_HM:
+            case TobIDs.SOTETSEG_INACTIVE_SM:
                 sote.updateNpcSpawned(event);
                 break;
-            case NpcIDs.XARPUS_INACTIVE:
-            case NpcIDs.XARPUS_P1:
-            case NpcIDs.XARPUS_P23:
-            case NpcIDs.XARPUS_DEAD:
-            case NpcIDs.XARPUS_INACTIVE_HM:
-            case NpcIDs.XARPUS_P1_HM:
-            case NpcIDs.XARPUS_P23_HM:
-            case NpcIDs.XARPUS_DEAD_HM:
-            case NpcIDs.XARPUS_INACTIVE_SM:
-            case NpcIDs.XARPUS_P1_SM:
-            case NpcIDs.XARPUS_P23_SM:
-            case NpcIDs.XARPUS_DEAD_SM:
+            case TobIDs.XARPUS_INACTIVE:
+            case TobIDs.XARPUS_P1:
+            case TobIDs.XARPUS_P23:
+            case TobIDs.XARPUS_DEAD:
+            case TobIDs.XARPUS_INACTIVE_HM:
+            case TobIDs.XARPUS_P1_HM:
+            case TobIDs.XARPUS_P23_HM:
+            case TobIDs.XARPUS_DEAD_HM:
+            case TobIDs.XARPUS_INACTIVE_SM:
+            case TobIDs.XARPUS_P1_SM:
+            case TobIDs.XARPUS_P23_SM:
+            case TobIDs.XARPUS_DEAD_SM:
                 xarpus.updateNpcSpawned(event);
                 break;
-            case NpcIDs.VERZIK_P1_INACTIVE:
-            case NpcIDs.VERZIK_P1:
-            case NpcIDs.VERZIK_P2_INACTIVE:
-            case NpcIDs.VERZIK_P2:
-            case NpcIDs.VERZIK_P3_INACTIVE:
-            case NpcIDs.VERZIK_P3:
-            case NpcIDs.VERZIK_DEAD:
-            case NpcIDs.VERZIK_P1_INACTIVE_HM:
-            case NpcIDs.VERZIK_P1_HM:
-            case NpcIDs.VERZIK_P2_INACTIVE_HM:
-            case NpcIDs.VERZIK_P2_HM:
-            case NpcIDs.VERZIK_P3_INACTIVE_HM:
-            case NpcIDs.VERZIK_P3_HM:
-            case NpcIDs.VERZIK_DEAD_HM:
-            case NpcIDs.VERZIK_P1_INACTIVE_SM:
-            case NpcIDs.VERZIK_P1_SM:
-            case NpcIDs.VERZIK_P2_INACTIVE_SM:
-            case NpcIDs.VERZIK_P2_SM:
-            case NpcIDs.VERZIK_P3_INACTIVE_SM:
-            case NpcIDs.VERZIK_P3_SM:
-            case NpcIDs.VERZIK_DEAD_SM:
+            case TobIDs.VERZIK_P1_INACTIVE:
+            case TobIDs.VERZIK_P1:
+            case TobIDs.VERZIK_P2_INACTIVE:
+            case TobIDs.VERZIK_P2:
+            case TobIDs.VERZIK_P3_INACTIVE:
+            case TobIDs.VERZIK_P3:
+            case TobIDs.VERZIK_DEAD:
+            case TobIDs.VERZIK_P1_INACTIVE_HM:
+            case TobIDs.VERZIK_P1_HM:
+            case TobIDs.VERZIK_P2_INACTIVE_HM:
+            case TobIDs.VERZIK_P2_HM:
+            case TobIDs.VERZIK_P3_INACTIVE_HM:
+            case TobIDs.VERZIK_P3_HM:
+            case TobIDs.VERZIK_DEAD_HM:
+            case TobIDs.VERZIK_P1_INACTIVE_SM:
+            case TobIDs.VERZIK_P1_SM:
+            case TobIDs.VERZIK_P2_INACTIVE_SM:
+            case TobIDs.VERZIK_P2_SM:
+            case TobIDs.VERZIK_P3_INACTIVE_SM:
+            case TobIDs.VERZIK_P3_SM:
+            case TobIDs.VERZIK_DEAD_SM:
                 verzik.updateNpcSpawned(event);
                 break;
             default:
@@ -1280,9 +1277,7 @@ public class TheatreTrackerPlugin extends Plugin
                             activeProjectiles.remove(matchedIndex);
                         } else
                         {
-                            if (event.getHitsplat().getAmount() > 3)
-                            {
-                            } else
+                            if (event.getHitsplat().getAmount() <= 3)
                             {
                                 index = i;
                                 clog.write(THRALL_DAMAGED, queuedThrallDamage.get(i).source, String.valueOf(event.getHitsplat().getAmount()));
@@ -1305,8 +1300,8 @@ public class TheatreTrackerPlugin extends Plugin
                     int expectedDamage = (int) (0.75 * veng.damage);
                     if (event.getHitsplat().getAmount() == expectedDamage)
                     {
+                        //todo can be wrong if splat would overkill
                         clog.write(VENG_WAS_PROCCED, veng.target, String.valueOf(expectedDamage));
-                        //log.info(veng.target + " venged " + expectedDamage);
                         if (inTheatre)
                         {
                             currentRoom.updateHitsplatApplied(event);
@@ -1342,23 +1337,4 @@ public class TheatreTrackerPlugin extends Plugin
             }
         }
     }
-
-    public boolean inRegion(int... regions)
-    {
-        if (client.getMapRegions() != null)
-        {
-            for (int currentRegion : client.getMapRegions())
-            {
-                for (int region : regions)
-                {
-                    if (currentRegion == region)
-                    {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
 }

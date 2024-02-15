@@ -1,7 +1,7 @@
 package com.TheatreTracker.utility.nyloutility;
 
-import static com.TheatreTracker.constants.NpcIDs.*;
-import static com.TheatreTracker.constants.NpcIDs.NYLO_MELEE_SMALL_AGRO_SM;
+import static com.TheatreTracker.constants.TobIDs.*;
+import static com.TheatreTracker.constants.TobIDs.NYLO_MELEE_SMALL_AGRO_SM;
 
 public class NylocasShell
 {
@@ -95,31 +95,51 @@ public class NylocasShell
     {
         switch (id)
         {
-            case 10791:
-            case 8342:
+            case NYLO_MELEE_SMALL_HM:
+            case NYLO_MELEE_SMALL_SM:
+            case NYLO_MELEE_SMALL:
+            case NYLO_MELEE_SMALL_AGRO_HM:
+            case NYLO_MELEE_SMALL_AGRO_SM:
                 style = 0;
                 break;
-            case 10792:
-            case 8343:
+            case NYLO_RANGE_SMALL_HM:
+            case NYLO_RANGE_SMALL_SM:
+            case NYLO_RANGE_SMALL:
+            case NYLO_RANGE_SMALL_AGRO_HM:
+            case NYLO_RANGE_SMALL_AGRO_SM:
+            case NYLO_RANGE_SMALL_AGRO:
                 style = 1;
                 break;
-            case 10793:
-            case 8344:
+            case NYLO_MAGE_SMALL_HM:
+            case NYLO_MAGE_SMALL_SM:
+            case NYLO_MAGE_SMALL:
+            case NYLO_MAGE_SMALL_AGRO_HM:
+            case NYLO_MAGE_SMALL_AGRO_SM:
+            case NYLO_MAGE_SMALL_AGRO:
                 style = 2;
                 break;
-            case 8345:
-            case 10794:
-            case 8351:
+            case NYLO_MELEE_BIG:
+            case NYLO_MELEE_BIG_HM:
+            case NYLO_MELEE_BIG_SM:
+            case NYLO_MELEE_BIG_AGRO:
+            case NYLO_MELEE_BIG_AGRO_HM:
+            case NYLO_MELEE_BIG_AGRO_SM:
                 style = 3;
                 break;
-            case 10795:
-            case 8346:
-            case 8352:
+            case NYLO_RANGE_BIG_HM:
+            case NYLO_RANGE_BIG_SM:
+            case NYLO_RANGE_BIG:
+            case NYLO_RANGE_BIG_AGRO_HM:
+            case NYLO_RANGE_BIG_AGRO_SM:
+            case NYLO_RANGE_BIG_AGRO:
                 style = 4;
                 break;
-            case 10796:
-            case 8347:
-            case 8353:
+            case NYLO_MAGE_BIG:
+            case NYLO_MAGE_BIG_HM:
+            case NYLO_MAGE_BIG_SM:
+            case NYLO_MAGE_BIG_AGRO:
+            case NYLO_MAGE_BIG_AGRO_HM:
+            case NYLO_MAGE_BIG_AGRO_SM:
                 style = 5;
                 break;
         }

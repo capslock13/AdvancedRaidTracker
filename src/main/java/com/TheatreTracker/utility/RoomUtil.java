@@ -1,10 +1,9 @@
 package com.TheatreTracker.utility;
 
-import com.TheatreTracker.constants.NpcIDs;
+import com.TheatreTracker.constants.TobIDs;
 import net.runelite.api.Client;
 import net.runelite.api.Player;
 import net.runelite.api.coords.WorldPoint;
-import com.TheatreTracker.Point;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
@@ -12,13 +11,6 @@ import java.util.Arrays;
 
 public class RoomUtil
 {
-    public final static int MAIDEN_REGION = 12613;
-    public final static int BLOAT_REGION = 13125;
-    public final static int NYLO_REGION = 13122;
-    public final static int SOTETSEG_REGION = 13123;
-    public final static int XARPUS_REGION = 12612;
-    public final static int VERZIK_REGION = 12611;
-
     public final static String[] MAIDEN_CRAB_NAMES = {
             "N1 70s", "N2 70s", "N3 70s", "N4 (1) 70s", "N4 (2) 70s",
             "S1 70s", "S2 70s", "S3 70s", "S4 (1) 70s", "S4 (2) 70s",
@@ -48,83 +40,55 @@ public class RoomUtil
     public static boolean isPrimaryBoss(int ID)
     {
         int[] bosses = {
-                NpcIDs.MAIDEN_P0,
-                NpcIDs.MAIDEN_P1,
-                NpcIDs.MAIDEN_P2,
-                NpcIDs.MAIDEN_P3,
-                NpcIDs.MAIDEN_PRE_DEAD,
-                NpcIDs.MAIDEN_P0_HM,
-                NpcIDs.MAIDEN_P1_HM,
-                NpcIDs.MAIDEN_P2_HM,
-                NpcIDs.MAIDEN_P3_HM,
-                NpcIDs.MAIDEN_PRE_DEAD_HM,
-                NpcIDs.MAIDEN_P0_SM,
-                NpcIDs.MAIDEN_P1_SM,
-                NpcIDs.MAIDEN_P2_SM,
-                NpcIDs.MAIDEN_P3_SM,
-                NpcIDs.MAIDEN_PRE_DEAD_SM,
-                NpcIDs.BLOAT,
-                NpcIDs.BLOAT_HM,
-                NpcIDs.BLOAT_SM,
-                NpcIDs.NYLO_BOSS_MELEE,
-                NpcIDs.NYLO_BOSS_RANGE,
-                NpcIDs.NYLO_BOSS_MAGE,
-                NpcIDs.NYLO_BOSS_MELEE_HM,
-                NpcIDs.NYLO_BOSS_RANGE_HM,
-                NpcIDs.NYLO_BOSS_MAGE_HM,
-                NpcIDs.NYLO_BOSS_MELEE_SM,
-                NpcIDs.NYLO_BOSS_RANGE_SM,
-                NpcIDs.NYLO_BOSS_MAGE_SM,
-                NpcIDs.SOTETSEG_ACTIVE,
-                NpcIDs.SOTETSEG_ACTIVE_HM,
-                NpcIDs.SOTETSEG_ACTIVE_SM,
-                NpcIDs.XARPUS_P23,
-                NpcIDs.XARPUS_P23_HM,
-                NpcIDs.XARPUS_P23_SM,
-                NpcIDs.VERZIK_P1,
-                NpcIDs.VERZIK_P2,
-                NpcIDs.VERZIK_P3,
-                NpcIDs.VERZIK_P1_HM,
-                NpcIDs.VERZIK_P2_HM,
-                NpcIDs.VERZIK_P3_HM,
-                NpcIDs.VERZIK_P1_SM,
-                NpcIDs.VERZIK_P2_SM,
-                NpcIDs.VERZIK_P3_SM,
+                TobIDs.MAIDEN_P0,
+                TobIDs.MAIDEN_P1,
+                TobIDs.MAIDEN_P2,
+                TobIDs.MAIDEN_P3,
+                TobIDs.MAIDEN_PRE_DEAD,
+                TobIDs.MAIDEN_P0_HM,
+                TobIDs.MAIDEN_P1_HM,
+                TobIDs.MAIDEN_P2_HM,
+                TobIDs.MAIDEN_P3_HM,
+                TobIDs.MAIDEN_PRE_DEAD_HM,
+                TobIDs.MAIDEN_P0_SM,
+                TobIDs.MAIDEN_P1_SM,
+                TobIDs.MAIDEN_P2_SM,
+                TobIDs.MAIDEN_P3_SM,
+                TobIDs.MAIDEN_PRE_DEAD_SM,
+                TobIDs.BLOAT,
+                TobIDs.BLOAT_HM,
+                TobIDs.BLOAT_SM,
+                TobIDs.NYLO_BOSS_MELEE,
+                TobIDs.NYLO_BOSS_RANGE,
+                TobIDs.NYLO_BOSS_MAGE,
+                TobIDs.NYLO_BOSS_MELEE_HM,
+                TobIDs.NYLO_BOSS_RANGE_HM,
+                TobIDs.NYLO_BOSS_MAGE_HM,
+                TobIDs.NYLO_BOSS_MELEE_SM,
+                TobIDs.NYLO_BOSS_RANGE_SM,
+                TobIDs.NYLO_BOSS_MAGE_SM,
+                TobIDs.SOTETSEG_ACTIVE,
+                TobIDs.SOTETSEG_ACTIVE_HM,
+                TobIDs.SOTETSEG_ACTIVE_SM,
+                TobIDs.XARPUS_P23,
+                TobIDs.XARPUS_P23_HM,
+                TobIDs.XARPUS_P23_SM,
+                TobIDs.VERZIK_P1,
+                TobIDs.VERZIK_P2,
+                TobIDs.VERZIK_P3,
+                TobIDs.VERZIK_P1_HM,
+                TobIDs.VERZIK_P2_HM,
+                TobIDs.VERZIK_P3_HM,
+                TobIDs.VERZIK_P1_SM,
+                TobIDs.VERZIK_P2_SM,
+                TobIDs.VERZIK_P3_SM,
         };
         return (Arrays.stream(bosses).anyMatch(p -> p == ID));
     }
 
     public static String time(int ticks)
     {
-        if (ticks == 0 || ticks == Integer.MAX_VALUE || ticks == -1)
-        {
-            return "-";
-        }
-        String timeStr = "";
-        double seconds = ticks * .6;
-        int minutes = ((int) seconds - ((int) seconds) % 60) / 60;
-        int onlySeconds = (int) seconds - 60 * minutes;
-        String secondsString = String.format("%.1f", ticks * .6);
-        if (minutes != 0)
-            timeStr += minutes + ":";
-        if (onlySeconds < 10 && minutes != 0)
-        {
-            timeStr += "0";
-        }
-        timeStr += onlySeconds;
-        if (StringUtils.split(secondsString, ".").length == 2)
-        {
-            String[] subStr = StringUtils.split(secondsString, ".");
-            timeStr += "." + subStr[1];
-        } else
-        {
-            timeStr += ".0";
-        }
-        if (minutes == 0)
-        {
-            timeStr += "s";
-        }
-        return timeStr;
+        return time((double)ticks);
     }
 
     public static String time(double ticks)

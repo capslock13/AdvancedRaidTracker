@@ -2,7 +2,7 @@ package com.TheatreTracker.rooms;
 
 import com.TheatreTracker.TheatreTrackerConfig;
 import net.runelite.api.Client;
-import com.TheatreTracker.utility.DataWriter;
+import com.TheatreTracker.utility.datautility.DataWriter;
 
 public class LobbyHandler extends RoomHandler
 {

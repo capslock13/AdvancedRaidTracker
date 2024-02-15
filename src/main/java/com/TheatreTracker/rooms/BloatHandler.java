@@ -2,6 +2,7 @@ package com.TheatreTracker.rooms;
 
 import com.TheatreTracker.TheatreTrackerConfig;
 import com.TheatreTracker.TheatreTrackerPlugin;
+import com.TheatreTracker.constants.TOBRoom;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.Player;
@@ -9,14 +10,14 @@ import net.runelite.api.events.AnimationChanged;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.NpcDespawned;
 import net.runelite.api.events.NpcSpawned;
-import com.TheatreTracker.Point;
+import com.TheatreTracker.utility.Point;
 import com.TheatreTracker.utility.RoomUtil;
-import com.TheatreTracker.utility.DataWriter;
+import com.TheatreTracker.utility.datautility.DataWriter;
 
 import java.util.ArrayList;
 
 import static com.TheatreTracker.constants.LogID.*;
-import static com.TheatreTracker.constants.NpcIDs.*;
+import static com.TheatreTracker.constants.TobIDs.*;
 import static com.TheatreTracker.utility.RoomState.*;
 import static com.TheatreTracker.utility.RoomState.BloatRoomState.*;
 
@@ -64,12 +65,14 @@ public class BloatHandler extends RoomHandler
     public void endBloat()
     {
         roomState = FINISHED;
-        bloatDeathTick = client.getTickCount() + 3;
-        plugin.addLiveLine(1, client.getTickCount() - bloatStartTick, "Dead");
+        bloatDeathTick = client.getTickCount() + BLOAT_DEATH_ANIMATION_LENGTH;
+        plugin.addDelayedLine(TOBRoom.BLOAT, client.getTickCount() - bloatStartTick, "Dead");
         clog.write(ACCURATE_BLOAT_END);
         plugin.liveFrame.setBloatFinished(bloatDeathTick - bloatStartTick);
         if (bloatStartTick != -1)
+        {
             sendTimeMessage("Wave 'Bloat last down' complete! Duration: ", splitLastDown(), " Room time: ", bloatDeathTick - bloatStartTick, true);
+        }
     }
 
     public int splitLastDown()
@@ -136,15 +139,15 @@ public class BloatHandler extends RoomHandler
         if (bloatStartTick != -1)
         {
             deferHP = client.getVarbitValue(HP_VARBIT) / 10.0;
-            bloatDeferTick = client.getTickCount();
+            bloatDeferTick = client.getTickCount() + 5; //delay so that the chat message can't be used to know immediately know when bloat has gone down
         }
-        plugin.addLiveLine(1, client.getTickCount() - bloatStartTick, "Down");
+        plugin.addDelayedLine(TOBRoom.BLOAT, client.getTickCount() - bloatStartTick, "Down");
     }
 
     public void walk()
     {
         walks.add(client.getTickCount());
-        plugin.addLiveLine(1, client.getTickCount() - bloatStartTick, "Moving");
+        plugin.addDelayedLine(TOBRoom.BLOAT, client.getTickCount() - bloatStartTick, "Moving");
         roomState = WALKING;
     }
 
@@ -157,8 +160,8 @@ public class BloatHandler extends RoomHandler
         }
         if (bloatStartTick == -1)
         {
-            if (RoomUtil.crossedLine(RoomUtil.BLOAT_REGION, new Point(39, 30), new Point(39, 33), true, client)
-                    || RoomUtil.crossedLine(RoomUtil.BLOAT_REGION, new Point(24, 30), new Point(24, 33), true, client))
+            if (RoomUtil.crossedLine(BLOAT_REGION, new Point(39, 30), new Point(39, 33), true, client)
+                    || RoomUtil.crossedLine(BLOAT_REGION, new Point(24, 30), new Point(24, 33), true, client))
             {
                 start();
                 walk();
@@ -167,7 +170,7 @@ public class BloatHandler extends RoomHandler
 
         if (NyloHandler.instanceStart == -1)
         {
-            if (RoomUtil.crossedLine(RoomUtil.BLOAT_REGION, new Point(4, 31), new Point(4, 32), true, client))
+            if (RoomUtil.crossedLine(BLOAT_REGION, new Point(4, 31), new Point(4, 32), true, client))
             {
                 NyloHandler.instanceStart = client.getTickCount();
             }
@@ -187,7 +190,7 @@ public class BloatHandler extends RoomHandler
         {
             endBloat();
         }
-        if (event.getActor().getAnimation() == 8056) //Player scythed
+        if (event.getActor().getAnimation() == SCYTHE_ANIMATION)
         {
             if (event.getActor() instanceof Player)
             {

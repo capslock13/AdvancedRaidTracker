@@ -1,7 +1,7 @@
 package com.TheatreTracker.filters;
 
 import com.TheatreTracker.RoomData;
-import com.TheatreTracker.utility.DataPoint;
+import com.TheatreTracker.utility.datautility.DataPoint;
 
 import java.util.ArrayList;
 import java.util.Arrays;

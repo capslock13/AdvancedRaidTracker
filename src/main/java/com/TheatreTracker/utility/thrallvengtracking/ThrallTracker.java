@@ -2,7 +2,7 @@ package com.TheatreTracker.utility.thrallvengtracking;
 
 import com.TheatreTracker.TheatreTrackerPlugin;
 import com.TheatreTracker.constants.LogID;
-import com.TheatreTracker.utility.ThrallOutlineBox;
+import com.TheatreTracker.utility.wrappers.ThrallOutlineBox;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Actor;
 import net.runelite.api.NPC;
@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
 
-import static com.TheatreTracker.constants.NpcIDs.*;
+import static com.TheatreTracker.constants.TobIDs.*;
 
 @Slf4j
 public class ThrallTracker
@@ -215,7 +215,7 @@ public class ThrallTracker
 
     public void thrallDespawned(NPC thrall)
     {
-
+        //todo handle thrall duration besides 59.4s
     }
 
 

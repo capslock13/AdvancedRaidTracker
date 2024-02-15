@@ -29,7 +29,7 @@ public class NylocasWaveMatcher
                         waveFlag = false;
                     }
                 }
-                if (waveFlag)
+                if (waveFlag) //waves 17, 26, and 28 are comprised of the exact same spawns
                 {
                     if (wave17Matched && w.getWave() == 17)
                     {

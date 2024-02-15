@@ -1,17 +1,20 @@
 package com.TheatreTracker;
 
 import com.TheatreTracker.constants.LogID;
-import com.TheatreTracker.utility.*;
+import com.TheatreTracker.constants.TOBRoom;
+import com.TheatreTracker.utility.datautility.DataManager;
+import com.TheatreTracker.utility.datautility.DataPoint;
+import com.TheatreTracker.utility.wrappers.*;
 import lombok.extern.slf4j.Slf4j;
 import java.util.*;
-import static com.TheatreTracker.RoomData.TobRoom.*;
+import static com.TheatreTracker.constants.TOBRoom.*;
+import static com.TheatreTracker.constants.TobIDs.EXIT_FLAG;
+import static com.TheatreTracker.constants.TobIDs.SPECTATE_FLAG;
 
 @Slf4j
 
 public class RoomData
 {
-
-    private static final String EXIT_FLAG = "4";
     public boolean spectated = false;
     public boolean maidenStartAccurate = false;
     public boolean bloatStartAccurate = false;
@@ -93,10 +96,6 @@ public class RoomData
     public String[] raidDataRaw;
     public String activeValue = "";
 
-    public enum TobRoom
-    {
-        MAIDEN, BLOAT, NYLOCAS, SOTETSEG, XARPUS, VERZIK
-    }
 
     public ArrayList<String> maidenCrabSpawn = new ArrayList<>();
     public ArrayList<PlayerDidAttack> maidenAttacks;
@@ -277,7 +276,7 @@ public class RoomData
                 && verzikStartAccurate && verzikEndAccurate;
     }
 
-    public boolean checkExit(TobRoom room)
+    public boolean checkExit(TOBRoom room)
     {
         if (globalData.isEmpty() || globalData.get(0).split(",", -1)[3].equals(EXIT_FLAG))
         {
@@ -365,12 +364,12 @@ public class RoomData
         {
             String[] subData = s.split(",");
             int key = Integer.parseInt(subData[3]);
-            if (key == 98)
+            if (key == SPECTATE_FLAG)
             {
                 room = Integer.parseInt(subData[4]);
                 spectated = true;
             }
-            if (key == 4)
+            if (String.valueOf(key).equals(EXIT_FLAG))
             {
                 endTime = new Date(Long.parseLong(subData[1]));
             }
@@ -729,7 +728,7 @@ public class RoomData
         return true;
     }
 
-    private boolean isTimeAccurateThroughRoom(TobRoom room)
+    private boolean isTimeAccurateThroughRoom(TOBRoom room)
     {
         switch (room)
         {
@@ -805,26 +804,7 @@ public class RoomData
                         }
                         break;
                     case XARPUS_HEAL:
-                        int amount = 0;
-                        switch (raidTeamSize)
-                        {
-                            case 5:
-                                amount = 8;
-                                break;
-                            case 4:
-                                amount = 9;
-                                break;
-                            case 3:
-                                amount = 12;
-                                break;
-                            case 2:
-                                amount = 16;
-                                break;
-                            case 1:
-                                amount = 20;
-                                break;
-                        }
-                        dataManager.increment(DataPoint.XARP_HEALING, amount);
+                        dataManager.increment(DataPoint.XARP_HEALING, getXarpusHealAmount());
                         break;
                     case XARPUS_SCREECH:
                         dataManager.set(DataPoint.XARP_SCREECH, Integer.parseInt(subData[4]));
@@ -858,6 +838,30 @@ public class RoomData
         }
         globalData = new ArrayList<>(globalData.subList(activeIndex + 1, globalData.size()));
         return true;
+    }
+
+    private int getXarpusHealAmount()
+    {
+        int amount = 0;
+        switch (raidTeamSize)
+        {
+            case 5:
+                amount = 8;
+                break;
+            case 4:
+                amount = 9;
+                break;
+            case 3:
+                amount = 12;
+                break;
+            case 2:
+                amount = 16;
+                break;
+            case 1:
+                amount = 20;
+                break;
+        }
+        return amount;
     }
 
     private boolean parseSotetseg()
@@ -1040,14 +1044,14 @@ public class RoomData
                         break;
                     case LAST_DEAD:
                         nyloLastDead = Integer.parseInt(subData[4]);
-                        int offset = 20 - (nyloLastDead % 4);
+                        int offset = 20 - (nyloLastDead % 4); //4 cycle (16 tick) delay for boss + difference to cycle (4-time%instance reference)
                         dataManager.set(DataPoint.NYLO_BOSS_SPAWN, nyloLastDead + offset);
                         dataManager.set(DataPoint.NYLO_CLEANUP, nyloLastDead - dataManager.get(DataPoint.NYLO_LAST_WAVE));
                         break;
                     case NYLO_WAVE:
                         waveSpawns.put(Integer.parseInt(subData[4]), Integer.parseInt(subData[5]));
                         break;
-                    case BOSS_SPAWN:
+                    case BOSS_SPAWN: //The number people are used to seeing on timers for boss spawn is actually 2 ticks prior to the spawn call for the boss
                         dataManager.set(DataPoint.NYLO_BOSS_SPAWN, Integer.parseInt(subData[4]) - 2);
                         if (partyComplete)
                         {

@@ -1,6 +1,7 @@
 package com.TheatreTracker.utility;
 
 import com.TheatreTracker.RoomData;
+import com.TheatreTracker.utility.datautility.DataPoint;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -135,12 +136,18 @@ public class StatisticGatherer
                 values.add((double) d);
         }
         Collections.sort(values);
+        return getMedian(values);
+    }
+
+    private static double getMedian(List<Double> values)
+    {
+        double median;
         if (values.size() % 2 == 0)
         {
-            median = ((double) values.get(values.size() / 2) + (double) values.get(values.size() / 2 - 1)) / 2.0;
+            median = (values.get(values.size() / 2) + (double) values.get(values.size() / 2 - 1)) / 2.0;
         } else
         {
-            median = (double) values.get(values.size() / 2);
+            median = values.get(values.size() / 2);
         }
         return median;
     }
@@ -151,7 +158,6 @@ public class StatisticGatherer
         {
             return -1;
         }
-        double median;
         List<Double> values = new ArrayList<>();
         for (RoomData room : data)
         {
@@ -166,14 +172,7 @@ public class StatisticGatherer
         Collections.sort(values);
         if (!values.isEmpty())
         {
-            if (values.size() % 2 == 0)
-            {
-                median = (values.get(values.size() / 2) + (double) values.get(values.size() / 2 - 1)) / 2.0;
-            } else
-            {
-                median = values.get(values.size() / 2);
-            }
-            return median;
+            return getMedian(values);
         }
         return -1;
     }

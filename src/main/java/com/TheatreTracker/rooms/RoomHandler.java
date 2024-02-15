@@ -2,7 +2,7 @@ package com.TheatreTracker.rooms;
 
 
 import com.TheatreTracker.TheatreTrackerConfig;
-import com.TheatreTracker.utility.DataWriter;
+import com.TheatreTracker.utility.datautility.DataWriter;
 import lombok.Getter;
 import lombok.Setter;
 import net.runelite.api.ChatMessageType;
@@ -15,12 +15,6 @@ public class RoomHandler
     protected Client client;
 
     DataWriter clog;
-
-    public static final int ROOM_ACTIVE_VARBIT = 6447;
-
-    public static final int HP_VARBIT = 6448;
-
-    public static final int FULL_HP = 1000;
 
 
     public int roomStartTick = -1;

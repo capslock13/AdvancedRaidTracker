@@ -2,13 +2,14 @@ package com.TheatreTracker.rooms;
 
 import com.TheatreTracker.TheatreTrackerConfig;
 import com.TheatreTracker.TheatreTrackerPlugin;
+import com.TheatreTracker.constants.TOBRoom;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.NPC;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.NpcDespawned;
 import net.runelite.api.events.NpcSpawned;
-import com.TheatreTracker.utility.DataWriter;
+import com.TheatreTracker.utility.datautility.DataWriter;
 import com.TheatreTracker.utility.RoomState;
 import com.TheatreTracker.utility.nyloutility.NylocasData;
 import com.TheatreTracker.utility.nyloutility.NylocasShell;
@@ -21,7 +22,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import static com.TheatreTracker.constants.LogID.*;
-import static com.TheatreTracker.constants.NpcIDs.*;
+import static com.TheatreTracker.constants.TobIDs.*;
 import static com.TheatreTracker.utility.RoomState.NyloRoomState.*;
 
 @Slf4j
@@ -103,13 +104,13 @@ public class NyloHandler extends RoomHandler
                 } else
                 {
                     expectedWaveTick = client.getTickCount() + ((hard && wave.getWave() % 10 == 0) ? 16 : NylocasWave.waves[wave.getWave()].getDelay());
-                    if (hard && (wave.getWave() % 10 == 0))
+                    if (hard && (wave.getWave() % 10 == 0)) //in hard mode each wave a prinkipas comes out on (10, 20, 30) has been changed to a 4 cycle natural delay
                     {
                         expectedWaveTick = client.getTickCount() + 16;
                     }
                 }
                 currentWave = wave.getWave();
-                plugin.addLiveLine(2, client.getTickCount() - pillarsSpawnedTick, "W" + currentWave);
+                plugin.addDelayedLine(TOBRoom.NYLOCAS, client.getTickCount() - pillarsSpawnedTick, "W" + currentWave);
                 clog.write(NYLO_WAVE, String.valueOf(currentWave), String.valueOf(client.getTickCount() - pillarsSpawnedTick));
             }
             buildWave.clear();
@@ -117,7 +118,7 @@ public class NyloHandler extends RoomHandler
         if (client.getTickCount() == expectedWaveTick && currentWave != 31)
         {
             clog.write(NYLO_STALL, "" + currentWave, "" + (client.getTickCount() - pillarsSpawnedTick), "" + nylosAlive.size());
-            plugin.addLiveLine(2, client.getTickCount() - pillarsSpawnedTick, "Stall");
+            plugin.addDelayedLine(TOBRoom.NYLOCAS, client.getTickCount() - pillarsSpawnedTick, "Stall");
             expectedWaveTick += 4;
         }
     }
@@ -289,7 +290,7 @@ public class NyloHandler extends RoomHandler
             case NYLO_BOSS_RANGE_SM:
             case NYLO_BOSS_MAGE_SM:
             {
-                bossDefinitelyKilled();
+                bossKilled();
             }
             break;
             case NYLO_MELEE_BIG:
@@ -357,19 +358,19 @@ public class NyloHandler extends RoomHandler
             case NYLO_BOSS_MELEE_HM:
             case NYLO_BOSS_MELEE_SM:
                 clog.write(MELEE_PHASE, "" + (client.getTickCount() - pillarsSpawnedTick));
-                plugin.addLiveLine(2, client.getTickCount() - pillarsSpawnedTick, "Phase");
+                plugin.addDelayedLine(TOBRoom.NYLOCAS, client.getTickCount() - pillarsSpawnedTick, "Phase");
                 break;
             case NYLO_BOSS_MAGE:
             case NYLO_BOSS_MAGE_HM:
             case NYLO_BOSS_MAGE_SM:
                 clog.write(MAGE_PHASE, "" + (client.getTickCount() - pillarsSpawnedTick));
-                plugin.addLiveLine(2, client.getTickCount() - pillarsSpawnedTick, "Phase");
+                plugin.addDelayedLine(TOBRoom.NYLOCAS, client.getTickCount() - pillarsSpawnedTick, "Phase");
                 break;
             case NYLO_BOSS_RANGE:
             case NYLO_BOSS_RANGE_HM:
             case NYLO_BOSS_RANGE_SM:
                 clog.write(RANGE_PHASE, "" + (client.getTickCount() - pillarsSpawnedTick));
-                plugin.addLiveLine(2, client.getTickCount() - pillarsSpawnedTick, "Phase");
+                plugin.addDelayedLine(TOBRoom.NYLOCAS, client.getTickCount() - pillarsSpawnedTick, "Phase");
                 break;
         }
     }
@@ -416,11 +417,11 @@ public class NyloHandler extends RoomHandler
         clog.write(BOSS_SPAWN, "" + (client.getTickCount() - pillarsSpawnedTick));
         roomState = BOSS;
         bossSpawn = client.getTickCount() - 2;
-        plugin.addLiveLine(2, client.getTickCount() - pillarsSpawnedTick - 2, "W" + currentWave);
+        plugin.addDelayedLine(TOBRoom.NYLOCAS, client.getTickCount() - pillarsSpawnedTick - 2, "W" + currentWave);
         sendTimeMessage("Wave 'Nylocas boss spawn' complete! Duration: ", bossSpawn - pillarsSpawnedTick, bossSpawn - lastDead);
     }
 
-    private void bossDefinitelyKilled()
+    private void bossKilled()
     {
         roomState = FINISHED;
         int deathTick = client.getTickCount();

@@ -3,7 +3,8 @@ package com.TheatreTracker.rooms;
 import com.TheatreTracker.TheatreTrackerConfig;
 import com.TheatreTracker.TheatreTrackerPlugin;
 import com.TheatreTracker.constants.LogID;
-import com.TheatreTracker.utility.DataWriter;
+import com.TheatreTracker.constants.TOBRoom;
+import com.TheatreTracker.utility.datautility.DataWriter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.coords.WorldPoint;
@@ -12,7 +13,7 @@ import net.runelite.api.events.GameTick;
 import net.runelite.api.events.NpcSpawned;
 import com.TheatreTracker.utility.RoomState;
 
-import static com.TheatreTracker.constants.NpcIDs.*;
+import static com.TheatreTracker.constants.TobIDs.*;
 
 @Slf4j
 public class SotetsegHandler extends RoomHandler
@@ -95,11 +96,11 @@ public class SotetsegHandler extends RoomHandler
 
     public void endSotetseg()
     {
-        clog.write(LogID.ACCURATE_SOTE_END);
-        clog.write(LogID.SOTETSEG_ENDED, (client.getTickCount() + 3 - soteEntryTick) + "");
-        plugin.addLiveLine(3, client.getTickCount() - soteEntryTick, "Dead");
-        soteDeathTick = client.getTickCount() + 3;
+        plugin.addDelayedLine(TOBRoom.SOTETSEG, client.getTickCount() - soteEntryTick, "Dead");
+        soteDeathTick = client.getTickCount() + SOTETSEG_DEATH_ANIMATION_LENGTH;
         roomState = RoomState.SotetsegRoomState.FINISHED;
+        clog.write(LogID.ACCURATE_SOTE_END);
+        clog.write(LogID.SOTETSEG_ENDED, (soteDeathTick - soteEntryTick) + "");
         plugin.liveFrame.setSoteFinished(soteDeathTick - soteEntryTick);
         sendTimeMessage("Wave 'Sotetseg phase 3' complete. Duration: ", soteDeathTick - soteEntryTick, soteDeathTick - soteSecondMazeEnd, false);
     }
@@ -110,7 +111,7 @@ public class SotetsegHandler extends RoomHandler
         clog.write(LogID.SOTETSEG_FIRST_MAZE_STARTED, (soteFirstMazeStart - soteEntryTick) + "");
         roomState = RoomState.SotetsegRoomState.MAZE_1;
         sendTimeMessage("Wave 'Sotetseg phase 1' complete. Duration: ", soteFirstMazeStart - soteEntryTick);
-        plugin.addLiveLine(3, soteFirstMazeStart - soteEntryTick, "Maze1 Start");
+        plugin.addDelayedLine(TOBRoom.SOTETSEG, soteFirstMazeStart - soteEntryTick, "Maze1 Start");
     }
 
     public void endFirstMaze()
@@ -119,7 +120,7 @@ public class SotetsegHandler extends RoomHandler
         clog.write(LogID.SOTETSEG_FIRST_MAZE_ENDED, (soteFirstMazeEnd - soteEntryTick) + "");
         roomState = RoomState.SotetsegRoomState.PHASE_2;
         sendTimeMessage("Wave 'Sotetseg maze 1' complete. Duration: ", soteFirstMazeEnd - soteEntryTick, soteFirstMazeEnd - soteFirstMazeStart);
-        plugin.addLiveLine(3, soteFirstMazeEnd - soteEntryTick, "Maze1 End");
+        plugin.addDelayedLine(TOBRoom.SOTETSEG, soteFirstMazeEnd - soteEntryTick, "Maze1 End");
     }
 
     public void startSecondMaze()
@@ -128,7 +129,7 @@ public class SotetsegHandler extends RoomHandler
         clog.write(LogID.SOTETSEG_SECOND_MAZE_STARTED, (soteSecondMazeStart - soteEntryTick) + "");
         roomState = RoomState.SotetsegRoomState.MAZE_2;
         sendTimeMessage("Wave 'Sotetseg phase 2' complete. Duration: ", soteSecondMazeStart - soteEntryTick, soteSecondMazeStart - soteFirstMazeEnd);
-        plugin.addLiveLine(3, soteSecondMazeStart - soteEntryTick, "Maze2 Start");
+        plugin.addDelayedLine(TOBRoom.SOTETSEG, soteSecondMazeStart - soteEntryTick, "Maze2 Start");
     }
 
     public void endSecondMaze()
@@ -137,7 +138,7 @@ public class SotetsegHandler extends RoomHandler
         clog.write(LogID.SOTETSEG_SECOND_MAZE_ENDED, (soteSecondMazeEnd - soteEntryTick) + "");
         roomState = RoomState.SotetsegRoomState.PHASE_3;
         sendTimeMessage("Wave 'Sotetseg maze 2' complete. Duration: ", soteSecondMazeEnd - soteEntryTick, soteSecondMazeEnd - soteSecondMazeStart);
-        plugin.addLiveLine(3, soteSecondMazeEnd - soteEntryTick, "Maze2 End");
+        plugin.addDelayedLine(TOBRoom.SOTETSEG, soteSecondMazeEnd - soteEntryTick, "Maze2 End");
     }
 
     public void updateGameTick(GameTick event)

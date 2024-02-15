@@ -4,7 +4,7 @@ import net.runelite.api.Actor;
 import net.runelite.api.NPC;
 import java.util.ArrayList;
 
-import static com.TheatreTracker.constants.NpcIDs.*;
+import static com.TheatreTracker.constants.TobIDs.*;
 
 public class Thrall
 {
@@ -26,9 +26,9 @@ public class Thrall
 
     public boolean matchesGraphic(int animationID)
     {
-        return (animationID == 1873 && npc.getId() == 10880)
-                || (animationID == 1874 && npc.getId() == 10883)
-                || (animationID == 1875 && npc.getId() == 10886);
+        return (animationID == THRALL_CAST_GRAPHIC_MAGE && npc.getId() == MAGE_THRALL)
+                || (animationID == THRALL_CAST_GRAPHIC_RANGE && npc.getId() == RANGE_THRALL)
+                || (animationID == THRALL_CAST_GRAPHIC_MELEE && npc.getId() == MELEE_THRALL);
     }
 
     public void setOwner(PlayerShell player)

@@ -1,6 +1,6 @@
 package com.TheatreTracker.filters;
 
-import com.TheatreTracker.utility.DataPoint;
+import com.TheatreTracker.utility.datautility.DataPoint;
 import lombok.extern.slf4j.Slf4j;
 import com.TheatreTracker.RoomData;
 

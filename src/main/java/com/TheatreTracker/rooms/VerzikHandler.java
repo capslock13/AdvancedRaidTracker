@@ -3,9 +3,10 @@ package com.TheatreTracker.rooms;
 import com.TheatreTracker.TheatreTrackerConfig;
 import com.TheatreTracker.TheatreTrackerPlugin;
 import com.TheatreTracker.constants.LogID;
-import com.TheatreTracker.utility.DataWriter;
-import com.TheatreTracker.utility.PlayerDidAttack;
-import com.TheatreTracker.utility.DawnSpec;
+import com.TheatreTracker.constants.TOBRoom;
+import com.TheatreTracker.utility.datautility.DataWriter;
+import com.TheatreTracker.utility.wrappers.PlayerDidAttack;
+import com.TheatreTracker.utility.wrappers.DawnSpec;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.events.*;
@@ -16,7 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.TheatreTracker.constants.LogID.*;
-import static com.TheatreTracker.constants.NpcIDs.*;
+import static com.TheatreTracker.constants.TobIDs.*;
 
 @Slf4j
 public class VerzikHandler extends RoomHandler
@@ -87,9 +88,10 @@ public class VerzikHandler extends RoomHandler
     {
         for (Projectile projectile : client.getProjectiles())
         {
-            if (projectile.getId() == 1587)
+            if (projectile.getId() == VERZIK_CRAB_HEAL_PROJECTILE)
             {
                 //log.info("Expecting purple heal on tick: " + client.getTickCount());
+                //todo finish p2 heal tracking
             }
         }
         if (client.getTickCount() == healingEndTick)
@@ -107,6 +109,7 @@ public class VerzikHandler extends RoomHandler
                     {
                         //log.info(p2.getName() + " is also in target of verz auto AOE");
                         playersHit++;
+                        //todo finish p2 heal tracking
                     }
                 }
             }
@@ -118,19 +121,10 @@ public class VerzikHandler extends RoomHandler
             healingEndTick = -1;
         }
         redsThisTick = false;
-        if (roomState == RoomState.VerzikRoomState.PHASE_1)
-        {
-            for (Projectile projectile : client.getProjectiles())
-            {
-                if (projectile.getId() == 1547 || projectile.getId() == 1544)
-                {
-                }
-            }
-        }
         if (webTick != -1)
         {
             webTick++;
-            if (webTick > 50)
+            if (webTick > 50) //non-specific large number > web length but < time before next webs could happen again
             {
                 hasWebbed = false;
                 webTick = -1;
@@ -143,14 +137,15 @@ public class VerzikHandler extends RoomHandler
 
     public void updateProjectileMoved(ProjectileMoved event)
     {
-        if (event.getProjectile().getId() == 1587)
+        if (event.getProjectile().getId() == VERZIK_CRAB_HEAL_PROJECTILE)
         {
             if (event.getProjectile().getRemainingCycles() == client.getGameCycle())
             {
                 //log.info("Expecting red heal on tick " + client.getTickCount());
+                //todo finish p2 heal tracking
             }
         }
-        if (event.getProjectile().getId() == 1591)
+        if (event.getProjectile().getId() == VERZIK_RED_MAGE_AUTO_PROJECTILE)
         {
             if (event.getProjectile().getRemainingCycles() == 0)
             {
@@ -163,7 +158,7 @@ public class VerzikHandler extends RoomHandler
                     queuedAutoHits.put(p, client.getTickCount() + 2);
                 }
             }
-        } else if (event.getProjectile().getId() == 1601)
+        } else if (event.getProjectile().getId() == VERZIK_WEB_PROJECTILE)
         {
             if (!hasWebbed)
             {
@@ -172,7 +167,7 @@ public class VerzikHandler extends RoomHandler
                 webTick = client.getTickCount();
                 if ((webTick - verzikEntryTick) % 2 == 0)
                 {
-                    plugin.addLiveLine(5, webTick - verzikEntryTick, "Webs");
+                    plugin.addDelayedLine(TOBRoom.VERZIK, webTick - verzikEntryTick, "Webs");
                 }
             }
         }
@@ -188,7 +183,7 @@ public class VerzikHandler extends RoomHandler
             }
             if (roomState == RoomState.VerzikRoomState.PHASE_1 && event.getActor().getName().contains("Verzik"))
             {
-                if (event.getHitsplat().getAmount() > 74)
+                if (event.getHitsplat().getAmount() >= DAWNBRINGER_MINIMUM_HIT)
                 {
                     clog.write(DAWN_DAMAGE, String.valueOf(event.getHitsplat().getAmount()), String.valueOf(client.getTickCount() - roomStartTick));
                     DawnSpec dawnSpec = new DawnSpec("", client.getTickCount() - roomStartTick);
@@ -204,14 +199,14 @@ public class VerzikHandler extends RoomHandler
         if (event.getActor().hasSpotAnim(VERZIK_BOUNCE_SPOT_ANIMATION))
         {
             clog.write(LogID.VERZIK_BOUNCE, event.getActor().getName(), String.valueOf(client.getTickCount() - verzikEntryTick));
-            plugin.liveFrame.addAttack(new PlayerDidAttack(event.getActor().getName(), "100000", client.getTickCount() - verzikEntryTick, "-1", "-1", "-1", -1, -1, ""), "Verzik");
+            plugin.liveFrame.addAttack(new PlayerDidAttack(event.getActor().getName(), VERZIK_BOUNCE_ANIMATION, client.getTickCount() - verzikEntryTick, "-1", "-1", "-1", -1, -1, ""), "Verzik");
 
         }
     }
 
     public void updateItemSpawned(ItemSpawned event)
     {
-        if (event.getItem().getId() == 22516)
+        if (event.getItem().getId() == DAWNBRINGER_ITEM)
         {
             clog.write(DAWN_DROPPED, client.getTickCount() - verzikEntryTick);
             plugin.liveFrame.getPanel(getName()).addRoomSpecificData(client.getTickCount() - verzikEntryTick, "X");
@@ -260,9 +255,9 @@ public class VerzikHandler extends RoomHandler
             if (!redsThisTick)
             {
                 clog.write(VERZIK_P2_REDS_PROC, (client.getTickCount() - verzikEntryTick) + "");
-                plugin.addLiveLine(5, client.getTickCount() - verzikEntryTick, "Reds");
-                healingEndTick = client.getTickCount() + 11;
-                plugin.addLiveLine(5, healingEndTick - verzikEntryTick, "Shield End");
+                plugin.addDelayedLine(TOBRoom.VERZIK, client.getTickCount() - verzikEntryTick, "Reds");
+                healingEndTick = client.getTickCount() + VERZIK_SHIELD_LENGTH;
+                plugin.addDelayedLine(TOBRoom.VERZIK, healingEndTick - verzikEntryTick, "Shield End");
                 redsThisTick = true;
                 plugin.verzShieldActive = true;
             }
@@ -352,7 +347,7 @@ public class VerzikHandler extends RoomHandler
         verzikP1EndTick = client.getTickCount();
         sendTimeMessage("Wave 'Verzik phase 1' complete. Duration: ", verzikP1EndTick - verzikEntryTick);
         clog.write(VERZIK_P1_DESPAWNED, (verzikP1EndTick - verzikEntryTick) + "");
-        plugin.addLiveLine(5, verzikP1EndTick - verzikEntryTick, "P1 End");
+        plugin.addDelayedLine(TOBRoom.VERZIK, verzikP1EndTick - verzikEntryTick, "P1 End");
 
     }
 
@@ -369,18 +364,19 @@ public class VerzikHandler extends RoomHandler
         verzikP2EndTick = client.getTickCount();
         sendTimeMessage("Wave 'Verzik phase 2' complete. Duration: ", verzikP2EndTick - verzikEntryTick, verzikP2EndTick - verzikP1EndTick);
         clog.write(VERZIK_P2_END, (verzikP2EndTick - verzikEntryTick) + "");
-        plugin.addLiveLine(5, verzikP2EndTick - verzikEntryTick, "P2 End");
+        plugin.addDelayedLine(TOBRoom.VERZIK, verzikP2EndTick - verzikEntryTick, "P2 End");
 
     }
 
     private void endP3()
     {
+        //todo incorrect doubles sometimes
         roomState = RoomState.VerzikRoomState.FINISHED;
-        verzikP3EndTick = client.getTickCount() + 6;
+        verzikP3EndTick = client.getTickCount() + VERZIK_DEATH_ANIMATION_LENGTH;
         clog.write(ACCURATE_VERZIK_END);
         sendTimeMessage("Wave 'Verzik phase 3' complete. Duration: ", verzikP3EndTick - verzikEntryTick, verzikP3EndTick - verzikP2EndTick);
         clog.write(VERZIK_P3_DESPAWNED, (verzikP3EndTick - verzikEntryTick) + "");
-        plugin.addLiveLine(5, client.getTickCount() - verzikEntryTick, "Dead");
+        plugin.addDelayedLine(TOBRoom.VERZIK, client.getTickCount() - verzikEntryTick, "Dead");
         plugin.liveFrame.setVerzFinished(verzikP3EndTick - verzikEntryTick);
 
     }

@@ -28,9 +28,11 @@ If you want to customize the data shown in the table you can right click the tab
 ![](images/rightclicktableheader.jpg)
 
 Where you can add whatever parameter to the table that you would like. You can then turn columns on and off, including the custom added ones, by right clicking again:
+
 ![](images/customcolumns.jpg)
 
 Which will allow the table to show as such:
+
 ![](images/customtablesetup.jpg)
 
 Right clicking selected raids in the table will open a context menu:
@@ -95,7 +97,9 @@ In the main window of the plugin you have advanced filter options, these can be 
 
 ![](images/advancedfilters.jpg)
 
-Adding filters will instantly filter data in the table. You can save a combination of filters by hitting 'save' in the filter options panel:
+Adding filters will instantly filter data in the table. As you add them they will populate the table.
+
+You can save a combination of filters by hitting 'save' in the filter options panel:
 
 ![](images/savefilters.jpg)
 

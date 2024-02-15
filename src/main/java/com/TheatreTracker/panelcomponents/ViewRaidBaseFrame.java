@@ -62,12 +62,7 @@ public class ViewRaidBaseFrame extends BaseFrame
         int xarpSplit = data.getXarpTime();
 
         int verzikEntry = xarpEntry + xarpSplit;
-        int verzikSplit = data.getVerzikTime();
 
-        String maidenEntryStr = RoomUtil.time(maidenEntry);
-        String maidenSplitStr = RoomUtil.time(maidenSplit);
-
-        String bloatEntryStr = RoomUtil.time(bloatEntry);
         String bloatSplitStr = RoomUtil.time(bloatSplit);
 
         String nyloEntryStr = RoomUtil.time(nyloEntry);
@@ -80,7 +75,6 @@ public class ViewRaidBaseFrame extends BaseFrame
         String xarpSplitStr = RoomUtil.time(xarpSplit);
 
         String verzikEntryStr = RoomUtil.time(verzikEntry);
-        String verzikSplitStr = RoomUtil.time(verzikSplit);
 
         maidenPanel.setBorder(BorderFactory.createTitledBorder(maidenColor + "Maiden" + ((data.maidenScuffed) ? " (Scuffed after " + data.firstMaidenCrabScuffed + ")" : "")));
 
@@ -155,7 +149,7 @@ public class ViewRaidBaseFrame extends BaseFrame
         bloatSubPanel.add(new JLabel(bloatBodyColor + ((data.bloatDefenseAccurate) ? "" + data.getValue(DataPoint.BLOAT_DEFENSE) : INCOMPLETE_MARKER)));
 
         bloatSubPanel.add(new JLabel(bloatBodyColor + "Scythes 1st walk"));
-        bloatSubPanel.add(new JLabel(bloatBodyColor + data.bloatScytheBeforeFirstDown));
+        bloatSubPanel.add(new JLabel(bloatBodyColor + data.getValue(DataPoint.BLOAT_FIRST_WALK_SCYTHES)));
 
         bloatSubPanel.add(new JLabel(bloatBodyColor + "HP % 1st down"));
 
@@ -240,7 +234,7 @@ public class ViewRaidBaseFrame extends BaseFrame
         sotetsegSubPanel.setLayout(new GridLayout(8, 2));
 
         sotetsegSubPanel.add(new JLabel(soteBodyColor + "Hammers hit"));
-        sotetsegSubPanel.add(new JLabel(soteBodyColor + ((data.soteDefenseAccurate) ? "" + data.getValue(DataPoint.SOTE_SPECS_P1) + " " + data.getValue(DataPoint.SOTE_SPECS_P2) + " " + data.getValue(DataPoint.SOTE_SPECS_P3) + " (" + (data.getValue(DataPoint.SOTE_SPECS_TOTAL)) + ")" : INCOMPLETE_MARKER)));
+        sotetsegSubPanel.add(new JLabel(soteBodyColor + ((data.soteDefenseAccurate) ? data.getValue(DataPoint.SOTE_SPECS_P1) + " " + data.getValue(DataPoint.SOTE_SPECS_P2) + " " + data.getValue(DataPoint.SOTE_SPECS_P3) + " (" + (data.getValue(DataPoint.SOTE_SPECS_TOTAL)) + ")" : INCOMPLETE_MARKER)));
 
         sotetsegSubPanel.add(new JLabel(soteBodyColor + "Deaths"));
         sotetsegSubPanel.add(new JLabel(soteBodyColor + data.getValue(DataPoint.SOTE_DEATHS)));
@@ -297,7 +291,7 @@ public class ViewRaidBaseFrame extends BaseFrame
         verzikSubPanel.add(new JLabel(verzikBodyColor + data.getValue(DataPoint.VERZIK_DEATHS)));
 
         verzikSubPanel.add(new JLabel(verzikBodyColor + "Crabs Spawned"));
-        verzikSubPanel.add(new JLabel(verzikBodyColor + data.getValue(DataPoint.VERZIK_CRABS_SPAWNED) + ""));
+        verzikSubPanel.add(new JLabel(verzikBodyColor + data.getValue(DataPoint.VERZIK_CRABS_SPAWNED)));
 
         verzikSubPanel.add(new JLabel(verzikBodyColor + "Phase 1"));
         verzikSubPanel.add(new JLabel(verzikBodyColor + RoomUtil.time(data.getValue(DataPoint.VERZIK_P1_SPLIT))));
@@ -354,45 +348,7 @@ public class ViewRaidBaseFrame extends BaseFrame
                 break;
         }
         summarySubPanel.add(new JLabel("Scale: " + scaleString));
-        String raidStatusString = "";
-        if (data.maidenWipe)
-        {
-            raidStatusString = "Maiden Wipe";
-        } else if (data.maidenReset)
-        {
-            raidStatusString = "Maiden Reset";
-        } else if (data.bloatWipe)
-        {
-            raidStatusString = "Bloat Wipe";
-        } else if (data.bloatReset)
-        {
-            raidStatusString = "Bloat Reset";
-        } else if (data.nyloWipe)
-        {
-            raidStatusString = "Nylo Wipe";
-        } else if (data.nyloReset)
-        {
-            raidStatusString = "Nylo Reset";
-        } else if (data.soteWipe)
-        {
-            raidStatusString = "Sotetseg Wipe";
-        } else if (data.soteReset)
-        {
-            raidStatusString = "Sotetseg Reset";
-        } else if (data.xarpWipe)
-        {
-            raidStatusString = "Xarpus Wipe";
-        } else if (data.xarpReset)
-        {
-            raidStatusString = "Xarpus Reset";
-        } else if (data.verzikWipe)
-        {
-            raidStatusString = "Verzik Wipe";
-        } else
-        {
-            raidStatusString = "Completion";
-        }
-        summarySubPanel.add(new JLabel("Raid Status: " + raidStatusString));
+        setSummaryStatus(data, summarySubPanel);
         summarySubPanel.add(new JLabel("Time: " + RoomUtil.time(data.getTimeSum())));
         summarySubPanel.add(new JLabel("Players:"));
         for (String player : data.players.keySet())
@@ -467,5 +423,48 @@ public class ViewRaidBaseFrame extends BaseFrame
         add(thisSubPanel);
 
         pack();
+    }
+
+    private static void setSummaryStatus(RoomData data, JPanel summarySubPanel)
+    {
+        String raidStatusString;
+        if (data.maidenWipe)
+        {
+            raidStatusString = "Maiden Wipe";
+        } else if (data.maidenReset)
+        {
+            raidStatusString = "Maiden Reset";
+        } else if (data.bloatWipe)
+        {
+            raidStatusString = "Bloat Wipe";
+        } else if (data.bloatReset)
+        {
+            raidStatusString = "Bloat Reset";
+        } else if (data.nyloWipe)
+        {
+            raidStatusString = "Nylo Wipe";
+        } else if (data.nyloReset)
+        {
+            raidStatusString = "Nylo Reset";
+        } else if (data.soteWipe)
+        {
+            raidStatusString = "Sotetseg Wipe";
+        } else if (data.soteReset)
+        {
+            raidStatusString = "Sotetseg Reset";
+        } else if (data.xarpWipe)
+        {
+            raidStatusString = "Xarpus Wipe";
+        } else if (data.xarpReset)
+        {
+            raidStatusString = "Xarpus Reset";
+        } else if (data.verzikWipe)
+        {
+            raidStatusString = "Verzik Wipe";
+        } else
+        {
+            raidStatusString = "Completion";
+        }
+        summarySubPanel.add(new JLabel("Raid Status: " + raidStatusString));
     }
 }

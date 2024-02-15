@@ -30,7 +30,7 @@ public class BloatHandler extends RoomHandler
     private int bloatStartTick = -1;
     private int bloatDeferTick = -1;
     private int bloatDeathTick = -1;
-    private TheatreTrackerPlugin plugin;
+    private final TheatreTrackerPlugin plugin;
 
     public BloatHandler(Client client, DataWriter clog, TheatreTrackerConfig config, TheatreTrackerPlugin plugin)
     {
@@ -67,7 +67,7 @@ public class BloatHandler extends RoomHandler
         bloatDeathTick = client.getTickCount() + 3;
         plugin.addLiveLine(1, client.getTickCount() - bloatStartTick, "Dead");
         clog.write(ACCURATE_BLOAT_END);
-        plugin.liveFrame.setBloatFinished(bloatDeathTick-bloatStartTick);
+        plugin.liveFrame.setBloatFinished(bloatDeathTick - bloatStartTick);
         if (bloatStartTick != -1)
             sendTimeMessage("Wave 'Bloat last down' complete! Duration: ", splitLastDown(), " Room time: ", bloatDeathTick - bloatStartTick, true);
     }
@@ -120,6 +120,7 @@ public class BloatHandler extends RoomHandler
             return -1;
         }
     }
+
     private double deferHP = -1;
 
     public void down()
@@ -134,7 +135,7 @@ public class BloatHandler extends RoomHandler
         roomState = DOWN;
         if (bloatStartTick != -1)
         {
-            deferHP = client.getVarbitValue(HP_VARBIT)/10.0;
+            deferHP = client.getVarbitValue(HP_VARBIT) / 10.0;
             bloatDeferTick = client.getTickCount();
         }
         plugin.addLiveLine(1, client.getTickCount() - bloatStartTick, "Down");
@@ -156,15 +157,15 @@ public class BloatHandler extends RoomHandler
         }
         if (bloatStartTick == -1)
         {
-            if(RoomUtil.crossedLine(RoomUtil.BLOAT_REGION, new Point(39, 30), new Point(39, 33), true, client)
-            || RoomUtil.crossedLine(RoomUtil.BLOAT_REGION, new Point(24, 30), new Point(24, 33), true, client))
+            if (RoomUtil.crossedLine(RoomUtil.BLOAT_REGION, new Point(39, 30), new Point(39, 33), true, client)
+                    || RoomUtil.crossedLine(RoomUtil.BLOAT_REGION, new Point(24, 30), new Point(24, 33), true, client))
             {
                 start();
                 walk();
             }
         }
 
-        if(NyloHandler.instanceStart == -1)
+        if (NyloHandler.instanceStart == -1)
         {
             if (RoomUtil.crossedLine(RoomUtil.BLOAT_REGION, new Point(4, 31), new Point(4, 32), true, client))
             {
@@ -191,7 +192,7 @@ public class BloatHandler extends RoomHandler
             if (event.getActor() instanceof Player)
             {
                 Player p = (Player) event.getActor();
-                clog.write(25, p.getName(), (client.getTickCount() - bloatStartTick) + "");
+                clog.write(BLOAT_SCYTHE_1ST_WALK, p.getName(), (client.getTickCount() - bloatStartTick) + "");
             }
         }
     }

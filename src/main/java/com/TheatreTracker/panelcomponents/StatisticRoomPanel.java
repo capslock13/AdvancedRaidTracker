@@ -14,7 +14,7 @@ import java.util.Objects;
 @Slf4j
 public class StatisticRoomPanel extends JPanel
 {
-    public static enum stat
+    public enum stat
     {
         AVERAGE,
         MEDIAN,

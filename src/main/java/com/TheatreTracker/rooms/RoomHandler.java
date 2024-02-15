@@ -47,7 +47,6 @@ public class RoomHandler
         this.client = client;
         this.clog = clog;
         this.config = config;
-        roomStartTick = -1;
     }
 
     private String accuracy()
@@ -101,7 +100,7 @@ public class RoomHandler
             String splitMessage;
             if (bloat)
             {
-                splitMessage = message + timeColor() + duration + entry() + accuracy() + " (" + RoomUtil.time(split) + ")"+ defaultColor() + alternate;
+                splitMessage = message + timeColor() + duration + entry() + accuracy() + " (" + RoomUtil.time(split) + ")" + defaultColor() + alternate;
             } else
             {
                 splitMessage = message + timeColor() + RoomUtil.time(split) + entry() + accuracy() + defaultColor() + " Room time: " + timeColor() + RoomUtil.time(duration) + defaultColor() + alternate;

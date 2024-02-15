@@ -6,7 +6,7 @@ public class PlayerHitsWrapper
 {
     public ArrayList<Integer> hitsplats;
     public String name;
-    public int hits; //reused for tracking count
+    public int hits;
 
     public PlayerHitsWrapper(String name, int initial)
     {
@@ -14,12 +14,5 @@ public class PlayerHitsWrapper
         hitsplats = new ArrayList<>();
         hitsplats.add(initial);
         this.hits = 0;
-    }
-
-    public PlayerHitsWrapper(String name)
-    {
-        this.name = name;
-        hitsplats = new ArrayList<>();
-        this.hits = 1;
     }
 }

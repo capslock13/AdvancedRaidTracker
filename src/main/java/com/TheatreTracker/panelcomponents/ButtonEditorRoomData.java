@@ -15,7 +15,7 @@ class ButtonEditorRoomData extends DefaultCellEditor
     protected JButton button;
     private String label;
     private boolean isPushed;
-    private ArrayList<RoomData> data;
+    private final ArrayList<RoomData> data;
     int row;
 
     public ButtonEditorRoomData(JCheckBox checkBox, ArrayList<RoomData> data)

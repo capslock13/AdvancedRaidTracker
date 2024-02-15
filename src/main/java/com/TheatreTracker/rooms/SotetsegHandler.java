@@ -26,13 +26,12 @@ public class SotetsegHandler extends RoomHandler
     private int soteDeathTick = -1;
     private int deferTick = -1;
     private int lastRegion = -1;
-    private TheatreTrackerPlugin plugin;
+    private final TheatreTrackerPlugin plugin;
 
     public SotetsegHandler(Client client, DataWriter clog, TheatreTrackerConfig config, TheatreTrackerPlugin plugin)
     {
         super(client, clog, config);
         this.plugin = plugin;
-        roomState = RoomState.SotetsegRoomState.NOT_STARTED;
     }
 
     public boolean isActive()
@@ -101,7 +100,7 @@ public class SotetsegHandler extends RoomHandler
         plugin.addLiveLine(3, client.getTickCount() - soteEntryTick, "Dead");
         soteDeathTick = client.getTickCount() + 3;
         roomState = RoomState.SotetsegRoomState.FINISHED;
-        plugin.liveFrame.setSoteFinished(soteDeathTick-soteEntryTick);
+        plugin.liveFrame.setSoteFinished(soteDeathTick - soteEntryTick);
         sendTimeMessage("Wave 'Sotetseg phase 3' complete. Duration: ", soteDeathTick - soteEntryTick, soteDeathTick - soteSecondMazeEnd, false);
     }
 

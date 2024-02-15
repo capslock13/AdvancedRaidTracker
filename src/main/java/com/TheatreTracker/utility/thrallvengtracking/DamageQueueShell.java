@@ -1,17 +1,15 @@
 package com.TheatreTracker.utility.thrallvengtracking;
 
+import lombok.Getter;
+
 public class DamageQueueShell
 {
+    @Getter
     public int sourceIndex;
     public int offset;
     public int targetIndex;
     public int originTick;
     public String source;
-
-    public int getSourceIndex()
-    {
-        return sourceIndex;
-    }
 
     public DamageQueueShell(int targetIndex, int sourceIndex, int offset, String source, int originTick)
     {

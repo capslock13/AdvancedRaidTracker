@@ -47,10 +47,10 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
             Color.decode("#b30000"),
     };
 
-    private Color gridColor = new Color(110, 110, 110);
+    private final Color gridColor = new Color(110, 110, 110);
 
-    private int xSections = 10;
-    private int ySections = 10;
+    private final int xSections = 10;
+    private final int ySections = 10;
 
     private ToolTipData activeToolTip;
     private boolean shouldDrawToolTip = false;
@@ -60,27 +60,27 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
     private int graphType = 0;
 
 
-    private ArrayList<Bounds> selectedBounds;
+    private final ArrayList<Bounds> selectedBounds;
     private Bounds activeBound = new Bounds(-1, -1, -1, -1, null);
 
-    private ArrayList<Bounds> bounds;
-    private Color gradientStart;
-    private Color gradientEnd;
+    private final ArrayList<Bounds> bounds;
+    private final Color gradientStart;
+    private final Color gradientEnd;
 
-    private Color gradientStartHighlighted;
-    private Color gradientEndHighlighted;
+    private final Color gradientStartHighlighted;
+    private final Color gradientEndHighlighted;
 
-    private Color gradientStartSelected;
-    private Color gradientEndSelected;
-    private Color gradientStartSelectedAndHighlighted;
-    private Color gradientEndSelectedAndHighlighted;
+    private final Color gradientStartSelected;
+    private final Color gradientEndSelected;
+    private final Color gradientStartSelectedAndHighlighted;
+    private final Color gradientEndSelectedAndHighlighted;
     private DataPoint activeKey;
 
     private boolean time = false;
-    private BufferedImage img = new BufferedImage(IMG_WIDTH, IMG_HEIGHT, BufferedImage.TYPE_INT_ARGB);
+    private final BufferedImage img = new BufferedImage(IMG_WIDTH, IMG_HEIGHT, BufferedImage.TYPE_INT_ARGB);
 
-    private ArrayList<RoomData> internalData;
-    private TheatreTrackerConfig config;
+    private final ArrayList<RoomData> internalData;
+    private final TheatreTrackerConfig config;
 
     public GraphPanel(ArrayList<RoomData> data, TheatreTrackerConfig config)
     {
@@ -165,11 +165,9 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
     public static int getCountedTotal(ArrayList<Integer> data)
     {
         int count = 0;
-        int index = 0;
         for (Integer i : data)
         {
             count += i;
-            index++;
         }
         return count;
     }
@@ -218,7 +216,7 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
         g.setPaint(gradient);
         g.fillRect(left, top, width, height);
 
-        if (highlight && selectedBounds.size() == 0)
+        if (highlight && selectedBounds.isEmpty())
         {
             String percent = Math.round((100.0 * count / (double) total) * 100.0) / 100.0 + "%";
             String message = value + ": " + count + "/" + total + " (" + percent + ")";
@@ -495,10 +493,7 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
         {
             if (i < data.fullData.size() && i > -1)
             {
-                for (RoomData tempData : data.fullData.get(i))
-                {
-                    summedData.add(tempData);
-                }
+                summedData.addAll(data.fullData.get(i));
             }
         }
         return summedData;
@@ -528,7 +523,7 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
 
     private void drawToolTip()
     {
-        if (shouldDrawToolTip && selectedBounds.size() == 0)
+        if (shouldDrawToolTip && selectedBounds.isEmpty())
         {
             shouldDrawToolTip = false;
             Graphics2D g = (Graphics2D) img.getGraphics();
@@ -1000,10 +995,7 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
         ArrayList<RoomData> mergedData = new ArrayList<>();
         for (Bounds b : selectedBounds)
         {
-            for (RoomData raid : b.raids)
-            {
-                mergedData.add(raid);
-            }
+            mergedData.addAll(b.raids);
         }
         return mergedData;
     }

@@ -36,13 +36,11 @@ public enum WeaponAttack
     VENG_SELF("Veng Self", "VS", new Color(160, 89, 13)),
     HUMIDIFY("Humidify", "HU", new Color(20, 20, 200)),
     MAGIC_IMBUE("Magic Imbue", "MI", new Color(60, 60, 150)),
-    WEB_WEAVER("Web Weaver", "WW", new Color(240,18,119))
+    WEB_WEAVER("Web Weaver", "WW", new Color(240, 18, 119));
 
-    ;
-
-    public String name;
-    public String shorthand;
-    public Color color;
+    public final String name;
+    public final String shorthand;
+    public final Color color;
 
 
     WeaponAttack(String name, String shorthand, Color color)

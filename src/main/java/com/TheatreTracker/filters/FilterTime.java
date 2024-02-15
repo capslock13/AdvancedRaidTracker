@@ -7,10 +7,10 @@ import com.TheatreTracker.RoomData;
 @Slf4j
 public class FilterTime extends FilterCondition
 {
-    private DataPoint split;
-    private int compare;
-    private int time;
-    private String stringValue;
+    private final DataPoint split;
+    private final int compare;
+    private final int time;
+    private final String stringValue;
 
     public FilterTime(DataPoint split, int compare1, int time1, String str)
     {
@@ -30,21 +30,7 @@ public class FilterTime extends FilterCondition
     public boolean evaluate(RoomData data)
     {
         int checkValue = data.getValue(split);
-        switch (compare)
-        {
-            case 0:
-                return time == checkValue;
-            case 1:
-                return checkValue < time;
-            case 2:
-                return checkValue > time;
-            case 3:
-                return checkValue <= time;
-            case 4:
-                return checkValue >= time;
-            default:
-                return false;
-        }
+        return FilterUtil.compare(compare, time, checkValue);
     }
 
     public String getFilterCSV()

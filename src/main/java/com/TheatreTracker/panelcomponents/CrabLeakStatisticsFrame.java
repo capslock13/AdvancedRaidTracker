@@ -6,28 +6,25 @@ import com.TheatreTracker.utility.StringInt;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class CrabLeakStatisticsFrame extends BaseFrame
 {
-    private ArrayList<ArrayList<StringInt>> crabs;
+
     public CrabLeakStatisticsFrame(ArrayList<ArrayList<StringInt>> crabs)
     {
-        this.crabs = crabs;
         JPanel primary = new JPanel();
         Map<String, Integer> crabLeakSums = new LinkedHashMap<>();
         primary.setBorder(BorderFactory.createTitledBorder("Crab Leak Info (Based on " + crabs.size() + " Raids)"));
-        for(ArrayList<StringInt> crabData : crabs)
+        for (ArrayList<StringInt> crabData : crabs)
         {
-            for(StringInt crab : crabData)
+            for (StringInt crab : crabData)
             {
-                if(crabLeakSums.containsKey(crab.string))
+                if (crabLeakSums.containsKey(crab.string))
                 {
-                    crabLeakSums.put(crab.string, crabLeakSums.get(crab.string)+crab.val);
-                }
-                else
+                    crabLeakSums.put(crab.string, crabLeakSums.get(crab.string) + crab.val);
+                } else
                 {
                     crabLeakSums.put(crab.string, crab.val);
                 }
@@ -47,7 +44,7 @@ public class CrabLeakStatisticsFrame extends BaseFrame
         panel30s.setBorder(BorderFactory.createTitledBorder("30s"));
 
         Color color = new Color(30, 30, 30);
-        for(int i = 0; i < 3; i++)
+        for (int i = 0; i < 3; i++)
         {
             JLabel test = new JLabel("Crab");
             test.setOpaque(true);
@@ -64,11 +61,11 @@ public class CrabLeakStatisticsFrame extends BaseFrame
             for (int j = 0; j < 10; j++)
             {
                 int averageTemp = 0;
-                String crabDescription = RoomUtil.MAIDEN_CRAB_NAMES[(i*10)+j];
+                String crabDescription = RoomUtil.MAIDEN_CRAB_NAMES[(i * 10) + j];
                 try
                 {
-                    averageTemp = (int) ((crabLeakSums.get(RoomUtil.MAIDEN_CRAB_NAMES[(i*10)+j]) / (double) crabs.size()) * 100);
-                } catch (Exception e)
+                    averageTemp = (int) ((crabLeakSums.get(RoomUtil.MAIDEN_CRAB_NAMES[(i * 10) + j]) / (double) crabs.size()) * 100);
+                } catch (Exception ignored)
                 {
 
                 }

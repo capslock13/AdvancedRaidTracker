@@ -133,10 +133,11 @@ public class FilteredRaidsBaseFrame extends BaseFrame
     }
 
     private TheatreTrackerConfig config;
+
     public FilteredRaidsBaseFrame(TheatreTrackerConfig config)
     {
         columnHeaders = new ArrayList<>();
-        for(String s : columnHeaderNames)
+        for (String s : columnHeaderNames)
         {
             columnHeaders.add(getCheckBoxMenuItem(s));
         }
@@ -385,9 +386,9 @@ public class FilteredRaidsBaseFrame extends BaseFrame
 
         ArrayList<String> columnNamesDynamic = new ArrayList<>();
         columnNamesDynamic.add("");
-        for(JCheckBoxMenuItem item : columnHeaders)
+        for (JCheckBoxMenuItem item : columnHeaders)
         {
-            if(item.getState())
+            if (item.getState())
             {
                 columnNamesDynamic.add(item.getText());
             }
@@ -400,14 +401,14 @@ public class FilteredRaidsBaseFrame extends BaseFrame
         for (RoomData raid : tableData)
         {
             ArrayList<Object> rowBuilder = new ArrayList<>();
-            for(String column : columnNamesDynamic)
+            for (String column : columnNamesDynamic)
             {
                 rowBuilder.add(getRowData(column, raid));
             }
             tableBuilder.add(rowBuilder.toArray());
         }
         int columns = 0;
-        if(tableBuilder.size() != 0)
+        if (tableBuilder.size() != 0)
         {
             columns = tableBuilder.get(0).length;
         }
@@ -420,14 +421,13 @@ public class FilteredRaidsBaseFrame extends BaseFrame
         }
 
         table.setModel(new DefaultTableModel(tableObject, columnNamesDynamic.toArray()));
-        for(int i = 0; i < table.getColumnCount(); i++)
+        for (int i = 0; i < table.getColumnCount(); i++)
         {
-            if(table.getColumnName(i).equals("View"))
+            if (table.getColumnName(i).equals("View"))
             {
                 table.getColumn(table.getColumnName(i)).setCellEditor(new ButtonEditorRoomData(new JCheckBox(), tableData));
                 table.getColumn(table.getColumnName(i)).setCellRenderer(new ButtonRenderer());
-            }
-            else
+            } else
             {
                 table.getColumn(table.getColumnName(i)).setCellEditor(new NonEditableCell(new JTextField()));
             }
@@ -442,7 +442,7 @@ public class FilteredRaidsBaseFrame extends BaseFrame
 
     public Object getRowData(String column, RoomData raid)
     {
-        switch(column)
+        switch (column)
         {
             case "":
                 return raid.index;
@@ -471,7 +471,7 @@ public class FilteredRaidsBaseFrame extends BaseFrame
                 cal2.setTime(raid.raidStarted);
                 int hour = cal2.get(Calendar.HOUR_OF_DAY);
                 int minute = cal2.get(Calendar.MINUTE);
-                String minuteString = (minute < 10) ? "0"+minute : String.valueOf(minute);
+                String minuteString = (minute < 10) ? "0" + minute : String.valueOf(minute);
                 String period = (hour > 11) ? " PM" : " AM";
                 if (hour == 0)
                 {
@@ -499,8 +499,7 @@ public class FilteredRaidsBaseFrame extends BaseFrame
                     valueToDisplay = pointData.value + " (" + pointData.player + ")";
                 }
             }
-        }
-        catch(Exception e)
+        } catch (Exception e)
         {
 
         }
@@ -514,13 +513,11 @@ public class FilteredRaidsBaseFrame extends BaseFrame
             if (!value.contains("Player:"))
             {
                 return (Objects.requireNonNull(DataPoint.getValue(Objects.requireNonNull(value)).type == DataPoint.types.TIME));
-            }
-            else
+            } else
             {
                 return false;
             }
-        }
-        catch(Exception e)
+        } catch (Exception e)
         {
             return false;
         }
@@ -730,21 +727,7 @@ public class FilteredRaidsBaseFrame extends BaseFrame
     {
         Vector<String> items = new Vector<>();
 
-        for (String item : comboStrictData)
-        {
-            if (item.endsWith(name))
-            {
-                items.add(item);
-                break;
-            }
-        }
-
-        viewByRaidComboBox.setModel(new DefaultComboBoxModel<String>(items));
-
-        if (items.size() == 1)
-        {
-            viewByRaidComboBox.setSelectedIndex(0);
-        }
+        ComparisonViewPanel.addComboItems(name, items, comboStrictData, viewByRaidComboBox);
     }
 
     private JMenuItem createMenuItemTableHeader(final String name)
@@ -2071,7 +2054,7 @@ public class FilteredRaidsBaseFrame extends BaseFrame
         built = true;
     }
 
-    public String[] columnHeaderNames = new String[]{"Date","Time","Scale","Status", "Players", "Spectate","View"};
+    public String[] columnHeaderNames = new String[]{"Date", "Time", "Scale", "Status", "Players", "Spectate", "View"};
     public ArrayList<JCheckBoxMenuItem> columnHeaders;
 
     private void getUpdatedPopupMenu(String newItem)
@@ -2080,7 +2063,7 @@ public class FilteredRaidsBaseFrame extends BaseFrame
         item.setOpaque(true);
         item.setBackground(Color.BLACK);
         item.setState(true);
-        item.addActionListener(al->
+        item.addActionListener(al ->
         {
             updateTable();
         });
@@ -2092,26 +2075,27 @@ public class FilteredRaidsBaseFrame extends BaseFrame
     private JCheckBoxMenuItem getCheckBoxMenuItem(String name)
     {
         JCheckBoxMenuItem item = new JCheckBoxMenuItem(name);
-        if(!name.equals("Time"))
+        if (!name.equals("Time"))
         {
             item.setState(true);
         }
         item.setOpaque(true);
         item.setBackground(Color.BLACK);
-        item.addActionListener(al->
+        item.addActionListener(al ->
         {
-            if(built)
+            if (built)
             {
                 updateTable();
             }
         });
         return item;
     }
+
     private JPopupMenu getjPopupMenu()
     {
         JPopupMenu tstMenu = new JPopupMenu();
 
-        for(JCheckBoxMenuItem item : columnHeaders)
+        for (JCheckBoxMenuItem item : columnHeaders)
         {
             tstMenu.add(item);
         }
@@ -2126,10 +2110,10 @@ public class FilteredRaidsBaseFrame extends BaseFrame
         resetCustom.setOpaque(true);
         resetCustom.setBackground(Color.BLACK);
 
-        resetCustom.addActionListener(al->
+        resetCustom.addActionListener(al ->
         {
             columnHeaders.clear();
-            for(String column : columnHeaderNames)
+            for (String column : columnHeaderNames)
             {
                 columnHeaders.add(getCheckBoxMenuItem(column));
             }

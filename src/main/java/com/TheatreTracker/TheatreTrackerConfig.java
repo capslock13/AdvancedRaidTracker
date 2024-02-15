@@ -47,5 +47,8 @@ public interface TheatreTrackerConfig extends Config
             name = "Chart Scale Size",
             description = "Adjusts box size in chart"
     )
-    default int chartScaleSize() { return 26;}
+    default int chartScaleSize()
+    {
+        return 26;
+    }
 }

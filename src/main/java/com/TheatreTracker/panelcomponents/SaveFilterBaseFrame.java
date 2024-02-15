@@ -5,14 +5,11 @@ import com.TheatreTracker.utility.FilterManager;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 public class SaveFilterBaseFrame extends BaseFrame
 {
-    private JTextField field;
-    private JButton saveButton;
+    private final JTextField field;
 
     public SaveFilterBaseFrame(ArrayList<ImplicitFilter> filters)
     {
@@ -25,28 +22,30 @@ public class SaveFilterBaseFrame extends BaseFrame
         field = new JTextField();
         subPanel.add(new JLabel("Filter Name: "));
         subPanel.add(field);
-        saveButton = new JButton("Save");
-        saveButton.addActionListener(new ActionListener()
-        {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                if (FilterManager.doesFilterExist(field.getText()))
-                {
-                    ConfirmationDialog dialog = new ConfirmationDialog(field.getText(), filters, (JFrame) (SwingUtilities.getRoot((Component) e.getSource())));
-                    dialog.open();
-                } else
-                {
-                    FilterManager.saveFilter(field.getText(), filters);
-                    close();
-                }
-            }
-        });
+        JButton saveButton = getSaveButton(filters);
         subPanel.add(saveButton);
         borderPanel.add(subPanel);
         add(borderPanel);
         pack();
         setLocationRelativeTo(null);
         repaint();
+    }
+
+    private JButton getSaveButton(ArrayList<ImplicitFilter> filters)
+    {
+        JButton saveButton = new JButton("Save");
+        saveButton.addActionListener(e ->
+        {
+            if (FilterManager.doesFilterExist(field.getText()))
+            {
+                ConfirmationDialog dialog = new ConfirmationDialog(field.getText(), filters, (JFrame) (SwingUtilities.getRoot((Component) e.getSource())));
+                dialog.open();
+            } else
+            {
+                FilterManager.saveFilter(field.getText(), filters);
+                close();
+            }
+        });
+        return saveButton;
     }
 }

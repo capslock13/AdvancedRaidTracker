@@ -1,15 +1,17 @@
 package com.TheatreTracker.utility;
 
 import com.TheatreTracker.RoomData;
+import com.TheatreTracker.ui.RaidTrackerPanelPrimary;
 
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Scanner;
+import java.util.Objects;
 
 public class RaidsManager
 {
@@ -22,7 +24,7 @@ public class RaidsManager
         if (!folder.exists()) folder.mkdirs();
         try
         {
-            for (File entry : folder.listFiles())
+            for (File entry : Objects.requireNonNull(folder.listFiles()))
             {
                 if (entry.isFile())
                 {
@@ -31,44 +33,7 @@ public class RaidsManager
                         ArrayList<RoomData> raids = new ArrayList<>();
                         try
                         {
-                            Scanner raidsReader = new Scanner(Files.newInputStream(entry.toPath()));
-                            ArrayList<String> raid = new ArrayList<>();
-                            boolean raidActive = false;
-                            while (raidsReader.hasNextLine())
-                            {
-                                String line = raidsReader.nextLine();
-                                String[] lineSplit = line.split(",");
-                                if (!raidActive)
-                                {
-                                    if (lineSplit.length > 3)
-                                    {
-                                        if (Integer.parseInt(lineSplit[3]) == 0)
-                                        {
-                                            raid.add(line);
-                                            raidActive = true;
-                                        }
-                                    }
-                                } else
-                                {
-                                    if (lineSplit.length > 3)
-                                    {
-                                        if (Integer.parseInt(lineSplit[3]) == 99)
-                                        {
-                                            raid.add(line);
-                                        } else if (Integer.parseInt(lineSplit[3]) == 4)
-                                        {
-                                            raid.add(line);
-                                            raidActive = false;
-                                            raids.add(new RoomData(raid.toArray(new String[raid.size()])));
-                                            raid.clear();
-                                        } else
-                                        {
-                                            raid.add(line);
-                                        }
-                                    }
-                                }
-                            }
-                            raidsReader.close();
+                            RaidTrackerPanelPrimary.parseLogFile(raids, entry);
                         } catch (Exception e)
                         {
                             e.printStackTrace();
@@ -89,7 +54,7 @@ public class RaidsManager
         File folder = new File(raidsFolder);
         try
         {
-            for (File entry : folder.listFiles())
+            for (File entry : Objects.requireNonNull(folder.listFiles()))
             {
                 if (entry.getName().equals(name + ".raids"))
                 {
@@ -119,20 +84,25 @@ public class RaidsManager
                 raidsFile.delete();
             }
             raidsFile.createNewFile();
-            BufferedWriter raidsWriter = new BufferedWriter(new OutputStreamWriter(Files.newOutputStream(Paths.get(raidsFolder + name + ".raids"))));
-            for (RoomData raid : raids)
-            {
-                for (String s : raid.raidDataRaw)
-                {
-                    raidsWriter.write(s);
-                    raidsWriter.newLine();
-                }
-            }
-            raidsWriter.close();
+            writeRaid(name, raids);
         } catch (Exception e)
         {
             e.printStackTrace();
         }
+    }
+
+    private static void writeRaid(String name, ArrayList<RoomData> raids) throws IOException
+    {
+        BufferedWriter raidsWriter = new BufferedWriter(new OutputStreamWriter(Files.newOutputStream(Paths.get(raidsFolder + name + ".raids"))));
+        for (RoomData raid : raids)
+        {
+            for (String s : raid.raidDataRaw)
+            {
+                raidsWriter.write(s);
+                raidsWriter.newLine();
+            }
+        }
+        raidsWriter.close();
     }
 
     public static void saveRaids(String name, ArrayList<RoomData> raids)
@@ -149,16 +119,7 @@ public class RaidsManager
             {
                 raidsFile.createNewFile();
             }
-            BufferedWriter raidsWriter = new BufferedWriter(new OutputStreamWriter(Files.newOutputStream(Paths.get(raidsFolder + name + ".raids"))));
-            for (RoomData raid : raids)
-            {
-                for (String s : raid.raidDataRaw)
-                {
-                    raidsWriter.write(s);
-                    raidsWriter.newLine();
-                }
-            }
-            raidsWriter.close();
+            writeRaid(name, raids);
         } catch (Exception e)
         {
             e.printStackTrace();

@@ -22,13 +22,8 @@ import static com.TheatreTracker.constants.NpcIDs.*;
 public class VerzikHandler extends RoomHandler
 {
     public RoomState.VerzikRoomState roomState;
-    private TheatreTrackerPlugin plugin;
+    private final TheatreTrackerPlugin plugin;
     private int healingEndTick = -1;
-
-    int p2Damage = 0;
-    int p2Heal = 0;
-    int p3Damage = 0;
-    int p3Heal = 0;
 
     public VerzikHandler(Client client, DataWriter clog, TheatreTrackerConfig config, TheatreTrackerPlugin plugin)
     {
@@ -59,7 +54,7 @@ public class VerzikHandler extends RoomHandler
     private boolean hasWebbed = false;
     private int webTick = -1;
 
-    private ArrayList<Integer> currentHits;
+    private final ArrayList<Integer> currentHits;
     private ArrayList<Integer> lastHits;
     private NPC verzNPC;
     Map<Integer, Integer> shieldActives = new HashMap<>();
@@ -117,10 +112,6 @@ public class VerzikHandler extends RoomHandler
             }
         }
         queuedAutoHits.clear();
-        for (Integer heal : currentHits)
-        {
-            //log.info("Heal: " + heal);
-        }
         currentHits.clear();
         if (healingEndTick == client.getTickCount())
         {
@@ -145,14 +136,10 @@ public class VerzikHandler extends RoomHandler
                 webTick = -1;
             }
         }
-        if (lastHits.size() != 0)
-        {
-
-        }
         lastHits = currentHits;
     }
 
-    private Map<Player, Integer> queuedAutoHits = new HashMap<>();
+    private final Map<Player, Integer> queuedAutoHits = new HashMap<>();
 
     public void updateProjectileMoved(ProjectileMoved event)
     {
@@ -394,7 +381,7 @@ public class VerzikHandler extends RoomHandler
         sendTimeMessage("Wave 'Verzik phase 3' complete. Duration: ", verzikP3EndTick - verzikEntryTick, verzikP3EndTick - verzikP2EndTick);
         clog.write(VERZIK_P3_DESPAWNED, (verzikP3EndTick - verzikEntryTick) + "");
         plugin.addLiveLine(5, client.getTickCount() - verzikEntryTick, "Dead");
-        plugin.liveFrame.setVerzFinished(verzikP3EndTick-verzikEntryTick);
+        plugin.liveFrame.setVerzFinished(verzikP3EndTick - verzikEntryTick);
 
     }
 }

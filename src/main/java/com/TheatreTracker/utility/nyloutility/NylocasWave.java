@@ -231,7 +231,7 @@ public class NylocasWave
                             }),
             };
 
-    public NylocasWave(int wave, int delay, NylocasData nylos[])
+    public NylocasWave(int wave, int delay, NylocasData[] nylos)
     {
         this.wave = wave;
         this.delay = delay;

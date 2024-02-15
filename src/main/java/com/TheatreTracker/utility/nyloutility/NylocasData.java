@@ -2,7 +2,7 @@ package com.TheatreTracker.utility.nyloutility;
 
 public class NylocasData
 {
-    enum NylocasType
+    public enum NylocasType
     {
         MELEE_BIG,
         MELEE_SMALL,

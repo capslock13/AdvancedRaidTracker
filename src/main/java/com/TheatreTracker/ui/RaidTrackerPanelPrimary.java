@@ -4,10 +4,11 @@ import com.TheatreTracker.RoomData;
 import com.TheatreTracker.TheatreTrackerConfig;
 import com.TheatreTracker.TheatreTrackerPlugin;
 import com.TheatreTracker.panelcomponents.FilteredRaidsBaseFrame;
-import com.TheatreTracker.panelcomponents.LiveChartFrame;
+import com.TheatreTracker.utility.DataWriter;
 import com.TheatreTracker.utility.RaidsArrayWrapper;
 import com.TheatreTracker.utility.RaidsManager;
 import com.google.inject.Inject;
+import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.ui.PluginPanel;
 
 import javax.swing.*;
@@ -15,13 +16,13 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.io.File;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Scanner;
+import java.util.*;
 
-
+@Slf4j
 public class RaidTrackerPanelPrimary extends PluginPanel
 {
     private JLabel raidCountLabel;
+    private final JLabel pleaseWait;
     private ArrayList<RoomData> raidsData;
     private JTable loadRaidsTable;
     private ArrayList<RaidsArrayWrapper> raidSets;
@@ -34,63 +35,93 @@ public class RaidTrackerPanelPrimary extends PluginPanel
     @Inject
     RaidTrackerPanelPrimary(TheatreTrackerPlugin plugin, TheatreTrackerConfig config)
     {
-        this.config = config;
-        this.plugin = plugin;
-        raidsData = getAllRaids();
-        raids = new FilteredRaidsBaseFrame(config);
-        buildComponents();
+        DataWriter.checkLogFileSize();
+        pleaseWait = new JLabel("Parsing files please wait..", SwingConstants.CENTER);
+        add(pleaseWait);
+        new Thread(() ->
+        {
+            this.config = config;
+            this.plugin = plugin;
+            raidsData = new ArrayList<>();
+            raidsData = getAllRaids(pleaseWait);
+            raids = new FilteredRaidsBaseFrame(config);
+            removeAll();
+            buildComponents();
+            updateUI();
+        }).start();
     }
 
-    private ArrayList<RoomData> getAllRaids()
+    private ArrayList<RoomData> getAllRaids(JLabel statusUpdate)
     {
         ArrayList<RoomData> raids = new ArrayList<>();
         try
         {
-            String path = "/.runelite/theatretracker/primary/tobdata.log";
-            File logFile = new File(System.getProperty("user.home").replace("\\", "/") + path);
-            Scanner logReader = new Scanner(Files.newInputStream(logFile.toPath()));
-            ArrayList<String> raid = new ArrayList<>();
-            boolean raidActive = false;
-            while (logReader.hasNextLine())
+            String path = "/.runelite/theatretracker/primary/";
+            File logDirectory = new File(System.getProperty("user.home").replace("\\", "/") + path);
+            File[] logFiles = logDirectory.listFiles();
+            if (logFiles != null)
             {
-                String line = logReader.nextLine();
-                String[] lineSplit = line.split(",");
-                if (!raidActive)
+                for (File file : logFiles)
                 {
-                    if (lineSplit.length > 3)
                     {
-                        if (Integer.parseInt(lineSplit[3]) == 0)
+                        if (!file.isDirectory())
                         {
-                            raid.add(line);
-                            raidActive = true;
-                        }
-                    }
-                } else
-                {
-                    if (lineSplit.length > 3)
-                    {
-                        if (Integer.parseInt(lineSplit[3]) == 99)
-                        {
-                            raid.add(line);
-                        } else if (Integer.parseInt(lineSplit[3]) == 4)
-                        {
-                            raid.add(line);
-                            raidActive = false;
-                            raids.add(new RoomData(raid.toArray(new String[raid.size()])));
-                            raid.clear();
-                        } else
-                        {
-                            raid.add(line);
+                            if (file.getName().contains("tobdata"))
+                            {
+                                File currentFile = new File(logDirectory.getAbsolutePath() + "/" + file.getName());
+                                parseLogFile(raids, currentFile);
+                            }
                         }
                     }
                 }
             }
-            logReader.close();
-        } catch (Exception e)
+        } catch (Exception ignored)
         {
-            e.printStackTrace();
         }
+        raids.sort(Comparator.comparing(RoomData::getDate));
         return raids;
+    }
+
+    public static void parseLogFile(ArrayList<RoomData> raids, File currentFile) throws Exception
+    {
+        Scanner logReader = new Scanner(Files.newInputStream(currentFile.toPath()));
+        ArrayList<String> raid = new ArrayList<>();
+        boolean raidActive = false;
+        while (logReader.hasNextLine())
+        {
+            String line = logReader.nextLine();
+            String[] lineSplit = line.split(",");
+            if (!raidActive)
+            {
+                if (lineSplit.length > 3)
+                {
+                    if (Integer.parseInt(lineSplit[3]) == 0)
+                    {
+                        raid.add(line);
+                        raidActive = true;
+                    }
+                }
+            } else
+            {
+                if (lineSplit.length > 3)
+                {
+                    if (Integer.parseInt(lineSplit[3]) == 99)
+                    {
+                        raid.add(line);
+                    } else if (Integer.parseInt(lineSplit[3]) == 4)
+                    {
+                        raid.add(line);
+                        raidActive = false;
+                        raids.add(new RoomData(raid.toArray(new String[0])));
+                        raid.clear();
+                    } else
+                    {
+                        raid.add(line);
+                    }
+                }
+            }
+        }
+        logReader.close();
     }
 
     private void buildComponents()
@@ -117,19 +148,21 @@ public class RaidTrackerPanelPrimary extends PluginPanel
         refreshRaidsButton.addActionListener(
                 al ->
                 {
-                    raidsData = getAllRaids();
-                    updateRaidCountLabel();
-
-                    Object[] columnNames = {"File Name", "Include?"};
-                    raidSets = RaidsManager.getRaidsSets();
-                    Object[][] tableData = new Object[raidSets.size()][2];
-                    for (int i = 0; i < raidSets.size(); i++)
+                    new Thread(() ->
                     {
-                        tableData[i] = new Object[]{raidSets.get(i).filename, false};
-                    }
-                    DefaultTableModel model = new DefaultTableModel(tableData, columnNames);
-                    loadRaidsTable.setModel(model);
+                        raidsData = getAllRaids(raidCountLabel);
+                        updateRaidCountLabel();
 
+                        Object[] columnNames = {"File Name", "Include?"};
+                        raidSets = RaidsManager.getRaidsSets();
+                        Object[][] tableData = new Object[raidSets.size()][2];
+                        for (int i = 0; i < raidSets.size(); i++)
+                        {
+                            tableData[i] = new Object[]{raidSets.get(i).filename, false};
+                        }
+                        DefaultTableModel model = new DefaultTableModel(tableData, columnNames);
+                        loadRaidsTable.setModel(model);
+                    }).start();
                 });
 
         tableRaidsButton.addActionListener(
@@ -168,7 +201,7 @@ public class RaidTrackerPanelPrimary extends PluginPanel
         loadRaidsTable = new JTable(model)
         {
             @Override
-            public Class getColumnClass(int column)
+            public Class<?> getColumnClass(int column)
             {
                 if (column == 0)
                 {
@@ -202,10 +235,7 @@ public class RaidTrackerPanelPrimary extends PluginPanel
             {
                 if (s.equals(set.filename))
                 {
-                    for (RoomData raid : set.data)
-                    {
-                        collectedRaids.add(raid);
-                    }
+                    collectedRaids.addAll(set.data);
                 }
             }
         }

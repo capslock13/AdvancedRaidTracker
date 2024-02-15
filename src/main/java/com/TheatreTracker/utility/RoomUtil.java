@@ -1,9 +1,7 @@
 package com.TheatreTracker.utility;
 
-import com.TheatreTracker.RoomData;
 import com.TheatreTracker.constants.NpcIDs;
 import net.runelite.api.Client;
-import net.runelite.api.NPC;
 import net.runelite.api.Player;
 import net.runelite.api.coords.WorldPoint;
 import com.TheatreTracker.Point;
@@ -29,8 +27,6 @@ public class RoomUtil
             "N1 30s", "N2 30s", "N3 30s", "N4 (1) 30s", "N4 (2) 30s",
             "S1 30s", "S2 30s", "S3 30s", "S4 (1) 30s", "S4 (2) 30s",
     };
-
-    public static boolean debug = true;
 
     public static String time(String ticks)
     {

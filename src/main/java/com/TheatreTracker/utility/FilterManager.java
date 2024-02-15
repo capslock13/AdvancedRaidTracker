@@ -7,6 +7,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class FilterManager
@@ -19,7 +20,7 @@ public class FilterManager
         File folder = new File(filterFolder);
         try
         {
-            for (File entry : folder.listFiles())
+            for (File entry : Objects.requireNonNull(folder.listFiles()))
             {
                 ArrayList<String> activeFileFilters = new ArrayList<>();
                 if (entry.isFile())
@@ -34,7 +35,7 @@ public class FilterManager
                                 activeFileFilters.add(filterReader.nextLine());
                             }
                             filterReader.close();
-                            if (activeFileFilters.size() != 0)
+                            if (!activeFileFilters.isEmpty())
                             {
                                 currentFilters.add(new Filter(entry.getName(), activeFileFilters.toArray(new String[activeFileFilters.size()])));
                             }

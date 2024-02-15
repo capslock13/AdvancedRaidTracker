@@ -5,14 +5,11 @@ import com.TheatreTracker.utility.RaidsManager;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 public class SaveRaidsBaseFrame extends BaseFrame
 {
-    private JTextField field;
-    private JButton saveButton;
+    private final JTextField field;
 
     public SaveRaidsBaseFrame(ArrayList<RoomData> raids)
     {
@@ -25,28 +22,30 @@ public class SaveRaidsBaseFrame extends BaseFrame
         field = new JTextField();
         subPanel.add(new JLabel("Raids Name: "));
         subPanel.add(field);
-        saveButton = new JButton("Save");
-        saveButton.addActionListener(new ActionListener()
-        {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                if (RaidsManager.doesRaidExist(field.getText()))
-                {
-                    ConfirmationDialog dialog = new ConfirmationDialog(field.getText(), raids, (JFrame) (SwingUtilities.getRoot((Component) e.getSource())), 1);
-                    dialog.open();
-                } else
-                {
-                    RaidsManager.saveRaids(field.getText(), raids);
-                    close();
-                }
-            }
-        });
+        JButton saveButton = getSaveButton(raids);
         subPanel.add(saveButton);
         borderPanel.add(subPanel);
         add(borderPanel);
         pack();
         setLocationRelativeTo(null);
         repaint();
+    }
+
+    private JButton getSaveButton(ArrayList<RoomData> raids)
+    {
+        JButton saveButton = new JButton("Save");
+        saveButton.addActionListener(e ->
+        {
+            if (RaidsManager.doesRaidExist(field.getText()))
+            {
+                ConfirmationDialog dialog = new ConfirmationDialog(field.getText(), raids, (JFrame) (SwingUtilities.getRoot((Component) e.getSource())), 1);
+                dialog.open();
+            } else
+            {
+                RaidsManager.saveRaids(field.getText(), raids);
+                close();
+            }
+        });
+        return saveButton;
     }
 }

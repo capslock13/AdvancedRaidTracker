@@ -9,9 +9,9 @@ import java.util.ArrayList;
 @Slf4j
 public class FilterPlayers extends FilterCondition
 {
-    private ArrayList<String> players;
-    private int operator;
-    private String stringValue;
+    private final ArrayList<String> players;
+    private final int operator;
+    private final String stringValue;
 
     public FilterPlayers(String players, int operator, String val)
     {
@@ -104,13 +104,13 @@ public class FilterPlayers extends FilterCondition
 
     public String getFilterCSV()
     {
-        String playerStr = "";
+        StringBuilder playerStr = new StringBuilder();
         for (String s : players)
         {
-            playerStr += s;
-            playerStr += ",";
+            playerStr.append(s);
+            playerStr.append(",");
         }
-        playerStr = StringUtils.substring(playerStr, 0, playerStr.length() - 1);
+        playerStr = new StringBuilder(StringUtils.substring(playerStr.toString(), 0, playerStr.length() - 1));
         return "2-" + operator + "-" + playerStr + "-" + stringValue;
     }
 }

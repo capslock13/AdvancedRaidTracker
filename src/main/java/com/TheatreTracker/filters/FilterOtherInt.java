@@ -30,21 +30,8 @@ public class FilterOtherInt extends FilterCondition
         int checkValue = data.getValue(param);
         if (data.getTimeAccurate(param) && value != -1)
         {
-            switch (qualifier)
-            {
-                case 0:
-                    return checkValue == value;
-                case 1:
-                    return checkValue < value;
-                case 2:
-                    return checkValue > value;
-                case 3:
-                    return checkValue <= value;
-                case 4:
-                    return checkValue >= value;
-                default:
-                    return false;
-            }
+            return FilterUtil.compare(qualifier, value, checkValue);
+
         } else
         {
             return false;

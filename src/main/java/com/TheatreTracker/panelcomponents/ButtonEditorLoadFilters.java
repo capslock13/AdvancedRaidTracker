@@ -18,12 +18,12 @@ class ButtonEditorLoadFilters extends DefaultCellEditor
     private String label;
     private boolean isPushed;
 
-    private boolean replace;
+    private final boolean replace;
     int row;
-    private ArrayList<Filter> data;
-    private BaseFrame closeBaseFrame;
+    private final ArrayList<Filter> data;
+    private final BaseFrame closeBaseFrame;
 
-    private FilteredRaidsBaseFrame filteredRaidsFrame;
+    private final FilteredRaidsBaseFrame filteredRaidsFrame;
 
     public ButtonEditorLoadFilters(JCheckBox checkBox, FilteredRaidsBaseFrame filteredRaidsFrame, ArrayList<Filter> data, LoadFilterBaseFrame loadFrame)
     {

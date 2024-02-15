@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 
 import static com.TheatreTracker.constants.LogID.*;
 import static com.TheatreTracker.constants.NpcIDs.*;
+
 import com.TheatreTracker.utility.MaidenCrab;
 
 @Slf4j
@@ -150,7 +151,7 @@ public class MaidenHandler extends RoomHandler
         clog.write(301);
         clog.write(MAIDEN_0HP, "" + (client.getTickCount() - maidenStartTick));
         plugin.addLiveLine(0, client.getTickCount() - maidenStartTick, "Dead");
-        plugin.liveFrame.setMaidenFinished(maidenDeathTick-maidenStartTick);
+        plugin.liveFrame.setMaidenFinished(maidenDeathTick - maidenStartTick);
     }
 
     public void updateAnimationChanged(AnimationChanged event)
@@ -304,8 +305,6 @@ public class MaidenHandler extends RoomHandler
             if (hits.isPresent())
             {
                 bloodDamage = hits.get().hitsplats.get(hits.get().hitsplats.size() - 1); //Last hitsplat is blood
-            } else
-            {
             }
             if (bloodDamage != -1)
             {
@@ -438,7 +437,7 @@ public class MaidenHandler extends RoomHandler
                         {
                             if (npc.chunk == i)
                             { //For some reason Maiden is NEVER targeted by additional dinhs hitsplat. Related to large non-moving NPCs
-                                if (!npc.npc.getName().contains("Maiden") && !npc.npc.getName().contains("null") && npc.npc.getHealthRatio() != 0)
+                                if (!Objects.requireNonNull(npc.npc.getName()).contains("Maiden") && !npc.npc.getName().contains("null") && npc.npc.getHealthRatio() != 0)
                                 {
                                     if (npc.npc.getWorldLocation().getRegionX() <= centerX + 5 &&
                                             npc.npc.getWorldLocation().getRegionX() >= centerX - 5 &&
@@ -480,7 +479,7 @@ public class MaidenHandler extends RoomHandler
                     }
                 }
                 String value3 = primaryTarget.getName() + "(" + whichCrab + ")" + ":" + primaryHP;
-                String value4 = "";
+                StringBuilder value4 = new StringBuilder();
                 if (targets.size() < 9)
                 {
                     if (config.showMistakesInChat())
@@ -506,25 +505,30 @@ public class MaidenHandler extends RoomHandler
                             healths.add(hp);
                         }
                     }
-                    value4 += npc.getName() + "~" + additionalDescription + "~" + hp + ":";
+                    value4.append(npc.getName()).append("~").append(additionalDescription).append("~").append(hp).append(":");
                 }
-                double total = 0;
-                double count = healths.size();
-                int belowThreshold = 0;
-                for (Integer i : healths)
-                {
-                    total += i;
-                    if (i < 27)
-                    {
-                        belowThreshold++;
-                    }
-                }
-                double average = total / healths.size();
-                String value5 = ((int) average) + ":" + belowThreshold + ":" + ((int) count) + ":" + targets.size() + ":" + didDoubleHit;
-                clog.write(MAIDEN_DINHS_SPEC, p.getName(), value3, value4, value5);
+                String value5 = getTargetsBelow27(healths, targets, didDoubleHit);
+                clog.write(MAIDEN_DINHS_SPEC, p.getName(), value3, value4.toString(), value5);
             }
         }
         dinhsers.clear();
+    }
+
+    private static String getTargetsBelow27(ArrayList<Integer> healths, ArrayList<NPC> targets, boolean didDoubleHit)
+    {
+        double total = 0;
+        double count = healths.size();
+        int belowThreshold = 0;
+        for (Integer i : healths)
+        {
+            total += i;
+            if (i < 27)
+            {
+                belowThreshold++;
+            }
+        }
+        double average = total / healths.size();
+        return ((int) average) + ":" + belowThreshold + ":" + ((int) count) + ":" + targets.size() + ":" + didDoubleHit;
     }
 
     public void updateGameTick(GameTick event)
@@ -538,7 +542,7 @@ public class MaidenHandler extends RoomHandler
         hitsplatsPerPlayer.clear();
         maidenHeals.clear();
 
-        for(MaidenCrab crab : deferredCrabs)
+        for (MaidenCrab crab : deferredCrabs)
         {
             //log.info(crab.description + " leaked with " + crab.health + " hp");
             clog.write(CRAB_LEAK, crab.description, String.valueOf(crab.health));
@@ -559,10 +563,10 @@ public class MaidenHandler extends RoomHandler
                 clog.write(ACCURATE_MAIDEN_START);
             }
         }
-        for(MaidenCrab crab : maidenCrabs)
+        for (MaidenCrab crab : maidenCrabs)
         {
             int distance = crab.crab.getWorldArea().distanceTo2D(maidenNPC.getWorldArea());
-            if(distance == 1 && crab.health > 0)
+            if (distance == 1 && crab.health > 0)
             {
                 deferredCrabs.add(crab);
             }
@@ -574,9 +578,9 @@ public class MaidenHandler extends RoomHandler
      */
     public void updateHitsplatApplied(HitsplatApplied event)
     {
-        if(event.getActor() instanceof NPC) //getHealthRatio doesn't give fine enough increments so we manually track the HP
+        if (event.getActor() instanceof NPC) //getHealthRatio doesn't give fine enough increments so we manually track the HP
         {
-            if (maidenCrabs.stream().map(x -> x.crab).collect(Collectors.toList()).contains((NPC)event.getActor()))
+            if (maidenCrabs.stream().map(x -> x.crab).collect(Collectors.toList()).contains((NPC) event.getActor()))
             {
                 MaidenCrab crab = maidenCrabs.stream().filter(x -> x.crab.equals(event.getActor())).collect(Collectors.toList()).get(0);
                 crab.health -= event.getHitsplat().getAmount();
@@ -589,11 +593,11 @@ public class MaidenHandler extends RoomHandler
                 hitsplatsPerPlayer.add(new PlayerHitsWrapper(event.getActor().getName(), event.getHitsplat().getAmount()));
             } else
             {
-                for (int i = 0; i < hitsplatsPerPlayer.size(); i++)
+                for (PlayerHitsWrapper playerHitsWrapper : hitsplatsPerPlayer)
                 {
-                    if (hitsplatsPerPlayer.get(i).name.equals(event.getActor().getName()))
+                    if (playerHitsWrapper.name.equals(event.getActor().getName()))
                     {
-                        hitsplatsPerPlayer.get(i).hitsplats.add(event.getHitsplat().getAmount());
+                        playerHitsWrapper.hitsplats.add(event.getHitsplat().getAmount());
                     }
                 }
             }

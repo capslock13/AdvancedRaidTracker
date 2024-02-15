@@ -2,11 +2,10 @@ package com.TheatreTracker.filters;
 
 import lombok.Getter;
 
+@Getter
 public class Filter
 {
-    @Getter
     private final String name;
-    @Getter
     private final String[] filters;
 
     public Filter(String name, String[] filters)

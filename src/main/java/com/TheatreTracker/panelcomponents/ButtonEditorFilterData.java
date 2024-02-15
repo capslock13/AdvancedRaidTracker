@@ -10,7 +10,7 @@ public class ButtonEditorFilterData extends DefaultCellEditor
     protected JButton button;
     private String label;
     private boolean isPushed;
-    private FilteredRaidsBaseFrame frame;
+    private final FilteredRaidsBaseFrame frame;
     int row;
 
     public ButtonEditorFilterData(JCheckBox checkBox, FilteredRaidsBaseFrame raidsFrame)

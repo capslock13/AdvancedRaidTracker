@@ -18,6 +18,7 @@ import com.TheatreTracker.utility.nyloutility.NylocasWaveMatcher;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import static com.TheatreTracker.constants.LogID.*;
 import static com.TheatreTracker.constants.NpcIDs.*;
@@ -49,7 +50,7 @@ public class NyloHandler extends RoomHandler
     int currentWave = 0;
     boolean hard = false;
     boolean story = false;
-    private TheatreTrackerPlugin plugin;
+    private final TheatreTrackerPlugin plugin;
     ArrayList<NPC> bigsDeadThisTick = new ArrayList<>();
     Map<Integer, String> bigDescription = new HashMap<>();
 
@@ -186,7 +187,6 @@ public class NyloHandler extends RoomHandler
                 {
                     int matches = 0;
                     String lastMatchedDescription = "";
-                    int lastMatchedIndex = -1;
                     for (NPC npc : bigsDeadThisTick)
                     {
                         int bigX = npc.getWorldLocation().getRegionX();
@@ -250,7 +250,7 @@ public class NyloHandler extends RoomHandler
                 if (pillarsSpawnedTick == -1)
                 {
                     startNylo();
-                    if (client.getNpcs().stream().anyMatch(p -> p.getName().toLowerCase().contains("nylo")))
+                    if (client.getNpcs().stream().anyMatch(p -> Objects.requireNonNull(p.getName()).toLowerCase().contains("nylo")))
                     {
                         accurateEntry = false;
                     } else
@@ -407,7 +407,7 @@ public class NyloHandler extends RoomHandler
             offsetTick = 0;
         }
         clog.write(ACCURATE_NYLO_END);
-        clog.write(36, "" + (lastDead - pillarsSpawnedTick)); //TODO huh?
+        clog.write(36, "" + (lastDead - pillarsSpawnedTick));
         sendTimeMessage("Wave 'Nylocas waves and cleanup' complete! Duration: ", lastDead - pillarsSpawnedTick, lastDead - wave31);
     }
 
@@ -429,7 +429,7 @@ public class NyloHandler extends RoomHandler
         {
             offset1 = 0;
         }
-        plugin.liveFrame.setNyloFinished(deathTick-pillarsSpawnedTick+offset1);
+        plugin.liveFrame.setNyloFinished(deathTick - pillarsSpawnedTick + offset1);
         sendTimeMessage("Wave 'Nylocas boss' complete! Duration: ", deathTick - pillarsSpawnedTick + offset1, deathTick + offset1 - bossSpawn, false);
         clog.write(NYLO_DESPAWNED, "" + (deathTick - pillarsSpawnedTick + offset1));
     }

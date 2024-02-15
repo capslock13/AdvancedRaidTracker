@@ -1,6 +1,4 @@
 package com.TheatreTracker.utility;
-
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -56,20 +54,13 @@ public class WeaponDecider
                 }
                 break;
             case 1979:
-                weaponUsed = WeaponAttack.FREEZE; //add lowercase if bad weapon
+                weaponUsed = WeaponAttack.FREEZE; //todo add lowercase if bad weapon
                 break;
             case 8056:
                 weaponUsed = WeaponAttack.SCYTHE;
                 break;
             case 7511:
-                //if(spotAnims.stream().anyMatch(p->p.contains("1336") || p.contains("2623")))
-                //{
-                //  weaponUsed = WeaponAttack.DINHS_SPEC;
-                //}
-                //else
-                //{
                 weaponUsed = WeaponAttack.DINHS_SPEC;
-                //}
                 break;
             case 7618:
                 weaponUsed = WeaponAttack.CHIN;
@@ -101,15 +92,13 @@ public class WeaponDecider
                 weaponUsed = WeaponAttack.BGS_WHACK;
                 break;
             case 426:
-                if(weapon == 20997)
+                if (weapon == 20997)
                 {
                     weaponUsed = WeaponAttack.TBOW;
-                }
-                else if(weapon == 27655)
+                } else if (weapon == 27655)
                 {
                     weaponUsed = WeaponAttack.WEB_WEAVER;
-                }
-                else
+                } else
                 {
                     weaponUsed = WeaponAttack.TBOW;
                 }

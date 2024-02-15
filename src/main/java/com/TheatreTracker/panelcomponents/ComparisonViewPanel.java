@@ -21,45 +21,43 @@ import java.util.*;
 @Slf4j
 public class ComparisonViewPanel extends JPanel
 {
-    private JPanel container;
-    private GraphPanel graph;
+    private final JPanel container;
+    private final JSlider leftCutOff;
+    private final JSlider rightCutOff;
+    private final JSlider threshold;
 
-    private JSlider leftCutOff;
-    private JSlider rightCutOff;
-    private JSlider threshold;
+    private final JTextField leftLabel;
+    private final JTextField rightLabel;
+    private final JTextField thresholdLabel;
 
-    private JTextField leftLabel;
-    private JTextField rightLabel;
-    private JTextField thresholdLabel;
+    private final JLabel graph1Average;
+    private final JLabel graph1Median;
+    private final JLabel graph1Maximum;
+    private final JLabel graph1Minimum;
+    private final JLabel graph1Mode;
+    private final JPanel otherPanel = new JPanel();
+    private final JLabel graph2Average;
+    private final JLabel graph2Median;
+    private final JLabel graph2Maximum;
+    private final JLabel graph2Minimum;
+    private final JLabel graph2Mode;
 
-    private JLabel graph1Average;
-    private JLabel graph1Median;
-    private JLabel graph1Maximum;
-    private JLabel graph1Minimum;
-    private JLabel graph1Mode;
-    private JPanel otherPanel = new JPanel();
-    private JLabel graph2Average;
-    private JLabel graph2Median;
-    private JLabel graph2Maximum;
-    private JLabel graph2Minimum;
-    private JLabel graph2Mode;
-
-    private JLabel graph1PercentThreshold;
-    private JLabel graph2PercentThreshold;
+    private final JLabel graph1PercentThreshold;
+    private final JLabel graph2PercentThreshold;
 
     private String panelName = "Other";
     private JPanel otherTopLeft;
     private JPanel otherTopRight;
     private JPanel otherBottomLeft;
     private JPanel otherBottomRight;
-    private JTabbedPane topGraphTabs;
-    private JTabbedPane bottomGraphTabs;
-    private JCheckBox matchYScales;
+    private final JTabbedPane topGraphTabs;
+    private final JTabbedPane bottomGraphTabs;
+    private final JCheckBox matchYScales;
 
-    private JCheckBox matchXScales;
+    private final JCheckBox matchXScales;
 
-    private JComboBox compareByComboBox;
-    private JComboBox graphTypeComboBox;
+    private final JComboBox compareByComboBox;
+    private final JComboBox graphTypeComboBox;
     private boolean time = false;
     ArrayList<ArrayList<RoomData>> data;
 
@@ -80,7 +78,8 @@ public class ComparisonViewPanel extends JPanel
 
     JCheckBox groupingEnabled;
 
-    private TheatreTrackerConfig config;
+    private final TheatreTrackerConfig config;
+
     public ComparisonViewPanel(ArrayList<ArrayList<RoomData>> raidData, ArrayList<String> names, TheatreTrackerConfig config)
     {
         this.config = config;
@@ -227,7 +226,7 @@ public class ComparisonViewPanel extends JPanel
             updateOtherPanels();
         });
 
-        comboPopupData = new LinkedHashMap<>();
+        Map<String, String[]> comboPopupData = new LinkedHashMap<>();
         comboPopupData.put("Room Times", DataPoint.getRoomTimes());
         comboPopupData.put("Maiden", DataPoint.getMaidenNames());
         comboPopupData.put("Bloat", DataPoint.getBloatNames());
@@ -368,15 +367,19 @@ public class ComparisonViewPanel extends JPanel
 
     private int valX = 0;
 
-    private Map<String, String[]> comboPopupData;
-    private JPopupMenu comboPopupMenu;
-    private ArrayList<String> comboStrictData;
+    private final JPopupMenu comboPopupMenu;
+    private final ArrayList<String> comboStrictData;
     private AbstractButton arrowButton;
 
     private void setComboSelection(String name)
     {
         Vector<String> items = new Vector<String>();
 
+        addComboItems(name, items, comboStrictData, compareByComboBox);
+    }
+
+    static void addComboItems(String name, Vector<String> items, ArrayList<String> comboStrictData, JComboBox compareByComboBox)
+    {
         for (String item : comboStrictData)
         {
             if (item.endsWith(name))
@@ -430,7 +433,7 @@ public class ComparisonViewPanel extends JPanel
         int xHigh = 0;
         int xLow = Integer.MAX_VALUE;
         int yHigh = 0;
-        if (!compareByComboBox.getSelectedItem().toString().contains("Player:"))
+        if (!Objects.requireNonNull(compareByComboBox.getSelectedItem()).toString().contains("Player:"))
         {
             time = Objects.requireNonNull(DataPoint.getValue(Objects.requireNonNull(compareByComboBox.getSelectedItem()).toString())).type == DataPoint.types.TIME;
         } else
@@ -464,7 +467,7 @@ public class ComparisonViewPanel extends JPanel
 
         threshold.setMaximum(xHigh);
         threshold.setMinimum(xLow);
-        threshold.setValue(((xHigh-xLow)/2)+xLow);
+        threshold.setValue(((xHigh - xLow) / 2) + xLow);
         thresholdLabel.setText("Threshold: " + ((time) ? RoomUtil.time(threshold.getValue()) : threshold.getValue()));
         leftThresholdLabel.setText("% <= " + ((time) ? RoomUtil.time(threshold.getValue()) : threshold.getValue()));
         rightThresholdLabel.setText("% <= " + ((time) ? RoomUtil.time(threshold.getValue()) : threshold.getValue()));
@@ -556,8 +559,7 @@ public class ComparisonViewPanel extends JPanel
 
     GraphPanel getGraphPanel(ArrayList<RoomData> points)
     {
-        GraphPanel graphPanel = new GraphPanel(points, config);
-        return graphPanel;
+        return new GraphPanel(points, config);
     }
 
     private ArrayList<Integer> getArrayForStatistics(ArrayList<RoomData> data)
@@ -779,7 +781,7 @@ public class ComparisonViewPanel extends JPanel
         threshold.setPaintLabels(true);
         threshold.setPaintTicks(true);
         threshold.setPaintTrack(true);
-        threshold.addChangeListener(cl->
+        threshold.addChangeListener(cl ->
         {
             Object source = cl.getSource();
             if (source instanceof JSlider)
@@ -823,7 +825,6 @@ public class ComparisonViewPanel extends JPanel
         });
 
         leftCutOff.setPreferredSize(new Dimension(180, leftCutOff.getPreferredSize().height));
-
 
 
         rightCutOff.setPaintTrack(true);

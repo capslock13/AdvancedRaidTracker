@@ -3,7 +3,6 @@ package com.TheatreTracker.panelcomponents;
 import com.TheatreTracker.RoomData;
 import com.TheatreTracker.TheatreTrackerConfig;
 import com.TheatreTracker.utility.DataPoint;
-import com.TheatreTracker.utility.PlayerDidAttack;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
@@ -13,20 +12,6 @@ import java.util.*;
 @Slf4j
 public class ChartFrame extends BaseFrame
 {
-
-    public int getHighestTick(ArrayList<PlayerDidAttack> attacks, int start)
-    {
-        int max = start;
-        for (PlayerDidAttack attack : attacks)
-        {
-            if (attack.tick > max)
-            {
-                max = attack.tick;
-            }
-        }
-        return max;
-    }
-
     public ChartFrame(ArrayList<RoomData> roomData, TheatreTrackerConfig config)
     {
         JTabbedPane basepane = new JTabbedPane();

@@ -5,7 +5,6 @@ import com.TheatreTracker.TheatreTrackerConfig;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
-import java.awt.*;
 import java.util.ArrayList;
 
 @Slf4j

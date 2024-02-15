@@ -1,6 +1,5 @@
 package com.TheatreTracker.panelcomponents;
 
-import com.TheatreTracker.Point;
 import com.TheatreTracker.RoomData;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.ui.FontManager;
@@ -12,11 +11,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
 @Slf4j
 public class SummarizeRaidsPanel extends JPanel
 {
-    private ArrayList<RoomData> data;
-    private BufferedImage img;
+    private final ArrayList<RoomData> data;
+    private final BufferedImage img;
     int width = 600;
     int height = 400;
     int margin = 20;
@@ -35,7 +35,7 @@ public class SummarizeRaidsPanel extends JPanel
     protected void paintComponent(Graphics g)
     {
         super.paintComponent(g);
-        if(img != null)
+        if (img != null)
         {
             g.drawImage(img, 0, 0, null);
         }
@@ -50,20 +50,20 @@ public class SummarizeRaidsPanel extends JPanel
     java.util.List<String> statuses = Arrays.asList("Maiden Wipe", "Maiden Reset", "Bloat Wipe", "Bloat Reset", "Nylo Wipe", "Nylo Reset", "Sotetseg Wipe", "Sotetseg Reset", "Xarpus Wipe", "Xarpus Reset", "Verzik Wipe", "Completion");
 
     private final Color[] statusColors =
-    {
-            Color.decode("#ebdc78"),
-            Color.decode("#8be04e"),
-            Color.decode("#5ad45a"),
-            Color.decode("#00b7c7"),
-            Color.decode("#0d88e6"),
-            Color.decode("#1a53ff"),
-            Color.decode("#4421af"),
-            Color.decode("#7c1158"),
-            Color.decode("#b30000"),
-            Color.decode("#5671FF"),
-            Color.decode("#FF3333"),
-            Color.decode("#22FF22")
-    };
+            {
+                    Color.decode("#ebdc78"),
+                    Color.decode("#8be04e"),
+                    Color.decode("#5ad45a"),
+                    Color.decode("#00b7c7"),
+                    Color.decode("#0d88e6"),
+                    Color.decode("#1a53ff"),
+                    Color.decode("#4421af"),
+                    Color.decode("#7c1158"),
+                    Color.decode("#b30000"),
+                    Color.decode("#5671FF"),
+                    Color.decode("#FF3333"),
+                    Color.decode("#22FF22")
+            };
 
     private void drawSummaryBar(Graphics2D g)
     {
@@ -71,28 +71,28 @@ public class SummarizeRaidsPanel extends JPanel
         g.setFont(FontManager.getDefaultBoldFont());
         g.drawString("Summary", 20, 20);
         g.setColor(primaryDark);
-        g.fillRoundRect(margin, margin+margin, width-(margin*2), 40, 15, 15);
+        g.fillRoundRect(margin, margin + margin, width - (margin * 2), 40, 15, 15);
 
         Map<String, Integer> statusCounts = new LinkedHashMap<>();
-        for(RoomData roomData : data)
+        for (RoomData roomData : data)
         {
-            for(String status : statuses)
+            for (String status : statuses)
             {
                 statusCounts.putIfAbsent(status, 0);
-                if(roomData.getRoomStatus().contains(status))
+                if (roomData.getRoomStatus().contains(status))
                 {
-                    statusCounts.put(status, statusCounts.get(status)+1);
+                    statusCounts.put(status, statusCounts.get(status) + 1);
                 }
             }
         }
 
         int latestIndex = 0;
         int firstNonZero = -1;
-        for(int i = 0; i < statuses.size(); i++)
+        for (int i = 0; i < statuses.size(); i++)
         {
-            if(statusCounts.get(statuses.get(i)) != 0)
+            if (statusCounts.get(statuses.get(i)) != 0)
             {
-                if(firstNonZero == -1)
+                if (firstNonZero == -1)
                 {
                     firstNonZero = i;
                 }
@@ -100,16 +100,16 @@ public class SummarizeRaidsPanel extends JPanel
             }
         }
         int cumulativeOffset = margin;
-        int summaryBarWidth = width-(margin*2);
-        for(int i = 0; i < latestIndex; i++)
+        int summaryBarWidth = width - (margin * 2);
+        for (int i = 0; i < latestIndex; i++)
         {
-            double percent = (statusCounts.get((statuses.get(i))))/(double)data.size();
-            int sectionWidth = (int) (percent*summaryBarWidth);
+            double percent = (statusCounts.get((statuses.get(i)))) / (double) data.size();
+            int sectionWidth = (int) (percent * summaryBarWidth);
             g.setColor(statusColors[i]);
-            g.fillRoundRect(cumulativeOffset, margin+margin, sectionWidth, 40, 14, 14);
-            if(i != firstNonZero && percent != 0)
+            g.fillRoundRect(cumulativeOffset, margin + margin, sectionWidth, 40, 14, 14);
+            if (i != firstNonZero && percent != 0)
             {
-                g.fillRect(cumulativeOffset-7, margin+margin, 14, 40);
+                g.fillRect(cumulativeOffset - 7, margin + margin, 14, 40);
             }
             cumulativeOffset += sectionWidth;
         }

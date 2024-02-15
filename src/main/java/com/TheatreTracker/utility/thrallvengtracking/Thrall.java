@@ -2,9 +2,6 @@ package com.TheatreTracker.utility.thrallvengtracking;
 
 import net.runelite.api.Actor;
 import net.runelite.api.NPC;
-import net.runelite.api.Player;
-
-import java.awt.*;
 import java.util.ArrayList;
 
 import static com.TheatreTracker.constants.NpcIDs.*;

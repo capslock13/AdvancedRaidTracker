@@ -15,12 +15,6 @@ public class NPCTimeInChunkShell
     {
         return npc.getIndex();
     }
-
-    public NPCTimeInChunkShell(NPC npc)
-    {
-        this.npc = npc;
-    }
-
     public NPCTimeInChunkShell(NPC npc, int chunk, int timeInChunk)
     {
         this.npc = npc;

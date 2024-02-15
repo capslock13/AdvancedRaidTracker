@@ -15,7 +15,7 @@ class ButtonEditorViewFilters extends DefaultCellEditor
     private String label;
     private boolean isPushed;
     int row;
-    private ArrayList<Filter> data;
+    private final ArrayList<Filter> data;
 
     public ButtonEditorViewFilters(JCheckBox checkBox, ArrayList<Filter> data)
     {

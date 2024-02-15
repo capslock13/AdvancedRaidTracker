@@ -2,6 +2,7 @@ package com.TheatreTracker.utility;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
 
 public enum DataPoint
 {
@@ -63,7 +64,7 @@ public enum DataPoint
     SOTE_DEATHS("Sote deaths", types.OTHER_INT, rooms.SOTETSEG, true),
     XARP_HEALING("Xarp Healing", types.OTHER_INT, rooms.XARPUS),
     XARP_DEFENSE("Xarp defense", types.OTHER_INT, rooms.XARPUS, 250),
-    XARP_DEATHS("Xarp Deaths", types.OTHER_INT, rooms.XARPUS, true),
+    XARP_DEATHS("Xarp deaths", types.OTHER_INT, rooms.XARPUS, true),
     VERZIK_BOUNCES("Verzik bounces", types.OTHER_INT, rooms.VERZIK, true),
     VERZIK_CRABS_SPAWNED("Verzik crabs spawned", types.OTHER_INT, rooms.VERZIK),
     VERZIK_REDS_SETS("Verzik Red Sets", types.OTHER_INT, rooms.VERZIK),
@@ -141,7 +142,7 @@ public enum DataPoint
     THRALL_ATTACKS_NYLO("Nylo thrall attacks", types.OTHER_INT, rooms.NYLOCAS, true),
     THRALL_ATTACKS_SOTE("Sote thrall attacks", types.OTHER_INT, rooms.SOTETSEG, true),
     THRALL_ATTACKS_XARP("Xarp thrall attacks", types.OTHER_INT, rooms.XARPUS, true),
-    THRALL_ATTACKS_VERZIK("Verz thrall attacks", types.OTHER_INT, rooms.VERZIK, true),
+    THRALL_ATTACKS_VERZIK("Verzik thrall attacks", types.OTHER_INT, rooms.VERZIK, true),
 
     THRALL_DAMAGE_TOTAL("Total thrall damage", types.OTHER_INT, rooms.ANY, true),
     THRALL_DAMAGE_MAIDEN("Maiden thrall damage", types.OTHER_INT, rooms.MAIDEN, true),
@@ -149,7 +150,7 @@ public enum DataPoint
     THRALL_DAMAGE_NYLO("Nylo thrall damage", types.OTHER_INT, rooms.NYLOCAS, true),
     THRALL_DAMAGE_SOTE("Sote thrall damage", types.OTHER_INT, rooms.SOTETSEG, true),
     THRALL_DAMAGE_XARP("Xarp thrall damage", types.OTHER_INT, rooms.XARPUS, true),
-    THRALL_DAMAGE_VERZIK("Verz thrall damage", types.OTHER_INT, rooms.VERZIK, true),
+    THRALL_DAMAGE_VERZIK("Verzik thrall damage", types.OTHER_INT, rooms.VERZIK, true),
 
     VENG_DAMAGE_TOTAL("Total veng damage", types.OTHER_INT, rooms.ANY),
     VENG_DAMAGE_MAIDEN("Maiden veng damage", types.OTHER_INT, rooms.MAIDEN),
@@ -157,7 +158,7 @@ public enum DataPoint
     VENG_DAMAGE_NYLO("Nylo veng damage", types.OTHER_INT, rooms.NYLOCAS),
     VENG_DAMAGE_SOTE("Sote veng damage", types.OTHER_INT, rooms.SOTETSEG),
     VENG_DAMAGE_XARP("Xarp veng damage", types.OTHER_INT, rooms.XARPUS),
-    VENG_DAMAGE_VERZIK("Verz veng damage", types.OTHER_INT, rooms.VERZIK),
+    VENG_DAMAGE_VERZIK("Verzik veng damage", types.OTHER_INT, rooms.VERZIK),
 
     VENG_CASTS_TOTAL("Total veng casts", types.OTHER_INT, rooms.ANY),
     VENG_CASTS_MAIDEN("Maiden veng casts", types.OTHER_INT, rooms.MAIDEN),
@@ -165,7 +166,7 @@ public enum DataPoint
     VENG_CASTS_NYLO("Nylo veng casts", types.OTHER_INT, rooms.NYLOCAS),
     VENG_CASTS_SOTE("Sote veng casts", types.OTHER_INT, rooms.SOTETSEG),
     VENG_CASTS_XARP("Xarp veng casts", types.OTHER_INT, rooms.XARPUS),
-    VENG_CASTS_VERZIK("Verz veng casts", types.OTHER_INT, rooms.VERZIK),
+    VENG_CASTS_VERZIK("Verzik veng casts", types.OTHER_INT, rooms.VERZIK),
 
     VENG_PROCS_TOTAL("Total veng procs", types.OTHER_INT, rooms.ANY),
     VENG_PROCS_MAIDEN("Maiden veng procs", types.OTHER_INT, rooms.MAIDEN),
@@ -173,16 +174,13 @@ public enum DataPoint
     VENG_PROCS_NYLO("Nylo veng procs", types.OTHER_INT, rooms.NYLOCAS),
     VENG_PROCS_SOTE("Sote veng procs", types.OTHER_INT, rooms.SOTETSEG),
     VENG_PROCS_XARP("Xarp veng procs", types.OTHER_INT, rooms.XARPUS),
-    VENG_PROCS_VERZIK("Verz veng procs", types.OTHER_INT, rooms.VERZIK),
+    VENG_PROCS_VERZIK("Verzik veng procs", types.OTHER_INT, rooms.VERZIK),
     KODAI_BOPS("Kodai bops", types.OTHER_INT, rooms.ANY, true),
     DWH_BOPS("DWH bops", types.OTHER_INT, rooms.ANY, true),
     CHALLY_POKE("Chally pokes", types.OTHER_INT, rooms.ANY, true),
     BGS_WHACKS("BGS whacks", types.OTHER_INT, rooms.ANY, true),
     TOTAL_DEATHS("Total deaths", types.OTHER_INT, rooms.ANY, true),
-    DEATHS("Alternate Deaths", types.OTHER_INT, rooms.ALL, true)
-
-
-    ;
+    DEATHS("Alternate Deaths", types.OTHER_INT, rooms.ALL, true);
 
 
     public static DataPoint getValue(String s)
@@ -250,23 +248,6 @@ public enum DataPoint
         this.room = room;
     }
 
-    public static DataPoint[] getValues() //todo
-    {
-        ArrayList<DataPoint> values = new ArrayList<>();
-        for(DataPoint dataPoint : DataPoint.values())
-        {
-            if(dataPoint.room != rooms.ALL)
-            {
-                values.add(dataPoint);
-            }
-            else
-            {
-
-            }
-        }
-        return DataPoint.values();
-    }
-
     public static String[] getPlayerSpecific()
     {
         ArrayList<String> valuesToGather = new ArrayList<>();
@@ -321,7 +302,7 @@ public enum DataPoint
         ArrayList<String> filtered = new ArrayList<>();
         for (String s : data)
         {
-            if (DataPoint.getValue(s).type == types.TIME)
+            if (Objects.requireNonNull(DataPoint.getValue(s)).type == types.TIME)
             {
                 filtered.add(s);
             }
@@ -335,7 +316,7 @@ public enum DataPoint
         for (String s : data)
         {
             DataPoint dp = DataPoint.getValue(s);
-            if (dp.type == types.OTHER_INT && !dp.name.contains("thrall") && !dp.name.contains("veng")
+            if (dp != null && dp.type == types.OTHER_INT && !dp.name.contains("thrall") && !dp.name.contains("veng")
                     && !dp.name.contains("BGS") && !dp.name.contains("hammers") && !dp.name.contains("dinhs"))
             {
                 filtered.add(s);
@@ -349,7 +330,7 @@ public enum DataPoint
         ArrayList<String> filtered = new ArrayList<>();
         for (String s : data)
         {
-            if (DataPoint.getValue(s).name.contains("thrall"))
+            if (Objects.requireNonNull(DataPoint.getValue(s)).name.contains("thrall"))
             {
                 filtered.add(s);
             }
@@ -362,7 +343,7 @@ public enum DataPoint
         ArrayList<String> filtered = new ArrayList<>();
         for (String s : data)
         {
-            if (DataPoint.getValue(s).name.contains("veng"))
+            if (Objects.requireNonNull(DataPoint.getValue(s)).name.contains("veng"))
             {
                 filtered.add(s);
             }
@@ -375,7 +356,7 @@ public enum DataPoint
         ArrayList<String> filtered = new ArrayList<>();
         for (String s : data)
         {
-            String name = DataPoint.getValue(s).name;
+            String name = Objects.requireNonNull(DataPoint.getValue(s)).name;
             if (name.contains("BGS") || name.contains("hammers") || name.contains("dinhs"))
             {
                 filtered.add(s);

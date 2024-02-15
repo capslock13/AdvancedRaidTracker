@@ -1,5 +1,8 @@
 package com.TheatreTracker.utility;
 
+import lombok.Getter;
+import lombok.Setter;
+
 public class DawnSpec
 {
     public String player;
@@ -11,15 +14,8 @@ public class DawnSpec
         this.tick = tick;
     }
 
+    @Getter
+    @Setter
     int damage = -1;
 
-    public void setDamage(int damage)
-    {
-        this.damage = damage;
-    }
-
-    public int getDamage()
-    {
-        return damage;
-    }
 }

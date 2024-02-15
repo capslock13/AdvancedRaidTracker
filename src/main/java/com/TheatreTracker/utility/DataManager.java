@@ -1,15 +1,12 @@
 package com.TheatreTracker.utility;
 
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.ArrayList;
-
 @Slf4j
 public class DataManager
 {
 
-    private DataPointWrapper data[];
-    private DataPointPlayerData playerSpecificData[];
+    private final DataPointWrapper[] data;
+    private final DataPointPlayerData[] playerSpecificData;
 
 
     public DataManager()
@@ -65,11 +62,6 @@ public class DataManager
     public void incrementPlayerSpecific(DataPoint dataPoint, String player, int valueAdded)
     {
         playerSpecificData[getPlayerSpecificIndex(dataPoint)].increment(player, valueAdded);
-    }
-
-    public int getPlayerSpecific(DataPoint point, String player)
-    {
-        return playerSpecificData[getPlayerSpecificIndex(point)].specificPlayerData.get(player);
     }
 
     public void set(DataPoint point, int value)

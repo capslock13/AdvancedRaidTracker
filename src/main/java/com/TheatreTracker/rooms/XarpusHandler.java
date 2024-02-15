@@ -18,18 +18,15 @@ import static com.TheatreTracker.constants.LogID.ACCURATE_XARP_END;
 import static com.TheatreTracker.constants.LogID.XARPUS_STARTED;
 import static com.TheatreTracker.constants.NpcIDs.*;
 import static com.TheatreTracker.utility.RoomState.XarpusRoomState.FINISHED;
-import static com.TheatreTracker.utility.RoomState.XarpusRoomState.NOT_STARTED;
-
 @Slf4j
 public class XarpusHandler extends RoomHandler
 {
     public RoomState.XarpusRoomState roomState = RoomState.XarpusRoomState.NOT_STARTED;
-    private TheatreTrackerPlugin plugin;
+    private final TheatreTrackerPlugin plugin;
 
     public XarpusHandler(Client client, DataWriter clog, TheatreTrackerConfig config, TheatreTrackerPlugin plugin)
     {
         super(client, clog, config);
-        roomState = NOT_STARTED;
         this.plugin = plugin;
     }
 
@@ -188,7 +185,7 @@ public class XarpusHandler extends RoomHandler
         roomState = FINISHED;
         xarpusEndTick = client.getTickCount() + 3;
         clog.write(ACCURATE_XARP_END);
-        plugin.liveFrame.setXarpFinished(xarpusEndTick-xarpusEntryTick);
+        plugin.liveFrame.setXarpFinished(xarpusEndTick - xarpusEntryTick);
         String splitMessage = "Wave 'Xarpus phase 3' complete. Duration: " + timeColor() + RoomUtil.time(xarpusEndTick - xarpusEntryTick) + " (" + RoomUtil.time(xarpusEndTick - xarpusScreechTick) + ")";
         this.client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", splitMessage, null, false);
     }

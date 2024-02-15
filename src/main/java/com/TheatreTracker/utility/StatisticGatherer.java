@@ -15,7 +15,7 @@ public class StatisticGatherer
     public static double getOverallTimeAverage(ArrayList<RoomData> data)
     {
         data = data.stream().filter(RoomData::getOverallTimeAccurate).collect(Collectors.toCollection(ArrayList::new));
-        if (data.size() == 0)
+        if (data.isEmpty())
         {
             return -1;
         }
@@ -32,7 +32,7 @@ public class StatisticGatherer
     public static double getOverallMedian(ArrayList<RoomData> data)
     {
         data = data.stream().filter(RoomData::getOverallTimeAccurate).collect(Collectors.toCollection(ArrayList::new));
-        if (data.size() == 0)
+        if (data.isEmpty())
         {
             return -1;
         }
@@ -102,10 +102,8 @@ public class StatisticGatherer
     {
         double total = 0;
         double count = 0;
-        int i = 0;
         for (RoomData room : data)
         {
-            i++;
             if (!room.getTimeAccurate(parameter))
             {
                 continue;
@@ -125,7 +123,7 @@ public class StatisticGatherer
 
     public static double getGenericMedian(ArrayList<Integer> data)
     {
-        if (data.size() == 0)
+        if (data.isEmpty())
         {
             return -1;
         }
@@ -149,7 +147,7 @@ public class StatisticGatherer
 
     public static double getGenericMedian(ArrayList<RoomData> data, DataPoint param)
     {
-        if (data.size() == 0)
+        if (data.isEmpty())
         {
             return -1;
         }
@@ -166,7 +164,7 @@ public class StatisticGatherer
                 values.add((double) d);
         }
         Collections.sort(values);
-        if (values.size() > 0)
+        if (!values.isEmpty())
         {
             if (values.size() % 2 == 0)
             {
@@ -263,16 +261,16 @@ public class StatisticGatherer
             }
             int iv = data.get(i).getValue(parameter);
             int count = 0;
-            for (int j = 0; j < data.size(); j++)
+            for (RoomData datum : data)
             {
-                if (!data.get(j).getTimeAccurate(parameter))
+                if (!datum.getTimeAccurate(parameter))
                 {
                     continue;
                 }
-                int jv = data.get(j).getValue(parameter);
+                int jv = datum.getValue(parameter);
                 if (jv != -1 && iv != -1)
                 {
-                    if (Objects.equals(data.get(j), data.get(i)))
+                    if (Objects.equals(datum, data.get(i)))
                     {
                         count++;
                     }
@@ -300,11 +298,11 @@ public class StatisticGatherer
         for (int i = 0; i < data.size(); i++)
         {
             int count = 0;
-            for (int j = 0; j < data.size(); j++)
+            for (Integer datum : data)
             {
-                if (data.get(j) != -1 && data.get(i) != -1)
+                if (datum != -1 && data.get(i) != -1)
                 {
-                    if (Objects.equals(data.get(j), data.get(i)))
+                    if (Objects.equals(datum, data.get(i)))
                     {
                         count++;
                     }
@@ -330,15 +328,15 @@ public class StatisticGatherer
     {
         double count = 0;
         double total = arrayForStatistics.size();
-        for(Integer i : arrayForStatistics)
+        for (Integer i : arrayForStatistics)
         {
-            if(i <= threshold)
+            if (i <= threshold)
             {
                 count++;
             }
         }
-        double percent = count/total;
-        int percentRounded = (int) (percent*1000);
+        double percent = count / total;
+        int percentRounded = (int) (percent * 1000);
         percentRounded /= 10;
         return percentRounded;
     }

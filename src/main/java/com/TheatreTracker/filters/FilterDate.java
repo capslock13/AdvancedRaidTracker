@@ -7,9 +7,9 @@ import java.util.Date;
 
 public class FilterDate extends FilterCondition
 {
-    private Date date;
-    private int qualifier;
-    private String stringValue;
+    private final Date date;
+    private final int qualifier;
+    private final String stringValue;
 
     public FilterDate(Date date, int qualifier, String val)
     {

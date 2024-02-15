@@ -4,8 +4,6 @@ import com.TheatreTracker.RoomData;
 import com.TheatreTracker.utility.DataPoint;
 import com.TheatreTracker.utility.RoomUtil;
 import lombok.extern.slf4j.Slf4j;
-import net.runelite.api.FontTypeFace;
-import net.runelite.client.config.FontType;
 import net.runelite.client.ui.FontManager;
 
 import javax.swing.*;
@@ -15,7 +13,6 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 @Slf4j
@@ -40,9 +37,9 @@ public class ViewRaidPanel extends JPanel implements MouseListener, MouseMotionL
 
     Color[] alternating = new Color[]{primaryLight, primaryDark};
 
-    private BufferedImage img;
+    private final BufferedImage img;
 
-    private RoomData roomData;
+    private final RoomData roomData;
 
     public ViewRaidPanel(RoomData roomData)
     {
@@ -80,12 +77,11 @@ public class ViewRaidPanel extends JPanel implements MouseListener, MouseMotionL
         g.drawString(string, x, y);
     }
 
-    private Rectangle getStringBounds(Graphics2D g2, String str,
-                                      float x, float y)
+    private Rectangle getStringBounds(Graphics2D g2, String str)
     {
         FontRenderContext frc = g2.getFontRenderContext();
         GlyphVector gv = g2.getFont().createGlyphVector(frc, str);
-        return gv.getPixelBounds(null, x, y);
+        return gv.getPixelBounds(null, (float) 0, (float) 0);
     }
 
     private void drawTwoLevelBorder(Graphics2D g, int x, int y, int width, int height)
@@ -122,12 +118,12 @@ public class ViewRaidPanel extends JPanel implements MouseListener, MouseMotionL
             g.fillRect(offsetX + 3, offsetY + (90 * i) + 2, 297, 90);
 
             g.setFont(FontManager.getRunescapeFont().deriveFont(24.0f));
-            fontHeight = getStringBounds(g, "a", 0, 0).height;
+            fontHeight = getStringBounds(g, "a").height;
             g.setColor(primaryText);
             drawShadowedString(g, roomNames[i], offsetX + 13, offsetY + (90 * i) + 2 + 45 + (fontHeight / 2));
 
             g.setFont(FontManager.getRunescapeFont().deriveFont(20.0f));
-            fontHeight = getStringBounds(g, "a", 0, 0).height;
+            fontHeight = getStringBounds(g, "a").height;
             g.setColor(Color.WHITE);
             drawShadowedString(g, RoomUtil.time(roomData.getValue(roomNames[i] + " Time")), offsetX + 200, offsetY + (90 * i) + 2 + 45 + (fontHeight / 2));
 
@@ -149,11 +145,11 @@ public class ViewRaidPanel extends JPanel implements MouseListener, MouseMotionL
         g.setFont(FontManager.getRunescapeBoldFont().deriveFont(36.0f));
 
 
-        drawTwoLevelBorder(g, 360 + 265 - ((getStringBounds(g, roomNames[selectedRoom] + " summary", 0, 0).width) / 2) - 7, offsetY + 50 - 10 - 25, (getStringBounds(g, roomNames[selectedRoom] + " summary", 0, 0).width) + 20, 44);
+        drawTwoLevelBorder(g, 360 + 265 - ((getStringBounds(g, roomNames[selectedRoom] + " summary").width) / 2) - 7, offsetY + 50 - 10 - 25, (getStringBounds(g, roomNames[selectedRoom] + " summary").width) + 20, 44);
         g.setColor(primaryText);
 
         drawShadowedString(g, roomNames[selectedRoom] + " summary", 360 + 265 -
-                (getStringBounds(g, roomNames[selectedRoom] + " summary", 0, 0).width) / 2, offsetY + 50);
+                (getStringBounds(g, roomNames[selectedRoom] + " summary").width) / 2, offsetY + 50);
         int incrementingOffset = offsetY + 50 + 40;
         g.setFont(FontManager.getRunescapeFont().deriveFont(24.0f));
 
@@ -187,8 +183,7 @@ public class ViewRaidPanel extends JPanel implements MouseListener, MouseMotionL
         if (x > 10 && x < 310 && y > 67 && y < (67 + (90 * 7)))
         {
             int yPos = y - 67;
-            int yBox = yPos / 90;
-            selectedRoom = yBox;
+            selectedRoom = yPos / 90;
         }
     }
 
@@ -197,8 +192,7 @@ public class ViewRaidPanel extends JPanel implements MouseListener, MouseMotionL
         if (x > 10 && x < 310 && y > 67 && y < (67 + (90 * 7)))
         {
             int yPos = y - 67;
-            int yBox = yPos / 90;
-            hoveredRoom = yBox;
+            hoveredRoom = yPos / 90;
         } else
         {
             hoveredRoom = -1;

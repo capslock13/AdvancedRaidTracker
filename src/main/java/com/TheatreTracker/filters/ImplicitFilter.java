@@ -39,7 +39,7 @@ public class ImplicitFilter
     public ImplicitFilter(String s)
     {
         filter = null;
-        if (s.length() != 0)
+        if (!s.isEmpty())
         {
             int filterType = Integer.parseInt(s.substring(0, 1));
             ArrayList<String> parse = new ArrayList<String>(Arrays.asList(s.split("-")));

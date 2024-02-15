@@ -11,6 +11,7 @@ public class OutlineBox
     public boolean primaryTarget;
 
     public String additionalText = "";
+
     public OutlineBox(String player, int tick, String letter, Color color, boolean primaryTarget, String additionalText)
     {
         this.player = player;

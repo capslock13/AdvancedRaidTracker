@@ -2,10 +2,14 @@ package com.TheatreTracker.constants;
 
 import lombok.Getter;
 
+import java.util.Arrays;
+import java.util.Optional;
+
 /**
  * Convenience class for the possible keys used to log events. The parameters each of these events should include can be found in
  * RoomData.
  */
+@Getter
 public enum LogID
 {
     ENTERED_TOB(0),
@@ -38,6 +42,7 @@ public enum LogID
     BLOAT_0HP(22),
     BLOAT_DESPAWN(23),
     BLOAT_HP_1ST_DOWN(24),
+    BLOAT_SCYTHE_1ST_WALK(25),
 
     NYLO_PILLAR_SPAWN(30),
     NYLO_STALL(31),
@@ -137,8 +142,7 @@ public enum LogID
 
     UPDATE_HP(576),
     ADD_NPC_MAPPING(587),
-
-    ;
+    UNKNOWN(-1);
 
 
     /*
@@ -216,11 +220,17 @@ public enum LogID
  305 accurate xarp end
  306 accurate verzik end
  */
-    @Getter
+    final
     int id;
 
     LogID(int id)
     {
         this.id = id;
+    }
+
+    public static LogID valueOf(int value)
+    {
+        Optional<LogID> o = Arrays.stream(values()).filter(logid -> logid.getId() == value).findFirst();
+        return o.orElse(UNKNOWN);
     }
 }

@@ -17,7 +17,7 @@ public class NylocasWaveMatcher
     public static boolean isWave(ArrayList<NylocasShell> nylos)
     {
         ArrayList<NylocasWave> potentialWaves = (ArrayList<NylocasWave>) Arrays.stream(NylocasWave.waves).filter(c -> c.count() == nylos.size()).collect(Collectors.toList());
-        if (potentialWaves.size() != 0)
+        if (!potentialWaves.isEmpty())
         {
             for (NylocasWave w : potentialWaves)
             {
@@ -58,7 +58,7 @@ public class NylocasWaveMatcher
                         wave17Matched = false;
                         wave26Matched = false;
                         wave28Matched = false;
-                    } else if (w.getWave() < 26 && w.getWave() > 17)
+                    } else if (w.getWave() < 26)
                     {
                         wave26Matched = false;
                         wave28Matched = false;

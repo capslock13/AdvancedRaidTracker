@@ -1,14 +1,19 @@
 package com.TheatreTracker.panelcomponents;
 
 import com.TheatreTracker.RoomData;
+import lombok.Getter;
 
 import java.util.ArrayList;
 
 public class Bounds
 {
+    @Getter
     private int left;
+    @Getter
     private int right;
+    @Getter
     private int bottom;
+    @Getter
     private int top;
 
     public ArrayList<RoomData> raids;
@@ -35,23 +40,4 @@ public class Bounds
         return (match.getLeft() == left && match.getRight() == right && match.getTop() == top && match.getBottom() == bottom);
     }
 
-    public int getLeft()
-    {
-        return left;
-    }
-
-    public int getRight()
-    {
-        return right;
-    }
-
-    public int getBottom()
-    {
-        return bottom;
-    }
-
-    public int getTop()
-    {
-        return top;
-    }
 }

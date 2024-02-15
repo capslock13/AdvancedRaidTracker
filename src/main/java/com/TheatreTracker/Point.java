@@ -3,12 +3,11 @@ package com.TheatreTracker;
 
 import lombok.Getter;
 
+@Getter
 public class Point
 {
-    @Getter
-    private int x;
-    @Getter
-    private int y;
+    private final int x;
+    private final int y;
 
     public Point(int x, int y)
     {

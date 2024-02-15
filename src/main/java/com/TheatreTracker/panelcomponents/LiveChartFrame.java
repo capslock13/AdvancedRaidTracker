@@ -25,7 +25,8 @@ public class LiveChartFrame extends BaseFrame
     JScrollPane verzikScroll;
     public JTabbedPane tabbedPane;
 
-    private TheatreTrackerConfig config;
+    private final TheatreTrackerConfig config;
+
     public LiveChartFrame(TheatreTrackerConfig config)
     {
         this.config = config;

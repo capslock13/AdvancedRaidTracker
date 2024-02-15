@@ -114,3 +114,4 @@ In the Load filters dialog, "Replace Active" will replace all currently active f
 Each tab in the main window will show you all the room specific splits for that room, as well as change the 'challenge time' column in the table to display that room time.
 
 ![](images/roomspecificsplits.jpg)
+

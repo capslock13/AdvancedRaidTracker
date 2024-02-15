@@ -15,6 +15,7 @@ import com.TheatreTracker.utility.RoomUtil;
 import com.TheatreTracker.utility.datautility.DataWriter;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import static com.TheatreTracker.constants.LogID.*;
 import static com.TheatreTracker.constants.TobIDs.*;
@@ -128,11 +129,11 @@ public class BloatHandler extends RoomHandler
 
     public void down()
     {
-        clog.write(BLOAT_DOWN, "" + (client.getTickCount() - bloatStartTick));
+        clog.write(BLOAT_DOWN, String.valueOf(client.getTickCount() - bloatStartTick));
         if (downs.isEmpty())
         {
             int currentBloatHP = client.getVarbitValue(HP_VARBIT);
-            clog.write(BLOAT_HP_1ST_DOWN, "" + currentBloatHP);
+            clog.write(BLOAT_HP_1ST_DOWN, String.valueOf(currentBloatHP));
         }
         downs.add(client.getTickCount());
         roomState = DOWN;
@@ -159,7 +160,7 @@ public class BloatHandler extends RoomHandler
             bloatDeferTick = -1;
         }
         if (bloatStartTick == -1)
-        {
+        { //room time starts when player enters either gate in the bloat region
             if (RoomUtil.crossedLine(BLOAT_REGION, new Point(39, 30), new Point(39, 33), true, client)
                     || RoomUtil.crossedLine(BLOAT_REGION, new Point(24, 30), new Point(24, 33), true, client))
             {
@@ -169,7 +170,7 @@ public class BloatHandler extends RoomHandler
         }
 
         if (NyloHandler.instanceStart == -1)
-        {
+        { //Nylo instance timer is started when the first player crosses the unreachable line by the bloat chest
             if (RoomUtil.crossedLine(BLOAT_REGION, new Point(4, 31), new Point(4, 32), true, client))
             {
                 NyloHandler.instanceStart = client.getTickCount();
@@ -182,7 +183,7 @@ public class BloatHandler extends RoomHandler
         if (event.getActor().getAnimation() == BLOAT_DOWN_ANIMATION)
         {
             down();
-        } else if (event.getActor().getAnimation() == -1 && event.getActor().getCombatLevel() > 400)
+        } else if (event.getActor().getAnimation() == -1 && Objects.requireNonNull(event.getActor().getName()).contains("Bloat"))
         {
             walk();
         }
@@ -195,7 +196,7 @@ public class BloatHandler extends RoomHandler
             if (event.getActor() instanceof Player)
             {
                 Player p = (Player) event.getActor();
-                clog.write(BLOAT_SCYTHE_1ST_WALK, p.getName(), (client.getTickCount() - bloatStartTick) + "");
+                clog.write(BLOAT_SCYTHE_1ST_WALK, p.getName(), String.valueOf(client.getTickCount() - bloatStartTick));
             }
         }
     }
@@ -229,7 +230,7 @@ public class BloatHandler extends RoomHandler
         int id = event.getNpc().getId();
         if (id == BLOAT || id == BLOAT_HM || id == BLOAT_SM)
         {
-            clog.write(BLOAT_DESPAWN, "" + (client.getTickCount() - bloatStartTick));
+            clog.write(BLOAT_DESPAWN, String.valueOf(client.getTickCount() - bloatStartTick));
         }
     }
 }

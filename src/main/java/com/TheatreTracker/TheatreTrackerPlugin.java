@@ -374,7 +374,7 @@ public class TheatreTrackerPlugin extends Plugin
             {
                 if (event.getWeapon().equals(SpecialWeapon.BANDOS_GODSWORD))
                 {
-                    clog.write(BGS, name, "" + event.getHit(), String.valueOf(client.getTickCount() - currentRoom.roomStartTick));
+                    clog.write(BGS, name, String.valueOf(event.getHit()), String.valueOf(client.getTickCount() - currentRoom.roomStartTick));
                 }
                 if (event.getWeapon().equals(SpecialWeapon.DRAGON_WARHAMMER))
                 {

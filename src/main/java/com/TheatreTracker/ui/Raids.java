@@ -178,11 +178,11 @@ public class Raids extends BaseFrame
         double min = StatisticGatherer.getGenericMin(raids, dataPoint);
         double max = StatisticGatherer.getGenericMax(raids, dataPoint);
 
-        String avgStr = (time) ? RoomUtil.time(avg) : avg + "";
-        String medStr = (time) ? RoomUtil.time(med) : med + "";
-        String modStr = (time) ? RoomUtil.time(mod) : mod + "";
-        String minStr = (time) ? RoomUtil.time(min) : min + "";
-        String maxStr = (time) ? RoomUtil.time(max) : max + "";
+        String avgStr = (time) ? RoomUtil.time(avg) : String.valueOf(avg);
+        String medStr = (time) ? RoomUtil.time(med) : String.valueOf(med);
+        String modStr = (time) ? RoomUtil.time(mod) : String.valueOf(mod);
+        String minStr = (time) ? RoomUtil.time(min) : String.valueOf(min);
+        String maxStr = (time) ? RoomUtil.time(max) : String.valueOf(max);
 
         if (avg == -1) avgStr = "-";
         if (med == -1) medStr = "-";

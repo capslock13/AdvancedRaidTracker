@@ -100,7 +100,7 @@ public class SotetsegHandler extends RoomHandler
         soteDeathTick = client.getTickCount() + SOTETSEG_DEATH_ANIMATION_LENGTH;
         roomState = RoomState.SotetsegRoomState.FINISHED;
         clog.write(LogID.ACCURATE_SOTE_END);
-        clog.write(LogID.SOTETSEG_ENDED, (soteDeathTick - soteEntryTick) + "");
+        clog.write(LogID.SOTETSEG_ENDED, String.valueOf(soteDeathTick - soteEntryTick));
         plugin.liveFrame.setSoteFinished(soteDeathTick - soteEntryTick);
         sendTimeMessage("Wave 'Sotetseg phase 3' complete. Duration: ", soteDeathTick - soteEntryTick, soteDeathTick - soteSecondMazeEnd, false);
     }
@@ -108,7 +108,7 @@ public class SotetsegHandler extends RoomHandler
     public void startFirstMaze()
     {
         soteFirstMazeStart = client.getTickCount();
-        clog.write(LogID.SOTETSEG_FIRST_MAZE_STARTED, (soteFirstMazeStart - soteEntryTick) + "");
+        clog.write(LogID.SOTETSEG_FIRST_MAZE_STARTED, String.valueOf(soteFirstMazeStart - soteEntryTick));
         roomState = RoomState.SotetsegRoomState.MAZE_1;
         sendTimeMessage("Wave 'Sotetseg phase 1' complete. Duration: ", soteFirstMazeStart - soteEntryTick);
         plugin.addDelayedLine(TOBRoom.SOTETSEG, soteFirstMazeStart - soteEntryTick, "Maze1 Start");
@@ -117,7 +117,7 @@ public class SotetsegHandler extends RoomHandler
     public void endFirstMaze()
     {
         soteFirstMazeEnd = client.getTickCount();
-        clog.write(LogID.SOTETSEG_FIRST_MAZE_ENDED, (soteFirstMazeEnd - soteEntryTick) + "");
+        clog.write(LogID.SOTETSEG_FIRST_MAZE_ENDED, String.valueOf(soteFirstMazeEnd - soteEntryTick));
         roomState = RoomState.SotetsegRoomState.PHASE_2;
         sendTimeMessage("Wave 'Sotetseg maze 1' complete. Duration: ", soteFirstMazeEnd - soteEntryTick, soteFirstMazeEnd - soteFirstMazeStart);
         plugin.addDelayedLine(TOBRoom.SOTETSEG, soteFirstMazeEnd - soteEntryTick, "Maze1 End");
@@ -126,7 +126,7 @@ public class SotetsegHandler extends RoomHandler
     public void startSecondMaze()
     {
         soteSecondMazeStart = client.getTickCount();
-        clog.write(LogID.SOTETSEG_SECOND_MAZE_STARTED, (soteSecondMazeStart - soteEntryTick) + "");
+        clog.write(LogID.SOTETSEG_SECOND_MAZE_STARTED, String.valueOf(soteSecondMazeStart - soteEntryTick));
         roomState = RoomState.SotetsegRoomState.MAZE_2;
         sendTimeMessage("Wave 'Sotetseg phase 2' complete. Duration: ", soteSecondMazeStart - soteEntryTick, soteSecondMazeStart - soteFirstMazeEnd);
         plugin.addDelayedLine(TOBRoom.SOTETSEG, soteSecondMazeStart - soteEntryTick, "Maze2 Start");
@@ -135,7 +135,7 @@ public class SotetsegHandler extends RoomHandler
     public void endSecondMaze()
     {
         soteSecondMazeEnd = client.getTickCount();
-        clog.write(LogID.SOTETSEG_SECOND_MAZE_ENDED, (soteSecondMazeEnd - soteEntryTick) + "");
+        clog.write(LogID.SOTETSEG_SECOND_MAZE_ENDED, String.valueOf(soteSecondMazeEnd - soteEntryTick));
         roomState = RoomState.SotetsegRoomState.PHASE_3;
         sendTimeMessage("Wave 'Sotetseg maze 2' complete. Duration: ", soteSecondMazeEnd - soteEntryTick, soteSecondMazeEnd - soteSecondMazeStart);
         plugin.addDelayedLine(TOBRoom.SOTETSEG, soteSecondMazeEnd - soteEntryTick, "Maze2 End");

@@ -147,7 +147,7 @@ public class ViewRaid extends BaseFrame
         bloatSubPanel.add(new JLabel(bloatBodyColor + data.getValue(DataPoint.BLOAT_DEATHS)));
 
         bloatSubPanel.add(new JLabel(bloatBodyColor + "Defense (1st walk)"));
-        bloatSubPanel.add(new JLabel(bloatBodyColor + ((data.bloatDefenseAccurate) ? "" + data.getValue(DataPoint.BLOAT_DEFENSE) : INCOMPLETE_MARKER)));
+        bloatSubPanel.add(new JLabel(bloatBodyColor + ((data.bloatDefenseAccurate) ?String.valueOf(data.getValue(DataPoint.BLOAT_DEFENSE)) : INCOMPLETE_MARKER)));
 
         bloatSubPanel.add(new JLabel(bloatBodyColor + "Scythes 1st walk"));
         bloatSubPanel.add(new JLabel(bloatBodyColor + data.getValue(DataPoint.BLOAT_FIRST_WALK_SCYTHES)));
@@ -214,7 +214,7 @@ public class ViewRaid extends BaseFrame
         nylocasSubPanel.add(new JLabel(nyloRotations));
 
         nylocasSubPanel.add(new JLabel(nyloBodyColor + "Defense"));
-        nylocasSubPanel.add(new JLabel(nyloBodyColor + ((data.nyloDefenseAccurate) ? "" + data.getValue(DataPoint.NYLO_DEFENSE) : INCOMPLETE_MARKER)));
+        nylocasSubPanel.add(new JLabel(nyloBodyColor + ((data.nyloDefenseAccurate) ? String.valueOf(data.getValue(DataPoint.NYLO_DEFENSE)) : INCOMPLETE_MARKER)));
 
         nylocasSubPanel.add(new JLabel(nyloBodyColor + "Deaths"));
         nylocasSubPanel.add(new JLabel(nyloBodyColor + data.nyloDeaths));
@@ -368,25 +368,25 @@ public class ViewRaid extends BaseFrame
         thrallsPanel.setLayout(new GridLayout(7, 2));
 
         thrallsPanel.add(new JLabel("Total Thrall Hits: "));
-        thrallsPanel.add(new JLabel(data.getValue(DataPoint.THRALL_ATTACKS_TOTAL) + "", SwingConstants.RIGHT));
+        thrallsPanel.add(new JLabel(String.valueOf(data.getValue(DataPoint.THRALL_ATTACKS_TOTAL)), SwingConstants.RIGHT));
 
         thrallsPanel.add(new JLabel("Maiden Thrall Hits: "));
-        thrallsPanel.add(new JLabel(data.getValue(DataPoint.THRALL_ATTACKS_MAIDEN) + "", SwingConstants.RIGHT));
+        thrallsPanel.add(new JLabel(String.valueOf(data.getValue(DataPoint.THRALL_ATTACKS_MAIDEN)), SwingConstants.RIGHT));
 
         thrallsPanel.add(new JLabel("Bloat Thrall Hits: "));
-        thrallsPanel.add(new JLabel(data.getValue(DataPoint.THRALL_ATTACKS_BLOAT) + "", SwingConstants.RIGHT));
+        thrallsPanel.add(new JLabel(String.valueOf(data.getValue(DataPoint.THRALL_ATTACKS_BLOAT)), SwingConstants.RIGHT));
 
         thrallsPanel.add(new JLabel("Nylo Thrall Hits: "));
-        thrallsPanel.add(new JLabel(data.getValue(DataPoint.THRALL_ATTACKS_NYLO) + "", SwingConstants.RIGHT));
+        thrallsPanel.add(new JLabel(String.valueOf(data.getValue(DataPoint.THRALL_ATTACKS_NYLO)), SwingConstants.RIGHT));
 
         thrallsPanel.add(new JLabel("Sotetseg Thrall Hits: "));
-        thrallsPanel.add(new JLabel(data.getValue(DataPoint.THRALL_ATTACKS_SOTE) + "", SwingConstants.RIGHT));
+        thrallsPanel.add(new JLabel(String.valueOf(data.getValue(DataPoint.THRALL_ATTACKS_SOTE)), SwingConstants.RIGHT));
 
         thrallsPanel.add(new JLabel("Xarpus Thrall Hits: "));
-        thrallsPanel.add(new JLabel(data.getValue(DataPoint.THRALL_ATTACKS_XARP) + "", SwingConstants.RIGHT));
+        thrallsPanel.add(new JLabel(String.valueOf(data.getValue(DataPoint.THRALL_ATTACKS_XARP)), SwingConstants.RIGHT));
 
         thrallsPanel.add(new JLabel("Verzik Thrall Hits: "));
-        thrallsPanel.add(new JLabel(data.getValue(DataPoint.THRALL_ATTACKS_VERZIK) + "", SwingConstants.RIGHT));
+        thrallsPanel.add(new JLabel(String.valueOf(data.getValue(DataPoint.THRALL_ATTACKS_VERZIK)), SwingConstants.RIGHT));
 
 
         JPanel vengPanel = new JPanel();

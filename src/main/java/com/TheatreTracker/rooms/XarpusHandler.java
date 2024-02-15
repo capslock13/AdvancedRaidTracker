@@ -108,7 +108,7 @@ public class XarpusHandler extends RoomHandler
             case XARPUS_P1_SM:
             case XARPUS_P23_SM:
             case XARPUS_DEAD_SM:
-                clog.write(XARPUS_DESPAWNED, "" + (xarpusEndTick - xarpusEntryTick));
+                clog.write(XARPUS_DESPAWNED, String.valueOf(xarpusEndTick - xarpusEntryTick));
         }
     }
 
@@ -140,7 +140,7 @@ public class XarpusHandler extends RoomHandler
     public void updateGameTick(GameTick event)
     {
         if (roomState == RoomState.XarpusRoomState.NOT_STARTED)
-        {
+        { //Xarpus timer starts when player crosses into region
             if (RoomUtil.crossedLine(XARPUS_REGION, new Point(25, 12), new Point(27, 12), false, client))
             {
                 startXarpus();
@@ -154,7 +154,7 @@ public class XarpusHandler extends RoomHandler
 
     private void startScreech()
     {
-        clog.write(XARPUS_SCREECH, "" + (client.getTickCount() - xarpusEntryTick));
+        clog.write(XARPUS_SCREECH, String.valueOf(client.getTickCount() - xarpusEntryTick));
         roomState = RoomState.XarpusRoomState.POSTSCREECH;
         xarpusScreechTick = client.getTickCount();
         String splitMessage = "Wave 'Xarpus phase 2' complete. Duration: " + timeColor() + RoomUtil.time(xarpusScreechTick - xarpusEntryTick) + " (" + RoomUtil.time(xarpusScreechTick - xarpusExhumedsEnd) + ")";

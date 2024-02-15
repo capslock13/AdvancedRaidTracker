@@ -13,10 +13,7 @@ import com.TheatreTracker.utility.RoomUtil;
 public class RoomHandler
 {
     protected Client client;
-
-    DataWriter clog;
-
-
+    protected DataWriter clog;
     public int roomStartTick = -1;
 
     private final TheatreTrackerConfig config;
@@ -192,6 +189,5 @@ public class RoomHandler
     public void reset()
     {
         roomStartTick = -1;
-
     }
 }

@@ -18,12 +18,10 @@ public class ButtonEditorLoadFilters extends DefaultCellEditor
     protected JButton button;
     private String label;
     private boolean isPushed;
-
     private final boolean replace;
     int row;
     private final ArrayList<Filter> data;
     private final BaseFrame closeBaseFrame;
-
     private final Raids filteredRaidsFrame;
 
     public ButtonEditorLoadFilters(JCheckBox checkBox, Raids filteredRaidsFrame, ArrayList<Filter> data, LoadFilter loadFrame)
@@ -68,7 +66,6 @@ public class ButtonEditorLoadFilters extends DefaultCellEditor
         this.row = row;
         return button;
     }
-
 
     @Override
     public Object getCellEditorValue()

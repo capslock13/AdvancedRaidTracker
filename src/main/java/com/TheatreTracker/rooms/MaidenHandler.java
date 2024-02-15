@@ -123,7 +123,7 @@ public class MaidenHandler extends RoomHandler
         roomState = RoomState.MaidenRoomState.PHASE_2;
         if (maidenStartTick != -1)
             sendTimeMessage("Wave 'Maiden phase 1' complete! Duration: ", p70 - maidenStartTick);
-        clog.write(MAIDEN_70S, "" + (p70 - maidenStartTick));
+        clog.write(MAIDEN_70S, String.valueOf(p70 - maidenStartTick));
         plugin.addDelayedLine(TOBRoom.MAIDEN, p70 - maidenStartTick - 2, "70s");
 
     }
@@ -134,7 +134,7 @@ public class MaidenHandler extends RoomHandler
         roomState = RoomState.MaidenRoomState.PHASE_3;
         if (maidenStartTick != -1)
             sendTimeMessage("Wave 'Maiden phase 2' complete! Duration: ", p50 - maidenStartTick, p50 - p70);
-        clog.write(MAIDEN_50S, "" + (p50 - maidenStartTick));
+        clog.write(MAIDEN_50S, String.valueOf(p50 - maidenStartTick));
         plugin.addDelayedLine(TOBRoom.MAIDEN, p50 - maidenStartTick - 2, "50s");
     }
 
@@ -144,7 +144,7 @@ public class MaidenHandler extends RoomHandler
         roomState = RoomState.MaidenRoomState.PHASE_4;
         if (maidenStartTick != -1)
             sendTimeMessage("Wave 'Maiden phase 3' complete! Duration: ", p30 - maidenStartTick, p30 - p50);
-        clog.write(MAIDEN_30S, "" + (p30 - maidenStartTick));
+        clog.write(MAIDEN_30S, String.valueOf(p30 - maidenStartTick));
         plugin.addDelayedLine(TOBRoom.MAIDEN, p30 - maidenStartTick - 2, "30s");
     }
 
@@ -155,7 +155,7 @@ public class MaidenHandler extends RoomHandler
         if (maidenStartTick != -1)
             sendTimeMessage("Wave 'Maiden Skip' complete! Duration: ", maidenDeathTick - maidenStartTick, maidenDeathTick - p30, false);
         clog.write(301);
-        clog.write(MAIDEN_0HP, "" + (client.getTickCount() - maidenStartTick));
+        clog.write(MAIDEN_0HP, String.valueOf(client.getTickCount() - maidenStartTick));
         plugin.addDelayedLine(TOBRoom.MAIDEN, client.getTickCount() - maidenStartTick, "Dead");
         plugin.liveFrame.setMaidenFinished(maidenDeathTick - maidenStartTick);
     }
@@ -172,7 +172,7 @@ public class MaidenHandler extends RoomHandler
                 Player player = (Player) event.getActor();
                 Actor target = player.getInteracting();
                 int distance = target.getWorldArea().distanceTo(player.getWorldLocation());
-                clog.write(MAIDEN_CHIN_THROWN, player.getName(), "" + distance);
+                clog.write(MAIDEN_CHIN_THROWN, player.getName(), String.valueOf(distance));
                 if (distance < 4 || distance > 6)
                 {
                     if (config.showMistakesInChat())
@@ -210,7 +210,7 @@ public class MaidenHandler extends RoomHandler
             case TobIDs.MAIDEN_P3_SM:
             case TobIDs.MAIDEN_PRE_DEAD_SM:
             case TobIDs.MAIDEN_DEAD_SM:
-                clog.write(MAIDEN_DESPAWNED, "" + (client.getTickCount() - maidenStartTick));
+                clog.write(MAIDEN_DESPAWNED, String.valueOf(client.getTickCount() - maidenStartTick));
                 break;
             case MAIDEN_MATOMENOS:
             case MAIDEN_MATOMENOS_HM:

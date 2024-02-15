@@ -603,7 +603,7 @@ public class ComparisonViewPanel extends JPanel
 
     private String getString(double val)
     {
-        return (time) ? RoomUtil.time(val) : "" + Math.round(val * 100.0) / 100.0;
+        return (time) ? RoomUtil.time(val) : String.valueOf(Math.round(val * 100.0) / 100.0);
     }
 
     private void updateOtherPanels()

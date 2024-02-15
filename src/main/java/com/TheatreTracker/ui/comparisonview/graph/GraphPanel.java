@@ -262,7 +262,7 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
 
     private String getString(int s)
     {
-        return (time) ? RoomUtil.time(s) : s + "";
+        return (time) ? RoomUtil.time(s) : String.valueOf(s);
     }
 
     private int xScaleLow = 0;
@@ -778,7 +778,7 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
                     g.setColor(new Color(100, 100, 100, 100));
                     g.drawLine(GRAPH_XS, stringOffset - 8, GRAPH_XE, stringOffset - 8);
                     g.setColor(oldColor);
-                    g.drawString(i + "", GRAPH_XS - 20, stringOffset);
+                    g.drawString(String.valueOf(i), GRAPH_XS - 20, stringOffset);
                 }
             }
         }

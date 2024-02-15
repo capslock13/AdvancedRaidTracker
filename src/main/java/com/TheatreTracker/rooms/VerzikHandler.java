@@ -81,7 +81,7 @@ public class VerzikHandler extends RoomHandler
 
     public void thrallAttackedShield(int tick)
     {
-
+        //todo finish p2 heal tracking
     }
 
     public void updateGameTick(GameTick event)
@@ -254,7 +254,7 @@ public class VerzikHandler extends RoomHandler
         {
             if (!redsThisTick)
             {
-                clog.write(VERZIK_P2_REDS_PROC, (client.getTickCount() - verzikEntryTick) + "");
+                clog.write(VERZIK_P2_REDS_PROC, String.valueOf(client.getTickCount() - verzikEntryTick));
                 plugin.addDelayedLine(TOBRoom.VERZIK, client.getTickCount() - verzikEntryTick, "Reds");
                 healingEndTick = client.getTickCount() + VERZIK_SHIELD_LENGTH;
                 plugin.addDelayedLine(TOBRoom.VERZIK, healingEndTick - verzikEntryTick, "Shield End");
@@ -346,7 +346,7 @@ public class VerzikHandler extends RoomHandler
         roomState = RoomState.VerzikRoomState.PHASE_2;
         verzikP1EndTick = client.getTickCount();
         sendTimeMessage("Wave 'Verzik phase 1' complete. Duration: ", verzikP1EndTick - verzikEntryTick);
-        clog.write(VERZIK_P1_DESPAWNED, (verzikP1EndTick - verzikEntryTick) + "");
+        clog.write(VERZIK_P1_DESPAWNED, String.valueOf(verzikP1EndTick - verzikEntryTick));
         plugin.addDelayedLine(TOBRoom.VERZIK, verzikP1EndTick - verzikEntryTick, "P1 End");
 
     }
@@ -363,7 +363,7 @@ public class VerzikHandler extends RoomHandler
         roomState = RoomState.VerzikRoomState.PHASE_3;
         verzikP2EndTick = client.getTickCount();
         sendTimeMessage("Wave 'Verzik phase 2' complete. Duration: ", verzikP2EndTick - verzikEntryTick, verzikP2EndTick - verzikP1EndTick);
-        clog.write(VERZIK_P2_END, (verzikP2EndTick - verzikEntryTick) + "");
+        clog.write(VERZIK_P2_END, String.valueOf(verzikP2EndTick - verzikEntryTick));
         plugin.addDelayedLine(TOBRoom.VERZIK, verzikP2EndTick - verzikEntryTick, "P2 End");
 
     }
@@ -375,7 +375,7 @@ public class VerzikHandler extends RoomHandler
         verzikP3EndTick = client.getTickCount() + VERZIK_DEATH_ANIMATION_LENGTH;
         clog.write(ACCURATE_VERZIK_END);
         sendTimeMessage("Wave 'Verzik phase 3' complete. Duration: ", verzikP3EndTick - verzikEntryTick, verzikP3EndTick - verzikP2EndTick);
-        clog.write(VERZIK_P3_DESPAWNED, (verzikP3EndTick - verzikEntryTick) + "");
+        clog.write(VERZIK_P3_DESPAWNED, String.valueOf(verzikP3EndTick - verzikEntryTick));
         plugin.addDelayedLine(TOBRoom.VERZIK, client.getTickCount() - verzikEntryTick, "Dead");
         plugin.liveFrame.setVerzFinished(verzikP3EndTick - verzikEntryTick);
 

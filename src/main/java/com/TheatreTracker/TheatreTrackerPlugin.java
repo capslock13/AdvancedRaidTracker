@@ -893,7 +893,7 @@ public class TheatreTrackerPlugin extends Plugin
             Player p = (Player) event.getActor();
             int animation = p.getAnimation();
             int weapon = p.getPlayerComposition().getEquipmentId(KitType.WEAPON);
-            log.info("Animation " + animation + " weapon " + weapon);
+            //log.info("Animation " + animation + " weapon " + weapon);
         }
         Player p;
         if (event.getActor() instanceof Player && inTheatre)

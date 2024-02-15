@@ -623,6 +623,7 @@ public class RoomData
                     case VERZIK_P2_END:
                         dataManager.set(DataPoint.VERZIK_P2_SPLIT, Integer.parseInt(subData[4]));
                         dataManager.set(DataPoint.VERZIK_P2_DURATION, dataManager.get(DataPoint.VERZIK_P2_SPLIT) - dataManager.get(DataPoint.VERZIK_P1_SPLIT));
+                        dataManager.set(DataPoint.VERZIK_REDS_DURATION, dataManager.get(DataPoint.VERZIK_P2_SPLIT)-dataManager.get(DataPoint.VERZIK_REDS_SPLIT));
                         try
                         {
                             int hp = verzikHP.get(dataManager.get(DataPoint.VERZIK_REDS_SPLIT));
@@ -669,6 +670,7 @@ public class RoomData
                         if (dataManager.get(DataPoint.VERZIK_REDS_SPLIT) == 0)
                         {
                             dataManager.set(DataPoint.VERZIK_REDS_SPLIT, Integer.parseInt(subData[4]));
+                            dataManager.set(DataPoint.VERZIK_P2_TILL_REDS, Integer.parseInt(subData[4]) - dataManager.get(DataPoint.VERZIK_P1_SPLIT));
                         }
                         redsProc.add(Integer.parseInt(subData[4]));
                         dataManager.increment(DataPoint.VERZIK_REDS_SETS);

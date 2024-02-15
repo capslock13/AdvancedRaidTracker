@@ -84,6 +84,7 @@ This will go through all the selected raids, and sort them by scale and players 
 ### View Charts
 
 This will open a window with a chart of the selected raid, where you can see exactly what each player did on each tick of the boss fights. Hovering can give you additional info about what was targted by the player and the bosses HP at the time.
+You can also see live charts as you raid by hitting "View Live Room" from the sidebar panel, however it will not show the red lines indicating boss-related actions until after the room has ended to avoid any chance of "revealing boss mechanics".
 
 ![](images/chart.jpg)
 

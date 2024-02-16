@@ -227,7 +227,14 @@ public class RoomData
         {
             return getMaidenTime() + getBloatTime() + getNyloTime() + getSoteTime() + getXarpTime() + getVerzikTime();
         }
-        return getValue(DataPoint.getValue(activeValue));
+        if(getTimeAccurate(Objects.requireNonNull(DataPoint.getValue(activeValue))))
+        {
+            return getValue(DataPoint.getValue(activeValue));
+        }
+        else
+        {
+            return Integer.MAX_VALUE;
+        }
     }
 
     public void setOverallTime()

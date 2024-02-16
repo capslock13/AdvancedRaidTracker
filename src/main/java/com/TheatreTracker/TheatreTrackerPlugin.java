@@ -525,53 +525,14 @@ public class TheatreTrackerPlugin extends Plugin
     @Subscribe
     public void onGameTick(GameTick event)
     {
-        for (Player p : deferredWeaponAnimationPlayers)
-        {
-            StringBuilder animations = new StringBuilder();
-            for (ActorSpotAnim anim : p.getSpotAnims())
-            {
-                animations.append(anim.getId());
-                animations.append(":");
-            }
-            if (p.getAnimation() != POWERED_STAFF_ANIMATION || p.getPlayerComposition().getEquipmentId(KitType.WEAPON) == DAWNBRINGER_ITEM)
-            { //Can be ZCB, Sang, or Dawnbringer. We only care about projectile for dawnbringer or ZCB. Sang & dawnbringer share animation
-                //so this filters powered staves unless it's dawnbringer
-                WorldPoint worldPoint = p.getWorldLocation();
-                playersAttacked.add(new QueuedPlayerAttackLessProjectiles(p, worldPoint, 1, animations.toString(), String.valueOf(p.getPlayerComposition().getEquipmentId(KitType.WEAPON)), String.valueOf(p.getAnimation())));
-            }
-            else
-            {
-                int interactedIndex = -1;
-                int interactedID = -1;
-                Actor interacted = p.getInteracting();
-                String targetName = "";
-                if (interacted instanceof NPC)
-                {
-                    NPC npc = (NPC) interacted;
-                    interactedID = npc.getId();
-                    interactedIndex = npc.getIndex();
-                    targetName = npc.getName();
-                }
-                generatePlayerAttackInfo(p, animations.toString(), interactedIndex, interactedID, interacted, targetName);
-            }
-        }
-        deferredWeaponAnimationPlayers.clear();
-        for (String player : playersWhoHaveOverheadText)
-        {
-            for (VengPair vp : playersTextChanged)
-            {
-                if (vp.player.equals(player))
-                {
-                    vengTracker.vengProcced(vp);
-                    activeVenges.add(new VengDamageQueue(vp.player, vp.hitsplat, client.getTickCount() + 1));
-                }
-            }
-        }
-        playersWhoHaveOverheadText.clear();
+        log.info(getPlayerItems(client.getLocalPlayer()));
+        checkAnimationsThatChanged();
+        checkOverheadTextsThatChanged();
+
         for (Player p : activelyPiping.keySet())
         {
             if (client.getTickCount() > (activelyPiping.get(p) + 1) && ((client.getTickCount() - activelyPiping.get(p) - 1) % 2) == 0)
-            {//
+            {
                 int interactedIndex = -1;
                 int interactedID = -1;
                 String targetName = "";
@@ -750,6 +711,139 @@ public class TheatreTrackerPlugin extends Plugin
         }
     }
 
+    private void checkOverheadTextsThatChanged()
+    {
+        for (String player : playersWhoHaveOverheadText)
+        {
+            for (VengPair vp : playersTextChanged)
+            {
+                if (vp.player.equals(player))
+                {
+                    vengTracker.vengProcced(vp);
+                    activeVenges.add(new VengDamageQueue(vp.player, vp.hitsplat, client.getTickCount() + 1));
+                }
+            }
+        }
+        playersWhoHaveOverheadText.clear();
+    }
+
+    private void checkAnimationsThatChanged()
+    {
+        for(Player p : deferredAnimations)
+        {
+            if (inTheatre)
+            {
+                if (p.getPlayerComposition() != null)
+                {
+                    int id = p.getPlayerComposition().getEquipmentId(KitType.WEAPON);
+                    if (p.getAnimation() == SCYTHE_ANIMATION)
+                    {
+                        if (id == UNCHARGED_SCYTHE || id == UNCHARGED_BLOOD_SCYTHE || id == UNCHARGED_HOLY_SCYTHE)
+                        {
+                            if (config.showMistakesInChat())
+                            {
+                                sendChatMessage(p.getName() + " is using an uncharged scythe");
+                            }
+                        }
+                    } else if (p.getAnimation() == BOP_ANIMATION)
+                    {
+                        if (id == DRAGON_WARHAMMER || id == DRAGON_WARHAMMER_ALTERNATE)
+                        {
+                            if (config.showMistakesInChat())
+                            {
+                                sendChatMessage(p.getName() + " hammer bopped (bad rng)");
+                            }
+                            clog.write(DWH_BOP, p.getName());
+                        }
+                    } else if (p.getAnimation() == WHACK_ANIMATION)
+                    {
+                        if (id == KODAI_WAND || id == KODAI_WAND_ALTERNATE)
+                        {
+                            if (config.showMistakesInChat())
+                            {
+                                sendChatMessage(p.getName() + " kodai bopped (nothing they could've done to prevent it)");
+                            }
+                            clog.write(KODAI_BOP, p.getName());
+                        }
+                    } else if (p.getAnimation() == STAB_ANIMATION)
+                    {
+                        if (id == CHALLY)
+                        {
+                            if (config.showMistakesInChat())
+                            {
+                                sendChatMessage(p.getName() + " chally poked");
+                            }
+                            clog.write(CHALLY_POKE, p.getName());
+                        }
+                    } else if (p.getAnimation() == TWO_HAND_SWORD_SWING)
+                    {
+                        if(id == BANDOS_GODSWORD || id == BANDOS_GODSWORD_OR)
+                        {
+                            if (config.showMistakesInChat())
+                            {
+                                sendChatMessage(p.getName() + " swung BGS without speccing");
+                            }
+                            clog.write(BGS_WHACK, p.getName());
+                        }
+                    }
+                    StringBuilder animations = new StringBuilder();
+                    for (ActorSpotAnim anim : p.getSpotAnims())
+                    {
+                        animations.append(anim.getId());
+                        animations.append(":");
+                    }
+                    if (p.getAnimation() == POWERED_STAFF_ANIMATION || p.getAnimation() == CROSSBOW_ANIMATION)
+                    {
+                        if (p.getAnimation() != POWERED_STAFF_ANIMATION || p.getPlayerComposition().getEquipmentId(KitType.WEAPON) == DAWNBRINGER_ITEM)
+                        { //Can be ZCB, Sang, or Dawnbringer. We only care about projectile for dawnbringer or ZCB. Sang & dawnbringer share animation
+                            //so this filters powered staves unless it's dawnbringer
+                            WorldPoint worldPoint = p.getWorldLocation();
+                            playersAttacked.add(new QueuedPlayerAttackLessProjectiles(p, worldPoint, 1, animations.toString(), String.valueOf(p.getPlayerComposition().getEquipmentId(KitType.WEAPON)), String.valueOf(p.getAnimation())));
+                        }
+                        else
+                        {
+                            int interactedIndex = -1;
+                            int interactedID = -1;
+                            Actor interacted = p.getInteracting();
+                            String targetName = "";
+                            if (interacted instanceof NPC)
+                            {
+                                NPC npc = (NPC) interacted;
+                                interactedID = npc.getId();
+                                interactedIndex = npc.getIndex();
+                                targetName = npc.getName();
+                            }
+                            generatePlayerAttackInfo(p, animations.toString(), interactedIndex, interactedID, interacted, targetName);
+                        }
+                    }
+                    else if (p.getAnimation() != -1)
+                    {
+                        int interactedIndex = -1;
+                        int interactedID = -1;
+                        Actor interacted = p.getInteracting();
+                        String targetName = "";
+                        if (interacted instanceof NPC)
+                        {
+                            NPC npc = (NPC) interacted;
+                            interactedID = npc.getId();
+                            interactedIndex = npc.getIndex();
+                        }
+                        generatePlayerAttackInfo(p, animations.toString(), interactedIndex, interactedID, interacted, targetName);
+                        if (p.getAnimation() == BLOWPIPE_ANIMATION || p.getAnimation() == BLOWPIPE_ANIMATION_OR)
+                        {
+                            activelyPiping.put(p, client.getTickCount());
+                        }
+                    } else
+                    {
+                        activelyPiping.remove(p);
+                    }
+
+                }
+            }
+        }
+        deferredAnimations.clear();
+    }
+
     public void leftRaid()
     {
         partyIntact = false;
@@ -757,7 +851,7 @@ public class TheatreTrackerPlugin extends Plugin
         clog.write(LEFT_TOB, String.valueOf(client.getTickCount() - currentRoom.roomStartTick), currentRoom.getName()); //todo add region
         currentRoom = null;
         activelyPiping.clear();
-        deferredWeaponAnimationPlayers.clear();
+        deferredAnimations.clear();
     }
 
     @Subscribe
@@ -882,109 +976,15 @@ public class TheatreTrackerPlugin extends Plugin
         clientThread.invoke(() -> client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", msg, null, false));
     }
 
-    private final ArrayList<Player> deferredWeaponAnimationPlayers = new ArrayList<>();
-
+    private final ArrayList<Player> deferredAnimations = new ArrayList<>();
 
     @Subscribe
     public void onAnimationChanged(AnimationChanged event)
     {
-        if(event.getActor() instanceof Player && event.getActor().getAnimation() != -1 && event.getActor().getAnimation() != 435)
+        if(event.getActor() instanceof Player)
         {
             Player p = (Player) event.getActor();
-            int animation = p.getAnimation();
-            int weapon = p.getPlayerComposition().getEquipmentId(KitType.WEAPON);
-            //log.info("Animation " + animation + " weapon " + weapon);
-        }
-        Player p;
-        if (event.getActor() instanceof Player && inTheatre)
-        {
-            p = (Player) event.getActor();
-            if (p.getPlayerComposition() != null)
-            {
-                int id = p.getPlayerComposition().getEquipmentId(KitType.WEAPON);
-                if (event.getActor().getAnimation() == SCYTHE_ANIMATION)
-                {
-                    if (id == UNCHARGED_SCYTHE || id == UNCHARGED_BLOOD_SCYTHE || id == UNCHARGED_HOLY_SCYTHE)
-                    {
-                        if (config.showMistakesInChat())
-                        {
-                            sendChatMessage(event.getActor().getName() + " is using an uncharged scythe");
-                        }
-                    }
-                } else if (event.getActor().getAnimation() == BOP_ANIMATION)
-                {
-                    if (id == DRAGON_WARHAMMER || id == DRAGON_WARHAMMER_ALTERNATE)
-                    {
-                        if (config.showMistakesInChat())
-                        {
-                            sendChatMessage(event.getActor().getName() + " hammer bopped (bad rng)");
-                        }
-                        clog.write(DWH_BOP, event.getActor().getName());
-                    }
-                } else if (event.getActor().getAnimation() == WHACK_ANIMATION)
-                {
-                    if (id == KODAI_WAND || id == KODAI_WAND_ALTERNATE)
-                    {
-                        if (config.showMistakesInChat())
-                        {
-                            sendChatMessage(event.getActor().getName() + " kodai bopped (nothing they could've done to prevent it)");
-                        }
-                        clog.write(KODAI_BOP, event.getActor().getName());
-                    }
-                } else if (event.getActor().getAnimation() == STAB_ANIMATION)
-                {
-                    if (id == CHALLY)
-                    {
-                        if (config.showMistakesInChat())
-                        {
-                            sendChatMessage(event.getActor().getName() + " chally poked");
-                        }
-                        clog.write(CHALLY_POKE, event.getActor().getName());
-                    }
-                } else if (event.getActor().getAnimation() == TWO_HAND_SWORD_SWING)
-                {
-                    if(id == BANDOS_GODSWORD || id == BANDOS_GODSWORD_OR)
-                    {
-                        if (config.showMistakesInChat())
-                        {
-                            sendChatMessage(event.getActor().getName() + " swung BGS without speccing");
-                        }
-                        clog.write(BGS_WHACK, event.getActor().getName());
-                    }
-                }
-                StringBuilder animations = new StringBuilder();
-                for (ActorSpotAnim anim : p.getSpotAnims())
-                {
-                    animations.append(anim.getId());
-                    animations.append(":");
-                }
-                if (p.getAnimation() == POWERED_STAFF_ANIMATION || p.getAnimation() == CROSSBOW_ANIMATION)
-                {
-                    deferredWeaponAnimationPlayers.add(p); //defer to game tick because 4t dawn spec the weapon is not equipped when animation changes
-                }
-                else if (p.getAnimation() != -1)
-                {
-                    int interactedIndex = -1;
-                    int interactedID = -1;
-                    Actor interacted = p.getInteracting();
-                    String targetName = "";
-                    if (interacted instanceof NPC)
-                    {
-                        NPC npc = (NPC) interacted;
-                        interactedID = npc.getId();
-                        interactedIndex = npc.getIndex();
-                    }
-                    generatePlayerAttackInfo(p, animations.toString(), interactedIndex, interactedID, interacted, targetName);
-                    if (p.getAnimation() == BLOWPIPE_ANIMATION || p.getAnimation() == BLOWPIPE_ANIMATION_OR)
-                    {
-                        activelyPiping.put(p, client.getTickCount());
-                    }
-                } else
-                {
-                    activelyPiping.remove(p);
-                }
-
-            }
+            deferredAnimations.add(p);
         }
         if (inTheatre)
         {
@@ -1316,6 +1316,20 @@ public class TheatreTrackerPlugin extends Plugin
                 currentRoom.updateHitsplatApplied(event);
             }
         }
+    }
+
+    private String getPlayerItems(Player p)
+    {
+        PlayerComposition pc = p.getPlayerComposition();
+        return pc.getEquipmentId(KitType.HEAD) +","
+                + pc.getEquipmentId(KitType.CAPE) +","
+                +pc.getEquipmentId(KitType.AMULET) + ","
+                +pc.getEquipmentId(KitType.TORSO) +","
+                +pc.getEquipmentId(KitType.WEAPON)+","
+                +pc.getEquipmentId(KitType.SHIELD)+","
+                +pc.getEquipmentId(KitType.LEGS)+","
+                +pc.getEquipmentId(KitType.HANDS)+","
+                +pc.getEquipmentId(KitType.BOOTS);
     }
 
     private ArrayList<VengPair> playersTextChanged;

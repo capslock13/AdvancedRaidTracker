@@ -128,4 +128,36 @@ public class FilterManager
         }
     }
 
+    public static void saveFilter(String name, ArrayList<ImplicitFilter> filters, ArrayList<String> quickFiltersState)
+    {
+        try
+        {
+            File directory = new File(filterFolder);
+            if (!directory.exists())
+            {
+                directory.mkdirs();
+            }
+            File filterFile = new File(filterFolder + name + ".filter");
+            if (!filterFile.exists())
+            {
+                filterFile.createNewFile();
+            }
+            BufferedWriter filterWriter = new BufferedWriter(new OutputStreamWriter(Files.newOutputStream(Paths.get(filterFolder + name + ".filter"))));
+            for (ImplicitFilter filter : filters)
+            {
+                filterWriter.write(filter.getFilterCSV());
+                filterWriter.newLine();
+            }
+            for(String s : quickFiltersState)
+            {
+                filterWriter.write(s);
+                filterWriter.newLine();
+            }
+            filterWriter.close();
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
 }

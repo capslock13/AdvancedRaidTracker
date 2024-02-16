@@ -140,7 +140,7 @@ public class BloatHandler extends RoomHandler
         if (bloatStartTick != -1)
         {
             deferHP = client.getVarbitValue(HP_VARBIT) / 10.0;
-            bloatDeferTick = client.getTickCount() + 5; //delay so that the chat message can't be used to know immediately know when bloat has gone down
+            bloatDeferTick = client.getTickCount(); //delay so that the chat message can't be used to know immediately know when bloat has gone down
         }
         plugin.addDelayedLine(TOBRoom.BLOAT, client.getTickCount() - bloatStartTick, "Down");
     }

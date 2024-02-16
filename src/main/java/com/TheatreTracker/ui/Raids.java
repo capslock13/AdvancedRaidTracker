@@ -1902,7 +1902,21 @@ public class Raids extends BaseFrame
         saveFiltersButton.addActionListener(
                 al ->
                 {
-                    SaveFilter saveFilter = new SaveFilter(activeFilters);
+                    ArrayList<String> quickFiltersState = new ArrayList<>();
+                    quickFiltersState.add("QF-Spectate Only:"+filterSpectateOnly.isSelected());
+                    quickFiltersState.add("QF-In Raid Only:"+filterInRaidOnly.isSelected());
+                    quickFiltersState.add("QF-Completion Only:"+filterCompletionOnly.isSelected());
+                    quickFiltersState.add("QF-Wipe/Reset Only:"+filterWipeResetOnly.isSelected());
+                    quickFiltersState.add("QF-Today Only:"+filterTodayOnly.isSelected());
+                    quickFiltersState.add("QF-Party Only:"+filterPartyOnly.isSelected());
+                    quickFiltersState.add("QF-Partial Raids:"+filterPartialData.isSelected());
+                    quickFiltersState.add("QF-Partial Rooms:"+filterPartialOnly.isSelected());
+                    quickFiltersState.add("QF-Normal Mode Only:"+filterNormalOnly.isSelected());
+                    quickFiltersState.add("QF-Scale:"+filterCheckBoxScale.isSelected()+":"+filterComboBoxScale.getSelectedIndex());
+                    quickFiltersState.add("QF-View Raid By:"+viewByRaidComboBox.getItemAt(viewByRaidComboBox.getSelectedIndex()));
+                    quickFiltersState.add("QF-Table Sort By:"+sortOptionsBox.getItemAt(sortOptionsBox.getSelectedIndex()));
+                    quickFiltersState.add("QF-Table Sort:"+sortOrderBox.getItemAt(sortOrderBox.getSelectedIndex()));
+                    SaveFilter saveFilter = new SaveFilter(activeFilters, quickFiltersState);
                     saveFilter.open();
                 });
         JButton loadFiltersButton = new JButton("Load");
@@ -2258,6 +2272,80 @@ public class Raids extends BaseFrame
         comparisonTable.setFillsViewportHeight(true);
         comparisonTable.validate();
         comparisonTable.repaint();
+    }
+
+    public void setFilterState(String state)
+    {
+        try
+        {
+            if (state.contains(":"))
+            {
+                String[] data = state.split(":");
+                if (data.length > 1)
+                {
+                    switch (data[0])
+                    {
+                        case "Spectate Only":
+                            filterSpectateOnly.setSelected(Boolean.parseBoolean(data[1]));
+                            break;
+                        case "In Raid Only":
+                            filterInRaidOnly.setSelected(Boolean.parseBoolean(data[1]));
+                            break;
+                        case "Completion Only":
+                            filterCompletionOnly.setSelected(Boolean.parseBoolean(data[1]));
+                            break;
+                        case "Wipe/Reset Only":
+                            filterWipeResetOnly.setSelected(Boolean.parseBoolean(data[1]));
+                            break;
+                        case "Today Only":
+                            filterTodayOnly.setSelected(Boolean.parseBoolean(data[1]));
+                            break;
+                        case "Party Only":
+                            filterPartyOnly.setSelected(Boolean.parseBoolean(data[1]));
+                            break;
+                        case "Partial Raids":
+                            filterPartialOnly.setSelected(Boolean.parseBoolean(data[1]));
+                            break;
+                        case "Partial Rooms":
+                            filterPartialData.setSelected(Boolean.parseBoolean(data[1]));
+                            break;
+                        case "Normal Mode Only":
+                            filterNormalOnly.setSelected(Boolean.parseBoolean(data[1]));
+                            break;
+                        case "Scale":
+                            if(data.length > 2)
+                            {
+                                filterCheckBoxScale.setSelected(Boolean.parseBoolean(data[1]));
+                                filterComboBoxScale.setSelectedIndex(Integer.parseInt(data[2]));
+                            }
+                            break;
+                        case "View Raid By":
+                            viewByRaidComboBox.setEditable(true);
+                            if(!Objects.equals(data[1], "null"))
+                            {
+                                viewByRaidComboBox.setSelectedItem(data[1]);
+                                log.info(data[1]);
+                            }
+                            else
+                            {
+                                viewByRaidComboBox.setSelectedItem("Challenge Time");
+                            }
+                            viewByRaidComboBox.setEditable(false);
+                            break;
+                        case "Table Sort By":
+                            sortOptionsBox.setSelectedItem(data[1]);
+                            break;
+                        case "Table Sort":
+                            sortOrderBox.setSelectedItem(data[1]);
+                            break;
+                    }
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            log.info("Failed to set filter state: " + state);
+        }
     }
 
     public void updateFilterTable()

@@ -172,7 +172,7 @@ public class TheatreTrackerPlugin extends Plugin
         RaidTrackerSidePanel timersPanelPrimary = injector.getInstance(RaidTrackerSidePanel.class);
         partyIntact = false;
         activelyPiping = new LinkedHashMap<>();
-        liveFrame = new LiveChart(config);
+        liveFrame = new LiveChart(config, itemManager, clientThread);
         playersTextChanged = new ArrayList<>();
         File dirMain = new File(System.getProperty("user.home").replace("\\", "/") + "/.runelite/theatretracker/primary/");
         File dirFilters = new File(System.getProperty("user.home").replace("\\", "/") + "/.runelite/theatretracker/filters/");
@@ -201,7 +201,7 @@ public class TheatreTrackerPlugin extends Plugin
         nylo = new NyloHandler(client, clog, config, this);
         sote = new SotetsegHandler(client, clog, config, this);
         xarpus = new XarpusHandler(client, clog, config, this);
-        verzik = new VerzikHandler(client, clog, config, this);
+        verzik = new VerzikHandler(client, clog, config, this, itemManager);
         inTheatre = false;
         wasInTheatre = false;
         deferredTick = 0;
@@ -521,11 +521,9 @@ public class TheatreTrackerPlugin extends Plugin
         return client.getTickCount() - currentRoom.roomStartTick;
     }
 
-
     @Subscribe
     public void onGameTick(GameTick event)
     {
-        log.info(getPlayerItems(client.getLocalPlayer()));
         checkAnimationsThatChanged();
         checkOverheadTextsThatChanged();
 
@@ -551,11 +549,11 @@ public class TheatreTrackerPlugin extends Plugin
                 }
                 clog.write(PLAYER_ATTACK,
                         p.getName() + ":" + (client.getTickCount() - currentRoom.roomStartTick - 1),
-                        String.valueOf(p.getAnimation()),
+                        p.getAnimation()+":"+PlayerWornItems.getStringFromComposition(p.getPlayerComposition()),
                         "",
                         p.getPlayerComposition().getEquipmentId(KitType.WEAPON) + ":" + interactedIndex + ":" + interactedID,
                         "-1:" + targetName);
-                liveFrame.addAttack(new PlayerDidAttack(
+                liveFrame.addAttack(new PlayerDidAttack(itemManager,
                         String.valueOf(p.getName()),
                         String.valueOf(p.getAnimation()),
                         -1,
@@ -564,7 +562,8 @@ public class TheatreTrackerPlugin extends Plugin
                         "",
                         interactedIndex,
                         interactedID,
-                        targetName
+                        targetName,
+                        PlayerWornItems.getStringFromComposition(p.getPlayerComposition())
                 ), currentRoom.getName());
             }
         }
@@ -613,11 +612,11 @@ public class TheatreTrackerPlugin extends Plugin
                                 }
                                 clog.write(PLAYER_ATTACK,
                                         playerAttackQueuedItem.player.getName() + ":" + (client.getTickCount() - currentRoom.roomStartTick),
-                                        playerAttackQueuedItem.animation,
+                                        playerAttackQueuedItem.animation+":"+PlayerWornItems.getStringFromComposition(playerAttackQueuedItem.player.getPlayerComposition()),
                                         playerAttackQueuedItem.spotAnims,
                                         playerAttackQueuedItem.weapon + ":" + interactedIndex + ":" + interactedID,
                                         projectile.getId() + ":" + targetName);
-                                liveFrame.addAttack(new PlayerDidAttack(
+                                liveFrame.addAttack(new PlayerDidAttack(itemManager,
                                                 playerAttackQueuedItem.player.getName(),
                                                 playerAttackQueuedItem.animation,
                                                 0,
@@ -626,7 +625,8 @@ public class TheatreTrackerPlugin extends Plugin
                                                 playerAttackQueuedItem.spotAnims,
                                                 interactedIndex,
                                                 interactedID,
-                                                targetName)
+                                                targetName,
+                                                PlayerWornItems.getStringFromComposition(playerAttackQueuedItem.player.getPlayerComposition()))
                                         , currentRoom.getName());
                             }
                         }
@@ -1024,11 +1024,11 @@ public class TheatreTrackerPlugin extends Plugin
         }
         clog.write(PLAYER_ATTACK,
                 p.getName() + ":" + (client.getTickCount() - currentRoom.roomStartTick),
-                String.valueOf(p.getAnimation()),
+                p.getAnimation()+":"+PlayerWornItems.getStringFromComposition(p.getPlayerComposition()),
                 animations,
                 p.getPlayerComposition().getEquipmentId(KitType.WEAPON) + ":" + interactedIndex + ":" + interactedID,
                 "-1:" + targetName);
-        liveFrame.addAttack(new PlayerDidAttack(
+        liveFrame.addAttack(new PlayerDidAttack(itemManager,
                 String.valueOf(p.getName()),
                 String.valueOf(p.getAnimation()),
                 0,
@@ -1037,7 +1037,8 @@ public class TheatreTrackerPlugin extends Plugin
                 animations,
                 interactedIndex,
                 interactedID,
-                targetName
+                targetName,
+                PlayerWornItems.getStringFromComposition(p.getPlayerComposition())
         ), currentRoom.getName());
     }
 
@@ -1318,19 +1319,6 @@ public class TheatreTrackerPlugin extends Plugin
         }
     }
 
-    private String getPlayerItems(Player p)
-    {
-        PlayerComposition pc = p.getPlayerComposition();
-        return pc.getEquipmentId(KitType.HEAD) +","
-                + pc.getEquipmentId(KitType.CAPE) +","
-                +pc.getEquipmentId(KitType.AMULET) + ","
-                +pc.getEquipmentId(KitType.TORSO) +","
-                +pc.getEquipmentId(KitType.WEAPON)+","
-                +pc.getEquipmentId(KitType.SHIELD)+","
-                +pc.getEquipmentId(KitType.LEGS)+","
-                +pc.getEquipmentId(KitType.HANDS)+","
-                +pc.getEquipmentId(KitType.BOOTS);
-    }
 
     private ArrayList<VengPair> playersTextChanged;
 

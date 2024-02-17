@@ -6,6 +6,8 @@ import com.TheatreTracker.utility.datautility.DataManager;
 import com.TheatreTracker.utility.datautility.DataPoint;
 import com.TheatreTracker.utility.wrappers.*;
 import lombok.extern.slf4j.Slf4j;
+import net.runelite.client.game.ItemManager;
+
 import java.util.*;
 import static com.TheatreTracker.constants.TOBRoom.*;
 import static com.TheatreTracker.constants.TobIDs.EXIT_FLAG;
@@ -333,8 +335,11 @@ public class RoomData
         return getMaidenTime() + getBloatTime() + getNyloTime() + getSoteTime() + getXarpTime() + getVerzikTime();
     }
 
-    public RoomData(String[] parameters) throws Exception
+    private ItemManager itemManager;
+
+    public RoomData(String[] parameters, ItemManager itemManager) throws Exception
     {
+        this.itemManager = itemManager;
         dataManager = new DataManager();
         raidDataRaw = parameters;
         partyComplete = false;
@@ -536,7 +541,13 @@ public class RoomData
                 case PLAYER_ATTACK:
                     String player = subData[4].split(":")[0];
                     int tick = Integer.parseInt(subData[4].split(":")[1]);
-                    String animation = subData[5];
+                    String wornItems = "";
+                    String [] animationAndWorn = subData[5].split(":");
+                    String animation = animationAndWorn[0];
+                    if(animationAndWorn.length == 2)
+                    {
+                        wornItems = animationAndWorn[1];
+                    }
                     String spotAnims = subData[6];
                     String[] subsubData = subData[7].split(":");
                     String weapon = subsubData[0];
@@ -557,22 +568,22 @@ public class RoomData
                     switch (room)
                     {
                         case "Maiden":
-                            maidenAttacks.add(new PlayerDidAttack(player, animation, tick, weapon, projectile, spotAnims, interactedIndex, interactedID, targetName));
+                            maidenAttacks.add(new PlayerDidAttack(itemManager, player, animation, tick, weapon, projectile, spotAnims, interactedIndex, interactedID, targetName, wornItems));
                             break;
                         case "Bloat":
-                            bloatAttacks.add(new PlayerDidAttack(player, animation, tick, weapon, projectile, spotAnims, interactedIndex, interactedID, targetName));
+                            bloatAttacks.add(new PlayerDidAttack(itemManager, player, animation, tick, weapon, projectile, spotAnims, interactedIndex, interactedID, targetName, wornItems));
                             break;
                         case "Nylo":
-                            nyloAttacks.add(new PlayerDidAttack(player, animation, tick, weapon, projectile, spotAnims, interactedIndex, interactedID, targetName));
+                            nyloAttacks.add(new PlayerDidAttack(itemManager, player, animation, tick, weapon, projectile, spotAnims, interactedIndex, interactedID, targetName, wornItems));
                             break;
                         case "Sote":
-                            soteAttacks.add(new PlayerDidAttack(player, animation, tick, weapon, projectile, spotAnims, interactedIndex, interactedID, targetName));
+                            soteAttacks.add(new PlayerDidAttack(itemManager, player, animation, tick, weapon, projectile, spotAnims, interactedIndex, interactedID, targetName, wornItems));
                             break;
                         case "Xarp":
-                            xarpAttacks.add(new PlayerDidAttack(player, animation, tick, weapon, projectile, spotAnims, interactedIndex, interactedID, targetName));
+                            xarpAttacks.add(new PlayerDidAttack(itemManager, player, animation, tick, weapon, projectile, spotAnims, interactedIndex, interactedID, targetName, wornItems));
                             break;
                         case "Verzik":
-                            verzAttacks.add(new PlayerDidAttack(player, animation, tick, weapon, projectile, spotAnims, interactedIndex, interactedID, targetName));
+                            verzAttacks.add(new PlayerDidAttack(itemManager, player, animation, tick, weapon, projectile, spotAnims, interactedIndex, interactedID, targetName, wornItems));
                             break;
                     }
                     break;
@@ -651,7 +662,7 @@ public class RoomData
                         dataManager.incrementPlayerSpecific(DataPoint.VERZIK_BOUNCES, subData[4]);
                         if (!subData[5].equalsIgnoreCase(""))
                         {
-                            verzAttacks.add(new PlayerDidAttack(subData[4], "100000", Integer.parseInt(subData[5]), "-1", "-1", "-1", -1, -1, ""));
+                            verzAttacks.add(new PlayerDidAttack(itemManager, subData[4], "100000", Integer.parseInt(subData[5]), "-1", "-1", "-1", -1, -1, "", ""));
                         }
                         break;
                     case VERZIK_CRAB_SPAWNED:

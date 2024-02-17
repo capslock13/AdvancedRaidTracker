@@ -1,5 +1,6 @@
 package com.TheatreTracker.ui.charts;
 
+import com.TheatreTracker.utility.ItemReference;
 import com.TheatreTracker.utility.Point;
 
 import java.awt.*;
@@ -15,17 +16,57 @@ public class HoverBox
     public HoverBox(String s)
     {
         info = new ArrayList<>();
-        info.add(s);
+        addString(s);
     }
+
+    String[] styles = {"None", "Melee", "Range", "Mage"};
 
     public void addString(String s)
     {
         info.add(s);
+        if(s.toLowerCase().startsWith(".weapon"))
+        {
+            setStyle(s);
+            addString("Style: " + styles[style]);
+        }
     }
 
     public void setPosition(int x, int y)
     {
-        location = new Point(x, y);
+        location = new Point(x+20, y);
+    }
+
+    private final int MELEE = 1;
+    private final int RANGE = 2;
+    private final int MAGE = 3;
+    private final int NONE = 0;
+    int style = NONE;
+
+    private void setStyle(String weapon)
+    {
+        if(anyMatch(weapon, ItemReference.ITEMS[MELEE]))
+        {
+            style = MELEE;
+        }
+        else if(anyMatch(weapon, ItemReference.ITEMS[RANGE]))
+        {
+            style = RANGE;
+        }
+        else if(anyMatch(weapon, ItemReference.ITEMS[MAGE]))
+        {
+            style = MAGE;
+        }
+    }
+    private boolean anyMatch(String item, String[] items)
+    {
+        for(String s : items)
+        {
+            if(item.toLowerCase().contains(s))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void draw(Graphics2D g)
@@ -45,9 +86,27 @@ public class HoverBox
         g.fillRect(location.getX(), location.getY(), longestString + 10, boxHeight);
         g.setColor(Color.WHITE);
         g.drawRect(location.getX(), location.getY(), longestString + 10, boxHeight);
+
         for(int i = 0; i < info.size(); i++)
         {
-            g.drawString(info.get(i), location.getX()+5, location.getY() + 5 + (fontHeight+5)*(i+1));
+            String label = info.get(i);
+            if(label.startsWith(".") && label.length() > 1)
+            {
+                label = label.substring(1);
+                if(anyMatch(label, ItemReference.ITEMS[style]))
+                {
+                    g.setColor(Color.GREEN);
+                }
+                else if(anyMatch(label, ItemReference.ITEMS[0]))
+                {
+                    g.setColor(Color.CYAN);
+                }
+                else
+                {
+                    g.setColor(Color.RED);
+                }
+            }
+            g.drawString(label, location.getX()+5, location.getY() + 5 + (fontHeight+5)*(i+1));
         }
     }
 

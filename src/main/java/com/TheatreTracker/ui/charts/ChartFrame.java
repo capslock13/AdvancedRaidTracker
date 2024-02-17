@@ -5,6 +5,8 @@ import com.TheatreTracker.TheatreTrackerConfig;
 import com.TheatreTracker.ui.BaseFrame;
 import com.TheatreTracker.utility.datautility.DataPoint;
 import lombok.extern.slf4j.Slf4j;
+import net.runelite.client.callback.ClientThread;
+import net.runelite.client.game.ItemManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,8 +15,10 @@ import java.util.*;
 @Slf4j
 public class ChartFrame extends BaseFrame
 {
-    public ChartFrame(ArrayList<RoomData> roomData, TheatreTrackerConfig config)
+    private ClientThread clientThread;
+    public ChartFrame(ArrayList<RoomData> roomData, TheatreTrackerConfig config, ItemManager itemManager, ClientThread clientThread)
     {
+        this.clientThread = clientThread;
         JTabbedPane basepane = new JTabbedPane();
 
         JPanel maidenTab = new JPanel();
@@ -170,7 +174,7 @@ public class ChartFrame extends BaseFrame
                 }
             }
 
-            ChartPanel maidenRCP = new ChartPanel("Maiden", false, config);
+            ChartPanel maidenRCP = new ChartPanel("Maiden", false, config, clientThread);
             maidenRCP.setNPCMappings(data.maidenNPCMapping);
             maidenRCP.setRoomHP(data.maidenHP);
             maidenRCP.addAttacks(data.maidenAttacks);
@@ -185,7 +189,7 @@ public class ChartFrame extends BaseFrame
             maidenRCP.addLines(maidenLines);
             maidenRCP.addThrallBoxes(data.maidenThrallSpawns);
 
-            ChartPanel bloatRCP = new ChartPanel("Bloat", false, config);
+            ChartPanel bloatRCP = new ChartPanel("Bloat", false, config, clientThread);
             bloatRCP.setRoomHP(data.bloatHP);
             bloatRCP.addAttacks(data.bloatAttacks);
             bloatRCP.setPlayers(new ArrayList<>(data.players.keySet()));
@@ -198,7 +202,7 @@ public class ChartFrame extends BaseFrame
             bloatRCP.addLines(bloatLines);
             bloatRCP.addThrallBoxes(data.bloatThrallSpawns);
 
-            ChartPanel nyloRCP = new ChartPanel("Nylocas", false, config);
+            ChartPanel nyloRCP = new ChartPanel("Nylocas", false, config, clientThread);
             nyloRCP.setNPCMappings(data.nyloNPCMapping);
             nyloRCP.setRoomHP(data.nyloHP);
             nyloRCP.addAttacks(data.nyloAttacks);
@@ -212,7 +216,7 @@ public class ChartFrame extends BaseFrame
             nyloRCP.addLines(nyloLines);
             nyloRCP.addThrallBoxes(data.nyloThrallSpawns);
 
-            ChartPanel soteRCP = new ChartPanel("Sotetseg", false, config);
+            ChartPanel soteRCP = new ChartPanel("Sotetseg", false, config, clientThread);
             soteRCP.setRoomHP(data.soteHP);
             soteRCP.addAttacks(data.soteAttacks);
             soteRCP.setPlayers(new ArrayList<>(data.players.keySet()));
@@ -225,7 +229,7 @@ public class ChartFrame extends BaseFrame
             soteRCP.addLines(soteLines);
             soteRCP.addThrallBoxes(data.soteThrallSpawns);
 
-            ChartPanel xarpRCP = new ChartPanel("Xarpus", false, config);
+            ChartPanel xarpRCP = new ChartPanel("Xarpus", false, config, clientThread);
             xarpRCP.setRoomHP(data.xarpHP);
             xarpRCP.addAttacks(data.xarpAttacks);
             xarpRCP.setPlayers(new ArrayList<>(data.players.keySet()));
@@ -238,7 +242,7 @@ public class ChartFrame extends BaseFrame
             xarpRCP.addLines(xarpLines);
             xarpRCP.addThrallBoxes(data.xarpusThrallSpawns);
 
-            ChartPanel verzP1RCP = new ChartPanel("Verzik P1", false, config);
+            ChartPanel verzP1RCP = new ChartPanel("Verzik P1", false, config, clientThread);
             verzP1RCP.setNPCMappings(data.verzikNPCMapping);
             verzP1RCP.setRoomHP(data.verzikHP);
             verzP1RCP.addAttacks(data.verzAttacks);
@@ -254,7 +258,7 @@ public class ChartFrame extends BaseFrame
             verzP1RCP.setRoomSpecificText("Dawn Appears: ");
             verzP1RCP.addAutos(p1autos);
 
-            ChartPanel verzP2RCP = new ChartPanel("Verzik P2", false, config);
+            ChartPanel verzP2RCP = new ChartPanel("Verzik P2", false, config, clientThread);
             verzP2RCP.setNPCMappings(data.verzikNPCMapping);
             verzP2RCP.setRoomHP(data.verzikHP);
             verzP2RCP.addAttacks(data.verzAttacks);
@@ -268,7 +272,7 @@ public class ChartFrame extends BaseFrame
             verzP2RCP.addLines(verzikP2Lines);
             verzP2RCP.addThrallBoxes(data.verzikThrallSpawns);
 
-            ChartPanel verzP3RCP = new ChartPanel("Verzik P3", false, config);
+            ChartPanel verzP3RCP = new ChartPanel("Verzik P3", false, config, clientThread);
             verzP3RCP.setNPCMappings(data.verzikNPCMapping);
             verzP3RCP.setRoomHP(data.verzikHP);
 

@@ -4,6 +4,8 @@ import com.TheatreTracker.TheatreTrackerConfig;
 import com.TheatreTracker.ui.BaseFrame;
 import com.TheatreTracker.utility.wrappers.PlayerDidAttack;
 import lombok.extern.slf4j.Slf4j;
+import net.runelite.client.callback.ClientThread;
+import net.runelite.client.game.ItemManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -27,16 +29,20 @@ public class LiveChart extends BaseFrame
     public JTabbedPane tabbedPane;
 
     private final TheatreTrackerConfig config;
+    private final ItemManager itemManager;
+    private final ClientThread clientThread;
 
-    public LiveChart(TheatreTrackerConfig config)
+    public LiveChart(TheatreTrackerConfig config, ItemManager itemManager, ClientThread clientThread)
     {
+        this.clientThread = clientThread;
         this.config = config;
-        maidenPanel = new ChartPanel("Maiden", true, config);
-        bloatPanel = new ChartPanel("Bloat", true, config);
-        nyloPanel = new ChartPanel("Nylocas", true, config);
-        sotetsegPanel = new ChartPanel("Sotetseg", true, config);
-        xarpPanel = new ChartPanel("Xarpus", true, config);
-        verzPanel = new ChartPanel("Verzik", true, config);
+        this.itemManager = itemManager;
+        maidenPanel = new ChartPanel("Maiden", true, config, clientThread);
+        bloatPanel = new ChartPanel("Bloat", true, config, clientThread);
+        nyloPanel = new ChartPanel("Nylocas", true, config, clientThread);
+        sotetsegPanel = new ChartPanel("Sotetseg", true, config, clientThread);
+        xarpPanel = new ChartPanel("Xarpus", true, config, clientThread);
+        verzPanel = new ChartPanel("Verzik", true, config, clientThread);
 
         maidenScroll = new JScrollPane(maidenPanel);
         bloatScroll = new JScrollPane(bloatPanel);
@@ -76,7 +82,7 @@ public class LiveChart extends BaseFrame
             case "Verzik":
                 return verzPanel;
         }
-        return new ChartPanel("", true, config);
+        return new ChartPanel("", true, config, clientThread);
     }
 
     public void incrementTick(String room)

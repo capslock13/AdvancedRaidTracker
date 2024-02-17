@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.events.*;
 import com.TheatreTracker.utility.RoomState;
+import net.runelite.client.game.ItemManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,8 +26,9 @@ public class VerzikHandler extends RoomHandler
     public RoomState.VerzikRoomState roomState;
     private final TheatreTrackerPlugin plugin;
     private int healingEndTick = -1;
+    private ItemManager itemManager;
 
-    public VerzikHandler(Client client, DataWriter clog, TheatreTrackerConfig config, TheatreTrackerPlugin plugin)
+    public VerzikHandler(Client client, DataWriter clog, TheatreTrackerConfig config, TheatreTrackerPlugin plugin, ItemManager itemManager)
     {
         super(client, clog, config);
         this.plugin = plugin;
@@ -199,7 +201,7 @@ public class VerzikHandler extends RoomHandler
         if (event.getActor().hasSpotAnim(VERZIK_BOUNCE_SPOT_ANIMATION))
         {
             clog.write(LogID.VERZIK_BOUNCE, event.getActor().getName(), String.valueOf(client.getTickCount() - verzikEntryTick));
-            plugin.liveFrame.addAttack(new PlayerDidAttack(event.getActor().getName(), VERZIK_BOUNCE_ANIMATION, client.getTickCount() - verzikEntryTick, "-1", "-1", "-1", -1, -1, ""), "Verzik");
+            plugin.liveFrame.addAttack(new PlayerDidAttack(itemManager, event.getActor().getName(), VERZIK_BOUNCE_ANIMATION, client.getTickCount() - verzikEntryTick, "-1", "-1", "-1", -1, -1, "", ""), "Verzik");
 
         }
     }

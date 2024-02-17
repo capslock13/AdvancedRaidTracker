@@ -4,6 +4,8 @@ import com.TheatreTracker.RoomData;
 import com.TheatreTracker.TheatreTrackerConfig;
 import com.TheatreTracker.ui.BaseFrame;
 import lombok.extern.slf4j.Slf4j;
+import net.runelite.client.callback.ClientThread;
+import net.runelite.client.game.ItemManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,14 +17,18 @@ public class ComparisonViewFrame extends BaseFrame
 {
     public ComparisonViewFrame(ArrayList<ArrayList<RoomData>> data, ArrayList<String> labels)
     {
-        add(new ComparisonViewPanel(data, labels, config));
+        add(new ComparisonViewPanel(data, labels, config, itemManager, clientThread));
         pack();
     }
 
     private TheatreTrackerConfig config;
+    private ItemManager itemManager;
+    private ClientThread clientThread;
 
-    public ComparisonViewFrame(Map<Integer, ArrayList<ArrayList<RoomData>>> dataSets, ArrayList<ArrayList<String>> labelSets, TheatreTrackerConfig config)
+    public ComparisonViewFrame(Map<Integer, ArrayList<ArrayList<RoomData>>> dataSets, ArrayList<ArrayList<String>> labelSets, TheatreTrackerConfig config, ItemManager itemManager, ClientThread clientThread)
     {
+        this.clientThread = clientThread;
+        this.itemManager = itemManager;
         this.config = config;
         JTabbedPane pane = new JTabbedPane();
         pane.setBackground(Color.BLACK);
@@ -41,7 +47,7 @@ public class ComparisonViewFrame extends BaseFrame
                 tabName = "4-Man";
             if (i == 5)
                 tabName = "5-Man";
-            pane.addTab(tabName, new ComparisonViewPanel(dataSets.get(i), labelSets.get(index), config));
+            pane.addTab(tabName, new ComparisonViewPanel(dataSets.get(i), labelSets.get(index), config, itemManager, clientThread));
             index++;
         }
         add(pane);

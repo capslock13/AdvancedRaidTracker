@@ -7,6 +7,8 @@ import com.TheatreTracker.utility.RoomUtil;
 import com.TheatreTracker.utility.datautility.DataPoint;
 import com.TheatreTracker.utility.StatisticGatherer;
 import lombok.extern.slf4j.Slf4j;
+import net.runelite.client.callback.ClientThread;
+import net.runelite.client.game.ItemManager;
 
 import javax.swing.*;
 import javax.swing.border.MatteBorder;
@@ -78,9 +80,13 @@ public class ComparisonViewPanel extends JPanel
     JCheckBox groupingEnabled;
 
     private final TheatreTrackerConfig config;
+    private final ItemManager itemManager;
 
-    public ComparisonViewPanel(ArrayList<ArrayList<RoomData>> raidData, ArrayList<String> names, TheatreTrackerConfig config)
+    private final ClientThread clientThread;
+    public ComparisonViewPanel(ArrayList<ArrayList<RoomData>> raidData, ArrayList<String> names, TheatreTrackerConfig config, ItemManager itemManager, ClientThread clientThread)
     {
+        this.clientThread = clientThread;
+        this.itemManager = itemManager;
         this.config = config;
         leftLabel = new JTextField("Min cutoff: ");
         rightLabel = new JTextField("Max cutoff: ");
@@ -542,7 +548,7 @@ public class ComparisonViewPanel extends JPanel
 
     GraphPanel getGraphPanel(ArrayList<RoomData> points)
     {
-        return new GraphPanel(points, config);
+        return new GraphPanel(points, config, itemManager, clientThread);
     }
 
     private ArrayList<Integer> getArrayForStatistics(ArrayList<RoomData> data)

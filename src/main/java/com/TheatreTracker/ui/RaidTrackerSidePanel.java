@@ -8,6 +8,8 @@ import com.TheatreTracker.utility.wrappers.RaidsArrayWrapper;
 import com.TheatreTracker.utility.datautility.RaidsManager;
 import com.google.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
+import net.runelite.client.callback.ClientThread;
+import net.runelite.client.game.ItemManager;
 import net.runelite.client.ui.PluginPanel;
 
 import javax.swing.*;
@@ -30,9 +32,11 @@ public class RaidTrackerSidePanel extends PluginPanel
 
     private TheatreTrackerPlugin plugin;
     private TheatreTrackerConfig config;
+    private static ItemManager itemManager;
+    private ClientThread clientThread;
 
     @Inject
-    RaidTrackerSidePanel(TheatreTrackerPlugin plugin, TheatreTrackerConfig config)
+    RaidTrackerSidePanel(TheatreTrackerPlugin plugin, TheatreTrackerConfig config, ItemManager itemManager, ClientThread clientThread)
     {
         DataWriter.checkLogFileSize();
         pleaseWait = new JLabel("Parsing files please wait..", SwingConstants.CENTER);
@@ -41,9 +45,10 @@ public class RaidTrackerSidePanel extends PluginPanel
         {
             this.config = config;
             this.plugin = plugin;
+            this.itemManager = itemManager;
             raidsData = new ArrayList<>();
             raidsData = getAllRaids(pleaseWait);
-            raids = new Raids(config);
+            raids = new Raids(config, itemManager, clientThread);
             removeAll();
             buildComponents();
             updateUI();
@@ -112,7 +117,7 @@ public class RaidTrackerSidePanel extends PluginPanel
                     {
                         raid.add(line);
                         raidActive = false;
-                        raids.add(new RoomData(raid.toArray(new String[0])));
+                        raids.add(new RoomData(raid.toArray(new String[0]), itemManager));
                         raid.clear();
                     } else
                     {
@@ -138,7 +143,7 @@ public class RaidTrackerSidePanel extends PluginPanel
         viewRaidsButton.addActionListener(
                 al ->
                 {
-                    raids = new Raids(config);
+                    raids = new Raids(config, itemManager, clientThread);
                     raids.createFrame(raidsData);
                     raids.getContentPane().setBackground(Color.BLACK);
                     raids.repaint();
@@ -160,7 +165,7 @@ public class RaidTrackerSidePanel extends PluginPanel
         tableRaidsButton.addActionListener(
                 al ->
                 {
-                    raids = new Raids(config);
+                    raids = new Raids(config, itemManager, clientThread);
                     raids.createFrame(getTableData());
                     raids.getContentPane().setBackground(Color.BLACK);
                     raids.repaint();

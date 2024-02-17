@@ -7,8 +7,11 @@ import com.TheatreTracker.utility.Point;
 import com.TheatreTracker.utility.weapons.WeaponAttack;
 import com.TheatreTracker.utility.weapons.WeaponDecider;
 import com.TheatreTracker.utility.wrappers.*;
+import com.google.inject.Inject;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import net.runelite.client.callback.ClientThread;
+import net.runelite.client.game.ItemManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,6 +25,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 public class ChartPanel extends JPanel implements MouseListener, MouseMotionListener
@@ -191,6 +195,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
     public void addAttack(PlayerDidAttack attack)
     {
+        clientThread.invoke(attack::setWornNames);
         WeaponAttack weaponAttack = WeaponDecider.getWeapon(attack.animation, attack.spotAnims, attack.projectile, attack.weapon);
         if (weaponAttack != WeaponAttack.UNDECIDED)
         {
@@ -204,7 +209,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             {
                 targetString += targetName;
             }
-            actions.add(new PlayerTick(attack.player, attack.tick, targetString));
+            actions.add(new PlayerTick(attack.player, attack.tick, targetString, attack.wornItemNames));
             String additionalText = "";
             if (targetString.contains("(on w"))
             {
@@ -254,7 +259,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     public void addLiveAttack(PlayerDidAttack attack)
     {
         attack.tick += endTick;
-        addAttack(new PlayerDidAttack(attack.player, attack.animation, attack.tick, attack.weapon, attack.projectile, attack.spotAnims, attack.targetedIndex, attack.targetedID, attack.targetName));
+        addAttack(new PlayerDidAttack(attack.itemManager, attack.player, attack.animation, attack.tick, attack.weapon, attack.projectile, attack.spotAnims, attack.targetedIndex, attack.targetedID, attack.targetName, attack.wornItems));
     }
 
     public void addAttacks(ArrayList<PlayerDidAttack> attacks)
@@ -339,8 +344,10 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
     }
 
-    public ChartPanel(String room, boolean isLive, TheatreTrackerConfig config)
+    private final ClientThread clientThread;
+    public ChartPanel(String room, boolean isLive, TheatreTrackerConfig config, ClientThread clientThread)
     {
+        this.clientThread = clientThread;
         scale = 26;
         live = isLive;
         this.room = room;
@@ -682,6 +689,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         }
     }
 
+
     private void drawHoverBox(Graphics2D g)
     {
         for (PlayerTick action : actions)
@@ -690,8 +698,11 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             {
                 Point location = getPoint(action.tick, action.player);
                 HoverBox hoverBox = new HoverBox(action.action);
-                hoverBox.addString(action.player);
-                hoverBox.addString(String.valueOf(action.tick));
+                hoverBox.addString("");
+                for(String item : action.wornItems)
+                {
+                    hoverBox.addString("."+item);
+                }
                 hoverBox.setPosition(location.getX() + 10, location.getY() - 10);
                 hoverBox.draw(g);
             }
@@ -895,28 +906,29 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
     }
 
+
     @Override
     public void mouseReleased(MouseEvent e)
     {
-
     }
 
     @Override
     public void mouseEntered(MouseEvent e)
     {
-
     }
 
     @Override
     public void mouseExited(MouseEvent e)
     {
-
+        selectedPlayer = "";
+        selectedTick = -1;
+        selectedRow = -1;
+        drawGraph();
     }
 
     @Override
     public void mouseDragged(MouseEvent e)
     {
-
     }
 
     @Override

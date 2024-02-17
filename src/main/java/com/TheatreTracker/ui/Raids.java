@@ -25,6 +25,8 @@ import com.TheatreTracker.utility.datautility.DataWriter;
 import com.TheatreTracker.utility.wrappers.PlayerCorrelatedPointData;
 import com.TheatreTracker.utility.wrappers.StringInt;
 import lombok.extern.slf4j.Slf4j;
+import net.runelite.client.callback.ClientThread;
+import net.runelite.client.game.ItemManager;
 
 import javax.swing.*;
 import javax.swing.border.MatteBorder;
@@ -149,10 +151,14 @@ public class Raids extends BaseFrame
         return "<html><font color='#" + Integer.toHexString(c.getRGB()).substring(2) + "'>";
     }
 
-    private TheatreTrackerConfig config;
+    private final TheatreTrackerConfig config;
+    private final ItemManager itemManager;
+    private final ClientThread clientThread;
 
-    public Raids(TheatreTrackerConfig config)
+    public Raids(TheatreTrackerConfig config, ItemManager itemManager, ClientThread clientThread)
     {
+        this.clientThread = clientThread;
+        this.itemManager = itemManager;
         columnHeaders = new ArrayList<>();
         for (String s : columnHeaderNames)
         {
@@ -1701,7 +1707,7 @@ public class Raids extends BaseFrame
                     dataSets.put(scale, scaleData);
                     labelSets.add(labels);
                 }
-                ComparisonViewFrame graphView = new ComparisonViewFrame(dataSets, labelSets, config);
+                ComparisonViewFrame graphView = new ComparisonViewFrame(dataSets, labelSets, config, itemManager, clientThread);
                 graphView.open();
             }
         });
@@ -1749,7 +1755,7 @@ public class Raids extends BaseFrame
                 {
                     rows.add(currentData.get(Integer.parseInt(table.getModel().getValueAt(toRemove[i], 0).toString())));
                 }
-                ChartFrame roomCharts = new ChartFrame(rows, config);
+                ChartFrame roomCharts = new ChartFrame(rows, config, itemManager, clientThread);
                 roomCharts.open();
             }
         });

@@ -5,6 +5,8 @@ import com.TheatreTracker.TheatreTrackerConfig;
 import com.TheatreTracker.utility.RoomUtil;
 import com.TheatreTracker.utility.datautility.DataPoint;
 import lombok.extern.slf4j.Slf4j;
+import net.runelite.client.callback.ClientThread;
+import net.runelite.client.game.ItemManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -62,9 +64,13 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
     private final ArrayList<RoomData> internalData;
     private final TheatreTrackerConfig config;
 
-    public GraphPanel(ArrayList<RoomData> data, TheatreTrackerConfig config)
-    {
+    private final ItemManager itemManager;
 
+    private final ClientThread clientThread;
+    public GraphPanel(ArrayList<RoomData> data, TheatreTrackerConfig config, ItemManager itemManager, ClientThread clientThread)
+    {
+        this.clientThread = clientThread;
+        this.itemManager = itemManager;
         selectedBounds = new ArrayList<>();
         gradientStart = new Color(100, 170, 230, 90);
         gradientEnd = new Color(200, 240, 255, 90);
@@ -1047,13 +1053,13 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
                 {
                     if (e.getX() >= bound.getLeft() && e.getX() <= bound.getRight() && e.getY() <= bound.getBottom() && e.getY() >= bound.getTop())
                     {
-                        GraphRightClickContextMenu menu = new GraphRightClickContextMenu(bound.raids, config);
+                        GraphRightClickContextMenu menu = new GraphRightClickContextMenu(bound.raids, config, itemManager, clientThread);
                         menu.show(e.getComponent(), e.getX(), e.getY());
                     }
                 }
             } else
             {
-                GraphRightClickContextMenu menu = new GraphRightClickContextMenu(mergeSelectedData(), config);
+                GraphRightClickContextMenu menu = new GraphRightClickContextMenu(mergeSelectedData(), config, itemManager, clientThread);
                 menu.show(e.getComponent(), e.getX(), e.getY());
             }
         }

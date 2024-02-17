@@ -20,7 +20,7 @@ public class PlayerWornItems
     public PlayerWornItems(String s, ItemManager itemManager)
     {
         this.itemManager = itemManager;
-        String[] items = s.split(",");
+        String[] items = s.split("~");
         if(items.length == 9)
         {
             helmet = Integer.parseInt(items[0]);
@@ -37,31 +37,38 @@ public class PlayerWornItems
 
     public static String getStringFromComposition(PlayerComposition pc)
     {
-        return pc.getEquipmentId(KitType.HEAD) +","
-                    + pc.getEquipmentId(KitType.CAPE) +","
-                    +pc.getEquipmentId(KitType.AMULET) + ","
-                    +pc.getEquipmentId(KitType.WEAPON) +","
-                    +pc.getEquipmentId(KitType.TORSO)+","
-                    +pc.getEquipmentId(KitType.SHIELD)+","
-                    +pc.getEquipmentId(KitType.LEGS)+","
-                    +pc.getEquipmentId(KitType.HANDS)+","
+        return pc.getEquipmentId(KitType.HEAD) +"~"
+                    + pc.getEquipmentId(KitType.CAPE) +"~"
+                    +pc.getEquipmentId(KitType.AMULET) + "~"
+                    +pc.getEquipmentId(KitType.WEAPON) +"~"
+                    +pc.getEquipmentId(KitType.TORSO)+"~"
+                    +pc.getEquipmentId(KitType.SHIELD)+"~"
+                    +pc.getEquipmentId(KitType.LEGS)+"~"
+                    +pc.getEquipmentId(KitType.HANDS)+"~"
                     +pc.getEquipmentId(KitType.BOOTS);
     }
 
     public String[] getAll()
     {
-        return new String[]
-                {
-                        "Helmet: " + getItemName(helmet),
-                        "Cape: " + getItemName(cape),
-                        "Amulet: " + getItemName(amulet),
-                        "Weapon: " + getItemName(weapon),
-                        "Torso: " + getItemName(torso),
-                        "Shield: " + getItemName(shield),
-                        "Legs: " + getItemName(legs),
-                        "Gloves: " + getItemName(gloves),
-                        "Boots: " + getItemName(boots),
-                };
+        if(helmet+cape+amulet+weapon+torso+shield+legs+gloves+boots == 0)
+        {
+            return new String[]{};
+        }
+        else
+        {
+            return new String[]
+                    {
+                            "Helmet: " + getItemName(helmet),
+                            "Cape: " + getItemName(cape),
+                            "Amulet: " + getItemName(amulet),
+                            "Weapon: " + getItemName(weapon),
+                            "Torso: " + getItemName(torso),
+                            "Shield: " + getItemName(shield),
+                            "Legs: " + getItemName(legs),
+                            "Gloves: " + getItemName(gloves),
+                            "Boots: " + getItemName(boots),
+                    };
+        }
     }
 
     public String getItemName(int id)

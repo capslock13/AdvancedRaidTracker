@@ -84,7 +84,7 @@ public class TheatreTrackerPlugin extends Plugin
     private ClientToolbar clientToolbar;
 
     @Inject
-    private ClientThread clientThread;
+    public ClientThread clientThread;
 
     @Inject
     private PartyService party;

@@ -195,7 +195,10 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
     public void addAttack(PlayerDidAttack attack)
     {
-        clientThread.invoke(attack::setWornNames);
+        if(clientThread != null)
+        {
+            clientThread.invoke(attack::setWornNames);
+        }
         WeaponAttack weaponAttack = WeaponDecider.getWeapon(attack.animation, attack.spotAnims, attack.projectile, attack.weapon);
         if (weaponAttack != WeaponAttack.UNDECIDED)
         {

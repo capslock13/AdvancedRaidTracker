@@ -33,7 +33,6 @@ public class RaidTrackerSidePanel extends PluginPanel
     private TheatreTrackerPlugin plugin;
     private TheatreTrackerConfig config;
     private static ItemManager itemManager;
-    private ClientThread clientThread;
 
     @Inject
     RaidTrackerSidePanel(TheatreTrackerPlugin plugin, TheatreTrackerConfig config, ItemManager itemManager, ClientThread clientThread)
@@ -45,7 +44,7 @@ public class RaidTrackerSidePanel extends PluginPanel
         {
             this.config = config;
             this.plugin = plugin;
-            this.itemManager = itemManager;
+            RaidTrackerSidePanel.itemManager = itemManager;
             raidsData = new ArrayList<>();
             raidsData = getAllRaids(pleaseWait);
             raids = new Raids(config, itemManager, clientThread);
@@ -143,7 +142,7 @@ public class RaidTrackerSidePanel extends PluginPanel
         viewRaidsButton.addActionListener(
                 al ->
                 {
-                    raids = new Raids(config, itemManager, clientThread);
+                    raids = new Raids(config, itemManager, plugin.clientThread);
                     raids.createFrame(raidsData);
                     raids.getContentPane().setBackground(Color.BLACK);
                     raids.repaint();
@@ -165,7 +164,7 @@ public class RaidTrackerSidePanel extends PluginPanel
         tableRaidsButton.addActionListener(
                 al ->
                 {
-                    raids = new Raids(config, itemManager, clientThread);
+                    raids = new Raids(config, itemManager, plugin.clientThread);
                     raids.createFrame(getTableData());
                     raids.getContentPane().setBackground(Color.BLACK);
                     raids.repaint();

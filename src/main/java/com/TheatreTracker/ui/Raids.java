@@ -153,7 +153,7 @@ public class Raids extends BaseFrame
 
     private final TheatreTrackerConfig config;
     private final ItemManager itemManager;
-    private final ClientThread clientThread;
+    private ClientThread clientThread;
 
     public Raids(TheatreTrackerConfig config, ItemManager itemManager, ClientThread clientThread)
     {
@@ -783,6 +783,10 @@ public class Raids extends BaseFrame
 
     private Map<String, String[]> comboPopupData = new LinkedHashMap<String, String[]>();
 
+    public void setClientThread(ClientThread clientThread)
+    {
+        this.clientThread = clientThread;
+    }
 
     public void createFrame(ArrayList<RoomData> data)
     {

@@ -183,7 +183,7 @@ public class BloatHandler extends RoomHandler
         if (event.getActor().getAnimation() == BLOAT_DOWN_ANIMATION)
         {
             down();
-        } else if (event.getActor().getAnimation() == -1 && Objects.requireNonNull(event.getActor().getName()).contains("Bloat"))
+        } else if (event.getActor().getName() != null && event.getActor().getAnimation() == -1 && event.getActor().getName().contains("Bloat"))
         {
             walk();
         }

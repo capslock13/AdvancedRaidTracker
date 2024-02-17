@@ -15,10 +15,8 @@ import java.util.*;
 @Slf4j
 public class ChartFrame extends BaseFrame
 {
-    private ClientThread clientThread;
     public ChartFrame(ArrayList<RoomData> roomData, TheatreTrackerConfig config, ItemManager itemManager, ClientThread clientThread)
     {
-        this.clientThread = clientThread;
         JTabbedPane basepane = new JTabbedPane();
 
         JPanel maidenTab = new JPanel();

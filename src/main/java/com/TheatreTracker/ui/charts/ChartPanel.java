@@ -69,7 +69,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     @Setter
     private Map<Integer, Integer> roomHP = new HashMap<>();
     Map<String, Integer> playerOffsets = new LinkedHashMap<>();
-    private final ArrayList<PlayerTick> actions = new ArrayList<>();
+    private final Map<PlayerDidAttack, String> actions = new HashMap<>();
 
     public void enableWrap()
     {
@@ -212,7 +212,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             {
                 targetString += targetName;
             }
-            actions.add(new PlayerTick(attack.player, attack.tick, targetString, attack.wornItemNames));
+            actions.put(attack, targetString);
             String additionalText = "";
             if (targetString.contains("(on w"))
             {
@@ -695,14 +695,14 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
     private void drawHoverBox(Graphics2D g)
     {
-        for (PlayerTick action : actions)
+        for (PlayerDidAttack action : actions.keySet())
         {
             if (action.tick == selectedTick && action.player.equals(selectedPlayer))
             {
                 Point location = getPoint(action.tick, action.player);
-                HoverBox hoverBox = new HoverBox(action.action);
+                HoverBox hoverBox = new HoverBox(actions.get(action));
                 hoverBox.addString("");
-                for(String item : action.wornItems)
+                for(String item : action.wornItemNames)
                 {
                     hoverBox.addString("."+item);
                 }

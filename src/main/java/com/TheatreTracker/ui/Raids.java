@@ -2334,7 +2334,6 @@ public class Raids extends BaseFrame
                             if(!Objects.equals(data[1], "null"))
                             {
                                 viewByRaidComboBox.setSelectedItem(data[1]);
-                                log.info(data[1]);
                             }
                             else
                             {

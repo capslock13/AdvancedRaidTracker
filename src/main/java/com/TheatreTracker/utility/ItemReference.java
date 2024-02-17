@@ -61,6 +61,7 @@ public class ItemReference
                     "kodai",
                     "ice",
                     "ward",
+                    "dawnbringer"
             }
     };
 

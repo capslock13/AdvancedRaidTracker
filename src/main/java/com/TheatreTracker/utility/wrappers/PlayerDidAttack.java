@@ -2,9 +2,10 @@ package com.TheatreTracker.utility.wrappers;
 
 import com.TheatreTracker.utility.PlayerWornItems;
 import com.google.inject.Inject;
+import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.game.ItemManager;
-
+@Slf4j
 public class PlayerDidAttack
 {
     public String player;

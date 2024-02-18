@@ -1305,6 +1305,11 @@ public class RoomData
                                 maidenSkip = false;
                             }
                         }
+                        break;
+                    case MAIDEN_PLAYER_DRAINED:
+                        dataManager.increment(DataPoint.MAIDEN_MELEE_DRAINS);
+                        dataManager.incrementPlayerSpecific(DataPoint.MAIDEN_MELEE_DRAINS, subData[4]);
+                        break;
                     case MAIDEN_SPAWNED:
                         maidenSpawned = true;
                         if (partyComplete)

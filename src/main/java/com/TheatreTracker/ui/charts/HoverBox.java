@@ -2,11 +2,14 @@ package com.TheatreTracker.ui.charts;
 
 import com.TheatreTracker.utility.ItemReference;
 import com.TheatreTracker.utility.Point;
+import net.runelite.api.Item;
 
 import java.awt.*;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
 import java.util.ArrayList;
+
+import static com.TheatreTracker.utility.ItemReference.*;
 
 public class HoverBox
 {
@@ -27,7 +30,7 @@ public class HoverBox
         if(s.toLowerCase().startsWith(".weapon"))
         {
             setStyle(s);
-            addString("Style: " + styles[style]);
+            info.add(1, "Style: " + styles[style]);
         }
     }
 
@@ -36,10 +39,6 @@ public class HoverBox
         location = new Point(x+20, y);
     }
 
-    private final int MELEE = 1;
-    private final int RANGE = 2;
-    private final int MAGE = 3;
-    private final int NONE = 0;
     int style = NONE;
 
     private void setStyle(String weapon)

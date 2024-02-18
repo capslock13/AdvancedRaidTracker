@@ -23,8 +23,13 @@ import java.util.stream.Collectors;
 
 import static com.TheatreTracker.constants.LogID.*;
 import static com.TheatreTracker.constants.TobIDs.*;
+import static com.TheatreTracker.utility.ItemReference.*;
 
 import com.TheatreTracker.utility.wrappers.MaidenCrab;
+import net.runelite.api.kit.KitType;
+import net.runelite.client.game.ItemManager;
+import net.runelite.http.api.item.ItemEquipmentStats;
+import net.runelite.http.api.item.ItemStats;
 
 @Slf4j
 public class MaidenHandler extends RoomHandler
@@ -58,11 +63,13 @@ public class MaidenHandler extends RoomHandler
     TheatreTrackerConfig config;
     TheatreTrackerPlugin plugin;
 
+    private ItemManager itemManager;
 
-    public MaidenHandler(Client client, DataWriter clog, TheatreTrackerConfig config, TheatreTrackerPlugin plugin)
+    public MaidenHandler(Client client, DataWriter clog, TheatreTrackerConfig config, TheatreTrackerPlugin plugin, ItemManager itemManager)
     {
         super(client, clog, config);
         this.plugin = plugin;
+        this.itemManager = itemManager;
         roomState = RoomState.MaidenRoomState.NOT_STARTED;
         p70 = -1;
         p50 = -1;
@@ -160,6 +167,8 @@ public class MaidenHandler extends RoomHandler
         plugin.liveFrame.setMaidenFinished(maidenDeathTick - maidenStartTick);
     }
 
+    private boolean didAuto = false;
+
     public void updateAnimationChanged(AnimationChanged event)
     {
         if (event.getActor().getAnimation() == MAIDEN_DEATH_ANIMATION)
@@ -184,6 +193,60 @@ public class MaidenHandler extends RoomHandler
         } else if (event.getActor().getAnimation() == DINHS_BULWARK_ANIMATION)
         {
             dinhsers.add((Player) event.getActor());
+        }
+        else if(event.getActor().getAnimation() == MAIDEN_AUTO_ANIMATION)
+        {
+            didAuto = true;
+        }
+    }
+
+    public int getDrainedStat(Player player) //Assumes berserker/ultor
+    {
+        if(player == null)
+        {
+            return NONE;
+        }
+        int stab = 0;
+        int slash = 0;
+        int crush = 0;
+        int magic = 0;
+        int range = 0;
+        PlayerComposition pc = player.getPlayerComposition();
+        int[] wornItems = {
+                pc.getEquipmentId(KitType.HEAD),
+                pc.getEquipmentId(KitType.CAPE),
+                pc.getEquipmentId(KitType.AMULET),
+                pc.getEquipmentId(KitType.WEAPON),
+                pc.getEquipmentId(KitType.TORSO),
+                pc.getEquipmentId(KitType.SHIELD),
+                pc.getEquipmentId(KitType.LEGS),
+                pc.getEquipmentId(KitType.HANDS),
+                pc.getEquipmentId(KitType.BOOTS)
+        };
+        for(int item : wornItems)
+        {
+            ItemStats itemStats = itemManager.getItemStats(item, false);
+            if(itemStats != null)
+            {
+                ItemEquipmentStats itemEquipmentStats = itemStats.getEquipment();
+                stab += itemEquipmentStats.getAstab();
+                slash += itemEquipmentStats.getAslash();
+                crush += itemEquipmentStats.getAcrush();
+                magic += itemEquipmentStats.getAmagic();
+                range += itemEquipmentStats.getArange();
+            }
+        }
+        if((stab >= magic && stab >= range) || (slash >= magic && slash >= range) || (crush >= magic && crush >= range))
+        {
+            return MELEE;
+        }
+        else if(magic > range)
+        {
+            return MAGE;
+        }
+        else
+        {
+            return RANGE;
         }
     }
 
@@ -547,6 +610,24 @@ public class MaidenHandler extends RoomHandler
         assessBloodForNextTick();
         hitsplatsPerPlayer.clear();
         maidenHeals.clear();
+        if(didAuto)
+        {
+            Actor drained = maidenNPC.getInteracting();
+            if (drained instanceof Player)
+            {
+                clog.write(MAIDEN_AUTO, drained.getName(), String.valueOf(client.getTickCount() - roomStartTick));
+                int statDrained = getDrainedStat((Player) drained);
+                if (statDrained == MELEE)
+                {
+                    if (config.showMistakesInChat())
+                    {
+                        plugin.sendChatMessage("Maiden drained " + drained.getName() + "'s melee stats.");
+                    }
+                    clog.write(MAIDEN_PLAYER_DRAINED, drained.getName(), String.valueOf((client.getTickCount() - roomStartTick)));
+                }
+            }
+            didAuto = false;
+        }
 
         for (MaidenCrab crab : deferredCrabs)
         {

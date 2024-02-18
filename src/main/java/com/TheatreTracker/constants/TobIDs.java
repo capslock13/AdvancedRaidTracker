@@ -120,6 +120,8 @@ public class TobIDs
     public final static int UNCHARGED_SCYTHE = 22486;
     public final static int UNCHARGED_BLOOD_SCYTHE = 25738;
     public final static int UNCHARGED_HOLY_SCYTHE = 25741;
+
+    public final static int MAIDEN_AUTO_ANIMATION = 8092;
     public final static int DRAGON_WARHAMMER = 13576;
     public final static int DRAGON_WARHAMMER_ALTERNATE = 20785;
     public final static int BOP_ANIMATION = 401;

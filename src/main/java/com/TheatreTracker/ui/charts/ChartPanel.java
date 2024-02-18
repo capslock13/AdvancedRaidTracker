@@ -229,7 +229,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
                 additionalText = proc + shortenedString;
             }
-            outlineBoxes.add(new OutlineBox(attack.player, attack.tick, weaponAttack.shorthand, weaponAttack.color, isTarget, additionalText));
+            outlineBoxes.add(new OutlineBox(attack, weaponAttack.shorthand, weaponAttack.color, isTarget, additionalText));
         }
     }
 
@@ -547,6 +547,9 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                     g.drawString(box.additionalText, xOffset + textOffset, yOffset + scale - 3);
                     g.setFont(f);
                 }
+                box.createOutline();
+                g.setColor(box.outlineColor);
+                g.drawRect(xOffset+1, yOffset+1, scale-2, scale-2);
             }
         }
     }

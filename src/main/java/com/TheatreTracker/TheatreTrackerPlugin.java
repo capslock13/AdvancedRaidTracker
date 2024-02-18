@@ -109,7 +109,7 @@ public class TheatreTrackerPlugin extends Plugin
     private boolean wasInTheatre;
     private RoomHandler currentRoom;
     int deferredTick;
-    private ArrayList<String> currentPlayers;
+    public ArrayList<String> currentPlayers;
     public static int scale = -1;
     public boolean verzShieldActive = false;
 
@@ -196,7 +196,7 @@ public class TheatreTrackerPlugin extends Plugin
 
         clog = new DataWriter(config);
         lobby = new LobbyHandler(client, clog, config);
-        maiden = new MaidenHandler(client, clog, config, this);
+        maiden = new MaidenHandler(client, clog, config, this, itemManager);
         bloat = new BloatHandler(client, clog, config, this);
         nylo = new NyloHandler(client, clog, config, this);
         sote = new SotetsegHandler(client, clog, config, this);
@@ -731,92 +731,83 @@ public class TheatreTrackerPlugin extends Plugin
     {
         for(Player p : deferredAnimations)
         {
-            if (inTheatre)
+            checkAnimation(p);
+        }
+        deferredAnimations.clear();
+    }
+
+    private void checkAnimation(Player p)
+    {
+        if (inTheatre)
+        {
+            if (p.getPlayerComposition() != null)
             {
-                if (p.getPlayerComposition() != null)
+                int id = p.getPlayerComposition().getEquipmentId(KitType.WEAPON);
+                if (p.getAnimation() == SCYTHE_ANIMATION)
                 {
-                    int id = p.getPlayerComposition().getEquipmentId(KitType.WEAPON);
-                    if (p.getAnimation() == SCYTHE_ANIMATION)
+                    if (id == UNCHARGED_SCYTHE || id == UNCHARGED_BLOOD_SCYTHE || id == UNCHARGED_HOLY_SCYTHE)
                     {
-                        if (id == UNCHARGED_SCYTHE || id == UNCHARGED_BLOOD_SCYTHE || id == UNCHARGED_HOLY_SCYTHE)
+                        if (config.showMistakesInChat())
                         {
-                            if (config.showMistakesInChat())
-                            {
-                                sendChatMessage(p.getName() + " is using an uncharged scythe");
-                            }
-                        }
-                    } else if (p.getAnimation() == BOP_ANIMATION)
-                    {
-                        if (id == DRAGON_WARHAMMER || id == DRAGON_WARHAMMER_ALTERNATE)
-                        {
-                            if (config.showMistakesInChat())
-                            {
-                                sendChatMessage(p.getName() + " hammer bopped (bad rng)");
-                            }
-                            clog.write(DWH_BOP, p.getName());
-                        }
-                    } else if (p.getAnimation() == WHACK_ANIMATION)
-                    {
-                        if (id == KODAI_WAND || id == KODAI_WAND_ALTERNATE)
-                        {
-                            if (config.showMistakesInChat())
-                            {
-                                sendChatMessage(p.getName() + " kodai bopped (nothing they could've done to prevent it)");
-                            }
-                            clog.write(KODAI_BOP, p.getName());
-                        }
-                    } else if (p.getAnimation() == STAB_ANIMATION)
-                    {
-                        if (id == CHALLY)
-                        {
-                            if (config.showMistakesInChat())
-                            {
-                                sendChatMessage(p.getName() + " chally poked");
-                            }
-                            clog.write(CHALLY_POKE, p.getName());
-                        }
-                    } else if (p.getAnimation() == TWO_HAND_SWORD_SWING)
-                    {
-                        if(id == BANDOS_GODSWORD || id == BANDOS_GODSWORD_OR)
-                        {
-                            if (config.showMistakesInChat())
-                            {
-                                sendChatMessage(p.getName() + " swung BGS without speccing");
-                            }
-                            clog.write(BGS_WHACK, p.getName());
+                            sendChatMessage(p.getName() + " is using an uncharged scythe");
                         }
                     }
-                    StringBuilder animations = new StringBuilder();
-                    for (ActorSpotAnim anim : p.getSpotAnims())
+                } else if (p.getAnimation() == BOP_ANIMATION)
+                {
+                    if (id == DRAGON_WARHAMMER || id == DRAGON_WARHAMMER_ALTERNATE)
                     {
-                        animations.append(anim.getId());
-                        animations.append(":");
-                    }
-                    if (p.getAnimation() == POWERED_STAFF_ANIMATION || p.getAnimation() == CROSSBOW_ANIMATION)
-                    {
-                        if (p.getAnimation() != POWERED_STAFF_ANIMATION || p.getPlayerComposition().getEquipmentId(KitType.WEAPON) == DAWNBRINGER_ITEM)
-                        { //Can be ZCB, Sang, or Dawnbringer. We only care about projectile for dawnbringer or ZCB. Sang & dawnbringer share animation
-                            //so this filters powered staves unless it's dawnbringer
-                            WorldPoint worldPoint = p.getWorldLocation();
-                            playersAttacked.add(new QueuedPlayerAttackLessProjectiles(p, worldPoint, 1, animations.toString(), String.valueOf(p.getPlayerComposition().getEquipmentId(KitType.WEAPON)), String.valueOf(p.getAnimation())));
-                        }
-                        else
+                        if (config.showMistakesInChat())
                         {
-                            int interactedIndex = -1;
-                            int interactedID = -1;
-                            Actor interacted = p.getInteracting();
-                            String targetName = "";
-                            if (interacted instanceof NPC)
-                            {
-                                NPC npc = (NPC) interacted;
-                                interactedID = npc.getId();
-                                interactedIndex = npc.getIndex();
-                                targetName = npc.getName();
-                            }
-                            generatePlayerAttackInfo(p, animations.toString(), interactedIndex, interactedID, interacted, targetName);
+                            sendChatMessage(p.getName() + " hammer bopped (bad rng)");
                         }
+                        clog.write(DWH_BOP, p.getName());
                     }
-                    else if (p.getAnimation() != -1)
+                } else if (p.getAnimation() == WHACK_ANIMATION)
+                {
+                    if (id == KODAI_WAND || id == KODAI_WAND_ALTERNATE)
+                    {
+                        if (config.showMistakesInChat())
+                        {
+                            sendChatMessage(p.getName() + " kodai bopped (nothing they could've done to prevent it)");
+                        }
+                        clog.write(KODAI_BOP, p.getName());
+                    }
+                } else if (p.getAnimation() == STAB_ANIMATION)
+                {
+                    if (id == CHALLY)
+                    {
+                        if (config.showMistakesInChat())
+                        {
+                            sendChatMessage(p.getName() + " chally poked");
+                        }
+                        clog.write(CHALLY_POKE, p.getName());
+                    }
+                } else if (p.getAnimation() == TWO_HAND_SWORD_SWING)
+                {
+                    if(id == BANDOS_GODSWORD || id == BANDOS_GODSWORD_OR)
+                    {
+                        if (config.showMistakesInChat())
+                        {
+                            sendChatMessage(p.getName() + " swung BGS without speccing");
+                        }
+                        clog.write(BGS_WHACK, p.getName());
+                    }
+                }
+                StringBuilder animations = new StringBuilder();
+                for (ActorSpotAnim anim : p.getSpotAnims())
+                {
+                    animations.append(anim.getId());
+                    animations.append(":");
+                }
+                if (p.getAnimation() == POWERED_STAFF_ANIMATION || p.getAnimation() == CROSSBOW_ANIMATION)
+                {
+                    if (p.getAnimation() != POWERED_STAFF_ANIMATION || p.getPlayerComposition().getEquipmentId(KitType.WEAPON) == DAWNBRINGER_ITEM)
+                    { //Can be ZCB, Sang, or Dawnbringer. We only care about projectile for dawnbringer or ZCB. Sang & dawnbringer share animation
+                        //so this filters powered staves unless it's dawnbringer
+                        WorldPoint worldPoint = p.getWorldLocation();
+                        playersAttacked.add(new QueuedPlayerAttackLessProjectiles(p, worldPoint, 1, animations.toString(), String.valueOf(p.getPlayerComposition().getEquipmentId(KitType.WEAPON)), String.valueOf(p.getAnimation())));
+                    }
+                    else
                     {
                         int interactedIndex = -1;
                         int interactedID = -1;
@@ -827,21 +818,39 @@ public class TheatreTrackerPlugin extends Plugin
                             NPC npc = (NPC) interacted;
                             interactedID = npc.getId();
                             interactedIndex = npc.getIndex();
+                            targetName = npc.getName();
                         }
                         generatePlayerAttackInfo(p, animations.toString(), interactedIndex, interactedID, interacted, targetName);
-                        if (p.getAnimation() == BLOWPIPE_ANIMATION || p.getAnimation() == BLOWPIPE_ANIMATION_OR)
-                        {
-                            activelyPiping.put(p, client.getTickCount());
-                        }
-                    } else
-                    {
-                        activelyPiping.remove(p);
                     }
-
                 }
+                else if (p.getAnimation() != -1)
+                {
+                    if(p.getAnimation() == 6294)
+                    {
+                        log.info("meow?");
+                    }
+                    int interactedIndex = -1;
+                    int interactedID = -1;
+                    Actor interacted = p.getInteracting();
+                    String targetName = "";
+                    if (interacted instanceof NPC)
+                    {
+                        NPC npc = (NPC) interacted;
+                        interactedID = npc.getId();
+                        interactedIndex = npc.getIndex();
+                    }
+                    generatePlayerAttackInfo(p, animations.toString(), interactedIndex, interactedID, interacted, targetName);
+                    if (p.getAnimation() == BLOWPIPE_ANIMATION || p.getAnimation() == BLOWPIPE_ANIMATION_OR)
+                    {
+                        activelyPiping.put(p, client.getTickCount());
+                    }
+                } else
+                {
+                    activelyPiping.remove(p);
+                }
+
             }
         }
-        deferredAnimations.clear();
     }
 
     public void leftRaid()
@@ -971,7 +980,7 @@ public class TheatreTrackerPlugin extends Plugin
         }
     }
 
-    private void sendChatMessage(String msg)
+    public void sendChatMessage(String msg)
     {
         clientThread.invoke(() -> client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", msg, null, false));
     }
@@ -984,7 +993,14 @@ public class TheatreTrackerPlugin extends Plugin
         if(event.getActor() instanceof Player)
         {
             Player p = (Player) event.getActor();
-            deferredAnimations.add(p);
+            if(event.getActor().getAnimation() == 6294 || event.getActor().getAnimation() == 722)
+            {
+                checkAnimation(p);
+            }
+            else
+            {
+                deferredAnimations.add(p);
+            }
         }
         if (inTheatre)
         {

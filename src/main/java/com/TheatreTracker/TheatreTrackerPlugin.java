@@ -825,10 +825,6 @@ public class TheatreTrackerPlugin extends Plugin
                 }
                 else if (p.getAnimation() != -1)
                 {
-                    if(p.getAnimation() == 6294)
-                    {
-                        log.info("meow?");
-                    }
                     int interactedIndex = -1;
                     int interactedID = -1;
                     Actor interacted = p.getInteracting();

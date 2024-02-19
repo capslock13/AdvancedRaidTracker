@@ -132,6 +132,13 @@ public class RaidTrackerSidePanel extends PluginPanel
     {
         JPanel container = new JPanel();
         JPanel primaryContainer = new JPanel();
+
+        JPanel container2 = new JPanel();
+        JTabbedPane tabbedPane = new JTabbedPane();
+
+        tabbedPane.addTab("Raids", container);
+        tabbedPane.addTab("Live Summary", container2);
+
         primaryContainer.setLayout(new GridLayout(5, 1));
 
         JButton viewRaidsButton = new JButton("View All Raids");
@@ -204,7 +211,7 @@ public class RaidTrackerSidePanel extends PluginPanel
         scrollPane.setPreferredSize(new Dimension(225, scrollPane.getPreferredSize().height));
         container.add(primaryContainer);
         container.add(scrollPane);
-        add(container);
+        add(tabbedPane);
     }
 
     private DefaultTableModel getTableModel()

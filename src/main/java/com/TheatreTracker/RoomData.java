@@ -13,6 +13,9 @@ import static com.TheatreTracker.constants.TOBRoom.*;
 import static com.TheatreTracker.constants.TobIDs.EXIT_FLAG;
 import static com.TheatreTracker.constants.TobIDs.SPECTATE_FLAG;
 
+/**
+ * Instantiations of RoomData represent all the data stored about one particular raid
+ */
 @Slf4j
 public class RoomData
 {
@@ -337,6 +340,12 @@ public class RoomData
 
     private ItemManager itemManager;
 
+    /**
+     * Room data is populated from the log file of saved raids.
+     * @param parameters The log data for a raid, line by line
+     * @param itemManager
+     * @throws Exception TODO does it? maybe we should handle it if it does..
+     */
     public RoomData(String[] parameters, ItemManager itemManager) throws Exception
     {
         this.itemManager = itemManager;
@@ -593,633 +602,6 @@ public class RoomData
         {
 
         }
-    }
-
-    private boolean parseVerzik()
-    {
-        int activeIndex = 0;
-        for (String s : globalData)
-        {
-            String[] subData = s.split(",", -1);
-            parseGeneric("Verzik", subData);
-            try
-            {
-                switch (LogID.valueOf(Integer.parseInt(subData[3])))
-                {
-                    case LEFT_TOB:
-                        if (dataManager.get(DataPoint.VERZIK_TOTAL_TIME) == 0)
-                        {
-                            if (!verzikStarted)
-                            {
-                                xarpReset = true;
-                            } else
-                            {
-                                verzikWipe = true;
-                            }
-                        } else
-                        {
-                            return true;
-                        }
-                        globalData = new ArrayList<>(globalData.subList(activeIndex + 1, globalData.size()));
-                        Date endTime = new Date(Long.parseLong(subData[1]));
-                        long difference = endTime.getTime() - raidStarted.getTime();
-                        int ticks = (int) (difference / 600);
-                        dataManager.set(DataPoint.OVERALL_TIME, ticks);
-                        return false;
-                    case DAWN_DROPPED:
-                        if (verzikStarted)
-                        {
-                            dawnDrops.add(Integer.parseInt(subData[4]));
-                        }
-                        break;
-                    case VERZIK_P1_START:
-                        verzikStarted = true;
-                        break;
-                    case VERZIK_P1_DESPAWNED:
-                        dataManager.set(DataPoint.VERZIK_P1_SPLIT, Integer.parseInt(subData[4]) - 13);
-                        break;
-                    case VERZIK_P2_END:
-                        dataManager.set(DataPoint.VERZIK_P2_SPLIT, Integer.parseInt(subData[4]));
-                        dataManager.set(DataPoint.VERZIK_P2_DURATION, dataManager.get(DataPoint.VERZIK_P2_SPLIT) - dataManager.get(DataPoint.VERZIK_P1_SPLIT));
-                        dataManager.set(DataPoint.VERZIK_REDS_DURATION, dataManager.get(DataPoint.VERZIK_P2_SPLIT)-dataManager.get(DataPoint.VERZIK_REDS_SPLIT));
-                        try
-                        {
-                            int hp = verzikHP.get(dataManager.get(DataPoint.VERZIK_REDS_SPLIT));
-                            dataManager.set(DataPoint.VERZIK_REDS_PROC_PERCENT, (hp));
-                        } catch
-                        (Exception ignored)
-                        {
-
-                        }
-                        break;
-                    case VERZIK_P3_DESPAWNED:
-                        dataManager.set(DataPoint.VERZIK_TOTAL_TIME, Integer.parseInt(subData[4]));
-                        dataManager.set(DataPoint.VERZIK_P3_DURATION, dataManager.get(DataPoint.VERZIK_TOTAL_TIME) - dataManager.get(DataPoint.VERZIK_P2_SPLIT));
-                        dataManager.set(DataPoint.CHALLENGE_TIME, (Integer.parseInt(subData[4]) + dataManager.get(DataPoint.VERZIK_ENTRY)));
-                        break;
-                    case VERZIK_BOUNCE:
-                        dataManager.increment(DataPoint.VERZIK_BOUNCES);
-                        dataManager.incrementPlayerSpecific(DataPoint.VERZIK_BOUNCES, subData[4]);
-                        if (!subData[5].equalsIgnoreCase(""))
-                        {
-                            verzAttacks.add(new PlayerDidAttack(itemManager, subData[4], "100000", Integer.parseInt(subData[5]), "-1", "-1", "-1", -1, -1, "", ""));
-                        }
-                        break;
-                    case VERZIK_CRAB_SPAWNED:
-                        if (!subData[4].equalsIgnoreCase(""))
-                        {
-                            if (dataManager.get(DataPoint.VERZIK_P2_SPLIT) > 1)
-                            {
-                                if (!p3Crabs.contains(Integer.parseInt(subData[4])))
-                                {
-                                    p3Crabs.add(Integer.parseInt(subData[4]));
-                                }
-                            } else
-                            {
-                                if (!p2Crabs.contains(Integer.parseInt(subData[4])))
-                                {
-                                    p2Crabs.add(Integer.parseInt(subData[4]));
-                                }
-                            }
-                        }
-                        dataManager.increment(DataPoint.VERZIK_CRABS_SPAWNED);
-                        break;
-                    case VERZIK_P2_REDS_PROC:
-                        if (dataManager.get(DataPoint.VERZIK_REDS_SPLIT) == 0)
-                        {
-                            dataManager.set(DataPoint.VERZIK_REDS_SPLIT, Integer.parseInt(subData[4]));
-                            dataManager.set(DataPoint.VERZIK_P2_TILL_REDS, Integer.parseInt(subData[4]) - dataManager.get(DataPoint.VERZIK_P1_SPLIT));
-                        }
-                        redsProc.add(Integer.parseInt(subData[4]));
-                        dataManager.increment(DataPoint.VERZIK_REDS_SETS);
-                        break;
-                    case ACCURATE_VERZIK_START:
-                        verzikStartAccurate = true;
-                        break;
-                    case ACCURATE_VERZIK_END:
-                        verzikEndAccurate = true;
-                        verzikTimeAccurate = verzikStartAccurate;
-                        break;
-                    case DAWN_SPEC:
-                        dawnSpecs.add(new DawnSpec(subData[4], Integer.parseInt(subData[5])));
-                        break;
-                    case DAWN_DAMAGE:
-                        for (DawnSpec dawnSpec : dawnSpecs)
-                        {
-                            if (dawnSpec.tick == Integer.parseInt(subData[5]))
-                            {
-                                dawnSpec.setDamage(Integer.parseInt(subData[4]));
-                            }
-                        }
-                        break;
-                    case UPDATE_HP:
-                        verzikHP.put(Integer.parseInt(subData[5]), Integer.parseInt(subData[4]));
-                        break;
-                    case ADD_NPC_MAPPING:
-                        verzikNPCMapping.put(Integer.parseInt(subData[4]), subData[5]);
-                        break;
-                    case WEBS_STARTED:
-                        try
-                        {
-                            websStart.add(Integer.parseInt(subData[4]));
-                            if (dataManager.get(DataPoint.VERZIK_HP_AT_WEBS) == -1)
-                            {
-                                int hp = verzikHP.get(Integer.parseInt(subData[4]) - 1);
-                                hp /= 10;
-                                dataManager.set(DataPoint.VERZIK_HP_AT_WEBS, hp);
-                            }
-                        }
-                        catch(Exception ignored)
-                        {
-
-                        }
-                        break;
-                    case THRALL_SPAWN:
-                        verzikThrallSpawns.add(new ThrallOutlineBox(subData[4], Integer.parseInt(subData[5]), Integer.parseInt(subData[6])));
-                        break;
-                }
-            } catch (Exception e)
-            {
-                log.info("Failed on " + s);
-            }
-            activeIndex++;
-        }
-        globalData = new ArrayList<>(globalData.subList(activeIndex + 1, globalData.size()));
-        return true;
-    }
-
-    private boolean isTimeAccurateThroughRoom(TOBRoom room)
-    {
-        switch (room)
-        {
-            case VERZIK:
-                if (!verzikTimeAccurate)
-                {
-                    return false;
-                }
-            case XARPUS:
-                if (!xarpTimeAccurate)
-                {
-                    return false;
-                }
-            case SOTETSEG:
-                if (!soteTimeAccurate)
-                {
-                    return false;
-                }
-            case NYLOCAS:
-                if (!nyloTimeAccurate)
-                {
-                    return false;
-                }
-            case BLOAT:
-                if (!bloatTimeAccurate)
-                {
-                    return false;
-                }
-            case MAIDEN:
-                return maidenTimeAccurate;
-        }
-        return false;
-    }
-
-    private boolean parseXarpus()
-    {
-
-        int activeIndex = 0;
-        loop:
-        for (String s : globalData)
-        {
-            String[] subData = s.split(",", -1);
-            parseGeneric("Xarp", subData);
-            try
-            {
-                switch (LogID.valueOf(Integer.parseInt(subData[3])))
-                {
-                    case LEFT_TOB:
-                        if (dataManager.get(DataPoint.XARP_TOTAL_TIME) != 0)
-                        {
-                            xarpReset = true;
-                        } else
-                        {
-                            if (!xarpStarted)
-                            {
-                                soteReset = true;
-                            } else
-                            {
-                                xarpWipe = true;
-                            }
-                        }
-                        globalData = new ArrayList<>(globalData.subList(activeIndex + 1, globalData.size()));
-                        Date endTime = new Date(Long.parseLong(subData[1]));
-                        long difference = endTime.getTime() - raidStarted.getTime();
-                        int ticks = (int) (difference / 600);
-                        dataManager.set(DataPoint.OVERALL_TIME, ticks);
-                        return false;
-                    case XARPUS_STARTED:
-                        xarpStarted = true;
-                        if (partyComplete)
-                        {
-                            xarpDefenseAccurate = true;
-                        }
-                        break;
-                    case XARPUS_HEAL:
-                        dataManager.increment(DataPoint.XARP_HEALING, getXarpusHealAmount());
-                        break;
-                    case XARPUS_SCREECH:
-                        dataManager.set(DataPoint.XARP_SCREECH, Integer.parseInt(subData[4]));
-                        break;
-                    case XARPUS_DESPAWNED:
-                        dataManager.set(DataPoint.XARP_TOTAL_TIME, Integer.parseInt(subData[4]));
-                        dataManager.set(DataPoint.XARP_POST_SCREECH, dataManager.get(DataPoint.XARP_TOTAL_TIME) - dataManager.get(DataPoint.XARP_SCREECH));
-                        if (isTimeAccurateThroughRoom(SOTETSEG))
-                            dataManager.set(DataPoint.VERZIK_ENTRY, Integer.parseInt(subData[4]) + dataManager.get(DataPoint.XARP_ENTRY));
-                        break loop;
-                    case ACCURATE_XARP_START:
-                        xarpStartAccurate = true;
-                        break;
-                    case ACCURATE_XARP_END:
-                        xarpTimeAccurate = xarpStartAccurate;
-                        xarpEndAccurate = true;
-                        break;
-                    case THRALL_SPAWN:
-                        xarpusThrallSpawns.add(new ThrallOutlineBox(subData[4], Integer.parseInt(subData[5]), Integer.parseInt(subData[6])));
-                        break;
-                    case UPDATE_HP:
-                        xarpHP.put(Integer.parseInt(subData[5]), Integer.parseInt(subData[4]));
-                        break;
-                }
-            }
-            catch(Exception e)
-            {
-                log.info("Failed on " + s);
-            }
-            activeIndex++;
-        }
-        globalData = new ArrayList<>(globalData.subList(activeIndex + 1, globalData.size()));
-        return true;
-    }
-
-    private int getXarpusHealAmount()
-    {
-        int amount = 0;
-        switch (raidTeamSize)
-        {
-            case 5:
-                amount = 8;
-                break;
-            case 4:
-                amount = 9;
-                break;
-            case 3:
-                amount = 12;
-                break;
-            case 2:
-                amount = 16;
-                break;
-            case 1:
-                amount = 20;
-                break;
-        }
-        return amount;
-    }
-
-    private boolean parseSotetseg()
-    {
-        int activeIndex = 0;
-        loop:
-        for (String s : globalData)
-        {
-            String[] subData = s.split(",", -1);
-            parseGeneric("Sote", subData);
-            try
-            {
-                switch (LogID.valueOf(Integer.parseInt(subData[3])))
-                {
-                    case DWH:
-                        if (dataManager.get(DataPoint.SOTE_P1_SPLIT) == 0)
-                        {
-                            dataManager.increment(DataPoint.SOTE_SPECS_P1);
-                            dataManager.increment(DataPoint.SOTE_SPECS_TOTAL);
-                        } else if (dataManager.get(DataPoint.SOTE_P2_SPLIT) == 0)
-                        {
-                            dataManager.increment(DataPoint.SOTE_SPECS_P2);
-                            dataManager.increment(DataPoint.SOTE_SPECS_TOTAL);
-                        } else
-                        {
-                            dataManager.increment(DataPoint.SOTE_SPECS_P3);
-                            dataManager.increment(DataPoint.SOTE_SPECS_TOTAL);
-                        }
-                        break;
-                    case LEFT_TOB:
-                        if (dataManager.get(DataPoint.SOTE_TOTAL_TIME) != 0)
-                        {
-                            soteReset = true;
-                        } else
-                        {
-                            if (!soteStarted)
-                            {
-                                nyloReset = true;
-                            } else
-                            {
-                                soteWipe = true;
-                            }
-                        }
-                        globalData = new ArrayList<>(globalData.subList(activeIndex + 1, globalData.size()));
-                        Date endTime = new Date(Long.parseLong(subData[1]));
-                        long difference = endTime.getTime() - raidStarted.getTime();
-                        int ticks = (int) (difference / 600);
-                        dataManager.set(DataPoint.OVERALL_TIME, ticks);
-                        return false;
-                    case SOTETSEG_STARTED:
-                        soteStarted = true;
-                        if (partyComplete)
-                        {
-                            soteDefenseAccurate = true;
-                        }
-                        break;
-                    case SOTETSEG_FIRST_MAZE_STARTED:
-                        dataManager.set(DataPoint.SOTE_P1_SPLIT, Integer.parseInt(subData[4]));
-                        break;
-                    case SOTETSEG_FIRST_MAZE_ENDED:
-                        dataManager.set(DataPoint.SOTE_M1_DURATION, Integer.parseInt(subData[4]) - dataManager.get(DataPoint.SOTE_P1_SPLIT));
-                        dataManager.set(DataPoint.SOTE_M1_SPLIT, Integer.parseInt(subData[4]));
-                        break;
-                    case SOTETSEG_SECOND_MAZE_STARTED:
-                        dataManager.set(DataPoint.SOTE_P2_DURATION, Integer.parseInt(subData[4]) - dataManager.get(DataPoint.SOTE_M1_SPLIT));
-                        dataManager.set(DataPoint.SOTE_P2_SPLIT, Integer.parseInt(subData[4]));
-                        break;
-                    case SOTETSEG_SECOND_MAZE_ENDED:
-                        dataManager.set(DataPoint.SOTE_M2_DURATION, Integer.parseInt(subData[4]) - dataManager.get(DataPoint.SOTE_P2_SPLIT));
-                        dataManager.set(DataPoint.SOTE_M2_SPLIT, Integer.parseInt(subData[4]));
-                        dataManager.set(DataPoint.SOTE_MAZE_SUM, dataManager.get(DataPoint.SOTE_M1_DURATION) + dataManager.get(DataPoint.SOTE_M2_DURATION));
-                        break;
-                    case SOTETSEG_ENDED:
-                        dataManager.set(DataPoint.SOTE_TOTAL_TIME, Integer.parseInt(subData[4]));
-                        dataManager.set(DataPoint.SOTE_P3_DURATION, dataManager.get(DataPoint.SOTE_TOTAL_TIME) - dataManager.get(DataPoint.SOTE_M2_SPLIT));
-                        if (isTimeAccurateThroughRoom(NYLOCAS))
-                            dataManager.set(DataPoint.XARP_ENTRY, Integer.parseInt(subData[4]) + dataManager.get(DataPoint.SOTE_ENTRY));
-                        break loop;
-                    case ACCURATE_SOTE_START:
-                        soteStartAccurate = true;
-                        break;
-                    case ACCURATE_SOTE_END:
-                        soteEndAccurate = true;
-                        soteTimeAccurate = soteStartAccurate;
-                        if (soteTimeAccurate && bloatTimeAccurate && !spectated)
-                        {
-                            nyloStartAccurate = true;
-                            nyloEndAccurate = true;
-                            nyloTimeAccurate = true;
-                        }
-
-                        break;
-                    case THRALL_SPAWN:
-                        soteThrallSpawns.add(new ThrallOutlineBox(subData[4], Integer.parseInt(subData[5]), Integer.parseInt(subData[6])));
-                        break;
-                    case UPDATE_HP:
-                        soteHP.put(Integer.parseInt(subData[5]), Integer.parseInt(subData[4]));
-                        break;
-
-                }
-            }
-            catch(Exception e)
-            {
-                log.info("Failed on " + s);
-            }
-            activeIndex++;
-        }
-        globalData = new ArrayList<>(globalData.subList(activeIndex + 1, globalData.size()));
-        return true;
-    }
-
-    private boolean parseNylo()
-    {
-        int activeIndex = 0;
-        loop:
-        for (String s : globalData)
-        {
-            String[] subData = s.split(",", -1);
-            parseGeneric("Nylo", subData);
-            try
-            {
-                switch (LogID.valueOf(Integer.parseInt(subData[3])))
-                {
-                    case LEFT_TOB:
-                        if (pillarDespawnTick - 5 < dataManager.get(DataPoint.NYLO_BOSS_SPAWN))
-                        {
-                            dataManager.set(DataPoint.NYLO_BOSS_SPAWN, 0);
-                            dataManager.set(DataPoint.NYLO_TOTAL_TIME, 0);
-                        }
-                        if (dataManager.get(DataPoint.NYLO_TOTAL_TIME) != 0)
-                        {
-                            nyloReset = true;
-                        } else
-                        {
-                            if (!nyloStarted)
-                            {
-                                if (!bloatEndAccurate)
-                                {
-                                    bloatWipe = true;
-                                } else
-                                {
-                                    bloatReset = true;
-                                }
-                            } else
-                            {
-                                nyloWipe = true;
-                            }
-                        }
-                        globalData = new ArrayList<>(globalData.subList(activeIndex + 1, globalData.size()));
-                        Date endTime = new Date(Long.parseLong(subData[1]));
-                        long difference = endTime.getTime() - raidStarted.getTime();
-                        int ticks = (int) (difference / 600);
-                        dataManager.set(DataPoint.OVERALL_TIME, ticks);
-                        return false;
-                    case NYLO_PILLAR_SPAWN:
-                        nyloStarted = true;
-                        break;
-                    case NYLO_STALL:
-                        nyloWaveStalled.add(Integer.parseInt(subData[5]));
-                        dataManager.increment(DataPoint.NYLO_STALLS_TOTAL);
-                        if (Integer.parseInt(subData[4]) > 19)
-                        {
-                            dataManager.increment(DataPoint.NYLO_STALLS_POST_20);
-                        } else
-                        {
-                            dataManager.increment(DataPoint.NYLO_STALLS_PRE_20);
-                        }
-                        break;
-                    case RANGE_SPLIT:
-                        dataManager.increment(DataPoint.NYLO_SPLITS_RANGE);
-                        break;
-                    case MAGE_SPLIT:
-                        dataManager.increment(DataPoint.NYLO_SPLITS_MAGE);
-                        break;
-                    case MELEE_SPLIT:
-                        dataManager.increment(DataPoint.NYLO_SPLITS_MELEE);
-                        break;
-                    case LAST_WAVE:
-                        dataManager.set(DataPoint.NYLO_LAST_WAVE, Integer.parseInt(subData[4]));
-                        break;
-                    case LAST_DEAD:
-                        nyloLastDead = Integer.parseInt(subData[4]);
-                        int offset = 20 - (nyloLastDead % 4); //4 cycle (16 tick) delay for boss + difference to cycle (4-time%instance reference)
-                        dataManager.set(DataPoint.NYLO_BOSS_SPAWN, nyloLastDead + offset);
-                        dataManager.set(DataPoint.NYLO_CLEANUP, nyloLastDead - dataManager.get(DataPoint.NYLO_LAST_WAVE));
-                        break;
-                    case NYLO_WAVE:
-                        waveSpawns.put(Integer.parseInt(subData[4]), Integer.parseInt(subData[5]));
-                        break;
-                    case BOSS_SPAWN: //The number people are used to seeing on timers for boss spawn is actually 2 ticks prior to the spawn call for the boss
-                        dataManager.set(DataPoint.NYLO_BOSS_SPAWN, Integer.parseInt(subData[4]) - 2);
-                        if (partyComplete)
-                        {
-                            nyloDefenseAccurate = true;
-                        }
-                        break;
-                    case MELEE_PHASE:
-                        dataManager.increment(DataPoint.NYLO_ROTATIONS_MELEE);
-                        break;
-                    case MAGE_PHASE:
-                        dataManager.increment(DataPoint.NYLO_ROTATIONS_MAGE);
-                        break;
-                    case RANGE_PHASE:
-                        dataManager.increment(DataPoint.NYLO_ROTATIONS_RANGE);
-                        break;
-                    case NYLO_DESPAWNED:
-                        if (Integer.parseInt(subData[4]) - dataManager.get(DataPoint.NYLO_BOSS_SPAWN) > 30)
-                        {
-                            dataManager.set(DataPoint.NYLO_TOTAL_TIME, Integer.parseInt(subData[4]));
-                            dataManager.set(DataPoint.NYLO_BOSS_DURATION, dataManager.get(DataPoint.NYLO_TOTAL_TIME) - dataManager.get(DataPoint.NYLO_BOSS_SPAWN));
-                            if (isTimeAccurateThroughRoom(BLOAT))
-                                dataManager.set(DataPoint.SOTE_ENTRY, Integer.parseInt(subData[4]) + dataManager.get(DataPoint.NYLO_ENTRY));
-                        }
-                        break loop;
-                    case NYLO_PILLAR_DESPAWNED:
-                        pillarDespawnTick = Integer.parseInt(subData[4]);
-                        break;
-                    case ACCURATE_NYLO_START:
-                        nyloStartAccurate = true;
-                        break;
-                    case ACCURATE_NYLO_END:
-                        nyloEndAccurate = true;
-                        nyloTimeAccurate = nyloStartAccurate;
-                        break;
-                    case THRALL_SPAWN:
-                        nyloThrallSpawns.add(new ThrallOutlineBox(subData[4], Integer.parseInt(subData[5]), Integer.parseInt(subData[6])));
-                        break;
-                    case UPDATE_HP:
-                        nyloHP.put(Integer.parseInt(subData[5]), Integer.parseInt(subData[4]));
-                        break;
-                    case ADD_NPC_MAPPING:
-                        nyloNPCMapping.put(Integer.parseInt(subData[4]), subData[5]);
-                        break;
-                }
-            }
-            catch(Exception e)
-            {
-                log.info("Failed on " + s);
-            }
-            activeIndex++;
-        }
-        globalData = new ArrayList<>(globalData.subList(activeIndex + 1, globalData.size()));
-        return true;
-    }
-
-    private boolean parseBloat()
-    {
-        int activeIndex = 0;
-        bloatDefenseAccurate = maidenDefenseAccurate;
-        loop:
-        for (String s : globalData)
-        {
-            String[] subData = s.split(",", -1);
-            parseGeneric("Bloat", subData);
-            try
-            {
-                switch (LogID.valueOf(Integer.parseInt(subData[3])))
-                {
-                    case BLOAT_HP_1ST_DOWN:
-                        dataManager.set(DataPoint.BLOAT_HP_FIRST_DOWN, Integer.parseInt(subData[4]) / 10);
-                        break;
-                    case BLOAT_SCYTHE_1ST_WALK:
-                        if (dataManager.get(DataPoint.BLOAT_DOWNS) == 0)
-                        {
-                            dataManager.increment(DataPoint.BLOAT_FIRST_WALK_SCYTHES);
-                            dataManager.incrementPlayerSpecific(DataPoint.BLOAT_FIRST_WALK_SCYTHES, subData[4]);
-                        }
-                        break;
-                    case LEFT_TOB:
-                        if (bloatEndAccurate)
-                        {
-                            bloatReset = true;
-                        } else
-                        {
-                            if (!bloatStarted)
-                            {
-                                maidenReset = true;
-                            } else
-                            {
-                                bloatWipe = true;
-                            }
-                        }
-                        globalData = new ArrayList<>(globalData.subList(activeIndex + 1, globalData.size()));
-                        Date endTime = new Date(Long.parseLong(subData[1]));
-                        long difference = endTime.getTime() - raidStarted.getTime();
-                        int ticks = (int) (difference / 600);
-                        dataManager.set(DataPoint.OVERALL_TIME, ticks);
-                        return false;
-                    case PLAYER_DIED:
-                        if (dataManager.get(DataPoint.BLOAT_DOWNS) == 0)
-                        {
-                            dataManager.increment(DataPoint.BLOAT_FIRST_WALK_DEATHS);
-                            dataManager.incrementPlayerSpecific(DataPoint.BLOAT_FIRST_WALK_DEATHS, subData[4]);
-                        }
-                        break;
-                    case BLOAT_SPAWNED:
-                        bloatStarted = true;
-                        if (partyComplete)
-                        {
-                            bloatDefenseAccurate = true;
-                        }
-                        break;
-                    case BLOAT_DOWN:
-                        if (dataManager.get(DataPoint.BLOAT_DOWNS) == 0)
-                        {
-                            dataManager.set(DataPoint.BLOAT_FIRST_DOWN_TIME, Integer.parseInt(subData[4]));
-                        }
-                        dataManager.increment(DataPoint.BLOAT_DOWNS);
-                        bloatDowns.add(Integer.parseInt(subData[4]));
-                        break;
-                    case BLOAT_DESPAWN:
-                        dataManager.set(DataPoint.BLOAT_TOTAL_TIME, Integer.parseInt(subData[4]));
-                        if (isTimeAccurateThroughRoom(MAIDEN))
-                            dataManager.set(DataPoint.NYLO_ENTRY, Integer.parseInt(subData[4]) + dataManager.get(DataPoint.MAIDEN_TOTAL_TIME));
-                        break loop;
-                    case ACCURATE_BLOAT_START:
-                        bloatStartAccurate = true;
-                        break;
-                    case ACCURATE_BLOAT_END:
-                        bloatEndAccurate = true;
-                        bloatTimeAccurate = bloatStartAccurate;
-                        break;
-                    case THRALL_SPAWN:
-                        bloatThrallSpawns.add(new ThrallOutlineBox(subData[4], Integer.parseInt(subData[5]), Integer.parseInt(subData[6])));
-                        break;
-                    case UPDATE_HP:
-                        bloatHP.put(Integer.parseInt(subData[5]), Integer.parseInt(subData[4]));
-                        break;
-                }
-            }
-            catch(Exception e)
-            {
-                log.info("Failed on " + s);
-            }
-            activeIndex++;
-        }
-        globalData = new ArrayList<>(globalData.subList(activeIndex + 1, globalData.size()));
-        return true;
     }
 
     private boolean parseMaiden()
@@ -1485,12 +867,642 @@ public class RoomData
         return true;
     }
 
+    private boolean parseBloat()
+    {
+        int activeIndex = 0;
+        bloatDefenseAccurate = maidenDefenseAccurate;
+        loop:
+        for (String s : globalData)
+        {
+            String[] subData = s.split(",", -1);
+            parseGeneric("Bloat", subData);
+            try
+            {
+                switch (LogID.valueOf(Integer.parseInt(subData[3])))
+                {
+                    case BLOAT_HP_1ST_DOWN:
+                        dataManager.set(DataPoint.BLOAT_HP_FIRST_DOWN, Integer.parseInt(subData[4]) / 10);
+                        break;
+                    case BLOAT_SCYTHE_1ST_WALK:
+                        if (dataManager.get(DataPoint.BLOAT_DOWNS) == 0)
+                        {
+                            dataManager.increment(DataPoint.BLOAT_FIRST_WALK_SCYTHES);
+                            dataManager.incrementPlayerSpecific(DataPoint.BLOAT_FIRST_WALK_SCYTHES, subData[4]);
+                        }
+                        break;
+                    case LEFT_TOB:
+                        if (bloatEndAccurate)
+                        {
+                            bloatReset = true;
+                        } else
+                        {
+                            if (!bloatStarted)
+                            {
+                                maidenReset = true;
+                            } else
+                            {
+                                bloatWipe = true;
+                            }
+                        }
+                        globalData = new ArrayList<>(globalData.subList(activeIndex + 1, globalData.size()));
+                        Date endTime = new Date(Long.parseLong(subData[1]));
+                        long difference = endTime.getTime() - raidStarted.getTime();
+                        int ticks = (int) (difference / 600);
+                        dataManager.set(DataPoint.OVERALL_TIME, ticks);
+                        return false;
+                    case PLAYER_DIED:
+                        if (dataManager.get(DataPoint.BLOAT_DOWNS) == 0)
+                        {
+                            dataManager.increment(DataPoint.BLOAT_FIRST_WALK_DEATHS);
+                            dataManager.incrementPlayerSpecific(DataPoint.BLOAT_FIRST_WALK_DEATHS, subData[4]);
+                        }
+                        break;
+                    case BLOAT_SPAWNED:
+                        bloatStarted = true;
+                        if (partyComplete)
+                        {
+                            bloatDefenseAccurate = true;
+                        }
+                        break;
+                    case BLOAT_DOWN:
+                        if (dataManager.get(DataPoint.BLOAT_DOWNS) == 0)
+                        {
+                            dataManager.set(DataPoint.BLOAT_FIRST_DOWN_TIME, Integer.parseInt(subData[4]));
+                        }
+                        dataManager.increment(DataPoint.BLOAT_DOWNS);
+                        bloatDowns.add(Integer.parseInt(subData[4]));
+                        break;
+                    case BLOAT_DESPAWN:
+                        dataManager.set(DataPoint.BLOAT_TOTAL_TIME, Integer.parseInt(subData[4]));
+                        if (isTimeAccurateThroughRoom(MAIDEN))
+                            dataManager.set(DataPoint.NYLO_ENTRY, Integer.parseInt(subData[4]) + dataManager.get(DataPoint.MAIDEN_TOTAL_TIME));
+                        break loop;
+                    case ACCURATE_BLOAT_START:
+                        bloatStartAccurate = true;
+                        break;
+                    case ACCURATE_BLOAT_END:
+                        bloatEndAccurate = true;
+                        bloatTimeAccurate = bloatStartAccurate;
+                        break;
+                    case THRALL_SPAWN:
+                        bloatThrallSpawns.add(new ThrallOutlineBox(subData[4], Integer.parseInt(subData[5]), Integer.parseInt(subData[6])));
+                        break;
+                    case UPDATE_HP:
+                        bloatHP.put(Integer.parseInt(subData[5]), Integer.parseInt(subData[4]));
+                        break;
+                }
+            }
+            catch(Exception e)
+            {
+                log.info("Failed on " + s);
+            }
+            activeIndex++;
+        }
+        globalData = new ArrayList<>(globalData.subList(activeIndex + 1, globalData.size()));
+        return true;
+    }
+
+    private boolean parseNylo()
+    {
+        int activeIndex = 0;
+        loop:
+        for (String s : globalData)
+        {
+            String[] subData = s.split(",", -1);
+            parseGeneric("Nylo", subData);
+            try
+            {
+                switch (LogID.valueOf(Integer.parseInt(subData[3])))
+                {
+                    case LEFT_TOB:
+                        if (pillarDespawnTick - 5 < dataManager.get(DataPoint.NYLO_BOSS_SPAWN))
+                        {
+                            dataManager.set(DataPoint.NYLO_BOSS_SPAWN, 0);
+                            dataManager.set(DataPoint.NYLO_TOTAL_TIME, 0);
+                        }
+                        if (dataManager.get(DataPoint.NYLO_TOTAL_TIME) != 0)
+                        {
+                            nyloReset = true;
+                        } else
+                        {
+                            if (!nyloStarted)
+                            {
+                                if (!bloatEndAccurate)
+                                {
+                                    bloatWipe = true;
+                                } else
+                                {
+                                    bloatReset = true;
+                                }
+                            } else
+                            {
+                                nyloWipe = true;
+                            }
+                        }
+                        globalData = new ArrayList<>(globalData.subList(activeIndex + 1, globalData.size()));
+                        Date endTime = new Date(Long.parseLong(subData[1]));
+                        long difference = endTime.getTime() - raidStarted.getTime();
+                        int ticks = (int) (difference / 600);
+                        dataManager.set(DataPoint.OVERALL_TIME, ticks);
+                        return false;
+                    case NYLO_PILLAR_SPAWN:
+                        nyloStarted = true;
+                        break;
+                    case NYLO_STALL:
+                        nyloWaveStalled.add(Integer.parseInt(subData[5]));
+                        dataManager.increment(DataPoint.NYLO_STALLS_TOTAL);
+                        if (Integer.parseInt(subData[4]) > 19)
+                        {
+                            dataManager.increment(DataPoint.NYLO_STALLS_POST_20);
+                        } else
+                        {
+                            dataManager.increment(DataPoint.NYLO_STALLS_PRE_20);
+                        }
+                        break;
+                    case RANGE_SPLIT:
+                        dataManager.increment(DataPoint.NYLO_SPLITS_RANGE);
+                        break;
+                    case MAGE_SPLIT:
+                        dataManager.increment(DataPoint.NYLO_SPLITS_MAGE);
+                        break;
+                    case MELEE_SPLIT:
+                        dataManager.increment(DataPoint.NYLO_SPLITS_MELEE);
+                        break;
+                    case LAST_WAVE:
+                        dataManager.set(DataPoint.NYLO_LAST_WAVE, Integer.parseInt(subData[4]));
+                        break;
+                    case LAST_DEAD:
+                        nyloLastDead = Integer.parseInt(subData[4]);
+                        int offset = 20 - (nyloLastDead % 4); //4 cycle (16 tick) delay for boss + difference to cycle (4-time%instance reference)
+                        dataManager.set(DataPoint.NYLO_BOSS_SPAWN, nyloLastDead + offset);
+                        dataManager.set(DataPoint.NYLO_CLEANUP, nyloLastDead - dataManager.get(DataPoint.NYLO_LAST_WAVE));
+                        break;
+                    case NYLO_WAVE:
+                        waveSpawns.put(Integer.parseInt(subData[4]), Integer.parseInt(subData[5]));
+                        break;
+                    case BOSS_SPAWN: //The number people are used to seeing on timers for boss spawn is actually 2 ticks prior to the spawn call for the boss
+                        dataManager.set(DataPoint.NYLO_BOSS_SPAWN, Integer.parseInt(subData[4]) - 2);
+                        if (partyComplete)
+                        {
+                            nyloDefenseAccurate = true;
+                        }
+                        break;
+                    case MELEE_PHASE:
+                        dataManager.increment(DataPoint.NYLO_ROTATIONS_MELEE);
+                        break;
+                    case MAGE_PHASE:
+                        dataManager.increment(DataPoint.NYLO_ROTATIONS_MAGE);
+                        break;
+                    case RANGE_PHASE:
+                        dataManager.increment(DataPoint.NYLO_ROTATIONS_RANGE);
+                        break;
+                    case NYLO_DESPAWNED:
+                        if (Integer.parseInt(subData[4]) - dataManager.get(DataPoint.NYLO_BOSS_SPAWN) > 30)
+                        {
+                            dataManager.set(DataPoint.NYLO_TOTAL_TIME, Integer.parseInt(subData[4]));
+                            dataManager.set(DataPoint.NYLO_BOSS_DURATION, dataManager.get(DataPoint.NYLO_TOTAL_TIME) - dataManager.get(DataPoint.NYLO_BOSS_SPAWN));
+                            if (isTimeAccurateThroughRoom(BLOAT))
+                                dataManager.set(DataPoint.SOTE_ENTRY, Integer.parseInt(subData[4]) + dataManager.get(DataPoint.NYLO_ENTRY));
+                        }
+                        break loop;
+                    case NYLO_PILLAR_DESPAWNED:
+                        pillarDespawnTick = Integer.parseInt(subData[4]);
+                        break;
+                    case ACCURATE_NYLO_START:
+                        nyloStartAccurate = true;
+                        break;
+                    case ACCURATE_NYLO_END:
+                        nyloEndAccurate = true;
+                        nyloTimeAccurate = nyloStartAccurate;
+                        break;
+                    case THRALL_SPAWN:
+                        nyloThrallSpawns.add(new ThrallOutlineBox(subData[4], Integer.parseInt(subData[5]), Integer.parseInt(subData[6])));
+                        break;
+                    case UPDATE_HP:
+                        nyloHP.put(Integer.parseInt(subData[5]), Integer.parseInt(subData[4]));
+                        break;
+                    case ADD_NPC_MAPPING:
+                        nyloNPCMapping.put(Integer.parseInt(subData[4]), subData[5]);
+                        break;
+                }
+            }
+            catch(Exception e)
+            {
+                log.info("Failed on " + s);
+            }
+            activeIndex++;
+        }
+        globalData = new ArrayList<>(globalData.subList(activeIndex + 1, globalData.size()));
+        return true;
+    }
+
+    private boolean parseSotetseg()
+    {
+        int activeIndex = 0;
+        loop:
+        for (String s : globalData)
+        {
+            String[] subData = s.split(",", -1);
+            parseGeneric("Sote", subData);
+            try
+            {
+                switch (LogID.valueOf(Integer.parseInt(subData[3])))
+                {
+                    case DWH:
+                        if (dataManager.get(DataPoint.SOTE_P1_SPLIT) == 0)
+                        {
+                            dataManager.increment(DataPoint.SOTE_SPECS_P1);
+                            dataManager.increment(DataPoint.SOTE_SPECS_TOTAL);
+                        } else if (dataManager.get(DataPoint.SOTE_P2_SPLIT) == 0)
+                        {
+                            dataManager.increment(DataPoint.SOTE_SPECS_P2);
+                            dataManager.increment(DataPoint.SOTE_SPECS_TOTAL);
+                        } else
+                        {
+                            dataManager.increment(DataPoint.SOTE_SPECS_P3);
+                            dataManager.increment(DataPoint.SOTE_SPECS_TOTAL);
+                        }
+                        break;
+                    case LEFT_TOB:
+                        if (dataManager.get(DataPoint.SOTE_TOTAL_TIME) != 0)
+                        {
+                            soteReset = true;
+                        } else
+                        {
+                            if (!soteStarted)
+                            {
+                                nyloReset = true;
+                            } else
+                            {
+                                soteWipe = true;
+                            }
+                        }
+                        globalData = new ArrayList<>(globalData.subList(activeIndex + 1, globalData.size()));
+                        Date endTime = new Date(Long.parseLong(subData[1]));
+                        long difference = endTime.getTime() - raidStarted.getTime();
+                        int ticks = (int) (difference / 600);
+                        dataManager.set(DataPoint.OVERALL_TIME, ticks);
+                        return false;
+                    case SOTETSEG_STARTED:
+                        soteStarted = true;
+                        if (partyComplete)
+                        {
+                            soteDefenseAccurate = true;
+                        }
+                        break;
+                    case SOTETSEG_FIRST_MAZE_STARTED:
+                        dataManager.set(DataPoint.SOTE_P1_SPLIT, Integer.parseInt(subData[4]));
+                        break;
+                    case SOTETSEG_FIRST_MAZE_ENDED:
+                        dataManager.set(DataPoint.SOTE_M1_DURATION, Integer.parseInt(subData[4]) - dataManager.get(DataPoint.SOTE_P1_SPLIT));
+                        dataManager.set(DataPoint.SOTE_M1_SPLIT, Integer.parseInt(subData[4]));
+                        break;
+                    case SOTETSEG_SECOND_MAZE_STARTED:
+                        dataManager.set(DataPoint.SOTE_P2_DURATION, Integer.parseInt(subData[4]) - dataManager.get(DataPoint.SOTE_M1_SPLIT));
+                        dataManager.set(DataPoint.SOTE_P2_SPLIT, Integer.parseInt(subData[4]));
+                        break;
+                    case SOTETSEG_SECOND_MAZE_ENDED:
+                        dataManager.set(DataPoint.SOTE_M2_DURATION, Integer.parseInt(subData[4]) - dataManager.get(DataPoint.SOTE_P2_SPLIT));
+                        dataManager.set(DataPoint.SOTE_M2_SPLIT, Integer.parseInt(subData[4]));
+                        dataManager.set(DataPoint.SOTE_MAZE_SUM, dataManager.get(DataPoint.SOTE_M1_DURATION) + dataManager.get(DataPoint.SOTE_M2_DURATION));
+                        break;
+                    case SOTETSEG_ENDED:
+                        dataManager.set(DataPoint.SOTE_TOTAL_TIME, Integer.parseInt(subData[4]));
+                        dataManager.set(DataPoint.SOTE_P3_DURATION, dataManager.get(DataPoint.SOTE_TOTAL_TIME) - dataManager.get(DataPoint.SOTE_M2_SPLIT));
+                        if (isTimeAccurateThroughRoom(NYLOCAS))
+                            dataManager.set(DataPoint.XARP_ENTRY, Integer.parseInt(subData[4]) + dataManager.get(DataPoint.SOTE_ENTRY));
+                        break loop;
+                    case ACCURATE_SOTE_START:
+                        soteStartAccurate = true;
+                        break;
+                    case ACCURATE_SOTE_END:
+                        soteEndAccurate = true;
+                        soteTimeAccurate = soteStartAccurate;
+                        if (soteTimeAccurate && bloatTimeAccurate && !spectated)
+                        {
+                            nyloStartAccurate = true;
+                            nyloEndAccurate = true;
+                            nyloTimeAccurate = true;
+                        }
+
+                        break;
+                    case THRALL_SPAWN:
+                        soteThrallSpawns.add(new ThrallOutlineBox(subData[4], Integer.parseInt(subData[5]), Integer.parseInt(subData[6])));
+                        break;
+                    case UPDATE_HP:
+                        soteHP.put(Integer.parseInt(subData[5]), Integer.parseInt(subData[4]));
+                        break;
+
+                }
+            }
+            catch(Exception e)
+            {
+                log.info("Failed on " + s);
+            }
+            activeIndex++;
+        }
+        globalData = new ArrayList<>(globalData.subList(activeIndex + 1, globalData.size()));
+        return true;
+    }
+
+    private boolean parseXarpus()
+    {
+
+        int activeIndex = 0;
+        loop:
+        for (String s : globalData)
+        {
+            String[] subData = s.split(",", -1);
+            parseGeneric("Xarp", subData);
+            try
+            {
+                switch (LogID.valueOf(Integer.parseInt(subData[3])))
+                {
+                    case LEFT_TOB:
+                        if (dataManager.get(DataPoint.XARP_TOTAL_TIME) != 0)
+                        {
+                            xarpReset = true;
+                        } else
+                        {
+                            if (!xarpStarted)
+                            {
+                                soteReset = true;
+                            } else
+                            {
+                                xarpWipe = true;
+                            }
+                        }
+                        globalData = new ArrayList<>(globalData.subList(activeIndex + 1, globalData.size()));
+                        Date endTime = new Date(Long.parseLong(subData[1]));
+                        long difference = endTime.getTime() - raidStarted.getTime();
+                        int ticks = (int) (difference / 600);
+                        dataManager.set(DataPoint.OVERALL_TIME, ticks);
+                        return false;
+                    case XARPUS_STARTED:
+                        xarpStarted = true;
+                        if (partyComplete)
+                        {
+                            xarpDefenseAccurate = true;
+                        }
+                        break;
+                    case XARPUS_HEAL:
+                        dataManager.increment(DataPoint.XARP_HEALING, getXarpusHealAmount());
+                        break;
+                    case XARPUS_SCREECH:
+                        dataManager.set(DataPoint.XARP_SCREECH, Integer.parseInt(subData[4]));
+                        break;
+                    case XARPUS_DESPAWNED:
+                        dataManager.set(DataPoint.XARP_TOTAL_TIME, Integer.parseInt(subData[4]));
+                        dataManager.set(DataPoint.XARP_POST_SCREECH, dataManager.get(DataPoint.XARP_TOTAL_TIME) - dataManager.get(DataPoint.XARP_SCREECH));
+                        if (isTimeAccurateThroughRoom(SOTETSEG))
+                            dataManager.set(DataPoint.VERZIK_ENTRY, Integer.parseInt(subData[4]) + dataManager.get(DataPoint.XARP_ENTRY));
+                        break loop;
+                    case ACCURATE_XARP_START:
+                        xarpStartAccurate = true;
+                        break;
+                    case ACCURATE_XARP_END:
+                        xarpTimeAccurate = xarpStartAccurate;
+                        xarpEndAccurate = true;
+                        break;
+                    case THRALL_SPAWN:
+                        xarpusThrallSpawns.add(new ThrallOutlineBox(subData[4], Integer.parseInt(subData[5]), Integer.parseInt(subData[6])));
+                        break;
+                    case UPDATE_HP:
+                        xarpHP.put(Integer.parseInt(subData[5]), Integer.parseInt(subData[4]));
+                        break;
+                }
+            }
+            catch(Exception e)
+            {
+                log.info("Failed on " + s);
+            }
+            activeIndex++;
+        }
+        globalData = new ArrayList<>(globalData.subList(activeIndex + 1, globalData.size()));
+        return true;
+    }
+
+    private boolean parseVerzik()
+    {
+        int activeIndex = 0;
+        for (String s : globalData)
+        {
+            String[] subData = s.split(",", -1);
+            parseGeneric("Verzik", subData);
+            try
+            {
+                switch (LogID.valueOf(Integer.parseInt(subData[3])))
+                {
+                    case LEFT_TOB:
+                        if (dataManager.get(DataPoint.VERZIK_TOTAL_TIME) == 0)
+                        {
+                            if (!verzikStarted)
+                            {
+                                xarpReset = true;
+                            } else
+                            {
+                                verzikWipe = true;
+                            }
+                        } else
+                        {
+                            return true;
+                        }
+                        globalData = new ArrayList<>(globalData.subList(activeIndex + 1, globalData.size()));
+                        Date endTime = new Date(Long.parseLong(subData[1]));
+                        long difference = endTime.getTime() - raidStarted.getTime();
+                        int ticks = (int) (difference / 600);
+                        dataManager.set(DataPoint.OVERALL_TIME, ticks);
+                        return false;
+                    case DAWN_DROPPED:
+                        if (verzikStarted)
+                        {
+                            dawnDrops.add(Integer.parseInt(subData[4]));
+                        }
+                        break;
+                    case VERZIK_P1_START:
+                        verzikStarted = true;
+                        break;
+                    case VERZIK_P1_DESPAWNED:
+                        dataManager.set(DataPoint.VERZIK_P1_SPLIT, Integer.parseInt(subData[4]) - 13);
+                        break;
+                    case VERZIK_P2_END:
+                        dataManager.set(DataPoint.VERZIK_P2_SPLIT, Integer.parseInt(subData[4]));
+                        dataManager.set(DataPoint.VERZIK_P2_DURATION, dataManager.get(DataPoint.VERZIK_P2_SPLIT) - dataManager.get(DataPoint.VERZIK_P1_SPLIT));
+                        dataManager.set(DataPoint.VERZIK_REDS_DURATION, dataManager.get(DataPoint.VERZIK_P2_SPLIT)-dataManager.get(DataPoint.VERZIK_REDS_SPLIT));
+                        try
+                        {
+                            int hp = verzikHP.get(dataManager.get(DataPoint.VERZIK_REDS_SPLIT));
+                            dataManager.set(DataPoint.VERZIK_REDS_PROC_PERCENT, (hp));
+                        } catch
+                        (Exception ignored)
+                        {
+
+                        }
+                        break;
+                    case VERZIK_P3_DESPAWNED:
+                        dataManager.set(DataPoint.VERZIK_TOTAL_TIME, Integer.parseInt(subData[4]));
+                        dataManager.set(DataPoint.VERZIK_P3_DURATION, dataManager.get(DataPoint.VERZIK_TOTAL_TIME) - dataManager.get(DataPoint.VERZIK_P2_SPLIT));
+                        dataManager.set(DataPoint.CHALLENGE_TIME, (Integer.parseInt(subData[4]) + dataManager.get(DataPoint.VERZIK_ENTRY)));
+                        break;
+                    case VERZIK_BOUNCE:
+                        dataManager.increment(DataPoint.VERZIK_BOUNCES);
+                        dataManager.incrementPlayerSpecific(DataPoint.VERZIK_BOUNCES, subData[4]);
+                        if (!subData[5].equalsIgnoreCase(""))
+                        {
+                            verzAttacks.add(new PlayerDidAttack(itemManager, subData[4], "100000", Integer.parseInt(subData[5]), "-1", "-1", "-1", -1, -1, "", ""));
+                        }
+                        break;
+                    case VERZIK_CRAB_SPAWNED:
+                        if (!subData[4].equalsIgnoreCase(""))
+                        {
+                            if (dataManager.get(DataPoint.VERZIK_P2_SPLIT) > 1)
+                            {
+                                if (!p3Crabs.contains(Integer.parseInt(subData[4])))
+                                {
+                                    p3Crabs.add(Integer.parseInt(subData[4]));
+                                }
+                            } else
+                            {
+                                if (!p2Crabs.contains(Integer.parseInt(subData[4])))
+                                {
+                                    p2Crabs.add(Integer.parseInt(subData[4]));
+                                }
+                            }
+                        }
+                        dataManager.increment(DataPoint.VERZIK_CRABS_SPAWNED);
+                        break;
+                    case VERZIK_P2_REDS_PROC:
+                        if (dataManager.get(DataPoint.VERZIK_REDS_SPLIT) == 0)
+                        {
+                            dataManager.set(DataPoint.VERZIK_REDS_SPLIT, Integer.parseInt(subData[4]));
+                            dataManager.set(DataPoint.VERZIK_P2_TILL_REDS, Integer.parseInt(subData[4]) - dataManager.get(DataPoint.VERZIK_P1_SPLIT));
+                        }
+                        redsProc.add(Integer.parseInt(subData[4]));
+                        dataManager.increment(DataPoint.VERZIK_REDS_SETS);
+                        break;
+                    case ACCURATE_VERZIK_START:
+                        verzikStartAccurate = true;
+                        break;
+                    case ACCURATE_VERZIK_END:
+                        verzikEndAccurate = true;
+                        verzikTimeAccurate = verzikStartAccurate;
+                        break;
+                    case DAWN_SPEC:
+                        dawnSpecs.add(new DawnSpec(subData[4], Integer.parseInt(subData[5])));
+                        break;
+                    case DAWN_DAMAGE:
+                        for (DawnSpec dawnSpec : dawnSpecs)
+                        {
+                            if (dawnSpec.tick == Integer.parseInt(subData[5]))
+                            {
+                                dawnSpec.setDamage(Integer.parseInt(subData[4]));
+                            }
+                        }
+                        break;
+                    case UPDATE_HP:
+                        verzikHP.put(Integer.parseInt(subData[5]), Integer.parseInt(subData[4]));
+                        break;
+                    case ADD_NPC_MAPPING:
+                        verzikNPCMapping.put(Integer.parseInt(subData[4]), subData[5]);
+                        break;
+                    case WEBS_STARTED:
+                        try
+                        {
+                            websStart.add(Integer.parseInt(subData[4]));
+                            if (dataManager.get(DataPoint.VERZIK_HP_AT_WEBS) == -1)
+                            {
+                                int hp = verzikHP.get(Integer.parseInt(subData[4]) - 1);
+                                hp /= 10;
+                                dataManager.set(DataPoint.VERZIK_HP_AT_WEBS, hp);
+                            }
+                        }
+                        catch(Exception ignored)
+                        {
+
+                        }
+                        break;
+                    case THRALL_SPAWN:
+                        verzikThrallSpawns.add(new ThrallOutlineBox(subData[4], Integer.parseInt(subData[5]), Integer.parseInt(subData[6])));
+                        break;
+                }
+            } catch (Exception e)
+            {
+                log.info("Failed on " + s);
+            }
+            activeIndex++;
+        }
+        globalData = new ArrayList<>(globalData.subList(activeIndex + 1, globalData.size()));
+        return true;
+    }
+
+    private boolean isTimeAccurateThroughRoom(TOBRoom room)
+    {
+        switch (room)
+        {
+            case VERZIK:
+                if (!verzikTimeAccurate)
+                {
+                    return false;
+                }
+            case XARPUS:
+                if (!xarpTimeAccurate)
+                {
+                    return false;
+                }
+            case SOTETSEG:
+                if (!soteTimeAccurate)
+                {
+                    return false;
+                }
+            case NYLOCAS:
+                if (!nyloTimeAccurate)
+                {
+                    return false;
+                }
+            case BLOAT:
+                if (!bloatTimeAccurate)
+                {
+                    return false;
+                }
+            case MAIDEN:
+                return maidenTimeAccurate;
+        }
+        return false;
+    }
+
+    private int getXarpusHealAmount()
+    {
+        int amount = 0;
+        switch (raidTeamSize)
+        {
+            case 5:
+                amount = 8;
+                break;
+            case 4:
+                amount = 9;
+                break;
+            case 3:
+                amount = 12;
+                break;
+            case 2:
+                amount = 16;
+                break;
+            case 1:
+                amount = 20;
+                break;
+        }
+        return amount;
+    }
+
     private void finishRaid()
     {
         raidCompleted = true;
     }
 
-
+    /**
+     * Returns the scale and mode of the raid
+     * @return Scale and Mode (Entry, Regular, Hard) as a String
+     */
     public String getScaleString()
     {
         String scaleString = "";
@@ -1523,6 +1535,10 @@ public class RoomData
         return scaleString;
     }
 
+    /**
+     * Determines the completion status of the raid and returns it
+     * @return Completion status as a String with HTML colouring.
+     */
     public String getRoomStatus()
     {
         String raidStatusString;

@@ -14,10 +14,8 @@ import static com.TheatreTracker.constants.TobIDs.EXIT_FLAG;
 import static com.TheatreTracker.constants.TobIDs.SPECTATE_FLAG;
 
 @Slf4j
-
 public class RoomData
 {
-    public boolean spectated = false;
     public boolean maidenStartAccurate = false;
     public boolean bloatStartAccurate = false;
     public boolean nyloStartAccurate = false;
@@ -33,38 +31,37 @@ public class RoomData
     public boolean verzikEndAccurate = false;
     public boolean resetBeforeMaiden;
 
-    public ArrayList<Integer> websStart = new ArrayList<>();
-
-    public boolean maidenTimeAccurate;
+    public boolean spectated = false;
     public boolean partyComplete;
-
-    public boolean maidenDefenseAccurate;
     public int index = -1;
-
+    public boolean hardMode;
+    public boolean storyMode;
+    public int raidTeamSize;
+    public boolean raidCompleted;
+    public Date raidStarted;
+    private ArrayList<String> globalData;
+    public LinkedHashMap<String, Integer> players;
+    public String[] raidDataRaw;
+    public String activeValue = "";
+    // Maiden tracking
+    public boolean maidenTimeAccurate;
+    public boolean maidenDefenseAccurate;
     public boolean maidenScuffed = false;
     public String firstMaidenCrabScuffed = "";
-
     public ArrayList<StringInt> maidenCrabs = new ArrayList<>();
+    public ArrayList<String> maidenCrabSpawn = new ArrayList<>();
     public boolean maidenSpawned = false;
     public boolean maidenSkip;
     public boolean maidenReset;
     public boolean maidenWipe;
-
-    public boolean hardMode;
-    public boolean storyMode;
-    public ArrayList<Integer> p2Crabs = new ArrayList<>();
-    public ArrayList<Integer> p3Crabs = new ArrayList<>();
-    public ArrayList<Integer> redsProc = new ArrayList<>();
-    public Map<Integer, Integer> waveSpawns = new HashMap<>();
-
+    // Bloat tracking
     public ArrayList<Integer> bloatDowns = new ArrayList<>();
-
-
     public boolean bloatTimeAccurate;
     public boolean bloatDefenseAccurate;
     public boolean bloatStarted;
     public boolean bloatReset;
     public boolean bloatWipe;
+    // Nylo tracking
     public boolean nyloTimeAccurate;
     public boolean nyloDefenseAccurate;
     public int nyloDeaths;
@@ -74,39 +71,42 @@ public class RoomData
     public boolean nyloReset;
     public boolean nyloStarted;
     public ArrayList<Integer> nyloWaveStalled = new ArrayList<>();
-    public ArrayList<DawnSpec> dawnSpecs = new ArrayList<>();
+    public Map<Integer, Integer> waveSpawns = new HashMap<>();
+    // Sotetseg tracking
     public boolean soteTimeAccurate;
     public boolean soteDefenseAccurate;
     public boolean soteStarted;
     public boolean soteWipe;
     public boolean soteReset;
+    // Xarpus tracking
     public boolean xarpTimeAccurate;
     public boolean xarpDefenseAccurate;
     public boolean xarpWipe;
     public boolean xarpReset;
     public boolean xarpStarted;
+    // Verzik tracking
     public boolean verzikWipe;
     public boolean verzikStarted;
     public boolean verzikTimeAccurate;
-    public int raidTeamSize;
-    public boolean raidCompleted;
-    public Date raidStarted;
-    private ArrayList<String> globalData;
-    public LinkedHashMap<String, Integer> players;
+    public ArrayList<Integer> websStart = new ArrayList<>();
+    public ArrayList<DawnSpec> dawnSpecs = new ArrayList<>();
+    public ArrayList<Integer> p2Crabs = new ArrayList<>();
+    public ArrayList<Integer> p3Crabs = new ArrayList<>();
+    public ArrayList<Integer> redsProc = new ArrayList<>();
     public ArrayList<Integer> dawnDrops;
     public ArrayList<PlayerDidAttack> attacksP1;
-    public String[] raidDataRaw;
-    public String activeValue = "";
 
 
-    public ArrayList<String> maidenCrabSpawn = new ArrayList<>();
+
+
+
     public ArrayList<PlayerDidAttack> maidenAttacks;
     public ArrayList<PlayerDidAttack> bloatAttacks;
     public ArrayList<PlayerDidAttack> nyloAttacks;
     public ArrayList<PlayerDidAttack> soteAttacks;
     public ArrayList<PlayerDidAttack> xarpAttacks;
     public ArrayList<PlayerDidAttack> verzAttacks;
-
+    // Thrall tracking
     public ArrayList<ThrallOutlineBox> maidenThrallSpawns;
     public ArrayList<ThrallOutlineBox> bloatThrallSpawns;
     public ArrayList<ThrallOutlineBox> nyloThrallSpawns;

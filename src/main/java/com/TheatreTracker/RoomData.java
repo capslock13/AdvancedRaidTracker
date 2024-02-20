@@ -12,6 +12,7 @@ import java.util.*;
 import static com.TheatreTracker.constants.TOBRoom.*;
 import static com.TheatreTracker.constants.TobIDs.EXIT_FLAG;
 import static com.TheatreTracker.constants.TobIDs.SPECTATE_FLAG;
+import static com.TheatreTracker.utility.datautility.DataPoint.*;
 
 @Slf4j
 public class RoomData
@@ -641,10 +642,10 @@ public class RoomData
                     case VERZIK_P2_END:
                         dataManager.set(DataPoint.VERZIK_P2_SPLIT, Integer.parseInt(subData[4]));
                         dataManager.set(DataPoint.VERZIK_P2_DURATION, dataManager.get(DataPoint.VERZIK_P2_SPLIT) - dataManager.get(DataPoint.VERZIK_P1_SPLIT));
-                        dataManager.set(DataPoint.VERZIK_REDS_DURATION, dataManager.get(DataPoint.VERZIK_P2_SPLIT)-dataManager.get(DataPoint.VERZIK_REDS_SPLIT));
+                        dataManager.set(DataPoint.VERZIK_REDS_DURATION, dataManager.get(DataPoint.VERZIK_P2_SPLIT)-dataManager.get(VERZIK_REDS_SPLIT));
                         try
                         {
-                            int hp = verzikHP.get(dataManager.get(DataPoint.VERZIK_REDS_SPLIT));
+                            int hp = verzikHP.get(dataManager.get(VERZIK_REDS_SPLIT));
                             dataManager.set(DataPoint.VERZIK_REDS_PROC_PERCENT, (hp));
                         } catch
                         (Exception ignored)
@@ -682,13 +683,13 @@ public class RoomData
                                 }
                             }
                         }
-                        dataManager.increment(DataPoint.VERZIK_CRABS_SPAWNED);
+                        dataManager.increment(VERZIK_CRABS_SPAWNED);
                         break;
                     case VERZIK_P2_REDS_PROC:
-                        if (dataManager.get(DataPoint.VERZIK_REDS_SPLIT) == 0)
+                        if (dataManager.get(VERZIK_REDS_SPLIT) == 0)
                         {
-                            dataManager.set(DataPoint.VERZIK_REDS_SPLIT, Integer.parseInt(subData[4]));
-                            dataManager.set(DataPoint.VERZIK_P2_TILL_REDS, Integer.parseInt(subData[4]) - dataManager.get(DataPoint.VERZIK_P1_SPLIT));
+                            dataManager.set(VERZIK_REDS_SPLIT, Integer.parseInt(subData[4]));
+                            dataManager.set(VERZIK_P2_TILL_REDS, Integer.parseInt(subData[4]) - dataManager.get(DataPoint.VERZIK_P1_SPLIT));
                         }
                         redsProc.add(Integer.parseInt(subData[4]));
                         dataManager.increment(DataPoint.VERZIK_REDS_SETS);

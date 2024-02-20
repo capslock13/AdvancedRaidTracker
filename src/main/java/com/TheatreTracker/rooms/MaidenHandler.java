@@ -824,7 +824,10 @@ public class MaidenHandler extends RoomHandler
         {
             clog.write(MAIDEN_SCUFFED, "S4 (2)");
             return "S4 (2)" + proc;
-        } else throw new InvalidParameterException("Impossible crab spawn data at maiden. Location: " + x + ", " + y);
+        } else
+        {
+            return "Unknown";
+        }
     }
 
     private String getProc()

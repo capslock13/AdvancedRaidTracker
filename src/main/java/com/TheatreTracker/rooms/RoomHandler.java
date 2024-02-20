@@ -176,6 +176,11 @@ public class RoomHandler
     {
     }
 
+    public void updateGroundObjectSpawned(GroundObjectSpawned event)
+    {
+
+    }
+
     public String getName()
     {
         return "";

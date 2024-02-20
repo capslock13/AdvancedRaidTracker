@@ -3,6 +3,7 @@ package com.TheatreTracker.ui;
 import com.TheatreTracker.RoomData;
 import com.TheatreTracker.TheatreTrackerConfig;
 import com.TheatreTracker.TheatreTrackerPlugin;
+import com.TheatreTracker.ui.buttons.StripedTableRowCellRenderer;
 import com.TheatreTracker.utility.datautility.DataWriter;
 import com.TheatreTracker.utility.wrappers.RaidsArrayWrapper;
 import com.TheatreTracker.utility.datautility.RaidsManager;
@@ -31,7 +32,7 @@ public class RaidTrackerSidePanel extends PluginPanel
     private Raids raids;
 
     private TheatreTrackerPlugin plugin;
-    private TheatreTrackerConfig config;
+    private static TheatreTrackerConfig config;
     private static ItemManager itemManager;
 
     @Inject
@@ -91,6 +92,8 @@ public class RaidTrackerSidePanel extends PluginPanel
         Scanner logReader = new Scanner(Files.newInputStream(currentFile.toPath()));
         ArrayList<String> raid = new ArrayList<>();
         boolean raidActive = false;
+        boolean spectate = false;
+        boolean lateStart = false;
         while (logReader.hasNextLine())
         {
             String line = logReader.nextLine();
@@ -103,24 +106,38 @@ public class RaidTrackerSidePanel extends PluginPanel
                     {
                         raid.add(line);
                         raidActive = true;
+                        spectate = false;
+                        lateStart = false;
                     }
                 }
             } else
             {
                 if (lineSplit.length > 3)
                 {
-                    if (Integer.parseInt(lineSplit[3]) == 99)
+                    int value = Integer.parseInt(lineSplit[3]);
+                    if(value != 0)
                     {
-                        raid.add(line);
-                    } else if (Integer.parseInt(lineSplit[3]) == 4)
-                    {
-                        raid.add(line);
-                        raidActive = false;
-                        raids.add(new RoomData(raid.toArray(new String[0]), itemManager));
-                        raid.clear();
-                    } else
-                    {
-                        raid.add(line);
+                        if(!config.reduceMemoryLoad() || (value != 801 && value != 403 && value != 404 && value != 576 && value != 587 && value != 410 && value != 405))
+                        {
+                            if (Integer.parseInt(lineSplit[3]) == 99 && !spectate)
+                            {
+                                spectate = true;
+                                raid.add(line);
+                            } else if (value == 98 && !lateStart)
+                            {
+                                lateStart = true;
+                                raid.add(line);
+                            } else if (Integer.parseInt(lineSplit[3]) == 4)
+                            {
+                                raid.add(line);
+                                raidActive = false;
+                                raids.add(new RoomData(raid.toArray(new String[0]), itemManager));
+                                raid.clear();
+                            } else if (value != 99 && value != 98)
+                            {
+                                raid.add(line);
+                            }
+                        }
                     }
                 }
             }
@@ -149,11 +166,14 @@ public class RaidTrackerSidePanel extends PluginPanel
         viewRaidsButton.addActionListener(
                 al ->
                 {
-                    raids = new Raids(config, itemManager, plugin.clientThread);
-                    raids.createFrame(raidsData);
-                    raids.getContentPane().setBackground(Color.BLACK);
-                    raids.repaint();
-                    raids.open();
+                    new Thread(() ->
+                    {
+                        raids = new Raids(config, itemManager, plugin.clientThread);
+                        raids.createFrame(raidsData);
+                        raids.getContentPane().setBackground(Color.BLACK);
+                        raids.repaint();
+                        raids.open();
+                    }).start();
                 });
 
         refreshRaidsButton.addActionListener(
@@ -206,6 +226,7 @@ public class RaidTrackerSidePanel extends PluginPanel
                 return Boolean.class;
             }
         };
+
         loadRaidsTable.setPreferredScrollableViewportSize(loadRaidsTable.getPreferredScrollableViewportSize());
         JScrollPane scrollPane = new JScrollPane(loadRaidsTable);
         scrollPane.setPreferredSize(new Dimension(225, scrollPane.getPreferredSize().height));

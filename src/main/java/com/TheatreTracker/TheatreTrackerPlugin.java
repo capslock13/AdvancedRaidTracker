@@ -5,6 +5,7 @@ import com.TheatreTracker.constants.TOBRoom;
 import com.TheatreTracker.ui.charts.LiveChart;
 import com.TheatreTracker.ui.RaidTrackerSidePanel;
 import com.TheatreTracker.utility.*;
+import com.TheatreTracker.utility.Point;
 import com.TheatreTracker.utility.datautility.DataWriter;
 import com.TheatreTracker.utility.thrallvengtracking.*;
 import com.TheatreTracker.utility.wrappers.PlayerDidAttack;
@@ -679,7 +680,7 @@ public class TheatreTrackerPlugin extends Plugin
                 {
                     if (!s.isEmpty())
                     {
-                        currentPlayers.add(s);
+                        currentPlayers.add(s.replaceAll(String.valueOf((char) 160), String.valueOf((char) 32)));
                     }
                 }
                 liveFrame.setPlayers(currentPlayers);
@@ -869,6 +870,15 @@ public class TheatreTrackerPlugin extends Plugin
             {
                 clog.write(PLAYER_DIED, event.getActor().getName(), String.valueOf(client.getTickCount() - currentRoom.roomStartTick));
             }
+        }
+    }
+
+    @Subscribe
+    public void onGroundObjectSpawned(GroundObjectSpawned event)
+    {
+        if(inTheatre)
+        {
+            currentRoom.updateGroundObjectSpawned(event);
         }
     }
 

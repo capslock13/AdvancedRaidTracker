@@ -184,7 +184,9 @@ public enum DataPoint
     CHALLY_POKE("Chally pokes", types.OTHER_INT, rooms.ANY, true),
     BGS_WHACKS("BGS whacks", types.OTHER_INT, rooms.ANY, true),
     TOTAL_DEATHS("Total deaths", types.OTHER_INT, rooms.ANY, true),
-    DEATHS("Alternate Deaths", types.OTHER_INT, rooms.ALL, true);
+    DEATHS("Alternate Deaths", types.OTHER_INT, rooms.ALL, true),
+    UNKNOWN("Unknown", types.OTHER_BOOL, rooms.ANY);
+
 
 
     public static DataPoint getValue(String s)

@@ -11,6 +11,9 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Objects;
 
+import static com.TheatreTracker.utility.UISwingUtility.getDarkJLabel;
+import static com.TheatreTracker.utility.UISwingUtility.primaryDark;
+
 @Slf4j
 public class StatisticRoomPanel extends JPanel
 {
@@ -37,8 +40,8 @@ public class StatisticRoomPanel extends JPanel
         labelNames = DataPoint.getTimeNamesByRoom(room);
         for (String s : labelNames)
         {
-            nameLabels.add(new JLabel(s.substring(s.indexOf(' ') + 1), SwingConstants.LEFT));
-            timeLabels.add(new JLabel("-", SwingConstants.RIGHT));
+            nameLabels.add(getDarkJLabel(s.substring(s.indexOf(' ') + 1), SwingConstants.LEFT));
+            timeLabels.add(getDarkJLabel("-", SwingConstants.RIGHT));
         }
         String borderString = "";
         switch (type)

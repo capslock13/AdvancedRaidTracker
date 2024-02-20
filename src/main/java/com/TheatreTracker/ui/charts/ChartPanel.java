@@ -524,13 +524,16 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         }
     }
 
-    private void drawPrimaryBoxes(Graphics2D g)
-    {
+    private void drawPrimaryBoxes(Graphics2D g)    {
         for (OutlineBox box : outlineBoxes)
         {
             if (box.tick >= startTick && box.tick <= endTick)
             {
                 int xOffset = 100 + ((shouldWrap) ? ((box.tick - startTick) % 50) * scale : box.tick * scale);
+                if(playerOffsets.get(box.player) == null)
+                {
+                    continue;
+                }
                 int yOffset = ((playerOffsets.get(box.player) + 1) * scale + 30) + ((shouldWrap) ? ((box.tick - startTick) / 50) * boxHeight : 30);
                 g.setColor(box.color);
                 g.fillRect(xOffset + 1, yOffset + 1, scale - 1, scale - 1);
@@ -717,7 +720,9 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
     private void drawMaidenCrabs(Graphics2D g)
     {
-        g.setColor(Color.BLACK);
+        g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+        g.setColor(new Color(230, 20, 20, 200));
         if (room.equals("Maiden"))
         {
             for (Integer tick : lines.keySet())
@@ -816,7 +821,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                             crabOffsetY = 29;
                         }
                         crabOffsetY -= scale;
-                        g.setColor(Color.BLACK);
+                        g.setColor(new Color(230, 20, 20, 200));
                         g.fillOval(xOffset + crabOffsetX, yOffset + crabOffsetY, 7, 7);
                     }
                 }

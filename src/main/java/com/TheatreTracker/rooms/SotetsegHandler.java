@@ -126,9 +126,9 @@ public class SotetsegHandler extends RoomHandler
                     if(ticksSinceLastProc > tickOffset)
                     {
                         String mazeRunner = (roomState== RoomState.SotetsegRoomState.MAZE_1) ? firstMazeChosen : secondMazeChosen;
-                        plugin.sendChatMessage(mazeRunner + " was late to first tile by " + (ticksSinceLastProc-tickOffset) + " ticks");
+                       // plugin.sendChatMessage(mazeRunner + " was late to first tile by " + (ticksSinceLastProc-tickOffset) + " ticks");
                     }
-                    plugin.sendChatMessage("First tile was " + distance + " away, and showed up after " + ticksSinceLastProc + " ticks. Expected: " + tickOffset + ". X Position: " + event.getGroundObject().getWorldLocation().getRegionX());
+                    //plugin.sendChatMessage("First tile was " + distance + " away, and showed up after " + ticksSinceLastProc + " ticks. Expected: " + tickOffset + ". X Position: " + event.getGroundObject().getWorldLocation().getRegionX());
                 }
                 //log.info("Red tile appeared " + ticksSinceLastProc + " ticks after proc, on (" + event.getGroundObject().getWorldLocation().getRegionX() + "," + event.getGroundObject().getWorldLocation().getRegionY() +")");
             }
@@ -315,7 +315,7 @@ public class SotetsegHandler extends RoomHandler
 
     public void endFirstMaze()
     {
-        endEitherMaze();
+        //endEitherMaze();
         soteFirstMazeEnd = client.getTickCount();
         clog.write(LogID.SOTETSEG_FIRST_MAZE_ENDED, String.valueOf(soteFirstMazeEnd - soteEntryTick));
         roomState = RoomState.SotetsegRoomState.PHASE_2;
@@ -325,7 +325,7 @@ public class SotetsegHandler extends RoomHandler
 
     public void startSecondMaze()
     {
-        startEitherMaze();
+        //startEitherMaze();
         lastChosen = "";
         excludedTiles.clear();
         currentMaze.clear();
@@ -550,7 +550,6 @@ public class SotetsegHandler extends RoomHandler
                 firstMazeChosen = getAboveWorldChosen();
             }
             lastChosen = firstMazeChosen;
-            log.info("Chosen 1st maze: " + firstMazeChosen);
         }
         else if(client.getTickCount() == soteSecondMazeStart+5)
         {
@@ -562,7 +561,7 @@ public class SotetsegHandler extends RoomHandler
             {
                 secondMazeChosen = getAboveWorldChosen();
             }
-            log.info("Chosen 2nd maze: " + secondMazeChosen);
+         //   log.info("Chosen 2nd maze: " + secondMazeChosen);
             lastChosen = secondMazeChosen;
         }
     }

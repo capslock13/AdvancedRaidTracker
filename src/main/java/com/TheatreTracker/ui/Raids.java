@@ -765,6 +765,13 @@ public class Raids extends BaseFrame
         return panel;
     }
 
+    public void clearData()
+    {
+        currentData.clear();
+        comparisons.clear();
+        close();
+    }
+
     public void createFrame(ArrayList<RoomData> data)
     {
         comboPopupData.put("Room Times", DataPoint.getRoomTimes());

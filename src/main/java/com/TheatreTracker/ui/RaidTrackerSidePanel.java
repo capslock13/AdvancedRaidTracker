@@ -145,6 +145,17 @@ public class RaidTrackerSidePanel extends PluginPanel
         logReader.close();
     }
 
+    public void refreshRaids()
+    {
+        new Thread(() ->
+        {
+            raidsData = getAllRaids(raidCountLabel);
+            updateRaidCountLabel();
+            DefaultTableModel model = getTableModel();
+            loadRaidsTable.setModel(model);
+        }).start();
+    }
+
     private void buildComponents()
     {
         JPanel container = new JPanel();
@@ -178,15 +189,15 @@ public class RaidTrackerSidePanel extends PluginPanel
 
         refreshRaidsButton.addActionListener(
                 al ->
-                {
-                    new Thread(() ->
-                    {
-                        raidsData = getAllRaids(raidCountLabel);
-                        updateRaidCountLabel();
-                        DefaultTableModel model = getTableModel();
-                        loadRaidsTable.setModel(model);
-                    }).start();
-                });
+                        new Thread(() ->
+                        {
+                            raidsData = getAllRaids(raidCountLabel);
+                            updateRaidCountLabel();
+                            DefaultTableModel model = getTableModel();
+                            loadRaidsTable.setModel(model);
+                            raids.clearData();
+                            raids = null;
+                        }).start());
 
         tableRaidsButton.addActionListener(
                 al ->

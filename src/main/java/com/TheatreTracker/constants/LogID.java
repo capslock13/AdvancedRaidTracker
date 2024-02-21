@@ -1,6 +1,5 @@
 package com.TheatreTracker.constants;
 
-import jdk.jpackage.internal.Log;
 import lombok.Getter;
 
 import java.util.Arrays;
@@ -147,82 +146,81 @@ public enum LogID
     ADD_NPC_MAPPING(587),
     UNKNOWN(-1);
 
-
     /*
- 2:DWH //Player, 0, 0, 0, 0
- 3:BGS //Player, Damage, 0, 0, 0
- 4:Left tob region //Last region, 0, 0, 0, 0
- 5:Player died //Player, 0, 0, 0, 0
- 6:Entered new tob region //Region, 0, 0, 0, 0 // Regions: (Bloat 1, Nylo 2, Sote 3, Xarpus 4, Verzik 5)
- 8: DB Specs // Player, DMG
+    2:DWH //Player, 0, 0, 0, 0
+    3:BGS //Player, Damage, 0, 0, 0
+    4:Left tob region //Last region, 0, 0, 0, 0
+    5:Player died //Player, 0, 0, 0, 0
+    6:Entered new tob region //Region, 0, 0, 0, 0 // Regions: (Bloat 1, Nylo 2, Sote 3, Xarpus 4, Verzik 5)
+    8: DB Specs // Player, DMG
 
- 10: Blood Spawned //room time, 0, 0, 0, 0
- 11: Crab leaked //room time, Description (E.G. N1 30s), Last known health, Current maiden dealth, 0
- 12: Maiden spawned //0, 0, 0, 0, 0
- 13: Maiden 70s //room time, 0, 0, 0, 0
- 14: Maiden 50s //room time, 0, 0, 0, 0
- 15: Maiden 30s //room time, 0, 0, 0, 0
- 16: Maiden 0 hp //room time, 0, 0, 0, 0
- 17: Maiden despawned //room time, 0, 0, 0, 0
- 18: Matomenos spawned //position, 0, 0, 0, 0
- 19: Maiden Scuffed
+    10: Blood Spawned //room time, 0, 0, 0, 0
+    11: Crab leaked //room time, Description (E.G. N1 30s), Last known health, Current maiden dealth, 0
+    12: Maiden spawned //0, 0, 0, 0, 0
+    13: Maiden 70s //room time, 0, 0, 0, 0
+    14: Maiden 50s //room time, 0, 0, 0, 0
+    15: Maiden 30s //room time, 0, 0, 0, 0
+    16: Maiden 0 hp //room time, 0, 0, 0, 0
+    17: Maiden despawned //room time, 0, 0, 0, 0
+    18: Matomenos spawned //position, 0, 0, 0, 0
+    19: Maiden Scuffed
 
- 20: Bloat spawned //0, 0, 0, 0, 0
- 21: Bloat down //Room time, 0, 0, 0, 0
- 22: Bloat 0 HP //room time, 0, 0, 0, 0
- 23: Bloat despawn //room time, 0, 0, 0, 0
- 24: Bloat HP on 1st down //HP, 0, 0, 0,0
+    20: Bloat spawned //0, 0, 0, 0, 0
+    21: Bloat down //Room time, 0, 0, 0, 0
+    22: Bloat 0 HP //room time, 0, 0, 0, 0
+    23: Bloat despawn //room time, 0, 0, 0, 0
+    24: Bloat HP on 1st down //HP, 0, 0, 0,0
 
- 30: Nylo pillars spawned //0, 0, 0, 0 ,0
- 31: Nylo stall //Wave, room time, 0, 0, 0
- 32: Range split //Wave, room time, 0, 0, 0
- 33: Mage split //Wave, room time, 0, 0, 0
- 34: Melee split //Wave, room time, 0, 0, 0
- 35: Last wave //Room time, 0, 0, 0, 0
- 40: Boss spawn //Room time, 0, 0, 0, 0
- 41: Melee rotation //room time, 0, 0, 0, 0
- 42: Mage rotation //room time, 0, 0, 0, 0
- 43: Range rotation //room time, 0, 0, 0, 0
- 44: Nylo 0 HP // room time, 0, 0, 0, 0
- 45: Nylo despawned // room time, 0, 0, 0, 0
+    30: Nylo pillars spawned //0, 0, 0, 0 ,0
+    31: Nylo stall //Wave, room time, 0, 0, 0
+    32: Range split //Wave, room time, 0, 0, 0
+    33: Mage split //Wave, room time, 0, 0, 0
+    34: Melee split //Wave, room time, 0, 0, 0
+    35: Last wave //Room time, 0, 0, 0, 0
+    40: Boss spawn //Room time, 0, 0, 0, 0
+    41: Melee rotation //room time, 0, 0, 0, 0
+    42: Mage rotation //room time, 0, 0, 0, 0
+    43: Range rotation //room time, 0, 0, 0, 0
+    44: Nylo 0 HP // room time, 0, 0, 0, 0
+    45: Nylo despawned // room time, 0, 0, 0, 0
 
- 5x: sote
+    5x: sote
 
- 60: xarpus spawned //0, 0, 0, 0, 0
- 61: xarpus room started //0, 0, 0, 0, 0
- 62: xarpus heal //amount, room time, 0, 0, 0
- 63: xarpus screech //room time, 0, 0, 0, 0
- 64: xarpus 0 hp //room time, 0, 0, 0, 0
- 65: xarpus despawned //room time, 0, 0, 0, 0
+    60: xarpus spawned //0, 0, 0, 0, 0
+    61: xarpus room started //0, 0, 0, 0, 0
+    62: xarpus heal //amount, room time, 0, 0, 0
+    63: xarpus screech //room time, 0, 0, 0, 0
+    64: xarpus 0 hp //room time, 0, 0, 0, 0
+    65: xarpus despawned //room time, 0, 0, 0, 0
 
- 70: verzik spawned //room time, 0, 0, 0, 0
- 71: verzik p1 started //0, 0, 0, 0, 0
- 72: verzik p1 0 hp //room time, 0, 0, 0, 0
- 73: verzik p1 despawned //room time, 0, 0, 0, 0
- 80: verzik p2 reds proc // room time, 0, 0, 0, 0
- 74: verzik p2 end
- 75: verzik p3 0 hp
- 76: verzik p3 despawned
- 77: verzik bounce //player, room time, 0, 0, 0
+    70: verzik spawned //room time, 0, 0, 0, 0
+    71: verzik p1 started //0, 0, 0, 0, 0
+    72: verzik p1 0 hp //room time, 0, 0, 0, 0
+    73: verzik p1 despawned //room time, 0, 0, 0, 0
+    80: verzik p2 reds proc // room time, 0, 0, 0, 0
+    74: verzik p2 end
+    75: verzik p3 0 hp
+    76: verzik p3 despawned
+    77: verzik bounce //player, room time, 0, 0, 0
 
- 100: party complete
- 101: party incomplete
- 102: party accurate pre maiden
+    100: party complete
+    101: party incomplete
+    102: party accurate pre maiden
 
- 201 accurate maiden start
- 202 accurate bloat start
- 203 accurate nylo start
- 204 accurate sote start
- 205 accurate xarp start
- 206 accurate verzik start
+    201 accurate maiden start
+    202 accurate bloat start
+    203 accurate nylo start
+    204 accurate sote start
+    205 accurate xarp start
+    206 accurate verzik start
 
- 301 accurate maiden end
- 302 accurate bloat end
- 303 accurate nylo end
- 304 accurate sote end
- 305 accurate xarp end
- 306 accurate verzik end
- */
+    301 accurate maiden end
+    302 accurate bloat end
+    303 accurate nylo end
+    304 accurate sote end
+    305 accurate xarp end
+    306 accurate verzik end
+    */
     final int id;
     final String commonName;
     final TOBRoom room;

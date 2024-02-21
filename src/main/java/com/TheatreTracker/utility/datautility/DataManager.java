@@ -72,6 +72,10 @@ public class DataManager
 
     public int get(DataPoint point)
     {
+        if(point == null)
+        {
+            return -1;
+        }
         return data[point.ordinal()].value;
     }
 

@@ -1,9 +1,12 @@
 package com.TheatreTracker.constants;
 
+import jdk.jpackage.internal.Log;
 import lombok.Getter;
 
 import java.util.Arrays;
 import java.util.Optional;
+
+import static com.TheatreTracker.constants.TOBRoom.*;
 
 /**
  * Convenience class for the possible keys used to log events. The parameters each of these events should include can be found in
@@ -12,20 +15,18 @@ import java.util.Optional;
 @Getter
 public enum LogID
 {
-    ENTERED_TOB(0),
-    PARTY_MEMBERS(1),
-    DWH(2),
-    BGS(3),
-    LEFT_TOB(4),
-    PLAYER_DIED(5),
-    ENTERED_NEW_TOB_REGION(6),
-    HAMMER_ATTEMPTED(7),
-    P1_ATTACK(8),
-    DAWN_DROPPED(800),
-    WEBS_STARTED(901),
-    PLAYER_ATTACK(801),
-
-    BLOOD_THROWN(9),
+    ENTERED_TOB(0, ANY, "Entered TOB"),
+    PARTY_MEMBERS(1, ANY, "Party Members"),
+    DWH(2, ANY,"DWH Hit"),
+    BGS(3, ANY,"BGS Hit"),
+    LEFT_TOB(4, ANY,"Left TOB"),
+    PLAYER_DIED(5, ANY,"Played Died"),
+    ENTERED_NEW_TOB_REGION(6, ANY,"Entered New TOB Region"),
+    HAMMER_ATTEMPTED(7, ANY,"DWH Attempted"),
+    DAWN_DROPPED(800, VERZIK,"Dawnbringer appeared"),
+    WEBS_STARTED(901, VERZIK,"Webs Thrown"),
+    PLAYER_ATTACK(801, ANY,"Player Animation"),
+    BLOOD_THROWN(9,MAIDEN,"Maiden blood thrown"),
     BLOOD_SPAWNED(10),
     CRAB_LEAK(11),
     MAIDEN_SPAWNED(12),
@@ -222,12 +223,20 @@ public enum LogID
  305 accurate xarp end
  306 accurate verzik end
  */
-    final
-    int id;
+    final int id;
+    final String commonName;
+    final TOBRoom room;
 
     LogID(int id)
     {
+        this(id, TOBRoom.UNKNOWN, "");
+    }
+
+    LogID(int id, TOBRoom room, String commonName)
+    {
         this.id = id;
+        this.commonName = commonName;
+        this.room = room;
     }
 
     public static LogID valueOf(int value)

@@ -4,10 +4,7 @@ package com.TheatreTracker.ui;
 import com.TheatreTracker.RoomData;
 import com.TheatreTracker.TheatreTrackerConfig;
 import com.TheatreTracker.filters.*;
-import com.TheatreTracker.ui.buttons.ButtonEditorComparisonData;
-import com.TheatreTracker.ui.buttons.ButtonEditorFilterData;
-import com.TheatreTracker.ui.buttons.ButtonEditorRoomData;
-import com.TheatreTracker.ui.buttons.ButtonRenderer;
+import com.TheatreTracker.ui.buttons.*;
 import com.TheatreTracker.ui.charts.ChartFrame;
 import com.TheatreTracker.ui.comparisonview.ComparisonViewFrame;
 import com.TheatreTracker.ui.comparisonview.ComparisonViewPanel;
@@ -18,7 +15,6 @@ import com.TheatreTracker.ui.filters.LoadFilter;
 import com.TheatreTracker.ui.filters.SaveFilter;
 import com.TheatreTracker.ui.statistics.StatisticTab;
 import com.TheatreTracker.ui.summary.SummarizeRaids;
-import com.TheatreTracker.ui.buttons.NonEditableCell;
 import com.TheatreTracker.utility.*;
 import com.TheatreTracker.utility.datautility.DataPoint;
 import com.TheatreTracker.utility.datautility.DataWriter;
@@ -46,6 +42,8 @@ import java.awt.event.MouseEvent;
 import java.util.*;
 import java.util.List;
 
+import static com.TheatreTracker.utility.UISwingUtility.*;
+
 @Slf4j
 public class Raids extends BaseFrame
 {
@@ -61,42 +59,11 @@ public class Raids extends BaseFrame
 
     private JComboBox<String> sortOrderBox;
     private JComboBox<String> sortOptionsBox;
-    private final JLabel overallPanelMaidenAverage = new JLabel("", SwingConstants.RIGHT);
-    private final JLabel overallPanelBloatAverage = new JLabel("", SwingConstants.RIGHT);
-    private final JLabel overallPanelNyloAverage = new JLabel("", SwingConstants.RIGHT);
-    private final JLabel overallPanelSoteAverage = new JLabel("", SwingConstants.RIGHT);
-    private final JLabel overallPanelXarpusAverage = new JLabel("", SwingConstants.RIGHT);
-    private final JLabel overallPanelVerzikAverage = new JLabel("", SwingConstants.RIGHT);
-    private final JLabel overallPanelOverallAverage = new JLabel("", SwingConstants.RIGHT);
 
-    private final JLabel overallPanelMaidenMedian = new JLabel("", SwingConstants.RIGHT);
-    private final JLabel overallPanelBloatMedian = new JLabel("", SwingConstants.RIGHT);
-    private final JLabel overallPanelNyloMedian = new JLabel("", SwingConstants.RIGHT);
-    private final JLabel overallPanelSoteMedian = new JLabel("", SwingConstants.RIGHT);
-    private final JLabel overallPanelXarpusMedian = new JLabel("", SwingConstants.RIGHT);
-    private final JLabel overallPanelVerzikMedian = new JLabel("", SwingConstants.RIGHT);
-    private final JLabel overallPanelOverallMedian = new JLabel("", SwingConstants.RIGHT);
-
-    private final JLabel overallPanelMaidenMinimum = new JLabel("", SwingConstants.RIGHT);
-    private final JLabel overallPanelBloatMinimum = new JLabel("", SwingConstants.RIGHT);
-    private final JLabel overallPanelNyloMinimum = new JLabel("", SwingConstants.RIGHT);
-    private final JLabel overallPanelSoteMinimum = new JLabel("", SwingConstants.RIGHT);
-    private final JLabel overallPanelXarpusMinimum = new JLabel("", SwingConstants.RIGHT);
-    private final JLabel overallPanelVerzikMinimum = new JLabel("", SwingConstants.RIGHT);
-    private final JLabel overallPanelOverallMinimum = new JLabel("", SwingConstants.RIGHT);
-    private final JLabel overallPanelMaidenMaximum = new JLabel("", SwingConstants.RIGHT);
-    private final JLabel overallPanelBloatMaximum = new JLabel("", SwingConstants.RIGHT);
-    private final JLabel overallPanelNyloMaximum = new JLabel("", SwingConstants.RIGHT);
-    private final JLabel overallPanelSoteMaximum = new JLabel("", SwingConstants.RIGHT);
-    private final JLabel overallPanelXarpusMaximum = new JLabel("", SwingConstants.RIGHT);
-    private final JLabel overallPanelVerzikMaximum = new JLabel("", SwingConstants.RIGHT);
-    private final JLabel overallPanelOverallMaximum = new JLabel("", SwingConstants.RIGHT);
-
-    private final JLabel resultsAverage = new JLabel("", SwingConstants.RIGHT);
-    private JLabel resultsMedian = new JLabel("", SwingConstants.RIGHT);
-    private JLabel resultsMode = new JLabel("", SwingConstants.RIGHT);
-    private JLabel resultsMinimum = new JLabel("", SwingConstants.RIGHT);
-    private JLabel resultsMaximum = new JLabel("", SwingConstants.RIGHT);
+    Map<String, JLabel> averageLabels = new LinkedHashMap<>();
+    Map<String, JLabel> medianLabels = new LinkedHashMap<>();
+    Map<String, JLabel> minLabels = new LinkedHashMap<>();
+    Map<String, JLabel> maxLabels = new LinkedHashMap<>();
     public JComboBox statisticsBox;
     public JLabel customAverageLabel = new JLabel("", SwingConstants.RIGHT);
     public JLabel customMedianLabel = new JLabel("", SwingConstants.RIGHT);
@@ -146,17 +113,22 @@ public class Raids extends BaseFrame
     private JComboBox<String> otherBoolFilterChoice;
     private JComboBox<String> otherBoolFilterOperator;
 
-    String colorStr(Color c)
-    {
-        return "<html><font color='#" + Integer.toHexString(c.getRGB()).substring(2) + "'>";
-    }
 
     private final TheatreTrackerConfig config;
     private final ItemManager itemManager;
     private ClientThread clientThread;
 
+    public String[] rooms = {"Maiden", "Bloat","Nylocas","Sotetseg","Xarpus","Verzik","Challenge"};
+
     public Raids(TheatreTrackerConfig config, ItemManager itemManager, ClientThread clientThread)
     {
+        for(String s : rooms)
+        {
+            averageLabels.put(s, getDarkJLabel("", SwingConstants.RIGHT));
+            medianLabels.put(s, getDarkJLabel("", SwingConstants.RIGHT));
+            minLabels.put(s, getDarkJLabel("", SwingConstants.RIGHT));
+            maxLabels.put(s, getDarkJLabel("", SwingConstants.RIGHT));
+        }
         this.clientThread = clientThread;
         this.itemManager = itemManager;
         columnHeaders = new ArrayList<>();
@@ -451,6 +423,7 @@ public class Raids extends BaseFrame
             } else
             {
                 table.getColumn(table.getColumnName(i)).setCellEditor(new NonEditableCell(new JTextField()));
+                table.getColumn(table.getColumnName(i)).setCellRenderer(new StripedTableRowCellRenderer());
             }
         }
 
@@ -661,46 +634,34 @@ public class Raids extends BaseFrame
 
     public void setOverallAverageLabels(ArrayList<RoomData> data)
     {
-        overallPanelMaidenAverage.setText(RoomUtil.time(StatisticGatherer.getGenericAverage(data, DataPoint.MAIDEN_TOTAL_TIME)));
-        overallPanelBloatAverage.setText(RoomUtil.time(StatisticGatherer.getGenericAverage(data, DataPoint.BLOAT_TOTAL_TIME)));
-        overallPanelNyloAverage.setText(RoomUtil.time(StatisticGatherer.getGenericAverage(data, DataPoint.NYLO_TOTAL_TIME)));
-        overallPanelSoteAverage.setText(RoomUtil.time(StatisticGatherer.getGenericAverage(data, DataPoint.SOTE_TOTAL_TIME)));
-        overallPanelXarpusAverage.setText(RoomUtil.time(StatisticGatherer.getGenericAverage(data, DataPoint.XARP_TOTAL_TIME)));
-        overallPanelVerzikAverage.setText(RoomUtil.time(StatisticGatherer.getGenericAverage(data, DataPoint.VERZIK_TOTAL_TIME)));
-        overallPanelOverallAverage.setText(RoomUtil.time(StatisticGatherer.getOverallTimeAverage(data)));
+        for(String s : averageLabels.keySet())
+        {
+            averageLabels.get(s).setText(RoomUtil.time(StatisticGatherer.getGenericAverage(data, DataPoint.getValue(s + " Time"))));
+        }
     }
 
     public void setOverallMedianLabels(ArrayList<RoomData> data)
     {
-        overallPanelMaidenMedian.setText(RoomUtil.time(StatisticGatherer.getGenericMedian(data, DataPoint.MAIDEN_TOTAL_TIME)));
-        overallPanelBloatMedian.setText(RoomUtil.time(StatisticGatherer.getGenericMedian(data, DataPoint.BLOAT_TOTAL_TIME)));
-        overallPanelNyloMedian.setText(RoomUtil.time(StatisticGatherer.getGenericMedian(data, DataPoint.NYLO_TOTAL_TIME)));
-        overallPanelSoteMedian.setText(RoomUtil.time(StatisticGatherer.getGenericMedian(data, DataPoint.SOTE_TOTAL_TIME)));
-        overallPanelXarpusMedian.setText(RoomUtil.time(StatisticGatherer.getGenericMedian(data, DataPoint.XARP_TOTAL_TIME)));
-        overallPanelVerzikMedian.setText(RoomUtil.time(StatisticGatherer.getGenericMedian(data, DataPoint.VERZIK_TOTAL_TIME)));
-        overallPanelOverallMedian.setText(RoomUtil.time(StatisticGatherer.getOverallMedian(data)));
+        for(String s : medianLabels.keySet())
+        {
+            medianLabels.get(s).setText(RoomUtil.time(StatisticGatherer.getGenericMedian(data, DataPoint.getValue(s + " Time"))));
+        }
     }
 
     public void setOverallMinLabels(ArrayList<RoomData> data)
     {
-        overallPanelMaidenMinimum.setText(RoomUtil.time(StatisticGatherer.getGenericMin(data, DataPoint.MAIDEN_TOTAL_TIME)));
-        overallPanelBloatMinimum.setText(RoomUtil.time(StatisticGatherer.getGenericMin(data, DataPoint.BLOAT_TOTAL_TIME)));
-        overallPanelNyloMinimum.setText(RoomUtil.time(StatisticGatherer.getGenericMin(data, DataPoint.NYLO_TOTAL_TIME)));
-        overallPanelSoteMinimum.setText(RoomUtil.time(StatisticGatherer.getGenericMin(data, DataPoint.SOTE_TOTAL_TIME)));
-        overallPanelXarpusMinimum.setText(RoomUtil.time(StatisticGatherer.getGenericMin(data, DataPoint.XARP_TOTAL_TIME)));
-        overallPanelVerzikMinimum.setText(RoomUtil.time(StatisticGatherer.getGenericMin(data, DataPoint.VERZIK_TOTAL_TIME)));
-        overallPanelOverallMinimum.setText(RoomUtil.time(StatisticGatherer.getOverallTimeMin(data)));
+        for(String s : minLabels.keySet())
+        {
+            minLabels.get(s).setText(RoomUtil.time(StatisticGatherer.getGenericMin(data, DataPoint.getValue(s + " Time"))));
+        }
     }
 
     private void setOverallMaxLabels(ArrayList<RoomData> data)
     {
-        overallPanelMaidenMaximum.setText(RoomUtil.time(StatisticGatherer.getGenericMax(data, DataPoint.MAIDEN_TOTAL_TIME)));
-        overallPanelBloatMaximum.setText(RoomUtil.time(StatisticGatherer.getGenericMax(data, DataPoint.BLOAT_TOTAL_TIME)));
-        overallPanelNyloMaximum.setText(RoomUtil.time(StatisticGatherer.getGenericMax(data, DataPoint.NYLO_TOTAL_TIME)));
-        overallPanelSoteMaximum.setText(RoomUtil.time(StatisticGatherer.getGenericMax(data, DataPoint.SOTE_TOTAL_TIME)));
-        overallPanelXarpusMaximum.setText(RoomUtil.time(StatisticGatherer.getGenericMax(data, DataPoint.XARP_TOTAL_TIME)));
-        overallPanelVerzikMaximum.setText(RoomUtil.time(StatisticGatherer.getGenericMax(data, DataPoint.VERZIK_TOTAL_TIME)));
-        overallPanelOverallMaximum.setText(RoomUtil.time(StatisticGatherer.getOverallMax(data)));
+        for(String s : maxLabels.keySet())
+        {
+            maxLabels.get(s).setText(RoomUtil.time(StatisticGatherer.getGenericMax(data, DataPoint.getValue(s + " Time"))));
+        }
     }
 
     private JPopupMenu comboPopupMenu;
@@ -781,11 +742,34 @@ public class Raids extends BaseFrame
         return item;
     }
 
-    private Map<String, String[]> comboPopupData = new LinkedHashMap<String, String[]>();
 
-    public void setClientThread(ClientThread clientThread)
+    private final Map<String, String[]> comboPopupData = new LinkedHashMap<String, String[]>();
+
+
+    public  JPanel getOverallPanel(String title, Map<String, JLabel> labelMap)
     {
-        this.clientThread = clientThread;
+        JPanel panel = new JPanel();
+        panel.setLayout(new BorderLayout());
+        panel.setBorder(BorderFactory.createTitledBorder(title));
+
+        JPanel subPanel = new JPanel();
+        subPanel.setLayout(new GridLayout(7, 2));
+
+        for(String s : rooms)
+        {
+            JLabel leftLabel = new JLabel(roomColor + s);
+            subPanel.add(leftLabel);
+            subPanel.add(labelMap.get(s));
+        }
+        panel.add(subPanel);
+        return panel;
+    }
+
+    public void clearData()
+    {
+        currentData.clear();
+        comparisons.clear();
+        close();
     }
 
     public void createFrame(ArrayList<RoomData> data)
@@ -963,53 +947,47 @@ public class Raids extends BaseFrame
         table.getTableHeader().setComponentPopupMenu(tstMenu);
         JScrollPane pane = new JScrollPane(table);
 
-        JPanel tablePanel = new JPanel();
+        JPanel tablePanel = getTitledPanel("Raids");
         tablePanel.setLayout(new BorderLayout());
-        tablePanel.setBorder(BorderFactory.createTitledBorder("Raids"));
         tablePanel.add(pane);
 
 
         container = new JPanel();
         container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
-
-        tabbedPane.addChangeListener(new ChangeListener()
+        tabbedPane.addChangeListener(e ->
         {
-            @Override
-            public void stateChanged(ChangeEvent e)
+            if (timeFollowsTab.isSelected())
             {
-                if (timeFollowsTab.isSelected())
+                if (built)
                 {
-                    if (built)
+                    viewByRaidComboBox.setEditable(true);
+                    switch (tabbedPane.getSelectedIndex())
                     {
-                        viewByRaidComboBox.setEditable(true);
-                        switch (tabbedPane.getSelectedIndex())
-                        {
-                            case 0:
-                                viewByRaidComboBox.setSelectedItem("Challenge Time");
-                                break;
-                            case 1:
-                                viewByRaidComboBox.setSelectedItem("Maiden Time");
-                                break;
-                            case 2:
-                                viewByRaidComboBox.setSelectedItem("Bloat Time");
-                                break;
-                            case 3:
-                                viewByRaidComboBox.setSelectedItem("Nylo Time");
-                                break;
-                            case 4:
-                                viewByRaidComboBox.setSelectedItem("Sote Time");
-                                break;
-                            case 5:
-                                viewByRaidComboBox.setSelectedItem("Xarp Time");
-                                break;
-                            case 6:
-                                viewByRaidComboBox.setSelectedItem("Verzik Time");
-                                break;
+                        case 0:
+                            viewByRaidComboBox.setSelectedItem("Challenge Time");
+                            break;
+                        case 1:
+                            viewByRaidComboBox.setSelectedItem("Maiden Time");
+                            break;
+                        case 2:
+                            viewByRaidComboBox.setSelectedItem("Bloat Time");
+                            break;
+                        case 3:
+                            viewByRaidComboBox.setSelectedItem("Nylo Time");
+                            break;
+                        case 4:
+                            viewByRaidComboBox.setSelectedItem("Sote Time");
+                            break;
+                        case 5:
+                            viewByRaidComboBox.setSelectedItem("Xarp Time");
+                            break;
+                        case 6:
+                            viewByRaidComboBox.setSelectedItem("Verzik Time");
+                            break;
 
-                        }
-                        viewByRaidComboBox.setEditable(false);
-                        updateTable();
                     }
+                    viewByRaidComboBox.setEditable(false);
+                    updateTable();
                 }
             }
         });
@@ -1025,15 +1003,15 @@ public class Raids extends BaseFrame
         JPanel customSubPanel = new JPanel();
         customSubPanel.setLayout(new GridLayout(1, 4));
 
-        JPanel subPanel1 = new JPanel();
-        subPanel1.setLayout(new GridLayout(1, 1));
+        JPanel chooseStatisticPanel = getTitledPanel("Choose Statistic");
+        chooseStatisticPanel.setLayout(new GridLayout(1, 1));
 
-        JPanel subPanel2 = new JPanel();
-        subPanel2.setLayout(new GridLayout(5, 2));
+        JPanel resultsPanel = getTitledPanel("Results");
+        resultsPanel.setLayout(new GridLayout(5, 2));
 
-        JPanel subPanel3 = new JPanel();
+        JPanel tableOptionsPanel = getTitledPanel("Table Options");
 
-        JPanel subPanel4 = new JPanel();
+        JPanel viewRaidByPanel = getTitledPanel("View Raid By");
 
         sortOptionsBox = new JComboBox(new String[]
                 {
@@ -1078,22 +1056,22 @@ public class Raids extends BaseFrame
         JLabel textCustomMinLabel = new JLabel("Minimum:", SwingConstants.LEFT);
         JLabel textCustomMaxLabel = new JLabel("Maximum:", SwingConstants.LEFT);
 
-        subPanel2.add(textCustomAverageLabel);
-        subPanel2.add(customAverageLabel);
+        resultsPanel.add(textCustomAverageLabel);
+        resultsPanel.add(customAverageLabel);
 
-        subPanel2.add(textCustomMedianLabel);
-        subPanel2.add(customMedianLabel);
+        resultsPanel.add(textCustomMedianLabel);
+        resultsPanel.add(customMedianLabel);
 
-        subPanel2.add(textCustomModeLabel);
-        subPanel2.add(customModeLabel);
+        resultsPanel.add(textCustomModeLabel);
+        resultsPanel.add(customModeLabel);
 
-        subPanel2.add(textCustomMinLabel);
-        subPanel2.add(customMinLabel);
+        resultsPanel.add(textCustomMinLabel);
+        resultsPanel.add(customMinLabel);
 
-        subPanel2.add(textCustomMaxLabel);
-        subPanel2.add(customMaxLabel);
+        resultsPanel.add(textCustomMaxLabel);
+        resultsPanel.add(customMaxLabel);
 
-        subPanel1.add(statisticsBox);
+        chooseStatisticPanel.add(statisticsBox);
 
         JButton undoFilter = new JButton("Clear manual filter");
         undoFilter.addActionListener(al ->
@@ -1102,170 +1080,47 @@ public class Raids extends BaseFrame
             updateTable();
         });
 
-        subPanel1.setBorder(BorderFactory.createTitledBorder("Choose Statistic"));
-        subPanel2.setBorder(BorderFactory.createTitledBorder("Results"));
-        subPanel3.setBorder(BorderFactory.createTitledBorder("Table Options"));
-        subPanel3.add(sortOptionsBox);
-        subPanel3.add(sortOrderBox);
-        subPanel3.add(undoFilter);
+        tableOptionsPanel.add(sortOptionsBox);
+        tableOptionsPanel.add(sortOrderBox);
+        tableOptionsPanel.add(undoFilter);
         JPanel buttonLine = new JPanel();
         buttonLine.setLayout(new GridLayout(1, 2));
         buttonLine.add(new JLabel("Config"));
 
-
-        subPanel4.setBorder(BorderFactory.createTitledBorder("View Raid By"));
         viewByRaidComboBox.addActionListener(
                 al ->
                 {
                     updateTable();
                 });
 
-        subPanel4.add(viewByRaidComboBox);
+        viewRaidByPanel.add(viewByRaidComboBox);
 
-        subPanel4.add(timeFollowsTab);
+        viewRaidByPanel.add(timeFollowsTab);
 
-        subPanel4.add(raidsFoundLabel);
-        subPanel4.add(completionsFound);
+        viewRaidByPanel.add(raidsFoundLabel);
+        viewRaidByPanel.add(completionsFound);
         raidsFoundLabel.setText("Raids found: " + data.size());
         completionsFound.setText("Completions found: " + completions);
 
-        customSubPanel.add(subPanel1);
-        customSubPanel.add(subPanel2);
-        customSubPanel.add(subPanel3);
-        customSubPanel.add(subPanel4);
+        customSubPanel.add(chooseStatisticPanel);
+        customSubPanel.add(resultsPanel);
+        customSubPanel.add(tableOptionsPanel);
+        customSubPanel.add(viewRaidByPanel);
 
         overallCustomPanel.add(customSubPanel);
 
-        JPanel overallAveragePanel = new JPanel();
-        overallAveragePanel.setLayout(new BorderLayout());
-        overallAveragePanel.setBorder(BorderFactory.createTitledBorder("Average"));
-
-        String roomColor = colorStr(new Color(200, 200, 200));
-
-        JPanel overallAverageSubPanel = new JPanel();
-        overallAverageSubPanel.setLayout(new GridLayout(7, 2));
-
-        overallAverageSubPanel.add(new JLabel(roomColor + "Maiden"));
-        overallAverageSubPanel.add(overallPanelMaidenAverage);
-
-        overallAverageSubPanel.add(new JLabel("Bloat"));
-        overallAverageSubPanel.add(overallPanelBloatAverage);
-
-        overallAverageSubPanel.add(new JLabel("Nylocas"));
-        overallAverageSubPanel.add(overallPanelNyloAverage);
-
-        overallAverageSubPanel.add(new JLabel("Sotetseg"));
-        overallAverageSubPanel.add(overallPanelSoteAverage);
-
-        overallAverageSubPanel.add(new JLabel("Xarpus"));
-        overallAverageSubPanel.add(overallPanelXarpusAverage);
-
-        overallAverageSubPanel.add(new JLabel("Verzik"));
-        overallAverageSubPanel.add(overallPanelVerzikAverage);
-
-        overallAverageSubPanel.add(new JLabel("Overall"));
-        overallAverageSubPanel.add(overallPanelOverallAverage);
-
-        JPanel overallMedianPanel = new JPanel();
-        overallMedianPanel.setLayout(new BorderLayout());
-        overallMedianPanel.setBorder(BorderFactory.createTitledBorder("Median"));
-
-        JPanel overallMedianSubPanel = new JPanel();
-        overallMedianSubPanel.setLayout(new GridLayout(7, 2));
-
-        overallMedianSubPanel.add(new JLabel("Maiden"));
-        overallMedianSubPanel.add(overallPanelMaidenMedian);
-
-        overallMedianSubPanel.add(new JLabel("Bloat"));
-        overallMedianSubPanel.add(overallPanelBloatMedian);
-
-        overallMedianSubPanel.add(new JLabel("Nylocas"));
-        overallMedianSubPanel.add(overallPanelNyloMedian);
-
-        overallMedianSubPanel.add(new JLabel("Sotetseg"));
-        overallMedianSubPanel.add(overallPanelSoteMedian);
-
-        overallMedianSubPanel.add(new JLabel("Xarpus"));
-        overallMedianSubPanel.add(overallPanelXarpusMedian);
-
-        overallMedianSubPanel.add(new JLabel("Verzik"));
-        overallMedianSubPanel.add(overallPanelVerzikMedian);
-
-
-        overallMedianSubPanel.add(new JLabel("Overall"));
-        overallMedianSubPanel.add(overallPanelOverallMedian);
-
-
-        overallAveragePanel.add(overallAverageSubPanel);
-        overallMedianPanel.add(overallMedianSubPanel);
-
-        JPanel overallMinimumPanel = new JPanel();
-        overallMinimumPanel.setLayout(new BorderLayout());
-        overallMinimumPanel.setBorder(BorderFactory.createTitledBorder("Minimum"));
-
-        JPanel overallMinimumSubPanel = new JPanel();
-        overallMinimumSubPanel.setLayout(new GridLayout(7, 2));
-
-        overallMinimumSubPanel.add(new JLabel("Maiden"));
-        overallMinimumSubPanel.add(overallPanelMaidenMinimum);
-
-        overallMinimumSubPanel.add(new JLabel("Bloat"));
-        overallMinimumSubPanel.add(overallPanelBloatMinimum);
-
-        overallMinimumSubPanel.add(new JLabel("Nylocas"));
-        overallMinimumSubPanel.add(overallPanelNyloMinimum);
-
-        overallMinimumSubPanel.add(new JLabel("Sotetseg"));
-        overallMinimumSubPanel.add(overallPanelSoteMinimum);
-
-        overallMinimumSubPanel.add(new JLabel("Xarpus"));
-        overallMinimumSubPanel.add(overallPanelXarpusMinimum);
-
-        overallMinimumSubPanel.add(new JLabel("Verzik"));
-        overallMinimumSubPanel.add(overallPanelVerzikMinimum);
-
-        overallMinimumSubPanel.add(new JLabel("Overall"));
-        overallMinimumSubPanel.add(overallPanelOverallMinimum);
-
-        overallMinimumPanel.add(overallMinimumSubPanel);
-
-        JPanel overallMaximumPanel = new JPanel();
-        overallMaximumPanel.setLayout(new BorderLayout());
-        overallMaximumPanel.setBorder(BorderFactory.createTitledBorder("Maximum"));
-
-        JPanel overallMaximumSubPanel = new JPanel();
-        overallMaximumSubPanel.setLayout(new GridLayout(7, 2));
-
-        overallMaximumSubPanel.add(new JLabel("Maiden"));
-        overallMaximumSubPanel.add(overallPanelMaidenMaximum);
-
-        overallMaximumSubPanel.add(new JLabel("Bloat"));
-        overallMaximumSubPanel.add(overallPanelBloatMaximum);
-
-        overallMaximumSubPanel.add(new JLabel("Nylocas"));
-        overallMaximumSubPanel.add(overallPanelNyloMaximum);
-
-        overallMaximumSubPanel.add(new JLabel("Sotetseg"));
-        overallMaximumSubPanel.add(overallPanelSoteMaximum);
-
-        overallMaximumSubPanel.add(new JLabel("Xarpus"));
-        overallMaximumSubPanel.add(overallPanelXarpusMaximum);
-
-        overallMaximumSubPanel.add(new JLabel("Verzik"));
-        overallMaximumSubPanel.add(overallPanelVerzikMaximum);
-
-        overallMaximumSubPanel.add(new JLabel("Overall"));
-        overallMaximumSubPanel.add(overallPanelOverallMaximum);
-
-        overallMaximumPanel.add(overallMaximumSubPanel);
+        JPanel overallAveragePanel = getOverallPanel("Average", averageLabels);
+        JPanel overallMedianPanel = getOverallPanel("Median", medianLabels);
+        JPanel overallMinPanel = getOverallPanel("Minimum", minLabels);
+        JPanel overallMaxPanel = getOverallPanel("Maximum",maxLabels);
 
         JPanel topStatPanel = new JPanel();
         topStatPanel.setLayout(new GridLayout(1, 4));
 
         topStatPanel.add(overallAveragePanel);
         topStatPanel.add(overallMedianPanel);
-        topStatPanel.add(overallMinimumPanel);
-        topStatPanel.add(overallMaximumPanel);
+        topStatPanel.add(overallMinPanel);
+        topStatPanel.add(overallMaxPanel);
 
         overallPanel.add(topStatPanel);
         overallPanel.add(overallCustomPanel);
@@ -1283,40 +1138,25 @@ public class Raids extends BaseFrame
         verzikTab = new StatisticTab(data, DataPoint.rooms.VERZIK);
         tabbedPane.addTab("Verzik", verzikTab);
 
-
         tabbedPane.setMinimumSize(new Dimension(100, 300));
 
-        JPanel additionalFiltersPanel = new JPanel();
+        JPanel additionalFiltersPanel = getTitledPanel("Quick Filters");
         additionalFiltersPanel.setLayout(new BorderLayout());
-        additionalFiltersPanel.setBorder(BorderFactory.createTitledBorder("Quick Filters"));
         additionalFiltersPanel.setMinimumSize(new Dimension(200, 300));
         additionalFiltersPanel.setPreferredSize(new Dimension(200, 300));
 
-        filterSpectateOnly = new JCheckBox("Spectate Only");
-        filterInRaidOnly = new JCheckBox("In Raid Only");
-        filterCompletionOnly = new JCheckBox("Completion Only");
-        filterWipeResetOnly = new JCheckBox("Wipe/Reset Only");
-        filterComboBoxScale = new JComboBox(new String[]{"Solo", "Duo", "Trio", "4-Man", "5-Man"});
-        filterCheckBoxScale = new JCheckBox("Scale");
-        filterTodayOnly = new JCheckBox("Today Only");
-        filterPartyOnly = new JCheckBox("Party Only");
-        filterPartialData = new JCheckBox("Filter Partial Raids");
-        filterPartialOnly = new JCheckBox("Filter Partial Rooms");
+        filterSpectateOnly = getActionListenCheckBox("Spectate Only", al->{updateTable();});
+        filterInRaidOnly = getActionListenCheckBox("In Raid Only", al->{updateTable();});
+        filterCompletionOnly = getActionListenCheckBox("Completion Only", al->{updateTable();});
+        filterWipeResetOnly = getActionListenCheckBox("Wipe/Reset Only", al->{updateTable();});
+        filterComboBoxScale = UISwingUtility.getActionListenCheckBox(new String[]{"Solo", "Duo", "Trio", "4-Man", "5-Man"}, al->{updateTable();});
+        filterCheckBoxScale = getActionListenCheckBox("Scale", al -> {updateTable();});
+        filterTodayOnly = getActionListenCheckBox("Today Only", al -> {updateTable();});
+        filterPartyOnly = getActionListenCheckBox("Party Only", al -> {updateTable();});
+        filterPartialData = getActionListenCheckBox("Filter Partial Raids", al -> {updateTable();});
+        filterPartialOnly = getActionListenCheckBox("Filter Partial Rooms", al -> {updateTable();});
         filterPartialData.setToolTipText("Removes data sets that have any rooms that were partially completed");
-        filterNormalOnly = new JCheckBox("Normal Mode Only", true);
-
-        filterSpectateOnly.addActionListener(al -> {updateTable();});
-        filterInRaidOnly.addActionListener(al -> {updateTable();});
-        filterCompletionOnly.addActionListener(al -> {updateTable();});
-        filterWipeResetOnly.addActionListener(al -> {updateTable();});
-        filterComboBoxScale.addActionListener(al -> {updateTable();});
-        filterCheckBoxScale.addActionListener(al -> {updateTable();});
-        filterTodayOnly.addActionListener(al -> {updateTable();});
-        filterPartyOnly.addActionListener(al -> {updateTable();});
-        filterPartialOnly.addActionListener(al -> {updateTable();});
-        filterPartialData.addActionListener(al -> {updateTable();});
-        filterNormalOnly.addActionListener(al -> {updateTable();}
-        );
+        filterNormalOnly = getActionListenCheckBox("Normal Mode Only", true, al->{updateTable();});
 
         JPanel scaleContainer = new JPanel();
         scaleContainer.setLayout(new BoxLayout(scaleContainer, BoxLayout.X_AXIS));
@@ -1361,28 +1201,22 @@ public class Raids extends BaseFrame
         rightContainer.setPreferredSize(new Dimension(400, 700));
         rightContainer.setLayout(new BoxLayout(rightContainer, BoxLayout.Y_AXIS));
 
-        JPanel rightTopContainer = new JPanel();
-        rightTopContainer.setBorder(BorderFactory.createTitledBorder("Advanced Filters"));
+        JPanel rightTopContainer = getTitledPanel("Advanced Filters");
         rightTopContainer.setLayout(new GridLayout(3, 2));
 
-        JPanel filterTimePanel = new JPanel();
-        filterTimePanel.setBorder(BorderFactory.createTitledBorder("Filter by room or split time"));
+        JPanel filterTimePanel = getTitledPanel("Filter by room or split time");
         filterTimePanel.setLayout(new BoxLayout(filterTimePanel, BoxLayout.Y_AXIS));
 
-        JPanel filterPlayerPanel = new JPanel();
-        filterPlayerPanel.setBorder(BorderFactory.createTitledBorder("Filter by players in raid"));
+        JPanel filterPlayerPanel = getTitledPanel("Filter by players in a raid");
         filterPlayerPanel.setLayout(new GridLayout(2, 2));
 
-        JPanel filterDatePanel = new JPanel();
-        filterDatePanel.setBorder(BorderFactory.createTitledBorder("Filter by date"));
+        JPanel filterDatePanel = getTitledPanel("Filter by date");
         filterDatePanel.setLayout(new GridLayout(2, 2));
 
-        JPanel filterOtherIntPanel = new JPanel();
-        filterOtherIntPanel.setBorder(BorderFactory.createTitledBorder("Filter by other condition (int)"));
+        JPanel filterOtherIntPanel = getTitledPanel("Filter by other condition (int)");
         filterOtherIntPanel.setLayout(new GridLayout(2, 2));
 
-        JPanel filterOtherBoolPanel = new JPanel();
-        filterOtherBoolPanel.setBorder(BorderFactory.createTitledBorder("Filter by other condition (bool)"));
+        JPanel filterOtherBoolPanel = getTitledPanel("Filter by other condition (bool)");
         filterOtherBoolPanel.setLayout(new GridLayout(2, 2));
 
 
@@ -1641,8 +1475,7 @@ public class Raids extends BaseFrame
         filterOtherBoolPanel.add(Box.createRigidArea(new Dimension(5, 5)));
         filterOtherBoolPanel.add(filterBoolBottom);
 
-        JPanel filterOptions = new JPanel();
-        filterOptions.setBorder(BorderFactory.createTitledBorder("Filter Options"));
+        JPanel filterOptions = getTitledPanel("Filter Options");
         rightTopContainer.setPreferredSize(new Dimension(400, 250));
         rightTopContainer.add(filterTimePanel);
         rightTopContainer.add(filterOtherIntPanel);
@@ -1651,9 +1484,8 @@ public class Raids extends BaseFrame
         rightTopContainer.add(filterDatePanel);
 
 
-        JPanel rightBottomContainer = new JPanel();
+        JPanel rightBottomContainer = getTitledPanel("Active Filters");
         rightBottomContainer.setPreferredSize(new Dimension(400, 200));
-        rightBottomContainer.setBorder(BorderFactory.createTitledBorder("Active Filters"));
 
         filterTableContainer = new JPanel();
 
@@ -1776,7 +1608,7 @@ public class Raids extends BaseFrame
                 {
                     rows.add(currentData.get(Integer.parseInt(table.getModel().getValueAt(toRemove[i], 0).toString())));
                 }
-                if (rows.size() == 0)
+                if (rows.isEmpty())
                 {
                     new NoDataPopUp().open();
                 } else
@@ -1952,9 +1784,8 @@ public class Raids extends BaseFrame
         filterOptions.add(clearFiltersButton);
         rightTopContainer.add(filterOptions);
 
-        JPanel rightBottomBottomContainer = new JPanel();
+        JPanel rightBottomBottomContainer = getTitledPanel("Comparison Options");
         rightBottomBottomContainer.setPreferredSize(new Dimension(400, 250));
-        rightBottomBottomContainer.setBorder(BorderFactory.createTitledBorder("Comparison Options"));
 
         comparisonTable = new JTable();
         JScrollPane comparisonTableScroll = new JScrollPane(comparisonTable);
@@ -1962,8 +1793,7 @@ public class Raids extends BaseFrame
         comparisonTableScroll.setPreferredSize(new Dimension(380, 155));
         updateComparisonTable();
 
-        JPanel rightBottomMostContainer = new JPanel();
-        rightBottomMostContainer.setBorder(BorderFactory.createTitledBorder("Alias Options"));
+        JPanel rightBottomMostContainer = getTitledPanel("Alias Options");
 
         aliasText.setToolTipText("This applies to the tab names when you use the analyze sessions features. Syntax- Name to be displayed:oldname1,oldname2,oldname3");
 
@@ -2042,6 +1872,7 @@ public class Raids extends BaseFrame
         rightContainer.add(rightBottomMostContainer);
         splitLeftRight.add(rightContainer);
         sortOrderBox.setSelectedIndex(1);
+
         add(splitLeftRight);
         pack();
         built = true;
@@ -2086,16 +1917,16 @@ public class Raids extends BaseFrame
 
     private JPopupMenu getjPopupMenu()
     {
-        JPopupMenu tstMenu = new JPopupMenu();
+        JPopupMenu baseMenu = new JPopupMenu();
 
         for (JCheckBoxMenuItem item : columnHeaders)
         {
-            tstMenu.add(item);
+            baseMenu.add(item);
         }
 
         List<String> allComboValues = new ArrayList<String>(comboPopupData.keySet());
 
-        comboStrictData = new ArrayList<String>();
+        comboStrictData = new ArrayList<>();
 
         JMenu addCustom = new JMenu("Add Custom");
 
@@ -2222,10 +2053,10 @@ public class Raids extends BaseFrame
         addCustom.setOpaque(true);
         addCustom.setBackground(Color.BLACK);
         addCustom.add(playerSpecificMenu);
-        tstMenu.add(addCustom);
-        tstMenu.add(resetCustom);
+        baseMenu.add(addCustom);
+        baseMenu.add(resetCustom);
 
-        return tstMenu;
+        return baseMenu;
     }
 
     private int getTimeFromString(String text)
@@ -2376,6 +2207,7 @@ public class Raids extends BaseFrame
             count++;
         }
         filterTable.setModel(new DefaultTableModel(tableObject, columnNames));
+        filterTable.setDefaultRenderer(Object.class, new StripedTableRowCellRenderer());
         filterTable.getColumn("Filter Descriptions").setCellEditor(new NonEditableCell(new JTextField()));
         filterTable.getColumn("").setCellRenderer(new ButtonRenderer());
         filterTable.getColumn("").setCellEditor(new ButtonEditorFilterData(new JCheckBox(), this));

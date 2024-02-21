@@ -5,8 +5,10 @@ import com.TheatreTracker.constants.TOBRoom;
 import com.TheatreTracker.ui.charts.LiveChart;
 import com.TheatreTracker.ui.RaidTrackerSidePanel;
 import com.TheatreTracker.utility.*;
+import com.TheatreTracker.utility.Point;
 import com.TheatreTracker.utility.datautility.DataWriter;
 import com.TheatreTracker.utility.thrallvengtracking.*;
+import com.TheatreTracker.utility.wrappers.PlayerCopy;
 import com.TheatreTracker.utility.wrappers.PlayerDidAttack;
 import com.TheatreTracker.utility.wrappers.QueuedPlayerAttackLessProjectiles;
 import com.TheatreTracker.utility.wrappers.ThrallOutlineBox;
@@ -22,6 +24,7 @@ import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.events.PartyChanged;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.party.PartyMember;
@@ -118,6 +121,7 @@ public class TheatreTrackerPlugin extends Plugin
     private List<PlayerShell> localPlayers;
     private List<ProjectileQueue> activeProjectiles;
     private List<VengDamageQueue> activeVenges;
+    private RaidTrackerSidePanel timersPanelPrimary;
 
     @Inject
     private PluginManager pluginManager;
@@ -169,7 +173,7 @@ public class TheatreTrackerPlugin extends Plugin
         activeProjectiles = new ArrayList<>();
         activeVenges = new ArrayList<>();
         queuedThrallDamage = new ArrayList<>();
-        RaidTrackerSidePanel timersPanelPrimary = injector.getInstance(RaidTrackerSidePanel.class);
+        timersPanelPrimary = injector.getInstance(RaidTrackerSidePanel.class);
         partyIntact = false;
         activelyPiping = new LinkedHashMap<>();
         liveFrame = new LiveChart(config, itemManager, clientThread);
@@ -516,6 +520,7 @@ public class TheatreTrackerPlugin extends Plugin
         liveFrame.getPanel(currentRoom.getName()).addThrallBox(outlineBox);
     }
 
+    public Map<String, PlayerCopy> lastTickPlayer = new HashMap<>();
     public int getRoomTick()
     {
         return client.getTickCount() - currentRoom.roomStartTick;
@@ -524,48 +529,59 @@ public class TheatreTrackerPlugin extends Plugin
     @Subscribe
     public void onGameTick(GameTick event)
     {
+        log.info("Tick " + client.getTickCount());
         checkAnimationsThatChanged();
         checkOverheadTextsThatChanged();
 
         for (Player p : activelyPiping.keySet())
         {
-            if (client.getTickCount() > (activelyPiping.get(p) + 1) && ((client.getTickCount() - activelyPiping.get(p) - 1) % 2) == 0)
+            if ((client.getTickCount() > (activelyPiping.get(p) + 1)) && ((client.getTickCount() - activelyPiping.get(p)-1) % 2 == 0))
             {
-                int interactedIndex = -1;
-                int interactedID = -1;
-                String targetName = "";
-                Actor interacted = p.getInteracting();
-                if (interacted instanceof NPC)
+                if (p.getAnimation() == BLOWPIPE_ANIMATION || p.getAnimation() == BLOWPIPE_ANIMATION_OR)
                 {
-                    NPC npc = (NPC) interacted;
-                    interactedID = npc.getId();
-                    interactedIndex = npc.getIndex();
-                    targetName = npc.getName();
+                    PlayerCopy previous = lastTickPlayer.get(p.getName());
+                    if(previous != null)
+                    {
+                        clog.write(PLAYER_ATTACK,
+                                previous.name + ":" + (client.getTickCount() - currentRoom.roomStartTick - 1),
+                                previous.animation + ":" + previous.wornItems,
+                                "",
+                                previous.weapon + ":" + previous.interactingIndex + ":" + previous.interactingID,
+                                "-1:" + previous.interactingName);
+                        liveFrame.addAttack(new PlayerDidAttack(itemManager,
+                                previous.name,
+                                String.valueOf(previous.animation),
+                                -1,
+                                previous.weapon,
+                                "-1",
+                                "",
+                                previous.interactingIndex,
+                                previous.interactingID,
+                                previous.interactingName,
+                                previous.wornItems
+                        ), currentRoom.getName());
+                    }
                 }
-                if (interacted instanceof Player)
-                {
-                    Player player = (Player) interacted;
-                    targetName = player.getName();
-                }
-                clog.write(PLAYER_ATTACK,
-                        p.getName() + ":" + (client.getTickCount() - currentRoom.roomStartTick - 1),
-                        p.getAnimation()+":"+PlayerWornItems.getStringFromComposition(p.getPlayerComposition()),
-                        "",
-                        p.getPlayerComposition().getEquipmentId(KitType.WEAPON) + ":" + interactedIndex + ":" + interactedID,
-                        "-1:" + targetName);
-                liveFrame.addAttack(new PlayerDidAttack(itemManager,
-                        String.valueOf(p.getName()),
-                        String.valueOf(p.getAnimation()),
-                        -1,
-                        String.valueOf(p.getPlayerComposition().getEquipmentId(KitType.WEAPON)),
-                        "-1",
-                        "",
-                        interactedIndex,
-                        interactedID,
-                        targetName,
-                        PlayerWornItems.getStringFromComposition(p.getPlayerComposition())
-                ), currentRoom.getName());
             }
+            int interactedIndex = -1;
+            int interactedID = -1;
+            String targetName = "";
+            Actor interacted = p.getInteracting();
+            if (interacted instanceof NPC)
+            {
+                NPC npc = (NPC) interacted;
+                interactedID = npc.getId();
+                interactedIndex = npc.getIndex();
+                targetName = npc.getName();
+            }
+            if (interacted instanceof Player)
+            {
+                Player player = (Player) interacted;
+                targetName = player.getName();
+            }
+            lastTickPlayer.put(p.getName(), new PlayerCopy(
+                    p.getName(), interactedIndex, interactedID, targetName, p.getAnimation(), PlayerWornItems.getStringFromComposition(p.getPlayerComposition()
+            ), String.valueOf(p.getPlayerComposition().getEquipmentId(KitType.WEAPON))));
         }
 
         for (QueuedPlayerAttackLessProjectiles playerAttackQueuedItem : playersAttacked)
@@ -679,7 +695,7 @@ public class TheatreTrackerPlugin extends Plugin
                 {
                     if (!s.isEmpty())
                     {
-                        currentPlayers.add(s);
+                        currentPlayers.add(s.replaceAll(String.valueOf((char) 160), String.valueOf((char) 32)));
                     }
                 }
                 liveFrame.setPlayers(currentPlayers);
@@ -839,10 +855,39 @@ public class TheatreTrackerPlugin extends Plugin
                     if (p.getAnimation() == BLOWPIPE_ANIMATION || p.getAnimation() == BLOWPIPE_ANIMATION_OR)
                     {
                         activelyPiping.put(p, client.getTickCount());
+                        interactedIndex = -1;
+                        interactedID = -1;
+                        targetName = "";
+                        interacted = p.getInteracting();
+                        if (interacted instanceof NPC)
+                        {
+                            NPC npc = (NPC) interacted;
+                            interactedID = npc.getId();
+                            interactedIndex = npc.getIndex();
+                            targetName = npc.getName();
+                        }
+                        if (interacted instanceof Player)
+                        {
+                            Player player = (Player) interacted;
+                            targetName = player.getName();
+                        }
+                        lastTickPlayer.put(p.getName(), new PlayerCopy(
+                                p.getName(), interactedIndex, interactedID, targetName, p.getAnimation(), PlayerWornItems.getStringFromComposition(p.getPlayerComposition()
+                        ), String.valueOf(p.getPlayerComposition().getEquipmentId(KitType.WEAPON))));
+                        log.info("Adding " + p.getName() + " on tick " + client.getTickCount());
                     }
-                } else
+                    else
+                    {
+                        activelyPiping.remove(p);
+                        lastTickPlayer.remove(p.getName());
+                        log.info("removing " + p.getName());
+                    }
+                }
+                else
                 {
                     activelyPiping.remove(p);
+                    lastTickPlayer.remove(p.getName());
+                    log.info("removing " + p.getName());
                 }
 
             }
@@ -851,6 +896,7 @@ public class TheatreTrackerPlugin extends Plugin
 
     public void leftRaid()
     {
+        lastTickPlayer.clear();
         partyIntact = false;
         currentPlayers.clear();
         clog.write(LEFT_TOB, String.valueOf(client.getTickCount() - currentRoom.roomStartTick), currentRoom.getName()); //todo add region
@@ -869,6 +915,15 @@ public class TheatreTrackerPlugin extends Plugin
             {
                 clog.write(PLAYER_DIED, event.getActor().getName(), String.valueOf(client.getTickCount() - currentRoom.roomStartTick));
             }
+        }
+    }
+
+    @Subscribe
+    public void onGroundObjectSpawned(GroundObjectSpawned event)
+    {
+        if(inTheatre)
+        {
+            currentRoom.updateGroundObjectSpawned(event);
         }
     }
 
@@ -984,13 +1039,23 @@ public class TheatreTrackerPlugin extends Plugin
     private final ArrayList<Player> deferredAnimations = new ArrayList<>();
 
     @Subscribe
+    public void onConfigChanged(ConfigChanged event)
+    {
+        if(event.getKey().equals("reduceMemoryLoad") && event.getGroup().equals("Theatre Statistic Tracker"))
+        {
+            timersPanelPrimary.refreshRaids();
+        }
+    }
+
+    @Subscribe
     public void onAnimationChanged(AnimationChanged event)
     {
         if(event.getActor() instanceof Player)
         {
             Player p = (Player) event.getActor();
-            if(event.getActor().getAnimation() == 6294 || event.getActor().getAnimation() == 722)
+            if(event.getActor().getAnimation() == 6294 || event.getActor().getAnimation() == 722 || event.getActor().getAnimation() == 6299 || event.getActor().getAnimation() == -1)
             {
+                log.info(event.getActor().getName() + " has animation " + event.getActor().getAnimation() + " on tick " + client.getTickCount());
                 checkAnimation(p);
             }
             else

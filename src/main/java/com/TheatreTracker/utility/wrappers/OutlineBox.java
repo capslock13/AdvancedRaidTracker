@@ -88,7 +88,9 @@ public class OutlineBox
             case MELEE:
                 if(correctItems < 8)
                 {
-                    outlineColor = new Color(255, 255, 0, (int)((255)*((8-correctItems)/8.0)));
+                    int opacity = (int)((255)*((8-correctItems)/8.0));
+                    opacity = Math.max(opacity, 150);
+                    outlineColor = new Color(255, 255, 0, opacity);
                 }
                 break;
             case RANGE:

@@ -140,7 +140,9 @@ public class NyloHandler extends RoomHandler
             case NYLO_MAGE_BIG_HM:
             case NYLO_MAGE_BIG_AGRO_HM:
                 if (!hard)
+                {
                     clog.write(IS_HARD_MODE);
+                }
                 hard = true;
             case NYLO_MELEE_SMALL_SM:
             case NYLO_MELEE_SMALL_AGRO_SM:
@@ -174,6 +176,10 @@ public class NyloHandler extends RoomHandler
             case NYLO_RANGE_SMALL_AGRO:
             case NYLO_MAGE_SMALL:
             case NYLO_MAGE_SMALL_AGRO:
+                if(pillarsSpawnedTick == -1)
+                {
+                    startNylo();
+                }
                 NylocasShell cShell = new NylocasShell(event.getNpc().getId(), event.getNpc().getWorldLocation().getRegionX(), event.getNpc().getWorldLocation().getRegionY());
                 if (cShell.isBig())
                 {
@@ -245,19 +251,17 @@ public class NyloHandler extends RoomHandler
             case NYLO_BOSS_RANGE_SM:
             case NYLO_BOSS_MAGE_SM:
                 bossSpawned();
+                if(pillarsSpawnedTick == -1)
+                {
+                    startNylo();
+                }
+                break;
             case NYLO_PILLAR:
             case NYLO_PILLAR_HM:
             case NYLO_PILLAR_SM:
                 if (pillarsSpawnedTick == -1)
                 {
                     startNylo();
-                    if (client.getNpcs().stream().anyMatch(p -> Objects.requireNonNull(p.getName()).toLowerCase().contains("nylo")))
-                    {
-                        accurateEntry = false;
-                    } else
-                    {
-                        clog.write(ACCURATE_NYLO_START);
-                    }
                 }
                 break;
             case NYLO_PRINKIPAS_DROPPING:
@@ -377,6 +381,14 @@ public class NyloHandler extends RoomHandler
 
     private void startNylo()
     {
+        if (client.getNpcs().stream().anyMatch(p -> Objects.requireNonNull(p.getName()).toLowerCase().contains("nylo")))
+        {
+            accurateEntry = false;
+        }
+        else
+        {
+            clog.write(ACCURATE_NYLO_START);
+        }
         clog.write(NYLO_PILLAR_SPAWN);
         roomState = WAVES;
         pillarsSpawnedTick = client.getTickCount();

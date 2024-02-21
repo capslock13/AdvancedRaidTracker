@@ -101,6 +101,10 @@ public class StatisticGatherer
 
     public static double getGenericAverage(ArrayList<RoomData> data, DataPoint parameter)
     {
+        if(parameter == DataPoint.CHALLENGE_TIME)
+        {
+            return getOverallTimeAverage(data);
+        }
         double total = 0;
         double count = 0;
         for (RoomData room : data)
@@ -154,6 +158,10 @@ public class StatisticGatherer
 
     public static double getGenericMedian(ArrayList<RoomData> data, DataPoint param)
     {
+        if(param == DataPoint.OVERALL_TIME)
+        {
+            return getOverallMedian(data);
+        }
         if (data.isEmpty())
         {
             return -1;
@@ -197,6 +205,10 @@ public class StatisticGatherer
 
     public static double getGenericMin(ArrayList<RoomData> data, DataPoint parameter)
     {
+        if(parameter == DataPoint.OVERALL_TIME)
+        {
+            return getOverallTimeMin(data);
+        }
         int minValue = Integer.MAX_VALUE;
         for (RoomData room : data)
         {
@@ -232,6 +244,10 @@ public class StatisticGatherer
 
     public static double getGenericMax(ArrayList<RoomData> data, DataPoint parameter)
     {
+        if(parameter == DataPoint.OVERALL_TIME)
+        {
+            return getOverallMax(data);
+        }
         int maxValue = 0;
         for (RoomData room : data)
         {

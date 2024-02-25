@@ -36,7 +36,6 @@ import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.plugins.PluginManager;
 import com.TheatreTracker.rooms.*;
-import net.runelite.client.plugins.devtools.DevToolsPlugin;
 import net.runelite.client.plugins.specialcounter.SpecialCounterUpdate;
 import net.runelite.client.plugins.specialcounter.SpecialWeapon;
 import net.runelite.client.ui.ClientToolbar;
@@ -193,7 +192,7 @@ public class TheatreTrackerPlugin extends Plugin
             logFile.createNewFile();
         }
 
-        final BufferedImage icon = ImageUtil.loadImageResource(DevToolsPlugin.class, "devtools_icon.png");
+        final BufferedImage icon = ImageUtil.loadImageResource(TheatreTrackerPlugin.class, "/com/TheatreTracker/icon.png");
         navButtonPrimary = NavigationButton.builder().tooltip("RaidTrackerPanelPrimary").icon(icon).priority(10).panel(timersPanelPrimary).build();
 
         clientToolbar.addNavigation(navButtonPrimary);

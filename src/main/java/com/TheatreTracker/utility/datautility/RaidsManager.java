@@ -1,6 +1,6 @@
 package com.TheatreTracker.utility.datautility;
 
-import com.TheatreTracker.RoomData;
+import com.TheatreTracker.SimpleRaidData;
 import com.TheatreTracker.ui.RaidTrackerSidePanel;
 import com.TheatreTracker.utility.wrappers.RaidsArrayWrapper;
 
@@ -31,10 +31,10 @@ public class RaidsManager
                 {
                     if (entry.getAbsolutePath().endsWith(".raids"))
                     {
-                        ArrayList<RoomData> raids = new ArrayList<>();
+                        ArrayList<SimpleRaidData> raids = new ArrayList<>();
                         try
                         {
-                            RaidTrackerSidePanel.parseLogFile(raids, entry);
+                            RaidTrackerSidePanel.parseLogFile(raids, entry, entry.getAbsolutePath());
                         } catch (Exception e)
                         {
                             e.printStackTrace();
@@ -69,7 +69,7 @@ public class RaidsManager
         return false;
     }
 
-    public static void saveOverwriteRaids(String name, ArrayList<RoomData> raids)
+    public static void saveOverwriteRaids(String name, ArrayList<SimpleRaidData> raids)
     {
         try
         {
@@ -92,10 +92,10 @@ public class RaidsManager
         }
     }
 
-    private static void writeRaid(String name, ArrayList<RoomData> raids) throws IOException
+    private static void writeRaid(String name, ArrayList<SimpleRaidData> raids) throws IOException
     {
         BufferedWriter raidsWriter = new BufferedWriter(new OutputStreamWriter(Files.newOutputStream(Paths.get(raidsFolder + name + ".raids"))));
-        for (RoomData raid : raids)
+        for (SimpleRaidData raid : raids)
         {
             for (String s : raid.raidDataRaw)
             {
@@ -106,7 +106,7 @@ public class RaidsManager
         raidsWriter.close();
     }
 
-    public static void saveRaids(String name, ArrayList<RoomData> raids)
+    public static void saveRaids(String name, ArrayList<SimpleRaidData> raids)
     {
         try
         {

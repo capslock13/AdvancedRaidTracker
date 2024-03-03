@@ -74,7 +74,7 @@ public class XarpusHandler extends RoomHandler
         {
             if (event.getProjectile().getId() == XARPUS_EXHUMED_PROJECTILE)
             {
-                clog.write(XARPUS_HEAL);
+                clog.addLine(XARPUS_HEAL);
             }
         }
     }
@@ -108,7 +108,7 @@ public class XarpusHandler extends RoomHandler
             case XARPUS_P1_SM:
             case XARPUS_P23_SM:
             case XARPUS_DEAD_SM:
-                clog.write(XARPUS_DESPAWNED, String.valueOf(xarpusEndTick - xarpusEntryTick));
+                clog.addLine(XARPUS_DESPAWNED, String.valueOf(xarpusEndTick - xarpusEntryTick));
         }
     }
 
@@ -122,18 +122,18 @@ public class XarpusHandler extends RoomHandler
             case TobIDs.XARPUS_P23_SM:
             case TobIDs.XARPUS_DEAD_SM:
                 story = true;
-                clog.write(IS_STORY_MODE);
+                clog.addLine(IS_STORY_MODE);
             case TobIDs.XARPUS_INACTIVE_HM:
             case TobIDs.XARPUS_P1_HM:
             case TobIDs.XARPUS_P23_HM:
             case TobIDs.XARPUS_DEAD_HM:
                 if (!story)
-                    clog.write(IS_HARD_MODE);
+                    clog.addLine(IS_HARD_MODE);
             case TobIDs.XARPUS_INACTIVE:
             case TobIDs.XARPUS_P1:
             case TobIDs.XARPUS_P23:
             case TobIDs.XARPUS_DEAD:
-                clog.write(XARPUS_SPAWNED);
+                clog.addLine(XARPUS_SPAWNED);
         }
     }
 
@@ -154,7 +154,7 @@ public class XarpusHandler extends RoomHandler
 
     private void startScreech()
     {
-        clog.write(XARPUS_SCREECH, String.valueOf(client.getTickCount() - xarpusEntryTick));
+        clog.addLine(XARPUS_SCREECH, String.valueOf(client.getTickCount() - xarpusEntryTick));
         roomState = RoomState.XarpusRoomState.POSTSCREECH;
         xarpusScreechTick = client.getTickCount();
         String splitMessage = "Wave 'Xarpus phase 2' complete. Duration: " + timeColor() + RoomUtil.time(xarpusScreechTick - xarpusEntryTick) + " (" + RoomUtil.time(xarpusScreechTick - xarpusExhumedsEnd) + ")";
@@ -167,8 +167,8 @@ public class XarpusHandler extends RoomHandler
         roomState = RoomState.XarpusRoomState.EXHUMEDS;
         xarpusEntryTick = client.getTickCount();
         roomStartTick = client.getTickCount();
-        clog.write(XARPUS_STARTED);
-        clog.write(ACCURATE_XARP_START);
+        clog.addLine(XARPUS_STARTED);
+        clog.addLine(ACCURATE_XARP_START);
     }
 
     private void endExhumeds()
@@ -185,7 +185,7 @@ public class XarpusHandler extends RoomHandler
 
         roomState = FINISHED;
         xarpusEndTick = client.getTickCount() + XARPUS_DEATH_ANIMATION_LENGTH;
-        clog.write(ACCURATE_XARP_END);
+        clog.addLine(ACCURATE_XARP_END);
         plugin.liveFrame.setXarpFinished(xarpusEndTick - xarpusEntryTick);
         String splitMessage = "Wave 'Xarpus phase 3' complete. Duration: " + timeColor() + RoomUtil.time(xarpusEndTick - xarpusEntryTick) + " (" + RoomUtil.time(xarpusEndTick - xarpusScreechTick) + ")";
         this.client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", splitMessage, null, false);

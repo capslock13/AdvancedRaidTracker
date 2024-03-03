@@ -16,7 +16,6 @@ import com.TheatreTracker.utility.RoomState;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.jar.Attributes;
 
 import static com.TheatreTracker.constants.TobIDs.*;
 
@@ -126,9 +125,9 @@ public class SotetsegHandler extends RoomHandler
                     if(ticksSinceLastProc > tickOffset)
                     {
                         String mazeRunner = (roomState== RoomState.SotetsegRoomState.MAZE_1) ? firstMazeChosen : secondMazeChosen;
-                       // plugin.sendChatMessage(mazeRunner + " was late to first tile by " + (ticksSinceLastProc-tickOffset) + " ticks");
+                        plugin.sendChatMessage(mazeRunner + " was late to first tile by " + (ticksSinceLastProc-tickOffset) + " ticks");
                     }
-                    //plugin.sendChatMessage("First tile was " + distance + " away, and showed up after " + ticksSinceLastProc + " ticks. Expected: " + tickOffset + ". X Position: " + event.getGroundObject().getWorldLocation().getRegionX());
+                    plugin.sendChatMessage("First tile was " + distance + " away, and showed up after " + ticksSinceLastProc + " ticks. Expected: " + tickOffset + ". X Position: " + event.getGroundObject().getWorldLocation().getRegionX());
                 }
                 //log.info("Red tile appeared " + ticksSinceLastProc + " ticks after proc, on (" + event.getGroundObject().getWorldLocation().getRegionX() + "," + event.getGroundObject().getWorldLocation().getRegionY() +")");
             }
@@ -275,7 +274,7 @@ public class SotetsegHandler extends RoomHandler
         roomStartTick = client.getTickCount();
         deferTick = soteEntryTick + 2;
         roomState = RoomState.SotetsegRoomState.PHASE_1;
-        clog.write(LogID.SOTETSEG_STARTED);
+        clog.addLine(LogID.SOTETSEG_STARTED);
     }
 
     public void endSotetseg()
@@ -283,8 +282,8 @@ public class SotetsegHandler extends RoomHandler
         plugin.addDelayedLine(TOBRoom.SOTETSEG, client.getTickCount() - soteEntryTick, "Dead");
         soteDeathTick = client.getTickCount() + SOTETSEG_DEATH_ANIMATION_LENGTH;
         roomState = RoomState.SotetsegRoomState.FINISHED;
-        clog.write(LogID.ACCURATE_SOTE_END);
-        clog.write(LogID.SOTETSEG_ENDED, String.valueOf(soteDeathTick - soteEntryTick));
+        clog.addLine(LogID.ACCURATE_SOTE_END);
+        clog.addLine(LogID.SOTETSEG_ENDED, String.valueOf(soteDeathTick - soteEntryTick));
         plugin.liveFrame.setSoteFinished(soteDeathTick - soteEntryTick);
         sendTimeMessage("Wave 'Sotetseg phase 3' complete. Duration: ", soteDeathTick - soteEntryTick, soteDeathTick - soteSecondMazeEnd, false);
     }
@@ -298,7 +297,7 @@ public class SotetsegHandler extends RoomHandler
         firstMazeChosen = "";
         hasSteppedOnMaze = false;
         soteFirstMazeStart = client.getTickCount();
-        clog.write(LogID.SOTETSEG_FIRST_MAZE_STARTED, String.valueOf(soteFirstMazeStart - soteEntryTick));
+        clog.addLine(LogID.SOTETSEG_FIRST_MAZE_STARTED, String.valueOf(soteFirstMazeStart - soteEntryTick));
         roomState = RoomState.SotetsegRoomState.MAZE_1;
         sendTimeMessage("Wave 'Sotetseg phase 1' complete. Duration: ", soteFirstMazeStart - soteEntryTick);
         plugin.addDelayedLine(TOBRoom.SOTETSEG, soteFirstMazeStart - soteEntryTick, "Maze1 Start");
@@ -315,9 +314,9 @@ public class SotetsegHandler extends RoomHandler
 
     public void endFirstMaze()
     {
-        //endEitherMaze();
+        endEitherMaze();
         soteFirstMazeEnd = client.getTickCount();
-        clog.write(LogID.SOTETSEG_FIRST_MAZE_ENDED, String.valueOf(soteFirstMazeEnd - soteEntryTick));
+        clog.addLine(LogID.SOTETSEG_FIRST_MAZE_ENDED, String.valueOf(soteFirstMazeEnd - soteEntryTick));
         roomState = RoomState.SotetsegRoomState.PHASE_2;
         sendTimeMessage("Wave 'Sotetseg maze 1' complete. Duration: ", soteFirstMazeEnd - soteEntryTick, soteFirstMazeEnd - soteFirstMazeStart);
         plugin.addDelayedLine(TOBRoom.SOTETSEG, soteFirstMazeEnd - soteEntryTick, "Maze1 End");
@@ -325,14 +324,14 @@ public class SotetsegHandler extends RoomHandler
 
     public void startSecondMaze()
     {
-        //startEitherMaze();
+        startEitherMaze();
         lastChosen = "";
         excludedTiles.clear();
         currentMaze.clear();
         secondMazeChosen = "";
         hasSteppedOnMaze = false;
         soteSecondMazeStart = client.getTickCount();
-        clog.write(LogID.SOTETSEG_SECOND_MAZE_STARTED, String.valueOf(soteSecondMazeStart - soteEntryTick));
+        clog.addLine(LogID.SOTETSEG_SECOND_MAZE_STARTED, String.valueOf(soteSecondMazeStart - soteEntryTick));
         roomState = RoomState.SotetsegRoomState.MAZE_2;
         sendTimeMessage("Wave 'Sotetseg phase 2' complete. Duration: ", soteSecondMazeStart - soteEntryTick, soteSecondMazeStart - soteFirstMazeEnd);
         plugin.addDelayedLine(TOBRoom.SOTETSEG, soteSecondMazeStart - soteEntryTick, "Maze2 Start");
@@ -452,7 +451,7 @@ public class SotetsegHandler extends RoomHandler
             }
             if(ragged > 0)
             {
-                //plugin.sendChatMessage(s + " ragged " + ragged + " tiles");
+                plugin.sendChatMessage(s + " ragged " + ragged + " tiles");
             }
         }
     }
@@ -461,7 +460,7 @@ public class SotetsegHandler extends RoomHandler
     {
         endEitherMaze();
         soteSecondMazeEnd = client.getTickCount();
-        clog.write(LogID.SOTETSEG_SECOND_MAZE_ENDED, String.valueOf(soteSecondMazeEnd - soteEntryTick));
+        clog.addLine(LogID.SOTETSEG_SECOND_MAZE_ENDED, String.valueOf(soteSecondMazeEnd - soteEntryTick));
         roomState = RoomState.SotetsegRoomState.PHASE_3;
         sendTimeMessage("Wave 'Sotetseg maze 2' complete. Duration: ", soteSecondMazeEnd - soteEntryTick, soteSecondMazeEnd - soteSecondMazeStart);
         plugin.addDelayedLine(TOBRoom.SOTETSEG, soteSecondMazeEnd - soteEntryTick, "Maze2 End");
@@ -536,7 +535,7 @@ public class SotetsegHandler extends RoomHandler
             deferTick = -1;
             if (client.getVarbitValue(HP_VARBIT) == FULL_HP)
             {
-                clog.write(LogID.ACCURATE_SOTE_START);
+                clog.addLine(LogID.ACCURATE_SOTE_START);
             }
         }
         if(client.getTickCount() == soteFirstMazeStart+5)
@@ -561,7 +560,7 @@ public class SotetsegHandler extends RoomHandler
             {
                 secondMazeChosen = getAboveWorldChosen();
             }
-         //   log.info("Chosen 2nd maze: " + secondMazeChosen);
+            log.info("Chosen 2nd maze: " + secondMazeChosen);
             lastChosen = secondMazeChosen;
         }
     }
@@ -574,10 +573,10 @@ public class SotetsegHandler extends RoomHandler
             {
                 if (id == SOTETSEG_ACTIVE_HM)
                 {
-                    clog.write(LogID.IS_HARD_MODE);
+                    clog.addLine(LogID.IS_HARD_MODE);
                 } else if (id == SOTETSEG_ACTIVE_SM)
                 {
-                    clog.write(LogID.IS_STORY_MODE);
+                    clog.addLine(LogID.IS_STORY_MODE);
                 }
                 startSotetseg();
             } else if (roomState == RoomState.SotetsegRoomState.MAZE_1)

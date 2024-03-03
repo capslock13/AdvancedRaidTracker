@@ -1,6 +1,6 @@
 package com.TheatreTracker.filters;
 
-import com.TheatreTracker.RoomData;
+import com.TheatreTracker.SimpleRaidData;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -25,7 +25,7 @@ public class FilterPlayers extends FilterCondition
         stringValue = val;
     }
 
-    private boolean cleanContains(RoomData data, String player)
+    private boolean cleanContains(SimpleRaidData data, String player)
     {
         for (String p : data.players.keySet())
         {
@@ -44,7 +44,7 @@ public class FilterPlayers extends FilterCondition
     }
 
     @Override
-    public boolean evaluate(RoomData data)
+    public boolean evaluate(SimpleRaidData data)
     {
         switch (operator)
         {

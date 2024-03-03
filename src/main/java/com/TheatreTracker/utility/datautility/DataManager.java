@@ -6,16 +6,16 @@ import lombok.extern.slf4j.Slf4j;
 public class DataManager
 {
 
-    private final DataPointWrapper[] data;
+    private final DataPointIntWrapper[] data;
     private final DataPointPlayerData[] playerSpecificData;
 
 
     public DataManager()
     {
-        data = new DataPointWrapper[DataPoint.values().length];
+        data = new DataPointIntWrapper[DataPoint.values().length];
         for (int i = 0; i < DataPoint.values().length; i++)
         {
-            data[i] = new DataPointWrapper(DataPoint.values()[i]);
+            data[i] = new DataPointIntWrapper(DataPoint.values()[i]);
         }
 
         playerSpecificData = new DataPointPlayerData[DataPoint.getPlayerSpecific().length];

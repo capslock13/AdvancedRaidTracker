@@ -6,16 +6,13 @@ import com.TheatreTracker.constants.TOBRoom;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.Player;
-import net.runelite.api.events.AnimationChanged;
-import net.runelite.api.events.GameTick;
-import net.runelite.api.events.NpcDespawned;
-import net.runelite.api.events.NpcSpawned;
+import net.runelite.api.coords.WorldPoint;
+import net.runelite.api.events.*;
 import com.TheatreTracker.utility.Point;
 import com.TheatreTracker.utility.RoomUtil;
 import com.TheatreTracker.utility.datautility.DataWriter;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 import static com.TheatreTracker.constants.LogID.*;
 import static com.TheatreTracker.constants.TobIDs.*;
@@ -68,7 +65,7 @@ public class BloatHandler extends RoomHandler
         roomState = FINISHED;
         bloatDeathTick = client.getTickCount() + BLOAT_DEATH_ANIMATION_LENGTH;
         plugin.addDelayedLine(TOBRoom.BLOAT, client.getTickCount() - bloatStartTick, "Dead");
-        clog.write(ACCURATE_BLOAT_END);
+        clog.addLine(ACCURATE_BLOAT_END);
         plugin.liveFrame.setBloatFinished(bloatDeathTick - bloatStartTick);
         if (bloatStartTick != -1)
         {
@@ -129,11 +126,11 @@ public class BloatHandler extends RoomHandler
 
     public void down()
     {
-        clog.write(BLOAT_DOWN, String.valueOf(client.getTickCount() - bloatStartTick));
+        clog.addLine(BLOAT_DOWN, String.valueOf(client.getTickCount() - bloatStartTick));
         if (downs.isEmpty())
         {
             int currentBloatHP = client.getVarbitValue(HP_VARBIT);
-            clog.write(BLOAT_HP_1ST_DOWN, String.valueOf(currentBloatHP));
+            clog.addLine(BLOAT_HP_1ST_DOWN, String.valueOf(currentBloatHP));
         }
         downs.add(client.getTickCount());
         roomState = DOWN;
@@ -196,7 +193,7 @@ public class BloatHandler extends RoomHandler
             if (event.getActor() instanceof Player)
             {
                 Player p = (Player) event.getActor();
-                clog.write(BLOAT_SCYTHE_1ST_WALK, p.getName(), String.valueOf(client.getTickCount() - bloatStartTick));
+                clog.addLine(BLOAT_SCYTHE_1ST_WALK, p.getName(), String.valueOf(client.getTickCount() - bloatStartTick));
             }
         }
     }
@@ -208,18 +205,18 @@ public class BloatHandler extends RoomHandler
         {
             case BLOAT_SM:
                 story = true;
-                clog.write(IS_STORY_MODE);
+                clog.addLine(IS_STORY_MODE);
             case BLOAT_HM:
                 if (!story)
-                    clog.write(IS_HARD_MODE);
+                    clog.addLine(IS_HARD_MODE);
             case BLOAT:
-                clog.write(BLOAT_SPAWNED);
+                clog.addLine(BLOAT_SPAWNED);
                 if (client.getVarbitValue(ROOM_ACTIVE_VARBIT) != 0)
                 {
                     accurateEntry = false;
                 } else
                 {
-                    clog.write(ACCURATE_BLOAT_START);
+                    clog.addLine(ACCURATE_BLOAT_START);
                 }
                 break;
         }
@@ -230,7 +227,17 @@ public class BloatHandler extends RoomHandler
         int id = event.getNpc().getId();
         if (id == BLOAT || id == BLOAT_HM || id == BLOAT_SM)
         {
-            clog.write(BLOAT_DESPAWN, String.valueOf(client.getTickCount() - bloatStartTick));
+            clog.addLine(BLOAT_DESPAWN, String.valueOf(client.getTickCount() - bloatStartTick));
+        }
+    }
+
+    public void updateGraphicsObjectCreated(GraphicsObjectCreated event)
+    {
+        int id = event.getGraphicsObject().getId();
+        if(id == 1570 || id == 1571 || id == 1572 || id == 1573)
+        {
+            WorldPoint wp = WorldPoint.fromLocal(client, event.getGraphicsObject().getLocation());
+            clog.addLine(BLOAT_HAND, String.valueOf(id), String.valueOf(wp.getRegionX()), String.valueOf(wp.getRegionY()), String.valueOf(client.getTickCount()-roomStartTick));
         }
     }
 }

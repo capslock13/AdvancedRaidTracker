@@ -1,6 +1,6 @@
 package com.TheatreTracker.ui.statistics;
 
-import com.TheatreTracker.RoomData;
+import com.TheatreTracker.SimpleRaidData;
 import com.TheatreTracker.utility.RoomUtil;
 import com.TheatreTracker.utility.datautility.DataPoint;
 import com.TheatreTracker.utility.StatisticGatherer;
@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 import static com.TheatreTracker.utility.UISwingUtility.getDarkJLabel;
-import static com.TheatreTracker.utility.UISwingUtility.primaryDark;
 
 @Slf4j
 public class StatisticRoomPanel extends JPanel
@@ -30,7 +29,7 @@ public class StatisticRoomPanel extends JPanel
     private final ArrayList<String> labelNames;
     private final stat type;
 
-    public StatisticRoomPanel(ArrayList<RoomData> data, stat type, DataPoint.rooms room)
+    public StatisticRoomPanel(ArrayList<SimpleRaidData> data, stat type, DataPoint.rooms room)
     {
         super();
         JPanel subPanel = new JPanel();
@@ -79,12 +78,12 @@ public class StatisticRoomPanel extends JPanel
         updateLabels(data);
     }
 
-    public void updateLabels(ArrayList<RoomData> data)
+    public void updateLabels(ArrayList<SimpleRaidData> data)
     {
         for (int i = 0; i < labelNames.size(); i++)
         {
             ArrayList<Integer> collectedData = new ArrayList<>();
-            for (RoomData d : data)
+            for (SimpleRaidData d : data)
             {
                 if (d.getTimeAccurate(Objects.requireNonNull(DataPoint.getValue(labelNames.get(i)))))
                 {

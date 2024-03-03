@@ -1,10 +1,9 @@
 package com.TheatreTracker.ui;
 
-import com.TheatreTracker.RoomData;
+import com.TheatreTracker.SimpleRaidData;
 import com.TheatreTracker.TheatreTrackerConfig;
 import com.TheatreTracker.TheatreTrackerPlugin;
-import com.TheatreTracker.ui.buttons.StripedTableRowCellRenderer;
-import com.TheatreTracker.utility.datautility.DataWriter;
+import com.TheatreTracker.utility.BloatHand;
 import com.TheatreTracker.utility.wrappers.RaidsArrayWrapper;
 import com.TheatreTracker.utility.datautility.RaidsManager;
 import com.google.inject.Inject;
@@ -20,12 +19,14 @@ import java.io.File;
 import java.nio.file.Files;
 import java.util.*;
 
+import static com.TheatreTracker.utility.datautility.DataWriter.PLUGIN_DIRECTORY;
+
 @Slf4j
 public class RaidTrackerSidePanel extends PluginPanel
 {
     private JLabel raidCountLabel;
     private final JLabel pleaseWait;
-    private ArrayList<RoomData> raidsData;
+    private ArrayList<SimpleRaidData> raidsData;
     private JTable loadRaidsTable;
     private ArrayList<RaidsArrayWrapper> raidSets;
 
@@ -38,7 +39,7 @@ public class RaidTrackerSidePanel extends PluginPanel
     @Inject
     RaidTrackerSidePanel(TheatreTrackerPlugin plugin, TheatreTrackerConfig config, ItemManager itemManager, ClientThread clientThread)
     {
-        DataWriter.checkLogFileSize();
+        //DataWriter.checkLogFileSize();
         pleaseWait = new JLabel("Parsing files please wait..", SwingConstants.CENTER);
         add(pleaseWait);
         new Thread(() ->
@@ -55,40 +56,87 @@ public class RaidTrackerSidePanel extends PluginPanel
         }).start();
     }
 
-    private ArrayList<RoomData> getAllRaids(JLabel statusUpdate)
+    private ArrayList<SimpleRaidData> getAllRaids(JLabel statusUpdate)
     {
         //todo reimplement status update
-        ArrayList<RoomData> raids = new ArrayList<>();
+        ArrayList<SimpleRaidData> raids = new ArrayList<>();
+        ArrayList<BloatHand> hands = new ArrayList<>();
         try
         {
-            String path = "/.runelite/theatretracker/primary/";
-            File logDirectory = new File(System.getProperty("user.home").replace("\\", "/") + path);
+            File logDirectory = new File(PLUGIN_DIRECTORY);
             File[] logFiles = logDirectory.listFiles();
             if (logFiles != null)
             {
                 for (File file : logFiles)
                 {
+                    if (file.isDirectory())
                     {
-                        if (!file.isDirectory())
+                        File subDirectory = new File(file.getAbsolutePath()+"/primary/");
+                        File[] subLogFiles = subDirectory.listFiles();
+                        if(subLogFiles != null)
                         {
-                            if (file.getName().contains("tobdata"))
+                            for (File dataFile : subLogFiles)
                             {
-                                File currentFile = new File(logDirectory.getAbsolutePath() + "/" + file.getName());
-                                parseLogFile(raids, currentFile);
+                                if (!dataFile.isDirectory())
+                                {
+                                    if (dataFile.getName().contains("tobdata"))
+                                    {
+                                        File currentFile = new File(subDirectory.getAbsolutePath() + "/" + dataFile.getName());
+                                        hands.addAll(parseLogFile(raids, currentFile, subDirectory.getAbsolutePath() + "/" + dataFile.getName()));
+                                    }
+                                }
                             }
                         }
                     }
                 }
             }
-        } catch (Exception ignored)
-        {
         }
-        raids.sort(Comparator.comparing(RoomData::getDate));
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        raids.sort(Comparator.comparing(SimpleRaidData::getDate));
+        Map<String, Integer> handMap = new HashMap<>();
+        for(BloatHand bloatHand : hands)
+        {
+            String position = bloatHand.x + "," + bloatHand.y;
+            if(!handMap.containsKey(position))
+            {
+                handMap.put(position, 1);
+            }
+            else
+            {
+                handMap.put(position, handMap.get(position)+1);
+            }
+        }
+        for(String position : handMap.keySet())
+        {
+            log.info(position + ": " + handMap.get(position));
+        }
+        /*BaseFrame bf = new BaseFrame();
+        bf.add(new BloatHandDataVisualizer(hands));
+        bf.open();*/
         return raids;
     }
 
-    public static void parseLogFile(ArrayList<RoomData> raids, File currentFile) throws Exception
+    public static ArrayList<BloatHand> parseLogFile(ArrayList<SimpleRaidData> raids, File currentFile, String filePath) throws Exception
     {
+        ArrayList<BloatHand> hands = new ArrayList<>();
+        int lastProc = -1;
+        int handsTotal = 0;
+        int bottomLeftChunkCount = 0;
+        int bottomRightChunkCount = 0;
+        int topLeftChunkCount = 0;
+        int topRightChunkCount = 0;
+        int bltotal = 0;
+        int brtotal = 0;
+        int tltotal = 0;
+        int trtotal = 0;
+        Map<Integer, Integer> procCountMap = new HashMap<>();
+        Map<Integer, Integer> blProcMap = new HashMap<>();
+        Map<Integer, Integer> brProcMap = new HashMap<>();
+        Map<Integer, Integer> tlProcMap = new HashMap<>();
+        Map<Integer, Integer> trProcMap = new HashMap<>();
         Scanner logReader = new Scanner(Files.newInputStream(currentFile.toPath()));
         ArrayList<String> raid = new ArrayList<>();
         boolean raidActive = false;
@@ -131,18 +179,158 @@ public class RaidTrackerSidePanel extends PluginPanel
                             {
                                 raid.add(line);
                                 raidActive = false;
-                                raids.add(new RoomData(raid.toArray(new String[0]), itemManager));
+                                raids.add(new SimpleRaidData(raid.toArray(new String[0]), itemManager, filePath));
                                 raid.clear();
                             } else if (value != 99 && value != 98)
                             {
                                 raid.add(line);
                             }
                         }
+                        if(value == 975)
+                        {
+                            if(lineSplit.length > 6)
+                            {
+                                int x = Integer.parseInt(lineSplit[5]);
+                                int y = Integer.parseInt(lineSplit[6]);
+                                int id = Integer.parseInt(lineSplit[4]);
+                                hands.add(new BloatHand(x, y, id));
+                                if(lineSplit.length > 7)
+                                {
+                                    int proc = Integer.parseInt(lineSplit[7]);
+                                    if(lastProc != proc)
+                                    {
+                                        if(!procCountMap.containsKey(handsTotal))
+                                        {
+                                            procCountMap.put(handsTotal, 1);
+                                        }
+                                        else
+                                        {
+                                            procCountMap.put(handsTotal, procCountMap.get(handsTotal)+1);
+                                        }
+
+                                        if(!blProcMap.containsKey(bottomLeftChunkCount))
+                                        {
+                                            blProcMap.put(bottomLeftChunkCount, 1);
+                                        }
+                                        else
+                                        {
+                                            blProcMap.put(bottomLeftChunkCount, blProcMap.get(bottomLeftChunkCount)+1);
+                                        }
+
+                                        if(!brProcMap.containsKey(bottomRightChunkCount))
+                                        {
+                                            brProcMap.put(bottomRightChunkCount, 1);
+                                        }
+                                        else
+                                        {
+                                            brProcMap.put(bottomRightChunkCount, brProcMap.get(bottomRightChunkCount)+1);
+                                        }
+
+                                        if(!tlProcMap.containsKey(topLeftChunkCount))
+                                        {
+                                            tlProcMap.put(topLeftChunkCount, 1);
+                                        }
+                                        else
+                                        {
+                                            tlProcMap.put(topLeftChunkCount, tlProcMap.get(topLeftChunkCount)+1);
+                                        }
+
+                                        if(!trProcMap.containsKey(topRightChunkCount))
+                                        {
+                                            trProcMap.put(topRightChunkCount, 1);
+                                        }
+                                        else
+                                        {
+                                            trProcMap.put(topRightChunkCount, trProcMap.get(topRightChunkCount)+1);
+                                        }
+                                        if(handsTotal == 13)
+                                        {
+                                            if(hands.size() > 13)
+                                            {
+                                                log.info("Last 13 hands: ");
+                                                for(int i = hands.size()-13; i < hands.size(); i++)
+                                                {
+                                                    log.info((i-hands.size()-13) + ": " + hands.get(i).x + "," + hands.get(i).y);
+                                                }
+                                            }
+                                        }
+                                        log.info(handsTotal + " in last proc on " + lastProc);
+                                        log.info("Bottom Left: " + bottomLeftChunkCount);
+                                        log.info("Bottom Right: " + bottomRightChunkCount);
+                                        log.info("Top Left: " + topLeftChunkCount);
+                                        log.info("Top Right: " + topRightChunkCount);
+                                        bltotal += bottomLeftChunkCount;
+                                        brtotal += bottomRightChunkCount;
+                                        tltotal += topLeftChunkCount;
+                                        trtotal += topRightChunkCount;
+
+                                        lastProc = proc;
+                                        handsTotal = 0;
+                                        bottomLeftChunkCount = 0;
+                                        bottomRightChunkCount = 0;
+                                        topLeftChunkCount = 0;
+                                        topRightChunkCount = 0;
+                                    }
+                                    else
+                                    {
+                                        handsTotal++;
+                                        if(x < 32 && y < 32)
+                                        {
+                                            bottomLeftChunkCount++;
+                                        }
+                                        else if(x < 32 && y > 31)
+                                        {
+                                            topLeftChunkCount++;
+                                        }
+                                        else if(x > 31 && y < 32)
+                                        {
+                                            bottomRightChunkCount++;
+                                        }
+                                        else if(x > 31 && y > 31)
+                                        {
+                                            topRightChunkCount++;
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
         }
+        int count = 0;
+        for(Integer i : procCountMap.keySet())
+        {
+            count += procCountMap.get(i);
+            log.info(i + " hands procced " + procCountMap.get(i) + " times");
+        }
+
+        for(Integer i : blProcMap.keySet())
+        {
+            log.info(i + " hands spawned " + blProcMap.get(i) + " times (BL)");
+        }
+        for(Integer i : brProcMap.keySet())
+        {
+            log.info(i + " hands spawned " + brProcMap.get(i) + " times (BR)");
+        }
+        for(Integer i : tlProcMap.keySet())
+        {
+            log.info(i + " hands spawned " + tlProcMap.get(i) + " times (TL)");
+        }
+        for(Integer i : trProcMap.keySet())
+        {
+            log.info(i + " hands spawned " + trProcMap.get(i) + " times (TR)");
+        }
+        if(count != 0)
+        {
+            log.info("Total procs: " + count);
+            log.info("Bottom left total: " + bltotal);
+            log.info("Bottom right total: " + brtotal);
+            log.info("top left total: " + tltotal);
+            log.info("top right total: " + trtotal);
+        }
         logReader.close();
+        return hands;
     }
 
     public void refreshRaids()
@@ -258,7 +446,7 @@ public class RaidTrackerSidePanel extends PluginPanel
         return new DefaultTableModel(tableData, columnNames);
     }
 
-    private ArrayList<RoomData> getTableData()
+    private ArrayList<SimpleRaidData> getTableData()
     {
         ArrayList<String> includedSets = new ArrayList<>();
         for (int i = 0; i < loadRaidsTable.getRowCount(); i++)
@@ -268,7 +456,7 @@ public class RaidTrackerSidePanel extends PluginPanel
                 includedSets.add((String) loadRaidsTable.getValueAt(i, 0));
             }
         }
-        ArrayList<RoomData> collectedRaids = new ArrayList<>();
+        ArrayList<SimpleRaidData> collectedRaids = new ArrayList<>();
         for (RaidsArrayWrapper set : raidSets)
         {
             for (String s : includedSets)

@@ -1,6 +1,6 @@
 package com.TheatreTracker.ui.filters;
 
-import com.TheatreTracker.RoomData;
+import com.TheatreTracker.SimpleRaidData;
 import com.TheatreTracker.filters.ImplicitFilter;
 import com.TheatreTracker.filters.FilterManager;
 import com.TheatreTracker.ui.BaseFrame;
@@ -35,7 +35,7 @@ public class ConfirmationDialog extends BaseFrame
         setLocationRelativeTo(null);
     }
 
-    public ConfirmationDialog(String raidsName, ArrayList<RoomData> raids, JFrame root, int mark)
+    public ConfirmationDialog(String raidsName, ArrayList<SimpleRaidData> raids, JFrame root, int mark)
     {
         setTitle("Confirm");
         JPanel panelButtons = new JPanel(new GridLayout(1, 2));

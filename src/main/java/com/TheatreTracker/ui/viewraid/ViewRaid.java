@@ -1,6 +1,6 @@
 package com.TheatreTracker.ui.viewraid;
 
-import com.TheatreTracker.RoomData;
+import com.TheatreTracker.SimpleRaidData;
 import com.TheatreTracker.ui.BaseFrame;
 import com.TheatreTracker.utility.RoomUtil;
 import com.TheatreTracker.utility.datautility.DataPoint;
@@ -10,12 +10,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Calendar;
 
+import static com.TheatreTracker.utility.datautility.DataPoint.NYLO_LAST_DEAD;
+
 @Slf4j
 public class ViewRaid extends BaseFrame
 {
     String INCOMPLETE_MARKER = "-";
 
-    public ViewRaid(RoomData data)
+    public ViewRaid(SimpleRaidData data)
     {
         String red = "<html><font color='#FF0000'>";
         String soft = "<html><font color='#666666'>";
@@ -217,16 +219,16 @@ public class ViewRaid extends BaseFrame
         nylocasSubPanel.add(new JLabel(nyloBodyColor + ((data.nyloDefenseAccurate) ? String.valueOf(data.getValue(DataPoint.NYLO_DEFENSE)) : INCOMPLETE_MARKER)));
 
         nylocasSubPanel.add(new JLabel(nyloBodyColor + "Deaths"));
-        nylocasSubPanel.add(new JLabel(nyloBodyColor + data.nyloDeaths));
+        nylocasSubPanel.add(new JLabel(nyloBodyColor + data.getValue(DataPoint.NYLO_DEATHS)));
 
         nylocasSubPanel.add(new JLabel(nyloBodyColor + "Last wave"));
         nylocasSubPanel.add(new JLabel(nyloBodyColor + RoomUtil.time(data.getValue(DataPoint.NYLO_LAST_WAVE))));
 
         nylocasSubPanel.add(new JLabel(nyloBodyColor + "Clean up"));
-        nylocasSubPanel.add(new JLabel(nyloBodyColor + RoomUtil.time(data.nyloLastDead) + " (" + RoomUtil.time(data.nyloLastDead - data.getValue(DataPoint.NYLO_LAST_WAVE)) + ")"));
+        nylocasSubPanel.add(new JLabel(nyloBodyColor + RoomUtil.time(data.getValue(NYLO_LAST_DEAD)) + " (" + RoomUtil.time(data.getValue(NYLO_LAST_DEAD) - data.getValue(DataPoint.NYLO_LAST_WAVE)) + ")"));
 
         nylocasSubPanel.add(new JLabel(nyloBodyColor + "Boss Spawn"));
-        nylocasSubPanel.add(new JLabel(nyloBodyColor + RoomUtil.time(data.getValue(DataPoint.NYLO_BOSS_SPAWN)) + " (" + RoomUtil.time(data.getValue(DataPoint.NYLO_BOSS_SPAWN) - data.nyloLastDead) + ")"));
+        nylocasSubPanel.add(new JLabel(nyloBodyColor + RoomUtil.time(data.getValue(DataPoint.NYLO_BOSS_SPAWN)) + " (" + RoomUtil.time(data.getValue(DataPoint.NYLO_BOSS_SPAWN) - data.getValue(NYLO_LAST_DEAD)) + ")"));
 
         nylocasSubPanel.add(new JLabel(nyloBodyColor + "Time"));
         nylocasSubPanel.add(new JLabel(nyloBodyColor + RoomUtil.time(data.getNyloTime()) + " (" + RoomUtil.time(data.getNyloTime() - data.getValue(DataPoint.NYLO_BOSS_SPAWN)) + ")"));
@@ -330,7 +332,7 @@ public class ViewRaid extends BaseFrame
         JPanel summarySubPanel = new JPanel(new GridLayout(10, 1));
         summarySubPanel.add(new JLabel("Date: " + dateString));
         String scaleString = "";
-        switch (data.raidTeamSize)
+        switch (data.getScale())
         {
             case 1:
                 scaleString = "Solo";
@@ -426,7 +428,7 @@ public class ViewRaid extends BaseFrame
         pack();
     }
 
-    private static void setSummaryStatus(RoomData data, JPanel summarySubPanel)
+    private static void setSummaryStatus(SimpleRaidData data, JPanel summarySubPanel)
     {
         String raidStatusString;
         if (data.maidenWipe)

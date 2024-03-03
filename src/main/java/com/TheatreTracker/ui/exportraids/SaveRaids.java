@@ -1,6 +1,6 @@
 package com.TheatreTracker.ui.exportraids;
 
-import com.TheatreTracker.RoomData;
+import com.TheatreTracker.SimpleRaidData;
 import com.TheatreTracker.ui.BaseFrame;
 import com.TheatreTracker.ui.filters.ConfirmationDialog;
 import com.TheatreTracker.utility.datautility.RaidsManager;
@@ -13,7 +13,7 @@ public class SaveRaids extends BaseFrame
 {
     private final JTextField field;
 
-    public SaveRaids(ArrayList<RoomData> raids)
+    public SaveRaids(ArrayList<SimpleRaidData> raids)
     {
         getContentPane().removeAll();
         setTitle("Save Raids");
@@ -33,7 +33,7 @@ public class SaveRaids extends BaseFrame
         repaint();
     }
 
-    private JButton getSaveButton(ArrayList<RoomData> raids)
+    private JButton getSaveButton(ArrayList<SimpleRaidData> raids)
     {
         JButton saveButton = new JButton("Save");
         saveButton.addActionListener(e ->

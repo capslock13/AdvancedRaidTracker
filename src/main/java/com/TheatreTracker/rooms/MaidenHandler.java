@@ -17,7 +17,6 @@ import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.*;
 import com.TheatreTracker.TheatreTrackerPlugin;
 
-import java.security.InvalidParameterException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -130,7 +129,7 @@ public class MaidenHandler extends RoomHandler
         roomState = RoomState.MaidenRoomState.PHASE_2;
         if (maidenStartTick != -1)
             sendTimeMessage("Wave 'Maiden phase 1' complete! Duration: ", p70 - maidenStartTick);
-        clog.write(MAIDEN_70S, String.valueOf(p70 - maidenStartTick));
+        clog.addLine(MAIDEN_70S, String.valueOf(p70 - maidenStartTick));
         plugin.addDelayedLine(TOBRoom.MAIDEN, p70 - maidenStartTick - 2, "70s");
 
     }
@@ -141,7 +140,7 @@ public class MaidenHandler extends RoomHandler
         roomState = RoomState.MaidenRoomState.PHASE_3;
         if (maidenStartTick != -1)
             sendTimeMessage("Wave 'Maiden phase 2' complete! Duration: ", p50 - maidenStartTick, p50 - p70);
-        clog.write(MAIDEN_50S, String.valueOf(p50 - maidenStartTick));
+        clog.addLine(MAIDEN_50S, String.valueOf(p50 - maidenStartTick));
         plugin.addDelayedLine(TOBRoom.MAIDEN, p50 - maidenStartTick - 2, "50s");
     }
 
@@ -151,7 +150,7 @@ public class MaidenHandler extends RoomHandler
         roomState = RoomState.MaidenRoomState.PHASE_4;
         if (maidenStartTick != -1)
             sendTimeMessage("Wave 'Maiden phase 3' complete! Duration: ", p30 - maidenStartTick, p30 - p50);
-        clog.write(MAIDEN_30S, String.valueOf(p30 - maidenStartTick));
+        clog.addLine(MAIDEN_30S, String.valueOf(p30 - maidenStartTick));
         plugin.addDelayedLine(TOBRoom.MAIDEN, p30 - maidenStartTick - 2, "30s");
     }
 
@@ -161,8 +160,8 @@ public class MaidenHandler extends RoomHandler
         maidenDeathTick = client.getTickCount() + MAIDEN_DEATH_ANIMATION_LENGTH;
         if (maidenStartTick != -1)
             sendTimeMessage("Wave 'Maiden Skip' complete! Duration: ", maidenDeathTick - maidenStartTick, maidenDeathTick - p30, false);
-        clog.write(301);
-        clog.write(MAIDEN_0HP, String.valueOf(client.getTickCount() - maidenStartTick));
+        clog.addLine(ACCURATE_MAIDEN_END);
+        clog.addLine(MAIDEN_0HP, String.valueOf(client.getTickCount() - maidenStartTick));
         plugin.addDelayedLine(TOBRoom.MAIDEN, client.getTickCount() - maidenStartTick, "Dead");
         plugin.liveFrame.setMaidenFinished(maidenDeathTick - maidenStartTick);
     }
@@ -181,7 +180,7 @@ public class MaidenHandler extends RoomHandler
                 Player player = (Player) event.getActor();
                 Actor target = player.getInteracting();
                 int distance = target.getWorldArea().distanceTo(player.getWorldLocation());
-                clog.write(MAIDEN_CHIN_THROWN, player.getName(), String.valueOf(distance));
+                clog.addLine(MAIDEN_CHIN_THROWN, player.getName(), String.valueOf(distance));
                 if (distance < 4 || distance > 6)
                 {
                     if (config.showMistakesInChat())
@@ -273,7 +272,7 @@ public class MaidenHandler extends RoomHandler
             case TobIDs.MAIDEN_P3_SM:
             case TobIDs.MAIDEN_PRE_DEAD_SM:
             case TobIDs.MAIDEN_DEAD_SM:
-                clog.write(MAIDEN_DESPAWNED, String.valueOf(client.getTickCount() - maidenStartTick));
+                clog.addLine(MAIDEN_DESPAWNED, String.valueOf(client.getTickCount() - maidenStartTick));
                 break;
             case MAIDEN_MATOMENOS:
             case MAIDEN_MATOMENOS_HM:
@@ -297,7 +296,7 @@ public class MaidenHandler extends RoomHandler
             case MAIDEN_PRE_DEAD_SM:
             case MAIDEN_DEAD_SM:
                 story = true;
-                clog.write(IS_STORY_MODE);
+                clog.addLine(IS_STORY_MODE);
             case MAIDEN_P0_HM:
             case MAIDEN_P1_HM:
             case MAIDEN_P2_HM:
@@ -305,13 +304,13 @@ public class MaidenHandler extends RoomHandler
             case MAIDEN_PRE_DEAD_HM:
             case MAIDEN_DEAD_HM:
                 if (!story)
-                    clog.write(IS_HARD_MODE);
+                    clog.addLine(IS_HARD_MODE);
             case MAIDEN_P0:
             case MAIDEN_P1:
             case MAIDEN_P2:
             case MAIDEN_P3:
             case MAIDEN_DEAD:
-                clog.write(MAIDEN_SPAWNED);
+                clog.addLine(MAIDEN_SPAWNED);
                 maidenNPC = npc;
                 startMaiden();
                 break;
@@ -319,7 +318,7 @@ public class MaidenHandler extends RoomHandler
             case MAIDEN_MATOMENOS_HM:
             case MAIDEN_MATOMENOS_SM:
                 String crabName = identifySpawn(npc);
-                clog.write(ADD_NPC_MAPPING, String.valueOf(npc.getIndex()), crabName);
+                clog.addLine(ADD_NPC_MAPPING, String.valueOf(npc.getIndex()), crabName);
                 plugin.liveFrame.getPanel(getName()).addNPCMapping(npc.getIndex(), crabName);
                 plugin.liveFrame.getPanel(getName()).addMaidenCrab(crabName);
                 MaidenCrab crab = new MaidenCrab(npc, TheatreTrackerPlugin.scale, crabName);
@@ -329,7 +328,7 @@ public class MaidenHandler extends RoomHandler
             case TobIDs.MAIDEN_BLOOD:
             case TobIDs.MAIDEN_BLOOD_HM:
             case TobIDs.MAIDEN_BLOOD_SM:
-                clog.write(BLOOD_SPAWNED);
+                clog.addLine(BLOOD_SPAWNED);
                 break;
         }
     }
@@ -362,7 +361,7 @@ public class MaidenHandler extends RoomHandler
 
     private void logCrabSpawn(String description)
     {
-        clog.write(MATOMENOS_SPAWNED, description);
+        clog.addLine(MATOMENOS_SPAWNED, description);
     }
 
     private void applyBlood()
@@ -379,10 +378,10 @@ public class MaidenHandler extends RoomHandler
             {
                 if (p.bloodTicksAlive == -1)
                 {
-                    clog.write(PLAYER_STOOD_IN_SPAWNED_BLOOD, p.playerName, String.valueOf(bloodDamage)); //player, dmg
+                    clog.addLine(PLAYER_STOOD_IN_SPAWNED_BLOOD, p.playerName, String.valueOf(bloodDamage)); //player, dmg
                 } else
                 {
-                    clog.write(PLAYER_STOOD_IN_THROWN_BLOOD, p.playerName, String.valueOf(bloodDamage), String.valueOf(p.bloodTicksAlive)); //player, dmg, blood tick
+                    clog.addLine(PLAYER_STOOD_IN_THROWN_BLOOD, p.playerName, String.valueOf(bloodDamage), String.valueOf(p.bloodTicksAlive)); //player, dmg, blood tick
                 }
                 bloodHeals++;
             }
@@ -417,7 +416,7 @@ public class MaidenHandler extends RoomHandler
     {
         for (int i = 0; i < maidenHeals.size() - bloodHeals; i++)
         {
-            clog.write(CRAB_HEALED_MAIDEN, String.valueOf(maidenHeals.get(i)));
+            clog.addLine(CRAB_HEALED_MAIDEN, String.valueOf(maidenHeals.get(i)));
         }
         bloodHeals = 0;
     }
@@ -577,7 +576,7 @@ public class MaidenHandler extends RoomHandler
                     value4.append(npc.getName()).append("~").append(additionalDescription).append("~").append(hp).append(":");
                 }
                 String value5 = getTargetsBelow27(healths, targets, didDoubleHit);
-                clog.write(MAIDEN_DINHS_SPEC, p.getName(), value3, value4.toString(), value5);
+                clog.addLine(MAIDEN_DINHS_SPEC, p.getName(), value3, value4.toString(), value5);
             }
         }
         dinhsers.clear();
@@ -615,7 +614,7 @@ public class MaidenHandler extends RoomHandler
             Actor drained = maidenNPC.getInteracting();
             if (drained instanceof Player)
             {
-                clog.write(MAIDEN_AUTO, drained.getName(), String.valueOf(client.getTickCount() - roomStartTick));
+                clog.addLine(MAIDEN_AUTO, drained.getName(), String.valueOf(client.getTickCount() - roomStartTick));
                 int statDrained = getDrainedStat((Player) drained);
                 if (statDrained == MELEE)
                 {
@@ -623,7 +622,7 @@ public class MaidenHandler extends RoomHandler
                     {
                         plugin.sendChatMessage("Maiden drained " + drained.getName() + "'s melee stats.");
                     }
-                    clog.write(MAIDEN_PLAYER_DRAINED, drained.getName(), String.valueOf((client.getTickCount() - roomStartTick)));
+                    clog.addLine(MAIDEN_PLAYER_DRAINED, drained.getName(), String.valueOf((client.getTickCount() - roomStartTick)));
                 }
             }
             didAuto = false;
@@ -631,7 +630,7 @@ public class MaidenHandler extends RoomHandler
 
         for (MaidenCrab crab : deferredCrabs)
         {
-            clog.write(CRAB_LEAK, crab.description, String.valueOf(crab.health));
+            clog.addLine(CRAB_LEAK, crab.description, String.valueOf(crab.health));
         }
         maidenCrabs.removeAll(deferredCrabs);
         deferredCrabs.clear();
@@ -646,7 +645,7 @@ public class MaidenHandler extends RoomHandler
             {
                 accurateEntry = true;
                 roomState = RoomState.MaidenRoomState.PHASE_1;
-                clog.write(ACCURATE_MAIDEN_START);
+                clog.addLine(ACCURATE_MAIDEN_START);
             }
         }
         for (MaidenCrab crab : maidenCrabs)
@@ -740,7 +739,7 @@ public class MaidenHandler extends RoomHandler
         }
         if (x == 22 && y == 41)
         {
-            clog.write(MAIDEN_SCUFFED, "N1");
+            clog.addLine(MAIDEN_SCUFFED, "N1");
             return "N1" + proc;
         }
         if (x == 25 && y == 40)
@@ -749,7 +748,7 @@ public class MaidenHandler extends RoomHandler
         }
         if (x == 26 && y == 41)
         {
-            clog.write(MAIDEN_SCUFFED, "N2");
+            clog.addLine(MAIDEN_SCUFFED, "N2");
             return "N2" + proc;
         }
         if (x == 29 && y == 40)
@@ -758,7 +757,7 @@ public class MaidenHandler extends RoomHandler
         }
         if (x == 30 && y == 41)
         {
-            clog.write(MAIDEN_SCUFFED, "N3");
+            clog.addLine(MAIDEN_SCUFFED, "N3");
             return "N3" + proc;
         }
         if (x == 33 && y == 40)
@@ -767,7 +766,7 @@ public class MaidenHandler extends RoomHandler
         }
         if (x == 34 && y == 41)
         {
-            clog.write(MAIDEN_SCUFFED, "N4 (1)");
+            clog.addLine(MAIDEN_SCUFFED, "N4 (1)");
             return "N4 (1)" + proc;
         }
         if (x == 33 && y == 38)
@@ -776,7 +775,7 @@ public class MaidenHandler extends RoomHandler
         }
         if (x == 34 && y == 39)
         {
-            clog.write(MAIDEN_SCUFFED, "N4 (2)");
+            clog.addLine(MAIDEN_SCUFFED, "N4 (2)");
             return "N4 (2)" + proc;
         }
         //
@@ -786,7 +785,7 @@ public class MaidenHandler extends RoomHandler
         }
         if (x == 22 && y == 19)
         {
-            clog.write(MAIDEN_SCUFFED, "S1");
+            clog.addLine(MAIDEN_SCUFFED, "S1");
             return "S1" + proc;
         }
         if (x == 25 && y == 20)
@@ -795,7 +794,7 @@ public class MaidenHandler extends RoomHandler
         }
         if (x == 26 && y == 19)
         {
-            clog.write(MAIDEN_SCUFFED, "S2");
+            clog.addLine(MAIDEN_SCUFFED, "S2");
             return "S2" + proc;
         }
         if (x == 29 && y == 20)
@@ -804,7 +803,7 @@ public class MaidenHandler extends RoomHandler
         }
         if (x == 30 && y == 19)
         {
-            clog.write(MAIDEN_SCUFFED, "S3");
+            clog.addLine(MAIDEN_SCUFFED, "S3");
             return "S3" + proc;
         }
         if (x == 33 && y == 20)
@@ -813,7 +812,7 @@ public class MaidenHandler extends RoomHandler
         }
         if (x == 34 && y == 19)
         {
-            clog.write(MAIDEN_SCUFFED, "S4 (1)");
+            clog.addLine(MAIDEN_SCUFFED, "S4 (1)");
             return "S4 (1)" + proc;
         }
         if (x == 33 && y == 22)
@@ -822,7 +821,7 @@ public class MaidenHandler extends RoomHandler
         }
         if (x == 34 && y == 21)
         {
-            clog.write(MAIDEN_SCUFFED, "S4 (2)");
+            clog.addLine(MAIDEN_SCUFFED, "S4 (2)");
             return "S4 (2)" + proc;
         } else
         {

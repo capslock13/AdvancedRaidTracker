@@ -1,8 +1,6 @@
 package com.TheatreTracker.utility.datautility;
 
-import com.TheatreTracker.RoomData;
 import com.TheatreTracker.TheatreTrackerConfig;
-import com.TheatreTracker.ui.RaidTrackerSidePanel;
 import lombok.extern.slf4j.Slf4j;
 import com.TheatreTracker.constants.LogID;
 
@@ -15,66 +13,103 @@ import java.util.Objects;
 public class DataWriter
 {
     private final TheatreTrackerConfig config;
+    private String activeUsername = "";
+    private final ArrayList<String> currentBuffer;
 
-    public DataWriter(TheatreTrackerConfig config)
+    public final static String PLUGIN_DIRECTORY = System.getProperty("user.home").replace("\\", "/") + "/.runelite/advancedraidtracker/";
+
+    public DataWriter(TheatreTrackerConfig config) throws IOException
     {
         this.config = config;
+        currentBuffer = new ArrayList<>();
     }
 
-    public static void splitLegacyFile()
+    public void setName(String name) throws IOException
     {
-        ArrayList<RoomData> raids = new ArrayList<>();
-        try
+        activeUsername = name;
+        File dirMain = new File(PLUGIN_DIRECTORY + name + "/primary/");
+        File dirFilters = new File(PLUGIN_DIRECTORY + "misc-dir/filters/");
+        File dirRaids = new File(PLUGIN_DIRECTORY + "misc-dir/raids/");
+
+        if (!dirRaids.exists())
         {
-            String path = "/.runelite/theatretracker/primary/tobdata.log";
-            File logFile = new File(System.getProperty("user.home").replace("\\", "/") + path);
-            RaidTrackerSidePanel.parseLogFile(raids, logFile);
-            if(!logFile.delete())
+            if (!dirRaids.mkdirs())
             {
-                log.info("Failed to delete previous field");
+                log.info("Failed to create raids directory for username " + name);
             }
-        } catch (Exception ignored)
-        {
         }
-        int currentSize = 0;
-        int highestFile = getHighestLogNumber();
-        ArrayList<RoomData> currentFileRaids = new ArrayList<>();
-        int last = raids.size()-1;
-        int index = 0;
-        for(RoomData r : raids)
+        if (!dirMain.exists())
         {
-            currentSize += r.raidDataRaw.length;
-            currentFileRaids.add(r);
-            if(currentSize > 50000 || last == index) //50k lines is roughly 2.5MB
+            if (!dirMain.mkdirs())
+            {
+                log.info("Failed to create main directory for username " + name);
+            }
+        }
+        if (!dirFilters.exists())
+        {
+            if (!dirFilters.mkdirs())
+            {
+                log.info("Failed to create filter directory for username " + name);
+            }
+        }
+
+        File logFile = new File(PLUGIN_DIRECTORY + name + "/primary/tobdata.log");
+        if (!logFile.exists())
+        {
+            if (!logFile.createNewFile())
+            {
+                log.info("Failed to create log file");
+            }
+        }
+    }
+
+    //If you X out client in the middle of a raid it does not record the flag that the raid ended, so this is called when you enter a tob to see
+    //if an active datafile and if so it adds an exit flag to the end
+    public void checkForEndFlag()
+    {
+        File logFile = new File(PLUGIN_DIRECTORY + activeUsername + "/primary/tobdata.log");
+        if (logFile.exists())
+        {
+            if (logFile.length() > 0)
+            {
+                currentBuffer.add("," + System.currentTimeMillis() + ",1," + 4 + "," + "," + "," + "," + ",");
+                writeFile();
+            }
+        }
+    }
+
+    public void migrateToNewRaid()
+    {
+        int highest = getHighestLogNumber(activeUsername);
+        File logFile = new File(PLUGIN_DIRECTORY + activeUsername + "/primary/tobdata.log");
+        if (!logFile.exists())
+        {
+            log.info("Could not migrate because file does not exist");
+            return;
+        }
+        if (logFile.length() == 0)
+        {
+            return;
+        } //Inject number to log file before the '.log' e.g. tobdata.log -> tobdata<number>.log
+        if (!logFile.renameTo(new File(logFile.getAbsolutePath().substring(0, logFile.getAbsolutePath().length() - 4) + (highest + 1) + ".log")))
+        {
+            log.info("Could not rename primary log file");
+        } else
+        {
+            logFile = new File(PLUGIN_DIRECTORY + activeUsername + "/primary/tobdata.log");
+            if (!logFile.exists())
             {
                 try
                 {
-                    File logFile = new File(System.getProperty("user.home").replace("\\", "/") + "/.runelite/theatretracker/primary/tobdata" + highestFile + ".log");
-                    if (!logFile.exists())
+                    if (!logFile.createNewFile())
                     {
-                        if(!logFile.createNewFile())
-                        {
-                            return;
-                        }
+                        log.info("Replacement file creation unsuccessful");
                     }
-                    BufferedWriter logger = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(logFile, true), StandardCharsets.UTF_8));
-                    for(RoomData data : currentFileRaids)
-                    {
-                        for(String s : data.raidDataRaw)
-                        {
-                            logger.write(s);
-                            logger.newLine();
-                        }
-                    }
-                    logger.close();
-                } catch (IOException ignored)
+                } catch (Exception e)
                 {
+                    log.info("Exception thrown when creating replacement log file: " + logFile.getAbsolutePath());
                 }
-                currentFileRaids.clear();
-                currentSize = 0;
-                highestFile++;
             }
-            index++;
         }
     }
 
@@ -82,22 +117,19 @@ public class DataWriter
     {
         try
         {
-            File logFile = new File(System.getProperty("user.home").replace("\\", "/") + "/.runelite/theatretracker/primary/tobdata.log");
+            File logFile = new File(PLUGIN_DIRECTORY + "primary/tobdata.log");
             if (!logFile.exists())
             {
                 return;
             }
             long fileSize = logFile.length();
-            if(fileSize > (6*1024*1024))
+            if (fileSize > (6 * 1024 * 1024))
             {
-                splitLegacyFile();
-            }
-            else if (fileSize > (5 * 1024 * 1024))
+                //splitLegacyFile();
+            } else if (fileSize > (5 * 1024 * 1024))
             {
-                log.info("Migrating log to new file");
-                int highestLogNumber = getHighestLogNumber();
-                log.info("Highest log found: " + highestLogNumber);
-                File newFile = new File(System.getProperty("user.home").replace("\\", "/") + "/.runelite/theatretracker/primary/tobdata" + (highestLogNumber + 1) + ".log");
+                int highestLogNumber = getHighestLogNumber("");
+                File newFile = new File(PLUGIN_DIRECTORY + "primary/tobdata" + (highestLogNumber + 1) + ".log");
                 if (newFile.exists())
                 {
                     log.info("Failed to migrate file due to name conflict.");
@@ -109,24 +141,39 @@ public class DataWriter
                     log.info("Failed to migrate file due to unknown reason");
                 } else
                 {
-                    File toCreate = new File(System.getProperty("user.home").replace("\\", "/") + "/.runelite/theatretracker/primary/tobdata.log");
+                    File toCreate = new File(PLUGIN_DIRECTORY + "primary/tobdata.log");
 
-                    if(!toCreate.createNewFile())
+                    if (!toCreate.createNewFile())
                     {
                         log.info("Failed to create");
                     }
                 }
             }
-        }
-        catch(Exception ignored)
+        } catch (Exception ignored)
         {
         }
     }
 
-    private static int getHighestLogNumber()
+    public static int getHighestLogNumber(String name)
     {
+        String directory = PLUGIN_DIRECTORY;
+        if (!name.isEmpty())
+        {
+            directory += name + "/primary/";
+        } else
+        {
+            directory += "primary/";
+        }
+        File logDirectory = new File(directory);
+        if(!logDirectory.exists())
+        {
+            if(!logDirectory.mkdirs())
+            {
+                log.info("Could not make directory to find log number");
+            }
+        }
         int highestLogNumber = 0;
-        for (File file : Objects.requireNonNull(new File(System.getProperty("user.home").replace("\\", "/") + "/.runelite/theatretracker/primary/").listFiles()))
+        for (File file : Objects.requireNonNull(new File(directory).listFiles()))
         {
             if (file.getName().contains("tobdata"))
             {
@@ -154,63 +201,49 @@ public class DataWriter
     /**
      * Writes a message to the log with the time, message ID, and up to 5 additional parameters
      *
-     * @param id     LogID of message
+     * @param id LogID of message
      */
-    public void write(LogID id, String... params)
+    public void addLine(LogID id, String... params)
     {
         if (params.length > 5)
             throw new IllegalArgumentException("Too many values passed to DataWriter");
         String[] values = {"", "", "", "", ""};
         System.arraycopy(params, 0, values, 0, params.length);
-        write(id.getId(), values[0], values[1], values[2], values[3], values[4]);
+        addLine(id.getId(), values[0], values[1], values[2], values[3], values[4]);
     }
 
-    public void write(int key)
-    {
-        write(key, "", "", "", "", "");
-    }
-
-    public void write(LogID id, int param)
-    {
-        write(id, String.valueOf(param));
-    }
-
-    public void write(int key, String v1)
-    {
-        write(key, v1, "", "", "", "");
-    }
-
-    public void write(int key, String v1, String v2)
-    {
-        write(key, v1, v2, "", "", "");
-    }
-
-    public void write(int key, String v1, String v2, String v3, String v4, String v5)
+    public void addLine(int key, String v1, String v2, String v3, String v4, String v5)
     {
         int versionID = 1;
-        writeFile(getUID() + "," + System.currentTimeMillis() + "," + versionID + "," + key + "," + v1 + "," + v2 + "," + v3 + "," + v4 + "," + v5);
+        currentBuffer.add(getUID() + "," + System.currentTimeMillis() + "," + versionID + "," + key + "," + v1 + "," + v2 + "," + v3 + "," + v4 + "," + v5);
     }
 
     public static void writeAliasFile(String aliasText)
     {
         try
         {
-            File aliasFile = new File(System.getProperty("user.home").replace("\\", "/") + "/.runelite/theatretracker/alias/alias.log");
+            File aliasFile = new File(PLUGIN_DIRECTORY + "alias/alias.log");
             if (!aliasFile.exists())
             {
-                File directory = new File(System.getProperty("user.home").replace("\\", "/") + "/.runelite/theatretracker/alias/");
+                File directory = new File(PLUGIN_DIRECTORY + "alias/");
                 if (!directory.exists())
                 {
-                    directory.mkdirs();
+                    if (!directory.mkdirs())
+                    {
+                        log.info("Failed to create alias directory");
+                    }
                 }
-                aliasFile.createNewFile();
+                if (!aliasFile.createNewFile())
+                {
+                    log.info("Failed to create alias file");
+                }
             }
-            BufferedWriter logger = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(System.getProperty("user.home").replace("\\", "/") + "/.runelite/theatretracker/alias/alias.log", false), StandardCharsets.UTF_8));
+            BufferedWriter logger = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(PLUGIN_DIRECTORY + "alias/alias.log", false), StandardCharsets.UTF_8));
             logger.write(aliasText);
             logger.close();
         } catch (IOException e)
         {
-            e.printStackTrace();
+            log.info("Failed writing to alias file");
         }
     }
 
@@ -220,7 +253,7 @@ public class DataWriter
         BufferedReader reader;
         try
         {
-            reader = new BufferedReader(new FileReader(System.getProperty("user.home").replace("\\", "/") + "/.runelite/theatretracker/alias/alias.log"));
+            reader = new BufferedReader(new FileReader(PLUGIN_DIRECTORY + "alias/alias.log"));
             String line = reader.readLine();
             while (line != null)
             {
@@ -234,27 +267,60 @@ public class DataWriter
         return lines;
     }
 
-    public void writeFile(String msg)
+    public void writeFile()
     {
         if (config.writeToLog())
         {
             try
             {
-                File logFile = new File(System.getProperty("user.home").replace("\\", "/") + "/.runelite/theatretracker/primary/tobdata.log");
+                File logFile = new File(PLUGIN_DIRECTORY + activeUsername + "/primary/tobdata.log");
                 if (!logFile.exists())
                 {
-                    logFile.createNewFile();
+                    if (!logFile.createNewFile())
+                    {
+                        log.info("Failed to create log file");
+                    }
                 }
-                BufferedWriter logger = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(System.getProperty("user.home").replace("\\", "/") + "/.runelite/theatretracker/primary/tobdata.log", true), StandardCharsets.UTF_8));
-                logger.write(msg);
-                logger.newLine();
+                BufferedWriter logger = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(PLUGIN_DIRECTORY + activeUsername + "/primary/tobdata.log", true), StandardCharsets.UTF_8));
+                for (String msg : currentBuffer)
+                {
+                    logger.write(msg);
+                    logger.newLine();
+                }
                 logger.close();
             } catch (IOException e)
             {
-                e.printStackTrace();
+                log.info("Failed clearing buffered tob data to log");
             }
         }
+        currentBuffer.clear();
     }
+
+    public static void writeFile(ArrayList<String> raid, String filePath)
+    {
+        try
+        {
+            File logFile = new File(filePath);
+            if (!logFile.exists())
+            {
+                if (!logFile.createNewFile())
+                {
+                    log.info("Failed to create log file");
+                }
+            }
+            BufferedWriter logger = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filePath, true), StandardCharsets.UTF_8));
+            for (String msg : raid)
+            {
+                logger.write(msg);
+                logger.newLine();
+            }
+            logger.close();
+        } catch (IOException e)
+        {
+            log.info("Failed clearing buffered tob data to log");
+        }
+    }
+
 
     private String getUID()
     {

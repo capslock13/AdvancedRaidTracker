@@ -1,6 +1,6 @@
 package com.TheatreTracker.ui.comparisonview;
 
-import com.TheatreTracker.RoomData;
+import com.TheatreTracker.SimpleRaidData;
 import com.TheatreTracker.TheatreTrackerConfig;
 import com.TheatreTracker.ui.BaseFrame;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +15,7 @@ import java.util.Map;
 @Slf4j
 public class ComparisonViewFrame extends BaseFrame
 {
-    public ComparisonViewFrame(ArrayList<ArrayList<RoomData>> data, ArrayList<String> labels)
+    public ComparisonViewFrame(ArrayList<ArrayList<SimpleRaidData>> data, ArrayList<String> labels)
     {
         add(new ComparisonViewPanel(data, labels, config, itemManager, clientThread));
         pack();
@@ -25,7 +25,7 @@ public class ComparisonViewFrame extends BaseFrame
     private ItemManager itemManager;
     private ClientThread clientThread;
 
-    public ComparisonViewFrame(Map<Integer, ArrayList<ArrayList<RoomData>>> dataSets, ArrayList<ArrayList<String>> labelSets, TheatreTrackerConfig config, ItemManager itemManager, ClientThread clientThread)
+    public ComparisonViewFrame(Map<Integer, ArrayList<ArrayList<SimpleRaidData>>> dataSets, ArrayList<ArrayList<String>> labelSets, TheatreTrackerConfig config, ItemManager itemManager, ClientThread clientThread)
     {
         this.clientThread = clientThread;
         this.itemManager = itemManager;

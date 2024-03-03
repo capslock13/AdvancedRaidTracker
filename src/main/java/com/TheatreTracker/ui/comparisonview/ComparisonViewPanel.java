@@ -1,6 +1,6 @@
 package com.TheatreTracker.ui.comparisonview;
 
-import com.TheatreTracker.RoomData;
+import com.TheatreTracker.SimpleRaidData;
 import com.TheatreTracker.TheatreTrackerConfig;
 import com.TheatreTracker.ui.comparisonview.graph.GraphPanel;
 import com.TheatreTracker.utility.RoomUtil;
@@ -60,7 +60,7 @@ public class ComparisonViewPanel extends JPanel
     private final JComboBox compareByComboBox;
     private final JComboBox graphTypeComboBox;
     private boolean time = false;
-    ArrayList<ArrayList<RoomData>> data;
+    ArrayList<ArrayList<SimpleRaidData>> data;
 
     JPanel scrollTopPanel;
     JPanel scrollBottomPanel;
@@ -83,7 +83,7 @@ public class ComparisonViewPanel extends JPanel
     private final ItemManager itemManager;
 
     private final ClientThread clientThread;
-    public ComparisonViewPanel(ArrayList<ArrayList<RoomData>> raidData, ArrayList<String> names, TheatreTrackerConfig config, ItemManager itemManager, ClientThread clientThread)
+    public ComparisonViewPanel(ArrayList<ArrayList<SimpleRaidData>> raidData, ArrayList<String> names, TheatreTrackerConfig config, ItemManager itemManager, ClientThread clientThread)
     {
         this.clientThread = clientThread;
         this.itemManager = itemManager;
@@ -546,15 +546,15 @@ public class ComparisonViewPanel extends JPanel
         updateCutoffs();
     }
 
-    GraphPanel getGraphPanel(ArrayList<RoomData> points)
+    GraphPanel getGraphPanel(ArrayList<SimpleRaidData> points)
     {
         return new GraphPanel(points, config, itemManager, clientThread);
     }
 
-    private ArrayList<Integer> getArrayForStatistics(ArrayList<RoomData> data)
+    private ArrayList<Integer> getArrayForStatistics(ArrayList<SimpleRaidData> data)
     {
         ArrayList<Integer> arrayToPass = new ArrayList<>();
-        for (RoomData raidData : data)
+        for (SimpleRaidData raidData : data)
         {
             int value = raidData.getValue(DataPoint.getValue(String.valueOf(compareByComboBox.getSelectedItem())));
             if (value > -1)
@@ -624,8 +624,8 @@ public class ComparisonViewPanel extends JPanel
             otherBottomLeft.setBorder(BorderFactory.createTitledBorder(topGraphTabs.getTitleAt(topGraphTabs.getSelectedIndex()) + " values"));
             otherBottomRight.setBorder(BorderFactory.createTitledBorder(bottomGraphTabs.getTitleAt(bottomGraphTabs.getSelectedIndex()) + " values"));
 
-            ArrayList<RoomData> topGraphData = (data.get(topGraphTabs.getSelectedIndex()));
-            ArrayList<RoomData> bottomGraphData = data.get(bottomGraphTabs.getSelectedIndex());
+            ArrayList<SimpleRaidData> topGraphData = (data.get(topGraphTabs.getSelectedIndex()));
+            ArrayList<SimpleRaidData> bottomGraphData = data.get(bottomGraphTabs.getSelectedIndex());
 
             String worse = "<html><font color='#F63131'>";
             String better = "<html><font color='#99E622'>";

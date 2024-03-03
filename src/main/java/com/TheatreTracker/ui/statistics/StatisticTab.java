@@ -1,6 +1,6 @@
 package com.TheatreTracker.ui.statistics;
 
-import com.TheatreTracker.RoomData;
+import com.TheatreTracker.SimpleRaidData;
 import com.TheatreTracker.utility.datautility.DataPoint;
 
 import javax.swing.*;
@@ -11,9 +11,9 @@ public class StatisticTab extends JPanel
 {
     private final ArrayList<StatisticRoomPanel> panels;
     DataPoint.rooms room;
-    ArrayList<RoomData> data;
+    ArrayList<SimpleRaidData> data;
 
-    public StatisticTab(ArrayList<RoomData> data, DataPoint.rooms room)
+    public StatisticTab(ArrayList<SimpleRaidData> data, DataPoint.rooms room)
     {
         this.room = room;
         this.data = data;
@@ -38,7 +38,7 @@ public class StatisticTab extends JPanel
         repaint();
     }
 
-    public void updateTab(ArrayList<RoomData> data)
+    public void updateTab(ArrayList<SimpleRaidData> data)
     {
         for (StatisticRoomPanel roomPanel : panels)
         {

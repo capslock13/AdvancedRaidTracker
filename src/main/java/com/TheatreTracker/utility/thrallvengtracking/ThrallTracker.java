@@ -148,7 +148,7 @@ public class ThrallTracker
                 {
                     if (thrall.lastParentInteraction.getWorldArea().distanceTo(thrall.npc.getWorldLocation()) < 2)
                     {
-                        plugin.clog.write(LogID.THRALL_ATTACKED, thrall.getOwner(), "melee");
+                        plugin.clog.addLine(LogID.THRALL_ATTACKED, thrall.getOwner(), "melee");
                         plugin.addQueuedThrallDamage(((((NPC) thrall.lastParentInteraction).getIndex())), thrall.npc.getIndex(), 1, thrall.getOwner());
                     }
                 }
@@ -173,7 +173,7 @@ public class ThrallTracker
             {
                 if (t.npc.getWorldLocation().distanceTo(origin) == 0 && hitOffset != -1)
                 {
-                    plugin.clog.write(LogID.THRALL_ATTACKED, t.getOwner(), String.valueOf(projectile.getId()));
+                    plugin.clog.addLine(LogID.THRALL_ATTACKED, t.getOwner(), String.valueOf(projectile.getId()));
                     plugin.addQueuedThrallDamage(((NPC) (projectile.getInteracting())).getIndex(), t.npc.getIndex(), hitOffset, t.getOwner());
                     if (plugin.isVerzP2())
                     {

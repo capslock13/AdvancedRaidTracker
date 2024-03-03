@@ -1,6 +1,6 @@
 package com.TheatreTracker.filters;
 
-import com.TheatreTracker.RoomData;
+import com.TheatreTracker.SimpleRaidData;
 
 public class FilterOtherBool extends FilterCondition
 {
@@ -22,7 +22,7 @@ public class FilterOtherBool extends FilterCondition
     }
 
     @Override
-    public boolean evaluate(RoomData data)
+    public boolean evaluate(SimpleRaidData data)
     {
         switch (param)
         {

@@ -1,6 +1,6 @@
 package com.TheatreTracker.ui.comparisonview.graph;
 
-import com.TheatreTracker.RoomData;
+import com.TheatreTracker.SimpleRaidData;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -16,9 +16,9 @@ public class Bounds
     @Getter
     private int top;
 
-    public ArrayList<RoomData> raids;
+    public ArrayList<SimpleRaidData> raids;
 
-    public Bounds(int l, int r, int b, int t, ArrayList<RoomData> raids)
+    public Bounds(int l, int r, int b, int t, ArrayList<SimpleRaidData> raids)
     {
         this.raids = raids;
         left = l;

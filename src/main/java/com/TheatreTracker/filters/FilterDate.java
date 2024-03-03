@@ -1,6 +1,6 @@
 package com.TheatreTracker.filters;
 
-import com.TheatreTracker.RoomData;
+import com.TheatreTracker.SimpleRaidData;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -25,7 +25,7 @@ public class FilterDate extends FilterCondition
     }
 
     @Override
-    public boolean evaluate(RoomData data)
+    public boolean evaluate(SimpleRaidData data)
     {
         Calendar cal = Calendar.getInstance();
         Calendar cal2 = Calendar.getInstance();

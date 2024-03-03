@@ -1,7 +1,7 @@
 package com.TheatreTracker.ui;
 
 
-import com.TheatreTracker.RoomData;
+import com.TheatreTracker.SimpleRaidData;
 import com.TheatreTracker.TheatreTrackerConfig;
 import com.TheatreTracker.filters.*;
 import com.TheatreTracker.ui.buttons.*;
@@ -26,8 +26,6 @@ import net.runelite.client.game.ItemManager;
 
 import javax.swing.*;
 import javax.swing.border.MatteBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
@@ -49,7 +47,7 @@ public class Raids extends BaseFrame
 {
     private final ArrayList<Integer> filteredIndices;
     private JTable comparisonTable;
-    private final ArrayList<ArrayList<RoomData>> comparisons;
+    private final ArrayList<ArrayList<SimpleRaidData>> comparisons;
 
     private final JTabbedPane tabbedPane = new JTabbedPane();
     public ArrayList<ImplicitFilter> activeFilters;
@@ -90,7 +88,7 @@ public class Raids extends BaseFrame
     JTable table;
     JPanel container;
     private JPanel filterTableContainer;
-    public ArrayList<RoomData> currentData;
+    public ArrayList<SimpleRaidData> currentData;
     private JComboBox<String> timeFilterChoice;
     private JComboBox<String> timeFilterOperator;
     private JTextField timeFilterValue;
@@ -145,7 +143,7 @@ public class Raids extends BaseFrame
         this.setPreferredSize(new Dimension(1200, 820));
     }
 
-    public void updateCustomStats(ArrayList<RoomData> raids)
+    public void updateCustomStats(ArrayList<SimpleRaidData> raids)
     {
         DataPoint dataPoint = DataPoint.ATTEMPTED_BGS_BLOAT;
         boolean time = dataPoint.type == DataPoint.types.TIME;
@@ -175,7 +173,7 @@ public class Raids extends BaseFrame
         customMaxLabel.setText(maxStr);
     }
 
-    private boolean evaluateAllFilters(RoomData data)
+    private boolean evaluateAllFilters(SimpleRaidData data)
     {
         for (ImplicitFilter filter : activeFilters)
         {
@@ -191,8 +189,8 @@ public class Raids extends BaseFrame
     {
         String timeToDisplay = "0";
         int completions = 0;
-        ArrayList<RoomData> tableData = new ArrayList<>();
-        for (RoomData data : currentData)
+        ArrayList<SimpleRaidData> tableData = new ArrayList<>();
+        for (SimpleRaidData data : currentData)
         {
             boolean shouldDataBeIncluded = true;
             if (filterSpectateOnly.isSelected())
@@ -311,13 +309,13 @@ public class Raids extends BaseFrame
             }
             if (shouldDataBeIncluded && filterCheckBoxScale.isSelected())
             {
-                shouldDataBeIncluded = filterComboBoxScale.getSelectedIndex() + 1 == data.raidTeamSize;
+                shouldDataBeIncluded = filterComboBoxScale.getSelectedIndex() + 1 == data.getScale();
             }
             timeToDisplay = String.valueOf(data.getSpecificTimeInactive(viewByRaidComboBox.getSelectedItem().toString()));
 
             for (Integer i : filteredIndices)
             {
-                if (data.index == i)
+                if (data.getValue(DataPoint.RAID_INDEX) == i)
                 {
                     shouldDataBeIncluded = false;
                 }
@@ -339,36 +337,36 @@ public class Raids extends BaseFrame
         {
             if (sortOrderBox.getSelectedIndex() == 0)
             {
-                tableData.sort(Comparator.comparing(RoomData::getDate));
+                tableData.sort(Comparator.comparing(SimpleRaidData::getDate));
             } else
             {
-                tableData.sort(Comparator.comparing(RoomData::getDate).reversed());
+                tableData.sort(Comparator.comparing(SimpleRaidData::getDate).reversed());
             }
         } else if (sortOptionsBox.getSelectedIndex() == 1)
         {
             if (sortOrderBox.getSelectedIndex() == 0)
             {
-                for (RoomData data : tableData)
+                for (SimpleRaidData data : tableData)
                 {
                     data.activeValue = viewByRaidComboBox.getSelectedItem().toString();
                 }
-                tableData.sort(Comparator.comparing(RoomData::getSpecificTime));
+                tableData.sort(Comparator.comparing(SimpleRaidData::getSpecificTime));
             } else
             {
-                for (RoomData data : tableData)
+                for (SimpleRaidData data : tableData)
                 {
                     data.activeValue = viewByRaidComboBox.getSelectedItem().toString();
                 }
-                tableData.sort(Comparator.comparing(RoomData::getSpecificTime).reversed());
+                tableData.sort(Comparator.comparing(SimpleRaidData::getSpecificTime).reversed());
             }
         } else if (sortOptionsBox.getSelectedIndex() == 2)
         {
             if (sortOrderBox.getSelectedIndex() == 0)
             {
-                tableData.sort(Comparator.comparing(RoomData::getScale));
+                tableData.sort(Comparator.comparing(SimpleRaidData::getScale));
             } else
             {
-                tableData.sort(Comparator.comparing(RoomData::getScale).reversed());
+                tableData.sort(Comparator.comparing(SimpleRaidData::getScale).reversed());
             }
         }
 
@@ -391,7 +389,7 @@ public class Raids extends BaseFrame
             }
         }
         ArrayList<Object[]> tableBuilder = new ArrayList<>();
-        for (RoomData raid : tableData)
+        for (SimpleRaidData raid : tableData)
         {
             ArrayList<Object> rowBuilder = new ArrayList<>();
             for (String column : columnNamesDynamic)
@@ -434,12 +432,12 @@ public class Raids extends BaseFrame
         container.repaint();
     }
 
-    public Object getRowData(String column, RoomData raid)
+    public Object getRowData(String column, SimpleRaidData raid)
     {
         switch (column)
         {
             case "":
-                return raid.index;
+                return raid.getValue(DataPoint.RAID_INDEX);
             case "Date":
                 Calendar cal = Calendar.getInstance();
                 cal.setTime(raid.raidStarted);
@@ -529,7 +527,7 @@ public class Raids extends BaseFrame
     }
 
 
-    private void updateTabNames(ArrayList<RoomData> data)
+    private void updateTabNames(ArrayList<SimpleRaidData> data)
     {
         int maidenCount = 0;
         int bloatCount = 0;
@@ -537,7 +535,7 @@ public class Raids extends BaseFrame
         int soteCount = 0;
         int xarpCount = 0;
         int verzikCount = 0;
-        for (RoomData d : data)
+        for (SimpleRaidData d : data)
         {
             if (d.maidenStartAccurate && d.maidenEndAccurate)
             {
@@ -613,7 +611,7 @@ public class Raids extends BaseFrame
         }
     }
 
-    public void setLabels(ArrayList<RoomData> data)
+    public void setLabels(ArrayList<SimpleRaidData> data)
     {
         setOverallLabels(data);
         maidenTab.updateTab(data);
@@ -624,7 +622,7 @@ public class Raids extends BaseFrame
         verzikTab.updateTab(data);
     }
 
-    public void setOverallLabels(ArrayList<RoomData> data)
+    public void setOverallLabels(ArrayList<SimpleRaidData> data)
     {
         setOverallAverageLabels(data);
         setOverallMedianLabels(data);
@@ -632,7 +630,7 @@ public class Raids extends BaseFrame
         setOverallMaxLabels(data);
     }
 
-    public void setOverallAverageLabels(ArrayList<RoomData> data)
+    public void setOverallAverageLabels(ArrayList<SimpleRaidData> data)
     {
         for(String s : averageLabels.keySet())
         {
@@ -640,7 +638,7 @@ public class Raids extends BaseFrame
         }
     }
 
-    public void setOverallMedianLabels(ArrayList<RoomData> data)
+    public void setOverallMedianLabels(ArrayList<SimpleRaidData> data)
     {
         for(String s : medianLabels.keySet())
         {
@@ -648,7 +646,7 @@ public class Raids extends BaseFrame
         }
     }
 
-    public void setOverallMinLabels(ArrayList<RoomData> data)
+    public void setOverallMinLabels(ArrayList<SimpleRaidData> data)
     {
         for(String s : minLabels.keySet())
         {
@@ -656,7 +654,7 @@ public class Raids extends BaseFrame
         }
     }
 
-    private void setOverallMaxLabels(ArrayList<RoomData> data)
+    private void setOverallMaxLabels(ArrayList<SimpleRaidData> data)
     {
         for(String s : maxLabels.keySet())
         {
@@ -772,7 +770,7 @@ public class Raids extends BaseFrame
         close();
     }
 
-    public void createFrame(ArrayList<RoomData> data)
+    public void createFrame(ArrayList<SimpleRaidData> data)
     {
         comboPopupData.put("Room Times", DataPoint.getRoomTimes());
         comboPopupData.put("Maiden", DataPoint.getMaidenNames());
@@ -933,7 +931,7 @@ public class Raids extends BaseFrame
 
         for (int i = 0; i < data.size(); i++)
         {
-            data.get(i).index = i;
+            data.get(i).setIndex(i);
         }
 
         int completions = 0;
@@ -1500,19 +1498,19 @@ public class Raids extends BaseFrame
             public void actionPerformed(ActionEvent e)
             {
                 updateAliases();
-                ArrayList<RoomData> rows = new ArrayList<>();
+                ArrayList<SimpleRaidData> rows = new ArrayList<>();
                 int[] toRemove = table.getSelectedRows();
                 for (int i = 0; i < toRemove.length; i++)
                 {
                     rows.add(currentData.get(Integer.parseInt(table.getModel().getValueAt(toRemove[i], 0).toString())));
                 }
-                Map<Integer, Map<String, ArrayList<RoomData>>> sessions = new LinkedHashMap<>();
-                for (RoomData data : rows)
+                Map<Integer, Map<String, ArrayList<SimpleRaidData>>> sessions = new LinkedHashMap<>();
+                for (SimpleRaidData data : rows)
                 {
                     if (!sessions.containsKey(data.players.size()))
                     {
-                        Map<String, ArrayList<RoomData>> scale = new LinkedHashMap<>();
-                        ArrayList<RoomData> list = new ArrayList<>();
+                        Map<String, ArrayList<SimpleRaidData>> scale = new LinkedHashMap<>();
+                        ArrayList<SimpleRaidData> list = new ArrayList<>();
                         list.add(data);
                         scale.put(data.getPlayerList(aliases), list);
                         sessions.put(data.players.size(), scale);
@@ -1520,7 +1518,7 @@ public class Raids extends BaseFrame
                     {
                         if (!sessions.get(data.players.size()).containsKey(data.getPlayerList(aliases)))
                         {
-                            ArrayList<RoomData> list = new ArrayList<>();
+                            ArrayList<SimpleRaidData> list = new ArrayList<>();
                             list.add(data);
                             sessions.get(data.players.size()).put(data.getPlayerList(aliases), list);
                         } else
@@ -1530,10 +1528,10 @@ public class Raids extends BaseFrame
                     }
                 }
                 ArrayList<ArrayList<String>> labelSets = new ArrayList<>();
-                Map<Integer, ArrayList<ArrayList<RoomData>>> dataSets = new LinkedHashMap<>();
+                Map<Integer, ArrayList<ArrayList<SimpleRaidData>>> dataSets = new LinkedHashMap<>();
                 for (Integer scale : sessions.keySet())
                 {
-                    ArrayList<ArrayList<RoomData>> scaleData = new ArrayList<>();
+                    ArrayList<ArrayList<SimpleRaidData>> scaleData = new ArrayList<>();
                     ArrayList<String> labels = new ArrayList<>();
                     for (String playerList : sessions.get(scale).keySet())
                     {
@@ -1557,7 +1555,7 @@ public class Raids extends BaseFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                ArrayList<RoomData> rows = new ArrayList<>();
+                ArrayList<SimpleRaidData> rows = new ArrayList<>();
                 int[] toRemove = table.getSelectedRows();
                 for (int i = 0; i < toRemove.length; i++)
                 {
@@ -1585,7 +1583,7 @@ public class Raids extends BaseFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                ArrayList<RoomData> rows = new ArrayList<>();
+                ArrayList<SimpleRaidData> rows = new ArrayList<>();
                 int[] toRemove = table.getSelectedRows();
                 for (int i = 0; i < toRemove.length; i++)
                 {
@@ -1602,7 +1600,7 @@ public class Raids extends BaseFrame
             public void actionPerformed(ActionEvent e)
             {
                 ArrayList<String> labels = new ArrayList<>();
-                ArrayList<RoomData> rows = new ArrayList<>();
+                ArrayList<SimpleRaidData> rows = new ArrayList<>();
                 int[] toRemove = table.getSelectedRows();
                 for (int i = 0; i < toRemove.length; i++)
                 {
@@ -1614,7 +1612,7 @@ public class Raids extends BaseFrame
                 } else
                 {
                     labels.add("");
-                    ArrayList<ArrayList<RoomData>> data = new ArrayList<>();
+                    ArrayList<ArrayList<SimpleRaidData>> data = new ArrayList<>();
                     data.add(rows);
                     ComparisonViewFrame graphView = new ComparisonViewFrame(data, labels);
                     graphView.open();
@@ -1627,7 +1625,7 @@ public class Raids extends BaseFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                ArrayList<RoomData> rows = new ArrayList<>();
+                ArrayList<SimpleRaidData> rows = new ArrayList<>();
                 int[] toRemove = table.getSelectedRows();
                 for (int i = 0; i < toRemove.length; i++)
                 {
@@ -1645,7 +1643,7 @@ public class Raids extends BaseFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                ArrayList<RoomData> rows = new ArrayList<>();
+                ArrayList<SimpleRaidData> rows = new ArrayList<>();
                 int[] toRemove = table.getSelectedRows();
                 for (int i = 0; i < toRemove.length; i++)
                 {
@@ -2090,7 +2088,7 @@ public class Raids extends BaseFrame
         ArrayList<Object[]> tableData = new ArrayList<>();
 
         int index = 0;
-        for (ArrayList<RoomData> comparison : comparisons)
+        for (ArrayList<SimpleRaidData> comparison : comparisons)
         {
             Object[] row = {comparison.size() + " raids averaging: " + RoomUtil.time(StatisticGatherer.getOverallTimeAverage(comparison)), "Set " + index, "Remove"};
             tableData.add(row);

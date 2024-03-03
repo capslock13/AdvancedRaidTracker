@@ -15,7 +15,7 @@ import static com.TheatreTracker.constants.TobIDs.SPECTATE_FLAG;
 import static com.TheatreTracker.utility.datautility.DataPoint.*;
 
 @Slf4j
-public class RoomData
+public class SimpleRaidData
 {
     public boolean maidenStartAccurate = false;
     public boolean bloatStartAccurate = false;
@@ -34,15 +34,14 @@ public class RoomData
 
     public boolean spectated = false;
     public boolean partyComplete;
-    public int index = -1;
     public boolean hardMode;
     public boolean storyMode;
-    public int raidTeamSize;
     public boolean raidCompleted;
     public Date raidStarted;
     private ArrayList<String> globalData;
     public LinkedHashMap<String, Integer> players;
     public String[] raidDataRaw;
+    String filePath = "";
     public String activeValue = "";
     // Maiden tracking
     public boolean maidenTimeAccurate;
@@ -65,9 +64,6 @@ public class RoomData
     // Nylo tracking
     public boolean nyloTimeAccurate;
     public boolean nyloDefenseAccurate;
-    public int nyloDeaths;
-    public int nyloLastDead;
-    public int pillarDespawnTick;
     public boolean nyloWipe;
     public boolean nyloReset;
     public boolean nyloStarted;
@@ -132,7 +128,7 @@ public class RoomData
 
     public int getScale()
     {
-        return raidTeamSize;
+        return dataManager.get(PARTY_SIZE);
     }
 
     public boolean getTimeAccurate(DataPoint param)
@@ -156,6 +152,11 @@ public class RoomData
             default:
                 return false;
         }
+    }
+
+    public void setIndex(int index)
+    {
+        dataManager.set(RAID_INDEX, index);
     }
 
     public String getPlayerList(ArrayList<Map<String, ArrayList<String>>> aliases)
@@ -338,8 +339,9 @@ public class RoomData
 
     private ItemManager itemManager;
 
-    public RoomData(String[] parameters, ItemManager itemManager) throws Exception
+    public SimpleRaidData(String[] parameters, ItemManager itemManager, String filePath) throws Exception
     {
+        this.filePath = filePath;
         this.itemManager = itemManager;
         dataManager = new DataManager();
         raidDataRaw = parameters;
@@ -460,7 +462,7 @@ public class RoomData
                     {
                         if (!subData[i].isEmpty())
                         {
-                            raidTeamSize++;
+                            dataManager.increment(PARTY_SIZE);
                             players.put(subData[i].replaceAll("[^\\p{ASCII}]", " ").replaceAll(" +", " "), 0);
                         }
                     }
@@ -864,7 +866,7 @@ public class RoomData
     private int getXarpusHealAmount()
     {
         int amount = 0;
-        switch (raidTeamSize)
+        switch (getScale())
         {
             case 5:
                 amount = 8;
@@ -1007,7 +1009,7 @@ public class RoomData
                 switch (LogID.valueOf(Integer.parseInt(subData[3])))
                 {
                     case LEFT_TOB:
-                        if (pillarDespawnTick - 5 < dataManager.get(DataPoint.NYLO_BOSS_SPAWN))
+                        if (dataManager.get(NYLOCAS_PILLAR_DESPAWN_TICK) - 5 < dataManager.get(DataPoint.NYLO_BOSS_SPAWN))
                         {
                             dataManager.set(DataPoint.NYLO_BOSS_SPAWN, 0);
                             dataManager.set(DataPoint.NYLO_TOTAL_TIME, 0);
@@ -1064,7 +1066,8 @@ public class RoomData
                         dataManager.set(DataPoint.NYLO_LAST_WAVE, Integer.parseInt(subData[4]));
                         break;
                     case LAST_DEAD:
-                        nyloLastDead = Integer.parseInt(subData[4]);
+                        int nyloLastDead = Integer.parseInt(subData[4]);
+                        dataManager.set(NYLO_LAST_DEAD, nyloLastDead);
                         int offset = 20 - (nyloLastDead % 4); //4 cycle (16 tick) delay for boss + difference to cycle (4-time%instance reference)
                         dataManager.set(DataPoint.NYLO_BOSS_SPAWN, nyloLastDead + offset);
                         dataManager.set(DataPoint.NYLO_CLEANUP, nyloLastDead - dataManager.get(DataPoint.NYLO_LAST_WAVE));
@@ -1098,7 +1101,7 @@ public class RoomData
                         }
                         break loop;
                     case NYLO_PILLAR_DESPAWNED:
-                        pillarDespawnTick = Integer.parseInt(subData[4]);
+                        dataManager.set(NYLOCAS_PILLAR_DESPAWN_TICK, Integer.parseInt(subData[4]));
                         break;
                     case ACCURATE_NYLO_START:
                         nyloStartAccurate = true;

@@ -1,6 +1,6 @@
 package com.TheatreTracker.ui.buttons;
 
-import com.TheatreTracker.RoomData;
+import com.TheatreTracker.SimpleRaidData;
 import com.TheatreTracker.ui.viewraid.ViewRaid;
 
 import javax.swing.*;
@@ -13,10 +13,10 @@ public class ButtonEditorRoomData extends DefaultCellEditor
     protected JButton button;
     private String label;
     private boolean isPushed;
-    private final ArrayList<RoomData> data;
+    private final ArrayList<SimpleRaidData> data;
     int row;
 
-    public ButtonEditorRoomData(JCheckBox checkBox, ArrayList<RoomData> data)
+    public ButtonEditorRoomData(JCheckBox checkBox, ArrayList<SimpleRaidData> data)
     {
         super(checkBox);
         this.data = data;

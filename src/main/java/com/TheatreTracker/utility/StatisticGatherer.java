@@ -1,6 +1,6 @@
 package com.TheatreTracker.utility;
 
-import com.TheatreTracker.RoomData;
+import com.TheatreTracker.SimpleRaidData;
 import com.TheatreTracker.utility.datautility.DataPoint;
 import lombok.extern.slf4j.Slf4j;
 
@@ -13,16 +13,16 @@ import java.util.stream.Collectors;
 @Slf4j
 public class StatisticGatherer
 {
-    public static double getOverallTimeAverage(ArrayList<RoomData> data)
+    public static double getOverallTimeAverage(ArrayList<SimpleRaidData> data)
     {
-        data = data.stream().filter(RoomData::getOverallTimeAccurate).collect(Collectors.toCollection(ArrayList::new));
+        data = data.stream().filter(SimpleRaidData::getOverallTimeAccurate).collect(Collectors.toCollection(ArrayList::new));
         if (data.isEmpty())
         {
             return -1;
         }
         double total = 0;
         double count = 0;
-        for (RoomData d : data)
+        for (SimpleRaidData d : data)
         {
             total += d.getTimeSum();
             count++;
@@ -30,16 +30,16 @@ public class StatisticGatherer
         return total / count;
     }
 
-    public static double getOverallMedian(ArrayList<RoomData> data)
+    public static double getOverallMedian(ArrayList<SimpleRaidData> data)
     {
-        data = data.stream().filter(RoomData::getOverallTimeAccurate).collect(Collectors.toCollection(ArrayList::new));
+        data = data.stream().filter(SimpleRaidData::getOverallTimeAccurate).collect(Collectors.toCollection(ArrayList::new));
         if (data.isEmpty())
         {
             return -1;
         }
         double median;
         List<Double> values = new ArrayList<>();
-        for (RoomData d : data)
+        for (SimpleRaidData d : data)
         {
             values.add((double) d.getTimeSum());
         }
@@ -54,11 +54,11 @@ public class StatisticGatherer
         return median;
     }
 
-    public static double getOverallTimeMin(ArrayList<RoomData> data)
+    public static double getOverallTimeMin(ArrayList<SimpleRaidData> data)
     {
-        data = data.stream().filter(RoomData::getOverallTimeAccurate).collect(Collectors.toCollection(ArrayList::new));
+        data = data.stream().filter(SimpleRaidData::getOverallTimeAccurate).collect(Collectors.toCollection(ArrayList::new));
         int minValue = Integer.MAX_VALUE;
-        for (RoomData d : data)
+        for (SimpleRaidData d : data)
         {
             int split = d.getTimeSum();
             if (split < minValue)
@@ -69,11 +69,11 @@ public class StatisticGatherer
         return minValue;
     }
 
-    public static double getOverallMax(ArrayList<RoomData> data)
+    public static double getOverallMax(ArrayList<SimpleRaidData> data)
     {
-        data = data.stream().filter(RoomData::getOverallTimeAccurate).collect(Collectors.toCollection(ArrayList::new));
+        data = data.stream().filter(SimpleRaidData::getOverallTimeAccurate).collect(Collectors.toCollection(ArrayList::new));
         int maxValue = 0;
-        for (RoomData d : data)
+        for (SimpleRaidData d : data)
         {
             int split = d.getTimeSum();
             if (split > maxValue)
@@ -99,7 +99,7 @@ public class StatisticGatherer
         return total / count;
     }
 
-    public static double getGenericAverage(ArrayList<RoomData> data, DataPoint parameter)
+    public static double getGenericAverage(ArrayList<SimpleRaidData> data, DataPoint parameter)
     {
         if(parameter == DataPoint.CHALLENGE_TIME)
         {
@@ -107,7 +107,7 @@ public class StatisticGatherer
         }
         double total = 0;
         double count = 0;
-        for (RoomData room : data)
+        for (SimpleRaidData room : data)
         {
             if (!room.getTimeAccurate(parameter))
             {
@@ -156,7 +156,7 @@ public class StatisticGatherer
         return median;
     }
 
-    public static double getGenericMedian(ArrayList<RoomData> data, DataPoint param)
+    public static double getGenericMedian(ArrayList<SimpleRaidData> data, DataPoint param)
     {
         if(param == DataPoint.OVERALL_TIME)
         {
@@ -167,7 +167,7 @@ public class StatisticGatherer
             return -1;
         }
         List<Double> values = new ArrayList<>();
-        for (RoomData room : data)
+        for (SimpleRaidData room : data)
         {
             if (!room.getTimeAccurate(param))
             {
@@ -203,14 +203,14 @@ public class StatisticGatherer
         return getGenericMin(data, false);
     }
 
-    public static double getGenericMin(ArrayList<RoomData> data, DataPoint parameter)
+    public static double getGenericMin(ArrayList<SimpleRaidData> data, DataPoint parameter)
     {
         if(parameter == DataPoint.OVERALL_TIME)
         {
             return getOverallTimeMin(data);
         }
         int minValue = Integer.MAX_VALUE;
-        for (RoomData room : data)
+        for (SimpleRaidData room : data)
         {
             if (!room.getTimeAccurate(parameter))
             {
@@ -242,14 +242,14 @@ public class StatisticGatherer
         return maxValue;
     }
 
-    public static double getGenericMax(ArrayList<RoomData> data, DataPoint parameter)
+    public static double getGenericMax(ArrayList<SimpleRaidData> data, DataPoint parameter)
     {
         if(parameter == DataPoint.OVERALL_TIME)
         {
             return getOverallMax(data);
         }
         int maxValue = 0;
-        for (RoomData room : data)
+        for (SimpleRaidData room : data)
         {
             if (!room.getTimeAccurate(parameter))
             {
@@ -264,7 +264,7 @@ public class StatisticGatherer
         return maxValue;
     }
 
-    public static double getGenericMode(ArrayList<RoomData> data, DataPoint parameter)
+    public static double getGenericMode(ArrayList<SimpleRaidData> data, DataPoint parameter)
     {
         int maxCount = 0;
         int maxValue = 0;
@@ -276,7 +276,7 @@ public class StatisticGatherer
             }
             int iv = data.get(i).getValue(parameter);
             int count = 0;
-            for (RoomData datum : data)
+            for (SimpleRaidData datum : data)
             {
                 if (!datum.getTimeAccurate(parameter))
                 {

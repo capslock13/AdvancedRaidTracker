@@ -1,6 +1,6 @@
 package com.TheatreTracker.ui.comparisonview.graph;
 
-import com.TheatreTracker.RoomData;
+import com.TheatreTracker.SimpleRaidData;
 import com.TheatreTracker.TheatreTrackerConfig;
 import com.TheatreTracker.utility.RoomUtil;
 import com.TheatreTracker.utility.datautility.DataPoint;
@@ -61,13 +61,13 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
     private DataPoint activeKey;
     private boolean time = false;
     private final BufferedImage img = new BufferedImage(IMG_WIDTH, IMG_HEIGHT, BufferedImage.TYPE_INT_ARGB);
-    private final ArrayList<RoomData> internalData;
+    private final ArrayList<SimpleRaidData> internalData;
     private final TheatreTrackerConfig config;
 
     private final ItemManager itemManager;
 
     private final ClientThread clientThread;
-    public GraphPanel(ArrayList<RoomData> data, TheatreTrackerConfig config, ItemManager itemManager, ClientThread clientThread)
+    public GraphPanel(ArrayList<SimpleRaidData> data, TheatreTrackerConfig config, ItemManager itemManager, ClientThread clientThread)
     {
         this.clientThread = clientThread;
         this.itemManager = itemManager;
@@ -329,7 +329,7 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
     public static GraphInternalBoundMatchedContainer getCounts(GraphInternalDataContainer data, int highestValue)
     {
         ArrayList<Integer> countedIntData = new ArrayList<>();
-        ArrayList<ArrayList<RoomData>> countedFullData = new ArrayList<>();
+        ArrayList<ArrayList<SimpleRaidData>> countedFullData = new ArrayList<>();
         for (int i = 0; i < highestValue + 1; i++)
         {
             countedIntData.add(0);
@@ -401,7 +401,7 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
                         int right = left + barWidth;
                         int top = GRAPH_HEIGHT - GRAPH_YS - height;
                         int bottom = GRAPH_HEIGHT - GRAPH_YS;
-                        ArrayList<RoomData> summedRegionData;
+                        ArrayList<SimpleRaidData> summedRegionData;
                         if (groupOffset == 0 || i != xScaleLow)
                         {
                             summedRegionData = sumRegionRaidData(countedDataSet, i, groupSize);
@@ -472,9 +472,9 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
         return sum;
     }
 
-    private ArrayList<RoomData> sumRegionRaidData(GraphInternalBoundMatchedContainer data, int index, int length)
+    private ArrayList<SimpleRaidData> sumRegionRaidData(GraphInternalBoundMatchedContainer data, int index, int length)
     {
-        ArrayList<RoomData> summedData = new ArrayList<>();
+        ArrayList<SimpleRaidData> summedData = new ArrayList<>();
         for (int i = index; i < index + length; i++)
         {
             if (i < data.fullData.size() && i > -1)
@@ -827,8 +827,8 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
     private GraphInternalDataContainer getInternalDataSet(DataPoint key)
     {
         ArrayList<Integer> intDataSet = new ArrayList<>();
-        ArrayList<RoomData> fullDataSet = new ArrayList<>();
-        for (RoomData data : internalData)
+        ArrayList<SimpleRaidData> fullDataSet = new ArrayList<>();
+        for (SimpleRaidData data : internalData)
         {
             if (data.getValue(key) != -1)
             {
@@ -969,9 +969,9 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
         }
     }
 
-    private ArrayList<RoomData> mergeSelectedData()
+    private ArrayList<SimpleRaidData> mergeSelectedData()
     {
-        ArrayList<RoomData> mergedData = new ArrayList<>();
+        ArrayList<SimpleRaidData> mergedData = new ArrayList<>();
         for (Bounds b : selectedBounds)
         {
             mergedData.addAll(b.raids);

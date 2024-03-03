@@ -1,6 +1,6 @@
 package com.TheatreTracker.ui.charts;
 
-import com.TheatreTracker.RoomData;
+import com.TheatreTracker.SimpleRaidData;
 import com.TheatreTracker.TheatreTrackerConfig;
 import com.TheatreTracker.ui.BaseFrame;
 import com.TheatreTracker.utility.datautility.DataPoint;
@@ -15,7 +15,7 @@ import java.util.*;
 @Slf4j
 public class ChartFrame extends BaseFrame
 {
-    public ChartFrame(ArrayList<RoomData> roomData, TheatreTrackerConfig config, ItemManager itemManager, ClientThread clientThread)
+    public ChartFrame(ArrayList<SimpleRaidData> roomData, TheatreTrackerConfig config, ItemManager itemManager, ClientThread clientThread)
     {
         JTabbedPane basepane = new JTabbedPane();
 
@@ -56,7 +56,7 @@ public class ChartFrame extends BaseFrame
         verzp3Charts.setLayout(new BoxLayout(verzp3Charts, BoxLayout.Y_AXIS));
 
 
-        for (RoomData data : roomData)
+        for (SimpleRaidData data : roomData)
         {
             Map<Integer, String> maidenLines = new LinkedHashMap<>();
             maidenLines.put(data.getValue(DataPoint.MAIDEN_70_SPLIT), "70s");

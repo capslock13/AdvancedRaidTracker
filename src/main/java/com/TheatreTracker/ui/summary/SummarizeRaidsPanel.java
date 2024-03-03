@@ -1,6 +1,6 @@
 package com.TheatreTracker.ui.summary;
 
-import com.TheatreTracker.RoomData;
+import com.TheatreTracker.SimpleRaidData;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.ui.FontManager;
 
@@ -15,7 +15,7 @@ import java.util.Map;
 @Slf4j
 public class SummarizeRaidsPanel extends JPanel
 {
-    private final ArrayList<RoomData> data;
+    private final ArrayList<SimpleRaidData> data;
     private final BufferedImage img;
     int width = 600;
     int height = 400;
@@ -24,7 +24,7 @@ public class SummarizeRaidsPanel extends JPanel
     Color primaryDark = new Color(23, 23, 23);
     Color primaryLight = new Color(30, 30, 30);
 
-    public SummarizeRaidsPanel(ArrayList<RoomData> data)
+    public SummarizeRaidsPanel(ArrayList<SimpleRaidData> data)
     {
         this.data = data;
         img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
@@ -74,7 +74,7 @@ public class SummarizeRaidsPanel extends JPanel
         g.fillRoundRect(margin, margin + margin, width - (margin * 2), 40, 15, 15);
 
         Map<String, Integer> statusCounts = new LinkedHashMap<>();
-        for (RoomData roomData : data)
+        for (SimpleRaidData roomData : data)
         {
             for (String status : statuses)
             {

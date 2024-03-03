@@ -40,6 +40,8 @@ public enum DataPoint
     MAIDEN_CHINS_THROWN("Maiden chins thrown", types.OTHER_INT, rooms.MAIDEN, true),
     MAIDEN_CHINS_THROWN_WRONG_DISTANCE("Maiden chins thrown wrong distance", types.OTHER_INT, rooms.MAIDEN, true),
     MAIDEN_CHIN_CORRECT_DISTANCE_PERCENT("Maiden chins correct distance %", types.OTHER_INT, rooms.MAIDEN, true),
+    RAID_INDEX("Raid Index", types.OTHER_INT, rooms.ANY),
+    PARTY_SIZE("Party Size", types.OTHER_INT, rooms.ANY),
 
     BLOAT_DOWNS("Bloat downs", types.OTHER_INT, rooms.BLOAT),
     BLOAT_HP_FIRST_DOWN("Bloat HP% 1st down", types.OTHER_INT, rooms.BLOAT),
@@ -82,7 +84,9 @@ public enum DataPoint
     NYLO_BOSS_SPAWN("Nylo boss spawn", types.TIME, rooms.NYLOCAS),
     NYLO_BOSS_DURATION("Nylo boss duration", types.TIME, rooms.NYLOCAS),
     NYLO_LAST_WAVE("Nylo last wave", types.TIME, rooms.NYLOCAS),
+    NYLO_LAST_DEAD("Nylo last dead", types.TIME, rooms.NYLOCAS),
     NYLO_CLEANUP("Nylo cleanup", types.TIME, rooms.NYLOCAS),
+    NYLOCAS_PILLAR_DESPAWN_TICK("Nylo Pillar despawn tick", types.TIME, rooms.NYLOCAS),
     SOTE_P1_SPLIT("Sote P1 split", types.TIME, rooms.SOTETSEG),
     SOTE_P2_SPLIT("Sote P2 split", types.TIME, rooms.SOTETSEG),
     SOTE_P2_DURATION("Sote P2 duration", types.TIME, rooms.SOTETSEG),

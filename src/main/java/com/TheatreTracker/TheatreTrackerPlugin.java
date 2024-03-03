@@ -5,7 +5,6 @@ import com.TheatreTracker.constants.TOBRoom;
 import com.TheatreTracker.ui.charts.LiveChart;
 import com.TheatreTracker.ui.RaidTrackerSidePanel;
 import com.TheatreTracker.utility.*;
-import com.TheatreTracker.utility.Point;
 import com.TheatreTracker.utility.datautility.DataWriter;
 import com.TheatreTracker.utility.thrallvengtracking.*;
 import com.TheatreTracker.utility.wrappers.PlayerCopy;
@@ -45,13 +44,13 @@ import net.runelite.client.util.ImageUtil;
 import net.runelite.client.util.Text;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.util.*;
 import java.util.List;
 import static com.TheatreTracker.constants.LogID.*;
 import static com.TheatreTracker.constants.TobIDs.*;
 import static com.TheatreTracker.constants.TOBRoom.*;
 import static com.TheatreTracker.utility.RoomUtil.inRegion;
+import static com.TheatreTracker.utility.datautility.LegacyFileUtility.splitLegacyFiles;
 
 
 @Slf4j
@@ -115,6 +114,7 @@ public class TheatreTrackerPlugin extends Plugin
     public ArrayList<String> currentPlayers;
     public static int scale = -1;
     public boolean verzShieldActive = false;
+    public boolean loggingIn = false;
 
     private ThrallTracker thrallTracker;
     private VengTracker vengTracker;
@@ -139,7 +139,7 @@ public class TheatreTrackerPlugin extends Plugin
     protected void shutDown()
     {
         partyIntact = false;
-        clog.write(LEFT_TOB, String.valueOf(client.getTickCount() - currentRoom.roomStartTick), currentRoom.getName());
+        clog.addLine(LEFT_TOB, String.valueOf(client.getTickCount() - currentRoom.roomStartTick), currentRoom.getName());
         clientToolbar.removeNavigation(navButtonPrimary);
     }
 
@@ -167,6 +167,7 @@ public class TheatreTrackerPlugin extends Plugin
     protected void startUp() throws Exception
     {
         super.startUp();
+        splitLegacyFiles();
         localPlayers = new ArrayList<>();
         thrallTracker = new ThrallTracker(this);
         vengTracker = new VengTracker(this);
@@ -178,27 +179,13 @@ public class TheatreTrackerPlugin extends Plugin
         activelyPiping = new LinkedHashMap<>();
         liveFrame = new LiveChart(config, itemManager, clientThread);
         playersTextChanged = new ArrayList<>();
-        File dirMain = new File(System.getProperty("user.home").replace("\\", "/") + "/.runelite/theatretracker/primary/");
-        File dirFilters = new File(System.getProperty("user.home").replace("\\", "/") + "/.runelite/theatretracker/filters/");
-
-        File dirRaids = new File(System.getProperty("user.home").replace("\\", "/") + "/.runelite/theatretracker/raids/");
-        if (!dirRaids.exists()) dirRaids.mkdirs();
-
-        if (!dirMain.exists()) dirMain.mkdirs();
-        if (!dirFilters.exists()) dirFilters.mkdirs();
-
-        File logFile = new File(System.getProperty("user.home").replace("\\", "/") + "/.runelite/theatretracker/primary/tobdata.log");
-        if (!logFile.exists())
-        {
-            logFile.createNewFile();
-        }
+        clog = new DataWriter(config);
 
         final BufferedImage icon = ImageUtil.loadImageResource(DevToolsPlugin.class, "devtools_icon.png");
         navButtonPrimary = NavigationButton.builder().tooltip("RaidTrackerPanelPrimary").icon(icon).priority(10).panel(timersPanelPrimary).build();
 
         clientToolbar.addNavigation(navButtonPrimary);
 
-        clog = new DataWriter(config);
         lobby = new LobbyHandler(client, clog, config);
         maiden = new MaidenHandler(client, clog, config, this, itemManager);
         bloat = new BloatHandler(client, clog, config, this);
@@ -211,8 +198,24 @@ public class TheatreTrackerPlugin extends Plugin
         deferredTick = 0;
         currentPlayers = new ArrayList<>();
         playersAttacked = new ArrayList<>();
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> clog.write(LEFT_TOB, String.valueOf(client.getTickCount() - currentRoom.roomStartTick), currentRoom.getName())));
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> clog.addLine(LEFT_TOB, String.valueOf(client.getTickCount() - currentRoom.roomStartTick), currentRoom.getName())));
 
+    }
+
+    @Subscribe
+    public void onGameStateChanged(GameStateChanged gameStateChanged)
+    {
+        if(gameStateChanged.getGameState().equals(GameState.LOGGED_IN))
+        {
+            try
+            {
+                loggingIn = true;
+            }
+            catch (Exception e)
+            {
+                log.info("Failed to set name: " + client.getLocalPlayer().getName());
+            }
+        }
     }
 
     /**
@@ -248,9 +251,11 @@ public class TheatreTrackerPlugin extends Plugin
         } else if (previous == lobby && inRegion(client, BLOAT_REGION, NYLO_REGION, SOTETSEG_REGION, XARPUS_REGION, VERZIK_REGION))
         {
             deferredTick = client.getTickCount() + 2; //Check two ticks from now for player names in orbs
-            clog.write(ENTERED_TOB);
-            clog.write(SPECTATE);
-            clog.write(LATE_START, String.valueOf(currentRegion));
+            clog.checkForEndFlag();
+            clog.migrateToNewRaid();
+            clog.addLine(ENTERED_TOB);
+            clog.addLine(SPECTATE);
+            clog.addLine(LATE_START, String.valueOf(currentRegion));
             liveFrame.resetAll();
         }
         if (inRegion(client, MAIDEN_REGION))
@@ -308,7 +313,9 @@ public class TheatreTrackerPlugin extends Plugin
 
     private void enteredMaiden()
     {
-        clog.write(ENTERED_TOB);
+        clog.checkForEndFlag();
+        clog.migrateToNewRaid();
+        clog.addLine(ENTERED_TOB);
         deferredTick = client.getTickCount() + 2;
         maiden.reset();
         liveFrame.tabbedPane.setSelectedIndex(0);
@@ -316,7 +323,7 @@ public class TheatreTrackerPlugin extends Plugin
 
     private void enteredBloat()
     {
-        clog.write(ENTERED_NEW_TOB_REGION, TOBRoom.BLOAT.ordinal());
+        clog.addLine(ENTERED_NEW_TOB_REGION, String.valueOf(TOBRoom.BLOAT.ordinal()));
         maiden.reset();
         bloat.reset();
         liveFrame.tabbedPane.setSelectedIndex(1);
@@ -324,7 +331,7 @@ public class TheatreTrackerPlugin extends Plugin
 
     private void enteredNylo()
     {
-        clog.write(ENTERED_NEW_TOB_REGION, NYLOCAS.ordinal());
+        clog.addLine(ENTERED_NEW_TOB_REGION, String.valueOf(NYLOCAS.ordinal()));
         bloat.reset();
         nylo.reset();
         liveFrame.tabbedPane.setSelectedIndex(2);
@@ -332,7 +339,7 @@ public class TheatreTrackerPlugin extends Plugin
 
     private void enteredSote()
     {
-        clog.write(ENTERED_NEW_TOB_REGION, SOTETSEG.ordinal());
+        clog.addLine(ENTERED_NEW_TOB_REGION, String.valueOf(SOTETSEG.ordinal()));
         nylo.reset();
         sote.reset();
         liveFrame.tabbedPane.setSelectedIndex(3);
@@ -340,7 +347,7 @@ public class TheatreTrackerPlugin extends Plugin
 
     private void enteredXarpus()
     {
-        clog.write(ENTERED_NEW_TOB_REGION, XARPUS.ordinal());
+        clog.addLine(ENTERED_NEW_TOB_REGION, String.valueOf(XARPUS.ordinal()));
         sote.reset();
         xarpus.reset();
         liveFrame.tabbedPane.setSelectedIndex(4);
@@ -348,7 +355,7 @@ public class TheatreTrackerPlugin extends Plugin
 
     private void enteredVerzik()
     {
-        clog.write(ENTERED_NEW_TOB_REGION, VERZIK.ordinal());
+        clog.addLine(ENTERED_NEW_TOB_REGION, String.valueOf(VERZIK.ordinal()));
         xarpus.reset();
         verzik.reset();
         liveFrame.tabbedPane.setSelectedIndex(5);
@@ -378,11 +385,11 @@ public class TheatreTrackerPlugin extends Plugin
             {
                 if (event.getWeapon().equals(SpecialWeapon.BANDOS_GODSWORD))
                 {
-                    clog.write(BGS, name, String.valueOf(event.getHit()), String.valueOf(client.getTickCount() - currentRoom.roomStartTick));
+                    clog.addLine(BGS, name, String.valueOf(event.getHit()), String.valueOf(client.getTickCount() - currentRoom.roomStartTick));
                 }
                 if (event.getWeapon().equals(SpecialWeapon.DRAGON_WARHAMMER))
                 {
-                    clog.write(DWH, name, String.valueOf(client.getTickCount() - currentRoom.roomStartTick));
+                    clog.addLine(DWH, name, String.valueOf(client.getTickCount() - currentRoom.roomStartTick));
                 }
             }
         }
@@ -426,14 +433,14 @@ public class TheatreTrackerPlugin extends Plugin
                 if (!isPartyComplete())
                 {
                     partyIntact = false;
-                    clog.write(PARTY_INCOMPLETE);
+                    clog.addLine(PARTY_INCOMPLETE);
                 }
             } else
             {
                 if (isPartyComplete())
                 {
                     partyIntact = true;
-                    clog.write(PARTY_COMPLETE);
+                    clog.addLine(PARTY_COMPLETE);
                 }
             }
         }
@@ -510,13 +517,13 @@ public class TheatreTrackerPlugin extends Plugin
 
     public void removeThrallBox(Thrall thrall)
     {
-        clog.write(THRALL_DESPAWN, thrall.getOwner(), String.valueOf(client.getTickCount() - currentRoom.roomStartTick));
+        clog.addLine(THRALL_DESPAWN, thrall.getOwner(), String.valueOf(client.getTickCount() - currentRoom.roomStartTick));
         liveFrame.getPanel(currentRoom.getName()).removeThrall(thrall.getOwner());
     }
 
     public void addThrallOutlineBox(ThrallOutlineBox outlineBox)
     {
-        clog.write(THRALL_SPAWN, outlineBox.owner, String.valueOf(outlineBox.spawnTick), String.valueOf(outlineBox.id));
+        clog.addLine(THRALL_SPAWN, outlineBox.owner, String.valueOf(outlineBox.spawnTick), String.valueOf(outlineBox.id));
         liveFrame.getPanel(currentRoom.getName()).addThrallBox(outlineBox);
     }
 
@@ -529,7 +536,18 @@ public class TheatreTrackerPlugin extends Plugin
     @Subscribe
     public void onGameTick(GameTick event)
     {
-        log.info("Tick " + client.getTickCount());
+        if(loggingIn)
+        {
+            try
+            {
+                clog.setName(client.getLocalPlayer().getName());
+            }
+            catch (Exception e)
+            {
+                log.info("failed to set name?");
+            }
+            loggingIn = false;
+        }
         checkAnimationsThatChanged();
         checkOverheadTextsThatChanged();
 
@@ -542,7 +560,7 @@ public class TheatreTrackerPlugin extends Plugin
                     PlayerCopy previous = lastTickPlayer.get(p.getName());
                     if(previous != null)
                     {
-                        clog.write(PLAYER_ATTACK,
+                        clog.addLine(PLAYER_ATTACK,
                                 previous.name + ":" + (client.getTickCount() - currentRoom.roomStartTick - 1),
                                 previous.animation + ":" + previous.wornItems,
                                 "",
@@ -605,7 +623,7 @@ public class TheatreTrackerPlugin extends Plugin
                             {
                                 int projectileHitTick = projectile.getRemainingCycles();
                                 projectileHitTick = (projectileHitTick / 30);
-                                clog.write(DAWN_SPEC, playerAttackQueuedItem.player.getName(), String.valueOf(client.getTickCount() - currentRoom.roomStartTick + projectileHitTick + 1));
+                                clog.addLine(DAWN_SPEC, playerAttackQueuedItem.player.getName(), String.valueOf(client.getTickCount() - currentRoom.roomStartTick + projectileHitTick + 1));
 
                             }
                             if (projectile.getId() == DAWNBRINGER_AUTO_PROJECTILE || projectile.getId() == ZCB_PROJECTILE || projectile.getId() == ZCB_SPEC_PROJECTILE || projectile.getId() == DAWNBRINGER_SPEC_PROJECTILE)
@@ -626,7 +644,7 @@ public class TheatreTrackerPlugin extends Plugin
                                     Player player = (Player) interacted;
                                     targetName = player.getName();
                                 }
-                                clog.write(PLAYER_ATTACK,
+                                clog.addLine(PLAYER_ATTACK,
                                         playerAttackQueuedItem.player.getName() + ":" + (client.getTickCount() - currentRoom.roomStartTick),
                                         playerAttackQueuedItem.animation+":"+PlayerWornItems.getStringFromComposition(playerAttackQueuedItem.player.getPlayerComposition()),
                                         playerAttackQueuedItem.spotAnims,
@@ -677,7 +695,7 @@ public class TheatreTrackerPlugin extends Plugin
                 liveFrame.incrementTick(currentRoom.getName());
                 int HP_VARBIT = 6448;
                 liveFrame.getPanel(currentRoom.getName()).addRoomHP(client.getTickCount() - currentRoom.roomStartTick, client.getVarbitValue(HP_VARBIT));
-                clog.write(UPDATE_HP, String.valueOf(client.getVarbitValue(HP_VARBIT)), String.valueOf(client.getTickCount() - currentRoom.roomStartTick), currentRoom.getName());
+                clog.addLine(UPDATE_HP, String.valueOf(client.getVarbitValue(HP_VARBIT)), String.valueOf(client.getTickCount() - currentRoom.roomStartTick), currentRoom.getName());
             }
 
             if (client.getTickCount() == deferredTick)
@@ -711,9 +729,9 @@ public class TheatreTrackerPlugin extends Plugin
                 deferredTick = 0;
                 if (!flag)
                 {
-                    clog.write(SPECTATE);
+                    clog.addLine(SPECTATE);
                 }
-                clog.write(PARTY_MEMBERS, players[0], players[1], players[2], players[3], players[4]);
+                clog.addLine(PARTY_MEMBERS, players[0], players[1], players[2], players[3], players[4]);
                 maiden.setScale((int) Arrays.stream(players).filter(x -> !x.isEmpty()).count());
                 scale = currentPlayers.size();
             }
@@ -723,8 +741,10 @@ public class TheatreTrackerPlugin extends Plugin
             {
                 leftRaid();
                 wasInTheatre = false;
+                return;
             }
         }
+        clog.writeFile();
     }
 
     private void checkOverheadTextsThatChanged()
@@ -776,7 +796,7 @@ public class TheatreTrackerPlugin extends Plugin
                         {
                             sendChatMessage(p.getName() + " hammer bopped (bad rng)");
                         }
-                        clog.write(DWH_BOP, p.getName());
+                        clog.addLine(DWH_BOP, p.getName());
                     }
                 } else if (p.getAnimation() == WHACK_ANIMATION)
                 {
@@ -786,7 +806,7 @@ public class TheatreTrackerPlugin extends Plugin
                         {
                             sendChatMessage(p.getName() + " kodai bopped (nothing they could've done to prevent it)");
                         }
-                        clog.write(KODAI_BOP, p.getName());
+                        clog.addLine(KODAI_BOP, p.getName());
                     }
                 } else if (p.getAnimation() == STAB_ANIMATION)
                 {
@@ -796,7 +816,7 @@ public class TheatreTrackerPlugin extends Plugin
                         {
                             sendChatMessage(p.getName() + " chally poked");
                         }
-                        clog.write(CHALLY_POKE, p.getName());
+                        clog.addLine(CHALLY_POKE, p.getName());
                     }
                 } else if (p.getAnimation() == TWO_HAND_SWORD_SWING)
                 {
@@ -806,7 +826,7 @@ public class TheatreTrackerPlugin extends Plugin
                         {
                             sendChatMessage(p.getName() + " swung BGS without speccing");
                         }
-                        clog.write(BGS_WHACK, p.getName());
+                        clog.addLine(BGS_WHACK, p.getName());
                     }
                 }
                 StringBuilder animations = new StringBuilder();
@@ -874,20 +894,17 @@ public class TheatreTrackerPlugin extends Plugin
                         lastTickPlayer.put(p.getName(), new PlayerCopy(
                                 p.getName(), interactedIndex, interactedID, targetName, p.getAnimation(), PlayerWornItems.getStringFromComposition(p.getPlayerComposition()
                         ), String.valueOf(p.getPlayerComposition().getEquipmentId(KitType.WEAPON))));
-                        log.info("Adding " + p.getName() + " on tick " + client.getTickCount());
                     }
                     else
                     {
                         activelyPiping.remove(p);
                         lastTickPlayer.remove(p.getName());
-                        log.info("removing " + p.getName());
                     }
                 }
                 else
                 {
                     activelyPiping.remove(p);
                     lastTickPlayer.remove(p.getName());
-                    log.info("removing " + p.getName());
                 }
 
             }
@@ -899,7 +916,9 @@ public class TheatreTrackerPlugin extends Plugin
         lastTickPlayer.clear();
         partyIntact = false;
         currentPlayers.clear();
-        clog.write(LEFT_TOB, String.valueOf(client.getTickCount() - currentRoom.roomStartTick), currentRoom.getName()); //todo add region
+        clog.addLine(LEFT_TOB, String.valueOf(client.getTickCount() - currentRoom.roomStartTick), currentRoom.getName());
+        clog.writeFile();
+        clog.migrateToNewRaid();
         currentRoom = null;
         activelyPiping.clear();
         deferredAnimations.clear();
@@ -913,7 +932,7 @@ public class TheatreTrackerPlugin extends Plugin
             Actor a = event.getActor();
             if (a instanceof Player)
             {
-                clog.write(PLAYER_DIED, event.getActor().getName(), String.valueOf(client.getTickCount() - currentRoom.roomStartTick));
+                clog.addLine(PLAYER_DIED, event.getActor().getName(), String.valueOf(client.getTickCount() - currentRoom.roomStartTick));
             }
         }
     }
@@ -1055,7 +1074,6 @@ public class TheatreTrackerPlugin extends Plugin
             Player p = (Player) event.getActor();
             if(event.getActor().getAnimation() == 6294 || event.getActor().getAnimation() == 722 || event.getActor().getAnimation() == 6299 || event.getActor().getAnimation() == -1)
             {
-                log.info(event.getActor().getName() + " has animation " + event.getActor().getAnimation() + " on tick " + client.getTickCount());
                 checkAnimation(p);
             }
             else
@@ -1080,10 +1098,10 @@ public class TheatreTrackerPlugin extends Plugin
                 vengTracker.vengOtherCast((Player) event.getActor());
             } else if (id == DWH_SPEC)
             {
-                clog.write(HAMMER_ATTEMPTED, event.getActor().getName());
+                clog.addLine(HAMMER_ATTEMPTED, event.getActor().getName());
             } else if (event.getActor().getName() != null && event.getActor().getName().contains("Maiden") && id == MAIDEN_BLOOD_THROW_ANIM)
             {
-                clog.write(BLOOD_THROWN);
+                clog.addLine(BLOOD_THROWN);
             }
             if (inTheatre)
             {
@@ -1099,7 +1117,7 @@ public class TheatreTrackerPlugin extends Plugin
             Player player = (Player) interacted;
             targetName = player.getName();
         }
-        clog.write(PLAYER_ATTACK,
+        clog.addLine(PLAYER_ATTACK,
                 p.getName() + ":" + (client.getTickCount() - currentRoom.roomStartTick),
                 p.getAnimation()+":"+PlayerWornItems.getStringFromComposition(p.getPlayerComposition()),
                 animations,
@@ -1358,7 +1376,7 @@ public class TheatreTrackerPlugin extends Plugin
                             if (event.getHitsplat().getAmount() <= 3)
                             {
                                 index = i;
-                                clog.write(THRALL_DAMAGED, queuedThrallDamage.get(i).source, String.valueOf(event.getHitsplat().getAmount()));
+                                clog.addLine(THRALL_DAMAGED, queuedThrallDamage.get(i).source, String.valueOf(event.getHitsplat().getAmount()));
 
                             }
                         }
@@ -1379,7 +1397,7 @@ public class TheatreTrackerPlugin extends Plugin
                     if (event.getHitsplat().getAmount() == expectedDamage)
                     {
                         //todo can be wrong if splat would overkill
-                        clog.write(VENG_WAS_PROCCED, veng.target, String.valueOf(expectedDamage));
+                        clog.addLine(VENG_WAS_PROCCED, veng.target, String.valueOf(expectedDamage));
                         if (inTheatre)
                         {
                             currentRoom.updateHitsplatApplied(event);

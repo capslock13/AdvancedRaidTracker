@@ -1,17 +1,16 @@
 package com.TheatreTracker.utility.datautility;
 
-import com.TheatreTracker.utility.datautility.DataPoint;
 import lombok.Getter;
 import lombok.Setter;
 
-public class DataPointWrapper
+public class DataPointIntWrapper
 {
     @Setter
     @Getter
     public int value = 0;
     DataPoint dataPoint;
 
-    public DataPointWrapper(DataPoint point)
+    public DataPointIntWrapper(DataPoint point)
     {
         dataPoint = point;
         if (point.equals(DataPoint.MAIDEN_DEFENSE))

@@ -1,6 +1,6 @@
 package com.TheatreTracker.ui.viewraid;
 
-import com.TheatreTracker.RoomData;
+import com.TheatreTracker.SimpleRaidData;
 import com.TheatreTracker.utility.datautility.DataPoint;
 import com.TheatreTracker.utility.RoomUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -39,9 +39,9 @@ public class ViewRaidPanel extends JPanel implements MouseListener, MouseMotionL
 
     private final BufferedImage img;
 
-    private final RoomData roomData;
+    private final SimpleRaidData roomData;
 
-    public ViewRaidPanel(RoomData roomData)
+    public ViewRaidPanel(SimpleRaidData roomData)
     {
         this.roomData = roomData;
         img = new BufferedImage(900, 733, BufferedImage.TYPE_INT_ARGB);

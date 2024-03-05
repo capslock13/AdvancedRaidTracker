@@ -131,6 +131,9 @@ public class TheatreTrackerPlugin extends Plugin
     @Inject
     private WSClient wsClient;
 
+    @Inject
+    private ConfigManager configManager;
+
     Map<Player, Integer> activelyPiping;
     public LiveChart liveFrame;
 
@@ -176,7 +179,7 @@ public class TheatreTrackerPlugin extends Plugin
         timersPanelPrimary = injector.getInstance(RaidTrackerSidePanel.class);
         partyIntact = false;
         activelyPiping = new LinkedHashMap<>();
-        liveFrame = new LiveChart(config, itemManager, clientThread);
+        liveFrame = new LiveChart(config, itemManager, clientThread, configManager);
         playersTextChanged = new ArrayList<>();
         clog = new DataWriter(config);
 
@@ -1057,9 +1060,9 @@ public class TheatreTrackerPlugin extends Plugin
     @Subscribe
     public void onConfigChanged(ConfigChanged event)
     {
-        if(event.getKey().equals("reduceMemoryLoad") && event.getGroup().equals("Theatre Statistic Tracker"))
+        if(event.getGroup().equals("Advanced Raid Tracker") && event.getKey().contains("primary"))
         {
-            timersPanelPrimary.refreshRaids();
+            liveFrame.redrawAll();
         }
     }
 

@@ -34,6 +34,7 @@ public class ItemReference
                     "joint",
                     "torture",
                     "serpentine helm",
+                    "barrows",
             },
             {
                     "masori",

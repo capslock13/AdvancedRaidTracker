@@ -6,6 +6,7 @@ import com.TheatreTracker.utility.RoomUtil;
 import com.TheatreTracker.utility.datautility.DataPoint;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.callback.ClientThread;
+import net.runelite.client.config.ConfigManager;
 import net.runelite.client.game.ItemManager;
 
 import javax.swing.*;
@@ -67,8 +68,10 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
     private final ItemManager itemManager;
 
     private final ClientThread clientThread;
-    public GraphPanel(ArrayList<SimpleRaidData> data, TheatreTrackerConfig config, ItemManager itemManager, ClientThread clientThread)
+    private final ConfigManager configManager;
+    public GraphPanel(ArrayList<SimpleRaidData> data, TheatreTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
     {
+        this.configManager = configManager;
         this.clientThread = clientThread;
         this.itemManager = itemManager;
         selectedBounds = new ArrayList<>();
@@ -1053,13 +1056,13 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
                 {
                     if (e.getX() >= bound.getLeft() && e.getX() <= bound.getRight() && e.getY() <= bound.getBottom() && e.getY() >= bound.getTop())
                     {
-                        GraphRightClickContextMenu menu = new GraphRightClickContextMenu(bound.raids, config, itemManager, clientThread);
+                        GraphRightClickContextMenu menu = new GraphRightClickContextMenu(bound.raids, config, itemManager, clientThread, configManager);
                         menu.show(e.getComponent(), e.getX(), e.getY());
                     }
                 }
             } else
             {
-                GraphRightClickContextMenu menu = new GraphRightClickContextMenu(mergeSelectedData(), config, itemManager, clientThread);
+                GraphRightClickContextMenu menu = new GraphRightClickContextMenu(mergeSelectedData(), config, itemManager, clientThread, configManager);
                 menu.show(e.getComponent(), e.getX(), e.getY());
             }
         }

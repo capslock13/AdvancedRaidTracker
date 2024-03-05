@@ -22,6 +22,7 @@ import com.TheatreTracker.utility.wrappers.PlayerCorrelatedPointData;
 import com.TheatreTracker.utility.wrappers.StringInt;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.callback.ClientThread;
+import net.runelite.client.config.ConfigManager;
 import net.runelite.client.game.ItemManager;
 
 import javax.swing.*;
@@ -117,8 +118,9 @@ public class Raids extends BaseFrame
     private ClientThread clientThread;
 
     public String[] rooms = {"Maiden", "Bloat","Nylocas","Sotetseg","Xarpus","Verzik","Challenge"};
+    private final ConfigManager configManager;
 
-    public Raids(TheatreTrackerConfig config, ItemManager itemManager, ClientThread clientThread)
+    public Raids(TheatreTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
     {
         for(String s : rooms)
         {
@@ -129,6 +131,7 @@ public class Raids extends BaseFrame
         }
         this.clientThread = clientThread;
         this.itemManager = itemManager;
+        this.configManager = configManager;
         columnHeaders = new ArrayList<>();
         for (String s : columnHeaderNames)
         {
@@ -1542,7 +1545,7 @@ public class Raids extends BaseFrame
                     dataSets.put(scale, scaleData);
                     labelSets.add(labels);
                 }
-                ComparisonViewFrame graphView = new ComparisonViewFrame(dataSets, labelSets, config, itemManager, clientThread);
+                ComparisonViewFrame graphView = new ComparisonViewFrame(dataSets, labelSets, config, itemManager, clientThread, configManager);
                 graphView.open();
             }
         });
@@ -1587,7 +1590,7 @@ public class Raids extends BaseFrame
             {
                 rows.add(currentData.get(Integer.parseInt(table.getModel().getValueAt(toRemove[i], 0).toString())));
             }
-            ChartFrame roomCharts = new ChartFrame(rows, config, itemManager, clientThread);
+            ChartFrame roomCharts = new ChartFrame(rows, config, itemManager, clientThread, configManager);
             roomCharts.open();
         });
 

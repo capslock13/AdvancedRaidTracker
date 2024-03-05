@@ -75,14 +75,33 @@ public class WeaponDecider
             case 1378:
                 weaponUsed = WeaponAttack.HAMMER;
                 break;
+            case 428:
+            case 419:
             case 440:
+                if(weapon == 12904)
+                {
+                    weaponUsed = WeaponAttack.TSOTD;
+                    break;
+                }
                 weaponUsed = WeaponAttack.CHALLY_WHACK;
                 break;
             case 1203:
                 weaponUsed = WeaponAttack.CHALLY_SPEC;
                 break;
-            case 8288:
             case 390:
+            case 9471:
+                if(weapon == 26219)
+                {
+                    weaponUsed = WeaponAttack.FANG;
+                    break;
+                }
+            case 8288:
+            case 386:
+                if(weapon == 23995 || weapon == 24551)
+                {
+                    weaponUsed = WeaponAttack.BLADE_OF_SAELDOR;
+                    break;
+                }
                 weaponUsed = WeaponAttack.SWIFT_BLADE;
                 break;
             case 7642:

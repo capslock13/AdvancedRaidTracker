@@ -1,6 +1,7 @@
 package com.TheatreTracker.utility.wrappers;
 
 import com.TheatreTracker.utility.ItemReference;
+import com.TheatreTracker.utility.weapons.WeaponAttack;
 
 import java.awt.*;
 
@@ -11,12 +12,14 @@ public class OutlineBox
     public String letter;
     public Color color;
     public boolean primaryTarget;
+    public WeaponAttack weaponAttack;
 
     public String additionalText = "";
     public PlayerDidAttack attack;
 
-    public OutlineBox(PlayerDidAttack attack, String letter, Color color, boolean primaryTarget, String additionalText)
+    public OutlineBox(PlayerDidAttack attack, String letter, Color color, boolean primaryTarget, String additionalText, WeaponAttack weaponAttack)
     {
+        this.weaponAttack = weaponAttack;
         this.attack = attack;
         this.player = attack.player;
         this.tick = attack.tick;

@@ -2,12 +2,14 @@ package com.TheatreTracker.utility;
 
 
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 public class Point
 {
-    private final int x;
-    private final int y;
+    private int x;
+    private int y;
 
     public Point(int x, int y)
     {

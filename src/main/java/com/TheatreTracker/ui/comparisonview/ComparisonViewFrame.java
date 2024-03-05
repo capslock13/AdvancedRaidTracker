@@ -5,6 +5,8 @@ import com.TheatreTracker.TheatreTrackerConfig;
 import com.TheatreTracker.ui.BaseFrame;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.callback.ClientThread;
+import net.runelite.client.config.Config;
+import net.runelite.client.config.ConfigManager;
 import net.runelite.client.game.ItemManager;
 
 import javax.swing.*;
@@ -17,16 +19,18 @@ public class ComparisonViewFrame extends BaseFrame
 {
     public ComparisonViewFrame(ArrayList<ArrayList<SimpleRaidData>> data, ArrayList<String> labels)
     {
-        add(new ComparisonViewPanel(data, labels, config, itemManager, clientThread));
+        add(new ComparisonViewPanel(data, labels, config, itemManager, clientThread, configManager));
         pack();
     }
 
     private TheatreTrackerConfig config;
     private ItemManager itemManager;
     private ClientThread clientThread;
+    private ConfigManager configManager;
 
-    public ComparisonViewFrame(Map<Integer, ArrayList<ArrayList<SimpleRaidData>>> dataSets, ArrayList<ArrayList<String>> labelSets, TheatreTrackerConfig config, ItemManager itemManager, ClientThread clientThread)
+    public ComparisonViewFrame(Map<Integer, ArrayList<ArrayList<SimpleRaidData>>> dataSets, ArrayList<ArrayList<String>> labelSets, TheatreTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
     {
+        this.configManager = configManager;
         this.clientThread = clientThread;
         this.itemManager = itemManager;
         this.config = config;
@@ -47,7 +51,7 @@ public class ComparisonViewFrame extends BaseFrame
                 tabName = "4-Man";
             if (i == 5)
                 tabName = "5-Man";
-            pane.addTab(tabName, new ComparisonViewPanel(dataSets.get(i), labelSets.get(index), config, itemManager, clientThread));
+            pane.addTab(tabName, new ComparisonViewPanel(dataSets.get(i), labelSets.get(index), config, itemManager, clientThread, configManager));
             index++;
         }
         add(pane);

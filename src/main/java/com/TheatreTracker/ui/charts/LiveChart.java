@@ -5,6 +5,7 @@ import com.TheatreTracker.ui.BaseFrame;
 import com.TheatreTracker.utility.wrappers.PlayerDidAttack;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.callback.ClientThread;
+import net.runelite.client.config.ConfigManager;
 import net.runelite.client.game.ItemManager;
 
 import javax.swing.*;
@@ -31,18 +32,20 @@ public class LiveChart extends BaseFrame
     private final TheatreTrackerConfig config;
     private final ItemManager itemManager;
     private final ClientThread clientThread;
+    private final ConfigManager configManager;
 
-    public LiveChart(TheatreTrackerConfig config, ItemManager itemManager, ClientThread clientThread)
+    public LiveChart(TheatreTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
     {
+        this.configManager = configManager;
         this.clientThread = clientThread;
         this.config = config;
         this.itemManager = itemManager;
-        maidenPanel = new ChartPanel("Maiden", true, config, clientThread);
-        bloatPanel = new ChartPanel("Bloat", true, config, clientThread);
-        nyloPanel = new ChartPanel("Nylocas", true, config, clientThread);
-        sotetsegPanel = new ChartPanel("Sotetseg", true, config, clientThread);
-        xarpPanel = new ChartPanel("Xarpus", true, config, clientThread);
-        verzPanel = new ChartPanel("Verzik", true, config, clientThread);
+        maidenPanel = new ChartPanel("Maiden", true, config, clientThread, configManager);
+        bloatPanel = new ChartPanel("Bloat", true, config, clientThread, configManager);
+        nyloPanel = new ChartPanel("Nylocas", true, config, clientThread, configManager);
+        sotetsegPanel = new ChartPanel("Sotetseg", true, config, clientThread, configManager);
+        xarpPanel = new ChartPanel("Xarpus", true, config, clientThread, configManager);
+        verzPanel = new ChartPanel("Verzik", true, config, clientThread,  configManager);
 
         maidenScroll = new JScrollPane(maidenPanel);
         bloatScroll = new JScrollPane(bloatPanel);
@@ -53,7 +56,15 @@ public class LiveChart extends BaseFrame
 
 
         tabbedPane = new JTabbedPane();
-
+        tabbedPane.addChangeListener(cl->
+        {
+            maidenPanel.redraw();
+            bloatPanel.redraw();
+            nyloPanel.redraw();
+            sotetsegPanel.redraw();
+            xarpPanel.redraw();
+            verzPanel.redraw();
+        });
         tabbedPane.add("Maiden", maidenScroll);
         tabbedPane.add("Bloat", bloatScroll);
         tabbedPane.add("Nylocas", nyloScroll);
@@ -82,7 +93,7 @@ public class LiveChart extends BaseFrame
             case "Verzik":
                 return verzPanel;
         }
-        return new ChartPanel("", true, config, clientThread);
+        return new ChartPanel("", true, config, clientThread, configManager);
     }
 
     public void incrementTick(String room)
@@ -179,6 +190,16 @@ public class LiveChart extends BaseFrame
         sotetsegScroll.getVerticalScrollBar().setValue(0);
         xarpusScroll.getVerticalScrollBar().setValue(0);
         verzikScroll.getVerticalScrollBar().setValue(0);
+    }
+
+    public void redrawAll()
+    {
+        maidenPanel.redraw();
+        bloatPanel.redraw();
+        nyloPanel.redraw();
+        sotetsegPanel.redraw();
+        xarpPanel.redraw();
+        verzPanel.redraw();
     }
 
     public void setPlayers(ArrayList<String> players)

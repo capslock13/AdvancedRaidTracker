@@ -8,6 +8,7 @@ import com.TheatreTracker.utility.datautility.DataPoint;
 import com.TheatreTracker.utility.StatisticGatherer;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.callback.ClientThread;
+import net.runelite.client.config.ConfigManager;
 import net.runelite.client.game.ItemManager;
 
 import javax.swing.*;
@@ -81,10 +82,12 @@ public class ComparisonViewPanel extends JPanel
 
     private final TheatreTrackerConfig config;
     private final ItemManager itemManager;
+    private final ConfigManager configManager;
 
     private final ClientThread clientThread;
-    public ComparisonViewPanel(ArrayList<ArrayList<SimpleRaidData>> raidData, ArrayList<String> names, TheatreTrackerConfig config, ItemManager itemManager, ClientThread clientThread)
+    public ComparisonViewPanel(ArrayList<ArrayList<SimpleRaidData>> raidData, ArrayList<String> names, TheatreTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
     {
+        this.configManager = configManager;
         this.clientThread = clientThread;
         this.itemManager = itemManager;
         this.config = config;
@@ -548,7 +551,7 @@ public class ComparisonViewPanel extends JPanel
 
     GraphPanel getGraphPanel(ArrayList<SimpleRaidData> points)
     {
-        return new GraphPanel(points, config, itemManager, clientThread);
+        return new GraphPanel(points, config, itemManager, clientThread, configManager);
     }
 
     private ArrayList<Integer> getArrayForStatistics(ArrayList<SimpleRaidData> data)

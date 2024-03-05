@@ -356,7 +356,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         {
             keyColumns++;
         }
-        int width = boxWidth + (keyColumns * 150) + 40;
+        int width = boxWidth /*+ (keyColumns * 150)*/ + 10;
         if (img != null)
         {
             img.flush();
@@ -999,7 +999,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         fontHeight = getStringBounds(g, "a").height;
         g.setColor(Color.WHITE);
 
-        drawKey(g);
+        //drawKey(g);
         drawTicks(g);
         drawGraphBoxes(g);
         drawBaseBoxes(g);

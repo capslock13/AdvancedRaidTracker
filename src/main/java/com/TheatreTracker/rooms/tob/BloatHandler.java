@@ -1,4 +1,4 @@
-package com.TheatreTracker.rooms;
+package com.TheatreTracker.rooms.tob;
 
 import com.TheatreTracker.TheatreTrackerConfig;
 import com.TheatreTracker.TheatreTrackerPlugin;
@@ -20,7 +20,7 @@ import static com.TheatreTracker.utility.RoomState.*;
 import static com.TheatreTracker.utility.RoomState.BloatRoomState.*;
 
 @Slf4j
-public class BloatHandler extends RoomHandler
+public class BloatHandler extends TOBRoomHandler
 {
     public BloatRoomState roomState;
 

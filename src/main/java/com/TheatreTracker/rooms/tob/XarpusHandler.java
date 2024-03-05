@@ -1,4 +1,4 @@
-package com.TheatreTracker.rooms;
+package com.TheatreTracker.rooms.tob;
 
 import com.TheatreTracker.TheatreTrackerConfig;
 import com.TheatreTracker.TheatreTrackerPlugin;
@@ -20,7 +20,7 @@ import static com.TheatreTracker.constants.LogID.XARPUS_STARTED;
 import static com.TheatreTracker.constants.TobIDs.*;
 import static com.TheatreTracker.utility.RoomState.XarpusRoomState.FINISHED;
 @Slf4j
-public class XarpusHandler extends RoomHandler
+public class XarpusHandler extends TOBRoomHandler
 {
     public RoomState.XarpusRoomState roomState = RoomState.XarpusRoomState.NOT_STARTED;
     private final TheatreTrackerPlugin plugin;

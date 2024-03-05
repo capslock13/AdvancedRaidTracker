@@ -2,7 +2,7 @@ package com.TheatreTracker.filters;
 
 import com.TheatreTracker.utility.datautility.DataPoint;
 import lombok.extern.slf4j.Slf4j;
-import com.TheatreTracker.SimpleRaidData;
+import com.TheatreTracker.SimpleTOBData;
 
 @Slf4j
 public class FilterTime extends FilterCondition
@@ -27,7 +27,7 @@ public class FilterTime extends FilterCondition
     }
 
     @Override
-    public boolean evaluate(SimpleRaidData data)
+    public boolean evaluate(SimpleTOBData data)
     {
         int checkValue = data.getValue(split);
         return FilterUtil.compare(compare, time, checkValue);

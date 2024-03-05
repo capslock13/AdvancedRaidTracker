@@ -1,6 +1,6 @@
 package com.TheatreTracker.ui.viewraid;
 
-import com.TheatreTracker.SimpleRaidData;
+import com.TheatreTracker.SimpleTOBData;
 import com.TheatreTracker.ui.BaseFrame;
 import com.TheatreTracker.utility.RoomUtil;
 import com.TheatreTracker.utility.datautility.DataPoint;
@@ -17,7 +17,7 @@ public class ViewRaid extends BaseFrame
 {
     String INCOMPLETE_MARKER = "-";
 
-    public ViewRaid(SimpleRaidData data)
+    public ViewRaid(SimpleTOBData data)
     {
         String red = "<html><font color='#FF0000'>";
         String soft = "<html><font color='#666666'>";
@@ -428,7 +428,7 @@ public class ViewRaid extends BaseFrame
         pack();
     }
 
-    private static void setSummaryStatus(SimpleRaidData data, JPanel summarySubPanel)
+    private static void setSummaryStatus(SimpleTOBData data, JPanel summarySubPanel)
     {
         String raidStatusString;
         if (data.maidenWipe)

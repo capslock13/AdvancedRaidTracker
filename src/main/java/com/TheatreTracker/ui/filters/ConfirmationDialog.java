@@ -1,6 +1,7 @@
 package com.TheatreTracker.ui.filters;
 
 import com.TheatreTracker.SimpleRaidData;
+import com.TheatreTracker.SimpleTOBData;
 import com.TheatreTracker.filters.ImplicitFilter;
 import com.TheatreTracker.filters.FilterManager;
 import com.TheatreTracker.ui.BaseFrame;

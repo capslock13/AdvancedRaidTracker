@@ -2,6 +2,7 @@ package com.TheatreTracker.ui;
 
 
 import com.TheatreTracker.SimpleRaidData;
+import com.TheatreTracker.SimpleTOBData;
 import com.TheatreTracker.TheatreTrackerConfig;
 import com.TheatreTracker.filters.*;
 import com.TheatreTracker.ui.buttons.*;
@@ -148,14 +149,22 @@ public class Raids extends BaseFrame
 
     public void updateCustomStats(ArrayList<SimpleRaidData> raids)
     {
+        ArrayList<SimpleTOBData> tobData = new ArrayList<>();
+        for(SimpleRaidData raidData : raids)
+        {
+            if(raidData instanceof SimpleTOBData)
+            {
+                tobData.add((SimpleTOBData) raidData);
+            }
+        }
         DataPoint dataPoint = DataPoint.ATTEMPTED_BGS_BLOAT;
         boolean time = dataPoint.type == DataPoint.types.TIME;
 
-        double avg = StatisticGatherer.getGenericAverage(raids, dataPoint);
-        double med = StatisticGatherer.getGenericMedian(raids, dataPoint);
-        double mod = StatisticGatherer.getGenericMode(raids, dataPoint);
-        double min = StatisticGatherer.getGenericMin(raids, dataPoint);
-        double max = StatisticGatherer.getGenericMax(raids, dataPoint);
+        double avg = StatisticGatherer.getGenericAverage(tobData, dataPoint);
+        double med = StatisticGatherer.getGenericMedian(tobData, dataPoint);
+        double mod = StatisticGatherer.getGenericMode(tobData, dataPoint);
+        double min = StatisticGatherer.getGenericMin(tobData, dataPoint);
+        double max = StatisticGatherer.getGenericMax(tobData, dataPoint);
 
         String avgStr = (time) ? RoomUtil.time(avg) : String.valueOf(avg);
         String medStr = (time) ? RoomUtil.time(med) : String.valueOf(med);
@@ -176,7 +185,7 @@ public class Raids extends BaseFrame
         customMaxLabel.setText(maxStr);
     }
 
-    private boolean evaluateAllFilters(SimpleRaidData data)
+    private boolean evaluateAllFilters(SimpleTOBData data)
     {
         for (ImplicitFilter filter : activeFilters)
         {
@@ -226,14 +235,18 @@ public class Raids extends BaseFrame
             }
             if (filterPartialData.isSelected())
             {
-                if (!(data.maidenStartAccurate == data.maidenEndAccurate &&
-                        data.bloatStartAccurate == data.bloatEndAccurate &&
-                        data.nyloStartAccurate == data.nyloEndAccurate &&
-                        data.soteStartAccurate == data.soteEndAccurate &&
-                        data.xarpStartAccurate == data.xarpEndAccurate &&
-                        data.verzikStartAccurate == data.verzikEndAccurate))
+                if(data instanceof SimpleTOBData)
                 {
-                    shouldDataBeIncluded = false;
+                    SimpleTOBData tobData = (SimpleTOBData) data;
+                    if (!(tobData.maidenStartAccurate == tobData.maidenEndAccurate &&
+                            tobData.bloatStartAccurate == tobData.bloatEndAccurate &&
+                            tobData.nyloStartAccurate == tobData.nyloEndAccurate &&
+                            tobData.soteStartAccurate == tobData.soteEndAccurate &&
+                            tobData.xarpStartAccurate == tobData.xarpEndAccurate &&
+                            tobData.verzikStartAccurate == tobData.verzikEndAccurate))
+                    {
+                        shouldDataBeIncluded = false;
+                    }
                 }
             }
             if (shouldDataBeIncluded && filterTodayOnly.isSelected())
@@ -250,9 +263,13 @@ public class Raids extends BaseFrame
             }
             if (filterPartyOnly.isSelected())
             {
-                if (!data.maidenDefenseAccurate || !data.bloatDefenseAccurate || !data.nyloDefenseAccurate || !data.soteDefenseAccurate || !data.xarpDefenseAccurate)
+                if(data instanceof SimpleTOBData)
                 {
-                    shouldDataBeIncluded = false;
+                    SimpleTOBData tobData = (SimpleTOBData) data;
+                    if (!tobData.maidenDefenseAccurate || !tobData.bloatDefenseAccurate || !tobData.nyloDefenseAccurate || !tobData.soteDefenseAccurate || !tobData.xarpDefenseAccurate)
+                    {
+                        shouldDataBeIncluded = false;
+                    }
                 }
             }
             if (filterNormalOnly.isSelected())
@@ -264,57 +281,60 @@ public class Raids extends BaseFrame
             }
             if (filterPartialOnly.isSelected())
             {
-                switch (viewByRaidComboBox.getSelectedItem().toString())
+                if(data instanceof SimpleTOBData)
                 {
-                    case "Challenge Time":
-                        if (!data.getOverallTimeAccurate())
-                        {
-                            shouldDataBeIncluded = false;
-                        }
-                        break;
-                    case "Maiden Time":
-                        if (!data.maidenStartAccurate || !data.maidenEndAccurate)
-                        {
-                            shouldDataBeIncluded = false;
-                        }
-                        break;
-                    case "Bloat Time":
-                        if (!data.bloatStartAccurate || !data.bloatEndAccurate)
-                        {
-                            shouldDataBeIncluded = false;
-                        }
-                        break;
-                    case "Nylocas Time":
-                        if (!data.nyloStartAccurate || !data.nyloEndAccurate)
-                        {
-                            shouldDataBeIncluded = false;
-                        }
-                        break;
-                    case "Sotetseg Time":
-                        if (!data.soteStartAccurate || !data.soteEndAccurate)
-                        {
-                            shouldDataBeIncluded = false;
-                        }
-                        break;
-                    case "Xarpus Time":
-                        if (!data.xarpStartAccurate || !data.xarpEndAccurate)
-                        {
-                            shouldDataBeIncluded = false;
-                        }
-                        break;
-                    case "Verzik Time":
-                        if (!data.verzikStartAccurate || !data.verzikEndAccurate)
-                        {
-                            shouldDataBeIncluded = false;
-                        }
-                        break;
+                    SimpleTOBData tobData = (SimpleTOBData) data;
+                    switch (viewByRaidComboBox.getSelectedItem().toString())
+                    {
+                        case "Challenge Time":
+                            if (!data.getOverallTimeAccurate())
+                            {
+                                shouldDataBeIncluded = false;
+                            }
+                            break;
+                        case "Maiden Time":
+                            if (!tobData.maidenStartAccurate || !tobData.maidenEndAccurate)
+                            {
+                                shouldDataBeIncluded = false;
+                            }
+                            break;
+                        case "Bloat Time":
+                            if (!tobData.bloatStartAccurate || !tobData.bloatEndAccurate)
+                            {
+                                shouldDataBeIncluded = false;
+                            }
+                            break;
+                        case "Nylocas Time":
+                            if (!tobData.nyloStartAccurate || !tobData.nyloEndAccurate)
+                            {
+                                shouldDataBeIncluded = false;
+                            }
+                            break;
+                        case "Sotetseg Time":
+                            if (!tobData.soteStartAccurate || !tobData.soteEndAccurate)
+                            {
+                                shouldDataBeIncluded = false;
+                            }
+                            break;
+                        case "Xarpus Time":
+                            if (!tobData.xarpStartAccurate || !tobData.xarpEndAccurate)
+                            {
+                                shouldDataBeIncluded = false;
+                            }
+                            break;
+                        case "Verzik Time":
+                            if (!tobData.verzikStartAccurate || !tobData.verzikEndAccurate)
+                            {
+                                shouldDataBeIncluded = false;
+                            }
+                            break;
+                    }
                 }
             }
             if (shouldDataBeIncluded && filterCheckBoxScale.isSelected())
             {
                 shouldDataBeIncluded = filterComboBoxScale.getSelectedIndex() + 1 == data.getScale();
             }
-            timeToDisplay = String.valueOf(data.getSpecificTimeInactive(viewByRaidComboBox.getSelectedItem().toString()));
 
             for (Integer i : filteredIndices)
             {
@@ -323,9 +343,13 @@ public class Raids extends BaseFrame
                     shouldDataBeIncluded = false;
                 }
             }
-            if (!evaluateAllFilters(data))
+            if(data instanceof SimpleTOBData)
             {
-                shouldDataBeIncluded = false;
+                SimpleTOBData tobData = (SimpleTOBData) data;
+                if (!evaluateAllFilters(tobData))
+                {
+                    shouldDataBeIncluded = false;
+                }
             }
             if (shouldDataBeIncluded)
             {
@@ -338,12 +362,19 @@ public class Raids extends BaseFrame
         }
         if (sortOptionsBox.getSelectedIndex() == 0)
         {
-            if (sortOrderBox.getSelectedIndex() == 0)
+            try
             {
-                tableData.sort(Comparator.comparing(SimpleRaidData::getDate));
-            } else
+                if (sortOrderBox.getSelectedIndex() == 0)
+                {
+                    tableData.sort(Comparator.comparing(SimpleRaidData::getDate));
+                } else
+                {
+                    tableData.sort(Comparator.comparing(SimpleRaidData::getDate).reversed());
+                }
+            }
+            catch (Exception e)
             {
-                tableData.sort(Comparator.comparing(SimpleRaidData::getDate).reversed());
+
             }
         } else if (sortOptionsBox.getSelectedIndex() == 1)
         {
@@ -450,13 +481,10 @@ public class Raids extends BaseFrame
                 return raid.getScaleString();
             case "Status":
                 return raid.getRoomStatus();
+            case "Raid":
+                return raid.raidType.name;
             case "Players":
-                StringBuilder players = new StringBuilder();
-                for (String s : raid.players.keySet())
-                {
-                    players.append(s).append(", ");
-                }
-                return (players.length() > 2) ? players.substring(0, players.length() - 2) : "";
+                return raid.getPlayers();
             case "Spectate":
                 return (raid.spectated) ? "Yes" : "No";
             case "View":
@@ -532,13 +560,21 @@ public class Raids extends BaseFrame
 
     private void updateTabNames(ArrayList<SimpleRaidData> data)
     {
+        ArrayList<SimpleTOBData> tobData = new ArrayList<>();
+        for(SimpleRaidData raidData : data)
+        {
+            if(raidData instanceof SimpleTOBData)
+            {
+                tobData.add((SimpleTOBData) raidData);
+            }
+        }
         int maidenCount = 0;
         int bloatCount = 0;
         int nyloCount = 0;
         int soteCount = 0;
         int xarpCount = 0;
         int verzikCount = 0;
-        for (SimpleRaidData d : data)
+        for (SimpleTOBData d : tobData)
         {
             if (d.maidenStartAccurate && d.maidenEndAccurate)
             {
@@ -616,16 +652,24 @@ public class Raids extends BaseFrame
 
     public void setLabels(ArrayList<SimpleRaidData> data)
     {
-        setOverallLabels(data);
-        maidenTab.updateTab(data);
-        bloatTab.updateTab(data);
-        nyloTab.updateTab(data);
-        soteTab.updateTab(data);
-        xarpTab.updateTab(data);
-        verzikTab.updateTab(data);
+        ArrayList<SimpleTOBData> tobData = new ArrayList<>();
+        for(SimpleRaidData raidData : data)
+        {
+            if(raidData instanceof SimpleTOBData)
+            {
+                tobData.add((SimpleTOBData) raidData);
+            }
+        }
+        setOverallLabels(tobData);
+        maidenTab.updateTab(tobData);
+        bloatTab.updateTab(tobData);
+        nyloTab.updateTab(tobData);
+        soteTab.updateTab(tobData);
+        xarpTab.updateTab(tobData);
+        verzikTab.updateTab(tobData);
     }
 
-    public void setOverallLabels(ArrayList<SimpleRaidData> data)
+    public void setOverallLabels(ArrayList<SimpleTOBData> data)
     {
         setOverallAverageLabels(data);
         setOverallMedianLabels(data);
@@ -633,7 +677,7 @@ public class Raids extends BaseFrame
         setOverallMaxLabels(data);
     }
 
-    public void setOverallAverageLabels(ArrayList<SimpleRaidData> data)
+    public void setOverallAverageLabels(ArrayList<SimpleTOBData> data)
     {
         for(String s : averageLabels.keySet())
         {
@@ -641,7 +685,7 @@ public class Raids extends BaseFrame
         }
     }
 
-    public void setOverallMedianLabels(ArrayList<SimpleRaidData> data)
+    public void setOverallMedianLabels(ArrayList<SimpleTOBData> data)
     {
         for(String s : medianLabels.keySet())
         {
@@ -649,7 +693,7 @@ public class Raids extends BaseFrame
         }
     }
 
-    public void setOverallMinLabels(ArrayList<SimpleRaidData> data)
+    public void setOverallMinLabels(ArrayList<SimpleTOBData> data)
     {
         for(String s : minLabels.keySet())
         {
@@ -657,7 +701,7 @@ public class Raids extends BaseFrame
         }
     }
 
-    private void setOverallMaxLabels(ArrayList<SimpleRaidData> data)
+    private void setOverallMaxLabels(ArrayList<SimpleTOBData> data)
     {
         for(String s : maxLabels.keySet())
         {
@@ -1126,17 +1170,26 @@ public class Raids extends BaseFrame
         overallPanel.add(topStatPanel);
         overallPanel.add(overallCustomPanel);
 
-        maidenTab = new StatisticTab(data, DataPoint.rooms.MAIDEN);
+        ArrayList<SimpleTOBData> tobData = new ArrayList<>();
+        for(SimpleRaidData raidData : data)
+        {
+            if(raidData instanceof SimpleTOBData)
+            {
+                tobData.add((SimpleTOBData) raidData);
+            }
+        }
+
+        maidenTab = new StatisticTab(tobData, DataPoint.rooms.MAIDEN);
         tabbedPane.addTab("Maiden", maidenTab);
-        bloatTab = new StatisticTab(data, DataPoint.rooms.BLOAT);
+        bloatTab = new StatisticTab(tobData, DataPoint.rooms.BLOAT);
         tabbedPane.addTab("Bloat", bloatTab);
-        nyloTab = new StatisticTab(data, DataPoint.rooms.NYLOCAS);
+        nyloTab = new StatisticTab(tobData, DataPoint.rooms.NYLOCAS);
         tabbedPane.addTab("Nylo", nyloTab);
-        soteTab = new StatisticTab(data, DataPoint.rooms.SOTETSEG);
+        soteTab = new StatisticTab(tobData, DataPoint.rooms.SOTETSEG);
         tabbedPane.addTab("Sotetseg", soteTab);
-        xarpTab = new StatisticTab(data, DataPoint.rooms.XARPUS);
+        xarpTab = new StatisticTab(tobData, DataPoint.rooms.XARPUS);
         tabbedPane.addTab("Xarpus", xarpTab);
-        verzikTab = new StatisticTab(data, DataPoint.rooms.VERZIK);
+        verzikTab = new StatisticTab(tobData, DataPoint.rooms.VERZIK);
         tabbedPane.addTab("Verzik", verzikTab);
 
         tabbedPane.setMinimumSize(new Dimension(100, 300));
@@ -1584,11 +1637,15 @@ public class Raids extends BaseFrame
 
         viewCharts.addActionListener(e ->
         {
-            ArrayList<SimpleRaidData> rows = new ArrayList<>();
+            ArrayList<SimpleTOBData> rows = new ArrayList<>();
             int[] toRemove = table.getSelectedRows();
             for (int i = 0; i < toRemove.length; i++)
             {
-                rows.add(currentData.get(Integer.parseInt(table.getModel().getValueAt(toRemove[i], 0).toString())));
+                SimpleRaidData raidData = currentData.get(Integer.parseInt(table.getModel().getValueAt(toRemove[i], 0).toString()));
+                if(raidData instanceof SimpleTOBData)
+                {
+                    rows.add((SimpleTOBData) raidData);
+                }
             }
             ChartFrame roomCharts = new ChartFrame(rows, config, itemManager, clientThread, configManager);
             roomCharts.open();
@@ -1712,7 +1769,11 @@ public class Raids extends BaseFrame
                 int[] toRemove = table.getSelectedRows();
                 for (int i = 0; i < toRemove.length; i++)
                 {
-                    crabData.add(currentData.get(Integer.parseInt(table.getModel().getValueAt(toRemove[i], 0).toString())).maidenCrabs);
+                    SimpleRaidData row = currentData.get(Integer.parseInt(table.getModel().getValueAt(toRemove[i], 0).toString()));
+                    if(row instanceof SimpleTOBData)
+                    {
+                        crabData.add(((SimpleTOBData)row).maidenCrabs);
+                    }
                 }
                 new CrabLeakInfo(crabData);
             }
@@ -1876,7 +1937,7 @@ public class Raids extends BaseFrame
         built = true;
     }
 
-    public String[] columnHeaderNames = new String[]{"Date", "Time", "Scale", "Status", "Players", "Spectate", "View"};
+    public String[] columnHeaderNames = new String[]{"Date", "Raid", "Time", "Scale", "Status", "Players", "Spectate", "View"};
     public ArrayList<JCheckBoxMenuItem> columnHeaders;
 
     private void getUpdatedPopupMenu(String newItem)

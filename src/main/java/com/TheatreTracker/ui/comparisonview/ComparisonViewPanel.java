@@ -1,6 +1,7 @@
 package com.TheatreTracker.ui.comparisonview;
 
 import com.TheatreTracker.SimpleRaidData;
+import com.TheatreTracker.SimpleTOBData;
 import com.TheatreTracker.TheatreTrackerConfig;
 import com.TheatreTracker.ui.comparisonview.graph.GraphPanel;
 import com.TheatreTracker.utility.RoomUtil;
@@ -564,44 +565,48 @@ public class ComparisonViewPanel extends JPanel
             {
                 if (!time || value != 0)
                 {
-                    switch ((Objects.requireNonNull(DataPoint.getValue(String.valueOf(compareByComboBox.getSelectedItem())))).room)
+                    if(raidData instanceof SimpleTOBData)
                     {
-                        case MAIDEN:
-                            if (!raidData.maidenStartAccurate || !raidData.maidenEndAccurate)
-                            {
-                                continue;
-                            }
-                            break;
-                        case BLOAT:
-                            if (!raidData.bloatStartAccurate || !raidData.bloatEndAccurate)
-                            {
-                                continue;
-                            }
-                            break;
-                        case NYLOCAS:
-                            if (!raidData.nyloStartAccurate || !raidData.nyloEndAccurate)
-                            {
-                                continue;
-                            }
-                            break;
-                        case SOTETSEG:
-                            if (!raidData.soteStartAccurate || !raidData.soteEndAccurate)
-                            {
-                                continue;
-                            }
-                            break;
-                        case XARPUS:
-                            if (!raidData.xarpStartAccurate || !raidData.xarpEndAccurate)
-                            {
-                                continue;
-                            }
-                            break;
-                        case VERZIK:
-                            if (!raidData.verzikStartAccurate || !raidData.verzikEndAccurate)
-                            {
-                                continue;
-                            }
-                            break;
+                        SimpleTOBData tobData = (SimpleTOBData) raidData;
+                        switch ((Objects.requireNonNull(DataPoint.getValue(String.valueOf(compareByComboBox.getSelectedItem())))).room)
+                        {
+                            case MAIDEN:
+                                if (!tobData.maidenStartAccurate || !tobData.maidenEndAccurate)
+                                {
+                                    continue;
+                                }
+                                break;
+                            case BLOAT:
+                                if (!tobData.bloatStartAccurate || !tobData.bloatEndAccurate)
+                                {
+                                    continue;
+                                }
+                                break;
+                            case NYLOCAS:
+                                if (!tobData.nyloStartAccurate || !tobData.nyloEndAccurate)
+                                {
+                                    continue;
+                                }
+                                break;
+                            case SOTETSEG:
+                                if (!tobData.soteStartAccurate || !tobData.soteEndAccurate)
+                                {
+                                    continue;
+                                }
+                                break;
+                            case XARPUS:
+                                if (!tobData.xarpStartAccurate || !tobData.xarpEndAccurate)
+                                {
+                                    continue;
+                                }
+                                break;
+                            case VERZIK:
+                                if (!tobData.verzikStartAccurate || !tobData.verzikEndAccurate)
+                                {
+                                    continue;
+                                }
+                                break;
+                        }
                     }
                     arrayToPass.add(value);
                 }

@@ -1,6 +1,7 @@
 package com.TheatreTracker.ui.exportraids;
 
 import com.TheatreTracker.SimpleRaidData;
+import com.TheatreTracker.SimpleTOBData;
 import com.TheatreTracker.ui.BaseFrame;
 import com.TheatreTracker.ui.filters.ConfirmationDialog;
 import com.TheatreTracker.utility.datautility.RaidsManager;

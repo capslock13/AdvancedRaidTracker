@@ -144,8 +144,15 @@ public enum LogID
 
     UPDATE_HP(576, false, ANY, "Update Boss HP"),
     ADD_NPC_MAPPING(587, false, ANY, "Update NPC Mappings"),
-    UNKNOWN(-1, false, ANY, "Unknown");
+    UNKNOWN(-1, false, ANY, "Unknown"),
 
+    ENTERED_TOA(1000, true, ANY, "Entered TOA"),
+    TOA_PARTY_MEMBERS(1001, true, ANY, "Party Members"),
+    LEFT_TOA(1004, true, ANY, "Left TOA"),
+    ENTERED_NEW_TOA_REGION(1006, true, ANY, "Entered New TOA Region"),
+
+
+    ;
     /*
     2:DWH //Player, 0, 0, 0, 0
     3:BGS //Player, Damage, 0, 0, 0

@@ -1,5 +1,7 @@
 package com.TheatreTracker.utility;
 
+import com.TheatreTracker.constants.RaidType;
+import com.TheatreTracker.constants.Room;
 import com.TheatreTracker.constants.TobIDs;
 import net.runelite.api.Client;
 import net.runelite.api.Player;
@@ -153,6 +155,27 @@ public class RoomUtil
             }
         }
         return false;
+    }
+
+    public static boolean inRegion(Client client, Room... rooms)
+    {
+        for(Room room : rooms)
+        {
+            if(inRegion(client, room))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean inRegion(Client client, Room room)
+    {
+        if(room.raidType.equals(RaidType.COX))
+        {
+            return false;
+        }
+        return inRegion(client, room.regions);
     }
 
     public static boolean inRegion(Client client, int... regions)

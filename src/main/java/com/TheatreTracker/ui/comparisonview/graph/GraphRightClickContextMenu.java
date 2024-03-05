@@ -1,6 +1,7 @@
 package com.TheatreTracker.ui.comparisonview.graph;
 
 import com.TheatreTracker.SimpleRaidData;
+import com.TheatreTracker.SimpleTOBData;
 import com.TheatreTracker.TheatreTrackerConfig;
 import com.TheatreTracker.ui.Raids;
 import lombok.extern.slf4j.Slf4j;

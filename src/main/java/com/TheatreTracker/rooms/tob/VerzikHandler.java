@@ -1,4 +1,4 @@
-package com.TheatreTracker.rooms;
+package com.TheatreTracker.rooms.tob;
 
 import com.TheatreTracker.TheatreTrackerConfig;
 import com.TheatreTracker.TheatreTrackerPlugin;
@@ -21,7 +21,7 @@ import static com.TheatreTracker.constants.LogID.*;
 import static com.TheatreTracker.constants.TobIDs.*;
 
 @Slf4j
-public class VerzikHandler extends RoomHandler
+public class VerzikHandler extends TOBRoomHandler
 {
     public RoomState.VerzikRoomState roomState;
     private final TheatreTrackerPlugin plugin;

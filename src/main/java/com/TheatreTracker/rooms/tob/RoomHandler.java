@@ -1,4 +1,4 @@
-package com.TheatreTracker.rooms;
+package com.TheatreTracker.rooms.tob;
 
 
 import com.TheatreTracker.TheatreTrackerConfig;

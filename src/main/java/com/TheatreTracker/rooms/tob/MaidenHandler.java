@@ -1,4 +1,4 @@
-package com.TheatreTracker.rooms;
+package com.TheatreTracker.rooms.tob;
 
 import com.TheatreTracker.TheatreTrackerConfig;
 
@@ -31,7 +31,7 @@ import net.runelite.http.api.item.ItemEquipmentStats;
 import net.runelite.http.api.item.ItemStats;
 
 @Slf4j
-public class MaidenHandler extends RoomHandler
+public class MaidenHandler extends TOBRoomHandler
 {
     public RoomState.MaidenRoomState roomState;
 

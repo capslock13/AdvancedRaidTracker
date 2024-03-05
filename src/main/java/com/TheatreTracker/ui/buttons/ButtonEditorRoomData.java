@@ -1,8 +1,8 @@
 package com.TheatreTracker.ui.buttons;
 
 import com.TheatreTracker.SimpleRaidData;
+import com.TheatreTracker.SimpleTOBData;
 import com.TheatreTracker.ui.viewraid.ViewRaid;
-import com.TheatreTracker.ui.viewraid.ViewRaidFrame;
 
 import javax.swing.*;
 import java.awt.*;
@@ -50,9 +50,13 @@ public class ButtonEditorRoomData extends DefaultCellEditor
     {
         if (isPushed)
         {
-            ViewRaid raid = new ViewRaid(data.get(row));
-            //ViewRaidFrame raid = new ViewRaidFrame(data.get(row));
-            raid.open();
+            if(data.get(row) instanceof SimpleTOBData)
+            {
+                SimpleTOBData tobData = (SimpleTOBData) data.get(row);
+                ViewRaid raid = new ViewRaid(tobData);
+                //ViewRaidFrame raid = new ViewRaidFrame(data.get(row));
+                raid.open();
+            }
         }
         isPushed = false;
         return label;

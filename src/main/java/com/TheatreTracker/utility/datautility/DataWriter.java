@@ -1,6 +1,7 @@
 package com.TheatreTracker.utility.datautility;
 
 import com.TheatreTracker.TheatreTrackerConfig;
+import com.TheatreTracker.constants.RaidType;
 import lombok.extern.slf4j.Slf4j;
 import com.TheatreTracker.constants.LogID;
 
@@ -15,6 +16,7 @@ public class DataWriter
     private final TheatreTrackerConfig config;
     private String activeUsername = "";
     private final ArrayList<String> currentBuffer;
+    private RaidType currentRaidType = RaidType.UNASSIGNED;
 
     public final static String PLUGIN_DIRECTORY = System.getProperty("user.home").replace("\\", "/") + "/.runelite/advancedraidtracker/";
 
@@ -22,6 +24,11 @@ public class DataWriter
     {
         this.config = config;
         currentBuffer = new ArrayList<>();
+    }
+
+    public void setRaidType(RaidType raidType)
+    {
+        this.currentRaidType = raidType;
     }
 
     public void setName(String name) throws IOException
@@ -53,12 +60,18 @@ public class DataWriter
             }
         }
 
-        File logFile = new File(PLUGIN_DIRECTORY + name + "/primary/tobdata.log");
-        if (!logFile.exists())
+        for(RaidType raidType : RaidType.values())
         {
-            if (!logFile.createNewFile())
+            if(!raidType.equals(RaidType.UNASSIGNED))
             {
-                log.info("Failed to create log file");
+                File logFile = new File(PLUGIN_DIRECTORY + name + "/primary/" + raidType.name + "data.log");
+                if (!logFile.exists())
+                {
+                    if (!logFile.createNewFile())
+                    {
+                        log.info("Failed to create log file for " + raidType.name);
+                    }
+                }
             }
         }
     }
@@ -81,7 +94,7 @@ public class DataWriter
     public void migrateToNewRaid()
     {
         int highest = getHighestLogNumber(activeUsername);
-        File logFile = new File(PLUGIN_DIRECTORY + activeUsername + "/primary/tobdata.log");
+        File logFile = new File(PLUGIN_DIRECTORY + activeUsername + "/primary/" + currentRaidType.name + "data.log");
         if (!logFile.exists())
         {
             log.info("Could not migrate because file does not exist");
@@ -96,7 +109,7 @@ public class DataWriter
             log.info("Could not rename primary log file");
         } else
         {
-            logFile = new File(PLUGIN_DIRECTORY + activeUsername + "/primary/tobdata.log");
+            logFile = new File(PLUGIN_DIRECTORY + activeUsername + "/primary/" + currentRaidType.name +"data.log");
             if (!logFile.exists())
             {
                 try
@@ -175,7 +188,7 @@ public class DataWriter
         int highestLogNumber = 0;
         for (File file : Objects.requireNonNull(new File(directory).listFiles()))
         {
-            if (file.getName().contains("tobdata"))
+            if (file.getName().contains("data"))
             {
                 int index = -1;
                 index = file.getName().indexOf(".log");
@@ -214,8 +227,7 @@ public class DataWriter
 
     public void addLine(int key, String v1, String v2, String v3, String v4, String v5)
     {
-        int versionID = 1;
-        currentBuffer.add(getUID() + "," + System.currentTimeMillis() + "," + versionID + "," + key + "," + v1 + "," + v2 + "," + v3 + "," + v4 + "," + v5);
+        currentBuffer.add(getUID() + "," + System.currentTimeMillis() + "," + currentRaidType.value + "," + key + "," + v1 + "," + v2 + "," + v3 + "," + v4 + "," + v5);
     }
 
     public static void writeAliasFile(String aliasText)
@@ -273,7 +285,7 @@ public class DataWriter
         {
             try
             {
-                File logFile = new File(PLUGIN_DIRECTORY + activeUsername + "/primary/tobdata.log");
+                File logFile = new File(PLUGIN_DIRECTORY + activeUsername + "/primary/" + currentRaidType.name +"data.log");
                 if (!logFile.exists())
                 {
                     if (!logFile.createNewFile())
@@ -281,7 +293,7 @@ public class DataWriter
                         log.info("Failed to create log file");
                     }
                 }
-                BufferedWriter logger = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(PLUGIN_DIRECTORY + activeUsername + "/primary/tobdata.log", true), StandardCharsets.UTF_8));
+                BufferedWriter logger = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(PLUGIN_DIRECTORY + activeUsername + "/primary/" + currentRaidType.name + "data.log", true), StandardCharsets.UTF_8));
                 for (String msg : currentBuffer)
                 {
                     logger.write(msg);

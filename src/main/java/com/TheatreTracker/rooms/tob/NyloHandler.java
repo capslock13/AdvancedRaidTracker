@@ -1,4 +1,4 @@
-package com.TheatreTracker.rooms;
+package com.TheatreTracker.rooms.tob;
 
 import com.TheatreTracker.TheatreTrackerConfig;
 import com.TheatreTracker.TheatreTrackerPlugin;
@@ -26,7 +26,7 @@ import static com.TheatreTracker.constants.TobIDs.*;
 import static com.TheatreTracker.utility.RoomState.NyloRoomState.*;
 
 @Slf4j
-public class NyloHandler extends RoomHandler
+public class NyloHandler extends TOBRoomHandler
 {
     public RoomState.NyloRoomState roomState;
     private final ArrayList<NylocasShell> buildWave;

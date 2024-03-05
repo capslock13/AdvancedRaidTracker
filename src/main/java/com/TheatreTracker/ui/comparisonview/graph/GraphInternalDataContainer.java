@@ -1,6 +1,7 @@
 package com.TheatreTracker.ui.comparisonview.graph;
 
 import com.TheatreTracker.SimpleRaidData;
+import com.TheatreTracker.SimpleTOBData;
 
 import java.util.ArrayList;
 

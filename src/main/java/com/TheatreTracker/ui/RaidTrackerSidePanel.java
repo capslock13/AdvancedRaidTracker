@@ -1,8 +1,6 @@
 package com.TheatreTracker.ui;
 
-import com.TheatreTracker.SimpleRaidData;
-import com.TheatreTracker.TheatreTrackerConfig;
-import com.TheatreTracker.TheatreTrackerPlugin;
+import com.TheatreTracker.*;
 import com.TheatreTracker.utility.BloatHand;
 import com.TheatreTracker.utility.wrappers.RaidsArrayWrapper;
 import com.TheatreTracker.utility.datautility.RaidsManager;
@@ -82,7 +80,7 @@ public class RaidTrackerSidePanel extends PluginPanel
                             {
                                 if (!dataFile.isDirectory())
                                 {
-                                    if (dataFile.getName().contains("tobdata"))
+                                    if (dataFile.getName().contains("data"))
                                     {
                                         File currentFile = new File(subDirectory.getAbsolutePath() + "/" + dataFile.getName());
                                         hands.addAll(parseLogFile(raids, currentFile, subDirectory.getAbsolutePath() + "/" + dataFile.getName()));
@@ -98,7 +96,14 @@ public class RaidTrackerSidePanel extends PluginPanel
         {
             e.printStackTrace();
         }
-        raids.sort(Comparator.comparing(SimpleRaidData::getDate));
+        try
+        {
+            raids.sort(Comparator.comparing(SimpleRaidData::getDate));
+        }
+        catch (Exception e)
+        {
+
+        }
         Map<String, Integer> handMap = new HashMap<>();
         for(BloatHand bloatHand : hands)
         {
@@ -153,7 +158,7 @@ public class RaidTrackerSidePanel extends PluginPanel
             {
                 if (lineSplit.length > 3)
                 {
-                    if (Integer.parseInt(lineSplit[3]) == 0)
+                    if (Integer.parseInt(lineSplit[3]) == 0 || Integer.parseInt(lineSplit[3]) == 1000)
                     {
                         raid.add(line);
                         raidActive = true;
@@ -178,11 +183,18 @@ public class RaidTrackerSidePanel extends PluginPanel
                             {
                                 lateStart = true;
                                 raid.add(line);
-                            } else if (Integer.parseInt(lineSplit[3]) == 4)
+                            } else if (Integer.parseInt(lineSplit[3]) == 4 || Integer.parseInt(lineSplit[3]) == 1004)
                             {
                                 raid.add(line);
                                 raidActive = false;
-                                raids.add(new SimpleRaidData(raid.toArray(new String[0]), filePath, currentFile.getName()));
+                                if(Integer.parseInt(lineSplit[3]) == 4)
+                                {
+                                    raids.add(new SimpleTOBData(raid.toArray(new String[0]), filePath, currentFile.getName()));
+                                }
+                                else
+                                {
+                                    raids.add(new SimpleTOAData(raid.toArray(new String[0]), filePath, currentFile.getName()));
+                                }
                                 raid.clear();
                             } else if (value != 99 && value != 98)
                             {

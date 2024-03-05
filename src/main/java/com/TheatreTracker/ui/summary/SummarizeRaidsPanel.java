@@ -1,6 +1,7 @@
 package com.TheatreTracker.ui.summary;
 
 import com.TheatreTracker.SimpleRaidData;
+import com.TheatreTracker.SimpleTOBData;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.ui.FontManager;
 

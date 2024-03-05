@@ -1,10 +1,10 @@
 package com.TheatreTracker.filters;
 
-import com.TheatreTracker.SimpleRaidData;
+import com.TheatreTracker.SimpleTOBData;
 
 public abstract class FilterCondition
 {
-    public abstract boolean evaluate(SimpleRaidData data);
+    public abstract boolean evaluate(SimpleTOBData data);
 
     public abstract String getFilterCSV();
 }

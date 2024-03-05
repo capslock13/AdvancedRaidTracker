@@ -1,11 +1,11 @@
 package com.TheatreTracker.ui.comparisonview;
 
 import com.TheatreTracker.SimpleRaidData;
+import com.TheatreTracker.SimpleTOBData;
 import com.TheatreTracker.TheatreTrackerConfig;
 import com.TheatreTracker.ui.BaseFrame;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.callback.ClientThread;
-import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.game.ItemManager;
 

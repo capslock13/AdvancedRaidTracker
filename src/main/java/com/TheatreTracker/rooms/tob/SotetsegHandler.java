@@ -1,4 +1,4 @@
-package com.TheatreTracker.rooms;
+package com.TheatreTracker.rooms.tob;
 
 import com.TheatreTracker.TheatreTrackerConfig;
 import com.TheatreTracker.TheatreTrackerPlugin;
@@ -20,7 +20,7 @@ import java.util.Map;
 import static com.TheatreTracker.constants.TobIDs.*;
 
 @Slf4j
-public class SotetsegHandler extends RoomHandler
+public class SotetsegHandler extends TOBRoomHandler
 {
     public RoomState.SotetsegRoomState roomState = RoomState.SotetsegRoomState.NOT_STARTED;
     private int soteEntryTick = -1;

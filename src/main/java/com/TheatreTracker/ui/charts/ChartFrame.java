@@ -1,7 +1,7 @@
 package com.TheatreTracker.ui.charts;
 
 import com.TheatreTracker.AdvancedRaidData;
-import com.TheatreTracker.SimpleRaidData;
+import com.TheatreTracker.SimpleTOBData;
 import com.TheatreTracker.TheatreTrackerConfig;
 import com.TheatreTracker.ui.BaseFrame;
 import com.TheatreTracker.utility.datautility.DataPoint;
@@ -17,7 +17,7 @@ import java.util.*;
 @Slf4j
 public class ChartFrame extends BaseFrame
 {
-    public ChartFrame(ArrayList<SimpleRaidData> roomData, TheatreTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
+    public ChartFrame(ArrayList<SimpleTOBData> roomData, TheatreTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
     {
         JTabbedPane basepane = new JTabbedPane();
 
@@ -59,7 +59,7 @@ public class ChartFrame extends BaseFrame
 
 
 
-        for (SimpleRaidData data : roomData)
+        for (SimpleTOBData data : roomData)
         {
             AdvancedRaidData advancedData = new AdvancedRaidData(AdvancedRaidData.getRaidStrings(data.filePath), itemManager);
             Map<Integer, String> maidenLines = new LinkedHashMap<>();

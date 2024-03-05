@@ -1,6 +1,7 @@
 package com.TheatreTracker.ui.summary;
 
 import com.TheatreTracker.SimpleRaidData;
+import com.TheatreTracker.SimpleTOBData;
 import com.TheatreTracker.ui.BaseFrame;
 
 import javax.swing.*;

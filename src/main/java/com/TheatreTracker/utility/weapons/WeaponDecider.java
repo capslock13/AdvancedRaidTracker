@@ -143,6 +143,17 @@ public class WeaponDecider
             case 722:
                 weaponUsed = WeaponAttack.MAGIC_IMBUE;
                 break;
+            case 10629:
+            case 836:
+                weaponUsed = WeaponAttack.DEATH;
+                break;
+            case 8070:
+            case 1816:
+                weaponUsed = WeaponAttack.TELEPORT;
+                break;
+            case 4409:
+                weaponUsed = WeaponAttack.HEAL_GROUP;
+                break;
         }
         return weaponUsed;
     }

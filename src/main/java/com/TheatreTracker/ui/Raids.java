@@ -281,19 +281,19 @@ public class Raids extends BaseFrame
                             shouldDataBeIncluded = false;
                         }
                         break;
-                    case "Nylo Time":
+                    case "Nylocas Time":
                         if (!data.nyloStartAccurate || !data.nyloEndAccurate)
                         {
                             shouldDataBeIncluded = false;
                         }
                         break;
-                    case "Sote Time":
+                    case "Sotetseg Time":
                         if (!data.soteStartAccurate || !data.soteEndAccurate)
                         {
                             shouldDataBeIncluded = false;
                         }
                         break;
-                    case "Xarp Time":
+                    case "Xarpus Time":
                         if (!data.xarpStartAccurate || !data.xarpEndAccurate)
                         {
                             shouldDataBeIncluded = false;
@@ -971,13 +971,13 @@ public class Raids extends BaseFrame
                             viewByRaidComboBox.setSelectedItem("Bloat Time");
                             break;
                         case 3:
-                            viewByRaidComboBox.setSelectedItem("Nylo Time");
+                            viewByRaidComboBox.setSelectedItem("Nylocas Time");
                             break;
                         case 4:
-                            viewByRaidComboBox.setSelectedItem("Sote Time");
+                            viewByRaidComboBox.setSelectedItem("Sotetseg Time");
                             break;
                         case 5:
-                            viewByRaidComboBox.setSelectedItem("Xarp Time");
+                            viewByRaidComboBox.setSelectedItem("Xarpus Time");
                             break;
                         case 6:
                             viewByRaidComboBox.setSelectedItem("Verzik Time");
@@ -1432,7 +1432,8 @@ public class Raids extends BaseFrame
                 "Sote wipe",
                 "Reset after xarp",
                 "Xarp wipe",
-                "Verzik  wipe"
+                "Verzik  wipe",
+                "Maiden Scuffed",
         };
 
         String[] qualifierOtherBool = {
@@ -1578,20 +1579,16 @@ public class Raids extends BaseFrame
         viewCharts.setBackground(Color.BLACK);
         viewCharts.setOpaque(true);
 
-        viewCharts.addActionListener(new ActionListener()
+        viewCharts.addActionListener(e ->
         {
-            @Override
-            public void actionPerformed(ActionEvent e)
+            ArrayList<SimpleRaidData> rows = new ArrayList<>();
+            int[] toRemove = table.getSelectedRows();
+            for (int i = 0; i < toRemove.length; i++)
             {
-                ArrayList<SimpleRaidData> rows = new ArrayList<>();
-                int[] toRemove = table.getSelectedRows();
-                for (int i = 0; i < toRemove.length; i++)
-                {
-                    rows.add(currentData.get(Integer.parseInt(table.getModel().getValueAt(toRemove[i], 0).toString())));
-                }
-                ChartFrame roomCharts = new ChartFrame(rows, config, itemManager, clientThread);
-                roomCharts.open();
+                rows.add(currentData.get(Integer.parseInt(table.getModel().getValueAt(toRemove[i], 0).toString())));
             }
+            ChartFrame roomCharts = new ChartFrame(rows, config, itemManager, clientThread);
+            roomCharts.open();
         });
 
         viewGraphs.addActionListener(new ActionListener()

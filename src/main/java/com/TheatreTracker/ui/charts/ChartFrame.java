@@ -1,5 +1,6 @@
 package com.TheatreTracker.ui.charts;
 
+import com.TheatreTracker.AdvancedRaidData;
 import com.TheatreTracker.SimpleRaidData;
 import com.TheatreTracker.TheatreTrackerConfig;
 import com.TheatreTracker.ui.BaseFrame;
@@ -58,10 +59,12 @@ public class ChartFrame extends BaseFrame
 
         for (SimpleRaidData data : roomData)
         {
+            AdvancedRaidData advancedData = new AdvancedRaidData(AdvancedRaidData.getRaidStrings(data.filePath), itemManager);
             Map<Integer, String> maidenLines = new LinkedHashMap<>();
             maidenLines.put(data.getValue(DataPoint.MAIDEN_70_SPLIT), "70s");
             maidenLines.put(data.getValue(DataPoint.MAIDEN_50_SPLIT), "50s");
             maidenLines.put(data.getValue(DataPoint.MAIDEN_30_SPLIT), "30s");
+            maidenLines.put(data.getValue(DataPoint.MAIDEN_TOTAL_TIME), "Dead");
 
             Map<Integer, String> bloatLines = new LinkedHashMap<>();
             for (Integer i : data.bloatDowns)
@@ -173,9 +176,9 @@ public class ChartFrame extends BaseFrame
             }
 
             ChartPanel maidenRCP = new ChartPanel("Maiden", false, config, clientThread);
-            maidenRCP.setNPCMappings(data.maidenNPCMapping);
-            maidenRCP.setRoomHP(data.maidenHP);
-            maidenRCP.addAttacks(data.maidenAttacks);
+            maidenRCP.setNPCMappings(advancedData.maidenNPCMapping);
+            maidenRCP.setRoomHP(advancedData.maidenHP);
+            maidenRCP.addAttacks(advancedData.maidenAttacks);
             maidenRCP.addMaidenCrabs(data.maidenCrabSpawn);
             maidenRCP.setPlayers(new ArrayList<>(data.players.keySet()));
             if (roomData.size() == 1)
@@ -188,8 +191,8 @@ public class ChartFrame extends BaseFrame
             maidenRCP.addThrallBoxes(data.maidenThrallSpawns);
 
             ChartPanel bloatRCP = new ChartPanel("Bloat", false, config, clientThread);
-            bloatRCP.setRoomHP(data.bloatHP);
-            bloatRCP.addAttacks(data.bloatAttacks);
+            bloatRCP.setRoomHP(advancedData.bloatHP);
+            bloatRCP.addAttacks(advancedData.bloatAttacks);
             bloatRCP.setPlayers(new ArrayList<>(data.players.keySet()));
             if (roomData.size() == 1)
             {
@@ -201,9 +204,9 @@ public class ChartFrame extends BaseFrame
             bloatRCP.addThrallBoxes(data.bloatThrallSpawns);
 
             ChartPanel nyloRCP = new ChartPanel("Nylocas", false, config, clientThread);
-            nyloRCP.setNPCMappings(data.nyloNPCMapping);
-            nyloRCP.setRoomHP(data.nyloHP);
-            nyloRCP.addAttacks(data.nyloAttacks);
+            nyloRCP.setNPCMappings(advancedData.nyloNPCMapping);
+            nyloRCP.setRoomHP(advancedData.nyloHP);
+            nyloRCP.addAttacks(advancedData.nyloAttacks);
             nyloRCP.setPlayers(new ArrayList<>(data.players.keySet()));
             if (roomData.size() == 1)
             {
@@ -215,8 +218,8 @@ public class ChartFrame extends BaseFrame
             nyloRCP.addThrallBoxes(data.nyloThrallSpawns);
 
             ChartPanel soteRCP = new ChartPanel("Sotetseg", false, config, clientThread);
-            soteRCP.setRoomHP(data.soteHP);
-            soteRCP.addAttacks(data.soteAttacks);
+            soteRCP.setRoomHP(advancedData.soteHP);
+            soteRCP.addAttacks(advancedData.soteAttacks);
             soteRCP.setPlayers(new ArrayList<>(data.players.keySet()));
             if (roomData.size() == 1)
             {
@@ -228,8 +231,8 @@ public class ChartFrame extends BaseFrame
             soteRCP.addThrallBoxes(data.soteThrallSpawns);
 
             ChartPanel xarpRCP = new ChartPanel("Xarpus", false, config, clientThread);
-            xarpRCP.setRoomHP(data.xarpHP);
-            xarpRCP.addAttacks(data.xarpAttacks);
+            xarpRCP.setRoomHP(advancedData.xarpHP);
+            xarpRCP.addAttacks(advancedData.xarpAttacks);
             xarpRCP.setPlayers(new ArrayList<>(data.players.keySet()));
             if (roomData.size() == 1)
             {
@@ -241,9 +244,9 @@ public class ChartFrame extends BaseFrame
             xarpRCP.addThrallBoxes(data.xarpusThrallSpawns);
 
             ChartPanel verzP1RCP = new ChartPanel("Verzik P1", false, config, clientThread);
-            verzP1RCP.setNPCMappings(data.verzikNPCMapping);
-            verzP1RCP.setRoomHP(data.verzikHP);
-            verzP1RCP.addAttacks(data.verzAttacks);
+            verzP1RCP.setNPCMappings(advancedData.verzikNPCMapping);
+            verzP1RCP.setRoomHP(advancedData.verzikHP);
+            verzP1RCP.addAttacks(advancedData.verzikAttacks);
             verzP1RCP.setPlayers(new ArrayList<>(data.players.keySet()));
             if (roomData.size() == 1)
             {
@@ -257,9 +260,9 @@ public class ChartFrame extends BaseFrame
             verzP1RCP.addAutos(p1autos);
 
             ChartPanel verzP2RCP = new ChartPanel("Verzik P2", false, config, clientThread);
-            verzP2RCP.setNPCMappings(data.verzikNPCMapping);
-            verzP2RCP.setRoomHP(data.verzikHP);
-            verzP2RCP.addAttacks(data.verzAttacks);
+            verzP2RCP.setNPCMappings(advancedData.verzikNPCMapping);
+            verzP2RCP.setRoomHP(advancedData.verzikHP);
+            verzP2RCP.addAttacks(advancedData.verzikAttacks);
             verzP2RCP.setPlayers(new ArrayList<>(data.players.keySet()));
             if (roomData.size() == 1)
             {
@@ -271,10 +274,10 @@ public class ChartFrame extends BaseFrame
             verzP2RCP.addThrallBoxes(data.verzikThrallSpawns);
 
             ChartPanel verzP3RCP = new ChartPanel("Verzik P3", false, config, clientThread);
-            verzP3RCP.setNPCMappings(data.verzikNPCMapping);
-            verzP3RCP.setRoomHP(data.verzikHP);
+            verzP3RCP.setNPCMappings(advancedData.verzikNPCMapping);
+            verzP3RCP.setRoomHP(advancedData.verzikHP);
 
-            verzP3RCP.addAttacks(data.verzAttacks);
+            verzP3RCP.addAttacks(advancedData.verzikAttacks);
             verzP3RCP.setPlayers(new ArrayList<>(data.players.keySet()));
             if (roomData.size() == 1)
             {

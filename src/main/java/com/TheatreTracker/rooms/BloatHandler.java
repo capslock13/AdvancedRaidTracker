@@ -217,6 +217,8 @@ public class BloatHandler extends RoomHandler
                 } else
                 {
                     clog.addLine(ACCURATE_BLOAT_START);
+                    clog.addLine(BLOAT_DIRECTION, String.valueOf(event.getNpc().getCurrentOrientation()), String.valueOf(event.getNpc().getIndex()));
+                    //log.info("Bloat direction: " + event.getNpc().getCurrentOrientation() + ", Index: " + event.getNpc().getIndex());
                 }
                 break;
         }

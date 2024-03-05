@@ -40,8 +40,8 @@ public class SimpleRaidData
     public Date raidStarted;
     private ArrayList<String> globalData;
     public LinkedHashMap<String, Integer> players;
-    public String[] raidDataRaw;
-    String filePath = "";
+    public String filePath = "";
+    public String fileName = "";
     public String activeValue = "";
     // Maiden tracking
     public boolean maidenTimeAccurate;
@@ -96,13 +96,6 @@ public class SimpleRaidData
 
 
 
-
-    public ArrayList<PlayerDidAttack> maidenAttacks;
-    public ArrayList<PlayerDidAttack> bloatAttacks;
-    public ArrayList<PlayerDidAttack> nyloAttacks;
-    public ArrayList<PlayerDidAttack> soteAttacks;
-    public ArrayList<PlayerDidAttack> xarpAttacks;
-    public ArrayList<PlayerDidAttack> verzAttacks;
     // Thrall tracking
     public ArrayList<ThrallOutlineBox> maidenThrallSpawns;
     public ArrayList<ThrallOutlineBox> bloatThrallSpawns;
@@ -111,16 +104,8 @@ public class SimpleRaidData
     public ArrayList<ThrallOutlineBox> xarpusThrallSpawns;
     public ArrayList<ThrallOutlineBox> verzikThrallSpawns;
 
-    public Map<Integer, Integer> maidenHP = new HashMap<>();
-    public Map<Integer, Integer> bloatHP = new HashMap<>();
-    public Map<Integer, Integer> nyloHP = new HashMap<>();
-    public Map<Integer, Integer> soteHP = new HashMap<>();
-    public Map<Integer, Integer> xarpHP = new HashMap<>();
     public Map<Integer, Integer> verzikHP = new HashMap<>();
 
-    public Map<Integer, String> maidenNPCMapping = new HashMap<>();
-    public Map<Integer, String> nyloNPCMapping = new HashMap<>();
-    public Map<Integer, String> verzikNPCMapping = new HashMap<>();
     public Date getDate()
     {
         return raidStarted;
@@ -336,28 +321,17 @@ public class SimpleRaidData
     {
         return getMaidenTime() + getBloatTime() + getNyloTime() + getSoteTime() + getXarpTime() + getVerzikTime();
     }
-
-    private ItemManager itemManager;
-
-    public SimpleRaidData(String[] parameters, ItemManager itemManager, String filePath) throws Exception
+    public SimpleRaidData(String[] parameters, String filePath, String fileName) throws Exception
     {
         this.filePath = filePath;
-        this.itemManager = itemManager;
+        this.fileName = fileName;
         dataManager = new DataManager();
-        raidDataRaw = parameters;
         partyComplete = false;
         maidenDefenseAccurate = false;
         bloatDefenseAccurate = false;
         nyloDefenseAccurate = false;
         soteDefenseAccurate = false;
         xarpDefenseAccurate = false;
-
-        maidenAttacks = new ArrayList<>();
-        bloatAttacks = new ArrayList<>();
-        nyloAttacks = new ArrayList<>();
-        soteAttacks = new ArrayList<>();
-        xarpAttacks = new ArrayList<>();
-        verzAttacks = new ArrayList<>();
 
         maidenThrallSpawns = new ArrayList<>();
         bloatThrallSpawns = new ArrayList<>();
@@ -446,6 +420,7 @@ public class SimpleRaidData
             dataManager.set(DataPoint.OVERALL_TIME, ticks);
             dataManager.set(DataPoint.TIME_OUTSIDE_ROOMS, dataManager.get(DataPoint.OVERALL_TIME) - dataManager.get(DataPoint.CHALLENGE_TIME));
         }
+        globalData.clear();
     }
 
     private void parseGeneric(String room, String[] subData)
@@ -541,55 +516,6 @@ public class SimpleRaidData
                     dataManager.increment(DataPoint.CHALLY_POKE);
                     dataManager.incrementPlayerSpecific(DataPoint.CHALLY_POKE, subData[4]);
                     break;
-                case PLAYER_ATTACK:
-                    String player = subData[4].split(":")[0];
-                    int tick = Integer.parseInt(subData[4].split(":")[1]);
-                    String wornItems = "";
-                    String [] animationAndWorn = subData[5].split(":");
-                    String animation = animationAndWorn[0];
-                    if(animationAndWorn.length == 2)
-                    {
-                        wornItems = animationAndWorn[1];
-                    }
-                    String spotAnims = subData[6];
-                    String[] subsubData = subData[7].split(":");
-                    String weapon = subsubData[0];
-                    int interactedIndex = -1;
-                    int interactedID = -1;
-                    if (subsubData.length > 2)
-                    {
-                        interactedIndex = Integer.parseInt(subsubData[1]);
-                        interactedID = Integer.parseInt(subsubData[2]);
-                    }
-                    String[] projectileAndTargetData = subData[8].split(":");
-                    String projectile = projectileAndTargetData[0];
-                    String targetName = "";
-                    if (projectileAndTargetData.length > 1)
-                    {
-                        targetName = projectileAndTargetData[1];
-                    }
-                    switch (room)
-                    {
-                        case "Maiden":
-                            maidenAttacks.add(new PlayerDidAttack(itemManager, player, animation, tick, weapon, projectile, spotAnims, interactedIndex, interactedID, targetName, wornItems));
-                            break;
-                        case "Bloat":
-                            bloatAttacks.add(new PlayerDidAttack(itemManager, player, animation, tick, weapon, projectile, spotAnims, interactedIndex, interactedID, targetName, wornItems));
-                            break;
-                        case "Nylo":
-                            nyloAttacks.add(new PlayerDidAttack(itemManager, player, animation, tick, weapon, projectile, spotAnims, interactedIndex, interactedID, targetName, wornItems));
-                            break;
-                        case "Sote":
-                            soteAttacks.add(new PlayerDidAttack(itemManager, player, animation, tick, weapon, projectile, spotAnims, interactedIndex, interactedID, targetName, wornItems));
-                            break;
-                        case "Xarp":
-                            xarpAttacks.add(new PlayerDidAttack(itemManager, player, animation, tick, weapon, projectile, spotAnims, interactedIndex, interactedID, targetName, wornItems));
-                            break;
-                        case "Verzik":
-                            verzAttacks.add(new PlayerDidAttack(itemManager, player, animation, tick, weapon, projectile, spotAnims, interactedIndex, interactedID, targetName, wornItems));
-                            break;
-                    }
-                    break;
             }
         }
         catch(Exception ignored)
@@ -660,14 +586,6 @@ public class SimpleRaidData
                         dataManager.set(DataPoint.VERZIK_P3_DURATION, dataManager.get(DataPoint.VERZIK_TOTAL_TIME) - dataManager.get(DataPoint.VERZIK_P2_SPLIT));
                         dataManager.set(DataPoint.CHALLENGE_TIME, (Integer.parseInt(subData[4]) + dataManager.get(DataPoint.VERZIK_ENTRY)));
                         break;
-                    case VERZIK_BOUNCE:
-                        dataManager.increment(DataPoint.VERZIK_BOUNCES);
-                        dataManager.incrementPlayerSpecific(DataPoint.VERZIK_BOUNCES, subData[4]);
-                        if (!subData[5].equalsIgnoreCase(""))
-                        {
-                            verzAttacks.add(new PlayerDidAttack(itemManager, subData[4], "100000", Integer.parseInt(subData[5]), "-1", "-1", "-1", -1, -1, "", ""));
-                        }
-                        break;
                     case VERZIK_CRAB_SPAWNED:
                         if (!subData[4].equalsIgnoreCase(""))
                         {
@@ -717,9 +635,6 @@ public class SimpleRaidData
                         break;
                     case UPDATE_HP:
                         verzikHP.put(Integer.parseInt(subData[5]), Integer.parseInt(subData[4]));
-                        break;
-                    case ADD_NPC_MAPPING:
-                        verzikNPCMapping.put(Integer.parseInt(subData[4]), subData[5]);
                         break;
                     case WEBS_STARTED:
                         try
@@ -847,9 +762,6 @@ public class SimpleRaidData
                         break;
                     case THRALL_SPAWN:
                         xarpusThrallSpawns.add(new ThrallOutlineBox(subData[4], Integer.parseInt(subData[5]), Integer.parseInt(subData[6])));
-                        break;
-                    case UPDATE_HP:
-                        xarpHP.put(Integer.parseInt(subData[5]), Integer.parseInt(subData[4]));
                         break;
                 }
             }
@@ -979,9 +891,6 @@ public class SimpleRaidData
                         break;
                     case THRALL_SPAWN:
                         soteThrallSpawns.add(new ThrallOutlineBox(subData[4], Integer.parseInt(subData[5]), Integer.parseInt(subData[6])));
-                        break;
-                    case UPDATE_HP:
-                        soteHP.put(Integer.parseInt(subData[5]), Integer.parseInt(subData[4]));
                         break;
 
                 }
@@ -1113,12 +1022,6 @@ public class SimpleRaidData
                     case THRALL_SPAWN:
                         nyloThrallSpawns.add(new ThrallOutlineBox(subData[4], Integer.parseInt(subData[5]), Integer.parseInt(subData[6])));
                         break;
-                    case UPDATE_HP:
-                        nyloHP.put(Integer.parseInt(subData[5]), Integer.parseInt(subData[4]));
-                        break;
-                    case ADD_NPC_MAPPING:
-                        nyloNPCMapping.put(Integer.parseInt(subData[4]), subData[5]);
-                        break;
                 }
             }
             catch(Exception e)
@@ -1210,9 +1113,6 @@ public class SimpleRaidData
                         break;
                     case THRALL_SPAWN:
                         bloatThrallSpawns.add(new ThrallOutlineBox(subData[4], Integer.parseInt(subData[5]), Integer.parseInt(subData[6])));
-                        break;
-                    case UPDATE_HP:
-                        bloatHP.put(Integer.parseInt(subData[5]), Integer.parseInt(subData[4]));
                         break;
                 }
             }
@@ -1354,6 +1254,10 @@ public class SimpleRaidData
                         if (!maidenScuffed)
                         {
                             firstMaidenCrabScuffed = lastProc;
+                            if(!maidenCrabSpawn.isEmpty())
+                            {
+                                firstMaidenCrabScuffed = maidenCrabSpawn.get(maidenCrabSpawn.size()-1);
+                            }
                         }
                         maidenScuffed = true;
                         break;
@@ -1470,12 +1374,6 @@ public class SimpleRaidData
 
                         dataManager.incrementPlayerSpecific(DataPoint.MAIDEN_PLAYER_STOOD_IN_BLOOD, subData[4]);
                         dataManager.incrementPlayerSpecific(DataPoint.MAIDEN_HEALS_FROM_ANY_BLOOD, subData[4], Integer.parseInt(subData[5]));
-                        break;
-                    case UPDATE_HP:
-                        maidenHP.put(Integer.parseInt(subData[5]), Integer.parseInt(subData[4]));
-                        break;
-                    case ADD_NPC_MAPPING:
-                        maidenNPCMapping.put(Integer.parseInt(subData[4]), subData[5]);
                         break;
                 }
             }

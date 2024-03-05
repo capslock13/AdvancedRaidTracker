@@ -181,7 +181,7 @@ public class TheatreTrackerPlugin extends Plugin
         clog = new DataWriter(config);
 
         final BufferedImage icon = ImageUtil.loadImageResource(TheatreTrackerPlugin.class, "/com/TheatreTracker/icon.png");
-        navButtonPrimary = NavigationButton.builder().tooltip("RaidTrackerPanelPrimary").icon(icon).priority(10).panel(timersPanelPrimary).build();
+        navButtonPrimary = NavigationButton.builder().tooltip("Advanced Raid Tracker").icon(icon).priority(10).panel(timersPanelPrimary).build();
 
         clientToolbar.addNavigation(navButtonPrimary);
 
@@ -197,8 +197,6 @@ public class TheatreTrackerPlugin extends Plugin
         deferredTick = 0;
         currentPlayers = new ArrayList<>();
         playersAttacked = new ArrayList<>();
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> clog.addLine(LEFT_TOB, String.valueOf(client.getTickCount() - currentRoom.roomStartTick), currentRoom.getName())));
-
     }
 
     @Subscribe

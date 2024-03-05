@@ -5,6 +5,8 @@ import com.google.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.game.ItemManager;
+import net.runelite.client.util.AsyncBufferedImage;
+
 @Slf4j
 public class PlayerDidAttack
 {
@@ -21,6 +23,7 @@ public class PlayerDidAttack
     public String[] wornItemNames = {};
 
     public ItemManager itemManager;
+    public AsyncBufferedImage img = null;
 
     public PlayerDidAttack(ItemManager itemManager, String player, String animation, int tick, String weapon, String projectile, String spotAnims, int targetedIndex, int targetedID, String targetName, String worn)
     {
@@ -40,5 +43,10 @@ public class PlayerDidAttack
     public void setWornNames()
     {
         wornItemNames = new PlayerWornItems(wornItems, itemManager).getAll();
+    }
+
+    public void setIcons()
+    {
+        img = itemManager.getImage(Integer.parseInt(this.weapon), 1, false);
     }
 }

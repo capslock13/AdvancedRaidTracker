@@ -50,6 +50,8 @@ public class FilterOtherBool extends FilterCondition
                 return data.xarpWipe == value;
             case 11:
                 return data.verzikWipe == value;
+            case 12:
+                return data.maidenScuffed == value;
         }
         return false;
     }

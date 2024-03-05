@@ -1,6 +1,5 @@
 package com.TheatreTracker.constants;
 
-import jdk.jpackage.internal.Log;
 import lombok.Getter;
 
 import java.util.Arrays;
@@ -89,6 +88,7 @@ public enum LogID
     RANDOM_TRACKER(1000, true, ANY, "Random Tracker"),
     RANDOM_TRACKER_2(1001, true, ANY, "Random Tracker2"),
     BLOAT_HAND(975, false, BLOAT, "Bloat Hand"),
+    BLOAT_DIRECTION(976, false, BLOAT, "Bloat Direction"),
 
     PARTY_COMPLETE(100, true, ANY, "Party Is Complete"),
     PARTY_INCOMPLETE(101, true, ANY, "Party Is Not Complete"),

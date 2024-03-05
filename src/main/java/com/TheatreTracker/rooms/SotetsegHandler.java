@@ -560,7 +560,7 @@ public class SotetsegHandler extends RoomHandler
             {
                 secondMazeChosen = getAboveWorldChosen();
             }
-            log.info("Chosen 2nd maze: " + secondMazeChosen);
+            //log.info("Chosen 2nd maze: " + secondMazeChosen);
             lastChosen = secondMazeChosen;
         }
     }

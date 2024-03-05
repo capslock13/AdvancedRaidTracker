@@ -63,18 +63,22 @@ public class StatisticRoomPanel extends JPanel
         }
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createTitledBorder(borderString));
-        subPanel.setLayout(new GridLayout(7, 2));
+        subPanel.setLayout(new GridLayout(0, 2));
         for (int i = 0; i < labelNames.size(); i++)
         {
             subPanel.add(nameLabels.get(i));
             subPanel.add(timeLabels.get(i));
         }
-        for (int i = labelNames.size(); i < 7; i++)
+        for (int i = labelNames.size(); i < 14; i++)
         {
             subPanel.add(new JLabel(""));
             subPanel.add(new JLabel(""));
         }
-        add(subPanel);
+        subPanel.setPreferredSize(new Dimension(100, 200));
+        JScrollPane scrollPane = new JScrollPane(subPanel);
+        scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
+        add(scrollPane);
         updateLabels(data);
     }
 

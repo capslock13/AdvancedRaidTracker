@@ -36,7 +36,15 @@ public enum WeaponAttack
     VENG_SELF("Veng Self", "VS", new Color(160, 89, 13)),
     HUMIDIFY("Humidify", "HU", new Color(20, 20, 200)),
     MAGIC_IMBUE("Magic Imbue", "MI", new Color(60, 60, 150)),
-    WEB_WEAVER("Web Weaver", "WW", new Color(240, 18, 119));
+    WEB_WEAVER("Web Weaver", "WW", new Color(240, 18, 119)),
+    DEATH("Death", "X", new Color(0, 0, 0)),
+    TELEPORT("Teleport", "TP", new Color(60, 70, 80)),
+    HEAL_GROUP("Heal Group", "HG", new Color(50, 170, 100)),
+    CONSUME("Food/Drink Consumed", "CS", new Color(110, 50, 60)),
+    THRALL_CAST("Thrall Cast", "TC", new Color(20, 65, 187)),
+
+
+    ;
 
     public final String name;
     public final String shorthand;

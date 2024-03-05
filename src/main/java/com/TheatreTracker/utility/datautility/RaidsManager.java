@@ -3,6 +3,7 @@ package com.TheatreTracker.utility.datautility;
 import com.TheatreTracker.SimpleRaidData;
 import com.TheatreTracker.ui.RaidTrackerSidePanel;
 import com.TheatreTracker.utility.wrappers.RaidsArrayWrapper;
+import lombok.extern.slf4j.Slf4j;
 
 
 import java.io.BufferedWriter;
@@ -13,10 +14,13 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.Scanner;
 
+import static com.TheatreTracker.utility.datautility.DataWriter.PLUGIN_DIRECTORY;
+@Slf4j
 public class RaidsManager
 {
-    private static final String raidsFolder = System.getProperty("user.home").replace("\\", "/") + "/.runelite/theatretracker/raids/";
+    private static final String raidsFolder = PLUGIN_DIRECTORY + "/misc-dir/raids/";
 
     public static ArrayList<RaidsArrayWrapper> getRaidsSets()
     {
@@ -27,20 +31,20 @@ public class RaidsManager
         {
             for (File entry : Objects.requireNonNull(folder.listFiles()))
             {
-                if (entry.isFile())
+                if (entry.isDirectory())
                 {
-                    if (entry.getAbsolutePath().endsWith(".raids"))
+                    ArrayList<SimpleRaidData> raids = new ArrayList<>();
+                    for(File raid : Objects.requireNonNull(entry.listFiles()))
                     {
-                        ArrayList<SimpleRaidData> raids = new ArrayList<>();
                         try
                         {
-                            RaidTrackerSidePanel.parseLogFile(raids, entry, entry.getAbsolutePath());
+                            RaidTrackerSidePanel.parseLogFile(raids, raid, raid.getAbsolutePath());
                         } catch (Exception e)
                         {
                             e.printStackTrace();
                         }
-                        raidSets.add(new RaidsArrayWrapper(raids, entry.getName()));
                     }
+                    raidSets.add(new RaidsArrayWrapper(raids, entry.getName()));
                 }
             }
         } catch (Exception e)
@@ -78,13 +82,13 @@ public class RaidsManager
             {
                 directory.mkdirs();
             }
-            File raidsFile = new File(raidsFolder + name + ".raids");
+            File raidsFile = new File(raidsFolder + name+"/");
 
             if (raidsFile.exists())
             {
                 raidsFile.delete();
             }
-            raidsFile.createNewFile();
+            raidsFile.mkdirs();
             writeRaid(name, raids);
         } catch (Exception e)
         {
@@ -94,16 +98,20 @@ public class RaidsManager
 
     private static void writeRaid(String name, ArrayList<SimpleRaidData> raids) throws IOException
     {
-        BufferedWriter raidsWriter = new BufferedWriter(new OutputStreamWriter(Files.newOutputStream(Paths.get(raidsFolder + name + ".raids"))));
         for (SimpleRaidData raid : raids)
         {
-            for (String s : raid.raidDataRaw)
+            File newEntry = new File(raidsFolder + name + "/" + raid.fileName);
+            Files.createFile(newEntry.toPath());
+            BufferedWriter fileWriter = new BufferedWriter(new OutputStreamWriter(Files.newOutputStream(newEntry.toPath())));
+            File file = new File(raid.filePath);
+            Scanner logReader = new Scanner(Files.newInputStream(file.toPath()));
+            while (logReader.hasNextLine())
             {
-                raidsWriter.write(s);
-                raidsWriter.newLine();
+                fileWriter.write(logReader.nextLine());
+                fileWriter.newLine();
             }
+            fileWriter.close();
         }
-        raidsWriter.close();
     }
 
     public static void saveRaids(String name, ArrayList<SimpleRaidData> raids)
@@ -115,10 +123,10 @@ public class RaidsManager
             {
                 directory.mkdirs();
             }
-            File raidsFile = new File(raidsFolder + name + ".raids");
+            File raidsFile = new File(raidsFolder + name+"/");
             if (!raidsFile.exists())
             {
-                raidsFile.createNewFile();
+                raidsFile.mkdirs();
             }
             writeRaid(name, raids);
         } catch (Exception e)

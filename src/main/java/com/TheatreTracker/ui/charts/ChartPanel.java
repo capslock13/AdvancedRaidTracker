@@ -12,6 +12,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.game.ItemManager;
+import net.runelite.client.ui.FontManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,7 +21,10 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -70,6 +74,10 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     private Map<Integer, Integer> roomHP = new HashMap<>();
     Map<String, Integer> playerOffsets = new LinkedHashMap<>();
     private final Map<PlayerDidAttack, String> actions = new HashMap<>();
+
+    private final Color primaryDark = new Color(20, 20, 20);
+    private final Color primaryLighter = new Color(40, 40, 40);
+    private final Color primaryMedium = new Color(30, 30, 30);
 
     public void enableWrap()
     {
@@ -197,13 +205,14 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     {
         if(clientThread != null)
         {
+            clientThread.invoke(attack::setIcons);
             clientThread.invoke(attack::setWornNames);
         }
         WeaponAttack weaponAttack = WeaponDecider.getWeapon(attack.animation, attack.spotAnims, attack.projectile, attack.weapon);
         if (weaponAttack != WeaponAttack.UNDECIDED)
         {
             boolean isTarget = RoomUtil.isPrimaryBoss(attack.targetedID) && attack.targetedID != -1;
-            String targetString = "Target: ";
+            String targetString = weaponAttack.name + ": ";
             String targetName = getBossName(attack.targetedID, attack.targetedIndex, attack.tick);
             if (targetName.equals("?"))
             {
@@ -220,10 +229,10 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                 additionalText = "s" + additionalText.substring(0, additionalText.indexOf(")"));
             } else if (targetString.contains("small") || targetString.contains("big"))
             {
-                additionalText = getShortenedString(targetString);
+                additionalText = getShortenedString(targetString, weaponAttack.name.length());
             } else if (targetString.contains("70s") || targetString.contains("50s") || targetString.contains("30s"))
             {
-                String shortenedString = targetString.substring(8);
+                String shortenedString = targetString.substring(weaponAttack.name.length()+2);
                 shortenedString = shortenedString.substring(0, 2);
                 String proc = targetString.substring(targetString.indexOf("0s") - 1, targetString.indexOf("0s") + 1);
 
@@ -233,9 +242,9 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         }
     }
 
-    private static String getShortenedString(String targetString)
+    private static String getShortenedString(String targetString, int index)
     {
-        String shortenedString = targetString.substring(9);
+        String shortenedString = targetString.substring(index+3);
         shortenedString = shortenedString.substring(0, shortenedString.indexOf(" "));
         if (targetString.contains("east small"))
         {
@@ -471,6 +480,21 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         }
     }
 
+    public static BufferedImage getScaledImage(BufferedImage image, int width, int height) throws IOException
+    {
+        int imageWidth  = image.getWidth();
+        int imageHeight = image.getHeight();
+
+        double scaleX = (double)width/imageWidth;
+        double scaleY = (double)height/imageHeight;
+        AffineTransform scaleTransform = AffineTransform.getScaleInstance(scaleX, scaleY);
+        AffineTransformOp bilinearScaleOp = new AffineTransformOp(scaleTransform, AffineTransformOp.TYPE_BILINEAR);
+
+        return bilinearScaleOp.filter(
+                image,
+                new BufferedImage(width, height, image.getType()));
+    }
+
     private void drawYChartColumn(Graphics2D g)
     {
         g.setColor(Color.WHITE);
@@ -481,8 +505,19 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             {
                 g.setColor(Color.DARK_GRAY);
                 g.drawLine(100, 30 + (j * boxHeight) + ((i + 2) * scale), boxWidth - scale, 30 + (j * boxHeight) + ((i + 2) * scale));
+
+                g.setColor(primaryMedium);
+                g.fillRoundRect(5, ((j*boxHeight)+((i+2)*scale))+10-3, 90, scale-6, 10, 10);
                 g.setColor(Color.WHITE);
-                g.drawString(players.get(i), 10, ((j * boxHeight) + ((i + 2) * scale) + (fontHeight) / 2) + 20);
+                Font oldFont = g.getFont();
+                g.setFont(FontManager.getRunescapeBoldFont());
+                int width = getStringWidth(g, players.get(i));
+                int margin = 5;
+                int subBoxWidth = 90;
+                int textPosition = margin + (subBoxWidth-width)/2;
+                g.drawString(players.get(i), textPosition, ((j * boxHeight) + ((i + 2) * scale) + (fontHeight) / 2) + (scale/2) + 6);
+                g.setFont(oldFont);
+
                 if (i == 0)
                 {
                     g.drawString(roomSpecificText, 10, j * boxHeight + ((players.size() + 2) * scale) + (fontHeight / 2) + 20);
@@ -524,7 +559,8 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         }
     }
 
-    private void drawPrimaryBoxes(Graphics2D g)    {
+    private void drawPrimaryBoxes(Graphics2D g)
+    {
         for (OutlineBox box : outlineBoxes)
         {
             if (box.tick >= startTick && box.tick <= endTick)
@@ -541,6 +577,14 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                 int textOffset = (scale / 2) - (getStringWidth(g, box.letter) / 2);
                 int primaryOffset = yOffset + (box.additionalText.isEmpty() ? (fontHeight / 2) : 0);
                 g.drawString(box.letter, xOffset + textOffset, primaryOffset + (scale / 2));
+                /*try
+                {
+                    g.drawImage(getScaledImage(box.attack.img, scale, scale), xOffset, yOffset, null);
+                }
+                catch(Exception e)
+                {
+
+                }*/
                 if (!box.additionalText.isEmpty())
                 {
                     Font f = g.getFont();
@@ -727,6 +771,10 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         {
             for (Integer tick : lines.keySet())
             {
+                if(lines.get(tick).equals("Dead"))
+                {
+                    continue;
+                }
                 String proc = lines.get(tick);
                 int xOffset = 100 + getXOffset(tick + 1);
                 int yOffset = 10 + getYOffset(tick + 1);
@@ -840,10 +888,16 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         Graphics2D g = (Graphics2D) img.getGraphics();
         g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-
+        RenderingHints qualityHints = new RenderingHints(
+                RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_ON );
+        qualityHints.put(
+                RenderingHints.KEY_RENDERING,
+                RenderingHints.VALUE_RENDER_QUALITY );
+        g.setRenderingHints( qualityHints);
         Color oldColor = g.getColor();
 
-        g.setColor(new Color(40, 40, 40));
+        g.setColor(primaryLighter);
         g.fillRect(0, 0, img.getWidth(), img.getHeight());
 
 

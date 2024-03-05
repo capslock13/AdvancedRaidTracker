@@ -111,11 +111,11 @@ public class RaidTrackerSidePanel extends PluginPanel
         }
         for(String position : handMap.keySet())
         {
-            log.info(position + ": " + handMap.get(position));
+           // log.info(position + ": " + handMap.get(position));
         }
-        /*BaseFrame bf = new BaseFrame();
-        bf.add(new BloatHandDataVisualizer(hands));
-        bf.open();*/
+        //BaseFrame bf = new BaseFrame();
+        //bf.add(new BloatHandDataVisualizer(hands));
+        //bf.open();
         return raids;
     }
 
@@ -165,7 +165,7 @@ public class RaidTrackerSidePanel extends PluginPanel
                     int value = Integer.parseInt(lineSplit[3]);
                     if(value != 0)
                     {
-                        if(!config.reduceMemoryLoad() || (value != 801 && value != 403 && value != 404 && value != 576 && value != 587 && value != 410 && value != 405))
+                        if(value != 801 && value != 576 && value != 587)
                         {
                             if (Integer.parseInt(lineSplit[3]) == 99 && !spectate)
                             {
@@ -179,7 +179,7 @@ public class RaidTrackerSidePanel extends PluginPanel
                             {
                                 raid.add(line);
                                 raidActive = false;
-                                raids.add(new SimpleRaidData(raid.toArray(new String[0]), itemManager, filePath));
+                                raids.add(new SimpleRaidData(raid.toArray(new String[0]), filePath, currentFile.getName()));
                                 raid.clear();
                             } else if (value != 99 && value != 98)
                             {
@@ -199,6 +199,7 @@ public class RaidTrackerSidePanel extends PluginPanel
                                     int proc = Integer.parseInt(lineSplit[7]);
                                     if(lastProc != proc)
                                     {
+
                                         if(!procCountMap.containsKey(handsTotal))
                                         {
                                             procCountMap.put(handsTotal, 1);
@@ -247,18 +248,32 @@ public class RaidTrackerSidePanel extends PluginPanel
                                         {
                                             if(hands.size() > 13)
                                             {
-                                                log.info("Last 13 hands: ");
+                                                //log.info("Last 13 hands: ");
+                                                boolean found1 = false;
+                                                boolean found2 = false;
                                                 for(int i = hands.size()-13; i < hands.size(); i++)
                                                 {
-                                                    log.info((i-hands.size()-13) + ": " + hands.get(i).x + "," + hands.get(i).y);
+                                                    //log.info(hands.get(i).x + ", " + hands.get(i).y);
+                                                    if(hands.get(i).x == 28 && hands.get(i).y == 34)
+                                                    {
+                                                        found1 = true;
+                                                    }
+                                                    if(hands.get(i).x == 28 && hands.get(i).y == 25)
+                                                    {
+                                                        found2 = true;
+                                                    }
+                                                }
+                                                if(found1 && found2)
+                                                {
+                                                    //log.info("HAND FOUND ON BOTH SIDES OF CORNER");
                                                 }
                                             }
                                         }
-                                        log.info(handsTotal + " in last proc on " + lastProc);
-                                        log.info("Bottom Left: " + bottomLeftChunkCount);
-                                        log.info("Bottom Right: " + bottomRightChunkCount);
-                                        log.info("Top Left: " + topLeftChunkCount);
-                                        log.info("Top Right: " + topRightChunkCount);
+                                        //log.info(handsTotal + " in last proc on " + lastProc);
+                                        //log.info("Bottom Left: " + bottomLeftChunkCount);
+                                        //log.info("Bottom Right: " + bottomRightChunkCount);
+                                        //log.info("Top Left: " + topLeftChunkCount);
+                                        //log.info("Top Right: " + topRightChunkCount);
                                         bltotal += bottomLeftChunkCount;
                                         brtotal += bottomRightChunkCount;
                                         tltotal += topLeftChunkCount;
@@ -302,10 +317,10 @@ public class RaidTrackerSidePanel extends PluginPanel
         for(Integer i : procCountMap.keySet())
         {
             count += procCountMap.get(i);
-            log.info(i + " hands procced " + procCountMap.get(i) + " times");
+            //log.info(i + " hands procced " + procCountMap.get(i) + " times");
         }
 
-        for(Integer i : blProcMap.keySet())
+        /*for(Integer i : blProcMap.keySet())
         {
             log.info(i + " hands spawned " + blProcMap.get(i) + " times (BL)");
         }
@@ -320,14 +335,14 @@ public class RaidTrackerSidePanel extends PluginPanel
         for(Integer i : trProcMap.keySet())
         {
             log.info(i + " hands spawned " + trProcMap.get(i) + " times (TR)");
-        }
+        }*/
         if(count != 0)
         {
-            log.info("Total procs: " + count);
-            log.info("Bottom left total: " + bltotal);
-            log.info("Bottom right total: " + brtotal);
-            log.info("top left total: " + tltotal);
-            log.info("top right total: " + trtotal);
+            //log.info("Total procs: " + count);
+            //log.info("Bottom left total: " + bltotal);
+            //log.info("Bottom right total: " + brtotal);
+            //log.info("top left total: " + tltotal);
+            //log.info("top right total: " + trtotal);
         }
         logReader.close();
         return hands;

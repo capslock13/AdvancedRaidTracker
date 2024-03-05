@@ -68,7 +68,7 @@ public interface TheatreTrackerConfig extends Config
             name = "Use icons on chart",
             description = "Replaced letter/colors with icons"
     )
-    default boolean useIconsOnChart() { return false;}
+    default boolean useIconsOnChart() { return true;}
 
     @ConfigItem(
             position = 6,
@@ -100,7 +100,7 @@ public interface TheatreTrackerConfig extends Config
             name = "Letter BG Opacity",
             description = "Opacity of letter background color on chart"
     )
-    default int letterBackgroundOpacity() { return 100;}
+    default int letterBackgroundOpacity() { return 180;}
 
     @ConfigItem(
             position = 9,
@@ -108,5 +108,13 @@ public interface TheatreTrackerConfig extends Config
             name = "Icon BG Opacity",
             description = "Opacity of icon background color on chart"
     )
-    default int iconBackgroundOpacity() { return 100;}
+    default int iconBackgroundOpacity() { return 180;}
+
+    @ConfigItem(
+            position = 10,
+            keyName = "useUnkitted",
+            name = "Use unkitted icons",
+            description = "Replaces kitted items with unkitted variants on chart icons"
+    )
+    default boolean useUnkitted(){return false;}
 }

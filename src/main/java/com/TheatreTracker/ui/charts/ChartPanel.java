@@ -10,10 +10,14 @@ import com.TheatreTracker.utility.wrappers.*;
 import com.google.inject.Inject;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import net.runelite.api.IconID;
+import net.runelite.api.SpriteID;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigItem;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.game.ItemManager;
+import net.runelite.client.game.SkillIconManager;
+import net.runelite.client.game.SpriteManager;
 import net.runelite.client.ui.FontManager;
 
 import javax.swing.*;
@@ -206,6 +210,10 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     {
         if(clientThread != null)
         {
+            if(config.useUnkitted())
+            {
+                attack.useUnkitted();
+            }
             clientThread.invoke(attack::setIcons);
             clientThread.invoke(attack::setWornNames);
         }
@@ -459,10 +467,10 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     {
         for (Integer i : autos)
         {
-            g.setColor(new Color(255, 80, 80, 100));
+            g.setColor(new Color(255, 80, 80, 60));
             int xOffset = getXOffset(i);
             int yOffset = getYOffset(i);
-            g.fillRect(xOffset + 100, yOffset + 10, scale, boxHeight - scale);
+            g.fillRoundRect(xOffset + 100, yOffset + 10, scale, boxHeight - scale, 7, 7);
         }
     }
 
@@ -562,6 +570,21 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         }
     }
 
+    public static BufferedImage createDropShadow(BufferedImage image)
+    {
+        BufferedImage shadow = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+
+        Graphics2D g2 = shadow.createGraphics();
+        g2.drawImage(image, 0, 0, null);
+
+        g2.setComposite(AlphaComposite.SrcIn);
+        g2.setColor(new Color(0, 0, 0, 128));
+        g2.fillRect(0, 0, shadow.getWidth(), shadow.getHeight());
+
+        g2.dispose();
+        return shadow;
+    }
+
     private void drawPrimaryBoxes(Graphics2D g)
     {
         for (OutlineBox box : outlineBoxes)
@@ -585,8 +608,9 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                             opacity = Math.max(0, opacity);
                             g.setColor(new Color(box.color.getRed(), box.color.getGreen(), box.color.getBlue(), opacity));
                             g.fillRoundRect(xOffset + 2, yOffset + 2, scale - 3, scale - 3, 5, 5);
-                            BufferedImage scaled = getScaledImage(box.attack.img, scale, scale);
-                            g.drawImage(getScaledImage(scaled, scale, scale), xOffset, yOffset, null);
+                            BufferedImage scaled = getScaledImage(box.attack.img, scale-2, scale-2);
+                            g.drawImage(createDropShadow(scaled), xOffset + 3, yOffset + 3, null);
+                            g.drawImage(scaled, xOffset+2, yOffset+1, null);
                         }
                     }
                     catch(Exception e)
@@ -977,13 +1001,13 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
         drawKey(g);
         drawTicks(g);
-        drawAutos(g);
         drawGraphBoxes(g);
         drawBaseBoxes(g);
         drawYChartColumn(g);
         drawRoomSpecificData(g);
         drawDawnSpecs(g);
         drawPrimaryBoxes(g);
+        drawAutos(g);
         drawMarkerLines(g);
         drawThrallBoxes(g);
         drawMaidenCrabs(g);

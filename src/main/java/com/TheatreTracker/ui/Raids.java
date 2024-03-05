@@ -14,7 +14,6 @@ import com.TheatreTracker.ui.exportraids.SaveRaids;
 import com.TheatreTracker.ui.filters.LoadFilter;
 import com.TheatreTracker.ui.filters.SaveFilter;
 import com.TheatreTracker.ui.statistics.StatisticTab;
-import com.TheatreTracker.ui.summary.SummarizeRaids;
 import com.TheatreTracker.utility.*;
 import com.TheatreTracker.utility.datautility.DataPoint;
 import com.TheatreTracker.utility.datautility.DataWriter;
@@ -34,8 +33,6 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
 import javax.swing.text.BadLocationException;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.*;
@@ -63,14 +60,14 @@ public class Raids extends BaseFrame
     Map<String, JLabel> medianLabels = new LinkedHashMap<>();
     Map<String, JLabel> minLabels = new LinkedHashMap<>();
     Map<String, JLabel> maxLabels = new LinkedHashMap<>();
-    public JComboBox statisticsBox;
+    public JComboBox<String> statisticsBox;
     public JLabel customAverageLabel = new JLabel("", SwingConstants.RIGHT);
     public JLabel customMedianLabel = new JLabel("", SwingConstants.RIGHT);
     public JLabel customModeLabel = new JLabel("", SwingConstants.RIGHT);
     public JLabel customMinLabel = new JLabel("", SwingConstants.RIGHT);
     public JLabel customMaxLabel = new JLabel("", SwingConstants.RIGHT);
 
-    private ArrayList<Map<String, ArrayList<String>>> aliases;
+    private final ArrayList<Map<String, ArrayList<String>>> aliases;
 
     private final JTextArea aliasText;
 
@@ -79,7 +76,7 @@ public class Raids extends BaseFrame
     JCheckBox filterInRaidOnly;
     JCheckBox filterCompletionOnly;
     JCheckBox filterWipeResetOnly;
-    JComboBox filterComboBoxScale;
+    JComboBox<String> filterComboBoxScale;
     JCheckBox filterCheckBoxScale;
     JCheckBox filterTodayOnly;
     JCheckBox filterPartyOnly;
@@ -105,7 +102,6 @@ public class Raids extends BaseFrame
     private StatisticTab verzikTab;
     private boolean built = false;
     private JComboBox<String> dateFilterOperator;
-    private JTextField dateFilterValue;
     private JComboBox<String> otherIntFilterChoice;
     private JComboBox<String> otherIntFilterOperator;
     private JTextField otherIntFilterValue;
@@ -115,7 +111,7 @@ public class Raids extends BaseFrame
 
     private final TheatreTrackerConfig config;
     private final ItemManager itemManager;
-    private ClientThread clientThread;
+    private final ClientThread clientThread;
 
     public String[] rooms = {"Maiden", "Bloat","Nylocas","Sotetseg","Xarpus","Verzik","Challenge"};
     private final ConfigManager configManager;
@@ -190,7 +186,6 @@ public class Raids extends BaseFrame
 
     public void updateTable()
     {
-        String timeToDisplay = "0";
         int completions = 0;
         ArrayList<SimpleRaidData> tableData = new ArrayList<>();
         for (SimpleRaidData data : currentData)
@@ -264,7 +259,7 @@ public class Raids extends BaseFrame
             }
             if (filterPartialOnly.isSelected())
             {
-                switch (viewByRaidComboBox.getSelectedItem().toString())
+                switch (Objects.requireNonNull(viewByRaidComboBox.getSelectedItem()).toString())
                 {
                     case "Challenge Time":
                         if (!data.getOverallTimeAccurate())
@@ -314,8 +309,6 @@ public class Raids extends BaseFrame
             {
                 shouldDataBeIncluded = filterComboBoxScale.getSelectedIndex() + 1 == data.getScale();
             }
-            timeToDisplay = String.valueOf(data.getSpecificTimeInactive(viewByRaidComboBox.getSelectedItem().toString()));
-
             for (Integer i : filteredIndices)
             {
                 if (data.getValue(DataPoint.RAID_INDEX) == i)
@@ -351,14 +344,14 @@ public class Raids extends BaseFrame
             {
                 for (SimpleRaidData data : tableData)
                 {
-                    data.activeValue = viewByRaidComboBox.getSelectedItem().toString();
+                    data.activeValue = Objects.requireNonNull(viewByRaidComboBox.getSelectedItem()).toString();
                 }
                 tableData.sort(Comparator.comparing(SimpleRaidData::getSpecificTime));
             } else
             {
                 for (SimpleRaidData data : tableData)
                 {
-                    data.activeValue = viewByRaidComboBox.getSelectedItem().toString();
+                    data.activeValue = Objects.requireNonNull(viewByRaidComboBox.getSelectedItem()).toString();
                 }
                 tableData.sort(Comparator.comparing(SimpleRaidData::getSpecificTime).reversed());
             }
@@ -388,7 +381,7 @@ public class Raids extends BaseFrame
             }
             if (item.getText().equals("Status"))
             {
-                columnNamesDynamic.add(viewByRaidComboBox.getSelectedItem().toString());
+                columnNamesDynamic.add(Objects.requireNonNull(viewByRaidComboBox.getSelectedItem()).toString());
             }
         }
         ArrayList<Object[]> tableBuilder = new ArrayList<>();
@@ -402,7 +395,7 @@ public class Raids extends BaseFrame
             tableBuilder.add(rowBuilder.toArray());
         }
         int columns = 0;
-        if (tableBuilder.size() != 0)
+        if (!tableBuilder.isEmpty())
         {
             columns = tableBuilder.get(0).length;
         }
@@ -444,8 +437,7 @@ public class Raids extends BaseFrame
             case "Date":
                 Calendar cal = Calendar.getInstance();
                 cal.setTime(raid.raidStarted);
-                String dateString = (cal.get(Calendar.MONTH) + 1) + "-" + cal.get(Calendar.DAY_OF_MONTH) + "-" + cal.get(Calendar.YEAR);
-                return dateString;
+                return (cal.get(Calendar.MONTH) + 1) + "-" + cal.get(Calendar.DAY_OF_MONTH) + "-" + cal.get(Calendar.YEAR);
             case "Scale":
                 return raid.getScaleString();
             case "Status":
@@ -494,7 +486,7 @@ public class Raids extends BaseFrame
                     valueToDisplay = pointData.value + " (" + pointData.player + ")";
                 }
             }
-        } catch (Exception e)
+        } catch (Exception ignored)
         {
 
         }
@@ -507,8 +499,9 @@ public class Raids extends BaseFrame
         {
             if (!value.contains("Player:"))
             {
-                return (Objects.requireNonNull(DataPoint.getValue(Objects.requireNonNull(value)).type == DataPoint.types.TIME));
-            } else
+                return DataPoint.getValue(value).type == DataPoint.types.TIME;
+            }
+            else
             {
                 return false;
             }
@@ -517,18 +510,6 @@ public class Raids extends BaseFrame
             return false;
         }
     }
-
-    boolean isTime()
-    {
-        if (!viewByRaidComboBox.getSelectedItem().toString().contains("Player:"))
-        {
-            return (Objects.requireNonNull(DataPoint.getValue(Objects.requireNonNull(viewByRaidComboBox.getSelectedItem()).toString())).type == DataPoint.types.TIME);
-        } else
-        {
-            return false;
-        }
-    }
-
 
     private void updateTabNames(ArrayList<SimpleRaidData> data)
     {
@@ -684,7 +665,7 @@ public class Raids extends BaseFrame
                 continue;
             }
             String name = split[0];
-            ArrayList<String> names = new ArrayList<String>(Arrays.asList(split[1].split(",")));
+            ArrayList<String> names = new ArrayList<>(Arrays.asList(split[1].split(",")));
             if (!names.isEmpty())
             {
                 Map<String, ArrayList<String>> map = new LinkedHashMap<>();
@@ -718,13 +699,7 @@ public class Raids extends BaseFrame
         JMenuItem item = new JMenuItem(name);
         item.setBackground(Color.BLACK);
         item.setOpaque(true);
-        item.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent event)
-            {
-                getUpdatedPopupMenu(name);
-            }
-        });
+        item.addActionListener(event -> getUpdatedPopupMenu(name));
         return item;
     }
 
@@ -733,18 +708,12 @@ public class Raids extends BaseFrame
         JMenuItem item = new JMenuItem(name);
         item.setBackground(Color.BLACK);
         item.setOpaque(true);
-        item.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent event)
-            {
-                setComboSelection(name);
-            }
-        });
+        item.addActionListener(event -> setComboSelection(name));
         return item;
     }
 
 
-    private final Map<String, String[]> comboPopupData = new LinkedHashMap<String, String[]>();
+    private final Map<String, String[]> comboPopupData = new LinkedHashMap<>();
 
 
     public  JPanel getOverallPanel(String title, Map<String, JLabel> labelMap)
@@ -786,9 +755,9 @@ public class Raids extends BaseFrame
         comboPopupMenu = new JPopupMenu();
         comboPopupMenu.setBorder(new MatteBorder(1, 1, 1, 1, Color.DARK_GRAY));
 
-        List<String> allComboValues = new ArrayList<String>(comboPopupData.keySet());
+        List<String> allComboValues = new ArrayList<>(comboPopupData.keySet());
 
-        comboStrictData = new ArrayList<String>();
+        comboStrictData = new ArrayList<>();
 
         for (String category : allComboValues)
         {
@@ -885,6 +854,7 @@ public class Raids extends BaseFrame
                 if (qualified.contains(s))
                 {
                     anyFlagged = true;
+                    break;
                 }
             }
             if (!anyFlagged)
@@ -911,14 +881,7 @@ public class Raids extends BaseFrame
             }
         }
 
-        arrowButton.addActionListener(new ActionListener()
-        {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                setPopupVisible(!comboPopupMenu.isVisible());
-            }
-        });
+        arrowButton.addActionListener(e -> setPopupVisible(!comboPopupMenu.isVisible()));
 
         viewByRaidComboBox.addMouseListener(new MouseAdapter()
         {
@@ -1014,7 +977,7 @@ public class Raids extends BaseFrame
 
         JPanel viewRaidByPanel = getTitledPanel("View Raid By");
 
-        sortOptionsBox = new JComboBox(new String[]
+        sortOptionsBox = new JComboBox<>(new String[]
                 {
                         "Date",
                         "Value",
@@ -1022,33 +985,27 @@ public class Raids extends BaseFrame
                 }
         );
 
-        sortOrderBox = new JComboBox(new String[]
+        sortOrderBox = new JComboBox<>(new String[]
                 {
                         "Ascending",
                         "Descending"
                 });
 
-        statisticsBox = new JComboBox(DataPoint.getByNames());
+        statisticsBox = new JComboBox<>(DataPoint.getByNames());
 
 
         statisticsBox.addActionListener(
                 al ->
-                {
-                    updateTable();
-                });
+                        updateTable());
 
         sortOptionsBox.addActionListener(
                 al ->
-                {
-                    updateTable();
-                }
+                        updateTable()
         );
 
         sortOrderBox.addActionListener(
                 al ->
-                {
-                    updateTable();
-                }
+                        updateTable()
         );
 
         JLabel textCustomAverageLabel = new JLabel("Average:", SwingConstants.LEFT);
@@ -1090,9 +1047,7 @@ public class Raids extends BaseFrame
 
         viewByRaidComboBox.addActionListener(
                 al ->
-                {
-                    updateTable();
-                });
+                        updateTable());
 
         viewRaidByPanel.add(viewByRaidComboBox);
 
@@ -1146,18 +1101,18 @@ public class Raids extends BaseFrame
         additionalFiltersPanel.setMinimumSize(new Dimension(200, 300));
         additionalFiltersPanel.setPreferredSize(new Dimension(200, 300));
 
-        filterSpectateOnly = getActionListenCheckBox("Spectate Only", al->{updateTable();});
-        filterInRaidOnly = getActionListenCheckBox("In Raid Only", al->{updateTable();});
-        filterCompletionOnly = getActionListenCheckBox("Completion Only", al->{updateTable();});
-        filterWipeResetOnly = getActionListenCheckBox("Wipe/Reset Only", al->{updateTable();});
-        filterComboBoxScale = UISwingUtility.getActionListenCheckBox(new String[]{"Solo", "Duo", "Trio", "4-Man", "5-Man"}, al->{updateTable();});
-        filterCheckBoxScale = getActionListenCheckBox("Scale", al -> {updateTable();});
-        filterTodayOnly = getActionListenCheckBox("Today Only", al -> {updateTable();});
-        filterPartyOnly = getActionListenCheckBox("Party Only", al -> {updateTable();});
-        filterPartialData = getActionListenCheckBox("Filter Partial Raids", al -> {updateTable();});
-        filterPartialOnly = getActionListenCheckBox("Filter Partial Rooms", al -> {updateTable();});
+        filterSpectateOnly = getActionListenCheckBox("Spectate Only", al-> updateTable());
+        filterInRaidOnly = getActionListenCheckBox("In Raid Only", al-> updateTable());
+        filterCompletionOnly = getActionListenCheckBox("Completion Only", al-> updateTable());
+        filterWipeResetOnly = getActionListenCheckBox("Wipe/Reset Only", al-> updateTable());
+        filterComboBoxScale = UISwingUtility.getActionListenCheckBox(new String[]{"Solo", "Duo", "Trio", "4-Man", "5-Man"}, al -> updateTable());
+        filterCheckBoxScale = getActionListenCheckBox("Scale", al -> updateTable());
+        filterTodayOnly = getActionListenCheckBox("Today Only", al -> updateTable());
+        filterPartyOnly = getActionListenCheckBox("Party Only", al -> updateTable());
+        filterPartialData = getActionListenCheckBox("Filter Partial Raids", al -> updateTable());
+        filterPartialOnly = getActionListenCheckBox("Filter Partial Rooms", al -> updateTable());
         filterPartialData.setToolTipText("Removes data sets that have any rooms that were partially completed");
-        filterNormalOnly = getActionListenCheckBox("Normal Mode Only", true, al->{updateTable();});
+        filterNormalOnly = getActionListenCheckBox("Normal Mode Only", true, al-> updateTable());
 
         JPanel scaleContainer = new JPanel();
         scaleContainer.setLayout(new BoxLayout(scaleContainer, BoxLayout.X_AXIS));
@@ -1221,7 +1176,7 @@ public class Raids extends BaseFrame
         filterOtherBoolPanel.setLayout(new GridLayout(2, 2));
 
 
-        timeFilterChoice = new JComboBox<String>(DataPoint.getTimeNames());
+        timeFilterChoice = new JComboBox<>(DataPoint.getTimeNames());
 
         String[] timeOperatorChoices =
                 {
@@ -1232,7 +1187,7 @@ public class Raids extends BaseFrame
                         ">="
                 };
 
-        timeFilterOperator = new JComboBox<String>(timeOperatorChoices);
+        timeFilterOperator = new JComboBox<>(timeOperatorChoices);
 
 
         timeFilterValue = new JTextField();
@@ -1242,11 +1197,11 @@ public class Raids extends BaseFrame
                 al ->
                 {
                     String time = timeFilterValue.getText();
-                    if (time.equals(""))
+                    if (time.isEmpty())
                     {
                         return;
                     }
-                    String timeStr = timeFilterChoice.getSelectedItem().toString() + " " + timeFilterOperator.getSelectedItem().toString() + " " + time;
+                    String timeStr = Objects.requireNonNull(timeFilterChoice.getSelectedItem()) + " " + Objects.requireNonNull(timeFilterOperator.getSelectedItem()) + " " + time;
                     activeFilters.add(new ImplicitFilter(new FilterTime(DataPoint.getValue(String.valueOf(timeFilterChoice.getSelectedItem())), timeFilterOperator.getSelectedIndex(), getTimeFromString(time), timeStr)));
                     updateFilterTable();
                 });
@@ -1281,7 +1236,7 @@ public class Raids extends BaseFrame
                 "excludes all of"
         };
 
-        playerFilterOperator = new JComboBox<String>(playersQualifier);
+        playerFilterOperator = new JComboBox<>(playersQualifier);
         playerFilterValue = new JTextField();
         JButton playerFilterAdd = new JButton("Add");
         playerFilterValue.setMaximumSize(new Dimension(Integer.MAX_VALUE, playerFilterAdd.getPreferredSize().height));
@@ -1292,7 +1247,7 @@ public class Raids extends BaseFrame
         playerFilterAdd.addActionListener(
                 al ->
                 {
-                    String filterStr = "Raid " + playerFilterOperator.getSelectedItem().toString() + " " + playerFilterValue.getText();
+                    String filterStr = "Raid " + playerFilterOperator.getSelectedItem() + " " + playerFilterValue.getText();
                     activeFilters.add(new ImplicitFilter(new FilterPlayers(playerFilterValue.getText(), playerFilterOperator.getSelectedIndex(), filterStr)));
                     updateFilterTable();
                 });
@@ -1320,8 +1275,8 @@ public class Raids extends BaseFrame
                         "after"
                 };
 
-        dateFilterOperator = new JComboBox<String>(choicesDate);
-        dateFilterValue = new JTextField();
+        dateFilterOperator = new JComboBox<>(choicesDate);
+        JTextField dateFilterValue = new JTextField();
         dateFilterOperator.setMaximumSize(new Dimension(Integer.MAX_VALUE, dateFilterValue.getPreferredSize().height));
 
 
@@ -1336,10 +1291,10 @@ public class Raids extends BaseFrame
                         int year = Integer.parseInt(datePartial[0]);
                         int month = Integer.parseInt(datePartial[1]);
                         int day = Integer.parseInt(datePartial[2]);
-                        Date date = new GregorianCalendar(year, month - 1, day).getTime();
-                        String filterStr = "Raid was " + dateFilterOperator.getSelectedItem().toString() + " " + date.toString();
+                        Date date = new GregorianCalendar(year, month-1, day).getTime();
+                        String filterStr = "Raid was " + dateFilterOperator.getSelectedItem() + " " + date;
                         activeFilters.add(new ImplicitFilter(new FilterDate(date, dateFilterOperator.getSelectedIndex(), filterStr)));
-                    } catch (Exception e)
+                    } catch (Exception ignored)
                     {
 
                     }
@@ -1380,15 +1335,15 @@ public class Raids extends BaseFrame
         };
 
 
-        otherIntFilterChoice = new JComboBox<String>(DataPoint.getOtherIntNames());
-        otherIntFilterOperator = new JComboBox<String>(otherIntOperatorChoices);
+        otherIntFilterChoice = new JComboBox<>(DataPoint.getOtherIntNames());
+        otherIntFilterOperator = new JComboBox<>(otherIntOperatorChoices);
         otherIntFilterValue = new JTextField();
 
         JButton otherIntAdd = new JButton("Add");
         otherIntAdd.addActionListener(
                 al ->
                 {
-                    String filterStr = otherIntFilterChoice.getSelectedItem().toString() + " " + otherIntFilterOperator.getSelectedItem().toString() + " " + otherIntFilterValue.getText() + " ";
+                    String filterStr = Objects.requireNonNull(otherIntFilterChoice.getSelectedItem()) + " " + Objects.requireNonNull(otherIntFilterOperator.getSelectedItem()) + " " + otherIntFilterValue.getText() + " ";
                     activeFilters.add(new ImplicitFilter(new FilterOtherInt(DataPoint.getValue(String.valueOf(otherIntFilterChoice.getSelectedItem())), otherIntFilterOperator.getSelectedIndex(), Integer.parseInt(otherIntFilterValue.getText()), filterStr)));
                     updateFilterTable();
                 }
@@ -1444,15 +1399,15 @@ public class Raids extends BaseFrame
                 "False"
         };
 
-        otherBoolFilterChoice = new JComboBox<String>(choicesOtherBool);
-        otherBoolFilterOperator = new JComboBox<String>(qualifierOtherBool);
+        otherBoolFilterChoice = new JComboBox<>(choicesOtherBool);
+        otherBoolFilterOperator = new JComboBox<>(qualifierOtherBool);
 
 
         JButton otherBoolAdd = new JButton("Add Filter");
         otherBoolAdd.addActionListener(
                 al ->
                 {
-                    String filterStr = otherBoolFilterChoice.getSelectedItem().toString() + " " + otherBoolFilterOperator.getSelectedItem().toString();
+                    String filterStr = Objects.requireNonNull(otherBoolFilterChoice.getSelectedItem()) + " " + otherBoolFilterOperator.getSelectedItem();
                     activeFilters.add(new ImplicitFilter(new FilterOtherBool(otherBoolFilterChoice.getSelectedIndex(), otherBoolFilterOperator.getSelectedIndex() == 0, filterStr)));
                     updateFilterTable();
                 }
@@ -1496,78 +1451,56 @@ public class Raids extends BaseFrame
         JMenuItem analyzeSessions = new JMenuItem("Analyze Sessions");
         analyzeSessions.setBackground(Color.BLACK);
         analyzeSessions.setOpaque(true);
-        analyzeSessions.addActionListener(new ActionListener()
+        analyzeSessions.addActionListener(e ->
         {
-            @Override
-            public void actionPerformed(ActionEvent e)
+            updateAliases();
+            ArrayList<SimpleRaidData> rows = new ArrayList<>();
+            int[] toRemove = table.getSelectedRows();
+            for (int j : toRemove)
             {
-                updateAliases();
-                ArrayList<SimpleRaidData> rows = new ArrayList<>();
-                int[] toRemove = table.getSelectedRows();
-                for (int i = 0; i < toRemove.length; i++)
+                rows.add(currentData.get(Integer.parseInt(table.getModel().getValueAt(j, 0).toString())));
+            }
+            Map<Integer, Map<String, ArrayList<SimpleRaidData>>> sessions = new LinkedHashMap<>();
+            for (SimpleRaidData data12 : rows)
+            {
+                if (!sessions.containsKey(data12.players.size()))
                 {
-                    rows.add(currentData.get(Integer.parseInt(table.getModel().getValueAt(toRemove[i], 0).toString())));
-                }
-                Map<Integer, Map<String, ArrayList<SimpleRaidData>>> sessions = new LinkedHashMap<>();
-                for (SimpleRaidData data : rows)
+                    Map<String, ArrayList<SimpleRaidData>> scale = new LinkedHashMap<>();
+                    ArrayList<SimpleRaidData> list = new ArrayList<>();
+                    list.add(data12);
+                    scale.put(data12.getPlayerList(aliases), list);
+                    sessions.put(data12.players.size(), scale);
+                } else
                 {
-                    if (!sessions.containsKey(data.players.size()))
+                    if (!sessions.get(data12.players.size()).containsKey(data12.getPlayerList(aliases)))
                     {
-                        Map<String, ArrayList<SimpleRaidData>> scale = new LinkedHashMap<>();
                         ArrayList<SimpleRaidData> list = new ArrayList<>();
-                        list.add(data);
-                        scale.put(data.getPlayerList(aliases), list);
-                        sessions.put(data.players.size(), scale);
+                        list.add(data12);
+                        sessions.get(data12.players.size()).put(data12.getPlayerList(aliases), list);
                     } else
                     {
-                        if (!sessions.get(data.players.size()).containsKey(data.getPlayerList(aliases)))
-                        {
-                            ArrayList<SimpleRaidData> list = new ArrayList<>();
-                            list.add(data);
-                            sessions.get(data.players.size()).put(data.getPlayerList(aliases), list);
-                        } else
-                        {
-                            sessions.get(data.players.size()).get(data.getPlayerList(aliases)).add(data);
-                        }
+                        sessions.get(data12.players.size()).get(data12.getPlayerList(aliases)).add(data12);
                     }
                 }
-                ArrayList<ArrayList<String>> labelSets = new ArrayList<>();
-                Map<Integer, ArrayList<ArrayList<SimpleRaidData>>> dataSets = new LinkedHashMap<>();
-                for (Integer scale : sessions.keySet())
-                {
-                    ArrayList<ArrayList<SimpleRaidData>> scaleData = new ArrayList<>();
-                    ArrayList<String> labels = new ArrayList<>();
-                    for (String playerList : sessions.get(scale).keySet())
-                    {
-                        scaleData.add(sessions.get(scale).get(playerList));
-                        labels.add(playerList);
-                    }
-                    dataSets.put(scale, scaleData);
-                    labelSets.add(labels);
-                }
-                ComparisonViewFrame graphView = new ComparisonViewFrame(dataSets, labelSets, config, itemManager, clientThread, configManager);
-                graphView.open();
             }
-        });
-
-        JMenuItem summarizeSession = new JMenuItem("Summarize Session");
-        summarizeSession.setBackground(Color.BLACK);
-        summarizeSession.setOpaque(true);
-
-        summarizeSession.addActionListener(new ActionListener()
-        {
-            @Override
-            public void actionPerformed(ActionEvent e)
+            ArrayList<ArrayList<String>> labelSets = new ArrayList<>();
+            Map<Integer, ArrayList<ArrayList<SimpleRaidData>>> dataSets = new LinkedHashMap<>();
+            for (Integer scale : sessions.keySet())
             {
-                ArrayList<SimpleRaidData> rows = new ArrayList<>();
-                int[] toRemove = table.getSelectedRows();
-                for (int i = 0; i < toRemove.length; i++)
+                ArrayList<ArrayList<SimpleRaidData>> scaleData = new ArrayList<>();
+                ArrayList<String> labels = new ArrayList<>();
+                for (String playerList : sessions.get(scale).keySet())
                 {
-                    rows.add(currentData.get(Integer.parseInt(table.getModel().getValueAt(toRemove[i], 0).toString())));
+                    scaleData.add(sessions.get(scale).get(playerList));
+                    labels.add(playerList);
                 }
-                new SummarizeRaids(rows);
+                dataSets.put(scale, scaleData);
+                labelSets.add(labels);
             }
+            ComparisonViewFrame graphView = new ComparisonViewFrame(dataSets, labelSets, config, itemManager, clientThread, configManager);
+            graphView.open();
         });
+
 
         JMenuItem addToComparison = new JMenuItem("Add set to comparison");
         addToComparison.setBackground(Color.BLACK);
@@ -1586,136 +1519,113 @@ public class Raids extends BaseFrame
         {
             ArrayList<SimpleRaidData> rows = new ArrayList<>();
             int[] toRemove = table.getSelectedRows();
-            for (int i = 0; i < toRemove.length; i++)
+            for (int j : toRemove)
             {
-                rows.add(currentData.get(Integer.parseInt(table.getModel().getValueAt(toRemove[i], 0).toString())));
+                rows.add(currentData.get(Integer.parseInt(table.getModel().getValueAt(j, 0).toString())));
             }
             ChartFrame roomCharts = new ChartFrame(rows, config, itemManager, clientThread, configManager);
             roomCharts.open();
         });
 
-        viewGraphs.addActionListener(new ActionListener()
+        viewGraphs.addActionListener(e ->
         {
-            @Override
-            public void actionPerformed(ActionEvent e)
+            ArrayList<String> labels = new ArrayList<>();
+            ArrayList<SimpleRaidData> rows = new ArrayList<>();
+            int[] toRemove = table.getSelectedRows();
+            for (int j : toRemove)
             {
-                ArrayList<String> labels = new ArrayList<>();
-                ArrayList<SimpleRaidData> rows = new ArrayList<>();
-                int[] toRemove = table.getSelectedRows();
-                for (int i = 0; i < toRemove.length; i++)
-                {
-                    rows.add(currentData.get(Integer.parseInt(table.getModel().getValueAt(toRemove[i], 0).toString())));
-                }
-                if (rows.isEmpty())
-                {
-                    new NoDataPopUp().open();
-                } else
-                {
-                    labels.add("");
-                    ArrayList<ArrayList<SimpleRaidData>> data = new ArrayList<>();
-                    data.add(rows);
-                    ComparisonViewFrame graphView = new ComparisonViewFrame(data, labels);
-                    graphView.open();
-                }
+                rows.add(currentData.get(Integer.parseInt(table.getModel().getValueAt(j, 0).toString())));
+            }
+            if (rows.isEmpty())
+            {
+                new NoDataPopUp().open();
+            } else
+            {
+                labels.add("");
+                ArrayList<ArrayList<SimpleRaidData>> data1 = new ArrayList<>();
+                data1.add(rows);
+                ComparisonViewFrame graphView = new ComparisonViewFrame(data1, labels);
+                graphView.open();
             }
         });
 
-        addToComparison.addActionListener(new ActionListener()
+        addToComparison.addActionListener(e ->
         {
-            @Override
-            public void actionPerformed(ActionEvent e)
+            ArrayList<SimpleRaidData> rows = new ArrayList<>();
+            int[] toRemove = table.getSelectedRows();
+            for (int j : toRemove)
             {
-                ArrayList<SimpleRaidData> rows = new ArrayList<>();
-                int[] toRemove = table.getSelectedRows();
-                for (int i = 0; i < toRemove.length; i++)
-                {
-                    rows.add(currentData.get(Integer.parseInt(table.getModel().getValueAt(toRemove[i], 0).toString())));
-                }
-                comparisons.add(rows);
-                updateComparisonTable();
+                rows.add(currentData.get(Integer.parseInt(table.getModel().getValueAt(j, 0).toString())));
             }
+            comparisons.add(rows);
+            updateComparisonTable();
         });
         JMenuItem exportRaids = new JMenuItem("Export Selected Raids to CSV");
         exportRaids.setBackground(Color.BLACK);
         exportRaids.setOpaque(true);
-        exportRaids.addActionListener(new ActionListener()
+        exportRaids.addActionListener(e ->
         {
-            @Override
-            public void actionPerformed(ActionEvent e)
+            ArrayList<SimpleRaidData> rows = new ArrayList<>();
+            int[] toRemove = table.getSelectedRows();
+            for (int j : toRemove)
             {
-                ArrayList<SimpleRaidData> rows = new ArrayList<>();
-                int[] toRemove = table.getSelectedRows();
-                for (int i = 0; i < toRemove.length; i++)
-                {
-                    rows.add(currentData.get(Integer.parseInt(table.getModel().getValueAt(toRemove[i], 0).toString())));
-                }
-                new SaveRaids(rows).open();
+                rows.add(currentData.get(Integer.parseInt(table.getModel().getValueAt(j, 0).toString())));
             }
+            new SaveRaids(rows).open();
         });
 
         JMenuItem filterRaids = new JMenuItem("Filter Selected Raids");
         filterRaids.setBackground(Color.BLACK);
         filterRaids.setOpaque(true);
-        filterRaids.addActionListener(new ActionListener()
+        filterRaids.addActionListener(e ->
         {
-            @Override
-            public void actionPerformed(ActionEvent e)
+            int[] toRemove = table.getSelectedRows();
+            for (int j : toRemove)
             {
-                int[] toRemove = table.getSelectedRows();
-                for (int i = 0; i < toRemove.length; i++)
-                {
-                    filteredIndices.add(Integer.parseInt(table.getModel().getValueAt(toRemove[i], 0).toString()));
-                }
-
-                updateTable();
+                filteredIndices.add(Integer.parseInt(table.getModel().getValueAt(j, 0).toString()));
             }
+
+            updateTable();
         });
 
         JMenuItem filterExclusiveRaids = new JMenuItem("Filter All Except Selected Raids");
         filterExclusiveRaids.setBackground(Color.BLACK);
         filterExclusiveRaids.setOpaque(true);
-        filterExclusiveRaids.addActionListener(new ActionListener()
+        filterExclusiveRaids.addActionListener(e ->
         {
-            @Override
-            public void actionPerformed(ActionEvent e)
+            int[] toKeep = table.getSelectedRows();
+            for (int i = 0; i < table.getRowCount(); i++)
             {
-                int[] toKeep = table.getSelectedRows();
-                for (int i = 0; i < table.getRowCount(); i++)
+                boolean found = false;
+                for (int k : toKeep)
                 {
-                    boolean found = false;
-                    for (int j = 0; j < toKeep.length; j++)
+                    if (i == k)
                     {
-                        if (i == toKeep[j])
-                        {
-                            found = true;
-                        }
-                    }
-                    if (!found)
-                    {
-                        filteredIndices.add(Integer.parseInt(table.getModel().getValueAt(i, 0).toString()));
+                        found = true;
+                        break;
                     }
                 }
-
-                updateTable();
+                if (!found)
+                {
+                    filteredIndices.add(Integer.parseInt(table.getModel().getValueAt(i, 0).toString()));
+                }
             }
+
+            updateTable();
         });
 
         JMenuItem analyzeCrabs = new JMenuItem("Analyze selection crab leaks");
         analyzeCrabs.setOpaque(true);
         analyzeCrabs.setBackground(Color.BLACK);
-        analyzeCrabs.addActionListener(new ActionListener()
+        analyzeCrabs.addActionListener(e ->
         {
-            @Override
-            public void actionPerformed(ActionEvent e)
+            ArrayList<ArrayList<StringInt>> crabData = new ArrayList<>();
+            int[] toRemove = table.getSelectedRows();
+            for (int j : toRemove)
             {
-                ArrayList<ArrayList<StringInt>> crabData = new ArrayList<>();
-                int[] toRemove = table.getSelectedRows();
-                for (int i = 0; i < toRemove.length; i++)
-                {
-                    crabData.add(currentData.get(Integer.parseInt(table.getModel().getValueAt(toRemove[i], 0).toString())).maidenCrabs);
-                }
-                new CrabLeakInfo(crabData);
+                crabData.add(currentData.get(Integer.parseInt(table.getModel().getValueAt(j, 0).toString())).maidenCrabs);
             }
+            new CrabLeakInfo(crabData);
         });
 
         raidPopup.add(analyzeCrabs);
@@ -1726,7 +1636,6 @@ public class Raids extends BaseFrame
         raidPopup.add(analyzeSessions);
         raidPopup.add(viewCharts);
         raidPopup.add(viewGraphs);
-        raidPopup.add(summarizeSession);
         table.setComponentPopupMenu(raidPopup);
 
         filterTable = new JTable();
@@ -1762,9 +1671,7 @@ public class Raids extends BaseFrame
         JButton loadFiltersButton = new JButton("Load");
         loadFiltersButton.addActionListener(
                 al ->
-                {
-                    new LoadFilter(this).open();
-                });
+                        new LoadFilter(this).open());
         JButton clearFiltersButton = new JButton("Clear");
         clearFiltersButton.addActionListener(
                 al ->
@@ -1804,10 +1711,9 @@ public class Raids extends BaseFrame
                 try
                 {
                     if (!writing)
-                        DataWriter.writeAliasFile(e.getDocument().getText(0, e.getDocument().getLength()).replaceAll("\n", System.getProperty("line.separator")));
-                } catch (BadLocationException ex)
+                        DataWriter.writeAliasFile(e.getDocument().getText(0, e.getDocument().getLength()).replaceAll("\n", System.lineSeparator()));
+                } catch (BadLocationException ignored)
                 {
-                    ex.printStackTrace();
                 }
             }
 
@@ -1817,10 +1723,9 @@ public class Raids extends BaseFrame
                 try
                 {
                     if (!writing)
-                        DataWriter.writeAliasFile(e.getDocument().getText(0, e.getDocument().getLength()).replaceAll("\n", System.getProperty("line.separator")));
-                } catch (BadLocationException ex)
+                        DataWriter.writeAliasFile(e.getDocument().getText(0, e.getDocument().getLength()).replaceAll("\n", System.lineSeparator()));
+                } catch (BadLocationException ignored)
                 {
-                    ex.printStackTrace();
                 }
             }
 
@@ -1830,10 +1735,9 @@ public class Raids extends BaseFrame
                 try
                 {
                     if (!writing)
-                        DataWriter.writeAliasFile(e.getDocument().getText(0, e.getDocument().getLength()).replaceAll("\n", System.getProperty("line.separator")));
-                } catch (BadLocationException ex)
+                        DataWriter.writeAliasFile(e.getDocument().getText(0, e.getDocument().getLength()).replaceAll("\n", System.lineSeparator()));
+                } catch (BadLocationException ignored)
                 {
-                    ex.printStackTrace();
                 }
             }
         });
@@ -1886,9 +1790,7 @@ public class Raids extends BaseFrame
         item.setBackground(Color.BLACK);
         item.setState(true);
         item.addActionListener(al ->
-        {
-            updateTable();
-        });
+                updateTable());
         columnHeaders.add(item);
         table.getTableHeader().setComponentPopupMenu(getjPopupMenu());
         updateTable();
@@ -1922,7 +1824,7 @@ public class Raids extends BaseFrame
             baseMenu.add(item);
         }
 
-        List<String> allComboValues = new ArrayList<String>(comboPopupData.keySet());
+        List<String> allComboValues = new ArrayList<>(comboPopupData.keySet());
 
         comboStrictData = new ArrayList<>();
 
@@ -2038,6 +1940,7 @@ public class Raids extends BaseFrame
                 if (qualified.contains(s))
                 {
                     anyFlagged = true;
+                    break;
                 }
             }
             if (!anyFlagged)
@@ -2066,7 +1969,7 @@ public class Raids extends BaseFrame
             ticks += 100 * Integer.parseInt(sub.substring(0, sub.indexOf(":")));
             sub = text.substring(sub.indexOf(":") + 1);
         }
-        ticks += (Double.parseDouble(sub) / 0.6);
+        ticks += (int) ((Double.parseDouble(sub) / 0.6));
         return ticks;
     }
 

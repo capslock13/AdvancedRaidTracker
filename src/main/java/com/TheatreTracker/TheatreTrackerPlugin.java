@@ -120,7 +120,6 @@ public class TheatreTrackerPlugin extends Plugin
     private List<PlayerShell> localPlayers;
     private List<ProjectileQueue> activeProjectiles;
     private List<VengDamageQueue> activeVenges;
-    private RaidTrackerSidePanel timersPanelPrimary;
 
     @Inject
     private PluginManager pluginManager;
@@ -176,10 +175,10 @@ public class TheatreTrackerPlugin extends Plugin
         activeProjectiles = new ArrayList<>();
         activeVenges = new ArrayList<>();
         queuedThrallDamage = new ArrayList<>();
-        timersPanelPrimary = injector.getInstance(RaidTrackerSidePanel.class);
+        RaidTrackerSidePanel timersPanelPrimary = injector.getInstance(RaidTrackerSidePanel.class);
         partyIntact = false;
         activelyPiping = new LinkedHashMap<>();
-        liveFrame = new LiveChart(config, itemManager, clientThread, configManager);
+        liveFrame = new LiveChart(config, clientThread, configManager);
         playersTextChanged = new ArrayList<>();
         clog = new DataWriter(config);
 
@@ -518,7 +517,6 @@ public class TheatreTrackerPlugin extends Plugin
     public void removeThrallBox(Thrall thrall)
     {
         clog.addLine(THRALL_DESPAWN, thrall.getOwner(), String.valueOf(client.getTickCount() - currentRoom.roomStartTick));
-        liveFrame.getPanel(currentRoom.getName()).removeThrall(thrall.getOwner());
     }
 
     public void addThrallOutlineBox(ThrallOutlineBox outlineBox)
@@ -755,7 +753,6 @@ public class TheatreTrackerPlugin extends Plugin
             {
                 if (vp.player.equals(player))
                 {
-                    vengTracker.vengProcced(vp);
                     activeVenges.add(new VengDamageQueue(vp.player, vp.hitsplat, client.getTickCount() + 1));
                 }
             }

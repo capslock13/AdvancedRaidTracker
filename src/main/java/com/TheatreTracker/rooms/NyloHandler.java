@@ -414,11 +414,6 @@ public class NyloHandler extends RoomHandler
     {
         roomState = WAITING_FOR_BOSS;
         lastDead = client.getTickCount();
-        int offsetTick = 4 - ((client.getTickCount() - instanceReference) % 4);
-        if (offsetTick == 4)
-        {
-            offsetTick = 0;
-        }
         clog.addLine(ACCURATE_NYLO_END);
         clog.addLine(LAST_DEAD, String.valueOf(lastDead - pillarsSpawnedTick));
         sendTimeMessage("Wave 'Nylocas waves and cleanup' complete! Duration: ", lastDead - pillarsSpawnedTick, lastDead - wave31);

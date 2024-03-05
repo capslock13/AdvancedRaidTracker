@@ -137,7 +137,7 @@ public class BloatHandler extends RoomHandler
         if (bloatStartTick != -1)
         {
             deferHP = client.getVarbitValue(HP_VARBIT) / 10.0;
-            bloatDeferTick = client.getTickCount(); //delay so that the chat message can't be used to know immediately know when bloat has gone down
+            bloatDeferTick = client.getTickCount() + 5; //delay so that the chat message can't be used to know immediately know when bloat has gone down
         }
         plugin.addDelayedLine(TOBRoom.BLOAT, client.getTickCount() - bloatStartTick, "Down");
     }
@@ -218,7 +218,6 @@ public class BloatHandler extends RoomHandler
                 {
                     clog.addLine(ACCURATE_BLOAT_START);
                     clog.addLine(BLOAT_DIRECTION, String.valueOf(event.getNpc().getCurrentOrientation()), String.valueOf(event.getNpc().getIndex()));
-                    //log.info("Bloat direction: " + event.getNpc().getCurrentOrientation() + ", Index: " + event.getNpc().getIndex());
                 }
                 break;
         }
@@ -236,7 +235,7 @@ public class BloatHandler extends RoomHandler
     public void updateGraphicsObjectCreated(GraphicsObjectCreated event)
     {
         int id = event.getGraphicsObject().getId();
-        if(id == 1570 || id == 1571 || id == 1572 || id == 1573)
+        if(id == 1570 || id == 1571 || id == 1572 || id == 1573) //various bloat hands
         {
             WorldPoint wp = WorldPoint.fromLocal(client, event.getGraphicsObject().getLocation());
             clog.addLine(BLOAT_HAND, String.valueOf(id), String.valueOf(wp.getRegionX()), String.valueOf(wp.getRegionY()), String.valueOf(client.getTickCount()-roomStartTick));

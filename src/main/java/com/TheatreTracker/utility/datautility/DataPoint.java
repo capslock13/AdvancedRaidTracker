@@ -202,10 +202,10 @@ public enum DataPoint
                 return point;
             }
         }
-        return null;
+        return DataPoint.UNKNOWN;
     }
 
-    public static enum rooms
+    public enum rooms
     {
         ANY,
         MAIDEN,
@@ -216,8 +216,6 @@ public enum DataPoint
         VERZIK,
         ALL
     }
-
-    ;
 
     public enum types
     {

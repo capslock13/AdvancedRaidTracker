@@ -26,12 +26,13 @@ public class VerzikHandler extends RoomHandler
     public RoomState.VerzikRoomState roomState;
     private final TheatreTrackerPlugin plugin;
     private int healingEndTick = -1;
-    private ItemManager itemManager;
+    private final ItemManager itemManager;
 
     public VerzikHandler(Client client, DataWriter clog, TheatreTrackerConfig config, TheatreTrackerPlugin plugin, ItemManager itemManager)
     {
         super(client, clog, config);
         this.plugin = plugin;
+        this.itemManager = itemManager;
         currentHits = new ArrayList<>();
         lastHits = new ArrayList<>();
         roomState = RoomState.VerzikRoomState.NOT_STARTED;
@@ -92,7 +93,6 @@ public class VerzikHandler extends RoomHandler
         {
             if (projectile.getId() == VERZIK_CRAB_HEAL_PROJECTILE)
             {
-                //log.info("Expecting purple heal on tick: " + client.getTickCount());
                 //todo finish p2 heal tracking
             }
         }
@@ -109,7 +109,6 @@ public class VerzikHandler extends RoomHandler
                 {
                     if (p2.getWorldLocation().distanceTo(p.getWorldLocation()) <= 1)
                     {
-                        //log.info(p2.getName() + " is also in target of verz auto AOE");
                         playersHit++;
                         //todo finish p2 heal tracking
                     }
@@ -143,7 +142,6 @@ public class VerzikHandler extends RoomHandler
         {
             if (event.getProjectile().getRemainingCycles() == client.getGameCycle())
             {
-                //log.info("Expecting red heal on tick " + client.getTickCount());
                 //todo finish p2 heal tracking
             }
         }
@@ -151,12 +149,9 @@ public class VerzikHandler extends RoomHandler
         {
             if (event.getProjectile().getRemainingCycles() == 0)
             {
-                //log.info("Expecting auto heal on tick " + (client.getTickCount() + 2));
                 if (verzNPC.getInteracting() instanceof Player)
                 {
                     Player p = (Player) verzNPC;
-                    //log.info("Verz targeting: " + p.getName());
-                    //log.info("");
                     queuedAutoHits.put(p, client.getTickCount() + 2);
                 }
             }
@@ -231,12 +226,7 @@ public class VerzikHandler extends RoomHandler
                         NPC interacting = (NPC) p.getInteracting();
                         if (interacting.getId() == VERZIK_P2 || interacting.getId() == VERZIK_P2_HM || interacting.getId() == VERZIK_P2_SM)
                         {
-                            switch (p.getAnimation())
-                            {
-                                case 8056:
-                                    //log.info("expecting 3 heals from scy by " + p.getName() + " on tick " + (client.getTickCount() + 1));
-                                    break;
-                            }
+                            //TODO: P2 Healing
                         }
                     }
                 }

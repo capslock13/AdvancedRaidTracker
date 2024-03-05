@@ -19,7 +19,7 @@ public class TobIDs
 
     public final static int VERZIK_SHIELD_LENGTH = 11;
     public final static int DAWNBRINGER_ITEM = 22516;
-    public final static String VERZIK_BOUNCE_ANIMATION = "100000";
+    public final static String VERZIK_BOUNCE_ANIMATION = "100000"; //fake number used due to poor design of how attacks are presented on the chart
 
     public final static int DAWNBRINGER_MINIMUM_HIT = 75;
 
@@ -37,9 +37,7 @@ public class TobIDs
     public final static int  SOTETSEG_UNDER_REGION = 13379;
     public final static int  XARPUS_REGION = 12612;
     public final static int  VERZIK_REGION = 12611;
-    public final static int MAIDEN_BLOOD_PROJECTILE = 1578;
     public final static int MAIDEN_THROWN_BLOOD_GRAPHIC_OBJECT = 1579;
-    public final static int MAIDEN_BLOOD_TRAIL_GAME_OBJECT = 32984;
     public final static int MAIDEN_BLOOD_THROW_ANIM = 8091;
     public final static int TBOW_PROJECTILE = 1120;
     public final static int ZCB_PROJECTILE = 1468;
@@ -61,9 +59,6 @@ public class TobIDs
 
 
     public final static int MELEE_THRALL_ATTACK_ANIMATION = 5568;
-    public final static int RANGE_THRALL_ATTACK_ANIMATION = 5512;
-    public final static int MAGE_THRALL_ATTACK_ANIMATION = 5540;
-
     public final static int THRALL_CAST_ANIMATION = 8973;
     public final static int THRALL_CAST_GRAPHIC_MAGE = 1873;
     public final static int THRALL_CAST_GRAPHIC_RANGE = 1874;

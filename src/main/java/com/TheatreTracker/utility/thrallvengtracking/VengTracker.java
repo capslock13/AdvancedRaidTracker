@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class VengTracker
 {
     public ArrayList<VengCastQueue> vengedPlayers;
-    private TheatreTrackerPlugin plugin;
+    private final TheatreTrackerPlugin plugin;
 
     public VengTracker(TheatreTrackerPlugin plugin)
     {
@@ -51,11 +51,6 @@ public class VengTracker
         }
     }
 
-    public void vengProcced(VengPair veng)
-    {
-        int amount = Math.max(1, ((int) (veng.hitsplat * .75)));
-    }
-
     public void updateTick()
     {
         handleApplyVeng();
@@ -69,7 +64,7 @@ public class VengTracker
     public void vengOtherCast(Player caster)
     {
         String nameTarget = "";
-        String nameSource = "";
+        String nameSource;
         nameSource = caster.getName();
         if (caster.getInteracting() != null)
         {

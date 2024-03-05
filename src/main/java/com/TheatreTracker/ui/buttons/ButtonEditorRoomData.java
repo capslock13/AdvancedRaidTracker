@@ -2,7 +2,6 @@ package com.TheatreTracker.ui.buttons;
 
 import com.TheatreTracker.SimpleRaidData;
 import com.TheatreTracker.ui.viewraid.ViewRaid;
-import com.TheatreTracker.ui.viewraid.ViewRaidFrame;
 
 import javax.swing.*;
 import java.awt.*;

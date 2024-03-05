@@ -6,7 +6,6 @@ import com.TheatreTracker.utility.wrappers.PlayerDidAttack;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
-import net.runelite.client.game.ItemManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -30,16 +29,14 @@ public class LiveChart extends BaseFrame
     public JTabbedPane tabbedPane;
 
     private final TheatreTrackerConfig config;
-    private final ItemManager itemManager;
     private final ClientThread clientThread;
     private final ConfigManager configManager;
 
-    public LiveChart(TheatreTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
+    public LiveChart(TheatreTrackerConfig config, ClientThread clientThread, ConfigManager configManager)
     {
         this.configManager = configManager;
         this.clientThread = clientThread;
         this.config = config;
-        this.itemManager = itemManager;
         maidenPanel = new ChartPanel("Maiden", true, config, clientThread, configManager);
         bloatPanel = new ChartPanel("Bloat", true, config, clientThread, configManager);
         nyloPanel = new ChartPanel("Nylocas", true, config, clientThread, configManager);

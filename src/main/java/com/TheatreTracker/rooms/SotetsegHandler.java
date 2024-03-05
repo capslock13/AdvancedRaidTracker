@@ -36,14 +36,16 @@ public class SotetsegHandler extends RoomHandler
     private String firstMazeChosen = "";
     private String secondMazeChosen = "";
     private String lastChosen = "";
-    private Map<String, ArrayList<Point>> playerTiles = new HashMap<>();
+    private final Map<String, ArrayList<Point>> playerTiles = new HashMap<>();
 
     private ArrayList<Point> excludedTiles = new ArrayList<>();
+    private final TheatreTrackerConfig config;
 
     public SotetsegHandler(Client client, DataWriter clog, TheatreTrackerConfig config, TheatreTrackerPlugin plugin)
     {
         super(client, clog, config);
         this.plugin = plugin;
+        this.config = config;
     }
 
     public boolean isActive()
@@ -95,8 +97,6 @@ public class SotetsegHandler extends RoomHandler
     }
 
     private ArrayList<Point> currentMaze = new ArrayList<>();
-    private int lastTileX = -1;
-    private int lastTileY = -1;
 
     public void updateGroundObjectSpawned(GroundObjectSpawned event)
     {
@@ -122,26 +122,21 @@ public class SotetsegHandler extends RoomHandler
                     int distance = Math.abs(event.getGroundObject().getWorldLocation().getRegionX()-15);
                     int stallDuration = 5;
                     int tickOffset = 1 + stallDuration + (int)((distance-0.5)/2.0);
-                    if(ticksSinceLastProc > tickOffset)
+                    if(ticksSinceLastProc > tickOffset && config.showMistakesInChat())
                     {
                         String mazeRunner = (roomState== RoomState.SotetsegRoomState.MAZE_1) ? firstMazeChosen : secondMazeChosen;
                         plugin.sendChatMessage(mazeRunner + " was late to first tile by " + (ticksSinceLastProc-tickOffset) + " ticks");
                     }
-                    plugin.sendChatMessage("First tile was " + distance + " away, and showed up after " + ticksSinceLastProc + " ticks. Expected: " + tickOffset + ". X Position: " + event.getGroundObject().getWorldLocation().getRegionX());
                 }
-                //log.info("Red tile appeared " + ticksSinceLastProc + " ticks after proc, on (" + event.getGroundObject().getWorldLocation().getRegionX() + "," + event.getGroundObject().getWorldLocation().getRegionY() +")");
             }
         }
         if (event.getGroundObject().getId() == SOTETSEG_RED_TILE && lastRegion == SOTETSEG_OVERWORLD)
         {
-            int mazeProc = (roomState == RoomState.SotetsegRoomState.MAZE_1) ? soteFirstMazeStart : soteSecondMazeStart;
             int currentTileX = event.getGroundObject().getWorldLocation().getRegionX();
             int currentTileY = event.getGroundObject().getWorldLocation().getRegionY();
             currentMaze.add(new Point(currentTileX, currentTileY));
-            //log.info("Tick: " + (client.getTickCount() - (6 - (mazeProc))) + ", Tile: " + event.getGroundObject().getWorldLocation().getRegionX() + ", " + event.getGroundObject().getWorldLocation().getRegionY());
         }
     }
-
 
     private static ArrayList<Point> removeDuplicatePoints(ArrayList<Point> tiles)
     {
@@ -187,15 +182,12 @@ public class SotetsegHandler extends RoomHandler
         }
         ArrayList<Point> crossTiles = new ArrayList<>();
         crossTiles.add(start);
-        //log.info("Trying every tile between " + start.getX() + ", " + start.getY() + " and " + end.getX() + ", " + end.getY());
         while (Math.abs(end.getX() - crossTiles.get(crossTiles.size() - 1).getX()) != end.getY() - crossTiles.get(crossTiles.size() - 1).getY())
         {
             if(crossTiles.size() > 1000)
             {
-                //log.info("failed on " + start.getX() + ", " + start.getY() + " to " + end.getX() + ", " + end.getY());
                 return new ArrayList<>();
             }
-            //log.info("Current: " + crossTiles.get((crossTiles.size()-1)).getX() + ", " + crossTiles.get(crossTiles.size()-1).getY());
             if (Math.abs(end.getX() - start.getX()) > end.getY() - start.getY())
             {
                 int offset = (end.getX() - start.getX() > 0) ? 1 : -1;
@@ -211,53 +203,6 @@ public class SotetsegHandler extends RoomHandler
             crossTiles.add(new Point(crossTiles.get(crossTiles.size() - 1).getX() + offset, crossTiles.get(crossTiles.size() - 1).getY() + 1));
         }
         return crossTiles;
-    }
-
-    private static ArrayList<Point> restoreMaze(ArrayList<Point> tiles)
-    {
-        ArrayList<Point> unfilteredTiles = new ArrayList<Point>();
-        if (!tiles.isEmpty())
-        {
-            unfilteredTiles.add(tiles.get(0));
-            for (Point p : tiles)
-            {
-                if (p.getY() != 22)
-                {
-                    Point last = unfilteredTiles.get(unfilteredTiles.size() - 1);
-                    for (int i = 0; i < Math.abs(p.getX() - last.getX()) + 1; i++)
-                    {
-                        if (p.getX() - last.getX() < 0)
-                        {
-                            unfilteredTiles.add(new Point(last.getX() - i, last.getY() + 1));
-                        } else
-                        {
-                            unfilteredTiles.add(new Point(last.getX() + i, last.getY() + 1));
-                        }
-                    }
-                    unfilteredTiles.add(p);
-                }
-            }
-        }
-        return unfilteredTiles;
-    }
-
-    public static void printMaze(ArrayList<Point> tiles)
-    {
-        if(tiles != null)
-        {
-            if (!tiles.isEmpty())
-            {
-                String output = "";
-                for (Point p : tiles)
-                {
-                    output += "(" + p.getX() + "," + p.getY() + "),";
-                }
-                log.info(output.substring(0, output.length() - 1));
-            } else
-            {
-                log.info("empty maze");
-            }
-        }
     }
 
     public void updateAnimationChanged(AnimationChanged event)
@@ -338,7 +283,7 @@ public class SotetsegHandler extends RoomHandler
     }
     private static ArrayList<Point> filterMaze(ArrayList<Point> tiles)
     {
-        ArrayList<Point> filteredTiles = new ArrayList<Point>();
+        ArrayList<Point> filteredTiles = new ArrayList<>();
         for (Point p : tiles)
         {
             if (p.getY() % 2 == 0)
@@ -373,9 +318,10 @@ public class SotetsegHandler extends RoomHandler
             boolean found = false;
             for(Point p2 : tiles2)
             {
-                if(p2.getX() == p1.getX() && p2.getY() == p1.getY())
+                if (p2.getX() == p1.getX() && p2.getY() == p1.getY())
                 {
                     found = true;
+                    break;
                 }
             }
             if(!found)
@@ -388,8 +334,6 @@ public class SotetsegHandler extends RoomHandler
 
     public void endEitherMaze()
     {
-        //log.info("Recorded Maze: ");
-        //printMaze(currentMaze);
         if(!currentMaze.isEmpty())
         {
             if(currentMaze.get(currentMaze.size()-1).getY() == 35)
@@ -398,42 +342,19 @@ public class SotetsegHandler extends RoomHandler
             }
         }
         currentMaze = removeDuplicatePoints(currentMaze);
-        //log.info("Filtered Maze: ");
-        //printMaze(currentMaze);
         currentMaze = addEveryTileBetween(currentMaze);
-        //log.info("restored maze: ");
-        //printMaze(currentMaze);
         ArrayList<Point> overlap = removeDuplicatePoints(findOverlappingTiles(currentMaze, excludedTiles));
         ArrayList<Point> nonoverlap = removeDuplicatePoints(findNonOverlappingTiles(excludedTiles, currentMaze));
-        //log.info("Overlap: ");
-        //printMaze(overlap);
-        //log.info("Nonoverlap: ");
-        //printMaze(nonoverlap);
-        if(!overlap.isEmpty())
+        if(!overlap.isEmpty() && config.showMistakesInChat())
         {
             plugin.sendChatMessage(lastChosen + " ragged " + overlap.size() + " while running the maze");
         }
-        if(!nonoverlap.isEmpty())
+        if(!nonoverlap.isEmpty() && config.showMistakesInChat())
         {
             plugin.sendChatMessage("Players following the maze ragged " + nonoverlap.size() + " tiles");
         }
-        //printMaze(overlap);
-        //log.info("Tiles ragged by non runner: ");
-        //printMaze(nonoverlap);
-        //log.info("shortened maze: ");
         currentMaze = filterMaze(currentMaze);
-        //printMaze(currentMaze);
         excludedTiles = removeDuplicatePoints(excludedTiles);
-        //log.info("excluded tiles: ");
-        //printMaze(excludedTiles);
-        for(String s : playerTiles.keySet())
-        {
-            //log.info("Player " + s + " array size " + playerTiles.get(s).size());
-            for(Point p : playerTiles.get(s))
-            {
-                //log.info("Point: " + p.getX() + ", " + p.getY());
-            }
-        }
         playerTiles.replaceAll((s, v) -> addEveryTileBetween(removeDuplicatePoints(v)));
         for(String s : playerTiles.keySet())
         {
@@ -445,7 +366,6 @@ public class SotetsegHandler extends RoomHandler
                     if(tile.getX() == raggedTile.getX() && tile.getY() == raggedTile.getY())
                     {
                         ragged++;
-                        //log.info(s + " ragged tile: " + raggedTile.getX() + ", " + raggedTile.getY());
                     }
                 }
             }
@@ -488,7 +408,7 @@ public class SotetsegHandler extends RoomHandler
 
     public void updateGraphicsObjectCreated(GraphicsObjectCreated event)
     {
-        if(event.getGraphicsObject().getId() == 505)
+        if(event.getGraphicsObject().getId() == SOTETSEG_RAGGED_TILE)
         {
             WorldPoint wp = WorldPoint.fromLocal(client, event.getGraphicsObject().getLocation());
             excludedTiles.add(new Point(wp.getRegionX(), wp.getRegionY()));
@@ -500,7 +420,7 @@ public class SotetsegHandler extends RoomHandler
         lastRegion = client.isInInstancedRegion() ? WorldPoint.fromLocalInstance(client, client.getLocalPlayer().getLocalLocation()).getRegionID() : client.getLocalPlayer().getWorldLocation().getRegionID();
         if(roomState == RoomState.SotetsegRoomState.MAZE_1 || roomState == RoomState.SotetsegRoomState.MAZE_2)
         {
-            int ticksSinceLastProc = -1;
+            int ticksSinceLastProc;
             if(roomState == RoomState.SotetsegRoomState.MAZE_1)
             {
                 ticksSinceLastProc = client.getTickCount()-soteFirstMazeStart;
@@ -521,9 +441,6 @@ public class SotetsegHandler extends RoomHandler
                             if (playerTiles.containsKey(player.getName()))
                             {
                                 playerTiles.get(player.getName()).add(new Point(location.getRegionX(), location.getRegionY()));
-                            } else
-                            {
-                                //log.info("How?" + player.getName());
                             }
                         }
                     }
@@ -560,7 +477,6 @@ public class SotetsegHandler extends RoomHandler
             {
                 secondMazeChosen = getAboveWorldChosen();
             }
-            //log.info("Chosen 2nd maze: " + secondMazeChosen);
             lastChosen = secondMazeChosen;
         }
     }

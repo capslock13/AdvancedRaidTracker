@@ -213,10 +213,4 @@ public class ThrallTracker
         queuedThrallSpawn.add(new Thrall(thrall, adjacentPlayers, plugin.getRoomTick()));
     }
 
-    public void thrallDespawned(NPC thrall)
-    {
-        //todo handle thrall duration besides 59.4s
-    }
-
-
 }

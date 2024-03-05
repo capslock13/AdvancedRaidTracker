@@ -113,47 +113,6 @@ public class DataWriter
         }
     }
 
-    public static void checkLogFileSize()
-    {
-        try
-        {
-            File logFile = new File(PLUGIN_DIRECTORY + "primary/tobdata.log");
-            if (!logFile.exists())
-            {
-                return;
-            }
-            long fileSize = logFile.length();
-            if (fileSize > (6 * 1024 * 1024))
-            {
-                //splitLegacyFile();
-            } else if (fileSize > (5 * 1024 * 1024))
-            {
-                int highestLogNumber = getHighestLogNumber("");
-                File newFile = new File(PLUGIN_DIRECTORY + "primary/tobdata" + (highestLogNumber + 1) + ".log");
-                if (newFile.exists())
-                {
-                    log.info("Failed to migrate file due to name conflict.");
-                    return;
-                }
-                boolean wasSuccessful = logFile.renameTo(newFile);
-                if (!wasSuccessful)
-                {
-                    log.info("Failed to migrate file due to unknown reason");
-                } else
-                {
-                    File toCreate = new File(PLUGIN_DIRECTORY + "primary/tobdata.log");
-
-                    if (!toCreate.createNewFile())
-                    {
-                        log.info("Failed to create");
-                    }
-                }
-            }
-        } catch (Exception ignored)
-        {
-        }
-    }
-
     public static int getHighestLogNumber(String name)
     {
         String directory = PLUGIN_DIRECTORY;
@@ -177,8 +136,7 @@ public class DataWriter
         {
             if (file.getName().contains("tobdata"))
             {
-                int index = -1;
-                index = file.getName().indexOf(".log");
+                int index = file.getName().indexOf(".log");
                 if (index != -1)
                 {
                     try

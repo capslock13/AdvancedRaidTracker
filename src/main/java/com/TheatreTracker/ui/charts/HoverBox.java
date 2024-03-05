@@ -3,10 +3,7 @@ package com.TheatreTracker.ui.charts;
 import com.TheatreTracker.TheatreTrackerConfig;
 import com.TheatreTracker.utility.ItemReference;
 import com.TheatreTracker.utility.Point;
-import net.runelite.api.Item;
-import net.runelite.client.config.Config;
 import net.runelite.client.ui.FontManager;
-
 import java.awt.*;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
@@ -26,15 +23,12 @@ public class HoverBox
         addString(s);
     }
 
-    String[] styles = {"None", "Melee", "Range", "Mage"};
-
     public void addString(String s)
     {
         info.add(s);
         if(s.toLowerCase().startsWith(".weapon"))
         {
             setStyle(s);
-            //info.add(1, "Style: " + styles[style]);
         }
     }
 

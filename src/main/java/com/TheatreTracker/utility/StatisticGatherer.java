@@ -132,7 +132,6 @@ public class StatisticGatherer
         {
             return -1;
         }
-        double median;
         List<Double> values = new ArrayList<>();
         for (int d : data)
         {

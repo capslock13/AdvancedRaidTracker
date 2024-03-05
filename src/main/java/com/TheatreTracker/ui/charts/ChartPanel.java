@@ -7,19 +7,11 @@ import com.TheatreTracker.utility.Point;
 import com.TheatreTracker.utility.weapons.WeaponAttack;
 import com.TheatreTracker.utility.weapons.WeaponDecider;
 import com.TheatreTracker.utility.wrappers.*;
-import com.google.inject.Inject;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import net.runelite.api.IconID;
-import net.runelite.api.SpriteID;
 import net.runelite.client.callback.ClientThread;
-import net.runelite.client.config.ConfigItem;
 import net.runelite.client.config.ConfigManager;
-import net.runelite.client.game.ItemManager;
-import net.runelite.client.game.SkillIconManager;
-import net.runelite.client.game.SpriteManager;
 import net.runelite.client.ui.FontManager;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -30,12 +22,10 @@ import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 public class ChartPanel extends JPanel implements MouseListener, MouseMotionListener
@@ -82,7 +72,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     Map<String, Integer> playerOffsets = new LinkedHashMap<>();
     private final Map<PlayerDidAttack, String> actions = new HashMap<>();
 
-    private ConfigManager configManager;
+    private final ConfigManager configManager;
 
     public void enableWrap()
     {
@@ -115,11 +105,6 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     public void addRoomHP(int tick, int hp)
     {
         roomHP.put(tick, hp);
-    }
-
-    public void addAuto(int autoTick)
-    {
-        autos.add(autoTick);
     }
 
     public void addAutos(ArrayList<Integer> autos)
@@ -413,28 +398,6 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         return gv.getPixelBounds(null, 0, 0).width;
     }
 
-    private void drawKey(Graphics2D g)
-    {
-        g.drawRect(boxWidth + (keyMargin / 2), keyMargin, (keyColumns * 150) - 10, (keyRows * (scale + 10)));
-        int currentColumn = 0;
-        int currentRow = 0;
-        for (int i = 0; i < keyCount; i++)
-        {
-            WeaponAttack attack = weaponAttacks[i];
-            g.setColor(attack.color);
-            g.fillRect(boxWidth + keyMargin + (currentColumn * 150) + 2, keyMargin + (currentRow * (scale + 10)) + 7, scale, scale);
-            g.setColor(Color.WHITE);
-            g.drawString(attack.shorthand, boxWidth + keyMargin + (currentColumn * 150) + 3, keyMargin + (currentRow * (scale + 10)) + scale + 2);
-            g.drawString(attack.name, boxWidth + keyMargin + (currentColumn * 150) + 33, keyMargin + (currentRow * (scale + 10)) + scale + 2);
-            currentRow++;
-            if (currentRow + 1 > keyRows)
-            {
-                currentColumn++;
-                currentRow = 0;
-            }
-        }
-    }
-
     int getYOffset(int tick)
     {
         return (shouldWrap) ? (((tick - startTick) / 50) * boxHeight) + 20 : 10;
@@ -491,7 +454,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         }
     }
 
-    public static BufferedImage getScaledImage(BufferedImage image, int width, int height) throws IOException
+    public static BufferedImage getScaledImage(BufferedImage image, int width, int height)
     {
         int imageWidth  = image.getWidth();
         int imageHeight = image.getHeight();
@@ -613,7 +576,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                             g.drawImage(scaled, xOffset+2, yOffset+1, null);
                         }
                     }
-                    catch(Exception e)
+                    catch(Exception ignored)
                     {
 
                     }
@@ -847,7 +810,6 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                 crabOffsetY = 11;
                 g.drawOval(xOffset + crabOffsetX, yOffset + crabOffsetY, 7, 7);
 
-                crabOffsetX = 9;
                 crabOffsetY = 20;
                 g.drawOval(xOffset + crabOffsetX, yOffset + crabOffsetY, 7, 7);
 
@@ -855,7 +817,6 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                 crabOffsetY = 11;
                 g.drawOval(xOffset + crabOffsetX, yOffset + crabOffsetY, 7, 7);
 
-                crabOffsetX = 18;
                 crabOffsetY = 20;
                 g.drawOval(xOffset + crabOffsetX, yOffset + crabOffsetY, 7, 7);
 
@@ -863,15 +824,12 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                 crabOffsetY = 2;
                 g.drawOval(xOffset + crabOffsetX, yOffset + crabOffsetY, 7, 7);
 
-                crabOffsetX = 27;
                 crabOffsetY = 20;
                 g.drawOval(xOffset + crabOffsetX, yOffset + crabOffsetY, 7, 7);
 
-                crabOffsetX = 27;
                 crabOffsetY = 11;
                 g.drawOval(xOffset + crabOffsetX, yOffset + crabOffsetY, 7, 7);
 
-                crabOffsetX = 27;
                 crabOffsetY = 29;
                 g.drawOval(xOffset + crabOffsetX, yOffset + crabOffsetY, 7, 7);
 
@@ -1185,7 +1143,4 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         }
     }
 
-    public void removeThrall(String owner)
-    {
-    }
 }

@@ -48,7 +48,7 @@ public class AdvancedRaidData
                 lines.add(scanner.nextLine());
             }
         }
-        catch(Exception e)
+        catch(Exception ignored)
         {
 
         }
@@ -179,7 +179,7 @@ public class AdvancedRaidData
                         break;
                 }
             }
-            catch(Exception e)
+            catch(Exception ignored)
             {
             }
             activeIndex++;
@@ -212,7 +212,7 @@ public class AdvancedRaidData
                         break;
                 }
             }
-            catch(Exception e)
+            catch(Exception ignored)
             {
             }
             activeIndex++;
@@ -248,7 +248,7 @@ public class AdvancedRaidData
                         break;
                 }
             }
-            catch(Exception e)
+            catch(Exception ignored)
             {
             }
             activeIndex++;
@@ -282,7 +282,7 @@ public class AdvancedRaidData
 
                 }
             }
-            catch(Exception e)
+            catch(Exception ignored)
             {
             }
             activeIndex++;
@@ -315,7 +315,7 @@ public class AdvancedRaidData
                         break;
                 }
             }
-            catch(Exception e)
+            catch(Exception ignored)
             {
             }
             activeIndex++;
@@ -324,7 +324,7 @@ public class AdvancedRaidData
         return true;
     }
 
-    private boolean parseVerzik()
+    private void parseVerzik()
     {
         int activeIndex = 0;
         for (String s : globalData)
@@ -336,7 +336,7 @@ public class AdvancedRaidData
                 {
                     case LEFT_TOB:
                         globalData = new ArrayList<>(globalData.subList(activeIndex + 1, globalData.size()));
-                        return false;
+                        return;
                     case PLAYER_ATTACK:
                         verzikAttacks.add(getPlayerDidAttack(subData));
                         break;
@@ -354,13 +354,12 @@ public class AdvancedRaidData
                         break;
 
                 }
-            } catch (Exception e)
+            } catch (Exception ignored)
             {
             }
             activeIndex++;
         }
         globalData = new ArrayList<>(globalData.subList(activeIndex + 1, globalData.size()));
-        return true;
     }
 
     public boolean checkExit()

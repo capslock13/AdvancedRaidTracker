@@ -47,7 +47,7 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
 
     private boolean groupingEnabled = true;
 
-    private int graphType = 0;
+    private int graphType;
     private final ArrayList<Bounds> selectedBounds;
     private Bounds activeBound = new Bounds(-1, -1, -1, -1, null);
     private final ArrayList<Bounds> bounds;
@@ -424,13 +424,6 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
                     bounds.add(new Bounds(left, right, bottom, top, countedDataSet.fullData.get(i)));
                 }
             }
-        } else if (graphType == 1)
-        {
-            //pie chart bounds
-
-        } else if (graphType == 2)
-        {
-            //line plot bounds
         }
     }
 
@@ -629,7 +622,7 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
                             }
                             FontMetrics m = g.getFontMetrics();
                             int yOffset = (int) (500 - GRAPH_HEIGHT - GRAPH_YS + 10 + (.5 * m.stringWidth(axisValue)));
-                            stringOffset -= (int) (m.stringWidth(axisValue)) - 5;
+                            stringOffset -= m.stringWidth(axisValue) - 5;
                             drawStringRotated(g, axisValue, startX + stringOffset + ((((i - Math.max(0, xScaleLow)) / groupSize) + barOffset) * barWidth), yOffset);
                         }
                         drawBar(g, barWidth, height, currentBarCenter, summedRegion, totalCount, axisValue);

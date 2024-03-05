@@ -6,7 +6,7 @@ import java.util.List;
 public class WeaponDecider
 {
     public static WeaponAttack getWeapon(String animationS, String graphics, String projectileS, String weaponS)
-    { //todo redo all of this once the incorrect weapon worn if same tick swap is fixed, magic numbers will be fixed then too
+    { //todo redo all of this ** magic numbers will be fixed then too
         WeaponAttack weaponUsed = WeaponAttack.UNDECIDED;
         List<String> spotAnims = Arrays.asList(graphics.split(":"));
         int projectile;
@@ -177,4 +177,3 @@ public class WeaponDecider
         return weaponUsed;
     }
 }
-//graphics todo recieve veng 725, sbs 1062, veng self 726, magic imbue 141, humidify 1061

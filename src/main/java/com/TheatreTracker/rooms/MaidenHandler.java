@@ -62,7 +62,7 @@ public class MaidenHandler extends RoomHandler
     TheatreTrackerConfig config;
     TheatreTrackerPlugin plugin;
 
-    private ItemManager itemManager;
+    private final ItemManager itemManager;
 
     public MaidenHandler(Client client, DataWriter clog, TheatreTrackerConfig config, TheatreTrackerPlugin plugin, ItemManager itemManager)
     {
@@ -724,8 +724,6 @@ public class MaidenHandler extends RoomHandler
     /**
      * Returns a string describing the spawn position of a maiden crab
      *
-     * @param npc
-     * @return
      */
     private String identifySpawn(NPC npc)
     {

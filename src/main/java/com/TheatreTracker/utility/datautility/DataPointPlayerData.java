@@ -1,7 +1,5 @@
 package com.TheatreTracker.utility.datautility;
 
-import com.TheatreTracker.utility.datautility.DataPoint;
-
 import java.util.LinkedHashMap;
 import java.util.Map;
 

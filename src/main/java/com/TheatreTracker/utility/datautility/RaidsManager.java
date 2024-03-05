@@ -11,7 +11,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Scanner;
@@ -26,7 +25,7 @@ public class RaidsManager
     {
         ArrayList<RaidsArrayWrapper> raidSets = new ArrayList<>();
         File folder = new File(raidsFolder);
-        if (!folder.exists()) folder.mkdirs();
+        if (!folder.exists()) if(!folder.mkdirs()){log.info("Couldn't make misc dir");}
         try
         {
             for (File entry : Objects.requireNonNull(folder.listFiles()))
@@ -41,7 +40,7 @@ public class RaidsManager
                             RaidTrackerSidePanel.parseLogFile(raids, raid, raid.getAbsolutePath());
                         } catch (Exception e)
                         {
-                            e.printStackTrace();
+                            log.info("Failed to parse log file " + raid.getAbsolutePath());
                         }
                     }
                     raidSets.add(new RaidsArrayWrapper(raids, entry.getName()));
@@ -49,7 +48,7 @@ public class RaidsManager
             }
         } catch (Exception e)
         {
-            e.printStackTrace();
+            log.info("Failed parsing raid sets");
         }
         return raidSets;
     }
@@ -68,7 +67,7 @@ public class RaidsManager
             }
         } catch (Exception e)
         {
-            e.printStackTrace();
+            log.info("Could not determine if raid exists");
         }
         return false;
     }
@@ -80,19 +79,25 @@ public class RaidsManager
             File directory = new File(raidsFolder);
             if (!directory.exists())
             {
-                directory.mkdirs();
+                if(!directory.mkdirs()) {log.info("Could not make overwrite dir");}
             }
             File raidsFile = new File(raidsFolder + name+"/");
 
             if (raidsFile.exists())
             {
-                raidsFile.delete();
+                if(!raidsFile.delete())
+                {
+                    log.info("Could not delete file during overwrite");
+                }
             }
-            raidsFile.mkdirs();
+            if(!raidsFile.mkdirs())
+            {
+                log.info("Could not make directories during overwrite");
+            }
             writeRaid(name, raids);
         } catch (Exception e)
         {
-            e.printStackTrace();
+            log.info("Could not write overwrite raid");
         }
     }
 
@@ -121,17 +126,23 @@ public class RaidsManager
             File directory = new File(raidsFolder);
             if (!directory.exists())
             {
-                directory.mkdirs();
+                if(!directory.mkdirs())
+                {
+                    log.info("Could not make directory to save raid");
+                }
             }
             File raidsFile = new File(raidsFolder + name+"/");
             if (!raidsFile.exists())
             {
-                raidsFile.mkdirs();
+                if(!raidsFile.mkdirs())
+                {
+                    log.info("Could not make directory for specific folder for raid");
+                }
             }
             writeRaid(name, raids);
         } catch (Exception e)
         {
-            e.printStackTrace();
+            log.info("Could not write save file");
         }
     }
 }

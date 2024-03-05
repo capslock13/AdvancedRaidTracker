@@ -1,7 +1,6 @@
 package com.TheatreTracker.filters;
 
-import com.TheatreTracker.filters.Filter;
-import com.TheatreTracker.filters.ImplicitFilter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -9,7 +8,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Scanner;
-
+@Slf4j
 public class FilterManager
 {
     private static final String filterFolder = System.getProperty("user.home").replace("\\", "/") + "/.runelite/theatretracker/filters/";
@@ -37,18 +36,18 @@ public class FilterManager
                             filterReader.close();
                             if (!activeFileFilters.isEmpty())
                             {
-                                currentFilters.add(new Filter(entry.getName(), activeFileFilters.toArray(new String[activeFileFilters.size()])));
+                                currentFilters.add(new Filter(entry.getName(), activeFileFilters.toArray(new String[0])));
                             }
                         } catch (Exception e)
                         {
-                            e.printStackTrace();
+                            log.info("Failed to read filter filter");
                         }
                     }
                 }
             }
         } catch (Exception e)
         {
-            e.printStackTrace();
+            log.info("Failed retrieving filters");
         }
         return currentFilters;
     }
@@ -58,7 +57,7 @@ public class FilterManager
         File folder = new File(filterFolder);
         try
         {
-            for (File entry : folder.listFiles())
+            for (File entry : Objects.requireNonNull(folder.listFiles()))
             {
                 if (entry.getName().equals(name + ".filter"))
                 {
@@ -67,7 +66,7 @@ public class FilterManager
             }
         } catch (Exception e)
         {
-            e.printStackTrace();
+            log.info("Failed to find filter");
         }
         return false;
     }
@@ -79,15 +78,24 @@ public class FilterManager
             File directory = new File(filterFolder);
             if (!directory.exists())
             {
-                directory.mkdirs();
+                if(!directory.mkdirs())
+                {
+                    log.info("Could not make directories to save filter");
+                }
             }
             File filterFile = new File(filterFolder + name + ".filter");
 
             if (filterFile.exists())
             {
-                filterFile.delete();
+                if(!filterFile.delete())
+                {
+                    log.info("Could not delete old filter");
+                }
             }
-            filterFile.createNewFile();
+            if(!filterFile.createNewFile())
+            {
+                log.info("Could not create new filter filter");
+            }
             BufferedWriter filterWriter = new BufferedWriter(new OutputStreamWriter(Files.newOutputStream(Paths.get(filterFolder + name + ".filter"))));
             for (ImplicitFilter s : filters)
             {
@@ -95,9 +103,8 @@ public class FilterManager
                 filterWriter.newLine();
             }
             filterWriter.close();
-        } catch (Exception e)
+        } catch (Exception ignored)
         {
-            e.printStackTrace();
         }
     }
 
@@ -108,12 +115,18 @@ public class FilterManager
             File directory = new File(filterFolder);
             if (!directory.exists())
             {
-                directory.mkdirs();
+                if(!directory.mkdirs())
+                {
+                    log.info("Could not make directory to save filter");
+                }
             }
             File filterFile = new File(filterFolder + name + ".filter");
             if (!filterFile.exists())
             {
-                filterFile.createNewFile();
+                if(!filterFile.createNewFile())
+                {
+                    log.info("Could not create new filter file");
+                }
             }
             BufferedWriter filterWriter = new BufferedWriter(new OutputStreamWriter(Files.newOutputStream(Paths.get(filterFolder + name + ".filter"))));
             for (ImplicitFilter filter : filters)
@@ -122,9 +135,8 @@ public class FilterManager
                 filterWriter.newLine();
             }
             filterWriter.close();
-        } catch (Exception e)
+        } catch (Exception ignored)
         {
-            e.printStackTrace();
         }
     }
 
@@ -135,12 +147,18 @@ public class FilterManager
             File directory = new File(filterFolder);
             if (!directory.exists())
             {
-                directory.mkdirs();
+                if(!directory.mkdirs())
+                {
+                    log.info("Could not make folder to save filters");
+                }
             }
             File filterFile = new File(filterFolder + name + ".filter");
             if (!filterFile.exists())
             {
-                filterFile.createNewFile();
+                if(!filterFile.createNewFile())
+                {
+                    log.info("Could not create new filter file");
+                }
             }
             BufferedWriter filterWriter = new BufferedWriter(new OutputStreamWriter(Files.newOutputStream(Paths.get(filterFolder + name + ".filter"))));
             for (ImplicitFilter filter : filters)
@@ -154,9 +172,8 @@ public class FilterManager
                 filterWriter.newLine();
             }
             filterWriter.close();
-        } catch (Exception e)
+        } catch (Exception ignored)
         {
-            e.printStackTrace();
         }
     }
 

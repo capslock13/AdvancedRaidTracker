@@ -14,7 +14,7 @@ public class OutlineBox
     public boolean primaryTarget;
     public WeaponAttack weaponAttack;
 
-    public String additionalText = "";
+    public String additionalText;
     public PlayerDidAttack attack;
 
     public OutlineBox(PlayerDidAttack attack, String letter, Color color, boolean primaryTarget, String additionalText, WeaponAttack weaponAttack)

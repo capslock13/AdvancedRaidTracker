@@ -14,8 +14,6 @@ import net.runelite.client.game.ItemManager;
 import javax.swing.*;
 import javax.swing.border.MatteBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.*;
@@ -58,8 +56,8 @@ public class ComparisonViewPanel extends JPanel
 
     private final JCheckBox matchXScales;
 
-    private final JComboBox compareByComboBox;
-    private final JComboBox graphTypeComboBox;
+    private final JComboBox<String> compareByComboBox;
+    private final JComboBox<String> graphTypeComboBox;
     private boolean time = false;
     ArrayList<ArrayList<SimpleRaidData>> data;
 
@@ -119,47 +117,39 @@ public class ComparisonViewPanel extends JPanel
         groupOffsetSpinner.setEnabled(false);
         groupSizeSpinner.setEnabled(false);
 
-        graphTypeComboBox = new JComboBox(new String[]{"Bar Graph", "Pie Chart", "Line Plot"});
+        graphTypeComboBox = new JComboBox<>(new String[]{"Bar Graph", "Pie Chart", "Line Plot"});
 
-        graphTypeComboBox.addActionListener(new ActionListener()
+        graphTypeComboBox.addActionListener(e ->
         {
-            @Override
-            public void actionPerformed(ActionEvent e)
+            for (GraphPanel panel : topGraphs)
             {
-                for (GraphPanel panel : topGraphs)
-                {
-                    panel.setGraphType(graphTypeComboBox.getSelectedIndex());
-                }
-                for (GraphPanel panel : bottomGraphs)
-                {
-                    panel.setGraphType(graphTypeComboBox.getSelectedIndex());
-                }
+                panel.setGraphType(graphTypeComboBox.getSelectedIndex());
+            }
+            for (GraphPanel panel : bottomGraphs)
+            {
+                panel.setGraphType(graphTypeComboBox.getSelectedIndex());
             }
         });
-        groupingEnabled.addActionListener(new ActionListener()
+        groupingEnabled.addActionListener(e ->
         {
-            @Override
-            public void actionPerformed(ActionEvent e)
+            for (GraphPanel panel : topGraphs)
             {
-                for (GraphPanel panel : topGraphs)
-                {
-                    panel.setGroupingEnabled(groupingEnabled.isSelected());
-                    panel.updateGroupOffset((Integer) groupOffsetSpinner.getValue());
-                    panel.updateGroupSize((Integer) groupSizeSpinner.getValue());
-
-                }
-                for (GraphPanel panel : bottomGraphs)
-                {
-                    panel.setGroupingEnabled(groupingEnabled.isSelected());
-                    panel.updateGroupOffset((Integer) groupOffsetSpinner.getValue());
-                    panel.updateGroupSize((Integer) groupSizeSpinner.getValue());
-
-
-                }
-                groupSizeSpinner.setEnabled(groupingEnabled.isSelected());
-                groupOffsetSpinner.setEnabled(groupingEnabled.isSelected());
+                panel.setGroupingEnabled(groupingEnabled.isSelected());
+                panel.updateGroupOffset((Integer) groupOffsetSpinner.getValue());
+                panel.updateGroupSize((Integer) groupSizeSpinner.getValue());
 
             }
+            for (GraphPanel panel : bottomGraphs)
+            {
+                panel.setGroupingEnabled(groupingEnabled.isSelected());
+                panel.updateGroupOffset((Integer) groupOffsetSpinner.getValue());
+                panel.updateGroupSize((Integer) groupSizeSpinner.getValue());
+
+
+            }
+            groupSizeSpinner.setEnabled(groupingEnabled.isSelected());
+            groupOffsetSpinner.setEnabled(groupingEnabled.isSelected());
+
         });
 
         groupSizeSpinner.addChangeListener(e ->
@@ -239,7 +229,7 @@ public class ComparisonViewPanel extends JPanel
         comboPopupMenu = new JPopupMenu();
         comboPopupMenu.setBorder(new MatteBorder(1, 1, 1, 1, Color.DARK_GRAY));
 
-        ArrayList<String> allComboValues = new ArrayList<String>(comboPopupData.keySet());
+        ArrayList<String> allComboValues = new ArrayList<>(comboPopupData.keySet());
 
         comboStrictData = new ArrayList<>();
 
@@ -339,9 +329,7 @@ public class ComparisonViewPanel extends JPanel
         });
 
         matchYScales.addActionListener(al ->
-        {
-            switchGraphData();
-        });
+                switchGraphData());
 
         matchXScales.addActionListener(al ->
         {
@@ -366,12 +354,12 @@ public class ComparisonViewPanel extends JPanel
 
     private void setComboSelection(String name)
     {
-        Vector<String> items = new Vector<String>();
+        Vector<String> items = new Vector<>();
 
         addComboItems(name, items, comboStrictData, compareByComboBox);
     }
 
-    public static void addComboItems(String name, Vector<String> items, ArrayList<String> comboStrictData, JComboBox compareByComboBox)
+    public static void addComboItems(String name, Vector<String> items, ArrayList<String> comboStrictData, JComboBox<String> compareByComboBox)
     {
         for (String item : comboStrictData)
         {
@@ -382,7 +370,7 @@ public class ComparisonViewPanel extends JPanel
             }
         }
 
-        compareByComboBox.setModel(new DefaultComboBoxModel<String>(items));
+        compareByComboBox.setModel(new DefaultComboBoxModel<>(items));
 
         if (items.size() == 1)
         {

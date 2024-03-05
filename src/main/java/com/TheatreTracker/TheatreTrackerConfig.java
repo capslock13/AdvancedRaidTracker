@@ -55,14 +55,6 @@ public interface TheatreTrackerConfig extends Config
     }
 
     @ConfigItem(
-            position = 4,
-            keyName = "reduceMemoryLoad",
-            name = "Don't load thrall/player attacks to memory",
-            description = "Reduces memory load but makes charts inaccessible. Data is still recorded, enable this and hit view all raids again to access it."
-    )
-    default  boolean reduceMemoryLoad() { return false; }
-
-    @ConfigItem(
             position = 5,
             keyName = "useIconsOnChart",
             name = "Use icons on chart",

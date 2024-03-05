@@ -1,7 +1,5 @@
 package com.TheatreTracker.utility.wrappers;
 
-import net.runelite.api.Actor;
-
 public class PlayerCopy
 {
     public String name;

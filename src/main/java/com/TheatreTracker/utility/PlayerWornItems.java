@@ -1,6 +1,5 @@
 package com.TheatreTracker.utility;
 
-import net.runelite.api.Item;
 import net.runelite.api.PlayerComposition;
 import net.runelite.api.kit.KitType;
 import net.runelite.client.game.ItemManager;
@@ -16,7 +15,7 @@ public class PlayerWornItems
     public int legs = 0;
     public int gloves = 0;
     public int boots = 0;
-    private ItemManager itemManager;
+    private final ItemManager itemManager;
     public PlayerWornItems(String s, ItemManager itemManager)
     {
         this.itemManager = itemManager;

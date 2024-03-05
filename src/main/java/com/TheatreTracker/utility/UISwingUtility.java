@@ -6,8 +6,6 @@ import java.awt.event.ActionListener;
 
 public class UISwingUtility
 {
-    public static Color primaryDark = new Color(20, 20, 20);
-
     public static String colorStr(Color c)
     {
         return "<html><font color='#" + Integer.toHexString(c.getRGB()).substring(2) + "'>";
@@ -15,14 +13,12 @@ public class UISwingUtility
     public  final static String roomColor = colorStr(new Color(200, 200, 200));
     public static JLabel getDarkJLabel(String labelText)
     {
-        JLabel darkLabel = new JLabel(labelText);
-        return darkLabel;
+        return new JLabel(labelText);
     }
 
     public static JLabel getDarkJLabel(String labelText, int swingConstant)
     {
-        JLabel darkLabel = new JLabel(labelText, swingConstant);
-        return darkLabel;
+        return new JLabel(labelText, swingConstant);
     }
 
     public static JPanel getTitledPanel(String title)
@@ -44,9 +40,9 @@ public class UISwingUtility
         return darkCheckBox;
     }
 
-    public static JComboBox getActionListenCheckBox(String[] options, ActionListener actionListener)
+    public static JComboBox<String> getActionListenCheckBox(String[] options, ActionListener actionListener)
     {
-        JComboBox dark = new JComboBox(options);
+        JComboBox<String> dark = new JComboBox<>(options);
         dark.addActionListener(actionListener);
         return dark;
     }

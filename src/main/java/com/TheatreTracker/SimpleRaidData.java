@@ -6,7 +6,6 @@ import com.TheatreTracker.utility.datautility.DataManager;
 import com.TheatreTracker.utility.datautility.DataPoint;
 import com.TheatreTracker.utility.wrappers.*;
 import lombok.extern.slf4j.Slf4j;
-import net.runelite.client.game.ItemManager;
 
 import java.util.*;
 import static com.TheatreTracker.constants.TOBRoom.*;
@@ -40,8 +39,8 @@ public class SimpleRaidData
     public Date raidStarted;
     private ArrayList<String> globalData;
     public LinkedHashMap<String, Integer> players;
-    public String filePath = "";
-    public String fileName = "";
+    public String filePath;
+    public String fileName;
     public String activeValue = "";
     // Maiden tracking
     public boolean maidenTimeAccurate;

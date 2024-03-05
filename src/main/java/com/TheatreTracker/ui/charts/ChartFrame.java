@@ -258,7 +258,7 @@ public class ChartFrame extends BaseFrame
             verzP1RCP.setTick(verzP1Time);
             verzP1RCP.addRoomSpecificDatum(dawnDropsMap);
             verzP1RCP.addThrallBoxes(data.verzikThrallSpawns);
-            verzP1RCP.setRoomSpecificText("Dawn Appears: ");
+            verzP1RCP.setRoomSpecificText("Dawn Appears");
             verzP1RCP.addAutos(p1autos);
 
             ChartPanel verzP2RCP = new ChartPanel("Verzik P2", false, config, clientThread, configManager);

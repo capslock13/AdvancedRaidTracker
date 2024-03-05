@@ -1,8 +1,11 @@
 package com.TheatreTracker.ui.charts;
 
+import com.TheatreTracker.TheatreTrackerConfig;
 import com.TheatreTracker.utility.ItemReference;
 import com.TheatreTracker.utility.Point;
 import net.runelite.api.Item;
+import net.runelite.client.config.Config;
+import net.runelite.client.ui.FontManager;
 
 import java.awt.*;
 import java.awt.font.FontRenderContext;
@@ -15,9 +18,10 @@ public class HoverBox
 {
     ArrayList<String> info;
     Point location = new Point(0,0);
-
-    public HoverBox(String s)
+    private final TheatreTrackerConfig config;
+    public HoverBox(String s, TheatreTrackerConfig config)
     {
+        this.config = config;
         info = new ArrayList<>();
         addString(s);
     }
@@ -30,13 +34,13 @@ public class HoverBox
         if(s.toLowerCase().startsWith(".weapon"))
         {
             setStyle(s);
-            info.add(1, "Style: " + styles[style]);
+            //info.add(1, "Style: " + styles[style]);
         }
     }
 
     public void setPosition(int x, int y)
     {
-        location = new Point(x+20, y);
+        location = new Point(x+config.chartScaleSize(), y);
     }
 
     int style = NONE;
@@ -68,8 +72,10 @@ public class HoverBox
         return false;
     }
 
-    public void draw(Graphics2D g)
+    public int getWidth(Graphics2D g)
     {
+        Font oldFont = g.getFont();
+        g.setFont(FontManager.getRunescapeBoldFont());
         int longestString = 0;
         for(String s : info)
         {
@@ -79,12 +85,20 @@ public class HoverBox
                 longestString = stringLength;
             }
         }
+        g.setFont(oldFont);
+        return longestString+10;
+    }
+
+    public void draw(Graphics2D g)
+    {
+        Font oldFont = g.getFont();
+        g.setFont(FontManager.getRunescapeBoldFont());
         int fontHeight = getStringBounds(g).height;
-        g.setColor(new Color(0, 0, 0, 220));
-        int boxHeight = 10 + (fontHeight+5)*info.size();
-        g.fillRect(location.getX(), location.getY(), longestString + 10, boxHeight);
-        g.setColor(Color.WHITE);
-        g.drawRect(location.getX(), location.getY(), longestString + 10, boxHeight);
+        g.setColor(config.primaryDark());
+        int boxHeight = 10 + (fontHeight+7)*info.size();
+        g.fillRoundRect(location.getX(), location.getY(), getWidth(g), boxHeight, 10, 10);
+        g.setColor(new Color(200, 200, 200));
+        g.drawRoundRect(location.getX(), location.getY(), getWidth(g), boxHeight, 10, 10);
 
         for(int i = 0; i < info.size(); i++)
         {
@@ -94,19 +108,20 @@ public class HoverBox
                 label = label.substring(1);
                 if(anyMatch(label, ItemReference.ITEMS[style]))
                 {
-                    g.setColor(Color.GREEN);
+                    g.setColor(new Color(60, 190, 60));
                 }
                 else if(anyMatch(label, ItemReference.ITEMS[0]))
                 {
-                    g.setColor(Color.CYAN);
+                    g.setColor(new Color(120, 120, 120));
                 }
                 else
                 {
-                    g.setColor(Color.RED);
+                    g.setColor(new Color(190, 30, 30));
                 }
             }
-            g.drawString(label, location.getX()+5, location.getY() + 5 + (fontHeight+5)*(i+1));
+            g.drawString(label, location.getX()+5, location.getY() + 5 + (fontHeight+7)*(i+1));
         }
+        g.setFont(oldFont);
     }
 
     private int getStringWidth(Graphics2D g, String str)

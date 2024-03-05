@@ -526,13 +526,13 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                 int margin = 5;
                 int subBoxWidth = 90;
                 int textPosition = margin + (subBoxWidth-width)/2;
-                g.drawString(players.get(i), textPosition, ((j * boxHeight) + ((i + 2) * scale) + (fontHeight) / 2) + (scale/2) + 6);
-                g.setFont(oldFont);
+                g.drawString(players.get(i), textPosition, ((j * boxHeight) + ((i + 2) * scale) + (fontHeight) / 2) + (scale/2) + 8);
 
                 if (i == 0)
                 {
-                    g.drawString(roomSpecificText, 10, j * boxHeight + ((players.size() + 2) * scale) + (fontHeight / 2) + 20);
+                    g.drawString(roomSpecificText, 5, j * boxHeight + ((players.size() + 2) * scale) + (fontHeight / 2) + 20);
                 }
+                g.setFont(oldFont);
             }
         }
 
@@ -632,7 +632,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                     g.setColor((box.primaryTarget) ? Color.WHITE : new Color(0, 190, 255));
                     int textOffset = (scale / 2) - (getStringWidth(g, box.letter) / 2);
                     int primaryOffset = yOffset + (box.additionalText.isEmpty() ? (fontHeight / 2) : 0);
-                    g.drawString(box.letter, xOffset + textOffset, primaryOffset + (scale / 2));
+                    g.drawString(box.letter, xOffset + textOffset-1, primaryOffset + (scale / 2)+1);
                     if (!box.additionalText.isEmpty())
                     {
                         Font f = g.getFont();
@@ -645,7 +645,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                 }
                 box.createOutline();
                 g.setColor(box.outlineColor);
-                g.drawRect(xOffset+1, yOffset+1, scale-2, scale-2);
+                g.drawRoundRect(xOffset+1, yOffset+1, scale-2, scale-2, 5, 5);
             }
         }
     }
@@ -777,16 +777,17 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             }
             String bossWouldHaveDied = (offset != -1) ? "Melee attack on this tick killing would result in: " + RoomUtil.time(selectedRow + 1 + offset + 1) + " (Quick death: " + RoomUtil.time(selectedRow + offset + 1) + ")" : "";
             String HPString = "Boss HP: " + ((selectedTickHP == -1) ? "-" : RoomUtil.varbitHPtoReadable(selectedTickHP));
-            HoverBox hoverBox = new HoverBox(HPString);
+            HoverBox hoverBox = new HoverBox(HPString, config);
             if (offset != -1)
             {
                 hoverBox.addString(bossWouldHaveDied);
             }
-            if (offset != -1)
+            int xPosition = xOffset+scale;
+            if(xPosition+hoverBox.getWidth(g) > img.getWidth())
             {
-                g.drawString(bossWouldHaveDied, xOffset + 10 + scale, yOffset + 35);
+                xPosition = xPosition-hoverBox.getWidth(g)-3*scale;
             }
-            hoverBox.setPosition(xOffset + scale, yOffset);
+            hoverBox.setPosition(xPosition, yOffset);
             hoverBox.draw(g);
         }
     }
@@ -799,13 +800,18 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             if (action.tick == selectedTick && action.player.equals(selectedPlayer))
             {
                 Point location = getPoint(action.tick, action.player);
-                HoverBox hoverBox = new HoverBox(actions.get(action));
+                HoverBox hoverBox = new HoverBox(actions.get(action), config);
                 hoverBox.addString("");
                 for(String item : action.wornItemNames)
                 {
                     hoverBox.addString("."+item);
                 }
-                hoverBox.setPosition(location.getX() + 10, location.getY() - 10);
+                int xPosition = location.getX()+10;
+                if(xPosition+hoverBox.getWidth(g) > img.getWidth())
+                {
+                    xPosition = xPosition-hoverBox.getWidth(g)-scale*2;
+                }
+                hoverBox.setPosition(xPosition, location.getY() - 10);
                 hoverBox.draw(g);
             }
         }
@@ -962,7 +968,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
     private void drawBaseBoxes(Graphics2D g)
     {
-        for(int i = 1; i < endTick; i++)
+        for(int i = startTick; i < endTick; i++)
         {
             for(int j = 0; j < playerOffsets.size(); j++)
             {

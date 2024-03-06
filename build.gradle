@@ -1,16 +1,3 @@
-plugins {
-	id 'java'
-	id "com.github.johnrengelman.shadow" version "6.1.0"
-}
-
-shadowJar {
-	from sourceSets.test.output
-	configurations = [project.configurations.testRuntimeClasspath]
-	manifest {
-		attributes "Main-Class": "com.advancedraidtracker.AdvancedRaidTrackerPluginTest"
-	}
-}
-
 repositories {
 	mavenLocal()
 	maven {
@@ -32,8 +19,8 @@ dependencies {
 	testImplementation group: 'net.runelite', name:'jshell', version: runeLiteVersion
 }
 
-group = 'com.example'
-version = '1.0-SNAPSHOT'
+group = 'com.advancedraidtracker'
+version = '1.0.1'
 sourceCompatibility = '1.8'
 
 tasks.withType(JavaCompile) {

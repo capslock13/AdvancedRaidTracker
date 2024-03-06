@@ -273,7 +273,6 @@ public class SimpleRaidData
 
     public boolean checkExit(TOBRoom room)
     {
-        log.info("Checking exit, globaldata size: " + globalData.size() + ", last key: " + ((globalData.isEmpty()) ? "empty" : globalData.get(0)));
         if (globalData.isEmpty() || globalData.get(0).split(",", -1)[3].equals(EXIT_FLAG))
         {
             switch (room)
@@ -526,7 +525,6 @@ public class SimpleRaidData
 
     private boolean parseVerzik()
     {
-        log.info("parse verzik");
         int activeIndex = 0;
         for (String s : globalData)
         {
@@ -704,7 +702,6 @@ public class SimpleRaidData
 
     private boolean parseXarpus()
     {
-        log.info("parse xarpus");
         int activeIndex = 0;
         loop:
         for (String s : globalData)
@@ -802,7 +799,6 @@ public class SimpleRaidData
 
     private boolean parseSotetseg()
     {
-        log.info("Parse sote");
         int activeIndex = 0;
         loop:
         for (String s : globalData)
@@ -908,7 +904,6 @@ public class SimpleRaidData
 
     private boolean parseNylo()
     {
-        log.info("Parse nylo");
         int activeIndex = 0;
         loop:
         for (String s : globalData)
@@ -1038,7 +1033,6 @@ public class SimpleRaidData
 
     private boolean parseBloat()
     {
-        log.info("Parse bloat");
         int activeIndex = 0;
         bloatDefenseAccurate = maidenDefenseAccurate;
         loop:

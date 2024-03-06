@@ -657,7 +657,7 @@ public class SimpleRaidData
                 }
             } catch (Exception e)
             {
-                log.info("Failed on " + s);
+                log.info("Failed: " + s);
             }
             activeIndex++;
         }

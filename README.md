@@ -1,4 +1,4 @@
-# Theatre Of Blood Tracker
+# Advanced Raid Tracker
 This plugin tracks various advanced statistics and data about your theatre of blood runs.
 
 ## User Interface
@@ -51,7 +51,7 @@ This option will open a window to save the raids you've selected under a differe
 
 ![](images/saveraidswindow.jpg)
 
-These will appear in the table in the sidepanel of the plugin to be viewed later. Additionally, they will be saved in .runelite/theatretracker/raids
+These will appear in the table in the sidepanel of the plugin to be viewed later. Additionally, they will be saved in .runelite/advancedraidtracker/misc-dir/raids
 
 ### Add set to comparison
 

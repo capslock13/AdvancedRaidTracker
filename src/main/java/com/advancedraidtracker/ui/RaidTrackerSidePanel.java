@@ -35,11 +35,12 @@ public class RaidTrackerSidePanel extends PluginPanel
     private static ItemManager itemManager;
     private final ConfigManager configManager;
 
+    private JLabel pleaseWait = new JLabel("Parsing Files...", SwingConstants.CENTER);
+
     @Inject
     RaidTrackerSidePanel(AdvancedRaidTrackerPlugin plugin, AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
     {
         this.configManager = configManager;
-        JLabel pleaseWait = new JLabel("Parsing files please wait..", SwingConstants.CENTER);
         add(pleaseWait);
         new Thread(() ->
         {
@@ -62,6 +63,23 @@ public class RaidTrackerSidePanel extends PluginPanel
         {
             File logDirectory = new File(PLUGIN_DIRECTORY);
             File[] logFiles = logDirectory.listFiles();
+            int raidCount = 0;
+            if(logFiles != null)
+            {
+                for(File file : logFiles)
+                {
+                    if(file.isDirectory())
+                    {
+                        File subDirectory = new File(file.getAbsolutePath()+"/primary/");
+                        File[] subDirectoryFiles = subDirectory.listFiles();
+                        if(subDirectoryFiles != null)
+                        {
+                            raidCount += subDirectoryFiles.length;
+                        }
+                    }
+                }
+            }
+            int index = 0;
             if (logFiles != null)
             {
                 for (File file : logFiles)
@@ -80,6 +98,15 @@ public class RaidTrackerSidePanel extends PluginPanel
                                     {
                                         File currentFile = new File(subDirectory.getAbsolutePath() + "/" + dataFile.getName());
                                         parseLogFile(raids, currentFile, subDirectory.getAbsolutePath() + "/" + dataFile.getName());
+                                        index++;
+                                        if(raidCountLabel != null)
+                                        {
+                                            raidCountLabel.setText("Refreshing...(" + index + "/" + raidCount + ")");
+                                        }
+                                        else if(pleaseWait != null)
+                                        {
+                                            pleaseWait.setText("Parsing Files...(" + index + "/" + raidCount + ")");
+                                        }
                                     }
                                 }
                             }
@@ -91,6 +118,7 @@ public class RaidTrackerSidePanel extends PluginPanel
         catch (Exception e)
         {
             log.info("Could not retrieve raids");
+            e.printStackTrace();
         }
         raids.sort(Comparator.comparing(SimpleRaidData::getDate));
         return raids;
@@ -181,12 +209,20 @@ public class RaidTrackerSidePanel extends PluginPanel
                 al ->
                         new Thread(() ->
                         {
+                            viewRaidsButton.setEnabled(false);
+                            tableRaidsButton.setEnabled(false);
+                            raidCountLabel.setText("Refreshing, Please Wait...");
                             raidsData = getAllRaids();
-                            updateRaidCountLabel();
                             DefaultTableModel model = getTableModel();
                             loadRaidsTable.setModel(model);
-                            raids.clearData();
-                            raids = null;
+                            if(raids != null)
+                            {
+                                raids.clearData();
+                                raids = null;
+                            }
+                            viewRaidsButton.setEnabled(true);
+                            tableRaidsButton.setEnabled(true);
+                            updateRaidCountLabel();
                         }).start());
 
         tableRaidsButton.addActionListener(

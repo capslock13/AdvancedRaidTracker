@@ -350,16 +350,22 @@ public class SimpleRaidData
         int room = -1;
         for (String s : globalData)
         {
-            String[] subData = s.split(",");
-            int key = Integer.parseInt(subData[3]);
-            if (key == SPECTATE_FLAG)
+            try
             {
-                room = Integer.parseInt(subData[4]);
-                spectated = true;
+                String[] subData = s.split(",");
+                int key = Integer.parseInt(subData[3]);
+                if (key == SPECTATE_FLAG)
+                {
+                    room = Integer.parseInt(subData[4]);
+                    spectated = true;
+                }
+                if (String.valueOf(key).equals(EXIT_FLAG))
+                {
+                    endTime = new Date(Long.parseLong(subData[1]));
+                }
             }
-            if (String.valueOf(key).equals(EXIT_FLAG))
+            catch (Exception e)
             {
-                endTime = new Date(Long.parseLong(subData[1]));
             }
         }
         if (room > 0)

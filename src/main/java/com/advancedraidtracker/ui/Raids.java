@@ -737,8 +737,14 @@ public class Raids extends BaseFrame
 
     public void clearData()
     {
-        currentData.clear();
-        comparisons.clear();
+        if(currentData != null)
+        {
+            currentData.clear();
+        }
+        if(comparisons != null)
+        {
+            comparisons.clear();
+        }
         close();
     }
 
@@ -955,7 +961,6 @@ public class Raids extends BaseFrame
                 }
             }
         });
-
         JComponent overallPanel = new JPanel();
         tabbedPane.addTab("Overall", overallPanel);
         overallPanel.setLayout(new GridLayout(2, 3));
@@ -1140,10 +1145,8 @@ public class Raids extends BaseFrame
         topContainer.setPreferredSize(new Dimension(800, 300));
         topContainer.add(tabbedPane);
         topContainer.add(additionalFiltersPanel);
-
         setLabels(data);
         updateTable();
-
         container.setPreferredSize(new Dimension(800, 700));
 
         container.add(topContainer);
@@ -1267,7 +1270,6 @@ public class Raids extends BaseFrame
         filterPlayerPanel.add(filterPlayerPanelTop);
         filterPlayerPanel.add(Box.createRigidArea(new Dimension(5, 5)));
         filterPlayerPanel.add(filterPlayerPanelBottom);
-
         String[] choicesDate =
                 {
                         "on",
@@ -1402,7 +1404,6 @@ public class Raids extends BaseFrame
         otherBoolFilterChoice = new JComboBox<>(choicesOtherBool);
         otherBoolFilterOperator = new JComboBox<>(qualifierOtherBool);
 
-
         JButton otherBoolAdd = new JButton("Add Filter");
         otherBoolAdd.addActionListener(
                 al ->
@@ -1510,7 +1511,6 @@ public class Raids extends BaseFrame
         viewGraphs.setBackground(Color.BLACK);
         viewGraphs.setOpaque(true);
 
-
         JMenuItem viewCharts = new JMenuItem("View Charts");
         viewCharts.setBackground(Color.BLACK);
         viewCharts.setOpaque(true);
@@ -1613,7 +1613,6 @@ public class Raids extends BaseFrame
 
             updateTable();
         });
-
         JMenuItem analyzeCrabs = new JMenuItem("Analyze selection crab leaks");
         analyzeCrabs.setOpaque(true);
         analyzeCrabs.setBackground(Color.BLACK);
@@ -1701,8 +1700,6 @@ public class Raids extends BaseFrame
         JPanel rightBottomMostContainer = getTitledPanel("Alias Options");
 
         aliasText.setToolTipText("This applies to the tab names when you use the analyze sessions features. Syntax- Name to be displayed:oldname1,oldname2,oldname3");
-
-
         aliasText.getDocument().addDocumentListener(new DocumentListener()
         {
             @Override

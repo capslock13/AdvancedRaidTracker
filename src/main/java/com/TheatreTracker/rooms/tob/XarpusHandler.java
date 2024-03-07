@@ -12,13 +12,13 @@ import net.runelite.api.events.*;
 import com.TheatreTracker.utility.Point;
 import com.TheatreTracker.utility.RoomUtil;
 import com.TheatreTracker.utility.datautility.DataWriter;
-import com.TheatreTracker.utility.RoomState;
+import com.TheatreTracker.constants.RoomState;
 
 import static com.TheatreTracker.constants.LogID.*;
 import static com.TheatreTracker.constants.LogID.ACCURATE_XARP_END;
 import static com.TheatreTracker.constants.LogID.XARPUS_STARTED;
 import static com.TheatreTracker.constants.TobIDs.*;
-import static com.TheatreTracker.utility.RoomState.XarpusRoomState.FINISHED;
+import static com.TheatreTracker.constants.RoomState.XarpusRoomState.FINISHED;
 @Slf4j
 public class XarpusHandler extends TOBRoomHandler
 {

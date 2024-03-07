@@ -139,11 +139,17 @@ public class SimpleTOBData extends SimpleRaidData
                 return xarpStartAccurate && xarpEndAccurate;
             case VERZIK:
                 return verzikStartAccurate && verzikEndAccurate;
-            case ANY:
+            case ANY_TOB:
                 return true;
             default:
                 return false;
         }
+    }
+
+    @Override
+    public int getIndex()
+    {
+        return dataManager.get(RAID_INDEX);
     }
 
     public void setIndex(int index)
@@ -187,6 +193,12 @@ public class SimpleTOBData extends SimpleRaidData
         {
             return "";
         }
+    }
+
+    @Override
+    public String getPlayerList()
+    {
+        return null;
     }
 
     public PlayerCorrelatedPointData getSpecificTimeInactiveCorrelated(String inactive)
@@ -333,7 +345,7 @@ public class SimpleTOBData extends SimpleRaidData
         raidType = RaidType.TOB;
         this.filePath = filePath;
         this.fileName = fileName;
-        dataManager = new DataManager();
+        dataManager = new DataManager(RaidType.TOB);
         partyComplete = false;
         maidenDefenseAccurate = false;
         bloatDefenseAccurate = false;

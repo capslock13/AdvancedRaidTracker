@@ -1,4 +1,4 @@
-package com.TheatreTracker.utility;
+package com.TheatreTracker.constants;
 
 public class RoomState
 {
@@ -57,6 +57,60 @@ public class RoomState
         PHASE_2,
         PHASE_2_REDS,
         PHASE_3,
+        FINISHED
+    }
+
+    public enum AkkhaRoomState
+    {
+        NOT_STARTED,
+        PHASE_1,
+        SHADOW_1,
+        PHASE_2,
+        SHADOW_2,
+        PHASE_3,
+        SHADOW_3,
+        PHASE_4,
+        SHADOW_4,
+        PHASE_5,
+        FINAL_PHASE,
+        FINISHED
+    }
+    public enum BabaRoomState
+    {
+        NOT_STARTED,
+        PHASE_1,
+        BOULDER_1,
+        PHASE_2,
+        BOULDER_2,
+        PHASE_3,
+        FINISHED
+    }
+
+    public enum KephriRoomState
+    {
+        NOT_STARTED,
+        PHASE_1,
+        SWARM_1,
+        PHASE_2,
+        SWARM_2,
+        PHASE_3,
+        FINISHED
+    }
+
+    public enum ZebakRoomState
+    {
+        NOT_STARTED,
+        PHASE_1,
+        FINISHED
+    }
+
+    public enum WardenRoomState
+    {
+        NOT_STARTED,
+        PHASE_1,
+        PHASE_2,
+        PHASE_3,
+        ENRAGED,
         FINISHED
     }
 }

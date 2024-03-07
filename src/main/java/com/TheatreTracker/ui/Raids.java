@@ -471,7 +471,7 @@ public class Raids extends BaseFrame
         switch (column)
         {
             case "":
-                return raid.getValue(DataPoint.RAID_INDEX);
+                return raid.getIndex();
             case "Date":
                 Calendar cal = Calendar.getInstance();
                 cal.setTime(raid.raidStarted);
@@ -819,127 +819,34 @@ public class Raids extends BaseFrame
 
     public void createFrame(ArrayList<SimpleRaidData> data)
     {
-        comboPopupData.put("Room Times", DataPoint.getRoomTimes());
-        comboPopupData.put("Maiden", DataPoint.getMaidenNames());
-        comboPopupData.put("Bloat", DataPoint.getBloatNames());
-        comboPopupData.put("Nylocas", DataPoint.getNyloNames());
-        comboPopupData.put("Sotetseg", DataPoint.getSoteNames());
-        comboPopupData.put("Xarpus", DataPoint.getXarpNames());
-        comboPopupData.put("Verzik", DataPoint.getVerzikNames());
-        comboPopupData.put("Any", DataPoint.getAnyRoomNames());
         comboPopupMenu = new JPopupMenu();
         comboPopupMenu.setBorder(new MatteBorder(1, 1, 1, 1, Color.DARK_GRAY));
+
+        comboPopupData.put("Room Times", DataPoint.getRoomTimes());
+        comboPopupData.put("Maiden", DataPoint.getSpecificNames(DataPoint.rooms.MAIDEN));
+        comboPopupData.put("Bloat", DataPoint.getSpecificNames(DataPoint.rooms.BLOAT));
+        comboPopupData.put("Nylocas", DataPoint.getSpecificNames(DataPoint.rooms.NYLOCAS));
+        comboPopupData.put("Sotetseg", DataPoint.getSpecificNames(DataPoint.rooms.SOTETSEG));
+        comboPopupData.put("Xarpus", DataPoint.getSpecificNames(DataPoint.rooms.XARPUS));
+        comboPopupData.put("Verzik", DataPoint.getSpecificNames(DataPoint.rooms.VERZIK));
+        comboPopupData.put("Any TOB", DataPoint.getSpecificNames(DataPoint.rooms.ANY_TOB));
+        comboPopupData.put("Apmeken", DataPoint.getSpecificNames(DataPoint.rooms.APMEKEN));
+        comboPopupData.put("Baba", DataPoint.getSpecificNames(DataPoint.rooms.BABA));
+        comboPopupData.put("Scabaras", DataPoint.getSpecificNames(DataPoint.rooms.SCABARAS));
+        comboPopupData.put("Kephri", DataPoint.getSpecificNames(DataPoint.rooms.KEPHRI));
+        comboPopupData.put("Crondis", DataPoint.getSpecificNames(DataPoint.rooms.CRONDIS));
+        comboPopupData.put("Zebak", DataPoint.getSpecificNames(DataPoint.rooms.ZEBAK));
+        comboPopupData.put("Het", DataPoint.getSpecificNames(DataPoint.rooms.HET));
+        comboPopupData.put("Akkha", DataPoint.getSpecificNames(DataPoint.rooms.AKKHA));
+        comboPopupData.put("Wardens", DataPoint.getSpecificNames(DataPoint.rooms.WARDENS));
+        comboPopupData.put("Any TOA", DataPoint.getSpecificNames(DataPoint.rooms.ANY_TOA));
 
         List<String> allComboValues = new ArrayList<String>(comboPopupData.keySet());
 
         comboStrictData = new ArrayList<String>();
 
-        for (String category : allComboValues)
-        {
-            JMenu menu = new JMenu(category);
-            menu.setBackground(Color.BLACK);
-            menu.setOpaque(true);
-            if (!category.equals("Room Times") && !category.equals("Any"))
-            {
-                JMenu timeMenu = new JMenu("Time");
-                timeMenu.setBackground(Color.BLACK);
-                timeMenu.setOpaque(true);
-                for (String itemName : DataPoint.filterTimes(comboPopupData.get(category)))
-                {
-                    timeMenu.add(createMenuItem(itemName));
-                    comboStrictData.add(itemName);
-                }
-                JMenu countMenu = new JMenu("Misc");
-                countMenu.setBackground(Color.BLACK);
-                countMenu.setOpaque(true);
-                for (String itemName : DataPoint.filterInt(comboPopupData.get(category)))
-                {
-                    countMenu.add(createMenuItem(itemName));
-                    comboStrictData.add(itemName);
-                }
-                JMenu thrallMenu = new JMenu("Thrall");
-                thrallMenu.setBackground(Color.BLACK);
-                thrallMenu.setOpaque(true);
-                for (String itemName : DataPoint.filterThrall(comboPopupData.get(category)))
-                {
-                    thrallMenu.add(createMenuItem(itemName));
-                    comboStrictData.add(itemName);
-                }
-                JMenu vengMenu = new JMenu("Veng");
-                vengMenu.setBackground(Color.BLACK);
-                vengMenu.setOpaque(true);
-                for (String itemName : DataPoint.filterVeng(comboPopupData.get(category)))
-                {
-                    vengMenu.add(createMenuItem(itemName));
-                    comboStrictData.add(itemName);
-                }
+        createComboBoxPopupMenu(allComboValues, comboPopupData, comboStrictData, comboPopupMenu);
 
-                JMenu specMenu = new JMenu("Spec");
-                specMenu.setBackground(Color.BLACK);
-                specMenu.setOpaque(true);
-                for (String itemName : DataPoint.filterSpecs(comboPopupData.get(category)))
-                {
-                    specMenu.add(createMenuItem(itemName));
-                    comboStrictData.add(itemName);
-                }
-
-                menu.add(timeMenu);
-                menu.add(countMenu);
-                menu.add(thrallMenu);
-                menu.add(vengMenu);
-                menu.add(specMenu);
-            } else
-            {
-                for (String itemName : comboPopupData.get(category))
-                {
-                    menu.add(createMenuItem(itemName));
-                    comboStrictData.add(itemName);
-                }
-            }
-            comboPopupMenu.add(menu);
-        }
-        JMenu playerSpecificMenu = new JMenu("Player Specific");
-        playerSpecificMenu.setBackground(Color.BLACK);
-        playerSpecificMenu.setOpaque(true);
-        String[] qualifiers = new String[]{"Maiden", "Bloat", "Nylo", "Sote", "Xarp", "Verz", "deaths"};
-
-        for (String s : qualifiers)
-        {
-            JMenu room = new JMenu(s);
-            room.setBackground(Color.BLACK);
-            room.setOpaque(true);
-            for (String qualified : DataPoint.getPlayerSpecific())
-            {
-                if (qualified.contains(s))
-                {
-                    room.add(createMenuItem("Player: " + qualified));
-                    comboStrictData.add("Player: " + qualified);
-                }
-            }
-            playerSpecificMenu.add(room);
-        }
-        JMenu room = new JMenu("Other");
-        room.setBackground(Color.BLACK);
-        room.setOpaque(true);
-        for (String qualified : DataPoint.getPlayerSpecific())
-        {
-            boolean anyFlagged = false;
-            for (String s : qualifiers)
-            {
-                if (qualified.contains(s))
-                {
-                    anyFlagged = true;
-                }
-            }
-            if (!anyFlagged)
-            {
-                room.add(createMenuItem("Player: " + qualified));
-                comboStrictData.add("Player: " + qualified);
-            }
-        }
-        playerSpecificMenu.add(room);
-
-        comboPopupMenu.add(playerSpecificMenu);
 
         viewByRaidComboBox = new JComboBox<>();
         viewByRaidComboBox.setEditable(true);
@@ -1935,6 +1842,116 @@ public class Raids extends BaseFrame
         add(splitLeftRight);
         pack();
         built = true;
+    }
+
+    private void createComboBoxPopupMenu(List<String> allComboValues, Map<String, String[]> popupData, ArrayList<String> flatData, JPopupMenu popmenu)
+    {
+        for (String category : allComboValues)
+        {
+            JMenu menu = new JMenu(category);
+            menu.setBackground(Color.BLACK);
+            menu.setOpaque(true);
+            if (!category.equals("Room Times") && !category.equals("Any"))
+            {
+                JMenu timeMenu = new JMenu("Time");
+                timeMenu.setBackground(Color.BLACK);
+                timeMenu.setOpaque(true);
+                for (String itemName : DataPoint.filterTimes(popupData.get(category)))
+                {
+                    timeMenu.add(createMenuItem(itemName));
+                    flatData.add(itemName);
+                }
+                JMenu countMenu = new JMenu("Misc");
+                countMenu.setBackground(Color.BLACK);
+                countMenu.setOpaque(true);
+                for (String itemName : DataPoint.filterInt(popupData.get(category)))
+                {
+                    countMenu.add(createMenuItem(itemName));
+                    flatData.add(itemName);
+                }
+                JMenu thrallMenu = new JMenu("Thrall");
+                thrallMenu.setBackground(Color.BLACK);
+                thrallMenu.setOpaque(true);
+                for (String itemName : DataPoint.filterThrall(popupData.get(category)))
+                {
+                    thrallMenu.add(createMenuItem(itemName));
+                    flatData.add(itemName);
+                }
+                JMenu vengMenu = new JMenu("Veng");
+                vengMenu.setBackground(Color.BLACK);
+                vengMenu.setOpaque(true);
+                for (String itemName : DataPoint.filterVeng(popupData.get(category)))
+                {
+                    vengMenu.add(createMenuItem(itemName));
+                    flatData.add(itemName);
+                }
+
+                JMenu specMenu = new JMenu("Spec");
+                specMenu.setBackground(Color.BLACK);
+                specMenu.setOpaque(true);
+                for (String itemName : DataPoint.filterSpecs(popupData.get(category)))
+                {
+                    specMenu.add(createMenuItem(itemName));
+                    flatData.add(itemName);
+                }
+
+                menu.add(timeMenu);
+                menu.add(countMenu);
+                menu.add(thrallMenu);
+                menu.add(vengMenu);
+                menu.add(specMenu);
+            } else
+            {
+                for (String itemName : popupData.get(category))
+                {
+                    menu.add(createMenuItem(itemName));
+                    flatData.add(itemName);
+                }
+            }
+            popmenu.add(menu);
+        }
+        JMenu playerSpecificMenu = new JMenu("Player Specific");
+        playerSpecificMenu.setBackground(Color.BLACK);
+        playerSpecificMenu.setOpaque(true);
+        String[] qualifiers = new String[]{"Maiden", "Bloat", "Nylo", "Sote", "Xarp", "Verz", "deaths"};
+
+        for (String s : qualifiers)
+        {
+            JMenu room = new JMenu(s);
+            room.setBackground(Color.BLACK);
+            room.setOpaque(true);
+            for (String qualified : DataPoint.getPlayerSpecific())
+            {
+                if (qualified.contains(s))
+                {
+                    room.add(createMenuItem("Player: " + qualified));
+                    flatData.add("Player: " + qualified);
+                }
+            }
+            playerSpecificMenu.add(room);
+        }
+        JMenu room = new JMenu("Other");
+        room.setBackground(Color.BLACK);
+        room.setOpaque(true);
+        for (String qualified : DataPoint.getPlayerSpecific())
+        {
+            boolean anyFlagged = false;
+            for (String s : qualifiers)
+            {
+                if (qualified.contains(s))
+                {
+                    anyFlagged = true;
+                }
+            }
+            if (!anyFlagged)
+            {
+                room.add(createMenuItem("Player: " + qualified));
+                flatData.add("Player: " + qualified);
+            }
+        }
+        playerSpecificMenu.add(room);
+
+        popmenu.add(playerSpecificMenu);
     }
 
     public String[] columnHeaderNames = new String[]{"Date", "Raid", "Time", "Scale", "Status", "Players", "Spectate", "View"};

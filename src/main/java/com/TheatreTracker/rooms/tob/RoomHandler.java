@@ -15,6 +15,7 @@ public class RoomHandler
     protected Client client;
     protected DataWriter clog;
     public int roomStartTick = -1;
+    protected boolean active = false;
 
     private final TheatreTrackerConfig config;
     protected boolean accurateTimer = true;
@@ -194,5 +195,9 @@ public class RoomHandler
     public void reset()
     {
         roomStartTick = -1;
+    }
+
+    public void updateGroundObjectDespawned(GroundObjectDespawned event)
+    {
     }
 }

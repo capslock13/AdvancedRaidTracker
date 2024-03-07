@@ -9,7 +9,7 @@ import java.util.*;
 import static com.TheatreTracker.utility.datautility.DataPoint.PARTY_SIZE;
 import static com.TheatreTracker.utility.datautility.DataPoint.RAID_INDEX;
 
-public class SimpleRaidData
+public abstract class SimpleRaidData
 {
     public RaidType raidType = RaidType.UNASSIGNED;
     public Date raidStarted = new Date(System.currentTimeMillis());
@@ -23,84 +23,38 @@ public class SimpleRaidData
     public String fileName = "";
     public String filePath = "";
 
-    public int getScale()
-    {
-        return 1;
-    }
+    public abstract int getScale();
 
-    public Date getDate()
-    {
-        return new Date(System.currentTimeMillis());
-    }
+    public abstract Date getDate();
 
-    public int getValue(String name)
-    {
-        return -1;
-    }
+    public abstract int getIndex();
 
-    public int getValue(DataPoint point)
-    {
-        return -1;
-    }
+    public abstract int getValue(String name);
 
-    public String getScaleString()
-    {
-        return "";
-    }
+    public abstract int getValue(DataPoint point);
 
-    public String getRoomStatus()
-    {
-        return "";
-    }
+    public abstract String getScaleString();
 
-    public void setIndex(int index)
-    {
+    public abstract String getRoomStatus();
 
-    }
+    public abstract void setIndex(int index);
 
-    public String getPlayers()
-    {
-        return "";
-    }
+    public abstract String getPlayers();
 
-    public String getPlayerList(ArrayList<Map<String, ArrayList<String>>> aliases)
-    {
-        return "";
-    }
+    public abstract String getPlayerList(ArrayList<Map<String, ArrayList<String>>> aliases);
 
-    public String getPlayerList()
-    {
-        return "";
-    }
+    public abstract String getPlayerList();
 
-    public int getSpecificTime()
-    {
-        return -1;
-    }
+    public abstract int getSpecificTime();
 
-    public boolean getOverallTimeAccurate()
-    {
-        return true;
-    }
+    public abstract boolean getOverallTimeAccurate();
 
-    public PlayerCorrelatedPointData getSpecificTimeInactiveCorrelated(String inactive)
-    {
-        return null;
-    }
+    public abstract PlayerCorrelatedPointData getSpecificTimeInactiveCorrelated(String inactive);
 
-    public int getSpecificTimeInactive(String inactive)
-    {
-        return -1;
-    }
+    public abstract int getSpecificTimeInactive(String inactive);
 
-    public boolean getTimeAccurate(DataPoint key)
-    {
-        return false;
-    }
+    public abstract boolean getTimeAccurate(DataPoint key);
 
-    public int getTimeSum()
-    {
-        return 0;
-    }
+    public abstract int getTimeSum();
 
 }

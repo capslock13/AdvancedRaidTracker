@@ -7,8 +7,8 @@ import net.runelite.api.Client;
 
 public class NexusHandler extends TOARoomHandler
 {
-    public NexusHandler(Client client, DataWriter clog, TheatreTrackerConfig config, TheatreTrackerPlugin plugin)
+    public NexusHandler(Client client, DataWriter clog, TheatreTrackerConfig config, TheatreTrackerPlugin plugin, TOAHandler handler)
     {
-        super(client, clog, config, plugin);
+        super(client, clog, config, plugin, handler);
     }
 }

@@ -16,8 +16,8 @@ import java.util.ArrayList;
 
 import static com.TheatreTracker.constants.LogID.*;
 import static com.TheatreTracker.constants.TobIDs.*;
-import static com.TheatreTracker.utility.RoomState.*;
-import static com.TheatreTracker.utility.RoomState.BloatRoomState.*;
+import static com.TheatreTracker.constants.RoomState.*;
+import static com.TheatreTracker.constants.RoomState.BloatRoomState.*;
 
 @Slf4j
 public class BloatHandler extends TOBRoomHandler

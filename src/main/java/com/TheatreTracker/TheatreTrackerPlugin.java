@@ -1,14 +1,12 @@
 package com.TheatreTracker;
 
-import com.TheatreTracker.constants.RaidType;
-import com.TheatreTracker.constants.Room;
-import com.TheatreTracker.constants.TobIDs;
-import com.TheatreTracker.constants.TOBRoom;
+import com.TheatreTracker.constants.*;
 import com.TheatreTracker.rooms.toa.*;
 import com.TheatreTracker.rooms.tob.*;
 import com.TheatreTracker.ui.charts.LiveChart;
 import com.TheatreTracker.ui.RaidTrackerSidePanel;
 import com.TheatreTracker.utility.*;
+import com.TheatreTracker.utility.datautility.DataPoint;
 import com.TheatreTracker.utility.datautility.DataWriter;
 import com.TheatreTracker.utility.thrallvengtracking.*;
 import com.TheatreTracker.utility.wrappers.PlayerCopy;
@@ -23,7 +21,6 @@ import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.*;
 import net.runelite.api.kit.KitType;
-import net.runelite.api.widgets.Widget;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.EventBus;
@@ -58,6 +55,7 @@ import static com.TheatreTracker.constants.TOBRoom.XARPUS;
 import static com.TheatreTracker.constants.TobIDs.*;
 import static com.TheatreTracker.utility.RoomUtil.inRegion;
 import static com.TheatreTracker.utility.datautility.LegacyFileUtility.splitLegacyFiles;
+import static net.runelite.api.Varbits.TOA_RAID_LEVEL;
 
 
 @Slf4j
@@ -119,6 +117,7 @@ public class TheatreTrackerPlugin extends Plugin
     private HetHandler het;
     private AkkhaHandler akkha;
     private WardensHandler wardens;
+    private TOAHandler toaHandler;
 
 
 
@@ -216,17 +215,18 @@ public class TheatreTrackerPlugin extends Plugin
         sote = new SotetsegHandler(client, clog, config, this);
         xarpus = new XarpusHandler(client, clog, config, this);
         verzik = new VerzikHandler(client, clog, config, this, itemManager);
-        lobbyTOA = new TOALobbyHandler(client, clog, config, this);
-        nexus = new NexusHandler(client, clog, config, this);
-        crondis = new CrondisHandler(client, clog, config, this);
-        zebak = new ZebakHandler(client, clog, config, this);
-        scabaras = new ScabarasHandler(client, clog, config, this);
-        kephri = new KephriHandler(client, clog, config, this);
-        apmeken = new ApmekenHandler(client, clog, config, this);
-        baba = new BabaHandler(client, clog, config, this);
-        het = new HetHandler(client, clog, config, this);
-        akkha = new AkkhaHandler(client, clog, config, this);
-        wardens = new WardensHandler(client, clog, config, this);
+        toaHandler = new TOAHandler(client, clog);
+        lobbyTOA = new TOALobbyHandler(client, clog, config, this, toaHandler);
+        nexus = new NexusHandler(client, clog, config, this, toaHandler);
+        crondis = new CrondisHandler(client, clog, config, this, toaHandler);
+        zebak = new ZebakHandler(client, clog, config, this, toaHandler);
+        scabaras = new ScabarasHandler(client, clog, config, this, toaHandler);
+        kephri = new KephriHandler(client, clog, config, this, toaHandler);
+        apmeken = new ApmekenHandler(client, clog, config, this, toaHandler);
+        baba = new BabaHandler(client, clog, config, this, toaHandler);
+        het = new HetHandler(client, clog, config, this, toaHandler);
+        akkha = new AkkhaHandler(client, clog, config, this, toaHandler);
+        wardens = new WardensHandler(client, clog, config, this, toaHandler);
 
         inTheatre = false;
         wasInTheatre = false;
@@ -429,18 +429,31 @@ public class TheatreTrackerPlugin extends Plugin
                 }
                 activeState = true;
                 break;
+            case TOMB:
+                enteredTomb();
+                break;
         }
         inTheatre = activeState;
+    }
+    private boolean TOAStarted = false;
+
+    private void enteredTomb()
+    {
+        clog.addLine(ENTERED_NEW_TOA_REGION, "Tomb");
     }
 
     private void enteredNexus()
     {
-        clog.addLine(ENTERED_NEW_TOB_REGION, TOA_NEXUS.name);
+        clog.addLine(ENTERED_NEW_TOA_REGION, TOA_NEXUS.name);
         nexus.reset();
     }
 
     private void enteredCrondis()
     {
+        if(!toaHandler.isActive())
+        {
+            toaHandler.start();
+        }
         clog.addLine(ENTERED_NEW_TOA_REGION, CRONDIS.name);
         crondis.reset();
     }
@@ -453,6 +466,10 @@ public class TheatreTrackerPlugin extends Plugin
 
     private void enteredScabaras()
     {
+        if(!toaHandler.isActive())
+        {
+            toaHandler.start();
+        }
         clog.addLine(ENTERED_NEW_TOA_REGION, SCABARAS.name);
         scabaras.reset();
     }
@@ -465,6 +482,10 @@ public class TheatreTrackerPlugin extends Plugin
 
     private void enteredApmeken()
     {
+        if(!toaHandler.isActive())
+        {
+            toaHandler.start();
+        }
         clog.addLine(ENTERED_NEW_TOA_REGION, APMEKEN.name);
         apmeken.reset();
     }
@@ -477,6 +498,10 @@ public class TheatreTrackerPlugin extends Plugin
 
     private void enteredHet()
     {
+        if(!toaHandler.isActive())
+        {
+            toaHandler.start();
+        }
         clog.addLine(ENTERED_NEW_TOA_REGION, HET.name);
         het.reset();
     }
@@ -787,6 +812,7 @@ public class TheatreTrackerPlugin extends Plugin
                         }
                     }
                     clog.addLine(TOA_PARTY_MEMBERS, players[0], players[1], players[2], players[3], players[4], players[5], players[6], players[7]);
+                    clog.addLine(INVOCATION_LEVEL, String.valueOf(client.getVarbitValue(TOA_RAID_LEVEL)));
                 }
                 else
                 {
@@ -830,7 +856,14 @@ public class TheatreTrackerPlugin extends Plugin
         {
             if (wasInTheatre)
             {
-                leftRaid();
+                if(currentRoom instanceof TOARoomHandler)
+                {
+                    leftTOA();
+                }
+                else
+                {
+                    leftRaid();
+                }
                 wasInTheatre = false;
                 return;
             }
@@ -1176,6 +1209,15 @@ public class TheatreTrackerPlugin extends Plugin
         if(inTheatre)
         {
             currentRoom.updateGroundObjectSpawned(event);
+        }
+    }
+
+    @Subscribe
+    public void onGroundObjectDespawned(GroundObjectDespawned event)
+    {
+        if(inTheatre)
+        {
+            currentRoom.updateGroundObjectDespawned(event);
         }
     }
 

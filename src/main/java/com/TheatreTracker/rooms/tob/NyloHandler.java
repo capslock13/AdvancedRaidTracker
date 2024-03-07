@@ -10,7 +10,7 @@ import net.runelite.api.events.GameTick;
 import net.runelite.api.events.NpcDespawned;
 import net.runelite.api.events.NpcSpawned;
 import com.TheatreTracker.utility.datautility.DataWriter;
-import com.TheatreTracker.utility.RoomState;
+import com.TheatreTracker.constants.RoomState;
 import com.TheatreTracker.utility.nyloutility.NylocasData;
 import com.TheatreTracker.utility.nyloutility.NylocasShell;
 import com.TheatreTracker.utility.nyloutility.NylocasWave;
@@ -23,7 +23,7 @@ import java.util.Objects;
 
 import static com.TheatreTracker.constants.LogID.*;
 import static com.TheatreTracker.constants.TobIDs.*;
-import static com.TheatreTracker.utility.RoomState.NyloRoomState.*;
+import static com.TheatreTracker.constants.RoomState.NyloRoomState.*;
 
 @Slf4j
 public class NyloHandler extends TOBRoomHandler

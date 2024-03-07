@@ -5,7 +5,10 @@ import java.util.Optional;
 
 public enum TOBRoom
 {
-    MAIDEN(0), BLOAT(1), NYLOCAS(2), SOTETSEG(3), XARPUS(4), VERZIK(5), UNKNOWN(-1), ANY(6);
+    MAIDEN(0), BLOAT(1), NYLOCAS(2), SOTETSEG(3), XARPUS(4), VERZIK(5), UNKNOWN(-1), ANY_TOB(6),
+    CRONDIS(7), ZEBAK(8), SCABARAS(9), KEPHRI(10), APMEKEN(11), BABA(12), HET(13), AKKHA(14), WARDENS(15), ANY_TOA(16),
+
+    ;
 
     public final int value;
     TOBRoom(int value)

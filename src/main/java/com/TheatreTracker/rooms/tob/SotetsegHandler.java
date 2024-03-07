@@ -11,7 +11,7 @@ import net.runelite.api.Client;
 import net.runelite.api.Player;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.*;
-import com.TheatreTracker.utility.RoomState;
+import com.TheatreTracker.constants.RoomState;
 
 import java.util.ArrayList;
 import java.util.HashMap;

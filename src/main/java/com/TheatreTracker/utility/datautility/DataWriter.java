@@ -216,13 +216,19 @@ public class DataWriter
      *
      * @param id LogID of message
      */
+
+    public void addLine(LogID id, int value)
+    {
+        addLine(id, String.valueOf(value));
+    }
     public void addLine(LogID id, String... params)
     {
-        if (params.length > 5)
-            throw new IllegalArgumentException("Too many values passed to DataWriter");
-        String[] values = {"", "", "", "", ""};
-        System.arraycopy(params, 0, values, 0, params.length);
-        addLine(id.getId(), values[0], values[1], values[2], values[3], values[4]);
+        StringBuilder line = new StringBuilder(getUID() + "," + System.currentTimeMillis() + "," + currentRaidType.value + "," + id.getId());
+        for(String s : params)
+        {
+            line.append(",").append(s);
+        }
+        currentBuffer.add(line.toString());
     }
 
     public void addLine(int key, String v1, String v2, String v3, String v4, String v5)

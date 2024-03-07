@@ -7,8 +7,8 @@ import net.runelite.api.Client;
 
 public class TOALobbyHandler extends TOARoomHandler
 {
-    public TOALobbyHandler(Client client, DataWriter clog, TheatreTrackerConfig config, TheatreTrackerPlugin plugin)
+    public TOALobbyHandler(Client client, DataWriter clog, TheatreTrackerConfig config, TheatreTrackerPlugin plugin, TOAHandler handler)
     {
-        super(client, clog, config, plugin);
+        super(client, clog, config, plugin, handler);
     }
 }

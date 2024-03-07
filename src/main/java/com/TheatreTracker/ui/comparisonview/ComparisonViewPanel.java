@@ -229,13 +229,13 @@ public class ComparisonViewPanel extends JPanel
 
         Map<String, String[]> comboPopupData = new LinkedHashMap<>();
         comboPopupData.put("Room Times", DataPoint.getRoomTimes());
-        comboPopupData.put("Maiden", DataPoint.getMaidenNames());
-        comboPopupData.put("Bloat", DataPoint.getBloatNames());
-        comboPopupData.put("Nylocas", DataPoint.getNyloNames());
-        comboPopupData.put("Sotetseg", DataPoint.getSoteNames());
-        comboPopupData.put("Xarpus", DataPoint.getXarpNames());
-        comboPopupData.put("Verzik", DataPoint.getVerzikNames());
-        comboPopupData.put("Any", DataPoint.getAnyRoomNames());
+        comboPopupData.put("Maiden", DataPoint.getSpecificNames(DataPoint.rooms.MAIDEN));
+        comboPopupData.put("Bloat", DataPoint.getSpecificNames(DataPoint.rooms.BLOAT));
+        comboPopupData.put("Nylocas", DataPoint.getSpecificNames(DataPoint.rooms.NYLOCAS));
+        comboPopupData.put("Sotetseg", DataPoint.getSpecificNames(DataPoint.rooms.SOTETSEG));
+        comboPopupData.put("Xarpus", DataPoint.getSpecificNames(DataPoint.rooms.XARPUS));
+        comboPopupData.put("Verzik", DataPoint.getSpecificNames(DataPoint.rooms.VERZIK));
+        comboPopupData.put("Any TOB", DataPoint.getSpecificNames(DataPoint.rooms.ANY_TOB));
 
         comboPopupMenu = new JPopupMenu();
         comboPopupMenu.setBorder(new MatteBorder(1, 1, 1, 1, Color.DARK_GRAY));

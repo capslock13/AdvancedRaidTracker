@@ -1110,7 +1110,7 @@ public class Raids extends BaseFrame
         filterInRaidOnly = getActionListenCheckBox("In Raid Only", al->{updateTable();});
         filterCompletionOnly = getActionListenCheckBox("Completion Only", al->{updateTable();});
         filterWipeResetOnly = getActionListenCheckBox("Wipe/Reset Only", al->{updateTable();});
-        filterComboBoxScale = UISwingUtility.getActionListenCheckBox(new String[]{"Solo", "Duo", "Trio", "4-Man", "5-Man"}, al->{updateTable();});
+        filterComboBoxScale = getActionListenCheckBox(new String[]{"Solo", "Duo", "Trio", "4-Man", "5-Man"}, al->{updateTable();});
         filterCheckBoxScale = getActionListenCheckBox("Scale", al -> {updateTable();});
         filterTodayOnly = getActionListenCheckBox("Today Only", al -> {updateTable();});
         filterPartyOnly = getActionListenCheckBox("Party Only", al -> {updateTable();});
@@ -1544,18 +1544,17 @@ public class Raids extends BaseFrame
 
         viewCharts.addActionListener(e ->
         {
-            ArrayList<SimpleTOBData> rows = new ArrayList<>();
             int[] toRemove = table.getSelectedRows();
+            SimpleRaidData raidData = null;
             for (int i = 0; i < toRemove.length; i++)
             {
-                SimpleRaidData raidData = currentData.get(Integer.parseInt(table.getModel().getValueAt(toRemove[i], 0).toString()));
-                if(raidData instanceof SimpleTOBData)
-                {
-                    rows.add((SimpleTOBData) raidData);
-                }
+                 raidData = currentData.get(Integer.parseInt(table.getModel().getValueAt(toRemove[i], 0).toString()));
             }
-            ChartFrame roomCharts = new ChartFrame(rows, config, itemManager, clientThread, configManager);
-            roomCharts.open();
+            if(raidData != null)
+            {
+                ChartFrame roomCharts = new ChartFrame(raidData, config, itemManager, clientThread, configManager);
+                roomCharts.open();
+            }
         });
 
         viewGraphs.addActionListener(new ActionListener()

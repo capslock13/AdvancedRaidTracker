@@ -1,9 +1,8 @@
 package com.TheatreTracker.ui.charts;
 
-import com.TheatreTracker.AdvancedRaidData;
-import com.TheatreTracker.SimpleTOBData;
-import com.TheatreTracker.TheatreTrackerConfig;
+import com.TheatreTracker.*;
 import com.TheatreTracker.ui.BaseFrame;
+import com.TheatreTracker.utility.AdvancedRaidData;
 import com.TheatreTracker.utility.datautility.DataPoint;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.callback.ClientThread;
@@ -17,51 +16,41 @@ import java.util.*;
 @Slf4j
 public class ChartFrame extends BaseFrame
 {
-    public ChartFrame(ArrayList<SimpleTOBData> roomData, TheatreTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
+    public ChartFrame(SimpleRaidData roomData, TheatreTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
     {
+
         JTabbedPane basepane = new JTabbedPane();
+        AdvancedRaidData raidData;
+        if (roomData instanceof SimpleTOBData)
+        {
+            raidData = new AdvancedTOBData(AdvancedRaidData.getRaidStrings(roomData.filePath), itemManager);
+        } else
+        {
+            raidData = new AdvancedTOAData(AdvancedRaidData.getRaidStrings(roomData.filePath), itemManager);
+        }
+        for (String s : raidData.attackData.keySet())
+        {
+            JPanel tab = new JPanel();
+            tab.setLayout(new GridLayout(1, 2));
+            JPanel chart = new JPanel();
+            chart.setLayout(new BoxLayout(chart, BoxLayout.Y_AXIS));
+            ChartPanel chartPanel = new ChartPanel(s, false, config, clientThread, configManager);
+            /*
 
-        JPanel maidenTab = new JPanel();
-        JPanel bloatTab = new JPanel();
-        JPanel nyloTab = new JPanel();
-        JPanel soteTab = new JPanel();
-        JPanel xarpTab = new JPanel();
-        JPanel verzP1Tab = new JPanel();
-        JPanel verzP2Tab = new JPanel();
-        JPanel verzP3Tab = new JPanel();
+            TODO add things
+             */
+            chartPanel.redraw();
+            basepane.addChangeListener(cl -> chartPanel.redraw());
+            chart.add(chartPanel);
+            tab.add(new JScrollPane(chart));
+            basepane.add(s, tab);
 
-        maidenTab.setLayout(new GridLayout(1, 2));
-        bloatTab.setLayout(new GridLayout(1, 2));
-        nyloTab.setLayout(new GridLayout(1, 2));
-        soteTab.setLayout(new GridLayout(1, 2));
-        xarpTab.setLayout(new GridLayout(1, 2));
-        verzP1Tab.setLayout(new GridLayout(1, 2));
-        verzP2Tab.setLayout(new GridLayout(1, 2));
-        verzP3Tab.setLayout(new GridLayout(1, 2));
-
-        JPanel maidenCharts = new JPanel();
-        JPanel bloatCharts = new JPanel();
-        JPanel nyloCharts = new JPanel();
-        JPanel soteCharts = new JPanel();
-        JPanel xarpCharts = new JPanel();
-        JPanel verzp1Charts = new JPanel();
-        JPanel verzp2Charts = new JPanel();
-        JPanel verzp3Charts = new JPanel();
-
-        maidenCharts.setLayout(new BoxLayout(maidenCharts, BoxLayout.Y_AXIS));
-        bloatCharts.setLayout(new BoxLayout(bloatCharts, BoxLayout.Y_AXIS));
-        nyloCharts.setLayout(new BoxLayout(nyloCharts, BoxLayout.Y_AXIS));
-        soteCharts.setLayout(new BoxLayout(soteCharts, BoxLayout.Y_AXIS));
-        xarpCharts.setLayout(new BoxLayout(xarpCharts, BoxLayout.Y_AXIS));
-        verzp1Charts.setLayout(new BoxLayout(verzp1Charts, BoxLayout.Y_AXIS));
-        verzp2Charts.setLayout(new BoxLayout(verzp2Charts, BoxLayout.Y_AXIS));
-        verzp3Charts.setLayout(new BoxLayout(verzp3Charts, BoxLayout.Y_AXIS));
-
-
-
+        }
+    }
+        /*
         for (SimpleTOBData data : roomData)
         {
-            AdvancedRaidData advancedData = new AdvancedRaidData(AdvancedRaidData.getRaidStrings(data.filePath), itemManager);
+            AdvancedTOBData advancedData = new AdvancedTOBData(AdvancedRaidData.getRaidStrings(data.filePath), itemManager);
             Map<Integer, String> maidenLines = new LinkedHashMap<>();
             maidenLines.put(data.getValue(DataPoint.MAIDEN_70_SPLIT), "70s");
             maidenLines.put(data.getValue(DataPoint.MAIDEN_50_SPLIT), "50s");
@@ -183,10 +172,7 @@ public class ChartFrame extends BaseFrame
             maidenRCP.addAttacks(advancedData.maidenAttacks);
             maidenRCP.addMaidenCrabs(data.maidenCrabSpawn);
             maidenRCP.setPlayers(new ArrayList<>(data.players.keySet()));
-            if (roomData.size() == 1)
-            {
-                maidenRCP.enableWrap();
-            }
+            maidenRCP.enableWrap();
             maidenRCP.setStartTick(1);
             maidenRCP.setTick(maidenTime);
             maidenRCP.addLines(maidenLines);
@@ -196,10 +182,7 @@ public class ChartFrame extends BaseFrame
             bloatRCP.setRoomHP(advancedData.bloatHP);
             bloatRCP.addAttacks(advancedData.bloatAttacks);
             bloatRCP.setPlayers(new ArrayList<>(data.players.keySet()));
-            if (roomData.size() == 1)
-            {
-                bloatRCP.enableWrap();
-            }
+            bloatRCP.enableWrap();
             bloatRCP.setStartTick(1);
             bloatRCP.setTick(bloatTime);
             bloatRCP.addLines(bloatLines);
@@ -210,10 +193,7 @@ public class ChartFrame extends BaseFrame
             nyloRCP.setRoomHP(advancedData.nyloHP);
             nyloRCP.addAttacks(advancedData.nyloAttacks);
             nyloRCP.setPlayers(new ArrayList<>(data.players.keySet()));
-            if (roomData.size() == 1)
-            {
-                nyloRCP.enableWrap();
-            }
+            nyloRCP.enableWrap();
             nyloRCP.setStartTick(1);
             nyloRCP.setTick(nyloTime);
             nyloRCP.addLines(nyloLines);
@@ -223,10 +203,7 @@ public class ChartFrame extends BaseFrame
             soteRCP.setRoomHP(advancedData.soteHP);
             soteRCP.addAttacks(advancedData.soteAttacks);
             soteRCP.setPlayers(new ArrayList<>(data.players.keySet()));
-            if (roomData.size() == 1)
-            {
-                soteRCP.enableWrap();
-            }
+            soteRCP.enableWrap();
             soteRCP.setStartTick(1);
             soteRCP.setTick(soteTime);
             soteRCP.addLines(soteLines);
@@ -236,10 +213,7 @@ public class ChartFrame extends BaseFrame
             xarpRCP.setRoomHP(advancedData.xarpHP);
             xarpRCP.addAttacks(advancedData.xarpAttacks);
             xarpRCP.setPlayers(new ArrayList<>(data.players.keySet()));
-            if (roomData.size() == 1)
-            {
-                xarpRCP.enableWrap();
-            }
+            xarpRCP.enableWrap();
             xarpRCP.setStartTick(1);
             xarpRCP.setTick(xarpTime);
             xarpRCP.addLines(xarpLines);
@@ -250,10 +224,7 @@ public class ChartFrame extends BaseFrame
             verzP1RCP.setRoomHP(advancedData.verzikHP);
             verzP1RCP.addAttacks(advancedData.verzikAttacks);
             verzP1RCP.setPlayers(new ArrayList<>(data.players.keySet()));
-            if (roomData.size() == 1)
-            {
-                verzP1RCP.enableWrap();
-            }
+            verzP1RCP.enableWrap();
             verzP1RCP.setStartTick(1);
             verzP1RCP.setTick(verzP1Time);
             verzP1RCP.addRoomSpecificDatum(dawnDropsMap);
@@ -266,10 +237,7 @@ public class ChartFrame extends BaseFrame
             verzP2RCP.setRoomHP(advancedData.verzikHP);
             verzP2RCP.addAttacks(advancedData.verzikAttacks);
             verzP2RCP.setPlayers(new ArrayList<>(data.players.keySet()));
-            if (roomData.size() == 1)
-            {
-                verzP2RCP.enableWrap();
-            }
+            verzP2RCP.enableWrap();
             verzP2RCP.setStartTick(verzP2Start);
             verzP2RCP.setTick(verzP2Time);
             verzP2RCP.addLines(verzikP2Lines);
@@ -281,10 +249,7 @@ public class ChartFrame extends BaseFrame
 
             verzP3RCP.addAttacks(advancedData.verzikAttacks);
             verzP3RCP.setPlayers(new ArrayList<>(data.players.keySet()));
-            if (roomData.size() == 1)
-            {
-                verzP3RCP.enableWrap();
-            }
+            verzP3RCP.enableWrap();
             verzP3RCP.setStartTick(verzP3Start);
             verzP3RCP.setTick(verzP3Time);
             verzP3RCP.addLines(verzikP3Lines);
@@ -292,59 +257,10 @@ public class ChartFrame extends BaseFrame
             verzP2RCP.addAutos(p2autos);
             verzP1RCP.addDawnSpecs(data.dawnSpecs);
 
-            maidenRCP.redraw();
-            bloatRCP.redraw();
-            nyloRCP.redraw();
-            soteRCP.redraw();
-            xarpRCP.redraw();
-            verzP1RCP.redraw();
-            verzP2RCP.redraw();
-            verzP3RCP.redraw();
-
-            basepane.addChangeListener(cl->
-            {
-                maidenRCP.redraw();
-                bloatRCP.redraw();
-                nyloRCP.redraw();
-                soteRCP.redraw();
-                xarpRCP.redraw();
-                verzP1RCP.redraw();
-                verzP2RCP.redraw();
-                verzP3RCP.redraw();
-            });
-
-
-            maidenCharts.add(maidenRCP);
-            bloatCharts.add(bloatRCP);
-            nyloCharts.add(nyloRCP);
-            soteCharts.add(soteRCP);
-            xarpCharts.add(xarpRCP);
-            verzp1Charts.add(verzP1RCP);
-            verzp2Charts.add(verzP2RCP);
-            verzp3Charts.add(verzP3RCP);
-
-        }
-
-        maidenTab.add(new JScrollPane(maidenCharts));
-        bloatTab.add(new JScrollPane(bloatCharts));
-        nyloTab.add(new JScrollPane(nyloCharts));
-        soteTab.add(new JScrollPane(soteCharts));
-        xarpTab.add(new JScrollPane(xarpCharts));
-        verzP1Tab.add(new JScrollPane(verzp1Charts));
-        verzP2Tab.add(new JScrollPane(verzp2Charts));
-        verzP3Tab.add(new JScrollPane(verzp3Charts));
-
-
-        basepane.addTab("Maiden", maidenTab);
-        basepane.addTab("Bloat", bloatTab);
-        basepane.addTab("Nylocas", nyloTab);
-        basepane.addTab("Sotetseg", soteTab);
-        basepane.addTab("Xarpus", xarpTab);
-        basepane.addTab("Verzik P1", verzP1Tab);
-        basepane.addTab("Verzik P2", verzP2Tab);
-        basepane.addTab("Verzik P3", verzP3Tab);
 
         add(basepane);
         pack();
     }
+
+         */
 }

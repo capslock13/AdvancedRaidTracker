@@ -1,29 +1,22 @@
 package com.TheatreTracker;
 
 import com.TheatreTracker.constants.LogID;
+import com.TheatreTracker.utility.AdvancedRaidData;
 import com.TheatreTracker.utility.wrappers.PlayerDidAttack;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.game.ItemManager;
 
 import java.io.File;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 import static com.TheatreTracker.constants.TobIDs.EXIT_FLAG;
 import static com.TheatreTracker.constants.TobIDs.SPECTATE_FLAG;
 
 @Slf4j
-public class AdvancedRaidData
+public class AdvancedTOBData extends AdvancedRaidData
 {
-    public final ArrayList<PlayerDidAttack> maidenAttacks = new ArrayList<>();
-    public final ArrayList<PlayerDidAttack> bloatAttacks = new ArrayList<>();
-    public final ArrayList<PlayerDidAttack> nyloAttacks = new ArrayList<>();
-    public final ArrayList<PlayerDidAttack> soteAttacks = new ArrayList<>();
-    public final ArrayList<PlayerDidAttack> xarpAttacks = new ArrayList<>();
-    public final ArrayList<PlayerDidAttack> verzikAttacks = new ArrayList<>();
+    private final String[] names = {"Maiden", "Bloat", "Nylocas", "Sotetseg", "Xarpus", "Verzik P1", "Verzik P2", "Verzik P3"};
     public Map<Integer, Integer> maidenHP = new HashMap<>();
     public Map<Integer, Integer> bloatHP = new HashMap<>();
     public Map<Integer, Integer> nyloHP = new HashMap<>();
@@ -35,29 +28,15 @@ public class AdvancedRaidData
     public Map<Integer, String> verzikNPCMapping = new HashMap<>();
     private ArrayList<String> globalData;
     private final ItemManager itemManager;
-
-    public static ArrayList<String> getRaidStrings(String path)
-    {
-        ArrayList<String> lines = new ArrayList<>();
-        File file = new File(path);
-        try
-        {
-            Scanner scanner = new Scanner(Files.newInputStream(file.toPath()));
-            while(scanner.hasNextLine())
-            {
-                lines.add(scanner.nextLine());
-            }
-        }
-        catch(Exception e)
-        {
-
-        }
-        return lines;
-    }
-    public AdvancedRaidData(ArrayList<String> globalData, ItemManager itemManager)
+    public AdvancedTOBData(ArrayList<String> globalData, ItemManager itemManager)
     {
         this.itemManager = itemManager;
         this.globalData = globalData;
+        attackData = new LinkedHashMap<>();
+        for(String name : names)
+        {
+            attackData.put(name, new ArrayList<>());
+        }
         int room = -1;
         for (String s : globalData)
         {
@@ -119,36 +98,6 @@ public class AdvancedRaidData
         }
     }
 
-    PlayerDidAttack getPlayerDidAttack(String[] subData)
-    {
-        String player = subData[4].split(":")[0];
-        int tick = Integer.parseInt(subData[4].split(":")[1]);
-        String wornItems = "";
-        String [] animationAndWorn = subData[5].split(":");
-        String animation = animationAndWorn[0];
-        if(animationAndWorn.length == 2)
-        {
-            wornItems = animationAndWorn[1];
-        }
-        String spotAnims = subData[6];
-        String[] subsubData = subData[7].split(":");
-        String weapon = subsubData[0];
-        int interactedIndex = -1;
-        int interactedID = -1;
-        if (subsubData.length > 2)
-        {
-            interactedIndex = Integer.parseInt(subsubData[1]);
-            interactedID = Integer.parseInt(subsubData[2]);
-        }
-        String[] projectileAndTargetData = subData[8].split(":");
-        String projectile = projectileAndTargetData[0];
-        String targetName = "";
-        if (projectileAndTargetData.length > 1)
-        {
-            targetName = projectileAndTargetData[1];
-        }
-        return (new PlayerDidAttack(itemManager, player, animation, tick, weapon, projectile, spotAnims, interactedIndex, interactedID, targetName, wornItems));
-    }
 
     private boolean parseMaiden()
     {
@@ -169,7 +118,7 @@ public class AdvancedRaidData
                     case MAIDEN_DESPAWNED:
                         break loop;
                     case PLAYER_ATTACK:
-                        maidenAttacks.add(getPlayerDidAttack(subData));
+                        attackData.get("Maiden").add(getPlayerDidAttack(subData, itemManager));
                         break;
                     case UPDATE_HP:
                         maidenHP.put(Integer.parseInt(subData[5]), Integer.parseInt(subData[4]));
@@ -205,7 +154,7 @@ public class AdvancedRaidData
                     case BLOAT_DESPAWN:
                         break loop;
                     case PLAYER_ATTACK:
-                        bloatAttacks.add(getPlayerDidAttack(subData));
+                        attackData.get("Bloat").add(getPlayerDidAttack(subData, itemManager));
                         break;
                     case UPDATE_HP:
                         bloatHP.put(Integer.parseInt(subData[5]), Integer.parseInt(subData[4]));
@@ -238,7 +187,7 @@ public class AdvancedRaidData
                     case NYLO_DESPAWNED:
                         break loop;
                     case PLAYER_ATTACK:
-                        nyloAttacks.add(getPlayerDidAttack(subData));
+                        attackData.get("Nylocas").add(getPlayerDidAttack(subData, itemManager));
                         break;
                     case UPDATE_HP:
                         nyloHP.put(Integer.parseInt(subData[5]), Integer.parseInt(subData[4]));
@@ -274,7 +223,7 @@ public class AdvancedRaidData
                     case SOTETSEG_ENDED:
                         break loop;
                     case PLAYER_ATTACK:
-                        soteAttacks.add(getPlayerDidAttack(subData));
+                        attackData.get("Sotetseg").add(getPlayerDidAttack(subData, itemManager));
                         break;
                     case UPDATE_HP:
                         soteHP.put(Integer.parseInt(subData[5]), Integer.parseInt(subData[4]));
@@ -308,7 +257,7 @@ public class AdvancedRaidData
                     case XARPUS_DESPAWNED:
                         break loop;
                     case PLAYER_ATTACK:
-                        xarpAttacks.add(getPlayerDidAttack(subData));
+                        attackData.get("Xarpus").add(getPlayerDidAttack(subData, itemManager));
                         break;
                     case UPDATE_HP:
                         xarpHP.put(Integer.parseInt(subData[5]), Integer.parseInt(subData[4]));
@@ -327,6 +276,7 @@ public class AdvancedRaidData
     private boolean parseVerzik()
     {
         int activeIndex = 0;
+        int phase = 1;
         for (String s : globalData)
         {
             String[] subData = s.split(",", -1);
@@ -338,7 +288,7 @@ public class AdvancedRaidData
                         globalData = new ArrayList<>(globalData.subList(activeIndex + 1, globalData.size()));
                         return false;
                     case PLAYER_ATTACK:
-                        verzikAttacks.add(getPlayerDidAttack(subData));
+                        attackData.get("Verzik P" + phase).add(getPlayerDidAttack(subData, itemManager));
                         break;
                     case UPDATE_HP:
                         verzikHP.put(Integer.parseInt(subData[5]), Integer.parseInt(subData[4]));
@@ -349,8 +299,14 @@ public class AdvancedRaidData
                     case VERZIK_BOUNCE:
                         if (!subData[5].equalsIgnoreCase(""))
                         { //use fake animation ID when bounce occurs
-                            verzikAttacks.add(new PlayerDidAttack(itemManager, subData[4], "100000", Integer.parseInt(subData[5]), "-1", "-1", "-1", -1, -1, "", ""));
+                            attackData.get("Verzik P2").add(new PlayerDidAttack(itemManager, subData[4], "100000", Integer.parseInt(subData[5]), "-1", "-1", "-1", -1, -1, "", ""));
                         }
+                        break;
+                    case VERZIK_P1_DESPAWNED:
+                        phase = 2;
+                        break;
+                    case VERZIK_P2_END:
+                        phase = 3;
                         break;
 
                 }

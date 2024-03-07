@@ -24,7 +24,7 @@ public enum LogID
     HAMMER_ATTEMPTED(7, true, ANY_TOB,"DWH Attempted"),
     DAWN_DROPPED(800, false, VERZIK,"Dawnbringer appeared"),
     WEBS_STARTED(901, false, VERZIK,"Webs Thrown"),
-    PLAYER_ATTACK(801, false, ANY_TOB,"Player Animation"),
+    PLAYER_ATTACK(801, false, ANY,"Player Animation"),
     BLOOD_THROWN(9, true, MAIDEN,"Maiden blood thrown"),
     BLOOD_SPAWNED(10, true, MAIDEN, "Blood Spawned"),
     CRAB_LEAK(11, true, MAIDEN, "Crab Leaked"),

@@ -937,7 +937,7 @@ public class TheatreTrackerPlugin extends Plugin
                                         playerAttackQueuedItem.animation+":"+PlayerWornItems.getStringFromComposition(playerAttackQueuedItem.player.getPlayerComposition()),
                                         playerAttackQueuedItem.spotAnims,
                                         playerAttackQueuedItem.weapon + ":" + interactedIndex + ":" + interactedID,
-                                        projectile.getId() + ":" + targetName);
+                                        projectile.getId() + ":" + targetName, currentRoom.getName());
                                 liveFrame.addAttack(new PlayerDidAttack(itemManager,
                                                 playerAttackQueuedItem.player.getName(),
                                                 playerAttackQueuedItem.animation,
@@ -975,7 +975,7 @@ public class TheatreTrackerPlugin extends Plugin
                                 previous.animation + ":" + previous.wornItems,
                                 "",
                                 previous.weapon + ":" + previous.interactingIndex + ":" + previous.interactingID,
-                                "-1:" + previous.interactingName);
+                                "-1:" + previous.interactingName, currentRoom.getName());
                         liveFrame.addAttack(new PlayerDidAttack(itemManager,
                                 previous.name,
                                 String.valueOf(previous.animation),
@@ -1397,7 +1397,7 @@ public class TheatreTrackerPlugin extends Plugin
                 p.getAnimation()+":"+PlayerWornItems.getStringFromComposition(p.getPlayerComposition()),
                 animations,
                 p.getPlayerComposition().getEquipmentId(KitType.WEAPON) + ":" + interactedIndex + ":" + interactedID,
-                "-1:" + targetName);
+                "-1:" + targetName, currentRoom.getName());
         liveFrame.addAttack(new PlayerDidAttack(itemManager,
                 String.valueOf(p.getName()),
                 String.valueOf(p.getAnimation()),

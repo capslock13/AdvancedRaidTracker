@@ -15,6 +15,7 @@ import static com.TheatreTracker.utility.datautility.DataWriter.*;
 @Slf4j
 public class LegacyFileUtility //Older versions of the plugin during testing used a different file structure, this class contains methods used to migrate those
 {
+
     public static void splitLegacyFiles()
     {
         try

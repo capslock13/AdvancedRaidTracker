@@ -97,6 +97,7 @@ public class BloatHandler extends TOBRoomHandler
     {
         bloatStartTick = client.getTickCount();
         roomStartTick = client.getTickCount();
+        clog.addLine(BLOAT_STARTED, client.getTickCount());
         roomState = WALKING;
     }
 

@@ -36,6 +36,7 @@ public enum LogID
     MAIDEN_DESPAWNED(17, true, MAIDEN, "Despawned", "Room Tick"),
     MATOMENOS_SPAWNED(18, true, MAIDEN, "Crab Spawned", "Crab Description"),
     MAIDEN_SCUFFED(19, true, MAIDEN, "Scuffed", "Current Proc"),
+    BLOAT_STARTED(26, true, BLOAT, "Bloat Started", "Client Tick"),
     BLOAT_SPAWNED(20, true, BLOAT, "Spawned"),
     BLOAT_DOWN(21, true, BLOAT, "Down", "Room Tick"),
     BLOAT_0HP(22, true, BLOAT, "0 HP"),

@@ -9,6 +9,8 @@ import com.TheatreTracker.utility.RoomUtil;
 import com.TheatreTracker.utility.datautility.DataWriter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
+import net.runelite.api.Player;
+import net.runelite.api.events.AnimationChanged;
 import net.runelite.api.events.GameTick;
 
 @Slf4j
@@ -44,6 +46,18 @@ public class ZebakHandler extends TOARoomHandler
     public boolean isActive()
     {
         return !(roomState == RoomState.ZebakRoomState.NOT_STARTED || roomState == RoomState.ZebakRoomState.FINISHED);
+    }
+
+    @Override
+    public void updateAnimationChanged(AnimationChanged animationChanged)
+    {
+        if(animationChanged.getActor() instanceof Player)
+        {
+            if(animationChanged.getActor().getAnimation() == 832)
+            {
+                clog.addLine(LogID.TOA_ZEBAK_JUG_PUSHED, animationChanged.getActor().getName(), String.valueOf(client.getTickCount()-roomStartTick));
+            }
+        }
     }
 
     @Override

@@ -482,7 +482,7 @@ public class Raids extends BaseFrame
             case "Status":
                 return raid.getRoomStatus();
             case "Raid":
-                return raid.raidType.name;
+                return raid.getRaidType();
             case "Players":
                 return raid.getPlayers();
             case "Spectate":

@@ -90,6 +90,16 @@ public class WeaponDecider
                     weaponUsed = WeaponAttack.KERIS_BREACHING;
                     break;
                 }
+                else if(weapon == 27291)
+                {
+                    weaponUsed = WeaponAttack.KERIS_SUN;
+                    break;
+                }
+                else if(weapon == 27287)
+                {
+                    weaponUsed = WeaponAttack.KERIS_CORRUPTION;
+                    break;
+                }
             case 440:
                 if(weapon == 12904)
                 {
@@ -212,8 +222,27 @@ public class WeaponDecider
                     weaponUsed = WeaponAttack.KERIS_BREACHING;
                     break;
                 }
+                else if(weapon == 27291)
+                {
+                    weaponUsed = WeaponAttack.KERIS_SUN;
+                    break;
+                }
+                else if(weapon == 27287)
+                {
+                    weaponUsed = WeaponAttack.KERIS_CORRUPTION;
+                    break;
+                }
             case 827:
                 weaponUsed = WeaponAttack.PICKUP;
+                break;
+            case 9546:
+                weaponUsed = WeaponAttack.KERIS_SUN_SPEC;
+                break;
+            case 9544:
+                weaponUsed = WeaponAttack.KERIS_CORRUPTION_SPEC;
+                break;
+            case 832:
+                weaponUsed = WeaponAttack.PUSH_JUG;
                 break;
         }
         return weaponUsed;

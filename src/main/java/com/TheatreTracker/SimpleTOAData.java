@@ -24,9 +24,6 @@ public class SimpleTOAData extends SimpleRaidData
     private String raidStatus = "";
     private boolean hasExited = false;
 
-    String red = "<html><font color='#FF0000'>";
-    String green = "<html><font color='#33FF33'>";
-    String yellow = "<html><font color='#FF7733'>";
     public SimpleTOAData(String[] parameters, String filePath, String fileName)
     {
         raidType = RaidType.TOA;
@@ -149,6 +146,7 @@ public class SimpleTOAData extends SimpleRaidData
         int pathStartTick = 0;
         raidStatus += "Z";
         int activeIndex = 0;
+        boolean hasSeenNexus = false;
         for(String s : globalData)
         {
             if(activeIndex == 0 && !LogID.valueOf(Integer.parseInt(s.split(",")[3])).equals(LogID.LEFT_TOA))
@@ -161,15 +159,23 @@ public class SimpleTOAData extends SimpleRaidData
             {
                 case LEFT_TOA:
                     hasExited = true;
-                    addColorToStatus(red);
+                    if(hasSeenNexus)
+                    {
+                        addColorToStatus(orange);
+                    }
+                    else
+                    {
+                        addColorToStatus(red);
+                    }
                     return;
                 case ENTERED_NEW_TOA_REGION:
                     if(subData[4].equals("TOA Nexus"))
                     {
-                        addColorToStatus(green);
+                        hasSeenNexus = true;
                     }
                     else if(!subData[4].equals("Zebak"))
                     {
+                        addColorToStatus(green);
                         globalData = new ArrayList<>(globalData.subList(activeIndex, globalData.size()));
                         return;
                     }
@@ -192,6 +198,7 @@ public class SimpleTOAData extends SimpleRaidData
     {
         raidStatus += "K";
         int activeIndex = 0;
+        boolean hasSeenNexus = false;
         for(String s : globalData)
         {
             if(activeIndex == 0 && !LogID.valueOf(Integer.parseInt(s.split(",")[3])).equals(LogID.LEFT_TOA))
@@ -204,15 +211,23 @@ public class SimpleTOAData extends SimpleRaidData
             {
                 case LEFT_TOA:
                     hasExited = true;
-                    addColorToStatus(red);
+                    if(hasSeenNexus)
+                    {
+                        addColorToStatus(orange);
+                    }
+                    else
+                    {
+                        addColorToStatus(red);
+                    }
                     return;
                 case ENTERED_NEW_TOA_REGION:
                     if(subData[4].equals("TOA Nexus"))
                     {
-                        addColorToStatus(green);
+                        hasSeenNexus = true;
                     }
                     else if(!subData[4].equals("Kephri"))
                     {
+                        addColorToStatus(green);
                         globalData = new ArrayList<>(globalData.subList(activeIndex, globalData.size()));
                         return;
                     }
@@ -248,6 +263,7 @@ public class SimpleTOAData extends SimpleRaidData
     {
         raidStatus += "B";
         int activeIndex = 0;
+        boolean hasSeenNexus = false;
         for(String s : globalData)
         {
             if(activeIndex == 0 && !LogID.valueOf(Integer.parseInt(s.split(",")[3])).equals(LogID.LEFT_TOA))
@@ -260,15 +276,23 @@ public class SimpleTOAData extends SimpleRaidData
             {
                 case LEFT_TOA:
                     hasExited = true;
-                    addColorToStatus(red);
+                    if(hasSeenNexus)
+                    {
+                        addColorToStatus(orange);
+                    }
+                    else
+                    {
+                        addColorToStatus(red);
+                    }
                     return;
                 case ENTERED_NEW_TOA_REGION:
                     if(subData[4].equals("TOA Nexus"))
                     {
-                        addColorToStatus(green);
+                        hasSeenNexus = true;
                     }
                     else if(!subData[4].equals("Baba"))
                     {
+                        addColorToStatus(green);
                         globalData = new ArrayList<>(globalData.subList(activeIndex, globalData.size()));
                         return;
                     }
@@ -304,6 +328,7 @@ public class SimpleTOAData extends SimpleRaidData
     {
         raidStatus += "A";
         int activeIndex = 0;
+        boolean hasSeenNexus = false;
         for(String s : globalData)
         {
             if(activeIndex == 0 && !LogID.valueOf(Integer.parseInt(s.split(",")[3])).equals(LogID.LEFT_TOA))
@@ -316,15 +341,23 @@ public class SimpleTOAData extends SimpleRaidData
             {
                 case LEFT_TOA:
                     hasExited = true;
-                    addColorToStatus(red);
+                    if(hasSeenNexus)
+                    {
+                        addColorToStatus(orange);
+                    }
+                    else
+                    {
+                        addColorToStatus(red);
+                    }
                     return;
                 case ENTERED_NEW_TOA_REGION:
                     if(subData[4].equals("TOA Nexus"))
                     {
-                        addColorToStatus(green);
+                        hasSeenNexus = true;
                     }
                     else if(!subData[4].equals("Akkha"))
                     {
+                        addColorToStatus(green);
                         globalData = new ArrayList<>(globalData.subList(activeIndex, globalData.size()));
                         return;
                     }
@@ -392,7 +425,14 @@ public class SimpleTOAData extends SimpleRaidData
             {
                 case LEFT_TOA:
                     hasExited = true;
-                    addColorToStatus(red);
+                    if(dataManager.get(WARDENS_TIME) > 0)
+                    {
+                        addColorToStatus(green);
+                    }
+                    else
+                    {
+                        addColorToStatus(red);
+                    }
                     return;
                 case ENTERED_NEW_TOA_REGION:
                     if(subData[4].equals("Tomb"))
@@ -420,6 +460,12 @@ public class SimpleTOAData extends SimpleRaidData
             }
             activeIndex++;
         }
+    }
+
+    @Override
+    public String getRaidType()
+    {
+        return yellow+raidType.name;
     }
 
     @Override
@@ -484,7 +530,7 @@ public class SimpleTOAData extends SimpleRaidData
     @Override
     public String getRoomStatus()
     {
-        return (raidStatus.isEmpty()) ? yellow+"Nexus Reset" : raidStatus;
+        return (raidStatus.isEmpty()) ? orange+"Nexus Reset" : raidStatus;
     }
 
     @Override

@@ -35,6 +35,8 @@ public class ItemReference
                     "torture",
                     "serpentine helm",
                     "barrows",
+                    "voidwaker",
+                    "keris"
             },
             {
                     "masori",

@@ -10,6 +10,8 @@ import com.TheatreTracker.utility.datautility.DataWriter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.events.GameTick;
+import net.runelite.api.events.HitsplatApplied;
+
 @Slf4j
 public class CrondisHandler extends TOARoomHandler
 {
@@ -47,6 +49,23 @@ public class CrondisHandler extends TOARoomHandler
             sendTimeMessage("Crondis Duration: ", duration);
             clog.addLine(LogID.TOA_CRONDIS_FINISHED, duration);
             plugin.liveFrame.setRoomFinished(getName(), duration);
+        }
+    }
+
+    @Override
+    public void updateHitsplatApplied(HitsplatApplied hitsplatApplied)
+    {
+        log.info(hitsplatApplied.getHitsplat().getAmount() + ", " + hitsplatApplied.getHitsplat().getHitsplatType());
+        if(hitsplatApplied.getActor().getName().contains("Palm"))
+        {
+            if(hitsplatApplied.getHitsplat().getHitsplatType() == 11)
+            {
+                clog.addLine(LogID.TOA_CRONDIS_WATER, String.valueOf(hitsplatApplied.getHitsplat().getAmount()), String.valueOf(client.getTickCount()-roomStartTick));
+            }
+            else if (hitsplatApplied.getHitsplat().getHitsplatType() == 15)
+            {
+                clog.addLine(LogID.TOA_CRONDIS_CROC_DAMAGE, String.valueOf(hitsplatApplied.getHitsplat().getAmount()), String.valueOf(client.getTickCount()-roomStartTick));
+            }
         }
     }
 }

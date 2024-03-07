@@ -6,6 +6,10 @@ import java.awt.*;
 
 public class StripedTableRowCellRenderer extends DefaultTableCellRenderer
 {
+    public StripedTableRowCellRenderer()
+    {
+        super();
+    }
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column)
     {

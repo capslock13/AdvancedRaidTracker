@@ -340,6 +340,12 @@ public class SimpleTOBData extends SimpleRaidData
     {
         return this.filePath;
     }
+    String red = "<html><font color='#FF0000'>";
+    @Override
+    public String getRaidType()
+    {
+        return red+raidType.name;
+    }
 
     @Override
     public String getFileName()

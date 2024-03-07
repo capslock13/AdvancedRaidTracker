@@ -8,6 +8,7 @@ import com.TheatreTracker.utility.datautility.DataWriter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.events.AnimationChanged;
+import net.runelite.api.events.NpcDespawned;
 import net.runelite.api.events.NpcSpawned;
 
 import static com.TheatreTracker.constants.RoomState.WardenRoomState.ENRAGED;
@@ -80,7 +81,13 @@ public class WardensHandler extends TOARoomHandler
     @Override
     public void updateNpcSpawned(NpcSpawned event)
     {
-        if(roomState == ENRAGED && event.getNpc().getId() == 11766) //todo investigate
+
+    }
+
+    @Override
+    public void updateNpcDespawned(NpcDespawned event)
+    {
+        if(roomState == ENRAGED && event.getNpc().getId() == 11761) //todo investigate
         {
             sendTimeMessage("Wardens Duration: ", client.getTickCount()-roomStartTick, client.getTickCount()-enraged);
             clog.addLine(LogID.TOA_WARDENS_FINISHED, client.getTickCount()-roomStartTick);

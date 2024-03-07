@@ -11,6 +11,11 @@ import static com.TheatreTracker.utility.datautility.DataPoint.RAID_INDEX;
 
 public abstract class SimpleRaidData
 {
+    String red = "<html><font color='#FF0000'>";
+    String green = "<html><font color='#33FF33'>";
+    String orange = "<html><font color='#FF7733'>";
+    String yellow = "<html><font color='#FFFF33'>";
+    public abstract String getRaidType();
     public RaidType raidType = RaidType.UNASSIGNED;
     public Date raidStarted = new Date(System.currentTimeMillis());
     public boolean spectated = false;

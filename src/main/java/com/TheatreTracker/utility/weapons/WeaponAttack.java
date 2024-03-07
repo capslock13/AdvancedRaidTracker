@@ -51,9 +51,13 @@ public enum WeaponAttack
     DDS_SPEC("Dragon Dagger Spec", "DDS", new Color(140, 10, 10), 4),
     DDS_POKE("Dragon Dagger poke", "dds", new Color(10, 10, 10), 4),
     KERIS_BREACHING("Keris of the Breaching", "KB", new Color(140, 140, 30), 4),
-    KERIS_CORRUPTION("Keris of the Corruption", "KC", new Color(140, 140, 30), 4),
-    KERIS_SUN("Keris of the Sun", "KS", new Color(140, 140, 30), 4),
+    KERIS_CORRUPTION("Keris of the Corruption", "kc", new Color(10, 140, 30), 4),
+    KERIS_SUN("Keris of the Sun", "ks", new Color(10, 140, 30), 4),
+
+    KERIS_CORRUPTION_SPEC("Keris of the Corruption spec", "KC", new Color(140, 140, 30), 4),
+    KERIS_SUN_SPEC("Keris of the Sun spec", "KS", new Color(140, 140, 30), 4),
     PICKUP("Pickup Animation", "PCK", new Color(30, 30, 90), -1),
+    PUSH_JUG("Push Animation", "PSH", new Color(10, 10, 10), -1),
 
     ;
 

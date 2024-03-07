@@ -410,7 +410,7 @@ public class SimpleTOAData extends SimpleRaidData
                     break;
                 case TOA_WARDENS_ENRAGED:
                     dataManager.set(WARDENS_ENRAGED_SPLIT, Integer.parseInt(subData[4]));
-                    dataManager.set(WARDENS_UNTIL_ENRAGED_DURATION, Integer.parseInt(subData[4]));
+                    dataManager.set(WARDENS_UNTIL_ENRAGED_DURATION, Integer.parseInt(subData[4])-dataManager.get(WARDENS_P3_SPLIT));
                     break;
                 case TOA_WARDENS_FINISHED:
                     dataManager.set(WARDENS_TIME, Integer.parseInt(subData[4]));

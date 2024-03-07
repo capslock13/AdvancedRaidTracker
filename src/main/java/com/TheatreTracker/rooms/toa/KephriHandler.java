@@ -77,7 +77,7 @@ public class KephriHandler extends TOARoomHandler
         {
             if(projectileMoved.getProjectile().getId() == 2150)
             {
-                clog.addLine(LogID.TOA_KEPHRI_MELEE_HEAL, client.getTickCount());
+                clog.addLine(LogID.TOA_KEPHRI_MELEE_HEAL, client.getTickCount()-roomStartTick);
                 log.info("Melee heal");
             }
         }
@@ -88,7 +88,7 @@ public class KephriHandler extends TOARoomHandler
     {
         if(spawned.getNpc().getId() == 11723)
         {
-            clog.addLine(LogID.TOA_KEPHRI_SWARM_SPAWN, client.getTickCount());
+            clog.addLine(LogID.TOA_KEPHRI_SWARM_SPAWN, client.getTickCount()-roomStartTick);
             log.info("Swarm spawned");
         }
         else if(spawned.getNpc().getId() == 11724)

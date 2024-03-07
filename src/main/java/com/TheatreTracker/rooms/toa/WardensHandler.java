@@ -80,7 +80,7 @@ public class WardensHandler extends TOARoomHandler
     @Override
     public void updateNpcSpawned(NpcSpawned event)
     {
-        if(roomState == ENRAGED && event.getNpc().getId() == 11766)
+        if(roomState == ENRAGED && event.getNpc().getId() == 11766) //todo investigate
         {
             sendTimeMessage("Wardens Duration: ", client.getTickCount()-roomStartTick, client.getTickCount()-enraged);
             clog.addLine(LogID.TOA_WARDENS_FINISHED, client.getTickCount()-roomStartTick);

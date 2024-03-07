@@ -158,6 +158,40 @@ public class ChartFrame extends BaseFrame
                         break;
                 }
             }
+            else if(roomData instanceof SimpleTOAData)
+            {
+                SimpleTOAData toaData = (SimpleTOAData) roomData;
+                switch(s)
+                {
+                    case "Baba":
+                        lines.put(toaData.getValue(DataPoint.BABA_P1_DURATION), "Boulder 1 Start");
+                        lines.put(toaData.getValue(DataPoint.BABA_P2_SPLIT), "Boulder 1 End");
+                        lines.put(toaData.getValue(DataPoint.BABA_BOULDER_2_SPLIT), "Boulder 2 Start");
+                        lines.put(toaData.getValue(DataPoint.BABA_P3_SPLIT), "Boulder 2 End");
+                        lines.put(toaData.getValue(DataPoint.BABA_TIME), "End");
+                        break;
+                    case "Akkha":
+                        lines.put(toaData.getValue(DataPoint.AKKHA_P1_DURATION), "Shadow1 Start");
+                        lines.put(toaData.getValue(DataPoint.AKKHA_P2_SPLIT), "Shadow1 End");
+                        lines.put(toaData.getValue(DataPoint.AKKHA_SHADOW_2_SPLIT), "Shadow2 Start");
+                        lines.put(toaData.getValue(DataPoint.AKKHA_P3_SPLIT), "Shadow2 End");
+                        lines.put(toaData.getValue(DataPoint.AKKHA_SHADOW_3_SPLIT), "Shadow3 Start");
+                        lines.put(toaData.getValue(DataPoint.AKKHA_P4_SPLIT), "Shadow3 End");
+                        lines.put(toaData.getValue(DataPoint.AKKHA_SHADOW_4_SPLIT), "Shadow4 Start");
+                        lines.put(toaData.getValue(DataPoint.AKKHA_P5_SPLIT), "Shadow4 End");
+                        lines.put(toaData.getValue(DataPoint.AKKHA_FINAL_PHASE_SPLIT), "Final Phase");
+                        lines.put(toaData.getValue(DataPoint.AKKHA_TIME), "End");
+                        break;
+                    case "Kephri":
+                        lines.put(toaData.getValue(DataPoint.KEPHRI_P1_DURATION), "Swarm1 Start");
+                        lines.put(toaData.getValue(DataPoint.KEPHRI_P2_SPLIT), "Swarm1 End");
+                        lines.put(toaData.getValue(DataPoint.KEPHRI_SWARM2_SPLIT), "Swarm2 Start");
+                        lines.put(toaData.getValue(DataPoint.KEPHRI_P3_SPLIT), "Swarm2 End");
+                        lines.put(toaData.getValue(DataPoint.KEPHRI_P3_SPLIT), "Final Phase");
+                        lines.put(toaData.getValue(DataPoint.KEPHRI_TIME), "End");
+                        break;
+                }
+            }
             chartPanel.addLines(lines);
             chartPanel.addAutos(autos);
             chartPanel.redraw();

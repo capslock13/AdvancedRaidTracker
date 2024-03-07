@@ -263,6 +263,7 @@ public enum DataPoint
 
 
 ;
+
     public static ArrayList<DataPoint> getTOBValues()
     {
         ArrayList<DataPoint> dataPoints = new ArrayList<>();

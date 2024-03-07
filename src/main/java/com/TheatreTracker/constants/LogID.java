@@ -15,88 +15,88 @@ import static com.TheatreTracker.constants.TOBRoom.*;
 public enum LogID
 {
     ENTERED_TOB(0, true, ANY_TOB, "Entered TOB"),
-    PARTY_MEMBERS(1, true, ANY_TOB, "Party Members"),
-    DWH(2, true, ANY_TOB,"DWH Hit"),
-    BGS(3, true, ANY_TOB,"BGS Hit"),
-    LEFT_TOB(4, true, ANY_TOB,"Left TOB"),
-    PLAYER_DIED(5, true, ANY_TOB,"Played Died"),
-    ENTERED_NEW_TOB_REGION(6, true, ANY_TOB,"Entered New TOB Region"),
-    HAMMER_ATTEMPTED(7, true, ANY_TOB,"DWH Attempted"),
-    DAWN_DROPPED(800, false, VERZIK,"Dawnbringer appeared"),
-    WEBS_STARTED(901, false, VERZIK,"Webs Thrown"),
-    PLAYER_ATTACK(801, false, ANY,"Player Animation"),
+    PARTY_MEMBERS(1, true, ANY_TOB, "Party Members", "Player1", "Player2", "Player3", "Player4", "Player5"),
+    DWH(2, true, ANY_TOB,"DWH Hit", "Player", "Room Tick"),
+    BGS(3, true, ANY_TOB,"BGS Hit", "Player", "Damage", "Room Tick"),
+    LEFT_TOB(4, true, ANY_TOB,"Left TOB", "Last Room Tick", "Last Room Name"),
+    PLAYER_DIED(5, true, ANY_TOB,"Played Died", "Player", "Room Tick"),
+    ENTERED_NEW_TOB_REGION(6, true, ANY_TOB,"Entered New TOB Region", "Room (Int)"),
+    HAMMER_ATTEMPTED(7, true, ANY_TOB,"DWH Attempted", "Player"),
+    DAWN_DROPPED(800, false, VERZIK,"Dawnbringer appeared", "Room Tick"),
+    WEBS_STARTED(901, false, VERZIK,"Webs Thrown", "Room Tick"),
+    PLAYER_ATTACK(801, false, ANY,"Player Animation", "Player:Room Tick", "Animation:Worn Items ~ Separated", "Spot animations", "Weapon:Interated Index:Interacted ID", "Matched Projectile:Interacted Name", "Room Name"),
     BLOOD_THROWN(9, true, MAIDEN,"Maiden blood thrown"),
     BLOOD_SPAWNED(10, true, MAIDEN, "Blood Spawned"),
     CRAB_LEAK(11, true, MAIDEN, "Crab Leaked"),
     MAIDEN_SPAWNED(12, true, MAIDEN, "Spawned"),
-    MAIDEN_70S(13, true, MAIDEN, "70s"),
-    MAIDEN_50S(14, true, MAIDEN, "50s"),
-    MAIDEN_30S(15, true, MAIDEN, "30s"),
-    MAIDEN_0HP(16, true, MAIDEN, "0 HP"),
-    MAIDEN_DESPAWNED(17, true, MAIDEN, "Despawned"),
-    MATOMENOS_SPAWNED(18, true, MAIDEN, "Crab Spawned"),
-    MAIDEN_SCUFFED(19, true, MAIDEN, "Scuffed"),
+    MAIDEN_70S(13, true, MAIDEN, "70s", "Room Tick"),
+    MAIDEN_50S(14, true, MAIDEN, "50s", "Room Tick"),
+    MAIDEN_30S(15, true, MAIDEN, "30s", "Room Tick"),
+    MAIDEN_0HP(16, true, MAIDEN, "0 HP", "Room Tick"),
+    MAIDEN_DESPAWNED(17, true, MAIDEN, "Despawned", "Room Tick"),
+    MATOMENOS_SPAWNED(18, true, MAIDEN, "Crab Spawned", "Crab Description"),
+    MAIDEN_SCUFFED(19, true, MAIDEN, "Scuffed", "Current Proc"),
     BLOAT_SPAWNED(20, true, BLOAT, "Spawned"),
-    BLOAT_DOWN(21, true, BLOAT, "Down"),
+    BLOAT_DOWN(21, true, BLOAT, "Down", "Room Tick"),
     BLOAT_0HP(22, true, BLOAT, "0 HP"),
-    BLOAT_DESPAWN(23, true, BLOAT, "Despawned"),
-    BLOAT_HP_1ST_DOWN(24, true, BLOAT, "HP at First Down"),
-    BLOAT_SCYTHE_1ST_WALK(25, true, BLOAT, "First Walk Scythes"),
+    BLOAT_DESPAWN(23, true, BLOAT, "Despawned", "Room Tick"),
+    BLOAT_HP_1ST_DOWN(24, true, BLOAT, "HP at First Down", "Bloat HP"), //Jagex format, 744 -> 74.4%
+    BLOAT_SCYTHE_1ST_WALK(25, true, BLOAT, "First Walk Scythes", "Player", "Room Tick"),
 
     NYLO_PILLAR_SPAWN(30, true, NYLOCAS, "Pillar Spawn"),
-    NYLO_STALL(31, true, NYLOCAS, "Stall"),
-    RANGE_SPLIT(32, true, NYLOCAS, "Range Split"),
-    MAGE_SPLIT(33, true, NYLOCAS, "Mage Split"),
-    MELEE_SPLIT(34, true, NYLOCAS, "Melee Split"),
-    LAST_WAVE(35, true, NYLOCAS, "Last Wave"),
-    LAST_DEAD(36, true, NYLOCAS, "Last Dead"),
-    NYLO_WAVE(37, true, NYLOCAS, "Wave"),
-    BOSS_SPAWN(40, true, NYLOCAS, "Boss Spawn"),
-    MELEE_PHASE(41, true, NYLOCAS, "Melee Phase"),
-    MAGE_PHASE(42, true, NYLOCAS, "Mage Phase"),
-    RANGE_PHASE(43, true, NYLOCAS, "Range Phase"),
+    NYLO_STALL(31, true, NYLOCAS, "Stall", "Wave", "Room Tick", "Nylos Alive"),
+    RANGE_SPLIT(32, true, NYLOCAS, "Range Split", "Wave", "Room Tick"),
+    MAGE_SPLIT(33, true, NYLOCAS, "Mage Split", "Wave", "Room Tick"),
+    MELEE_SPLIT(34, true, NYLOCAS, "Melee Split", "Wave", "Room Tick"),
+    LAST_WAVE(35, true, NYLOCAS, "Last Wave", "Room Tick"),
+    LAST_DEAD(36, true, NYLOCAS, "Last Dead", "Room Tick"),
+    NYLO_WAVE(37, true, NYLOCAS, "Wave", "Wave Number", "Room Tick"),
+    BOSS_SPAWN(40, true, NYLOCAS, "Boss Spawn", "Room Tick"),
+    MELEE_PHASE(41, true, NYLOCAS, "Melee Phase", "Room Tick"),
+    MAGE_PHASE(42, true, NYLOCAS, "Mage Phase", "Room Tick"),
+    RANGE_PHASE(43, true, NYLOCAS, "Range Phase", "Room Tick"),
     NYLO_0HP(44, true, NYLOCAS, "0 HP"),
-    NYLO_DESPAWNED(45, true, NYLOCAS, "Despawn"),
-    NYLO_PILLAR_DESPAWNED(46, true, NYLOCAS, "Pillar Despawn"), //tick
-    SOTETSEG_STARTED(51, true, SOTETSEG, "Started"),
-    SOTETSEG_FIRST_MAZE_STARTED(52, true, SOTETSEG, "First Maze Start"),
-    SOTETSEG_FIRST_MAZE_ENDED(53, true, SOTETSEG, "First Maze End"),
-    SOTETSEG_SECOND_MAZE_STARTED(54, true, SOTETSEG, "Second Maze Start"),
-    SOTETSEG_SECOND_MAZE_ENDED(55, true, SOTETSEG, "Second Maze End"),
-    SOTETSEG_ENDED(57, true, SOTETSEG, "Room End"),
+    NYLO_DESPAWNED(45, true, NYLOCAS, "Despawn", "Room Tick"),
+    NYLO_PILLAR_DESPAWNED(46, true, NYLOCAS, "Pillar Despawn", "Room Tick"),
+    SOTETSEG_STARTED(51, true, SOTETSEG, "Started", "Room Tick"),
+    SOTETSEG_FIRST_MAZE_STARTED(52, true, SOTETSEG, "First Maze Start", "Room Tick"),
+    SOTETSEG_FIRST_MAZE_ENDED(53, true, SOTETSEG, "First Maze End", "Room Tick"),
+    SOTETSEG_SECOND_MAZE_STARTED(54, true, SOTETSEG, "Second Maze Start", "Room Tick"),
+    SOTETSEG_SECOND_MAZE_ENDED(55, true, SOTETSEG, "Second Maze End", "Room Tick"),
+    SOTETSEG_ENDED(57, true, SOTETSEG, "Room End", "Room Tick"),
     XARPUS_SPAWNED(60, true, XARPUS, "Spawned"),
     XARPUS_STARTED(61, true, XARPUS, "Started"),
     XARPUS_HEAL(62, true, XARPUS, "Heal"),
-    XARPUS_SCREECH(63, true, XARPUS, "Screech"),
+    XARPUS_SCREECH(63, true, XARPUS, "Screech", "Room Tick"),
     XARPUS_0HP(64, true, XARPUS, "0 HP"),
-    XARPUS_DESPAWNED(65, true, XARPUS, "Despawned"),
+    XARPUS_DESPAWNED(65, true, XARPUS, "Despawned", "Room Tick"),
     VERZIK_SPAWNED(70, true, VERZIK, "Spawned"),
     VERZIK_P1_START(71, true, VERZIK, "P1 Start"),
     VERZIK_P1_0HP(72, true, VERZIK, "P1 0 HP"),
-    VERZIK_P1_DESPAWNED(73, true, VERZIK, "P1 Despawned"),
-    VERZIK_P2_END(74, true, VERZIK, "P2 End"),
+    VERZIK_P1_DESPAWNED(73, true, VERZIK, "P1 Despawned", "Room Tick"),
+    VERZIK_P2_END(74, true, VERZIK, "P2 End", "Room Tick"),
     VERZIK_P3_0HP(75, true, VERZIK, "P2 0 HP"),
-    VERZIK_P3_DESPAWNED(76, true, VERZIK, "P3 Despawned"),
-    VERZIK_BOUNCE(77, true, VERZIK, "Bounce"),
-    VERZIK_CRAB_SPAWNED(78, true, VERZIK, "Crab Spawned"),
-    VERZIK_P2_REDS_PROC(80, true, VERZIK, "Reds Proc"),
+    VERZIK_P3_DESPAWNED(76, true, VERZIK, "P3 Despawned", "Room Tick"),
+    VERZIK_BOUNCE(77, true, VERZIK, "Bounce", "Player", "Room Tick"),
+    VERZIK_CRAB_SPAWNED(78, true, VERZIK, "Crab Spawned", "Room Tick"),
+    VERZIK_P2_REDS_PROC(80, true, VERZIK, "Reds Proc", "Room Tick"),
 
-    LATE_START(98, true, ANY_TOB, "Joined Raid After Start"),
+    LATE_START(98, true, ANY_TOB, "Joined Raid After Start", "Room Name"),
     SPECTATE(99, true, ANY_TOB, "Is Spectating"),
-    NOT_118(998, true, ANY_TOB, "Not 118"),
-    NO_PIETY(999, true, ANY_TOB, "No Piety"),
+    DEPRECATED_1(998, true, ANY_TOB, "DEPRECATED"),
+    DEPRECATED_2(999, true, ANY_TOB, "DEPRECATED"),
 
-    BLOAT_HAND(975, false, BLOAT, "Bloat Hand"),
-    BLOAT_DIRECTION(976, false, BLOAT, "Bloat Direction"),
+    BLOAT_HAND(975, false, BLOAT, "Bloat Hand", "Game Object ID", "RegionX", "RegionY", "Room Tick"),
+    BLOAT_DIRECTION(976, false, BLOAT, "Bloat Direction on instance creation", "Orientation (Runelite Angle)", "NPC Index"),
 
     PARTY_COMPLETE(100, true, ANY_TOB, "Party Is Complete"),
     PARTY_INCOMPLETE(101, true, ANY_TOB, "Party Is Not Complete"),
     PARTY_ACCURATE_PREMAIDEN(102, true, ANY_TOB, "Party Is Complete Prior To Maiden"),
 
-    MAIDEN_DINHS_SPEC(111, true, MAIDEN, "Dinhs Spec"), //Player, tick, primary target:primary target hp, targets~hp:,stats:stats
+    MAIDEN_DINHS_SPEC(111, true, MAIDEN, "Dinhs Spec", "Player", "Tick", "Primary Target:Primary Target HP", "Targets~HP, : Separated", "Targets Below 27hp"), //Player, tick, primary target:primary target hp, targets~hp:,stats:stats
     MAIDEN_DINHS_TARGET(112, true, MAIDEN, "Dinhs Target"), //
 
-    MAIDEN_CHIN_THROWN(113, true, MAIDEN, "Chin Thrown"), //player, distance
+    MAIDEN_CHIN_THROWN(113, true, MAIDEN, "Chin Thrown", "Player", "Distance"), //player, distance
 
     ACCURATE_MAIDEN_START(201, true, MAIDEN, "Accurate Maiden Start"),
     ACCURATE_BLOAT_START(202, true, BLOAT, "Accurate Bloat Start"),
@@ -114,106 +114,106 @@ public enum LogID
     IS_HARD_MODE(401, true, ANY_TOB, "Is Hard Mode"),
     IS_STORY_MODE(402, true, ANY_TOB, "Is Story Mode"),
 
-    THRALL_ATTACKED(403, false, ANY_TOB, "Thrall Attacked"), // player, type
+    THRALL_ATTACKED(403, false, ANY_TOB, "Thrall Attacked", "Player", "Type"), // player, type
 
-    THRALL_DAMAGED(404, false, ANY_TOB, "Thrall Damaged"), // player, damage
+    THRALL_DAMAGED(404, false, ANY_TOB, "Thrall Damaged", "Player", "Damage"), // player, damage
 
-    VENG_WAS_CAST(405, false, ANY_TOB, "Veng Cast"), //target, source
+    VENG_WAS_CAST(405, false, ANY_TOB, "Veng Cast", "Target", "Source"), //target, source
 
-    VENG_WAS_PROCCED(406, false, ANY_TOB, "Veng Procced"), //player, source of veng, damage
+    VENG_WAS_PROCCED(406, false, ANY_TOB, "Veng Procced", "Player", "Source of veng", "Damage"), //player, source of veng, damage
 
-    PLAYER_STOOD_IN_THROWN_BLOOD(411, true, MAIDEN, "Player Stood In Thrown Blood"), //player, damage, blood tick
-    PLAYER_STOOD_IN_SPAWNED_BLOOD(412, true, MAIDEN, "Player Stood In Spawned Blood"),  //player, damage
-    CRAB_HEALED_MAIDEN(413, true, MAIDEN, "Crab Healed Maiden"), //damage
-    VERZIK_PURPLE_HEAL(701, true, VERZIK, "Purple Heal"),
-    VERZIK_RED_AUTO(702, true, VERZIK, "Red Auto"),
-    VERZIK_THRALL_HEAL(703, true, VERZIK, "Thrall Heal"),
-    VERZIK_PLAYER_HEAL(704, true, VERZIK, "Player Heal"),
+    PLAYER_STOOD_IN_THROWN_BLOOD(411, true, MAIDEN, "Player Stood In Thrown Blood", "Player", "Damage", "Ticks blood was alive for"), //player, damage, blood tick
+    PLAYER_STOOD_IN_SPAWNED_BLOOD(412, true, MAIDEN, "Player Stood In Spawned Blood", "Player", "Damage"),  //player, damage
+    CRAB_HEALED_MAIDEN(413, true, MAIDEN, "Crab Healed Maiden"," Heal Amount"), //damage
+    VERZIK_PURPLE_HEAL(701, true, VERZIK, "Purple Heal"), //unimplemented
+    VERZIK_RED_AUTO(702, true, VERZIK, "Red Auto"), //unimplemented
+    VERZIK_THRALL_HEAL(703, true, VERZIK, "Thrall Heal"), //unimplemented
+    VERZIK_PLAYER_HEAL(704, true, VERZIK, "Player Heal"), //unimplemented
 
-    KODAI_BOP(501, true, ANY_TOB, "Kodai Bop"),
-    DWH_BOP(502, true, ANY_TOB, "DWH Bop"),
-    BGS_WHACK(503, true, ANY_TOB, "BGS Whack"),
-    CHALLY_POKE(504, true, ANY_TOB, "Chally Poke"),
-    THRALL_SPAWN(410, false, ANY_TOB, "Thrall Spawn"),
-    THRALL_DESPAWN(498, false, ANY_TOB, "Thrall Despawn"),
-    DAWN_SPEC(487, false, VERZIK, "Dawn Spec"),
-    DAWN_DAMAGE(488, false, VERZIK, "Dawn Damage"),
-    MAIDEN_PLAYER_DRAINED(530, true, MAIDEN, "Player Drained"),
-    MAIDEN_AUTO(531, true, MAIDEN, "Maiden Auto"),
+    KODAI_BOP(501, true, ANY_TOB, "Kodai Bop", "Player"),
+    DWH_BOP(502, true, ANY_TOB, "DWH Bop", "Player"),
+    BGS_WHACK(503, true, ANY_TOB, "BGS Whack", "Player"),
+    CHALLY_POKE(504, true, ANY_TOB, "Chally Poke", "Players"),
+    THRALL_SPAWN(410, false, ANY_TOB, "Thrall Spawn", "Owner", "Room Tick", "Npc ID", "Room"),
+    THRALL_DESPAWN(498, false, ANY_TOB, "Thrall Despawn", "Owner", "Room Tick"),
+    DAWN_SPEC(487, false, VERZIK, "Dawn Spec", "Player", "Room Tick Damage Applied"),
+    DAWN_DAMAGE(488, false, VERZIK, "Dawn Damage", "Damage", "Room Tick"),
+    MAIDEN_PLAYER_DRAINED(530, true, MAIDEN, "Player Drained", "Player", "Room Tick"),
+    MAIDEN_AUTO(531, true, MAIDEN, "Maiden Auto", "Player targeted", "Room Tick"),
 
-    UPDATE_HP(576, false, ANY_TOB, "Update Boss HP"),
-    ADD_NPC_MAPPING(587, false, ANY_TOB, "Update NPC Mappings"),
+    UPDATE_HP(576, false, ANY_TOB, "Update Boss HP", "HP", "Tick", "Room"), //Hp is in jagex format (744 -> 74.4%)
+    ADD_NPC_MAPPING(587, false, ANY_TOB, "Update NPC Mappings", "NPC Index", "Description", "Room"),
     UNKNOWN(-1, false, ANY_TOB, "Unknown"),
 
     ENTERED_TOA(1000, true, ANY_TOB, "Entered TOA"),
-    TOA_PARTY_MEMBERS(1001, true, ANY_TOB, "Party Members"),
-    LEFT_TOA(1004, true, ANY_TOB, "Left TOA"),
-    ENTERED_NEW_TOA_REGION(1006, true, ANY_TOB, "Entered New TOA Region"),
-    INVOCATION_LEVEL(1100, true, ANY_TOB, "Invocation Level"),
-    TOA_TIMER_START(1101, true, ANY_TOB, "TOA Timer Start"),
+    TOA_PARTY_MEMBERS(1001, true, ANY_TOB, "Party Members", "Player1", "Player2", "Player3", "Player4", "Player5", "Player6", "Player7", "Player8"),
+    LEFT_TOA(1004, true, ANY_TOB, "Left TOA", "Room Tick", "Last Room"),
+    ENTERED_NEW_TOA_REGION(1006, true, ANY_TOB, "Entered New TOA Region", "Region"),
+    INVOCATION_LEVEL(1100, true, ANY_TOB, "Invocation Level","Raid Level"),
+    TOA_TIMER_START(1101, true, ANY_TOB, "TOA Timer Start", "Client Tick"),
 
-    TOA_CRONDIS_START(1010, true, CRONDIS, "Crondis Start"),
-    TOA_CRONDIS_FINISHED(1011, true, CRONDIS, "Crondis Finished"),
-    TOA_CRONDIS_WATER(1022, true, CRONDIS, "Crondis Water"),
-    TOA_CRONDIS_CROC_DAMAGE(1023, true, CRONDIS, "Crondis Croc Damage"),
+    TOA_CRONDIS_START(1010, true, CRONDIS, "Crondis Start", "Room Tick"),
+    TOA_CRONDIS_FINISHED(1011, true, CRONDIS, "Crondis Finished", "Room Tick"),
+    TOA_CRONDIS_WATER(1022, true, CRONDIS, "Crondis Water", "Heal"),
+    TOA_CRONDIS_CROC_DAMAGE(1023, true, CRONDIS, "Crondis Croc Damage", "Damage"),
 
-    TOA_ZEBAK_START(1020, true, ZEBAK, "Zebak Start"),
-    TOA_ZEBAK_FINISHED(1021, true, ZEBAK, "Zebak Finished"),
+    TOA_ZEBAK_START(1020, true, ZEBAK, "Zebak Start", "Room Tick"),
+    TOA_ZEBAK_FINISHED(1021, true, ZEBAK, "Zebak Finished", "Room Tick"),
 
-    TOA_SCABARAS_START(1030, true, SCABARAS, "Scabaras Start"),
-    TOA_SCABARAS_FINISHED(1031, true, SCABARAS, "Scabaras End"),
+    TOA_SCABARAS_START(1030, true, SCABARAS, "Scabaras Start", "Room Tick"),
+    TOA_SCABARAS_FINISHED(1031, true, SCABARAS, "Scabaras End", "Room Tick"),
 
-    TOA_KEPHRI_START(1040, true, KEPHRI, "Kephri Start"),
-    TOA_KEPHRI_PHASE_1_END(1041, true, KEPHRI, "Kephri P1 End"),
-    TOA_KEPHRI_SWARM_1_END(1042, true, KEPHRI, "Kephri Swarm1 End"),
-    TOA_KEPHRI_PHASE_2_END(1043, true, KEPHRI, "Kephri P2 End"),
-    TOA_KEPHRI_SWARM_2_END(1044, true, KEPHRI, "Kephri Swarm2 End"),
-    TOA_KEPHRI_FINISHED(1045, true, KEPHRI, "Kephri Finished"),
-    TOA_KEPHRI_HEAL(1046, true, KEPHRI, "Kephri Swarm Heal"),
-    TOA_KEPHRI_SWARM_SPAWN(1047, true, KEPHRI, "Kephri Swarm Spawn"),
-    TOA_KEPHRI_BOMB_TANKED(1048, true, KEPHRI, "Kephri Bomb Tanked"),
-    TOA_KEPHRI_DUNG_THROWN(1049, true, KEPHRI, "Kephri Dung Thrown"),
-    TOA_KEPHRI_MELEE_ALIVE_TICKS(1350, true, KEPHRI, "Kephri Melee Alive Ticks"),
-    TOA_KEPHRI_MELEE_HEAL(1351, true, KEPHRI, "Kephri Melee Heal"),
+    TOA_KEPHRI_START(1040, true, KEPHRI, "Kephri Start", "Client Tick"),
+    TOA_KEPHRI_PHASE_1_END(1041, true, KEPHRI, "Kephri P1 End", "Room Tick"),
+    TOA_KEPHRI_SWARM_1_END(1042, true, KEPHRI, "Kephri Swarm1 End", "Room Tick"),
+    TOA_KEPHRI_PHASE_2_END(1043, true, KEPHRI, "Kephri P2 End", "Room Tick"),
+    TOA_KEPHRI_SWARM_2_END(1044, true, KEPHRI, "Kephri Swarm2 End", "Room Tick"),
+    TOA_KEPHRI_FINISHED(1045, true, KEPHRI, "Kephri Finished", "Room Tick"),
+    TOA_KEPHRI_HEAL(1046, true, KEPHRI, "Kephri Swarm Heal", "Room Tick", "Heal"),
+    TOA_KEPHRI_SWARM_SPAWN(1047, true, KEPHRI, "Kephri Swarm Spawn", "Room Tick"),
+    TOA_KEPHRI_BOMB_TANKED(1048, true, KEPHRI, "Kephri Bomb Tanked", "Player", "Room Tick"),
+    TOA_KEPHRI_DUNG_THROWN(1049, true, KEPHRI, "Kephri Dung Thrown", "Room Tick"),
+    TOA_KEPHRI_MELEE_ALIVE_TICKS(1350, true, KEPHRI, "Kephri Melee Alive Ticks", "Ticks Alive"),
+    TOA_KEPHRI_MELEE_HEAL(1351, true, KEPHRI, "Kephri Melee Heal", "Room Tick"),
 
 
-    TOA_APMEKEN_START(1050, true, APMEKEN, "Apmeken Start"),
-    TOA_APMEKEN_FINISHED(1051, true, APMEKEN, "Apmeken Finished"),
-    TOA_APMEKEN_VOLATILE_SPAWN(1052, true, APMEKEN, "Volatile Spawn"),
-    TOA_APMEKEN_SHAMAN_SPAWN(1053, true, APMEKEN, "Shaman Spawn"),
-    TOA_APMEKEN_CURSED_SPAWN(1054, true, APMEKEN, "Cursed Spawn"),
+    TOA_APMEKEN_START(1050, true, APMEKEN, "Apmeken Start", "Client Tick"),
+    TOA_APMEKEN_FINISHED(1051, true, APMEKEN, "Apmeken Finished", "Room Tick"),
+    TOA_APMEKEN_VOLATILE_SPAWN(1052, true, APMEKEN, "Volatile Spawn", "Room Tick"),
+    TOA_APMEKEN_SHAMAN_SPAWN(1053, true, APMEKEN, "Shaman Spawn", "Room Tick"),
+    TOA_APMEKEN_CURSED_SPAWN(1054, true, APMEKEN, "Cursed Spawn", "Room Tick"),
 
-    TOA_BABA_START(1060, true, BABA, "Baba Start"),
-    TOA_BABA_PHASE_1_END(1061, true, BABA, "Baba P1 End"),
-    TOA_BABA_BOULDER_1_END(1062, true, BABA, "Baba Boulder1 End"),
-    TOA_BABA_PHASE_2_END(1063, true, BABA, "Baba P2 End"),
-    TOA_BABA_BOULDER_2_END(1064, true, BABA, "Baba Boulder2 End"),
-    TOA_BABA_FINISHED(1065, true, BABA, "Baba Finished"),
-    TOA_BABA_BOULDER_THROW(1066, true, BABA, "Boulder Throw"),
-    TOA_BABA_BOULDER_BROKEN(1067, true, BABA, "Boulder Broken"),
+    TOA_BABA_START(1060, true, BABA, "Baba Start", "Client Tick"),
+    TOA_BABA_PHASE_1_END(1061, true, BABA, "Baba P1 End", "Room Tick"),
+    TOA_BABA_BOULDER_1_END(1062, true, BABA, "Baba Boulder1 End", "Room Tick"),
+    TOA_BABA_PHASE_2_END(1063, true, BABA, "Baba P2 End", "Room Tick"),
+    TOA_BABA_BOULDER_2_END(1064, true, BABA, "Baba Boulder2 End", "Room Tick"),
+    TOA_BABA_FINISHED(1065, true, BABA, "Baba Finished", "Room Tick"),
+    TOA_BABA_BOULDER_THROW(1066, true, BABA, "Boulder Throw", "Room Tick"),
+    TOA_BABA_BOULDER_BROKEN(1067, true, BABA, "Boulder Broken", "Room Tick"),
 
-    TOA_HET_START(1070, true, HET, "Het Start"),
-    TOA_HET_FINISHED(1071, true, HET, "Het Finished"),
-    TOA_HET_PLAYED_MINED_OBELISK(1072, true, HET, "Het Player Mined Obelisk"),
+    TOA_HET_START(1070, true, HET, "Het Start", "Client Tick"),
+    TOA_HET_FINISHED(1071, true, HET, "Het Finished", "Room Tick"),
+    TOA_HET_PLAYED_MINED_OBELISK(1072, true, HET, "Het Player Mined Obelisk", "Player", "Room Tick"),
 
-    TOA_AKKHA_START(1080, true, AKKHA, "Akkha Start"),
-    TOA_AKKHA_PHASE_1_END(1081, true, AKKHA, "Akkha P1 End"),
-    TOA_AKKHA_SHADOW_1_END(1082, true, AKKHA, "Akkha Shadow1 End"),
-    TOA_AKKHA_PHASE_2_END(1083, true, AKKHA, "Akkha P2 End"),
-    TOA_AKKHA_SHADOW_2_END(1084, true, AKKHA, "Akkha Shadow2 End"),
-    TOA_AKKHA_PHASE_3_END(1085, true, AKKHA, "Akkha P3 End"),
-    TOA_AKKHA_SHADOW_3_END(1086, true, AKKHA, "Akkha Shadow3 End"),
-    TOA_AKKHA_PHASE_4_END(1087, true, AKKHA, "Akkha P4 End"),
-    TOA_AKKHA_SHADOW_4_END(1088, true, AKKHA, "Akkha Shadow4 End"),
-    TOA_AKKHA_PHASE_5_END(1089, true, AKKHA, "Akkha P5 End"),
-    TOA_AKKHA_FINISHED(1090, true, AKKHA, "Akkha Finished"),
-    TOA_AKKHA_NULLED_HIT(1091, true, AKKHA, "Akkha nulled hit"),
+    TOA_AKKHA_START(1080, true, AKKHA, "Akkha Start", "Client Tick"),
+    TOA_AKKHA_PHASE_1_END(1081, true, AKKHA, "Akkha P1 End", "Room Tick"),
+    TOA_AKKHA_SHADOW_1_END(1082, true, AKKHA, "Akkha Shadow1 End", "Room Tick"),
+    TOA_AKKHA_PHASE_2_END(1083, true, AKKHA, "Akkha P2 End", "Room Tick"),
+    TOA_AKKHA_SHADOW_2_END(1084, true, AKKHA, "Akkha Shadow2 End", "Room Tick"),
+    TOA_AKKHA_PHASE_3_END(1085, true, AKKHA, "Akkha P3 End", "Room Tick"),
+    TOA_AKKHA_SHADOW_3_END(1086, true, AKKHA, "Akkha Shadow3 End", "Room Tick"),
+    TOA_AKKHA_PHASE_4_END(1087, true, AKKHA, "Akkha P4 End", "Room Tick"),
+    TOA_AKKHA_SHADOW_4_END(1088, true, AKKHA, "Akkha Shadow4 End", "Room Tick"),
+    TOA_AKKHA_PHASE_5_END(1089, true, AKKHA, "Akkha P5 End", "Room Tick"),
+    TOA_AKKHA_FINISHED(1090, true, AKKHA, "Akkha Finished", "Room Tick"),
+    TOA_AKKHA_NULLED_HIT(1091, true, AKKHA, "Akkha nulled hit"), //not implemented yet todo
 
-    TOA_WARDENS_START(1200, true, WARDENS, "Wardens Start"),
-    TOA_WARDENS_P1_END(1201, true, WARDENS, "Wardens P1 End"),
-    TOA_WARDENS_P2_END(1202, true, WARDENS, "Wardens P2 End"),
-    TOA_WARDENS_ENRAGED(1203, true, WARDENS, "Wardens Enraged"),
-    TOA_WARDENS_FINISHED(1204, true, WARDENS, "Wardens Finished"),
+    TOA_WARDENS_START(1200, true, WARDENS, "Wardens Start", "Client Tick"),
+    TOA_WARDENS_P1_END(1201, true, WARDENS, "Wardens P1 End", "Room Tick"),
+    TOA_WARDENS_P2_END(1202, true, WARDENS, "Wardens P2 End", "Room Tick"),
+    TOA_WARDENS_ENRAGED(1203, true, WARDENS, "Wardens Enraged", "Room Tick"),
+    TOA_WARDENS_FINISHED(1204, true, WARDENS, "Wardens Finished", "Room Tick"),
 
 
 
@@ -299,17 +299,16 @@ public enum LogID
     final TOBRoom room;
     final boolean simple;
 
-    LogID(int id)
-    {
-        this(id, true, TOBRoom.UNKNOWN, "");
-    }
+    final String[] valueDescriptors;
 
-    LogID(int id, boolean simple, TOBRoom room, String commonName)
+
+    LogID(int id, boolean simple, TOBRoom room, String commonName, String... arguments)
     {
         this.id = id;
         this.commonName = commonName;
         this.room = room;
         this.simple = simple;
+        this.valueDescriptors = arguments;
     }
 
     public static boolean isSimple(int value)

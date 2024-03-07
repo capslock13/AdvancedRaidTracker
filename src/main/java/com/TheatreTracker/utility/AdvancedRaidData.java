@@ -1,6 +1,7 @@
 package com.TheatreTracker.utility;
 
 import com.TheatreTracker.utility.wrappers.PlayerDidAttack;
+import com.TheatreTracker.utility.wrappers.ThrallOutlineBox;
 import net.runelite.client.game.ItemManager;
 
 import java.io.File;
@@ -14,6 +15,8 @@ public abstract class AdvancedRaidData
     public Map<String, ArrayList<PlayerDidAttack>> attackData;
     public Map<String, Map<Integer, Integer>> hpData;
     public Map<String, Map<Integer, String>> npcIndexData;
+
+    public Map<String, ArrayList<ThrallOutlineBox>> thrallOutlineBoxes;
 
     public static ArrayList<String> getRaidStrings(String path)
     {

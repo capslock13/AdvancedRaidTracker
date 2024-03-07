@@ -3,6 +3,7 @@ package com.TheatreTracker.rooms.toa;
 import com.TheatreTracker.TheatreTrackerConfig;
 import com.TheatreTracker.TheatreTrackerPlugin;
 import com.TheatreTracker.constants.LogID;
+import com.TheatreTracker.constants.RoomState;
 import com.TheatreTracker.utility.Point;
 import com.TheatreTracker.utility.RoomUtil;
 import com.TheatreTracker.utility.datautility.DataWriter;
@@ -15,6 +16,10 @@ import net.runelite.api.events.NpcDespawned;
 @Slf4j
 public class HetHandler extends TOARoomHandler
 {
+    public String getName()
+    {
+        return "Het";
+    }
     public HetHandler(Client client, DataWriter clog, TheatreTrackerConfig config, TheatreTrackerPlugin plugin, TOAHandler handler)
     {
         super(client, clog, config, plugin, handler);
@@ -30,6 +35,10 @@ public class HetHandler extends TOARoomHandler
             clog.addLine(LogID.TOA_HET_START, roomStartTick);
         }
     }
+    public boolean isActive()
+    {
+        return active;
+    }
 
     @Override
     public void updateNpcDespawned(NpcDespawned despawned)
@@ -40,6 +49,7 @@ public class HetHandler extends TOARoomHandler
             sendTimeMessage("Het Duration: ", duration);
             clog.addLine(LogID.TOA_HET_FINISHED, duration);
             active = false;
+            plugin.liveFrame.setRoomFinished(getName(), duration);
         }
     }
 }

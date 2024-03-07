@@ -16,6 +16,10 @@ import net.runelite.api.events.*;
 @Slf4j
 public class KephriHandler extends TOARoomHandler
 {
+    public String getName()
+    {
+        return "Kephri";
+    }
     RoomState.KephriRoomState roomState = RoomState.KephriRoomState.NOT_STARTED;
     private int p1End = -1;
     private int s1End = -1;
@@ -132,6 +136,11 @@ public class KephriHandler extends TOARoomHandler
         }
     }
 
+    public boolean isActive()
+    {
+        return !(roomState == RoomState.KephriRoomState.NOT_STARTED || roomState == RoomState.KephriRoomState.FINISHED);
+    }
+
     @Override
     public void handleNPCChanged(int changed)
     {
@@ -177,6 +186,7 @@ public class KephriHandler extends TOARoomHandler
             int duration = client.getTickCount()-roomStartTick+3;
             sendTimeMessage("Kephri Duration: ", duration, duration-s2End);
             clog.addLine(LogID.TOA_KEPHRI_FINISHED, duration);
+            plugin.liveFrame.setRoomFinished(getName(), duration);
         }
     }
 }

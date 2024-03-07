@@ -189,7 +189,7 @@ public class NyloHandler extends TOBRoomHandler
                 {
                     buildWave.add(cShell);
                     plugin.liveFrame.getPanel(getName()).addNPCMapping(event.getNpc().getIndex(), "W" + (currentWave + 1) + " " + cShell.getDescription());
-                    clog.addLine(ADD_NPC_MAPPING, String.valueOf(event.getNpc().getIndex()), "W" + (currentWave + 1) + " " + cShell.getDescription());
+                    clog.addLine(ADD_NPC_MAPPING, String.valueOf(event.getNpc().getIndex()), "W" + (currentWave + 1) + " " + cShell.getDescription(), getName());
                 } else
                 {
                     int matches = 0;
@@ -208,7 +208,7 @@ public class NyloHandler extends TOBRoomHandler
                     }
                     if (matches == 1)
                     {
-                        clog.addLine(ADD_NPC_MAPPING, String.valueOf(event.getNpc().getIndex()), NylocasShell.getTypeName(event.getNpc().getId()) + " split from " + lastMatchedDescription + "(on w" + currentWave + ")");
+                        clog.addLine(ADD_NPC_MAPPING, String.valueOf(event.getNpc().getIndex()), NylocasShell.getTypeName(event.getNpc().getId()) + " split from " + lastMatchedDescription + "(on w" + currentWave + ")", getName());
                         plugin.liveFrame.getPanel(getName()).addNPCMapping(event.getNpc().getIndex(), NylocasShell.getTypeName(event.getNpc().getId()) + " split from " + lastMatchedDescription + "(on w" + currentWave + ")");
                     }
                     switch (event.getNpc().getId())
@@ -442,7 +442,7 @@ public class NyloHandler extends TOBRoomHandler
         {
             offset1 = 0;
         }
-        plugin.liveFrame.setNyloFinished(deathTick - pillarsSpawnedTick + offset1);
+        plugin.liveFrame.setRoomFinished(getName(), deathTick - pillarsSpawnedTick + offset1);
         sendTimeMessage("Wave 'Nylocas boss' complete! Duration: ", deathTick - pillarsSpawnedTick + offset1, deathTick + offset1 - bossSpawn, false);
         clog.addLine(NYLO_DESPAWNED, String.valueOf(deathTick - pillarsSpawnedTick + offset1));
     }

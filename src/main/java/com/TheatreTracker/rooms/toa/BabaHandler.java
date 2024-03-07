@@ -16,6 +16,10 @@ import net.runelite.api.events.NpcSpawned;
 @Slf4j
 public class BabaHandler extends TOARoomHandler
 {
+    public String getName()
+    {
+        return "Baba";
+    }
     RoomState.BabaRoomState roomState = RoomState.BabaRoomState.NOT_STARTED;
     private int p1End = -1;
     private int b1End = -1;
@@ -48,6 +52,10 @@ public class BabaHandler extends TOARoomHandler
         }
     }
 
+    public boolean isActive()
+    {
+        return !(roomState == RoomState.BabaRoomState.NOT_STARTED || roomState == RoomState.BabaRoomState.FINISHED);
+    }
     @Override
     public void updateNpcSpawned(NpcSpawned spawned)
     {
@@ -57,6 +65,7 @@ public class BabaHandler extends TOARoomHandler
             sendTimeMessage("Baba Duration: ", duration, duration-b2End);
             roomState = RoomState.BabaRoomState.FINISHED;
             clog.addLine(LogID.TOA_BABA_FINISHED, duration);
+            plugin.liveFrame.setRoomFinished(getName(), duration);
         }
         else if(spawned.getNpc().getId() == 11783)
         {

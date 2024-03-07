@@ -20,8 +20,11 @@ public abstract class SimpleRaidData
     public LinkedHashMap<String, Integer> players = new LinkedHashMap<>();
 
     public String activeValue = "";
-    public String fileName = "";
-    public String filePath = "";
+    public String fileName;
+    public String filePath;
+
+    public abstract String getFileName();
+    public abstract String getFilePath();
 
     public abstract int getScale();
 
@@ -40,6 +43,8 @@ public abstract class SimpleRaidData
     public abstract void setIndex(int index);
 
     public abstract String getPlayers();
+
+    public abstract ArrayList<String> getPlayersArray();
 
     public abstract String getPlayerList(ArrayList<Map<String, ArrayList<String>>> aliases);
 

@@ -3,6 +3,7 @@ package com.TheatreTracker;
 import com.TheatreTracker.constants.LogID;
 import com.TheatreTracker.utility.AdvancedRaidData;
 import com.TheatreTracker.utility.wrappers.PlayerDidAttack;
+import com.TheatreTracker.utility.wrappers.ThrallOutlineBox;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.game.ItemManager;
 
@@ -17,15 +18,6 @@ import static com.TheatreTracker.constants.TobIDs.SPECTATE_FLAG;
 public class AdvancedTOBData extends AdvancedRaidData
 {
     private final String[] names = {"Maiden", "Bloat", "Nylocas", "Sotetseg", "Xarpus", "Verzik P1", "Verzik P2", "Verzik P3"};
-    public Map<Integer, Integer> maidenHP = new HashMap<>();
-    public Map<Integer, Integer> bloatHP = new HashMap<>();
-    public Map<Integer, Integer> nyloHP = new HashMap<>();
-    public Map<Integer, Integer> soteHP = new HashMap<>();
-    public Map<Integer, Integer> xarpHP = new HashMap<>();
-    public Map<Integer, Integer> verzikHP = new HashMap<>();
-    public Map<Integer, String> maidenNPCMapping = new HashMap<>();
-    public Map<Integer, String> nyloNPCMapping = new HashMap<>();
-    public Map<Integer, String> verzikNPCMapping = new HashMap<>();
     private ArrayList<String> globalData;
     private final ItemManager itemManager;
     public AdvancedTOBData(ArrayList<String> globalData, ItemManager itemManager)
@@ -33,9 +25,15 @@ public class AdvancedTOBData extends AdvancedRaidData
         this.itemManager = itemManager;
         this.globalData = globalData;
         attackData = new LinkedHashMap<>();
+        hpData = new LinkedHashMap<>();
+        npcIndexData = new LinkedHashMap<>();
+        thrallOutlineBoxes = new LinkedHashMap<>();
         for(String name : names)
         {
             attackData.put(name, new ArrayList<>());
+            hpData.put(name, new LinkedHashMap<>());
+            npcIndexData.put(name, new LinkedHashMap<>());
+            thrallOutlineBoxes.put(name, new ArrayList<>());
         }
         int room = -1;
         for (String s : globalData)
@@ -119,12 +117,16 @@ public class AdvancedTOBData extends AdvancedRaidData
                         break loop;
                     case PLAYER_ATTACK:
                         attackData.get("Maiden").add(getPlayerDidAttack(subData, itemManager));
+                        log.info("Attack data size is now: " + attackData.get("Maiden").size());
                         break;
                     case UPDATE_HP:
-                        maidenHP.put(Integer.parseInt(subData[5]), Integer.parseInt(subData[4]));
+                        hpData.get("Maiden").put(Integer.parseInt(subData[5]), Integer.parseInt(subData[4]));
                         break;
                     case ADD_NPC_MAPPING:
-                        maidenNPCMapping.put(Integer.parseInt(subData[4]), subData[5]);
+                        npcIndexData.get("Maiden").put(Integer.parseInt(subData[4]), subData[5]);
+                        break;
+                    case THRALL_SPAWN:
+                        thrallOutlineBoxes.get("Maiden").add(new ThrallOutlineBox(subData[4], Integer.parseInt(subData[5]), Integer.parseInt(subData[6])));
                         break;
                 }
             }
@@ -157,7 +159,13 @@ public class AdvancedTOBData extends AdvancedRaidData
                         attackData.get("Bloat").add(getPlayerDidAttack(subData, itemManager));
                         break;
                     case UPDATE_HP:
-                        bloatHP.put(Integer.parseInt(subData[5]), Integer.parseInt(subData[4]));
+                        hpData.get("Bloat").put(Integer.parseInt(subData[5]), Integer.parseInt(subData[4]));
+                        break;
+                    case ADD_NPC_MAPPING:
+                        npcIndexData.get("Bloat").put(Integer.parseInt(subData[4]), subData[5]);
+                        break;
+                    case THRALL_SPAWN:
+                        thrallOutlineBoxes.get("Bloat").add(new ThrallOutlineBox(subData[4], Integer.parseInt(subData[5]), Integer.parseInt(subData[6])));
                         break;
                 }
             }
@@ -190,10 +198,13 @@ public class AdvancedTOBData extends AdvancedRaidData
                         attackData.get("Nylocas").add(getPlayerDidAttack(subData, itemManager));
                         break;
                     case UPDATE_HP:
-                        nyloHP.put(Integer.parseInt(subData[5]), Integer.parseInt(subData[4]));
+                        hpData.get("Nylocas").put(Integer.parseInt(subData[5]), Integer.parseInt(subData[4]));
                         break;
                     case ADD_NPC_MAPPING:
-                        nyloNPCMapping.put(Integer.parseInt(subData[4]), subData[5]);
+                        npcIndexData.get("Nylocas").put(Integer.parseInt(subData[4]), subData[5]);
+                        break;
+                    case THRALL_SPAWN:
+                        thrallOutlineBoxes.get("Nylocas").add(new ThrallOutlineBox(subData[4], Integer.parseInt(subData[5]), Integer.parseInt(subData[6])));
                         break;
                 }
             }
@@ -226,7 +237,13 @@ public class AdvancedTOBData extends AdvancedRaidData
                         attackData.get("Sotetseg").add(getPlayerDidAttack(subData, itemManager));
                         break;
                     case UPDATE_HP:
-                        soteHP.put(Integer.parseInt(subData[5]), Integer.parseInt(subData[4]));
+                        hpData.get("Sotetseg").put(Integer.parseInt(subData[5]), Integer.parseInt(subData[4]));
+                        break;
+                    case ADD_NPC_MAPPING:
+                        npcIndexData.get("Sotetseg").put(Integer.parseInt(subData[4]), subData[5]);
+                        break;
+                    case THRALL_SPAWN:
+                        thrallOutlineBoxes.get("Sotetseg").add(new ThrallOutlineBox(subData[4], Integer.parseInt(subData[5]), Integer.parseInt(subData[6])));
                         break;
 
                 }
@@ -260,7 +277,13 @@ public class AdvancedTOBData extends AdvancedRaidData
                         attackData.get("Xarpus").add(getPlayerDidAttack(subData, itemManager));
                         break;
                     case UPDATE_HP:
-                        xarpHP.put(Integer.parseInt(subData[5]), Integer.parseInt(subData[4]));
+                        hpData.get("Xarpus").put(Integer.parseInt(subData[5]), Integer.parseInt(subData[4]));
+                        break;
+                    case ADD_NPC_MAPPING:
+                        npcIndexData.get("Xarpus").put(Integer.parseInt(subData[4]), subData[5]);
+                        break;
+                    case THRALL_SPAWN:
+                        thrallOutlineBoxes.get("Xarpus").add(new ThrallOutlineBox(subData[4], Integer.parseInt(subData[5]), Integer.parseInt(subData[6])));
                         break;
                 }
             }
@@ -291,10 +314,13 @@ public class AdvancedTOBData extends AdvancedRaidData
                         attackData.get("Verzik P" + phase).add(getPlayerDidAttack(subData, itemManager));
                         break;
                     case UPDATE_HP:
-                        verzikHP.put(Integer.parseInt(subData[5]), Integer.parseInt(subData[4]));
+                        hpData.get("Verzik P" + phase).put(Integer.parseInt(subData[5]), Integer.parseInt(subData[4]));
                         break;
                     case ADD_NPC_MAPPING:
-                        verzikNPCMapping.put(Integer.parseInt(subData[4]), subData[5]);
+                        npcIndexData.get("Verzik P" + phase).put(Integer.parseInt(subData[4]), subData[5]);
+                        break;
+                    case THRALL_SPAWN:
+                        thrallOutlineBoxes.get("Verzik P" + phase).add(new ThrallOutlineBox(subData[4], Integer.parseInt(subData[5]), Integer.parseInt(subData[6])));
                         break;
                     case VERZIK_BOUNCE:
                         if (!subData[5].equalsIgnoreCase(""))

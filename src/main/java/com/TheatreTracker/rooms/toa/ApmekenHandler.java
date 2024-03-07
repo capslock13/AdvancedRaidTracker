@@ -3,6 +3,7 @@ package com.TheatreTracker.rooms.toa;
 import com.TheatreTracker.TheatreTrackerConfig;
 import com.TheatreTracker.TheatreTrackerPlugin;
 import com.TheatreTracker.constants.LogID;
+import com.TheatreTracker.constants.RoomState;
 import com.TheatreTracker.utility.Point;
 import com.TheatreTracker.utility.RoomUtil;
 import com.TheatreTracker.utility.datautility.DataWriter;
@@ -16,6 +17,10 @@ import net.runelite.api.events.NpcSpawned;
 @Slf4j
 public class ApmekenHandler extends TOARoomHandler
 {
+    public String getName()
+    {
+        return "Apmeken";
+    }
     public ApmekenHandler(Client client, DataWriter clog, TheatreTrackerConfig config, TheatreTrackerPlugin plugin, TOAHandler handler)
     {
         super(client, clog, config, plugin, handler);
@@ -49,6 +54,11 @@ public class ApmekenHandler extends TOARoomHandler
         }
     }
 
+    public boolean isActive()
+    {
+        return active;
+    }
+
     @Override
     public void updateGameObjectDespawned(GameObjectDespawned gameObjectDespawned)
     {
@@ -59,6 +69,7 @@ public class ApmekenHandler extends TOARoomHandler
             int duration = client.getTickCount()-roomStartTick;
             sendTimeMessage("Apmeken Duration: ", duration);
             clog.addLine(LogID.TOA_APMEKEN_FINISHED, duration);
+            plugin.liveFrame.setRoomFinished(getName(), duration);
         }
     }
 }

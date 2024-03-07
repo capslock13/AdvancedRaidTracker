@@ -16,6 +16,10 @@ import net.runelite.api.events.NpcSpawned;
 @Slf4j
 public class AkkhaHandler extends TOARoomHandler
 {
+    public String getName()
+    {
+        return "Akkha";
+    }
     RoomState.AkkhaRoomState roomState = RoomState.AkkhaRoomState.NOT_STARTED;
     private int p1End = -1;
     private int s1End = -1;
@@ -96,7 +100,13 @@ public class AkkhaHandler extends TOARoomHandler
             sendTimeMessage("Akkha Duration: ", duration, duration-p5End);
             roomState = RoomState.AkkhaRoomState.FINISHED;
             clog.addLine(LogID.TOA_AKKHA_FINISHED, duration);
+            plugin.liveFrame.setRoomFinished(getName(), duration);
         }
+    }
+
+    public boolean isActive()
+    {
+        return !(roomState == RoomState.AkkhaRoomState.NOT_STARTED || roomState == RoomState.AkkhaRoomState.FINISHED);
     }
 
     @Override

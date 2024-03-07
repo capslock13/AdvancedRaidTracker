@@ -66,7 +66,7 @@ public class BloatHandler extends TOBRoomHandler
         bloatDeathTick = client.getTickCount() + BLOAT_DEATH_ANIMATION_LENGTH;
         plugin.addDelayedLine(TOBRoom.BLOAT, client.getTickCount() - bloatStartTick, "Dead");
         clog.addLine(ACCURATE_BLOAT_END);
-        plugin.liveFrame.setBloatFinished(bloatDeathTick - bloatStartTick);
+        plugin.liveFrame.setRoomFinished(getName(), bloatDeathTick - bloatStartTick);
         if (bloatStartTick != -1)
         {
             sendTimeMessage("Wave 'Bloat last down' complete! Duration: ", splitLastDown(), " Room time: ", bloatDeathTick - bloatStartTick, true);

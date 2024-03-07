@@ -285,6 +285,7 @@ public class TheatreTrackerPlugin extends Plugin
             clog.addLine(SPECTATE);
             clog.addLine(LATE_START, room.name);
             liveFrame.resetAll();
+            liveFrame.switchToTOB();
         }
         if(inRegion(client, TOA_LOBBY))
         {
@@ -297,6 +298,8 @@ public class TheatreTrackerPlugin extends Plugin
             clog.checkForEndFlag();
             clog.migrateToNewRaid();
             clog.addLine(ENTERED_TOA);
+            liveFrame.resetAll();
+            liveFrame.switchToTOA();
         }
         switch(room)
         {
@@ -455,12 +458,14 @@ public class TheatreTrackerPlugin extends Plugin
             toaHandler.start();
         }
         clog.addLine(ENTERED_NEW_TOA_REGION, CRONDIS.name);
+        liveFrame.tabbedPane.setSelectedIndex(4);
         crondis.reset();
     }
 
     private void enteredZebak()
     {
         clog.addLine(ENTERED_NEW_TOA_REGION, ZEBAK.name);
+        liveFrame.tabbedPane.setSelectedIndex(5);
         zebak.reset();
     }
 
@@ -471,12 +476,14 @@ public class TheatreTrackerPlugin extends Plugin
             toaHandler.start();
         }
         clog.addLine(ENTERED_NEW_TOA_REGION, SCABARAS.name);
+        liveFrame.tabbedPane.setSelectedIndex(2);
         scabaras.reset();
     }
 
     private void enteredKephri()
     {
         clog.addLine(ENTERED_NEW_TOA_REGION, KEPHRI.name);
+        liveFrame.tabbedPane.setSelectedIndex(3);
         kephri.reset();
     }
 
@@ -487,12 +494,14 @@ public class TheatreTrackerPlugin extends Plugin
             toaHandler.start();
         }
         clog.addLine(ENTERED_NEW_TOA_REGION, APMEKEN.name);
+        liveFrame.tabbedPane.setSelectedIndex(0);
         apmeken.reset();
     }
 
     private void enteredBaba()
     {
         clog.addLine(ENTERED_NEW_TOA_REGION, BABA.name);
+        liveFrame.tabbedPane.setSelectedIndex(1);
         baba.reset();
     }
 
@@ -503,18 +512,21 @@ public class TheatreTrackerPlugin extends Plugin
             toaHandler.start();
         }
         clog.addLine(ENTERED_NEW_TOA_REGION, HET.name);
+        liveFrame.tabbedPane.setSelectedIndex(6);
         het.reset();
     }
 
     private void enteredAkkha()
     {
         clog.addLine(ENTERED_NEW_TOA_REGION, AKKHA.name);
+        liveFrame.tabbedPane.setSelectedIndex(7);
         akkha.reset();
     }
 
     private void enteredWardens()
     {
         clog.addLine(ENTERED_NEW_TOA_REGION, WARDENS.name);
+        liveFrame.tabbedPane.setSelectedIndex(8);
         wardens.reset();
     }
 
@@ -536,6 +548,7 @@ public class TheatreTrackerPlugin extends Plugin
         clog.checkForEndFlag();
         clog.migrateToNewRaid();
         clog.addLine(ENTERED_TOB);
+        liveFrame.switchToTOB();
         deferredTick = client.getTickCount() + 2;
         maiden.reset();
         liveFrame.tabbedPane.setSelectedIndex(0);
@@ -706,22 +719,22 @@ public class TheatreTrackerPlugin extends Plugin
         switch (TOBRoom.valueOf(room.value))
         {
             case MAIDEN:
-                liveFrame.addMaidenLine(value, description);
+                liveFrame.addLine("Maiden", value, description);
                 break;
             case BLOAT:
-                liveFrame.addBloatLine(value, description);
+                liveFrame.addLine("Bloat", value, description);
                 break;
             case NYLOCAS:
-                liveFrame.addNyloLine(value, description);
+                liveFrame.addLine("Nylocas", value, description);
                 break;
             case SOTETSEG:
-                liveFrame.addSoteLine(value, description);
+                liveFrame.addLine("Sotetseg", value, description);
                 break;
             case XARPUS:
-                liveFrame.addXarpLine(value, description);
+                liveFrame.addLine("Xarpus", value, description);
                 break;
             case VERZIK:
-                liveFrame.addVerzikLine(value, description);
+                liveFrame.addLine("Verzik", value, description);
                 break;
         }
     }
@@ -743,7 +756,7 @@ public class TheatreTrackerPlugin extends Plugin
 
     public void addThrallOutlineBox(ThrallOutlineBox outlineBox)
     {
-        clog.addLine(THRALL_SPAWN, outlineBox.owner, String.valueOf(outlineBox.spawnTick), String.valueOf(outlineBox.id));
+        clog.addLine(THRALL_SPAWN, outlineBox.owner, String.valueOf(outlineBox.spawnTick), String.valueOf(outlineBox.id), currentRoom.getName());
         liveFrame.getPanel(currentRoom.getName()).addThrallBox(outlineBox);
     }
 
@@ -811,6 +824,7 @@ public class TheatreTrackerPlugin extends Plugin
                             currentPlayers.add(s);
                         }
                     }
+                    liveFrame.setPlayers(currentPlayers);
                     clog.addLine(TOA_PARTY_MEMBERS, players[0], players[1], players[2], players[3], players[4], players[5], players[6], players[7]);
                     clog.addLine(INVOCATION_LEVEL, String.valueOf(client.getVarbitValue(TOA_RAID_LEVEL)));
                 }

@@ -163,7 +163,7 @@ public class MaidenHandler extends TOBRoomHandler
         clog.addLine(ACCURATE_MAIDEN_END);
         clog.addLine(MAIDEN_0HP, String.valueOf(client.getTickCount() - maidenStartTick));
         plugin.addDelayedLine(TOBRoom.MAIDEN, client.getTickCount() - maidenStartTick, "Dead");
-        plugin.liveFrame.setMaidenFinished(maidenDeathTick - maidenStartTick);
+        plugin.liveFrame.setRoomFinished(getName(), maidenDeathTick - maidenStartTick);
     }
 
     private boolean didAuto = false;
@@ -318,7 +318,7 @@ public class MaidenHandler extends TOBRoomHandler
             case MAIDEN_MATOMENOS_HM:
             case MAIDEN_MATOMENOS_SM:
                 String crabName = identifySpawn(npc);
-                clog.addLine(ADD_NPC_MAPPING, String.valueOf(npc.getIndex()), crabName);
+                clog.addLine(ADD_NPC_MAPPING, String.valueOf(npc.getIndex()), crabName, getName());
                 plugin.liveFrame.getPanel(getName()).addNPCMapping(npc.getIndex(), crabName);
                 plugin.liveFrame.getPanel(getName()).addMaidenCrab(crabName);
                 MaidenCrab crab = new MaidenCrab(npc, TheatreTrackerPlugin.scale, crabName);

@@ -100,14 +100,14 @@ public enum DataPoint
     SOTE_MAZE_SUM("Sote mazes combined", types.TIME, rooms.SOTETSEG),
     XARP_SCREECH("Xarp screech", types.TIME, rooms.XARPUS),
     XARP_POST_SCREECH("Xarp post screech", types.TIME, rooms.XARPUS),
-    VERZIK_P1_SPLIT("Verzik P1 split", types.TIME, rooms.VERZIK),
+    VERZIK_P1_SPLIT("Verzik P1 Time", types.TIME, rooms.VERZIK),
 
     VERZIK_P2_TILL_REDS("Verzik P2 until reds split", types.TIME, rooms.VERZIK),
     VERZIK_REDS_SPLIT("Verzik reds split", types.TIME, rooms.VERZIK),
     VERZIK_REDS_DURATION("Verzik reds duration", types.TIME, rooms.VERZIK),
     VERZIK_P2_SPLIT("Verzik P2 split", types.TIME, rooms.VERZIK),
-    VERZIK_P2_DURATION("Verzik P2 duration", types.TIME, rooms.VERZIK),
-    VERZIK_P3_DURATION("Verzik P3 duration", types.TIME, rooms.VERZIK),
+    VERZIK_P2_DURATION("Verzik P2 Time", types.TIME, rooms.VERZIK),
+    VERZIK_P3_DURATION("Verzik P3 Time", types.TIME, rooms.VERZIK),
 
     NYLO_ENTRY("Nylo Entry", types.TIME, rooms.NYLOCAS),
     SOTE_ENTRY("Sote Entry", types.TIME, rooms.SOTETSEG),
@@ -252,12 +252,12 @@ public enum DataPoint
     AKKHA_FINAL_PHASE_DURATION("Akkha Final Phase Duration", types.TIME, rooms.AKKHA),
 
     WARDENS_TIME("Wardens Time", types.TIME, rooms.WARDENS),
-    WARDENS_P1_DURATION("Wardens P1 Duration", types.TIME, rooms.WARDENS),
-    WARDENS_P2_DURATION("Wardens P2 Duration", types.TIME, rooms.WARDENS),
+    WARDENS_P1_DURATION("Wardens P1 Time", types.TIME, rooms.WARDENS),
+    WARDENS_P2_DURATION("Wardens P2 Time", types.TIME, rooms.WARDENS),
     WARDENS_P3_SPLIT("Wardens P3 Split", types.TIME, rooms.WARDENS),
     WARDENS_ENRAGED_SPLIT("Wardens Enraged Split", types.TIME, rooms.WARDENS),
     WARDENS_UNTIL_ENRAGED_DURATION("Wardens Until Enraged Duration", types.TIME, rooms.WARDENS),
-    WARDENS_P3_DURATION("Wardens P3 Duration", types.TIME, rooms.WARDENS),
+    WARDENS_P3_DURATION("Wardens P3 Time", types.TIME, rooms.WARDENS),
     WARDENS_ENRAGED_DURATION("Wardens Enraged Duration", types.TIME, rooms.WARDENS),
 
 

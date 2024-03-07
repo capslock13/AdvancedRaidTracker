@@ -423,6 +423,18 @@ public class SimpleTOAData extends SimpleRaidData
     }
 
     @Override
+    public String getFileName()
+    {
+        return this.fileName;
+    }
+
+    @Override
+    public String getFilePath()
+    {
+        return this.filePath;
+    }
+
+    @Override
     public int getScale()
     {
         return dataManager.get(TOA_PARTY_SIZE);
@@ -496,6 +508,12 @@ public class SimpleTOAData extends SimpleRaidData
             playerString.append(s).append(", ");
         }
         return (playerString.length() > 2) ? playerString.substring(0, playerString.length() - 2) : "";
+    }
+
+    @Override
+    public ArrayList<String> getPlayersArray()
+    {
+        return new ArrayList<>(players.keySet());
     }
 
     @Override

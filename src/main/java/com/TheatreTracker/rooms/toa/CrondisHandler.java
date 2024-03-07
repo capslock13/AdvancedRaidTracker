@@ -3,6 +3,7 @@ package com.TheatreTracker.rooms.toa;
 import com.TheatreTracker.TheatreTrackerConfig;
 import com.TheatreTracker.TheatreTrackerPlugin;
 import com.TheatreTracker.constants.LogID;
+import com.TheatreTracker.constants.RoomState;
 import com.TheatreTracker.utility.Point;
 import com.TheatreTracker.utility.RoomUtil;
 import com.TheatreTracker.utility.datautility.DataWriter;
@@ -12,6 +13,11 @@ import net.runelite.api.events.GameTick;
 @Slf4j
 public class CrondisHandler extends TOARoomHandler
 {
+
+    public String getName()
+    {
+        return "Crondis";
+    }
     public CrondisHandler(Client client, DataWriter clog, TheatreTrackerConfig config, TheatreTrackerPlugin plugin, TOAHandler handler)
     {
         super(client, clog, config, plugin, handler);
@@ -27,6 +33,10 @@ public class CrondisHandler extends TOARoomHandler
             clog.addLine(LogID.TOA_CRONDIS_START, roomStartTick);
         }
     }
+    public boolean isActive()
+    {
+        return active;
+    }
     @Override
     public void handleNPCChanged(int npcChanged)
     {
@@ -36,6 +46,7 @@ public class CrondisHandler extends TOARoomHandler
             int duration = client.getTickCount()-roomStartTick;
             sendTimeMessage("Crondis Duration: ", duration);
             clog.addLine(LogID.TOA_CRONDIS_FINISHED, duration);
+            plugin.liveFrame.setRoomFinished(getName(), duration);
         }
     }
 }

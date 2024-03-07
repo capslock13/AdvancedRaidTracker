@@ -379,7 +379,7 @@ public class VerzikHandler extends TOBRoomHandler
         sendTimeMessage("Wave 'Verzik phase 3' complete. Duration: ", verzikP3EndTick - verzikEntryTick, verzikP3EndTick - verzikP2EndTick);
         clog.addLine(VERZIK_P3_DESPAWNED, String.valueOf(verzikP3EndTick - verzikEntryTick));
         plugin.addDelayedLine(TOBRoom.VERZIK, client.getTickCount() - verzikEntryTick, "Dead");
-        plugin.liveFrame.setVerzFinished(verzikP3EndTick - verzikEntryTick);
+        plugin.liveFrame.setRoomFinished(getName(), verzikP3EndTick - verzikEntryTick);
 
     }
 }

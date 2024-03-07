@@ -14,6 +14,10 @@ import net.runelite.api.events.GameTick;
 @Slf4j
 public class ZebakHandler extends TOARoomHandler
 {
+    public String getName()
+    {
+        return "Zebak";
+    }
     RoomState.ZebakRoomState roomState = RoomState.ZebakRoomState.NOT_STARTED;
     public ZebakHandler(Client client, DataWriter clog, TheatreTrackerConfig config, TheatreTrackerPlugin plugin, TOAHandler handler)
     {
@@ -37,15 +41,21 @@ public class ZebakHandler extends TOARoomHandler
         }
     }
 
+    public boolean isActive()
+    {
+        return !(roomState == RoomState.ZebakRoomState.NOT_STARTED || roomState == RoomState.ZebakRoomState.FINISHED);
+    }
+
     @Override
     public void handleNPCChanged(int changed)
     {
-        if(active && changed == 11733)
+        if(roomState == RoomState.ZebakRoomState.PHASE_1 && changed == 11733)
         {
             roomState = RoomState.ZebakRoomState.FINISHED;
             int duration = client.getTickCount()-roomStartTick;
             sendTimeMessage("Zebak Duration: ", duration);
             clog.addLine(LogID.TOA_ZEBAK_FINISHED, duration);
+            plugin.liveFrame.setRoomFinished(getName(), duration);
         }
     }
 }

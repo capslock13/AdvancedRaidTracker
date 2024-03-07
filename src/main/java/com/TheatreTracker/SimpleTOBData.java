@@ -92,20 +92,19 @@ public class SimpleTOBData extends SimpleRaidData
 
 
 
-    // Thrall tracking
-    public ArrayList<ThrallOutlineBox> maidenThrallSpawns;
-    public ArrayList<ThrallOutlineBox> bloatThrallSpawns;
-    public ArrayList<ThrallOutlineBox> nyloThrallSpawns;
-    public ArrayList<ThrallOutlineBox> soteThrallSpawns;
-    public ArrayList<ThrallOutlineBox> xarpusThrallSpawns;
-    public ArrayList<ThrallOutlineBox> verzikThrallSpawns;
-
     public Map<Integer, Integer> verzikHP = new HashMap<>();
 
     @Override
     public Date getDate()
     {
         return raidStarted;
+    }
+
+    public ArrayList<String> getPlayersArray()
+    {
+        ArrayList<String> playerArray = new ArrayList<>();
+        playerArray.addAll(players.keySet());
+        return playerArray;
     }
 
     public String getPlayers()
@@ -336,6 +335,18 @@ public class SimpleTOBData extends SimpleRaidData
         return dataManager.get(point);
     }
 
+    @Override
+    public String getFilePath()
+    {
+        return this.filePath;
+    }
+
+    @Override
+    public String getFileName()
+    {
+        return this.fileName;
+    }
+
     public int getTimeSum()
     {
         return getMaidenTime() + getBloatTime() + getNyloTime() + getSoteTime() + getXarpTime() + getVerzikTime();
@@ -353,13 +364,6 @@ public class SimpleTOBData extends SimpleRaidData
         soteDefenseAccurate = false;
         xarpDefenseAccurate = false;
 
-        maidenThrallSpawns = new ArrayList<>();
-        bloatThrallSpawns = new ArrayList<>();
-        nyloThrallSpawns = new ArrayList<>();
-        soteThrallSpawns = new ArrayList<>();
-        xarpusThrallSpawns = new ArrayList<>();
-        verzikThrallSpawns = new ArrayList<>();
-
         hardMode = false;
         storyMode = false;
         attacksP1 = new ArrayList<>();
@@ -371,16 +375,23 @@ public class SimpleTOBData extends SimpleRaidData
         int room = -1;
         for (String s : globalData)
         {
-            String[] subData = s.split(",");
-            int key = Integer.parseInt(subData[3]);
-            if (key == SPECTATE_FLAG)
+            try
             {
-                room = Integer.parseInt(subData[4]);
-                spectated = true;
+                String[] subData = s.split(",");
+                int key = Integer.parseInt(subData[3]);
+                if (key == SPECTATE_FLAG)
+                {
+                    room = Integer.parseInt(subData[4]);
+                    spectated = true;
+                }
+                if (String.valueOf(key).equals(EXIT_FLAG))
+                {
+                    endTime = new Date(Long.parseLong(subData[1]));
+                }
             }
-            if (String.valueOf(key).equals(EXIT_FLAG))
+            catch (Exception e)
             {
-                endTime = new Date(Long.parseLong(subData[1]));
+
             }
         }
         if (room > 0)
@@ -672,9 +683,6 @@ public class SimpleTOBData extends SimpleRaidData
 
                         }
                         break;
-                    case THRALL_SPAWN:
-                        verzikThrallSpawns.add(new ThrallOutlineBox(subData[4], Integer.parseInt(subData[5]), Integer.parseInt(subData[6])));
-                        break;
                 }
             } catch (Exception e)
             {
@@ -779,9 +787,6 @@ public class SimpleTOBData extends SimpleRaidData
                     case ACCURATE_XARP_END:
                         xarpTimeAccurate = xarpStartAccurate;
                         xarpEndAccurate = true;
-                        break;
-                    case THRALL_SPAWN:
-                        xarpusThrallSpawns.add(new ThrallOutlineBox(subData[4], Integer.parseInt(subData[5]), Integer.parseInt(subData[6])));
                         break;
                 }
             }
@@ -908,9 +913,6 @@ public class SimpleTOBData extends SimpleRaidData
                             nyloTimeAccurate = true;
                         }
 
-                        break;
-                    case THRALL_SPAWN:
-                        soteThrallSpawns.add(new ThrallOutlineBox(subData[4], Integer.parseInt(subData[5]), Integer.parseInt(subData[6])));
                         break;
 
                 }
@@ -1039,9 +1041,6 @@ public class SimpleTOBData extends SimpleRaidData
                         nyloEndAccurate = true;
                         nyloTimeAccurate = nyloStartAccurate;
                         break;
-                    case THRALL_SPAWN:
-                        nyloThrallSpawns.add(new ThrallOutlineBox(subData[4], Integer.parseInt(subData[5]), Integer.parseInt(subData[6])));
-                        break;
                 }
             }
             catch(Exception e)
@@ -1130,9 +1129,6 @@ public class SimpleTOBData extends SimpleRaidData
                     case ACCURATE_BLOAT_END:
                         bloatEndAccurate = true;
                         bloatTimeAccurate = bloatStartAccurate;
-                        break;
-                    case THRALL_SPAWN:
-                        bloatThrallSpawns.add(new ThrallOutlineBox(subData[4], Integer.parseInt(subData[5]), Integer.parseInt(subData[6])));
                         break;
                 }
             }
@@ -1365,9 +1361,6 @@ public class SimpleTOBData extends SimpleRaidData
                     case ACCURATE_MAIDEN_END:
                         maidenEndAccurate = true;
                         maidenTimeAccurate = maidenStartAccurate;
-                        break;
-                    case THRALL_SPAWN:
-                        maidenThrallSpawns.add(new ThrallOutlineBox(subData[4], Integer.parseInt(subData[5]), Integer.parseInt(subData[6])));
                         break;
                     case PLAYER_STOOD_IN_THROWN_BLOOD:
                         dataManager.increment(DataPoint.MAIDEN_PLAYER_STOOD_IN_THROWN_BLOOD);

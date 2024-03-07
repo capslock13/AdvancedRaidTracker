@@ -284,7 +284,7 @@ public class SotetsegHandler extends TOBRoomHandler
         roomState = RoomState.SotetsegRoomState.FINISHED;
         clog.addLine(LogID.ACCURATE_SOTE_END);
         clog.addLine(LogID.SOTETSEG_ENDED, String.valueOf(soteDeathTick - soteEntryTick));
-        plugin.liveFrame.setSoteFinished(soteDeathTick - soteEntryTick);
+        plugin.liveFrame.setRoomFinished(getName(), soteDeathTick - soteEntryTick);
         sendTimeMessage("Wave 'Sotetseg phase 3' complete. Duration: ", soteDeathTick - soteEntryTick, soteDeathTick - soteSecondMazeEnd, false);
     }
 

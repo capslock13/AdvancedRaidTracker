@@ -16,6 +16,10 @@ import static com.TheatreTracker.constants.RoomState.WardenRoomState.FINISHED;
 @Slf4j
 public class WardensHandler extends TOARoomHandler
 {
+    public String getName()
+    {
+        return "Wardens";
+    }
     private int p1End = -1;
     private int p2End = -1;
     private int enraged = -1;
@@ -69,7 +73,10 @@ public class WardensHandler extends TOARoomHandler
             clog.addLine(LogID.TOA_WARDENS_ENRAGED, enraged);
         }
     }
-
+    public boolean isActive()
+    {
+        return !(roomState == RoomState.WardenRoomState.NOT_STARTED || roomState == RoomState.WardenRoomState.FINISHED);
+    }
     @Override
     public void updateNpcSpawned(NpcSpawned event)
     {
@@ -78,6 +85,7 @@ public class WardensHandler extends TOARoomHandler
             sendTimeMessage("Wardens Duration: ", client.getTickCount()-roomStartTick, client.getTickCount()-enraged);
             clog.addLine(LogID.TOA_WARDENS_FINISHED, client.getTickCount()-roomStartTick);
             roomState = FINISHED;
+            plugin.liveFrame.setRoomFinished(getName(), client.getTickCount()-roomStartTick);
         }
     }
 }

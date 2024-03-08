@@ -1,6 +1,6 @@
 package com.advancedraidtracker.ui.comparisonview;
 
-import com.advancedraidtracker.SimpleRaidData;
+import com.advancedraidtracker.SimpleTOBData;
 import com.advancedraidtracker.AdvancedRaidTrackerConfig;
 import com.advancedraidtracker.ui.BaseFrame;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +16,7 @@ import java.util.Map;
 @Slf4j
 public class ComparisonViewFrame extends BaseFrame
 {
-    public ComparisonViewFrame(ArrayList<ArrayList<SimpleRaidData>> data, ArrayList<String> labels)
+    public ComparisonViewFrame(ArrayList<ArrayList<SimpleTOBData>> data, ArrayList<String> labels)
     {
         add(new ComparisonViewPanel(data, labels, config, itemManager, clientThread, configManager));
         pack();
@@ -27,7 +27,7 @@ public class ComparisonViewFrame extends BaseFrame
     private ClientThread clientThread;
     private ConfigManager configManager;
 
-    public ComparisonViewFrame(Map<Integer, ArrayList<ArrayList<SimpleRaidData>>> dataSets, ArrayList<ArrayList<String>> labelSets, AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
+    public ComparisonViewFrame(Map<Integer, ArrayList<ArrayList<SimpleTOBData>>> dataSets, ArrayList<ArrayList<String>> labelSets, AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
     {
         this.configManager = configManager;
         this.clientThread = clientThread;

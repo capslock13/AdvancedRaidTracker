@@ -1,6 +1,6 @@
 package com.advancedraidtracker.filters;
 
-import com.advancedraidtracker.SimpleRaidData;
+import com.advancedraidtracker.SimpleTOBData;
 import com.advancedraidtracker.utility.datautility.DataPoint;
 
 public class FilterOtherInt extends FilterCondition
@@ -25,7 +25,7 @@ public class FilterOtherInt extends FilterCondition
     }
 
     @Override
-    public boolean evaluate(SimpleRaidData data)
+    public boolean evaluate(SimpleTOBData data)
     {
         int checkValue = data.getValue(param);
         if (data.getTimeAccurate(param) && value != -1)

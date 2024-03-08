@@ -1,6 +1,6 @@
 package com.advancedraidtracker.filters;
 
-import com.advancedraidtracker.SimpleRaidData;
+import com.advancedraidtracker.SimpleTOBData;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -25,7 +25,7 @@ public class FilterPlayers extends FilterCondition
         stringValue = val;
     }
 
-    private boolean cleanContains(SimpleRaidData data, String player)
+    private boolean cleanContains(SimpleTOBData data, String player)
     {
         for (String p : data.players.keySet())
         {
@@ -44,7 +44,7 @@ public class FilterPlayers extends FilterCondition
     }
 
     @Override
-    public boolean evaluate(SimpleRaidData data)
+    public boolean evaluate(SimpleTOBData data)
     {
         switch (operator)
         {

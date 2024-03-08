@@ -1,6 +1,6 @@
 package com.advancedraidtracker.ui.statistics;
 
-import com.advancedraidtracker.SimpleRaidData;
+import com.advancedraidtracker.SimpleTOBData;
 import com.advancedraidtracker.utility.RoomUtil;
 import com.advancedraidtracker.utility.datautility.DataPoint;
 import com.advancedraidtracker.utility.StatisticGatherer;
@@ -29,7 +29,7 @@ public class StatisticRoomPanel extends JPanel
     private final ArrayList<String> labelNames;
     private final stat type;
 
-    public StatisticRoomPanel(ArrayList<SimpleRaidData> data, stat type, DataPoint.rooms room)
+    public StatisticRoomPanel(ArrayList<SimpleTOBData> data, stat type, DataPoint.rooms room)
     {
         super();
         JPanel subPanel = new JPanel();
@@ -82,12 +82,12 @@ public class StatisticRoomPanel extends JPanel
         updateLabels(data);
     }
 
-    public void updateLabels(ArrayList<SimpleRaidData> data)
+    public void updateLabels(ArrayList<SimpleTOBData> data)
     {
         for (int i = 0; i < labelNames.size(); i++)
         {
             ArrayList<Integer> collectedData = new ArrayList<>();
-            for (SimpleRaidData d : data)
+            for (SimpleTOBData d : data)
             {
                 if (d.getTimeAccurate(Objects.requireNonNull(DataPoint.getValue(labelNames.get(i)))))
                 {

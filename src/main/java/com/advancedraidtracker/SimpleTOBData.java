@@ -14,7 +14,7 @@ import static com.advancedraidtracker.constants.TobIDs.SPECTATE_FLAG;
 import static com.advancedraidtracker.utility.datautility.DataPoint.*;
 
 @Slf4j
-public class SimpleRaidData
+public class SimpleTOBData
 {
     public boolean maidenStartAccurate = false;
     public boolean bloatStartAccurate = false;
@@ -320,7 +320,7 @@ public class SimpleRaidData
     {
         return getMaidenTime() + getBloatTime() + getNyloTime() + getSoteTime() + getXarpTime() + getVerzikTime();
     }
-    public SimpleRaidData(String[] parameters, String filePath, String fileName) throws Exception
+    public SimpleTOBData(String[] parameters, String filePath, String fileName) throws Exception
     {
         this.filePath = filePath;
         this.fileName = fileName;

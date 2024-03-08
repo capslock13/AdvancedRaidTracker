@@ -1,6 +1,6 @@
 package com.advancedraidtracker.ui.viewraid;
 
-import com.advancedraidtracker.SimpleRaidData;
+import com.advancedraidtracker.SimpleTOBData;
 import com.advancedraidtracker.ui.BaseFrame;
 import com.advancedraidtracker.utility.RoomUtil;
 import com.advancedraidtracker.utility.datautility.DataPoint;
@@ -17,7 +17,7 @@ public class ViewTOBRaid extends BaseFrame
 {
     String INCOMPLETE_MARKER = "-";
 
-    public ViewTOBRaid(SimpleRaidData data)
+    public ViewTOBRaid(SimpleTOBData data)
     {
         String red = "<html><font color='#FF0000'>";
         String soft = "<html><font color='#666666'>";
@@ -428,7 +428,7 @@ public class ViewTOBRaid extends BaseFrame
         pack();
     }
 
-    private static void setSummaryStatus(SimpleRaidData data, JPanel summarySubPanel)
+    private static void setSummaryStatus(SimpleTOBData data, JPanel summarySubPanel)
     {
         String raidStatusString;
         if (data.maidenWipe)

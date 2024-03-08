@@ -1,7 +1,7 @@
 package com.advancedraidtracker.ui;
 
 import com.advancedraidtracker.AdvancedRaidTrackerPlugin;
-import com.advancedraidtracker.SimpleRaidData;
+import com.advancedraidtracker.SimpleTOBData;
 import com.advancedraidtracker.AdvancedRaidTrackerConfig;
 import com.advancedraidtracker.utility.wrappers.RaidsArrayWrapper;
 import com.advancedraidtracker.utility.datautility.RaidsManager;
@@ -24,7 +24,7 @@ import static com.advancedraidtracker.utility.datautility.DataWriter.PLUGIN_DIRE
 public class RaidTrackerSidePanel extends PluginPanel
 {
     private JLabel raidCountLabel;
-    private ArrayList<SimpleRaidData> raidsData;
+    private ArrayList<SimpleTOBData> raidsData;
     private JTable loadRaidsTable;
     private ArrayList<RaidsArrayWrapper> raidSets;
 
@@ -56,9 +56,9 @@ public class RaidTrackerSidePanel extends PluginPanel
         }).start();
     }
 
-    private ArrayList<SimpleRaidData> getAllRaids()
+    private ArrayList<SimpleTOBData> getAllRaids()
     {
-        ArrayList<SimpleRaidData> raids = new ArrayList<>();
+        ArrayList<SimpleTOBData> raids = new ArrayList<>();
         try
         {
             File logDirectory = new File(PLUGIN_DIRECTORY);
@@ -120,11 +120,11 @@ public class RaidTrackerSidePanel extends PluginPanel
             log.info("Could not retrieve raids");
             e.printStackTrace();
         }
-        raids.sort(Comparator.comparing(SimpleRaidData::getDate));
+        raids.sort(Comparator.comparing(SimpleTOBData::getDate));
         return raids;
     }
 
-    public static void parseLogFile(ArrayList<SimpleRaidData> raids, File currentFile, String filePath) throws Exception
+    public static void parseLogFile(ArrayList<SimpleTOBData> raids, File currentFile, String filePath) throws Exception
     {
         Scanner logReader = new Scanner(Files.newInputStream(currentFile.toPath()));
         ArrayList<String> raid = new ArrayList<>();
@@ -168,7 +168,7 @@ public class RaidTrackerSidePanel extends PluginPanel
                             {
                                 raid.add(line);
                                 raidActive = false;
-                                raids.add(new SimpleRaidData(raid.toArray(new String[0]), filePath, currentFile.getName()));
+                                raids.add(new SimpleTOBData(raid.toArray(new String[0]), filePath, currentFile.getName()));
                                 raid.clear();
                             } else if (value != 99 && value != 98)
                             {
@@ -282,7 +282,7 @@ public class RaidTrackerSidePanel extends PluginPanel
         return new DefaultTableModel(tableData, columnNames);
     }
 
-    private ArrayList<SimpleRaidData> getTableData()
+    private ArrayList<SimpleTOBData> getTableData()
     {
         ArrayList<String> includedSets = new ArrayList<>();
         for (int i = 0; i < loadRaidsTable.getRowCount(); i++)
@@ -292,7 +292,7 @@ public class RaidTrackerSidePanel extends PluginPanel
                 includedSets.add((String) loadRaidsTable.getValueAt(i, 0));
             }
         }
-        ArrayList<SimpleRaidData> collectedRaids = new ArrayList<>();
+        ArrayList<SimpleTOBData> collectedRaids = new ArrayList<>();
         for (RaidsArrayWrapper set : raidSets)
         {
             for (String s : includedSets)

@@ -1,6 +1,6 @@
 package com.advancedraidtracker.ui.comparisonview.graph;
 
-import com.advancedraidtracker.SimpleRaidData;
+import com.advancedraidtracker.SimpleTOBData;
 import com.advancedraidtracker.AdvancedRaidTrackerConfig;
 import com.advancedraidtracker.utility.RoomUtil;
 import com.advancedraidtracker.utility.datautility.DataPoint;
@@ -62,14 +62,14 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
     private DataPoint activeKey;
     private boolean time = false;
     private final BufferedImage img = new BufferedImage(IMG_WIDTH, IMG_HEIGHT, BufferedImage.TYPE_INT_ARGB);
-    private final ArrayList<SimpleRaidData> internalData;
+    private final ArrayList<SimpleTOBData> internalData;
     private final AdvancedRaidTrackerConfig config;
 
     private final ItemManager itemManager;
 
     private final ClientThread clientThread;
     private final ConfigManager configManager;
-    public GraphPanel(ArrayList<SimpleRaidData> data, AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
+    public GraphPanel(ArrayList<SimpleTOBData> data, AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
     {
         this.configManager = configManager;
         this.clientThread = clientThread;
@@ -332,7 +332,7 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
     public static GraphInternalBoundMatchedContainer getCounts(GraphInternalDataContainer data, int highestValue)
     {
         ArrayList<Integer> countedIntData = new ArrayList<>();
-        ArrayList<ArrayList<SimpleRaidData>> countedFullData = new ArrayList<>();
+        ArrayList<ArrayList<SimpleTOBData>> countedFullData = new ArrayList<>();
         for (int i = 0; i < highestValue + 1; i++)
         {
             countedIntData.add(0);
@@ -404,7 +404,7 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
                         int right = left + barWidth;
                         int top = GRAPH_HEIGHT - GRAPH_YS - height;
                         int bottom = GRAPH_HEIGHT - GRAPH_YS;
-                        ArrayList<SimpleRaidData> summedRegionData;
+                        ArrayList<SimpleTOBData> summedRegionData;
                         if (groupOffset == 0 || i != xScaleLow)
                         {
                             summedRegionData = sumRegionRaidData(countedDataSet, i, groupSize);
@@ -468,9 +468,9 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
         return sum;
     }
 
-    private ArrayList<SimpleRaidData> sumRegionRaidData(GraphInternalBoundMatchedContainer data, int index, int length)
+    private ArrayList<SimpleTOBData> sumRegionRaidData(GraphInternalBoundMatchedContainer data, int index, int length)
     {
-        ArrayList<SimpleRaidData> summedData = new ArrayList<>();
+        ArrayList<SimpleTOBData> summedData = new ArrayList<>();
         for (int i = index; i < index + length; i++)
         {
             if (i < data.fullData.size() && i > -1)
@@ -823,8 +823,8 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
     private GraphInternalDataContainer getInternalDataSet(DataPoint key)
     {
         ArrayList<Integer> intDataSet = new ArrayList<>();
-        ArrayList<SimpleRaidData> fullDataSet = new ArrayList<>();
-        for (SimpleRaidData data : internalData)
+        ArrayList<SimpleTOBData> fullDataSet = new ArrayList<>();
+        for (SimpleTOBData data : internalData)
         {
             if (data.getValue(key) != -1)
             {
@@ -965,9 +965,9 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
         }
     }
 
-    private ArrayList<SimpleRaidData> mergeSelectedData()
+    private ArrayList<SimpleTOBData> mergeSelectedData()
     {
-        ArrayList<SimpleRaidData> mergedData = new ArrayList<>();
+        ArrayList<SimpleTOBData> mergedData = new ArrayList<>();
         for (Bounds b : selectedBounds)
         {
             mergedData.addAll(b.raids);

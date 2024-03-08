@@ -1,6 +1,6 @@
 package com.advancedraidtracker.filters;
 
-import com.advancedraidtracker.SimpleRaidData;
+import com.advancedraidtracker.SimpleTOBData;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -25,7 +25,7 @@ public class FilterDate extends FilterCondition
     }
 
     @Override
-    public boolean evaluate(SimpleRaidData data)
+    public boolean evaluate(SimpleTOBData data)
     {
         Calendar cal = Calendar.getInstance();
         Calendar cal2 = Calendar.getInstance();

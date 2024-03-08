@@ -1,6 +1,6 @@
 package com.advancedraidtracker.filters;
 
-import com.advancedraidtracker.SimpleRaidData;
+import com.advancedraidtracker.SimpleTOBData;
 
 public class FilterOtherBool extends FilterCondition
 {
@@ -22,7 +22,7 @@ public class FilterOtherBool extends FilterCondition
     }
 
     @Override
-    public boolean evaluate(SimpleRaidData data)
+    public boolean evaluate(SimpleTOBData data)
     {
         switch (param)
         {

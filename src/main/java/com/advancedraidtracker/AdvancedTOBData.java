@@ -16,7 +16,7 @@ import static com.advancedraidtracker.constants.TobIDs.EXIT_FLAG;
 import static com.advancedraidtracker.constants.TobIDs.SPECTATE_FLAG;
 
 @Slf4j
-public class AdvancedRaidData
+public class AdvancedTOBData
 {
     public final ArrayList<PlayerDidAttack> maidenAttacks = new ArrayList<>();
     public final ArrayList<PlayerDidAttack> bloatAttacks = new ArrayList<>();
@@ -54,7 +54,7 @@ public class AdvancedRaidData
         }
         return lines;
     }
-    public AdvancedRaidData(ArrayList<String> globalData, ItemManager itemManager)
+    public AdvancedTOBData(ArrayList<String> globalData, ItemManager itemManager)
     {
         this.itemManager = itemManager;
         this.globalData = globalData;

@@ -1,6 +1,6 @@
 package com.advancedraidtracker.utility.datautility;
 
-import com.advancedraidtracker.SimpleRaidData;
+import com.advancedraidtracker.SimpleTOBData;
 import com.advancedraidtracker.ui.RaidTrackerSidePanel;
 import com.advancedraidtracker.utility.wrappers.RaidsArrayWrapper;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +32,7 @@ public class RaidsManager
             {
                 if (entry.isDirectory())
                 {
-                    ArrayList<SimpleRaidData> raids = new ArrayList<>();
+                    ArrayList<SimpleTOBData> raids = new ArrayList<>();
                     for(File raid : Objects.requireNonNull(entry.listFiles()))
                     {
                         try
@@ -72,7 +72,7 @@ public class RaidsManager
         return false;
     }
 
-    public static void saveOverwriteRaids(String name, ArrayList<SimpleRaidData> raids)
+    public static void saveOverwriteRaids(String name, ArrayList<SimpleTOBData> raids)
     {
         try
         {
@@ -101,9 +101,9 @@ public class RaidsManager
         }
     }
 
-    private static void writeRaid(String name, ArrayList<SimpleRaidData> raids) throws IOException
+    private static void writeRaid(String name, ArrayList<SimpleTOBData> raids) throws IOException
     {
-        for (SimpleRaidData raid : raids)
+        for (SimpleTOBData raid : raids)
         {
             File newEntry = new File(raidsFolder + name + "/" + raid.fileName);
             Files.createFile(newEntry.toPath());
@@ -119,7 +119,7 @@ public class RaidsManager
         }
     }
 
-    public static void saveRaids(String name, ArrayList<SimpleRaidData> raids)
+    public static void saveRaids(String name, ArrayList<SimpleTOBData> raids)
     {
         try
         {

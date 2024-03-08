@@ -1,6 +1,6 @@
 package com.advancedraidtracker.filters;
 
-import com.advancedraidtracker.SimpleRaidData;
+import com.advancedraidtracker.SimpleTOBData;
 import com.advancedraidtracker.utility.datautility.DataPoint;
 
 import java.util.ArrayList;
@@ -105,7 +105,7 @@ public class ImplicitFilter
         return filter.toString();
     }
 
-    public boolean evaluate(SimpleRaidData data)
+    public boolean evaluate(SimpleTOBData data)
     {
         return filter.evaluate(data);
     }

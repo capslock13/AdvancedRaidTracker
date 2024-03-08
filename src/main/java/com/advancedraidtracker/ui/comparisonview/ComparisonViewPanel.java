@@ -1,6 +1,6 @@
 package com.advancedraidtracker.ui.comparisonview;
 
-import com.advancedraidtracker.SimpleRaidData;
+import com.advancedraidtracker.SimpleTOBData;
 import com.advancedraidtracker.AdvancedRaidTrackerConfig;
 import com.advancedraidtracker.ui.comparisonview.graph.GraphPanel;
 import com.advancedraidtracker.utility.RoomUtil;
@@ -59,7 +59,7 @@ public class ComparisonViewPanel extends JPanel
     private final JComboBox<String> compareByComboBox;
     private final JComboBox<String> graphTypeComboBox;
     private boolean time = false;
-    ArrayList<ArrayList<SimpleRaidData>> data;
+    ArrayList<ArrayList<SimpleTOBData>> data;
 
     JPanel scrollTopPanel;
     JPanel scrollBottomPanel;
@@ -83,7 +83,7 @@ public class ComparisonViewPanel extends JPanel
     private final ConfigManager configManager;
 
     private final ClientThread clientThread;
-    public ComparisonViewPanel(ArrayList<ArrayList<SimpleRaidData>> raidData, ArrayList<String> names, AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
+    public ComparisonViewPanel(ArrayList<ArrayList<SimpleTOBData>> raidData, ArrayList<String> names, AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
     {
         this.configManager = configManager;
         this.clientThread = clientThread;
@@ -537,15 +537,15 @@ public class ComparisonViewPanel extends JPanel
         updateCutoffs();
     }
 
-    GraphPanel getGraphPanel(ArrayList<SimpleRaidData> points)
+    GraphPanel getGraphPanel(ArrayList<SimpleTOBData> points)
     {
         return new GraphPanel(points, config, itemManager, clientThread, configManager);
     }
 
-    private ArrayList<Integer> getArrayForStatistics(ArrayList<SimpleRaidData> data)
+    private ArrayList<Integer> getArrayForStatistics(ArrayList<SimpleTOBData> data)
     {
         ArrayList<Integer> arrayToPass = new ArrayList<>();
-        for (SimpleRaidData raidData : data)
+        for (SimpleTOBData raidData : data)
         {
             int value = raidData.getValue(DataPoint.getValue(String.valueOf(compareByComboBox.getSelectedItem())));
             if (value > -1)
@@ -615,8 +615,8 @@ public class ComparisonViewPanel extends JPanel
             otherBottomLeft.setBorder(BorderFactory.createTitledBorder(topGraphTabs.getTitleAt(topGraphTabs.getSelectedIndex()) + " values"));
             otherBottomRight.setBorder(BorderFactory.createTitledBorder(bottomGraphTabs.getTitleAt(bottomGraphTabs.getSelectedIndex()) + " values"));
 
-            ArrayList<SimpleRaidData> topGraphData = (data.get(topGraphTabs.getSelectedIndex()));
-            ArrayList<SimpleRaidData> bottomGraphData = data.get(bottomGraphTabs.getSelectedIndex());
+            ArrayList<SimpleTOBData> topGraphData = (data.get(topGraphTabs.getSelectedIndex()));
+            ArrayList<SimpleTOBData> bottomGraphData = data.get(bottomGraphTabs.getSelectedIndex());
 
             String worse = "<html><font color='#F63131'>";
             String better = "<html><font color='#99E622'>";

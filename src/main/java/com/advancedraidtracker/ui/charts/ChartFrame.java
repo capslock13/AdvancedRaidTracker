@@ -1,7 +1,7 @@
 package com.advancedraidtracker.ui.charts;
 
-import com.advancedraidtracker.AdvancedRaidData;
-import com.advancedraidtracker.SimpleRaidData;
+import com.advancedraidtracker.AdvancedTOBData;
+import com.advancedraidtracker.SimpleTOBData;
 import com.advancedraidtracker.AdvancedRaidTrackerConfig;
 import com.advancedraidtracker.ui.BaseFrame;
 import com.advancedraidtracker.utility.datautility.DataPoint;
@@ -17,7 +17,7 @@ import java.util.*;
 @Slf4j
 public class ChartFrame extends BaseFrame
 {
-    public ChartFrame(ArrayList<SimpleRaidData> roomData, AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
+    public ChartFrame(ArrayList<SimpleTOBData> roomData, AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
     {
         JTabbedPane basepane = new JTabbedPane();
 
@@ -59,9 +59,9 @@ public class ChartFrame extends BaseFrame
 
 
 
-        for (SimpleRaidData data : roomData)
+        for (SimpleTOBData data : roomData)
         {
-            AdvancedRaidData advancedData = new AdvancedRaidData(AdvancedRaidData.getRaidStrings(data.filePath), itemManager);
+            AdvancedTOBData advancedData = new AdvancedTOBData(AdvancedTOBData.getRaidStrings(data.filePath), itemManager);
             Map<Integer, String> maidenLines = new LinkedHashMap<>();
             maidenLines.put(data.getValue(DataPoint.MAIDEN_70_SPLIT), "70s");
             maidenLines.put(data.getValue(DataPoint.MAIDEN_50_SPLIT), "50s");

@@ -9,7 +9,7 @@ import java.util.Scanner;
 
 public class FilterManager
 {
-    private static final String filterFolder = System.getProperty("user.home").replace("\\", "/") + "/.runelite/theatretracker/filters/";
+    private static final String filterFolder = System.getProperty("user.home").replace("\\", "/") + "/.runelite/advancedraidtracker/misc-dir/filters/";
 
     public static ArrayList<Filter> getFilters()
     {

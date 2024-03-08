@@ -3,7 +3,7 @@ package com.advancedraidtracker;
 import net.runelite.client.RuneLite;
 import net.runelite.client.externalplugins.ExternalPluginManager;
 
-public class TheatreTrackerPluginTest
+public class AdvancedRaidTrackerPluginTest
 {
     public static void main(String[] args) throws Exception
     {

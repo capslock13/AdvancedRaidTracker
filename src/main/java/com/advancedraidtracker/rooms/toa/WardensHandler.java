@@ -1,7 +1,7 @@
 package com.advancedraidtracker.rooms.toa;
 
-import com.advancedraidtracker.TheatreTrackerConfig;
-import com.advancedraidtracker.TheatreTrackerPlugin;
+import com.advancedraidtracker.AdvancedRaidTrackerConfig;
+import com.advancedraidtracker.AdvancedRaidTrackerPlugin;
 import com.advancedraidtracker.constants.LogID;
 import com.advancedraidtracker.constants.RoomState;
 import com.advancedraidtracker.utility.datautility.DataWriter;
@@ -27,7 +27,7 @@ public class WardensHandler extends TOARoomHandler
     private int enraged = -1;
     RoomState.WardenRoomState roomState = RoomState.WardenRoomState.NOT_STARTED;
 
-    public WardensHandler(Client client, DataWriter clog, TheatreTrackerConfig config, TheatreTrackerPlugin plugin, TOAHandler handler)
+    public WardensHandler(Client client, DataWriter clog, AdvancedRaidTrackerConfig config, AdvancedRaidTrackerPlugin plugin, TOAHandler handler)
     {
         super(client, clog, config, plugin, handler);
     }

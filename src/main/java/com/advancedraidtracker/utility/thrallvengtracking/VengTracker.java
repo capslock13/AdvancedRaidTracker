@@ -1,6 +1,6 @@
 package com.advancedraidtracker.utility.thrallvengtracking;
 
-import com.advancedraidtracker.TheatreTrackerPlugin;
+import com.advancedraidtracker.AdvancedRaidTrackerPlugin;
 import com.advancedraidtracker.constants.LogID;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Player;
@@ -11,9 +11,9 @@ import java.util.ArrayList;
 public class VengTracker
 {
     public ArrayList<VengCastQueue> vengedPlayers;
-    private TheatreTrackerPlugin plugin;
+    private AdvancedRaidTrackerPlugin plugin;
 
-    public VengTracker(TheatreTrackerPlugin plugin)
+    public VengTracker(AdvancedRaidTrackerPlugin plugin)
     {
         vengedPlayers = new ArrayList<>();
         this.plugin = plugin;

@@ -3,7 +3,7 @@ package com.advancedraidtracker.ui;
 
 import com.advancedraidtracker.SimpleRaidData;
 import com.advancedraidtracker.SimpleTOBData;
-import com.advancedraidtracker.TheatreTrackerConfig;
+import com.advancedraidtracker.AdvancedRaidTrackerConfig;
 import com.advancedraidtracker.filters.*;
 import com.advancedraidtracker.ui.buttons.*;
 import com.advancedraidtracker.ui.charts.ChartFrame;
@@ -114,14 +114,14 @@ public class Raids extends BaseFrame
     private JComboBox<String> otherBoolFilterOperator;
 
 
-    private final TheatreTrackerConfig config;
+    private final AdvancedRaidTrackerConfig config;
     private final ItemManager itemManager;
     private ClientThread clientThread;
 
     public String[] rooms = {"Maiden", "Bloat", "Nylocas", "Sotetseg", "Xarpus", "Verzik", "Challenge"};
     private final ConfigManager configManager;
 
-    public Raids(TheatreTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
+    public Raids(AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
     {
         for (String s : rooms)
         {

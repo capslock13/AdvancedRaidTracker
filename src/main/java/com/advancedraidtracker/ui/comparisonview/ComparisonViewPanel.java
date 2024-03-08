@@ -2,7 +2,7 @@ package com.advancedraidtracker.ui.comparisonview;
 
 import com.advancedraidtracker.SimpleRaidData;
 import com.advancedraidtracker.SimpleTOBData;
-import com.advancedraidtracker.TheatreTrackerConfig;
+import com.advancedraidtracker.AdvancedRaidTrackerConfig;
 import com.advancedraidtracker.ui.comparisonview.graph.GraphPanel;
 import com.advancedraidtracker.utility.RoomUtil;
 import com.advancedraidtracker.utility.datautility.DataPoint;
@@ -81,13 +81,13 @@ public class ComparisonViewPanel extends JPanel
 
     JCheckBox groupingEnabled;
 
-    private final TheatreTrackerConfig config;
+    private final AdvancedRaidTrackerConfig config;
     private final ItemManager itemManager;
     private final ConfigManager configManager;
 
     private final ClientThread clientThread;
 
-    public ComparisonViewPanel(ArrayList<ArrayList<SimpleRaidData>> raidData, ArrayList<String> names, TheatreTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
+    public ComparisonViewPanel(ArrayList<ArrayList<SimpleRaidData>> raidData, ArrayList<String> names, AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
     {
         this.configManager = configManager;
         this.clientThread = clientThread;

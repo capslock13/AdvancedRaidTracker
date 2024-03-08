@@ -1,7 +1,7 @@
 package com.advancedraidtracker.rooms.tob;
 
-import com.advancedraidtracker.TheatreTrackerConfig;
-import com.advancedraidtracker.TheatreTrackerPlugin;
+import com.advancedraidtracker.AdvancedRaidTrackerConfig;
+import com.advancedraidtracker.AdvancedRaidTrackerPlugin;
 import com.advancedraidtracker.constants.TOBRoom;
 import com.advancedraidtracker.constants.TobIDs;
 import lombok.extern.slf4j.Slf4j;
@@ -24,9 +24,9 @@ import static com.advancedraidtracker.constants.RoomState.XarpusRoomState.FINISH
 public class XarpusHandler extends TOBRoomHandler
 {
     public RoomState.XarpusRoomState roomState = RoomState.XarpusRoomState.NOT_STARTED;
-    private final TheatreTrackerPlugin plugin;
+    private final AdvancedRaidTrackerPlugin plugin;
 
-    public XarpusHandler(Client client, DataWriter clog, TheatreTrackerConfig config, TheatreTrackerPlugin plugin)
+    public XarpusHandler(Client client, DataWriter clog, AdvancedRaidTrackerConfig config, AdvancedRaidTrackerPlugin plugin)
     {
         super(client, clog, config);
         this.plugin = plugin;

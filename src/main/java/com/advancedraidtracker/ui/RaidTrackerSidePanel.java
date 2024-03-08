@@ -31,13 +31,13 @@ public class RaidTrackerSidePanel extends PluginPanel
 
     private Raids raids;
 
-    private TheatreTrackerPlugin plugin;
-    private static TheatreTrackerConfig config;
+    private AdvancedRaidTrackerPlugin plugin;
+    private static AdvancedRaidTrackerConfig config;
     private static ItemManager itemManager;
     private ConfigManager configManager;
 
     @Inject
-    RaidTrackerSidePanel(TheatreTrackerPlugin plugin, TheatreTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
+    RaidTrackerSidePanel(AdvancedRaidTrackerPlugin plugin, AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
     {
         this.configManager = configManager;
         //DataWriter.checkLogFileSize();

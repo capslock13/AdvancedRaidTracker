@@ -1,7 +1,7 @@
 package com.advancedraidtracker.rooms.tob;
 
-import com.advancedraidtracker.TheatreTrackerConfig;
-import com.advancedraidtracker.TheatreTrackerPlugin;
+import com.advancedraidtracker.AdvancedRaidTrackerConfig;
+import com.advancedraidtracker.AdvancedRaidTrackerPlugin;
 import com.advancedraidtracker.constants.TOBRoom;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
@@ -31,7 +31,7 @@ public class NyloHandler extends TOBRoomHandler
     public RoomState.NyloRoomState roomState;
     private final ArrayList<NylocasShell> buildWave;
 
-    public NyloHandler(Client client, DataWriter clog, TheatreTrackerConfig config, TheatreTrackerPlugin plugin)
+    public NyloHandler(Client client, DataWriter clog, AdvancedRaidTrackerConfig config, AdvancedRaidTrackerPlugin plugin)
     {
         super(client, clog, config);
         this.plugin = plugin;
@@ -51,7 +51,7 @@ public class NyloHandler extends TOBRoomHandler
     int currentWave = 0;
     boolean hard = false;
     boolean story = false;
-    private final TheatreTrackerPlugin plugin;
+    private final AdvancedRaidTrackerPlugin plugin;
     ArrayList<NPC> bigsDeadThisTick = new ArrayList<>();
     Map<Integer, String> bigDescription = new HashMap<>();
 

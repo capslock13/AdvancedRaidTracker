@@ -1,7 +1,7 @@
 package com.advancedraidtracker.rooms.tob;
 
-import com.advancedraidtracker.TheatreTrackerConfig;
-import com.advancedraidtracker.TheatreTrackerPlugin;
+import com.advancedraidtracker.AdvancedRaidTrackerConfig;
+import com.advancedraidtracker.AdvancedRaidTrackerPlugin;
 import com.advancedraidtracker.constants.TOBRoom;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
@@ -29,9 +29,9 @@ public class BloatHandler extends TOBRoomHandler
     private int bloatStartTick = -1;
     private int bloatDeferTick = -1;
     private int bloatDeathTick = -1;
-    private final TheatreTrackerPlugin plugin;
+    private final AdvancedRaidTrackerPlugin plugin;
 
-    public BloatHandler(Client client, DataWriter clog, TheatreTrackerConfig config, TheatreTrackerPlugin plugin)
+    public BloatHandler(Client client, DataWriter clog, AdvancedRaidTrackerConfig config, AdvancedRaidTrackerPlugin plugin)
     {
         super(client, clog, config);
         this.plugin = plugin;

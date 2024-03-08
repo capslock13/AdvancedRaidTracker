@@ -1,7 +1,7 @@
 package com.advancedraidtracker.rooms.tob;
 
-import com.advancedraidtracker.TheatreTrackerConfig;
-import com.advancedraidtracker.TheatreTrackerPlugin;
+import com.advancedraidtracker.AdvancedRaidTrackerConfig;
+import com.advancedraidtracker.AdvancedRaidTrackerPlugin;
 import com.advancedraidtracker.constants.LogID;
 import com.advancedraidtracker.constants.TOBRoom;
 import com.advancedraidtracker.utility.datautility.DataWriter;
@@ -24,11 +24,11 @@ import static com.advancedraidtracker.constants.TobIDs.*;
 public class VerzikHandler extends TOBRoomHandler
 {
     public RoomState.VerzikRoomState roomState;
-    private final TheatreTrackerPlugin plugin;
+    private final AdvancedRaidTrackerPlugin plugin;
     private int healingEndTick = -1;
     private ItemManager itemManager;
 
-    public VerzikHandler(Client client, DataWriter clog, TheatreTrackerConfig config, TheatreTrackerPlugin plugin, ItemManager itemManager)
+    public VerzikHandler(Client client, DataWriter clog, AdvancedRaidTrackerConfig config, AdvancedRaidTrackerPlugin plugin, ItemManager itemManager)
     {
         super(client, clog, config);
         this.plugin = plugin;

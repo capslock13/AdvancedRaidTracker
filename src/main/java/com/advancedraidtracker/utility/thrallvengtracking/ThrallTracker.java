@@ -1,6 +1,6 @@
 package com.advancedraidtracker.utility.thrallvengtracking;
 
-import com.advancedraidtracker.TheatreTrackerPlugin;
+import com.advancedraidtracker.AdvancedRaidTrackerPlugin;
 import com.advancedraidtracker.constants.LogID;
 import com.advancedraidtracker.utility.wrappers.ThrallOutlineBox;
 import lombok.extern.slf4j.Slf4j;
@@ -28,9 +28,9 @@ public class ThrallTracker
     private final ArrayList<Thrall> activeThralls;
 
 
-    private final TheatreTrackerPlugin plugin;
+    private final AdvancedRaidTrackerPlugin plugin;
 
-    public ThrallTracker(TheatreTrackerPlugin plugin)
+    public ThrallTracker(AdvancedRaidTrackerPlugin plugin)
     {
         this.plugin = plugin;
         queuedCastAnimation = new ArrayList<>();

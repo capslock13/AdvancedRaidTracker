@@ -1,7 +1,7 @@
 package com.advancedraidtracker.ui.comparisonview;
 
 import com.advancedraidtracker.SimpleRaidData;
-import com.advancedraidtracker.TheatreTrackerConfig;
+import com.advancedraidtracker.AdvancedRaidTrackerConfig;
 import com.advancedraidtracker.ui.BaseFrame;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.callback.ClientThread;
@@ -22,12 +22,12 @@ public class ComparisonViewFrame extends BaseFrame
         pack();
     }
 
-    private TheatreTrackerConfig config;
+    private AdvancedRaidTrackerConfig config;
     private ItemManager itemManager;
     private ClientThread clientThread;
     private ConfigManager configManager;
 
-    public ComparisonViewFrame(Map<Integer, ArrayList<ArrayList<SimpleRaidData>>> dataSets, ArrayList<ArrayList<String>> labelSets, TheatreTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
+    public ComparisonViewFrame(Map<Integer, ArrayList<ArrayList<SimpleRaidData>>> dataSets, ArrayList<ArrayList<String>> labelSets, AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
     {
         this.configManager = configManager;
         this.clientThread = clientThread;

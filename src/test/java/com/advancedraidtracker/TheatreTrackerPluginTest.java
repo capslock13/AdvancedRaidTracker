@@ -7,7 +7,7 @@ public class TheatreTrackerPluginTest
 {
     public static void main(String[] args) throws Exception
     {
-        ExternalPluginManager.loadBuiltin(TheatreTrackerPlugin.class);
+        ExternalPluginManager.loadBuiltin(AdvancedRaidTrackerPlugin.class);
         RuneLite.main(args);
     }
 }

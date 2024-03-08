@@ -1,6 +1,6 @@
 package com.advancedraidtracker.ui.charts;
 
-import com.advancedraidtracker.TheatreTrackerConfig;
+import com.advancedraidtracker.AdvancedRaidTrackerConfig;
 import com.advancedraidtracker.utility.ItemReference;
 import com.advancedraidtracker.utility.Point;
 import net.runelite.client.ui.FontManager;
@@ -16,9 +16,9 @@ public class HoverBox
 {
     ArrayList<String> info;
     Point location = new Point(0, 0);
-    private final TheatreTrackerConfig config;
+    private final AdvancedRaidTrackerConfig config;
 
-    public HoverBox(String s, TheatreTrackerConfig config)
+    public HoverBox(String s, AdvancedRaidTrackerConfig config)
     {
         this.config = config;
         info = new ArrayList<>();

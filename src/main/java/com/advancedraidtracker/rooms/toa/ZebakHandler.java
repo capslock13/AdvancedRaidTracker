@@ -1,7 +1,7 @@
 package com.advancedraidtracker.rooms.toa;
 
-import com.advancedraidtracker.TheatreTrackerConfig;
-import com.advancedraidtracker.TheatreTrackerPlugin;
+import com.advancedraidtracker.AdvancedRaidTrackerConfig;
+import com.advancedraidtracker.AdvancedRaidTrackerPlugin;
 import com.advancedraidtracker.constants.LogID;
 import com.advancedraidtracker.utility.Point;
 import com.advancedraidtracker.constants.RoomState;
@@ -23,7 +23,7 @@ public class ZebakHandler extends TOARoomHandler
 
     RoomState.ZebakRoomState roomState = RoomState.ZebakRoomState.NOT_STARTED;
 
-    public ZebakHandler(Client client, DataWriter clog, TheatreTrackerConfig config, TheatreTrackerPlugin plugin, TOAHandler handler)
+    public ZebakHandler(Client client, DataWriter clog, AdvancedRaidTrackerConfig config, AdvancedRaidTrackerPlugin plugin, TOAHandler handler)
     {
         super(client, clog, config, plugin, handler);
     }

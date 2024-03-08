@@ -1,7 +1,7 @@
 package com.advancedraidtracker.ui.comparisonview.graph;
 
 import com.advancedraidtracker.SimpleRaidData;
-import com.advancedraidtracker.TheatreTrackerConfig;
+import com.advancedraidtracker.AdvancedRaidTrackerConfig;
 import com.advancedraidtracker.utility.RoomUtil;
 import com.advancedraidtracker.utility.datautility.DataPoint;
 import lombok.extern.slf4j.Slf4j;
@@ -63,14 +63,14 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
     private boolean time = false;
     private final BufferedImage img = new BufferedImage(IMG_WIDTH, IMG_HEIGHT, BufferedImage.TYPE_INT_ARGB);
     private final ArrayList<SimpleRaidData> internalData;
-    private final TheatreTrackerConfig config;
+    private final AdvancedRaidTrackerConfig config;
 
     private final ItemManager itemManager;
 
     private final ClientThread clientThread;
     private final ConfigManager configManager;
 
-    public GraphPanel(ArrayList<SimpleRaidData> data, TheatreTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
+    public GraphPanel(ArrayList<SimpleRaidData> data, AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
     {
         this.configManager = configManager;
         this.clientThread = clientThread;

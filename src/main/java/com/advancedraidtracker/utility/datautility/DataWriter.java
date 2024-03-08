@@ -1,6 +1,6 @@
 package com.advancedraidtracker.utility.datautility;
 
-import com.advancedraidtracker.TheatreTrackerConfig;
+import com.advancedraidtracker.AdvancedRaidTrackerConfig;
 import com.advancedraidtracker.constants.RaidType;
 import lombok.extern.slf4j.Slf4j;
 import com.advancedraidtracker.constants.LogID;
@@ -13,14 +13,14 @@ import java.util.Objects;
 @Slf4j
 public class DataWriter
 {
-    private final TheatreTrackerConfig config;
+    private final AdvancedRaidTrackerConfig config;
     private String activeUsername = "";
     private final ArrayList<String> currentBuffer;
     private RaidType currentRaidType = RaidType.UNASSIGNED;
 
     public final static String PLUGIN_DIRECTORY = System.getProperty("user.home").replace("\\", "/") + "/.runelite/advancedraidtracker/";
 
-    public DataWriter(TheatreTrackerConfig config) throws IOException
+    public DataWriter(AdvancedRaidTrackerConfig config) throws IOException
     {
         this.config = config;
         currentBuffer = new ArrayList<>();

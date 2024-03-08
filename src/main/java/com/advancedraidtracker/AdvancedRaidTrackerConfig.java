@@ -8,7 +8,7 @@ import java.awt.*;
 
 @ConfigGroup("Advanced Raid Tracker")
 
-public interface TheatreTrackerConfig extends Config
+public interface AdvancedRaidTrackerConfig extends Config
 {
     @ConfigItem(
             position = 0,

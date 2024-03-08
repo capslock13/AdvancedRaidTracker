@@ -1,7 +1,7 @@
 package com.advancedraidtracker.rooms.toa;
 
-import com.advancedraidtracker.TheatreTrackerConfig;
-import com.advancedraidtracker.TheatreTrackerPlugin;
+import com.advancedraidtracker.AdvancedRaidTrackerConfig;
+import com.advancedraidtracker.AdvancedRaidTrackerPlugin;
 import com.advancedraidtracker.constants.LogID;
 import com.advancedraidtracker.utility.Point;
 import com.advancedraidtracker.constants.RoomState;
@@ -32,7 +32,7 @@ public class AkkhaHandler extends TOARoomHandler
     private int s4End = -1;
     private int p5End = -1;
 
-    public AkkhaHandler(Client client, DataWriter clog, TheatreTrackerConfig config, TheatreTrackerPlugin plugin, TOAHandler handler)
+    public AkkhaHandler(Client client, DataWriter clog, AdvancedRaidTrackerConfig config, AdvancedRaidTrackerPlugin plugin, TOAHandler handler)
     {
         super(client, clog, config, plugin, handler);
     }

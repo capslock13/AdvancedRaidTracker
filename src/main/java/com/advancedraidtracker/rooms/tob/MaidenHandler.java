@@ -1,6 +1,6 @@
 package com.advancedraidtracker.rooms.tob;
 
-import com.advancedraidtracker.TheatreTrackerConfig;
+import com.advancedraidtracker.AdvancedRaidTrackerConfig;
 
 import com.advancedraidtracker.constants.RoomState;
 import com.advancedraidtracker.constants.TOBRoom;
@@ -15,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.*;
-import com.advancedraidtracker.TheatreTrackerPlugin;
+import com.advancedraidtracker.AdvancedRaidTrackerPlugin;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -59,12 +59,12 @@ public class MaidenHandler extends TOBRoomHandler
     ArrayList<NPCTimeInChunkShell> npcs;
 
 
-    TheatreTrackerConfig config;
-    TheatreTrackerPlugin plugin;
+    AdvancedRaidTrackerConfig config;
+    AdvancedRaidTrackerPlugin plugin;
 
     private ItemManager itemManager;
 
-    public MaidenHandler(Client client, DataWriter clog, TheatreTrackerConfig config, TheatreTrackerPlugin plugin, ItemManager itemManager)
+    public MaidenHandler(Client client, DataWriter clog, AdvancedRaidTrackerConfig config, AdvancedRaidTrackerPlugin plugin, ItemManager itemManager)
     {
         super(client, clog, config);
         this.plugin = plugin;
@@ -318,7 +318,7 @@ public class MaidenHandler extends TOBRoomHandler
                 clog.addLine(ADD_NPC_MAPPING, String.valueOf(npc.getIndex()), crabName, getName());
                 plugin.liveFrame.getPanel(getName()).addNPCMapping(npc.getIndex(), crabName);
                 plugin.liveFrame.getPanel(getName()).addMaidenCrab(crabName);
-                MaidenCrab crab = new MaidenCrab(npc, TheatreTrackerPlugin.scale, crabName);
+                MaidenCrab crab = new MaidenCrab(npc, AdvancedRaidTrackerPlugin.scale, crabName);
                 logCrabSpawn(crab.description);
                 maidenCrabs.add(crab);
                 break;

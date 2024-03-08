@@ -1,6 +1,6 @@
 package com.advancedraidtracker.ui.charts;
 
-import com.advancedraidtracker.TheatreTrackerConfig;
+import com.advancedraidtracker.AdvancedRaidTrackerConfig;
 import com.advancedraidtracker.ui.BaseFrame;
 import com.advancedraidtracker.utility.wrappers.PlayerDidAttack;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +19,7 @@ public class LiveChart extends BaseFrame
 {
     public JTabbedPane tabbedPane;
 
-    private final TheatreTrackerConfig config;
+    private final AdvancedRaidTrackerConfig config;
     private final ItemManager itemManager;
     private final ClientThread clientThread;
     private final ConfigManager configManager;
@@ -30,7 +30,7 @@ public class LiveChart extends BaseFrame
     Map<String, JScrollPane> toaScrollPanes;
     Map<String, JScrollPane> tobScrollPanes;
 
-    public LiveChart(TheatreTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
+    public LiveChart(AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
     {
         this.configManager = configManager;
         this.clientThread = clientThread;

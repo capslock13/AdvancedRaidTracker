@@ -1,6 +1,6 @@
 package com.advancedraidtracker.ui.charts;
 
-import com.advancedraidtracker.TheatreTrackerConfig;
+import com.advancedraidtracker.AdvancedRaidTrackerConfig;
 import com.advancedraidtracker.constants.TobIDs;
 import com.advancedraidtracker.utility.*;
 import com.advancedraidtracker.utility.Point;
@@ -82,7 +82,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         recalculateSize();
     }
 
-    private final TheatreTrackerConfig config;
+    private final AdvancedRaidTrackerConfig config;
 
     public void addRoomSpecificData(int tick, String data)
     {
@@ -363,7 +363,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
     private final ClientThread clientThread;
 
-    public ChartPanel(String room, boolean isLive, TheatreTrackerConfig config, ClientThread clientThread, ConfigManager configManager, ItemManager itemManager)
+    public ChartPanel(String room, boolean isLive, AdvancedRaidTrackerConfig config, ClientThread clientThread, ConfigManager configManager, ItemManager itemManager)
     {
         this.itemManager = itemManager;
         this.configManager = configManager;

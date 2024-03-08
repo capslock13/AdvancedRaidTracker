@@ -1,7 +1,7 @@
 package com.advancedraidtracker.rooms.tob;
 
-import com.advancedraidtracker.TheatreTrackerConfig;
-import com.advancedraidtracker.TheatreTrackerPlugin;
+import com.advancedraidtracker.AdvancedRaidTrackerConfig;
+import com.advancedraidtracker.AdvancedRaidTrackerPlugin;
 import com.advancedraidtracker.constants.LogID;
 import com.advancedraidtracker.constants.TOBRoom;
 import com.advancedraidtracker.utility.Point;
@@ -31,7 +31,7 @@ public class SotetsegHandler extends TOBRoomHandler
     private int soteDeathTick = -1;
     private int deferTick = -1;
     private int lastRegion = -1;
-    private final TheatreTrackerPlugin plugin;
+    private final AdvancedRaidTrackerPlugin plugin;
     private boolean hasSteppedOnMaze = false;
     private String firstMazeChosen = "";
     private String secondMazeChosen = "";
@@ -40,7 +40,7 @@ public class SotetsegHandler extends TOBRoomHandler
 
     private ArrayList<Point> excludedTiles = new ArrayList<>();
 
-    public SotetsegHandler(Client client, DataWriter clog, TheatreTrackerConfig config, TheatreTrackerPlugin plugin)
+    public SotetsegHandler(Client client, DataWriter clog, AdvancedRaidTrackerConfig config, AdvancedRaidTrackerPlugin plugin)
     {
         super(client, clog, config);
         this.plugin = plugin;

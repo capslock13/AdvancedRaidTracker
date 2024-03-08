@@ -60,11 +60,11 @@ import static net.runelite.api.Varbits.TOA_RAID_LEVEL;
 
 @Slf4j
 @PluginDescriptor(
-        name = "Theatre of Blood Tracker",
+        name = "Advanced Raid Tracker",
         description = "Tracking and statistics for Theatre of Blood",
         tags = {"timers", "tob", "tracker", "time", "theatre", "analytics"}
 )
-public class TheatreTrackerPlugin extends Plugin
+public class AdvancedRaidTrackerPlugin extends Plugin
 {
     private NavigationButton navButtonPrimary;
     public DataWriter clog;
@@ -72,19 +72,19 @@ public class TheatreTrackerPlugin extends Plugin
     private boolean partyIntact = false;
 
     @Inject
-    private TheatreTrackerConfig config;
+    private AdvancedRaidTrackerConfig config;
 
     @Inject
     private ItemManager itemManager;
 
-    public TheatreTrackerPlugin()
+    public AdvancedRaidTrackerPlugin()
     {
     }
 
     @Provides
-    TheatreTrackerConfig getConfig(ConfigManager configManager)
+    AdvancedRaidTrackerConfig getConfig(ConfigManager configManager)
     {
-        return configManager.getConfig(TheatreTrackerConfig.class);
+        return configManager.getConfig(AdvancedRaidTrackerConfig.class);
     }
 
     @Inject
@@ -202,7 +202,7 @@ public class TheatreTrackerPlugin extends Plugin
         playersTextChanged = new ArrayList<>();
         clog = new DataWriter(config);
 
-        final BufferedImage icon = ImageUtil.loadImageResource(TheatreTrackerPlugin.class, "/com/advancedraidtracker/icon.png");
+        final BufferedImage icon = ImageUtil.loadImageResource(AdvancedRaidTrackerPlugin.class, "/com/advancedraidtracker/icon.png");
         navButtonPrimary = NavigationButton.builder().tooltip("Advanced Raid Tracker").icon(icon).priority(10).panel(timersPanelPrimary).build();
 
         clientToolbar.addNavigation(navButtonPrimary);

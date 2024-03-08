@@ -1,7 +1,7 @@
 package com.advancedraidtracker;
 
-import com.advancedraidtracker.constants.TobIDs;
-import com.advancedraidtracker.constants.TOBRoom;
+import com.advancedraidtracker.constants.*;
+import com.advancedraidtracker.rooms.toa.*;
 import com.advancedraidtracker.rooms.tob.*;
 import com.advancedraidtracker.ui.charts.LiveChart;
 import com.advancedraidtracker.ui.RaidTrackerSidePanel;
@@ -45,11 +45,17 @@ import net.runelite.client.util.Text;
 import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.List;
+
 import static com.advancedraidtracker.constants.LogID.*;
+import static com.advancedraidtracker.constants.Room.*;
+import static com.advancedraidtracker.constants.TOBRoom.NYLOCAS;
+import static com.advancedraidtracker.constants.TOBRoom.SOTETSEG;
+import static com.advancedraidtracker.constants.TOBRoom.VERZIK;
+import static com.advancedraidtracker.constants.TOBRoom.XARPUS;
 import static com.advancedraidtracker.constants.TobIDs.*;
-import static com.advancedraidtracker.constants.TOBRoom.*;
 import static com.advancedraidtracker.utility.RoomUtil.inRegion;
 import static com.advancedraidtracker.utility.datautility.LegacyFileUtility.splitLegacyFiles;
+import static net.runelite.api.Varbits.TOA_RAID_LEVEL;
 
 
 @Slf4j
@@ -93,13 +99,26 @@ public class AdvancedRaidTrackerPlugin extends Plugin
     @Inject
     private Client client;
 
-    private LobbyHandler lobby;
+    private TOBLobbyHandler lobbyTOB;
     private MaidenHandler maiden;
     private BloatHandler bloat;
     private NyloHandler nylo;
     private SotetsegHandler sote;
     private XarpusHandler xarpus;
     private VerzikHandler verzik;
+    private TOALobbyHandler lobbyTOA;
+    private NexusHandler nexus;
+    private CrondisHandler crondis;
+    private ZebakHandler zebak;
+    private ScabarasHandler scabaras;
+    private KephriHandler kephri;
+    private ApmekenHandler apmeken;
+    private BabaHandler baba;
+    private HetHandler het;
+    private AkkhaHandler akkha;
+    private WardensHandler wardens;
+    private TOAHandler toaHandler;
+
 
     private ArrayList<DamageQueueShell> queuedThrallDamage;
 
@@ -187,13 +206,26 @@ public class AdvancedRaidTrackerPlugin extends Plugin
 
         clientToolbar.addNavigation(navButtonPrimary);
 
-        lobby = new LobbyHandler(client, clog, config);
+        lobbyTOB = new TOBLobbyHandler(client, clog, config);
         maiden = new MaidenHandler(client, clog, config, this, itemManager);
         bloat = new BloatHandler(client, clog, config, this);
         nylo = new NyloHandler(client, clog, config, this);
         sote = new SotetsegHandler(client, clog, config, this);
         xarpus = new XarpusHandler(client, clog, config, this);
         verzik = new VerzikHandler(client, clog, config, this, itemManager);
+        toaHandler = new TOAHandler(client, clog);
+        lobbyTOA = new TOALobbyHandler(client, clog, config, this, toaHandler);
+        nexus = new NexusHandler(client, clog, config, this, toaHandler);
+        crondis = new CrondisHandler(client, clog, config, this, toaHandler);
+        zebak = new ZebakHandler(client, clog, config, this, toaHandler);
+        scabaras = new ScabarasHandler(client, clog, config, this, toaHandler);
+        kephri = new KephriHandler(client, clog, config, this, toaHandler);
+        apmeken = new ApmekenHandler(client, clog, config, this, toaHandler);
+        baba = new BabaHandler(client, clog, config, this, toaHandler);
+        het = new HetHandler(client, clog, config, this, toaHandler);
+        akkha = new AkkhaHandler(client, clog, config, this, toaHandler);
+        wardens = new WardensHandler(client, clog, config, this, toaHandler);
+
         inTheatre = false;
         wasInTheatre = false;
         deferredTick = 0;
@@ -204,13 +236,12 @@ public class AdvancedRaidTrackerPlugin extends Plugin
     @Subscribe
     public void onGameStateChanged(GameStateChanged gameStateChanged)
     {
-        if(gameStateChanged.getGameState().equals(GameState.LOGGED_IN))
+        if (gameStateChanged.getGameState().equals(GameState.LOGGED_IN))
         {
             try
             {
                 loggingIn = true;
-            }
-            catch (Exception e)
+            } catch (Exception e)
             {
                 log.info("Failed to set name: " + client.getLocalPlayer().getName());
             }
@@ -220,94 +251,292 @@ public class AdvancedRaidTrackerPlugin extends Plugin
     /**
      * @return Room as int if inside TOB (0 indexed), -1 otherwise
      */
-    private int getRoom()
+    private Room getRoom()
     {
-        if (inRegion(client, LOBBY_REGION))
-            return -1;
-        else if (inRegion(client, MAIDEN_REGION))
-            return 0;
-        else if (inRegion(client, BLOAT_REGION))
-            return 1;
-        else if (inRegion(client, NYLO_REGION))
-            return 2;
-        else if (inRegion(client, SOTETSEG_REGION) || inRegion(client, SOTETSEG_UNDER_REGION))
-            return 3;
-        else if (inRegion(client, XARPUS_REGION))
-            return 4;
-        else if (inRegion(client, VERZIK_REGION))
-            return 5;
-        return -1;
+        for (Room room : Room.values())
+        {
+            if (inRegion(client, room))
+            {
+                return room;
+            }
+        }
+        return Room.UNKNOWN;
     }
 
     private void updateRoom()
     {
         RoomHandler previous = currentRoom;
-        int currentRegion = getRoom();
         boolean activeState = false;
+        Room room = getRoom();
         if (inRegion(client, LOBBY_REGION))
         {
-            currentRoom = lobby;
-        } else if (previous == lobby && inRegion(client, BLOAT_REGION, NYLO_REGION, SOTETSEG_REGION, XARPUS_REGION, VERZIK_REGION))
+            currentRoom = lobbyTOB;
+        } else if (previous == lobbyTOB && inRegion(client, BLOAT_REGION, NYLO_REGION, SOTETSEG_REGION, XARPUS_REGION, VERZIK_REGION))
         {
+            clog.setRaidType(RaidType.TOB);
             deferredTick = client.getTickCount() + 2; //Check two ticks from now for player names in orbs
             clog.checkForEndFlag();
             clog.migrateToNewRaid();
             clog.addLine(ENTERED_TOB);
             clog.addLine(SPECTATE);
-            clog.addLine(LATE_START, String.valueOf(currentRegion));
+            clog.addLine(LATE_START, room.name);
             liveFrame.resetAll();
+            liveFrame.switchToTOB();
         }
-        if (inRegion(client, MAIDEN_REGION))
+        if (inRegion(client, TOA_LOBBY))
         {
-            if (previous != maiden)
-            {
-                currentRoom = maiden;
-                enteredMaiden();
-                liveFrame.resetAll();
-            }
-            activeState = true;
-        } else if (inRegion(client, BLOAT_REGION))
+            currentRoom = lobbyTOA;
+        } else if (previous == lobbyTOA && inRegion(client, TOA_NEXUS))
         {
-            if (previous != bloat)
-            {
-                currentRoom = bloat;
-                enteredBloat();
-            }
-            activeState = true;
-        } else if (inRegion(client, NYLO_REGION))
+            clog.setRaidType(RaidType.TOA);
+            deferredTick = client.getTickCount() + 5;
+            clog.checkForEndFlag();
+            clog.migrateToNewRaid();
+            clog.addLine(ENTERED_TOA);
+            liveFrame.resetAll();
+            liveFrame.switchToTOA();
+        }
+        switch (room)
         {
-            if (previous != nylo)
-            {
-                currentRoom = nylo;
-                enteredNylo();
-            }
-            activeState = true;
-        } else if (inRegion(client, SOTETSEG_REGION, SOTETSEG_UNDER_REGION))
-        {
-            if (previous != sote)
-            {
-                currentRoom = sote;
-                enteredSote();
-            }
-            activeState = true;
-        } else if (inRegion(client, XARPUS_REGION))
-        {
-            if (previous != xarpus)
-            {
-                currentRoom = xarpus;
-                enteredXarpus();
-            }
-            activeState = true;
-        } else if (inRegion(client, VERZIK_REGION))
-        {
-            if (previous != verzik)
-            {
-                currentRoom = verzik;
-                enteredVerzik();
-            }
-            activeState = true;
+            case MAIDEN:
+                if (previous != maiden)
+                {
+                    currentRoom = maiden;
+                    enteredMaiden();
+                    liveFrame.resetAll();
+                }
+                activeState = true;
+                break;
+            case BLOAT:
+                if (previous != bloat)
+                {
+                    currentRoom = bloat;
+                    enteredBloat();
+                }
+                activeState = true;
+                break;
+            case NYLOCAS:
+                if (previous != nylo)
+                {
+                    currentRoom = nylo;
+                    enteredNylo();
+                }
+                activeState = true;
+                break;
+            case SOTETSEG:
+                if (previous != sote)
+                {
+                    currentRoom = sote;
+                    enteredSote();
+                }
+                activeState = true;
+                break;
+            case XARPUS:
+                if (previous != xarpus)
+                {
+                    currentRoom = xarpus;
+                    enteredXarpus();
+                }
+                activeState = true;
+                break;
+            case VERZIK:
+                if (previous != verzik)
+                {
+                    currentRoom = verzik;
+                    enteredVerzik();
+                }
+                activeState = true;
+                break;
+            case TOA_NEXUS:
+                if (previous != nexus)
+                {
+                    currentRoom = nexus;
+                    enteredNexus();
+                }
+                activeState = true;
+                break;
+            case CRONDIS:
+                if (previous != crondis)
+                {
+                    currentRoom = crondis;
+                    enteredCrondis();
+                }
+                activeState = true;
+                break;
+            case ZEBAK:
+                if (previous != zebak)
+                {
+                    currentRoom = zebak;
+                    enteredZebak();
+                }
+                activeState = true;
+                break;
+            case SCABARAS:
+                if (previous != scabaras)
+                {
+                    currentRoom = scabaras;
+                    enteredScabaras();
+                }
+                activeState = true;
+                break;
+            case KEPHRI:
+                if (previous != kephri)
+                {
+                    currentRoom = kephri;
+                    enteredKephri();
+                }
+                activeState = true;
+                break;
+            case APMEKEN:
+                if (previous != apmeken)
+                {
+                    currentRoom = apmeken;
+                    enteredApmeken();
+                }
+                activeState = true;
+                break;
+            case BABA:
+                if (previous != baba)
+                {
+                    currentRoom = baba;
+                    enteredBaba();
+                }
+                activeState = true;
+                break;
+            case HET:
+                if (previous != het)
+                {
+                    currentRoom = het;
+                    enteredHet();
+                }
+                activeState = true;
+                break;
+            case AKKHA:
+                if (previous != akkha)
+                {
+                    currentRoom = akkha;
+                    enteredAkkha();
+                }
+                activeState = true;
+                break;
+            case WARDENS:
+                if (previous != wardens)
+                {
+                    currentRoom = wardens;
+                    enteredWardens();
+                }
+                activeState = true;
+                break;
+            case TOMB:
+                enteredTomb();
+                break;
         }
         inTheatre = activeState;
+    }
+
+    private boolean TOAStarted = false;
+
+    private void enteredTomb()
+    {
+        clog.addLine(ENTERED_NEW_TOA_REGION, "Tomb");
+    }
+
+    private void enteredNexus()
+    {
+        clog.addLine(ENTERED_NEW_TOA_REGION, TOA_NEXUS.name);
+        nexus.reset();
+    }
+
+    private void enteredCrondis()
+    {
+        if (!toaHandler.isActive())
+        {
+            toaHandler.start();
+        }
+        clog.addLine(ENTERED_NEW_TOA_REGION, CRONDIS.name);
+        liveFrame.tabbedPane.setSelectedIndex(4);
+        crondis.reset();
+    }
+
+    private void enteredZebak()
+    {
+        clog.addLine(ENTERED_NEW_TOA_REGION, ZEBAK.name);
+        liveFrame.tabbedPane.setSelectedIndex(5);
+        zebak.reset();
+    }
+
+    private void enteredScabaras()
+    {
+        if (!toaHandler.isActive())
+        {
+            toaHandler.start();
+        }
+        clog.addLine(ENTERED_NEW_TOA_REGION, SCABARAS.name);
+        liveFrame.tabbedPane.setSelectedIndex(2);
+        scabaras.reset();
+    }
+
+    private void enteredKephri()
+    {
+        clog.addLine(ENTERED_NEW_TOA_REGION, KEPHRI.name);
+        liveFrame.tabbedPane.setSelectedIndex(3);
+        kephri.reset();
+    }
+
+    private void enteredApmeken()
+    {
+        if (!toaHandler.isActive())
+        {
+            toaHandler.start();
+        }
+        clog.addLine(ENTERED_NEW_TOA_REGION, APMEKEN.name);
+        liveFrame.tabbedPane.setSelectedIndex(0);
+        apmeken.reset();
+    }
+
+    private void enteredBaba()
+    {
+        clog.addLine(ENTERED_NEW_TOA_REGION, BABA.name);
+        liveFrame.tabbedPane.setSelectedIndex(1);
+        baba.reset();
+    }
+
+    private void enteredHet()
+    {
+        if (!toaHandler.isActive())
+        {
+            toaHandler.start();
+        }
+        clog.addLine(ENTERED_NEW_TOA_REGION, HET.name);
+        liveFrame.tabbedPane.setSelectedIndex(6);
+        het.reset();
+    }
+
+    private void enteredAkkha()
+    {
+        clog.addLine(ENTERED_NEW_TOA_REGION, AKKHA.name);
+        liveFrame.tabbedPane.setSelectedIndex(7);
+        akkha.reset();
+    }
+
+    private void enteredWardens()
+    {
+        clog.addLine(ENTERED_NEW_TOA_REGION, WARDENS.name);
+        liveFrame.tabbedPane.setSelectedIndex(8);
+        wardens.reset();
+    }
+
+    private void leftTOA()
+    {
+        lastTickPlayer.clear();
+        partyIntact = false;
+        currentPlayers.clear();
+        clog.addLine(LEFT_TOA, String.valueOf(client.getTickCount() - currentRoom.roomStartTick), currentRoom.getName());
+        clog.writeFile();
+        clog.migrateToNewRaid();
+        currentRoom = null;
+        activelyPiping.clear();
+        deferredAnimations.clear();
     }
 
     private void enteredMaiden()
@@ -315,6 +544,7 @@ public class AdvancedRaidTrackerPlugin extends Plugin
         clog.checkForEndFlag();
         clog.migrateToNewRaid();
         clog.addLine(ENTERED_TOB);
+        liveFrame.switchToTOB();
         deferredTick = client.getTickCount() + 2;
         maiden.reset();
         liveFrame.tabbedPane.setSelectedIndex(0);
@@ -485,22 +715,22 @@ public class AdvancedRaidTrackerPlugin extends Plugin
         switch (TOBRoom.valueOf(room.value))
         {
             case MAIDEN:
-                liveFrame.addMaidenLine(value, description);
+                liveFrame.addLine("Maiden", value, description);
                 break;
             case BLOAT:
-                liveFrame.addBloatLine(value, description);
+                liveFrame.addLine("Bloat", value, description);
                 break;
             case NYLOCAS:
-                liveFrame.addNyloLine(value, description);
+                liveFrame.addLine("Nylocas", value, description);
                 break;
             case SOTETSEG:
-                liveFrame.addSoteLine(value, description);
+                liveFrame.addLine("Sotetseg", value, description);
                 break;
             case XARPUS:
-                liveFrame.addXarpLine(value, description);
+                liveFrame.addLine("Xarpus", value, description);
                 break;
             case VERZIK:
-                liveFrame.addVerzikLine(value, description);
+                liveFrame.addLine("Verzik", value, description);
                 break;
         }
     }
@@ -521,26 +751,27 @@ public class AdvancedRaidTrackerPlugin extends Plugin
 
     public void addThrallOutlineBox(ThrallOutlineBox outlineBox)
     {
-        clog.addLine(THRALL_SPAWN, outlineBox.owner, String.valueOf(outlineBox.spawnTick), String.valueOf(outlineBox.id));
+        clog.addLine(THRALL_SPAWN, outlineBox.owner, String.valueOf(outlineBox.spawnTick), String.valueOf(outlineBox.id), currentRoom.getName());
         liveFrame.getPanel(currentRoom.getName()).addThrallBox(outlineBox);
     }
 
     public Map<String, PlayerCopy> lastTickPlayer = new HashMap<>();
+
     public int getRoomTick()
     {
         return client.getTickCount() - currentRoom.roomStartTick;
     }
 
+
     @Subscribe
     public void onGameTick(GameTick event)
     {
-        if(loggingIn)
+        if (loggingIn)
         {
             try
             {
                 clog.setName(client.getLocalPlayer().getName());
-            }
-            catch (Exception e)
+            } catch (Exception e)
             {
                 log.info("failed to set name?");
             }
@@ -548,58 +779,124 @@ public class AdvancedRaidTrackerPlugin extends Plugin
         }
         checkAnimationsThatChanged();
         checkOverheadTextsThatChanged();
+        checkActivelyPiping();
+        handleQueuedProjectiles();
+        removeDeadProjectiles();
+        removeDeadVenges();
+        updateThrallVengTracker();
 
-        for (Player p : activelyPiping.keySet())
+        updateRoom();
+        if (inTheatre)
         {
-            if ((client.getTickCount() > (activelyPiping.get(p) + 1)) && ((client.getTickCount() - activelyPiping.get(p)-1) % 2 == 0))
+            wasInTheatre = true;
+            currentRoom.updateGameTick(event);
+
+            if (currentRoom.isActive())
             {
-                if (p.getAnimation() == BLOWPIPE_ANIMATION || p.getAnimation() == BLOWPIPE_ANIMATION_OR)
+                liveFrame.incrementTick(currentRoom.getName());
+                int HP_VARBIT = 6448;
+                liveFrame.getPanel(currentRoom.getName()).addRoomHP(client.getTickCount() - currentRoom.roomStartTick, client.getVarbitValue(HP_VARBIT));
+                clog.addLine(UPDATE_HP, String.valueOf(client.getVarbitValue(HP_VARBIT)), String.valueOf(client.getTickCount() - currentRoom.roomStartTick), currentRoom.getName());
+            }
+
+            if (client.getTickCount() == deferredTick)
+            {
+                if (currentRoom instanceof NexusHandler)
                 {
-                    PlayerCopy previous = lastTickPlayer.get(p.getName());
-                    if(previous != null)
+                    String[] players = {"", "", "", "", "", "", "", ""};
+                    int varcStrID = 1099;
+                    for (int i = varcStrID; i < varcStrID + 8; i++)
                     {
-                        clog.addLine(PLAYER_ATTACK,
-                                previous.name + ":" + (client.getTickCount() - currentRoom.roomStartTick - 1),
-                                previous.animation + ":" + previous.wornItems,
-                                "",
-                                previous.weapon + ":" + previous.interactingIndex + ":" + previous.interactingID,
-                                "-1:" + previous.interactingName);
-                        liveFrame.addAttack(new PlayerDidAttack(itemManager,
-                                previous.name,
-                                String.valueOf(previous.animation),
-                                -1,
-                                previous.weapon,
-                                "-1",
-                                "",
-                                previous.interactingIndex,
-                                previous.interactingID,
-                                previous.interactingName,
-                                previous.wornItems
-                        ), currentRoom.getName());
+                        if (client.getVarcStrValue(i) != null && !client.getVarcStrValue(i).isEmpty())
+                        {
+                            players[i - varcStrID] = client.getVarcStrValue(i).replaceAll(String.valueOf((char) 160), String.valueOf((char) 32));
+                        }
                     }
+                    for (String s : players)
+                    {
+                        if (!s.isEmpty())
+                        {
+                            currentPlayers.add(s);
+                        }
+                    }
+                    liveFrame.setPlayers(currentPlayers);
+                    clog.addLine(TOA_PARTY_MEMBERS, players[0], players[1], players[2], players[3], players[4], players[5], players[6], players[7]);
+                    clog.addLine(INVOCATION_LEVEL, String.valueOf(client.getVarbitValue(TOA_RAID_LEVEL)));
+                } else
+                {
+                    String[] players = {"", "", "", "", ""};
+                    int varcStrID = 330; // Widget for player names
+                    for (int i = varcStrID; i < varcStrID + 5; i++)
+                    {
+                        if (client.getVarcStrValue(i) != null && !client.getVarcStrValue(i).isEmpty())
+                        {
+                            players[i - varcStrID] = Text.escapeJagex(client.getVarcStrValue(i));
+                        }
+                    }
+                    for (String s : players)
+                    {
+                        if (!s.isEmpty())
+                        {
+                            currentPlayers.add(s.replaceAll(String.valueOf((char) 160), String.valueOf((char) 32)));
+                        }
+                    }
+                    liveFrame.setPlayers(currentPlayers);
+                    checkPartyUpdate();
+                    boolean flag = false;
+                    for (String p : players)
+                    {
+                        if (p.replaceAll(String.valueOf((char) 160), String.valueOf((char) 32)).equals(Objects.requireNonNull(client.getLocalPlayer().getName()).replaceAll(String.valueOf((char) 160), String.valueOf((char) 32))))
+                        {
+                            flag = true;
+                        }
+                    }
+                    deferredTick = 0;
+                    if (!flag)
+                    {
+                        clog.addLine(SPECTATE);
+                    }
+                    clog.addLine(PARTY_MEMBERS, players[0], players[1], players[2], players[3], players[4]);
+                    maiden.setScale((int) Arrays.stream(players).filter(x -> !x.isEmpty()).count());
+                    scale = currentPlayers.size();
                 }
             }
-            int interactedIndex = -1;
-            int interactedID = -1;
-            String targetName = "";
-            Actor interacted = p.getInteracting();
-            if (interacted instanceof NPC)
+        } else
+        {
+            if (wasInTheatre)
             {
-                NPC npc = (NPC) interacted;
-                interactedID = npc.getId();
-                interactedIndex = npc.getIndex();
-                targetName = npc.getName();
+                if (currentRoom instanceof TOARoomHandler)
+                {
+                    leftTOA();
+                } else
+                {
+                    leftRaid();
+                }
+                wasInTheatre = false;
+                return;
             }
-            if (interacted instanceof Player)
-            {
-                Player player = (Player) interacted;
-                targetName = player.getName();
-            }
-            lastTickPlayer.put(p.getName(), new PlayerCopy(
-                    p.getName(), interactedIndex, interactedID, targetName, p.getAnimation(), PlayerWornItems.getStringFromComposition(p.getPlayerComposition()
-            ), String.valueOf(p.getPlayerComposition().getEquipmentId(KitType.WEAPON))));
         }
+        clog.writeFile();
+    }
 
+    private void updateThrallVengTracker()
+    {
+        playersTextChanged.clear();
+        localPlayers.clear();
+        for (Player p : client.getPlayers())
+        {
+            localPlayers.add(new PlayerShell(p.getWorldLocation(), p.getName()));
+            thrallTracker.updatePlayerInteracting(p.getName(), p.getInteracting());
+        }
+        for (DamageQueueShell damage : queuedThrallDamage)
+        {
+            damage.offset--;
+        }
+        thrallTracker.updateTick();
+        vengTracker.updateTick();
+    }
+
+    private void handleQueuedProjectiles()
+    {
         for (QueuedPlayerAttackLessProjectiles playerAttackQueuedItem : playersAttacked)
         {
             playerAttackQueuedItem.tick--;
@@ -644,10 +941,10 @@ public class AdvancedRaidTrackerPlugin extends Plugin
                                 }
                                 clog.addLine(PLAYER_ATTACK,
                                         playerAttackQueuedItem.player.getName() + ":" + (client.getTickCount() - currentRoom.roomStartTick),
-                                        playerAttackQueuedItem.animation+":"+PlayerWornItems.getStringFromComposition(playerAttackQueuedItem.player.getPlayerComposition()),
+                                        playerAttackQueuedItem.animation + ":" + PlayerWornItems.getStringFromComposition(playerAttackQueuedItem.player.getPlayerComposition()),
                                         playerAttackQueuedItem.spotAnims,
                                         playerAttackQueuedItem.weapon + ":" + interactedIndex + ":" + interactedID,
-                                        projectile.getId() + ":" + targetName);
+                                        projectile.getId() + ":" + targetName, currentRoom.getName());
                                 liveFrame.addAttack(new PlayerDidAttack(itemManager,
                                                 playerAttackQueuedItem.player.getName(),
                                                 playerAttackQueuedItem.animation,
@@ -667,82 +964,60 @@ public class AdvancedRaidTrackerPlugin extends Plugin
             }
         }
         playersAttacked.removeIf(p -> p.tick == 0);
-        removeDeadProjectiles();
-        removeDeadVenges();
-        playersTextChanged.clear();
-        localPlayers.clear();
-        for (Player p : client.getPlayers())
-        {
-            localPlayers.add(new PlayerShell(p.getWorldLocation(), p.getName()));
-            thrallTracker.updatePlayerInteracting(p.getName(), p.getInteracting());
-        }
-        for (DamageQueueShell damage : queuedThrallDamage)
-        {
-            damage.offset--;
-        }
-        thrallTracker.updateTick();
-        vengTracker.updateTick();
-        updateRoom();
-        if (inTheatre)
-        {
-            wasInTheatre = true;
-            currentRoom.updateGameTick(event);
+    }
 
-            if (currentRoom.isActive())
-            {
-                liveFrame.incrementTick(currentRoom.getName());
-                int HP_VARBIT = 6448;
-                liveFrame.getPanel(currentRoom.getName()).addRoomHP(client.getTickCount() - currentRoom.roomStartTick, client.getVarbitValue(HP_VARBIT));
-                clog.addLine(UPDATE_HP, String.valueOf(client.getVarbitValue(HP_VARBIT)), String.valueOf(client.getTickCount() - currentRoom.roomStartTick), currentRoom.getName());
-            }
-
-            if (client.getTickCount() == deferredTick)
-            {
-                String[] players = {"", "", "", "", ""};
-                int varcStrID = 330; // Widget for player names
-                for (int i = varcStrID; i < varcStrID + 5; i++)
-                {
-                    if (client.getVarcStrValue(i) != null && !client.getVarcStrValue(i).isEmpty())
-                    {
-                        players[i - varcStrID] = Text.escapeJagex(client.getVarcStrValue(i));
-                    }
-                }
-                for (String s : players)
-                {
-                    if (!s.isEmpty())
-                    {
-                        currentPlayers.add(s.replaceAll(String.valueOf((char) 160), String.valueOf((char) 32)));
-                    }
-                }
-                liveFrame.setPlayers(currentPlayers);
-                checkPartyUpdate();
-                boolean flag = false;
-                for (String p : players)
-                {
-                    if (p.replaceAll(String.valueOf((char) 160), String.valueOf((char) 32)).equals(Objects.requireNonNull(client.getLocalPlayer().getName()).replaceAll(String.valueOf((char) 160), String.valueOf((char) 32))))
-                    {
-                        flag = true;
-                    }
-                }
-                deferredTick = 0;
-                if (!flag)
-                {
-                    clog.addLine(SPECTATE);
-                }
-                clog.addLine(PARTY_MEMBERS, players[0], players[1], players[2], players[3], players[4]);
-                maiden.setScale((int) Arrays.stream(players).filter(x -> !x.isEmpty()).count());
-                scale = currentPlayers.size();
-            }
-        } else
+    private void checkActivelyPiping()
+    {
+        for (Player p : activelyPiping.keySet())
         {
-            if (wasInTheatre)
+            if ((client.getTickCount() > (activelyPiping.get(p) + 1)) && ((client.getTickCount() - activelyPiping.get(p) - 1) % 2 == 0))
             {
-                leftRaid();
-                wasInTheatre = false;
-                return;
+                if (p.getAnimation() == BLOWPIPE_ANIMATION || p.getAnimation() == BLOWPIPE_ANIMATION_OR)
+                {
+                    PlayerCopy previous = lastTickPlayer.get(p.getName());
+                    if (previous != null)
+                    {
+                        clog.addLine(PLAYER_ATTACK,
+                                previous.name + ":" + (client.getTickCount() - currentRoom.roomStartTick - 1),
+                                previous.animation + ":" + previous.wornItems,
+                                "",
+                                previous.weapon + ":" + previous.interactingIndex + ":" + previous.interactingID,
+                                "-1:" + previous.interactingName, currentRoom.getName());
+                        liveFrame.addAttack(new PlayerDidAttack(itemManager,
+                                previous.name,
+                                String.valueOf(previous.animation),
+                                -1,
+                                previous.weapon,
+                                "-1",
+                                "",
+                                previous.interactingIndex,
+                                previous.interactingID,
+                                previous.interactingName,
+                                previous.wornItems
+                        ), currentRoom.getName());
+                    }
+                }
             }
+            int interactedIndex = -1;
+            int interactedID = -1;
+            String targetName = "";
+            Actor interacted = p.getInteracting();
+            if (interacted instanceof NPC)
+            {
+                NPC npc = (NPC) interacted;
+                interactedID = npc.getId();
+                interactedIndex = npc.getIndex();
+                targetName = npc.getName();
+            }
+            if (interacted instanceof Player)
+            {
+                Player player = (Player) interacted;
+                targetName = player.getName();
+            }
+            lastTickPlayer.put(p.getName(), new PlayerCopy(
+                    p.getName(), interactedIndex, interactedID, targetName, p.getAnimation(), PlayerWornItems.getStringFromComposition(p.getPlayerComposition()
+            ), p.getPlayerComposition().getEquipmentId(KitType.WEAPON)));
         }
-        clog.writeFile();
     }
 
     private void checkOverheadTextsThatChanged()
@@ -762,7 +1037,7 @@ public class AdvancedRaidTrackerPlugin extends Plugin
 
     private void checkAnimationsThatChanged()
     {
-        for(Player p : deferredAnimations)
+        for (Player p : deferredAnimations)
         {
             checkAnimation(p);
         }
@@ -817,7 +1092,7 @@ public class AdvancedRaidTrackerPlugin extends Plugin
                     }
                 } else if (p.getAnimation() == TWO_HAND_SWORD_SWING)
                 {
-                    if(id == BANDOS_GODSWORD || id == BANDOS_GODSWORD_OR)
+                    if (id == BANDOS_GODSWORD || id == BANDOS_GODSWORD_OR)
                     {
                         if (config.showMistakesInChat())
                         {
@@ -838,67 +1113,40 @@ public class AdvancedRaidTrackerPlugin extends Plugin
                     { //Can be ZCB, Sang, or Dawnbringer. We only care about projectile for dawnbringer or ZCB. Sang & dawnbringer share animation
                         //so this filters powered staves unless it's dawnbringer
                         WorldPoint worldPoint = p.getWorldLocation();
-                        playersAttacked.add(new QueuedPlayerAttackLessProjectiles(p, worldPoint, 1, animations.toString(), String.valueOf(p.getPlayerComposition().getEquipmentId(KitType.WEAPON)), String.valueOf(p.getAnimation())));
-                    }
-                    else
+                        playersAttacked.add(new QueuedPlayerAttackLessProjectiles(p, worldPoint, 1, animations.toString(), p.getPlayerComposition().getEquipmentId(KitType.WEAPON), String.valueOf(p.getAnimation())));
+                    } else
                     {
                         int interactedIndex = -1;
                         int interactedID = -1;
                         Actor interacted = p.getInteracting();
-                        String targetName = "";
-                        if (interacted instanceof NPC)
-                        {
-                            NPC npc = (NPC) interacted;
-                            interactedID = npc.getId();
-                            interactedIndex = npc.getIndex();
-                            targetName = npc.getName();
-                        }
-                        generatePlayerAttackInfo(p, animations.toString(), interactedIndex, interactedID, interacted, targetName);
+                        generatePlayerAttackInfo(p, animations.toString(), interacted);
                     }
-                }
-                else if (p.getAnimation() != -1)
+                } else if (p.getAnimation() != -1)
                 {
                     int interactedIndex = -1;
                     int interactedID = -1;
                     Actor interacted = p.getInteracting();
-                    String targetName = "";
-                    if (interacted instanceof NPC)
-                    {
-                        NPC npc = (NPC) interacted;
-                        interactedID = npc.getId();
-                        interactedIndex = npc.getIndex();
-                    }
-                    generatePlayerAttackInfo(p, animations.toString(), interactedIndex, interactedID, interacted, targetName);
+                    generatePlayerAttackInfo(p, animations.toString(), interacted);
                     if (p.getAnimation() == BLOWPIPE_ANIMATION || p.getAnimation() == BLOWPIPE_ANIMATION_OR)
                     {
                         activelyPiping.put(p, client.getTickCount());
-                        interactedIndex = -1;
-                        interactedID = -1;
-                        targetName = "";
-                        interacted = p.getInteracting();
+                        String targetName = interacted.getName();
                         if (interacted instanceof NPC)
                         {
                             NPC npc = (NPC) interacted;
                             interactedID = npc.getId();
                             interactedIndex = npc.getIndex();
-                            targetName = npc.getName();
-                        }
-                        if (interacted instanceof Player)
-                        {
-                            Player player = (Player) interacted;
-                            targetName = player.getName();
                         }
                         lastTickPlayer.put(p.getName(), new PlayerCopy(
-                                p.getName(), interactedIndex, interactedID, targetName, p.getAnimation(), PlayerWornItems.getStringFromComposition(p.getPlayerComposition()
-                        ), String.valueOf(p.getPlayerComposition().getEquipmentId(KitType.WEAPON))));
-                    }
-                    else
+                                p.getName(), interactedIndex, interactedID, targetName,
+                                p.getAnimation(), PlayerWornItems.getStringFromComposition(p.getPlayerComposition()
+                        ), p.getPlayerComposition().getEquipmentId(KitType.WEAPON)));
+                    } else
                     {
                         activelyPiping.remove(p);
                         lastTickPlayer.remove(p.getName());
                     }
-                }
-                else
+                } else
                 {
                     activelyPiping.remove(p);
                     lastTickPlayer.remove(p.getName());
@@ -937,9 +1185,18 @@ public class AdvancedRaidTrackerPlugin extends Plugin
     @Subscribe
     public void onGroundObjectSpawned(GroundObjectSpawned event)
     {
-        if(inTheatre)
+        if (inTheatre)
         {
             currentRoom.updateGroundObjectSpawned(event);
+        }
+    }
+
+    @Subscribe
+    public void onGroundObjectDespawned(GroundObjectDespawned event)
+    {
+        if (inTheatre)
+        {
+            currentRoom.updateGroundObjectDespawned(event);
         }
     }
 
@@ -1057,7 +1314,7 @@ public class AdvancedRaidTrackerPlugin extends Plugin
     @Subscribe
     public void onConfigChanged(ConfigChanged event)
     {
-        if(event.getGroup().equals("Advanced Raid Tracker") && event.getKey().contains("primary"))
+        if (event.getGroup().equals("Advanced Raid Tracker") && event.getKey().contains("primary"))
         {
             liveFrame.redrawAll();
         }
@@ -1066,14 +1323,13 @@ public class AdvancedRaidTrackerPlugin extends Plugin
     @Subscribe
     public void onAnimationChanged(AnimationChanged event)
     {
-        if(event.getActor() instanceof Player)
+        if (event.getActor() instanceof Player)
         {
             Player p = (Player) event.getActor();
-            if(event.getActor().getAnimation() == 6294 || event.getActor().getAnimation() == 722 || event.getActor().getAnimation() == 6299 || event.getActor().getAnimation() == -1)
+            if (event.getActor().getAnimation() == 6294 || event.getActor().getAnimation() == 722 || event.getActor().getAnimation() == 6299 || event.getActor().getAnimation() == -1)
             {
                 checkAnimation(p);
-            }
-            else
+            } else
             {
                 deferredAnimations.add(p);
             }
@@ -1107,24 +1363,37 @@ public class AdvancedRaidTrackerPlugin extends Plugin
         }
     }
 
-    private void generatePlayerAttackInfo(Player p, String animations, int interactedIndex, int interactedID, Actor interacted, String targetName)
+    /**
+     * Generates a PlayerDidAttack entry into the log.
+     *
+     * @param p          the current player
+     * @param animations animations happening
+     * @param interacted Actor (Player or NPC) that was interacted with.
+     */
+    private void generatePlayerAttackInfo(Player p, String animations, Actor interacted)
     {
-        if (interacted instanceof Player)
+        int interactedIndex = -1;
+        int interactedID = -1;
+        String targetName = interacted.getName();
+
+        if (interacted instanceof NPC)
         {
-            Player player = (Player) interacted;
-            targetName = player.getName();
+            NPC npc = (NPC) interacted;
+            interactedID = npc.getId();
+            interactedIndex = npc.getIndex();
         }
+
         clog.addLine(PLAYER_ATTACK,
                 p.getName() + ":" + (client.getTickCount() - currentRoom.roomStartTick),
-                p.getAnimation()+":"+PlayerWornItems.getStringFromComposition(p.getPlayerComposition()),
+                p.getAnimation() + ":" + PlayerWornItems.getStringFromComposition(p.getPlayerComposition()),
                 animations,
                 p.getPlayerComposition().getEquipmentId(KitType.WEAPON) + ":" + interactedIndex + ":" + interactedID,
-                "-1:" + targetName);
+                "-1:" + targetName, currentRoom.getName());
         liveFrame.addAttack(new PlayerDidAttack(itemManager,
                 String.valueOf(p.getName()),
                 String.valueOf(p.getAnimation()),
                 0,
-                String.valueOf(p.getPlayerComposition().getEquipmentId(KitType.WEAPON)),
+                p.getPlayerComposition().getEquipmentId(KitType.WEAPON),
                 "-1",
                 animations,
                 interactedIndex,

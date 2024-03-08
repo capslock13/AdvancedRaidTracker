@@ -1,5 +1,6 @@
 package com.advancedraidtracker.utility;
 
+import com.advancedraidtracker.SimpleRaidDataBase;
 import com.advancedraidtracker.SimpleTOBData;
 import com.advancedraidtracker.utility.datautility.DataPoint;
 import lombok.extern.slf4j.Slf4j;
@@ -13,16 +14,16 @@ import java.util.stream.Collectors;
 @Slf4j
 public class StatisticGatherer
 {
-    public static double getOverallTimeAverage(ArrayList<SimpleTOBData> data)
+    public static double getOverallTimeAverage(ArrayList<SimpleRaidDataBase> data)
     {
-        data = data.stream().filter(SimpleTOBData::getOverallTimeAccurate).collect(Collectors.toCollection(ArrayList::new));
+        data = data.stream().filter(SimpleRaidDataBase::getOverallTimeAccurate).collect(Collectors.toCollection(ArrayList::new));
         if (data.isEmpty())
         {
             return -1;
         }
         double total = 0;
         double count = 0;
-        for (SimpleTOBData d : data)
+        for (SimpleRaidDataBase d : data)
         {
             total += d.getTimeSum();
             count++;
@@ -101,9 +102,10 @@ public class StatisticGatherer
 
     public static double getGenericAverage(ArrayList<SimpleTOBData> data, DataPoint parameter)
     {
-        if(parameter == DataPoint.CHALLENGE_TIME)
+        if (parameter == DataPoint.CHALLENGE_TIME)
         {
-            return getOverallTimeAverage(data);
+            ArrayList<SimpleRaidDataBase> raidData = new ArrayList<>(data);
+            return getOverallTimeAverage(raidData);
         }
         double total = 0;
         double count = 0;
@@ -157,7 +159,7 @@ public class StatisticGatherer
 
     public static double getGenericMedian(ArrayList<SimpleTOBData> data, DataPoint param)
     {
-        if(param == DataPoint.OVERALL_TIME)
+        if (param == DataPoint.OVERALL_TIME)
         {
             return getOverallMedian(data);
         }
@@ -204,7 +206,7 @@ public class StatisticGatherer
 
     public static double getGenericMin(ArrayList<SimpleTOBData> data, DataPoint parameter)
     {
-        if(parameter == DataPoint.OVERALL_TIME)
+        if (parameter == DataPoint.OVERALL_TIME)
         {
             return getOverallTimeMin(data);
         }
@@ -243,7 +245,7 @@ public class StatisticGatherer
 
     public static double getGenericMax(ArrayList<SimpleTOBData> data, DataPoint parameter)
     {
-        if(parameter == DataPoint.OVERALL_TIME)
+        if (parameter == DataPoint.OVERALL_TIME)
         {
             return getOverallMax(data);
         }

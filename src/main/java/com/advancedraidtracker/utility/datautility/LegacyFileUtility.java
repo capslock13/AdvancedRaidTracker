@@ -14,6 +14,7 @@ import static com.advancedraidtracker.utility.datautility.DataWriter.*;
 @Slf4j
 public class LegacyFileUtility //Older versions of the plugin during testing used a different file structure, this class contains methods used to migrate those
 {
+
     public static void splitLegacyFiles()
     {
         try
@@ -42,7 +43,7 @@ public class LegacyFileUtility //Older versions of the plugin during testing use
                             currentRaid.clear();
                         }
                     }
-                    if (!file.renameTo(new File(file.getAbsolutePath().substring(0, file.getAbsolutePath().length()-4)+"-archive.log")))
+                    if (!file.renameTo(new File(file.getAbsolutePath().substring(0, file.getAbsolutePath().length() - 4) + "-archive.log")))
                     {
                         log.info("failed to rename old file");
                     }
@@ -50,25 +51,24 @@ public class LegacyFileUtility //Older versions of the plugin during testing use
             }
             path = System.getProperty("user.home").replace("\\", "/") + "/.runelite/theatretracker/";
             File oldDirectory = new File(path);
-            if(oldDirectory.exists())
+            if (oldDirectory.exists())
             {
-                for(File folder : Objects.requireNonNull(oldDirectory.listFiles()))
+                for (File folder : Objects.requireNonNull(oldDirectory.listFiles()))
                 {
-                    if(folder.isDirectory() && !folder.getName().equals("primary"))
+                    if (folder.isDirectory() && !folder.getName().equals("primary"))
                     {
                         try
                         {
                             File newSubDirectory = new File(PLUGIN_DIRECTORY + "misc-dir/");
-                            if(!newSubDirectory.exists())
+                            if (!newSubDirectory.exists())
                             {
-                                if(!newSubDirectory.mkdirs())
+                                if (!newSubDirectory.mkdirs())
                                 {
                                     log.info("Failed to create folder: " + newSubDirectory.getAbsolutePath());
                                 }
                             }
                             Files.move(folder.toPath(), (new File(PLUGIN_DIRECTORY + "misc-dir/" + folder.getName()).toPath()));
-                        }
-                        catch(Exception e)
+                        } catch (Exception e)
                         {
                             log.info("Failed to move folder " + folder.getAbsolutePath());
                         }

@@ -35,6 +35,8 @@ public class ItemReference
                     "torture",
                     "serpentine helm",
                     "barrows",
+                    "voidwaker",
+                    "keris"
             },
             {
                     "masori",
@@ -65,10 +67,8 @@ public class ItemReference
                     "dawnbringer"
             }
     };
-
     public static final int MELEE = 1;
     public static final int RANGE = 2;
     public static final int MAGE = 3;
     public static final int NONE = 0;
-
 }

@@ -149,7 +149,7 @@ public class ViewTOBRaid extends BaseFrame
         bloatSubPanel.add(new JLabel(bloatBodyColor + data.getValue(DataPoint.BLOAT_DEATHS)));
 
         bloatSubPanel.add(new JLabel(bloatBodyColor + "Defense (1st walk)"));
-        bloatSubPanel.add(new JLabel(bloatBodyColor + ((data.bloatDefenseAccurate) ?String.valueOf(data.getValue(DataPoint.BLOAT_DEFENSE)) : INCOMPLETE_MARKER)));
+        bloatSubPanel.add(new JLabel(bloatBodyColor + ((data.bloatDefenseAccurate) ? String.valueOf(data.getValue(DataPoint.BLOAT_DEFENSE)) : INCOMPLETE_MARKER)));
 
         bloatSubPanel.add(new JLabel(bloatBodyColor + "Scythes 1st walk"));
         bloatSubPanel.add(new JLabel(bloatBodyColor + data.getValue(DataPoint.BLOAT_FIRST_WALK_SCYTHES)));

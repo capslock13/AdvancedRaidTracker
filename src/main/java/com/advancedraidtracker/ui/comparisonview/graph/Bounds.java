@@ -1,6 +1,6 @@
 package com.advancedraidtracker.ui.comparisonview.graph;
 
-import com.advancedraidtracker.SimpleTOBData;
+import com.advancedraidtracker.SimpleRaidDataBase;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -16,9 +16,9 @@ public class Bounds
     @Getter
     private int top;
 
-    public ArrayList<SimpleTOBData> raids;
+    public ArrayList<SimpleRaidDataBase> raids;
 
-    public Bounds(int l, int r, int b, int t, ArrayList<SimpleTOBData> raids)
+    public Bounds(int l, int r, int b, int t, ArrayList<SimpleRaidDataBase> raids)
     {
         this.raids = raids;
         left = l;

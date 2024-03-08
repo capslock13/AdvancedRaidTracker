@@ -1,15 +1,16 @@
 package com.advancedraidtracker.utility.datautility;
 
+import com.advancedraidtracker.constants.RaidType;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 
 public enum DataPoint
 {
-
     CHALLENGE_TIME("Challenge Time", types.TIME, rooms.ANY),
     OVERALL_TIME("Overall Time", types.TIME, rooms.ANY),
-    TIME_OUTSIDE_ROOMS("Time Outside Rooms", types.TIME, rooms.ANY),
+    TIME_OUTSIDE_ROOMS("Time Outside Rooms", types.TIME, rooms.ANY_TOB),
     MAIDEN_TOTAL_TIME("Maiden Time", types.TIME, rooms.MAIDEN),
     BLOAT_TOTAL_TIME("Bloat Time", types.TIME, rooms.BLOAT),
     NYLO_TOTAL_TIME("Nylocas Time", types.TIME, rooms.NYLOCAS),
@@ -41,7 +42,7 @@ public enum DataPoint
     MAIDEN_CHINS_THROWN_WRONG_DISTANCE("Maiden chins thrown wrong distance", types.OTHER_INT, rooms.MAIDEN, true),
     MAIDEN_CHIN_CORRECT_DISTANCE_PERCENT("Maiden chins correct distance %", types.OTHER_INT, rooms.MAIDEN, true),
     RAID_INDEX("Raid Index", types.OTHER_INT, rooms.ANY),
-    PARTY_SIZE("Party Size", types.OTHER_INT, rooms.ANY),
+    PARTY_SIZE("Party Size", types.OTHER_INT, rooms.ANY_TOB),
 
     BLOAT_DOWNS("Bloat downs", types.OTHER_INT, rooms.BLOAT),
     BLOAT_HP_FIRST_DOWN("Bloat HP% 1st down", types.OTHER_INT, rooms.BLOAT),
@@ -99,14 +100,14 @@ public enum DataPoint
     SOTE_MAZE_SUM("Sote mazes combined", types.TIME, rooms.SOTETSEG),
     XARP_SCREECH("Xarp screech", types.TIME, rooms.XARPUS),
     XARP_POST_SCREECH("Xarp post screech", types.TIME, rooms.XARPUS),
-    VERZIK_P1_SPLIT("Verzik P1 split", types.TIME, rooms.VERZIK),
+    VERZIK_P1_SPLIT("Verzik P1 Time", types.TIME, rooms.VERZIK),
 
     VERZIK_P2_TILL_REDS("Verzik P2 until reds split", types.TIME, rooms.VERZIK),
     VERZIK_REDS_SPLIT("Verzik reds split", types.TIME, rooms.VERZIK),
     VERZIK_REDS_DURATION("Verzik reds duration", types.TIME, rooms.VERZIK),
     VERZIK_P2_SPLIT("Verzik P2 split", types.TIME, rooms.VERZIK),
-    VERZIK_P2_DURATION("Verzik P2 duration", types.TIME, rooms.VERZIK),
-    VERZIK_P3_DURATION("Verzik P3 duration", types.TIME, rooms.VERZIK),
+    VERZIK_P2_DURATION("Verzik P2 Time", types.TIME, rooms.VERZIK),
+    VERZIK_P3_DURATION("Verzik P3 Time", types.TIME, rooms.VERZIK),
 
     NYLO_ENTRY("Nylo Entry", types.TIME, rooms.NYLOCAS),
     SOTE_ENTRY("Sote Entry", types.TIME, rooms.SOTETSEG),
@@ -144,7 +145,7 @@ public enum DataPoint
     ATTEMPTED_BGS_VERZ("Verzik attempted BGS", types.OTHER_INT, rooms.VERZIK, true),
     BGS_DAMAGE_VERZ("Verzik BGS damage", types.OTHER_INT, rooms.VERZIK, true),
 
-    THRALL_ATTACKS_TOTAL("Total thrall attacks", types.OTHER_INT, rooms.ANY, true),
+    THRALL_ATTACKS_TOTAL("Total thrall attacks", types.OTHER_INT, rooms.ANY_TOB, true),
     THRALL_ATTACKS_MAIDEN("Maiden thrall attacks", types.OTHER_INT, rooms.MAIDEN, true),
     THRALL_ATTACKS_BLOAT("Bloat thrall attacks", types.OTHER_INT, rooms.BLOAT, true),
     THRALL_ATTACKS_NYLO("Nylo thrall attacks", types.OTHER_INT, rooms.NYLOCAS, true),
@@ -152,7 +153,7 @@ public enum DataPoint
     THRALL_ATTACKS_XARP("Xarp thrall attacks", types.OTHER_INT, rooms.XARPUS, true),
     THRALL_ATTACKS_VERZIK("Verzik thrall attacks", types.OTHER_INT, rooms.VERZIK, true),
 
-    THRALL_DAMAGE_TOTAL("Total thrall damage", types.OTHER_INT, rooms.ANY, true),
+    THRALL_DAMAGE_TOTAL("Total thrall damage", types.OTHER_INT, rooms.ANY_TOB, true),
     THRALL_DAMAGE_MAIDEN("Maiden thrall damage", types.OTHER_INT, rooms.MAIDEN, true),
     THRALL_DAMAGE_BLOAT("Bloat thrall damage", types.OTHER_INT, rooms.BLOAT, true),
     THRALL_DAMAGE_NYLO("Nylo thrall damage", types.OTHER_INT, rooms.NYLOCAS, true),
@@ -160,7 +161,7 @@ public enum DataPoint
     THRALL_DAMAGE_XARP("Xarp thrall damage", types.OTHER_INT, rooms.XARPUS, true),
     THRALL_DAMAGE_VERZIK("Verzik thrall damage", types.OTHER_INT, rooms.VERZIK, true),
 
-    VENG_DAMAGE_TOTAL("Total veng damage", types.OTHER_INT, rooms.ANY),
+    VENG_DAMAGE_TOTAL("Total veng damage", types.OTHER_INT, rooms.ANY_TOB),
     VENG_DAMAGE_MAIDEN("Maiden veng damage", types.OTHER_INT, rooms.MAIDEN),
     VENG_DAMAGE_BLOAT("Bloat veng damage", types.OTHER_INT, rooms.BLOAT),
     VENG_DAMAGE_NYLO("Nylo veng damage", types.OTHER_INT, rooms.NYLOCAS),
@@ -168,7 +169,7 @@ public enum DataPoint
     VENG_DAMAGE_XARP("Xarp veng damage", types.OTHER_INT, rooms.XARPUS),
     VENG_DAMAGE_VERZIK("Verzik veng damage", types.OTHER_INT, rooms.VERZIK),
 
-    VENG_CASTS_TOTAL("Total veng casts", types.OTHER_INT, rooms.ANY),
+    VENG_CASTS_TOTAL("Total veng casts", types.OTHER_INT, rooms.ANY_TOB),
     VENG_CASTS_MAIDEN("Maiden veng casts", types.OTHER_INT, rooms.MAIDEN),
     VENG_CASTS_BLOAT("Bloat veng casts", types.OTHER_INT, rooms.BLOAT),
     VENG_CASTS_NYLO("Nylo veng casts", types.OTHER_INT, rooms.NYLOCAS),
@@ -176,22 +177,179 @@ public enum DataPoint
     VENG_CASTS_XARP("Xarp veng casts", types.OTHER_INT, rooms.XARPUS),
     VENG_CASTS_VERZIK("Verzik veng casts", types.OTHER_INT, rooms.VERZIK),
 
-    VENG_PROCS_TOTAL("Total veng procs", types.OTHER_INT, rooms.ANY),
+    VENG_PROCS_TOTAL("Total veng procs", types.OTHER_INT, rooms.ANY_TOB),
     VENG_PROCS_MAIDEN("Maiden veng procs", types.OTHER_INT, rooms.MAIDEN),
     VENG_PROCS_BLOAT("Bloat veng procs", types.OTHER_INT, rooms.BLOAT),
     VENG_PROCS_NYLO("Nylo veng procs", types.OTHER_INT, rooms.NYLOCAS),
     VENG_PROCS_SOTE("Sote veng procs", types.OTHER_INT, rooms.SOTETSEG),
     VENG_PROCS_XARP("Xarp veng procs", types.OTHER_INT, rooms.XARPUS),
     VENG_PROCS_VERZIK("Verzik veng procs", types.OTHER_INT, rooms.VERZIK),
-    KODAI_BOPS("Kodai bops", types.OTHER_INT, rooms.ANY, true),
-    DWH_BOPS("DWH bops", types.OTHER_INT, rooms.ANY, true),
-    CHALLY_POKE("Chally pokes", types.OTHER_INT, rooms.ANY, true),
-    BGS_WHACKS("BGS whacks", types.OTHER_INT, rooms.ANY, true),
-    TOTAL_DEATHS("Total deaths", types.OTHER_INT, rooms.ANY, true),
-    DEATHS("Alternate Deaths", types.OTHER_INT, rooms.ALL, true),
-    UNKNOWN("Unknown", types.OTHER_BOOL, rooms.ANY);
+    KODAI_BOPS("Kodai bops", types.OTHER_INT, rooms.ANY_TOB, true),
+    DWH_BOPS("DWH bops", types.OTHER_INT, rooms.ANY_TOB, true),
+    CHALLY_POKE("Chally pokes", types.OTHER_INT, rooms.ANY_TOB, true),
+    BGS_WHACKS("BGS whacks", types.OTHER_INT, rooms.ANY_TOB, true),
+    TOTAL_DEATHS("Total deaths", types.OTHER_INT, rooms.ANY_TOB, true),
+    DEATHS("Alternate Deaths", types.OTHER_INT, rooms.ALL_TOB, true),
+    UNKNOWN("Unknown", types.OTHER_BOOL, rooms.ANY_TOB),
 
+    TOA_PARTY_SIZE("TOA Party Size", types.OTHER_INT, rooms.ANY_TOA),
+    TOA_RAID_INDEX("TOA Raid Index", types.OTHER_INT, rooms.ANY_TOA),
+    TOA_INVOCATION_LEVEL("TOA Invocation Level", types.OTHER_INT, rooms.ANY_TOA),
 
+    CRONDIS_TIME("Crondis Time", types.TIME, rooms.CRONDIS),
+    ZEBAK_TIME("Zebak Time", types.TIME, rooms.ZEBAK),
+
+    SCABARAS_TIME("Scabaras Time", types.TIME, rooms.SCABARAS),
+
+    KEPHRI_TIME("Kephri Time", types.TIME, rooms.KEPHRI),
+    KEPHRI_P1_DURATION("Kephri P1 Duration", types.TIME, rooms.KEPHRI),
+    KEPHRI_SWARM1_DURATION("Kephri Swarm1 Duration", types.TIME, rooms.KEPHRI),
+    KEPHRI_P2_SPLIT("Kephri P2 Split", types.TIME, rooms.KEPHRI),
+    KEPHRI_P2_DURATION("Kephri P2 Duration", types.TIME, rooms.KEPHRI),
+    KEPHRI_SWARM2_SPLIT("Kephri Swarm2 Split", types.TIME, rooms.KEPHRI),
+    KEPHRI_SWARM2_DURATION("Kephri Swarm2 Duration", types.TIME, rooms.KEPHRI),
+    KEPHRI_P3_SPLIT("Kephri P3 Split", types.TIME, rooms.KEPHRI),
+    KEPHRI_P3_DURATION("Kephri P3 Duration", types.TIME, rooms.KEPHRI),
+
+    APMEKEN_TIME("Apmeken Time", types.TIME, rooms.APMEKEN),
+
+    BABA_TIME("Baba Time", types.TIME, rooms.BABA),
+    BABA_P1_DURATION("Baba P1 Duration", types.TIME, rooms.BABA),
+    BABA_BOULDER_1_DURATION("Baba Boulder1 Duration", types.TIME, rooms.BABA),
+    BABA_P2_SPLIT("Baba P2 Split", types.TIME, rooms.BABA),
+    BABA_P2_DURATION("Baba P2 Duration", types.TIME, rooms.BABA),
+    BABA_BOULDER_2_SPLIT("Baba Boulder2 Split", types.TIME, rooms.BABA),
+    BABA_BOULDER_2_DURATION("Baba Boulder2 Duration", types.TIME, rooms.BABA),
+    BABA_P3_SPLIT("Baba P3 Split", types.TIME, rooms.BABA),
+    BABA_P3_DURATION("Baba P3 Duration", types.TIME, rooms.BABA),
+
+    HET_TIME("Het Time", types.TIME, rooms.HET),
+
+    AKKHA_TIME("Akkha Time", types.TIME, rooms.AKKHA),
+
+    AKKHA_P1_DURATION("Akkha P1 Duration", types.TIME, rooms.AKKHA),
+    AKKHA_SHADOW_1_DURATION("Akkha Shadow1 Duration", types.TIME, rooms.AKKHA),
+
+    AKKHA_P2_SPLIT("Akkha P2 Split", types.TIME, rooms.AKKHA),
+    AKKHA_P2_DURATION("Akkha P2 Duration", types.TIME, rooms.AKKHA),
+    AKKHA_SHADOW_2_SPLIT("Akkha Shadow2 Split", types.TIME, rooms.AKKHA),
+    AKKHA_SHADOW_2_DURATION("Akkha Shadow2 Duration", types.TIME, rooms.AKKHA),
+
+    AKKHA_P3_SPLIT("Akkha P3 Split", types.TIME, rooms.AKKHA),
+    AKKHA_P3_DURATION("Akkha P3 Duration", types.TIME, rooms.AKKHA),
+    AKKHA_SHADOW_3_SPLIT("Akkha Shadow3 Split", types.TIME, rooms.AKKHA),
+    AKKHA_SHADOW_3_DURATION("Akkha Shadow3 Duration", types.TIME, rooms.AKKHA),
+
+    AKKHA_P4_SPLIT("Akkha P4 Split", types.TIME, rooms.AKKHA),
+    AKKHA_P4_DURATION("Akkha P4 Duration", types.TIME, rooms.AKKHA),
+    AKKHA_SHADOW_4_SPLIT("Akkha Shadow4 Split", types.TIME, rooms.AKKHA),
+    AKKHA_SHADOW_4_DURATION("Akkha Shadow4 Duration", types.TIME, rooms.AKKHA),
+
+    AKKHA_P5_SPLIT("Akkha P5 Split", types.TIME, rooms.AKKHA),
+    AKKHA_P5_DURATION("Akkha P5 Duration", types.TIME, rooms.AKKHA),
+
+    AKKHA_FINAL_PHASE_SPLIT("Akkha Final Phase Split", types.TIME, rooms.AKKHA),
+    AKKHA_FINAL_PHASE_DURATION("Akkha Final Phase Duration", types.TIME, rooms.AKKHA),
+
+    WARDENS_TIME("Wardens Time", types.TIME, rooms.WARDENS),
+    WARDENS_P1_DURATION("Wardens P1 Time", types.TIME, rooms.WARDENS),
+    WARDENS_P2_DURATION("Wardens P2 Time", types.TIME, rooms.WARDENS),
+    WARDENS_P3_SPLIT("Wardens P3 Split", types.TIME, rooms.WARDENS),
+    WARDENS_ENRAGED_SPLIT("Wardens Enraged Split", types.TIME, rooms.WARDENS),
+    WARDENS_UNTIL_ENRAGED_DURATION("Wardens Until Enraged Duration", types.TIME, rooms.WARDENS),
+    WARDENS_P3_DURATION("Wardens P3 Time", types.TIME, rooms.WARDENS),
+    WARDENS_ENRAGED_DURATION("Wardens Enraged Duration", types.TIME, rooms.WARDENS),
+    APMEKEN_VOLATILE_COUNT("Apmeken Volatile Count", types.OTHER_INT, rooms.APMEKEN),
+    APMEKEN_SHAMAN_COUNT("Apmeken Shaman Count", types.OTHER_INT, rooms.APMEKEN),
+    APMEKEN_CURSED_COUNT("Apmeken Cursed Count", types.OTHER_INT, rooms.APMEKEN),
+    BABA_BOULDERS_THROWN("Baba Boulders Thrown", types.OTHER_INT, rooms.BABA),
+    BABA_BOULDERS_BROKEN("Baba Boulders Broken", types.OTHER_INT, rooms.BABA),
+    KEPHRI_SWARMS_HEALED("Kephri Swarms Healed", types.OTHER_INT, rooms.KEPHRI),
+    KEPHRI_SWARMS_TOTAL("Kephri Swarms Total", types.OTHER_INT, rooms.KEPHRI),
+    KEPHRI_MELEE_SCARAB_HEALS("Kephri Melee Scarab Heals", types.OTHER_INT, rooms.KEPHRI),
+    KEPHRI_DUNG_THROWN("Kephri Dung Thrown", types.OTHER_INT, rooms.KEPHRI),
+    KEPHRI_MELEE_TICKS_ALIVE("Kephri Melee Ticks Alive", types.OTHER_INT, rooms.KEPHRI),
+    HET_DOWNS("Het Downs", types.OTHER_INT, rooms.HET),
+    CRONDIS_HEALS_100("Crondis Heals 100", types.OTHER_INT, rooms.CRONDIS),
+    CRONDIS_HEALS_50("Crondis Heals 50", types.OTHER_INT, rooms.CRONDIS),
+    CRONDIS_HEALS_25("Crondis Heals 25", types.OTHER_INT, rooms.CRONDIS),
+    CRONDIS_CROCODILE_DAMAGE("Crondis Damage from Crocodile", types.OTHER_INT, rooms.CRONDIS),
+    ZEBAK_JUGS_PUSHED("Zebak Jugs Pushed", types.OTHER_INT, rooms.ZEBAK);
+
+    public static ArrayList<DataPoint> getTOBValues()
+    {
+        ArrayList<DataPoint> dataPoints = new ArrayList<>();
+        for (DataPoint dataPoint : values())
+        {
+            if (dataPoint.isTOB())
+            {
+                dataPoints.add(dataPoint);
+            }
+        }
+        return dataPoints;
+    }
+
+    public static ArrayList<DataPoint> getTOAValues()
+    {
+        ArrayList<DataPoint> dataPoints = new ArrayList<>();
+        for (DataPoint dataPoint : values())
+        {
+            if (dataPoint.isTOA())
+            {
+                dataPoints.add(dataPoint);
+            }
+        }
+        return dataPoints;
+    }
+
+    public boolean isTOB()
+    {
+        return room.equals(rooms.ANY_TOB)
+                || room.equals(rooms.MAIDEN)
+                || room.equals(rooms.BLOAT)
+                || room.equals(rooms.NYLOCAS)
+                || room.equals(rooms.SOTETSEG)
+                || room.equals(rooms.XARPUS)
+                || room.equals(rooms.VERZIK)
+                || room.equals(rooms.ALL_TOB)
+                || room.equals(rooms.ANY);
+    }
+
+    public boolean isTOA()
+    {
+        return room.equals(rooms.ANY_TOA)
+                || room.equals(rooms.CRONDIS)
+                || room.equals(rooms.ZEBAK)
+                || room.equals(rooms.SCABARAS)
+                || room.equals(rooms.KEPHRI)
+                || room.equals(rooms.APMEKEN)
+                || room.equals(rooms.BABA)
+                || room.equals(rooms.HET)
+                || room.equals(rooms.AKKHA)
+                || room.equals(rooms.WARDENS)
+                || room.equals(rooms.ALL_TOA)
+                || room.equals(rooms.ANY);
+    }
+
+    public boolean isCOX()
+    {
+        return false;
+    }
+
+    public boolean isType(RaidType raidType)
+    {
+        switch (raidType)
+        {
+            case COX:
+                return isCOX();
+            case TOB:
+                return isTOB();
+            case TOA:
+                return isTOA();
+            default:
+                return true;
+        }
+    }
 
     public static DataPoint getValue(String s)
     {
@@ -207,14 +365,25 @@ public enum DataPoint
 
     public enum rooms
     {
-        ANY,
+        ANY_TOB,
         MAIDEN,
         BLOAT,
         NYLOCAS,
         SOTETSEG,
         XARPUS,
         VERZIK,
-        ALL
+        ALL_TOB,
+        ANY_TOA,
+        CRONDIS,
+        ZEBAK,
+        SCABARAS,
+        KEPHRI,
+        APMEKEN,
+        BABA,
+        HET,
+        AKKHA,
+        WARDENS,
+        ALL_TOA, ANY,
     }
 
     public enum types
@@ -258,10 +427,15 @@ public enum DataPoint
 
     public static String[] getPlayerSpecific()
     {
+        return getPlayerSpecific(RaidType.UNASSIGNED);
+    }
+
+    public static String[] getPlayerSpecific(RaidType raidType)
+    {
         ArrayList<String> valuesToGather = new ArrayList<>();
         for (DataPoint point : DataPoint.values())
         {
-            if (point.playerSpecific)
+            if (point.playerSpecific && point.isType(raidType))
             {
                 valuesToGather.add(point.name);
             }
@@ -373,91 +547,12 @@ public enum DataPoint
         return Arrays.copyOf(filtered.toArray(), filtered.size(), String[].class);
     }
 
-
-    public static String[] getMaidenNames()
+    public static String[] getSpecificNames(DataPoint.rooms room)
     {
         ArrayList<String> valuesToGather = new ArrayList<>();
         for (DataPoint point : DataPoint.values())
         {
-            if (point.room.equals(rooms.MAIDEN))
-            {
-                valuesToGather.add(point.name);
-            }
-        }
-        return Arrays.copyOf(valuesToGather.toArray(), valuesToGather.size(), String[].class);
-    }
-
-    public static String[] getBloatNames()
-    {
-        ArrayList<String> valuesToGather = new ArrayList<>();
-        for (DataPoint point : DataPoint.values())
-        {
-            if (point.room.equals(rooms.BLOAT))
-            {
-                valuesToGather.add(point.name);
-            }
-        }
-        return Arrays.copyOf(valuesToGather.toArray(), valuesToGather.size(), String[].class);
-    }
-
-    public static String[] getNyloNames()
-    {
-        ArrayList<String> valuesToGather = new ArrayList<>();
-        for (DataPoint point : DataPoint.values())
-        {
-            if (point.room.equals(rooms.NYLOCAS))
-            {
-                valuesToGather.add(point.name);
-            }
-        }
-        return Arrays.copyOf(valuesToGather.toArray(), valuesToGather.size(), String[].class);
-    }
-
-    public static String[] getSoteNames()
-    {
-        ArrayList<String> valuesToGather = new ArrayList<>();
-        for (DataPoint point : DataPoint.values())
-        {
-            if (point.room.equals(rooms.SOTETSEG))
-            {
-                valuesToGather.add(point.name);
-            }
-        }
-        return Arrays.copyOf(valuesToGather.toArray(), valuesToGather.size(), String[].class);
-    }
-
-    public static String[] getXarpNames()
-    {
-        ArrayList<String> valuesToGather = new ArrayList<>();
-        for (DataPoint point : DataPoint.values())
-        {
-            if (point.room.equals(rooms.XARPUS))
-            {
-                valuesToGather.add(point.name);
-            }
-        }
-        return Arrays.copyOf(valuesToGather.toArray(), valuesToGather.size(), String[].class);
-    }
-
-    public static String[] getVerzikNames()
-    {
-        ArrayList<String> valuesToGather = new ArrayList<>();
-        for (DataPoint point : DataPoint.values())
-        {
-            if (point.room.equals(rooms.VERZIK))
-            {
-                valuesToGather.add(point.name);
-            }
-        }
-        return Arrays.copyOf(valuesToGather.toArray(), valuesToGather.size(), String[].class);
-    }
-
-    public static String[] getAnyRoomNames()
-    {
-        ArrayList<String> valuesToGather = new ArrayList<>();
-        for (DataPoint point : DataPoint.values())
-        {
-            if (point.room.equals(rooms.ANY))
+            if (point.room.equals(room))
             {
                 valuesToGather.add(point.name);
             }
@@ -467,7 +562,8 @@ public enum DataPoint
 
     public static String[] getRoomTimes()
     {
-        return new String[]{"Challenge Time", "Overall Time", "Time Outside Rooms", "Maiden Time", "Bloat Time", "Nylocas Time", "Sotetseg Time", "Xarpus Time", "Verzik Time"};
+        return new String[]{"Challenge Time", "Overall Time", "Time Outside Rooms", "Maiden Time", "Bloat Time", "Nylocas Time", "Sotetseg Time", "Xarpus Time", "Verzik Time",
+                "Scabaras Time", "Kephri Time", "Apmeken Time", "Baba Time", "Crondis Time", "Zebak Time", "Het Time", "Akkha Time", "Wardens Time"};
     }
 
     public static ArrayList<String> getTimeNamesByRoom(rooms room)

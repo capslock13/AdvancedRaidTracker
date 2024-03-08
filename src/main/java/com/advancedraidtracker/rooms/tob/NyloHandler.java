@@ -1,7 +1,7 @@
 package com.advancedraidtracker.rooms.tob;
 
-import com.advancedraidtracker.AdvancedRaidTrackerPlugin;
 import com.advancedraidtracker.AdvancedRaidTrackerConfig;
+import com.advancedraidtracker.AdvancedRaidTrackerPlugin;
 import com.advancedraidtracker.constants.TOBRoom;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
@@ -26,7 +26,7 @@ import static com.advancedraidtracker.constants.TobIDs.*;
 import static com.advancedraidtracker.utility.RoomState.NyloRoomState.*;
 
 @Slf4j
-public class NyloHandler extends RoomHandler
+public class NyloHandler extends TOBRoomHandler
 {
     public RoomState.NyloRoomState roomState;
     private final ArrayList<NylocasShell> buildWave;
@@ -176,7 +176,7 @@ public class NyloHandler extends RoomHandler
             case NYLO_RANGE_SMALL_AGRO:
             case NYLO_MAGE_SMALL:
             case NYLO_MAGE_SMALL_AGRO:
-                if(pillarsSpawnedTick == -1)
+                if (pillarsSpawnedTick == -1)
                 {
                     startNylo();
                 }
@@ -189,7 +189,7 @@ public class NyloHandler extends RoomHandler
                 {
                     buildWave.add(cShell);
                     plugin.liveFrame.getPanel(getName()).addNPCMapping(event.getNpc().getIndex(), "W" + (currentWave + 1) + " " + cShell.getDescription());
-                    clog.addLine(ADD_NPC_MAPPING, String.valueOf(event.getNpc().getIndex()), "W" + (currentWave + 1) + " " + cShell.getDescription());
+                    clog.addLine(ADD_NPC_MAPPING, String.valueOf(event.getNpc().getIndex()), "W" + (currentWave + 1) + " " + cShell.getDescription(), getName());
                 } else
                 {
                     int matches = 0;
@@ -208,7 +208,7 @@ public class NyloHandler extends RoomHandler
                     }
                     if (matches == 1)
                     {
-                        clog.addLine(ADD_NPC_MAPPING, String.valueOf(event.getNpc().getIndex()), NylocasShell.getTypeName(event.getNpc().getId()) + " split from " + lastMatchedDescription + "(on w" + currentWave + ")");
+                        clog.addLine(ADD_NPC_MAPPING, String.valueOf(event.getNpc().getIndex()), NylocasShell.getTypeName(event.getNpc().getId()) + " split from " + lastMatchedDescription + "(on w" + currentWave + ")", getName());
                         plugin.liveFrame.getPanel(getName()).addNPCMapping(event.getNpc().getIndex(), NylocasShell.getTypeName(event.getNpc().getId()) + " split from " + lastMatchedDescription + "(on w" + currentWave + ")");
                     }
                     switch (event.getNpc().getId())
@@ -251,7 +251,7 @@ public class NyloHandler extends RoomHandler
             case NYLO_BOSS_RANGE_SM:
             case NYLO_BOSS_MAGE_SM:
                 bossSpawned();
-                if(pillarsSpawnedTick == -1)
+                if (pillarsSpawnedTick == -1)
                 {
                     startNylo();
                 }
@@ -384,8 +384,7 @@ public class NyloHandler extends RoomHandler
         if (client.getNpcs().stream().anyMatch(p -> Objects.requireNonNull(p.getName()).toLowerCase().contains("nylo")))
         {
             accurateEntry = false;
-        }
-        else
+        } else
         {
             clog.addLine(ACCURATE_NYLO_START);
         }
@@ -437,7 +436,7 @@ public class NyloHandler extends RoomHandler
         {
             offset1 = 0;
         }
-        plugin.liveFrame.setNyloFinished(deathTick - pillarsSpawnedTick + offset1);
+        plugin.liveFrame.setRoomFinished(getName(), deathTick - pillarsSpawnedTick + offset1);
         sendTimeMessage("Wave 'Nylocas boss' complete! Duration: ", deathTick - pillarsSpawnedTick + offset1, deathTick + offset1 - bossSpawn, false);
         clog.addLine(NYLO_DESPAWNED, String.valueOf(deathTick - pillarsSpawnedTick + offset1));
     }

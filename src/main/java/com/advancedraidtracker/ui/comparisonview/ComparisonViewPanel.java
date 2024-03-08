@@ -1,5 +1,6 @@
 package com.advancedraidtracker.ui.comparisonview;
 
+import com.advancedraidtracker.SimpleRaidDataBase;
 import com.advancedraidtracker.SimpleTOBData;
 import com.advancedraidtracker.AdvancedRaidTrackerConfig;
 import com.advancedraidtracker.ui.comparisonview.graph.GraphPanel;
@@ -59,7 +60,7 @@ public class ComparisonViewPanel extends JPanel
     private final JComboBox<String> compareByComboBox;
     private final JComboBox<String> graphTypeComboBox;
     private boolean time = false;
-    ArrayList<ArrayList<SimpleTOBData>> data;
+    ArrayList<ArrayList<SimpleRaidDataBase>> data;
 
     JPanel scrollTopPanel;
     JPanel scrollBottomPanel;
@@ -83,7 +84,8 @@ public class ComparisonViewPanel extends JPanel
     private final ConfigManager configManager;
 
     private final ClientThread clientThread;
-    public ComparisonViewPanel(ArrayList<ArrayList<SimpleTOBData>> raidData, ArrayList<String> names, AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
+
+    public ComparisonViewPanel(ArrayList<ArrayList<SimpleRaidDataBase>> raidData, ArrayList<String> names, AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
     {
         this.configManager = configManager;
         this.clientThread = clientThread;
@@ -218,13 +220,13 @@ public class ComparisonViewPanel extends JPanel
 
         Map<String, String[]> comboPopupData = new LinkedHashMap<>();
         comboPopupData.put("Room Times", DataPoint.getRoomTimes());
-        comboPopupData.put("Maiden", DataPoint.getMaidenNames());
-        comboPopupData.put("Bloat", DataPoint.getBloatNames());
-        comboPopupData.put("Nylocas", DataPoint.getNyloNames());
-        comboPopupData.put("Sotetseg", DataPoint.getSoteNames());
-        comboPopupData.put("Xarpus", DataPoint.getXarpNames());
-        comboPopupData.put("Verzik", DataPoint.getVerzikNames());
-        comboPopupData.put("Any", DataPoint.getAnyRoomNames());
+        comboPopupData.put("Maiden", DataPoint.getSpecificNames(DataPoint.rooms.MAIDEN));
+        comboPopupData.put("Bloat", DataPoint.getSpecificNames(DataPoint.rooms.BLOAT));
+        comboPopupData.put("Nylocas", DataPoint.getSpecificNames(DataPoint.rooms.NYLOCAS));
+        comboPopupData.put("Sotetseg", DataPoint.getSpecificNames(DataPoint.rooms.SOTETSEG));
+        comboPopupData.put("Xarpus", DataPoint.getSpecificNames(DataPoint.rooms.XARPUS));
+        comboPopupData.put("Verzik", DataPoint.getSpecificNames(DataPoint.rooms.VERZIK));
+        comboPopupData.put("Any TOB", DataPoint.getSpecificNames(DataPoint.rooms.ANY_TOB));
 
         comboPopupMenu = new JPopupMenu();
         comboPopupMenu.setBorder(new MatteBorder(1, 1, 1, 1, Color.DARK_GRAY));
@@ -537,59 +539,63 @@ public class ComparisonViewPanel extends JPanel
         updateCutoffs();
     }
 
-    GraphPanel getGraphPanel(ArrayList<SimpleTOBData> points)
+    GraphPanel getGraphPanel(ArrayList<SimpleRaidDataBase> points)
     {
         return new GraphPanel(points, config, itemManager, clientThread, configManager);
     }
 
-    private ArrayList<Integer> getArrayForStatistics(ArrayList<SimpleTOBData> data)
+    private ArrayList<Integer> getArrayForStatistics(ArrayList<SimpleRaidDataBase> data)
     {
         ArrayList<Integer> arrayToPass = new ArrayList<>();
-        for (SimpleTOBData raidData : data)
+        for (SimpleRaidDataBase raidData : data)
         {
             int value = raidData.getValue(DataPoint.getValue(String.valueOf(compareByComboBox.getSelectedItem())));
             if (value > -1)
             {
                 if (!time || value != 0)
                 {
-                    switch ((Objects.requireNonNull(DataPoint.getValue(String.valueOf(compareByComboBox.getSelectedItem())))).room)
+                    if (raidData instanceof SimpleTOBData)
                     {
-                        case MAIDEN:
-                            if (!raidData.maidenStartAccurate || !raidData.maidenEndAccurate)
-                            {
-                                continue;
-                            }
-                            break;
-                        case BLOAT:
-                            if (!raidData.bloatStartAccurate || !raidData.bloatEndAccurate)
-                            {
-                                continue;
-                            }
-                            break;
-                        case NYLOCAS:
-                            if (!raidData.nyloStartAccurate || !raidData.nyloEndAccurate)
-                            {
-                                continue;
-                            }
-                            break;
-                        case SOTETSEG:
-                            if (!raidData.soteStartAccurate || !raidData.soteEndAccurate)
-                            {
-                                continue;
-                            }
-                            break;
-                        case XARPUS:
-                            if (!raidData.xarpStartAccurate || !raidData.xarpEndAccurate)
-                            {
-                                continue;
-                            }
-                            break;
-                        case VERZIK:
-                            if (!raidData.verzikStartAccurate || !raidData.verzikEndAccurate)
-                            {
-                                continue;
-                            }
-                            break;
+                        SimpleTOBData tobData = (SimpleTOBData) raidData;
+                        switch ((Objects.requireNonNull(DataPoint.getValue(String.valueOf(compareByComboBox.getSelectedItem())))).room)
+                        {
+                            case MAIDEN:
+                                if (!tobData.maidenStartAccurate || !tobData.maidenEndAccurate)
+                                {
+                                    continue;
+                                }
+                                break;
+                            case BLOAT:
+                                if (!tobData.bloatStartAccurate || !tobData.bloatEndAccurate)
+                                {
+                                    continue;
+                                }
+                                break;
+                            case NYLOCAS:
+                                if (!tobData.nyloStartAccurate || !tobData.nyloEndAccurate)
+                                {
+                                    continue;
+                                }
+                                break;
+                            case SOTETSEG:
+                                if (!tobData.soteStartAccurate || !tobData.soteEndAccurate)
+                                {
+                                    continue;
+                                }
+                                break;
+                            case XARPUS:
+                                if (!tobData.xarpStartAccurate || !tobData.xarpEndAccurate)
+                                {
+                                    continue;
+                                }
+                                break;
+                            case VERZIK:
+                                if (!tobData.verzikStartAccurate || !tobData.verzikEndAccurate)
+                                {
+                                    continue;
+                                }
+                                break;
+                        }
                     }
                     arrayToPass.add(value);
                 }
@@ -615,8 +621,8 @@ public class ComparisonViewPanel extends JPanel
             otherBottomLeft.setBorder(BorderFactory.createTitledBorder(topGraphTabs.getTitleAt(topGraphTabs.getSelectedIndex()) + " values"));
             otherBottomRight.setBorder(BorderFactory.createTitledBorder(bottomGraphTabs.getTitleAt(bottomGraphTabs.getSelectedIndex()) + " values"));
 
-            ArrayList<SimpleTOBData> topGraphData = (data.get(topGraphTabs.getSelectedIndex()));
-            ArrayList<SimpleTOBData> bottomGraphData = data.get(bottomGraphTabs.getSelectedIndex());
+            ArrayList<SimpleRaidDataBase> topGraphData = (data.get(topGraphTabs.getSelectedIndex()));
+            ArrayList<SimpleRaidDataBase> bottomGraphData = data.get(bottomGraphTabs.getSelectedIndex());
 
             String worse = "<html><font color='#F63131'>";
             String better = "<html><font color='#99E622'>";

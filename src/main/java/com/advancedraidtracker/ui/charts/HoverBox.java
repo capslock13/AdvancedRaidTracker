@@ -14,8 +14,9 @@ import static com.advancedraidtracker.utility.ItemReference.*;
 public class HoverBox
 {
     ArrayList<String> info;
-    Point location = new Point(0,0);
+    Point location = new Point(0, 0);
     private final AdvancedRaidTrackerConfig config;
+
     public HoverBox(String s, AdvancedRaidTrackerConfig config)
     {
         this.config = config;
@@ -26,7 +27,7 @@ public class HoverBox
     public void addString(String s)
     {
         info.add(s);
-        if(s.toLowerCase().startsWith(".weapon"))
+        if (s.toLowerCase().startsWith(".weapon"))
         {
             setStyle(s);
         }
@@ -34,31 +35,30 @@ public class HoverBox
 
     public void setPosition(int x, int y)
     {
-        location = new Point(x+config.chartScaleSize(), y);
+        location = new Point(x + config.chartScaleSize(), y);
     }
 
     int style = NONE;
 
     private void setStyle(String weapon)
     {
-        if(anyMatch(weapon, ItemReference.ITEMS[MELEE]))
+        if (anyMatch(weapon, ItemReference.ITEMS[MELEE]))
         {
             style = MELEE;
-        }
-        else if(anyMatch(weapon, ItemReference.ITEMS[RANGE]))
+        } else if (anyMatch(weapon, ItemReference.ITEMS[RANGE]))
         {
             style = RANGE;
-        }
-        else if(anyMatch(weapon, ItemReference.ITEMS[MAGE]))
+        } else if (anyMatch(weapon, ItemReference.ITEMS[MAGE]))
         {
             style = MAGE;
         }
     }
+
     private boolean anyMatch(String item, String[] items)
     {
-        for(String s : items)
+        for (String s : items)
         {
-            if(item.toLowerCase().contains(s))
+            if (item.toLowerCase().contains(s))
             {
                 return true;
             }
@@ -71,7 +71,7 @@ public class HoverBox
         Font oldFont = g.getFont();
         g.setFont(FontManager.getRunescapeBoldFont());
         int longestString = 0;
-        for(String s : info)
+        for (String s : info)
         {
             int stringLength = getStringWidth(g, s);
             if (stringLength > longestString)
@@ -80,7 +80,7 @@ public class HoverBox
             }
         }
         g.setFont(oldFont);
-        return longestString+10;
+        return longestString + 10;
     }
 
     public void draw(Graphics2D g)
@@ -89,31 +89,29 @@ public class HoverBox
         g.setFont(FontManager.getRunescapeBoldFont());
         int fontHeight = getStringBounds(g).height;
         g.setColor(config.primaryDark());
-        int boxHeight = 10 + (fontHeight+7)*info.size();
+        int boxHeight = 10 + (fontHeight + 7) * info.size();
         g.fillRoundRect(location.getX(), location.getY(), getWidth(g), boxHeight, 10, 10);
         g.setColor(new Color(200, 200, 200));
         g.drawRoundRect(location.getX(), location.getY(), getWidth(g), boxHeight, 10, 10);
 
-        for(int i = 0; i < info.size(); i++)
+        for (int i = 0; i < info.size(); i++)
         {
             String label = info.get(i);
-            if(label.startsWith(".") && label.length() > 1)
+            if (label.startsWith(".") && label.length() > 1)
             {
                 label = label.substring(1);
-                if(anyMatch(label, ItemReference.ITEMS[style]))
+                if (anyMatch(label, ItemReference.ITEMS[style]))
                 {
                     g.setColor(new Color(60, 190, 60));
-                }
-                else if(anyMatch(label, ItemReference.ITEMS[0]))
+                } else if (anyMatch(label, ItemReference.ITEMS[0]))
                 {
                     g.setColor(new Color(120, 120, 120));
-                }
-                else
+                } else
                 {
                     g.setColor(new Color(190, 30, 30));
                 }
             }
-            g.drawString(label, location.getX()+5, location.getY() + 5 + (fontHeight+7)*(i+1));
+            g.drawString(label, location.getX() + 5, location.getY() + 5 + (fontHeight + 7) * (i + 1));
         }
         g.setFont(oldFont);
     }

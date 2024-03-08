@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class VengTracker
 {
     public ArrayList<VengCastQueue> vengedPlayers;
-    private final AdvancedRaidTrackerPlugin plugin;
+    private AdvancedRaidTrackerPlugin plugin;
 
     public VengTracker(AdvancedRaidTrackerPlugin plugin)
     {

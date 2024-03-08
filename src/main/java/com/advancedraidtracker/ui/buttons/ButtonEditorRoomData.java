@@ -1,6 +1,9 @@
 package com.advancedraidtracker.ui.buttons;
 
+import com.advancedraidtracker.SimpleRaidDataBase;
+import com.advancedraidtracker.SimpleTOAData;
 import com.advancedraidtracker.SimpleTOBData;
+import com.advancedraidtracker.ui.viewraid.ViewTOARaid;
 import com.advancedraidtracker.ui.viewraid.ViewTOBRaid;
 
 import javax.swing.*;
@@ -13,10 +16,10 @@ public class ButtonEditorRoomData extends DefaultCellEditor
     protected JButton button;
     private String label;
     private boolean isPushed;
-    private final ArrayList<SimpleTOBData> data;
+    private final ArrayList<SimpleRaidDataBase> data;
     int row;
 
-    public ButtonEditorRoomData(JCheckBox checkBox, ArrayList<SimpleTOBData> data)
+    public ButtonEditorRoomData(JCheckBox checkBox, ArrayList<SimpleRaidDataBase> data)
     {
         super(checkBox);
         this.data = data;
@@ -49,9 +52,18 @@ public class ButtonEditorRoomData extends DefaultCellEditor
     {
         if (isPushed)
         {
-            ViewTOBRaid raid = new ViewTOBRaid(data.get(row));
-            //ViewRaidFrame raid = new ViewRaidFrame(data.get(row));
-            raid.open();
+            if (data.get(row) instanceof SimpleTOBData)
+            {
+                SimpleTOBData tobData = (SimpleTOBData) data.get(row);
+                ViewTOBRaid raid = new ViewTOBRaid(tobData);
+                //ViewRaidFrame raid = new ViewRaidFrame(data.get(row));
+                raid.open();
+            } else if (data.get(row) instanceof SimpleTOAData)
+            {
+                SimpleTOAData toaData = (SimpleTOAData) data.get(row);
+                ViewTOARaid raid = new ViewTOARaid(toaData);
+                raid.open();
+            }
         }
         isPushed = false;
         return label;

@@ -1,7 +1,7 @@
 package com.advancedraidtracker.rooms.tob;
 
-import com.advancedraidtracker.AdvancedRaidTrackerPlugin;
 import com.advancedraidtracker.AdvancedRaidTrackerConfig;
+import com.advancedraidtracker.AdvancedRaidTrackerPlugin;
 import com.advancedraidtracker.constants.TOBRoom;
 import com.advancedraidtracker.constants.TobIDs;
 import lombok.extern.slf4j.Slf4j;
@@ -19,8 +19,9 @@ import static com.advancedraidtracker.constants.LogID.ACCURATE_XARP_END;
 import static com.advancedraidtracker.constants.LogID.XARPUS_STARTED;
 import static com.advancedraidtracker.constants.TobIDs.*;
 import static com.advancedraidtracker.utility.RoomState.XarpusRoomState.FINISHED;
+
 @Slf4j
-public class XarpusHandler extends RoomHandler
+public class XarpusHandler extends TOBRoomHandler
 {
     public RoomState.XarpusRoomState roomState = RoomState.XarpusRoomState.NOT_STARTED;
     private final AdvancedRaidTrackerPlugin plugin;
@@ -186,7 +187,7 @@ public class XarpusHandler extends RoomHandler
         roomState = FINISHED;
         xarpusEndTick = client.getTickCount() + XARPUS_DEATH_ANIMATION_LENGTH;
         clog.addLine(ACCURATE_XARP_END);
-        plugin.liveFrame.setXarpFinished(xarpusEndTick - xarpusEntryTick);
+        plugin.liveFrame.setRoomFinished(getName(), xarpusEndTick - xarpusEntryTick);
         String splitMessage = "Wave 'Xarpus phase 3' complete. Duration: " + timeColor() + RoomUtil.time(xarpusEndTick - xarpusEntryTick) + " (" + RoomUtil.time(xarpusEndTick - xarpusScreechTick) + ")";
         this.client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", splitMessage, null, false);
     }

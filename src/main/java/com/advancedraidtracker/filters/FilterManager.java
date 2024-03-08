@@ -1,7 +1,5 @@
 package com.advancedraidtracker.filters;
 
-import lombok.extern.slf4j.Slf4j;
-
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -166,7 +164,7 @@ public class FilterManager
                 filterWriter.write(filter.getFilterCSV());
                 filterWriter.newLine();
             }
-            for(String s : quickFiltersState)
+            for (String s : quickFiltersState)
             {
                 filterWriter.write(s);
                 filterWriter.newLine();

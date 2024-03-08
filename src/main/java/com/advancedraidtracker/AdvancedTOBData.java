@@ -2,62 +2,37 @@ package com.advancedraidtracker;
 
 import com.advancedraidtracker.constants.LogID;
 import com.advancedraidtracker.utility.wrappers.PlayerDidAttack;
+import com.advancedraidtracker.utility.wrappers.ThrallOutlineBox;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.game.ItemManager;
 
-import java.io.File;
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 import static com.advancedraidtracker.constants.TobIDs.EXIT_FLAG;
 import static com.advancedraidtracker.constants.TobIDs.SPECTATE_FLAG;
 
 @Slf4j
-public class AdvancedTOBData
+public class AdvancedTOBData extends AdvancedRaidDataBase
 {
-    public final ArrayList<PlayerDidAttack> maidenAttacks = new ArrayList<>();
-    public final ArrayList<PlayerDidAttack> bloatAttacks = new ArrayList<>();
-    public final ArrayList<PlayerDidAttack> nyloAttacks = new ArrayList<>();
-    public final ArrayList<PlayerDidAttack> soteAttacks = new ArrayList<>();
-    public final ArrayList<PlayerDidAttack> xarpAttacks = new ArrayList<>();
-    public final ArrayList<PlayerDidAttack> verzikAttacks = new ArrayList<>();
-    public Map<Integer, Integer> maidenHP = new HashMap<>();
-    public Map<Integer, Integer> bloatHP = new HashMap<>();
-    public Map<Integer, Integer> nyloHP = new HashMap<>();
-    public Map<Integer, Integer> soteHP = new HashMap<>();
-    public Map<Integer, Integer> xarpHP = new HashMap<>();
-    public Map<Integer, Integer> verzikHP = new HashMap<>();
-    public Map<Integer, String> maidenNPCMapping = new HashMap<>();
-    public Map<Integer, String> nyloNPCMapping = new HashMap<>();
-    public Map<Integer, String> verzikNPCMapping = new HashMap<>();
+    private final String[] names = {"Maiden", "Bloat", "Nylocas", "Sotetseg", "Xarpus", "Verzik P1", "Verzik P2", "Verzik P3"};
     private ArrayList<String> globalData;
     private final ItemManager itemManager;
 
-    public static ArrayList<String> getRaidStrings(String path)
-    {
-        ArrayList<String> lines = new ArrayList<>();
-        File file = new File(path);
-        try
-        {
-            Scanner scanner = new Scanner(Files.newInputStream(file.toPath()));
-            while(scanner.hasNextLine())
-            {
-                lines.add(scanner.nextLine());
-            }
-        }
-        catch(Exception ignored)
-        {
-
-        }
-        return lines;
-    }
     public AdvancedTOBData(ArrayList<String> globalData, ItemManager itemManager)
     {
         this.itemManager = itemManager;
         this.globalData = globalData;
+        attackData = new LinkedHashMap<>();
+        hpData = new LinkedHashMap<>();
+        npcIndexData = new LinkedHashMap<>();
+        thrallOutlineBoxes = new LinkedHashMap<>();
+        for (String name : names)
+        {
+            attackData.put(name, new ArrayList<>());
+            hpData.put(name, new LinkedHashMap<>());
+            npcIndexData.put(name, new LinkedHashMap<>());
+            thrallOutlineBoxes.put(name, new ArrayList<>());
+        }
         int room = -1;
         for (String s : globalData)
         {
@@ -119,36 +94,6 @@ public class AdvancedTOBData
         }
     }
 
-    PlayerDidAttack getPlayerDidAttack(String[] subData)
-    {
-        String player = subData[4].split(":")[0];
-        int tick = Integer.parseInt(subData[4].split(":")[1]);
-        String wornItems = "";
-        String [] animationAndWorn = subData[5].split(":");
-        String animation = animationAndWorn[0];
-        if(animationAndWorn.length == 2)
-        {
-            wornItems = animationAndWorn[1];
-        }
-        String spotAnims = subData[6];
-        String[] subsubData = subData[7].split(":");
-        String weapon = subsubData[0];
-        int interactedIndex = -1;
-        int interactedID = -1;
-        if (subsubData.length > 2)
-        {
-            interactedIndex = Integer.parseInt(subsubData[1]);
-            interactedID = Integer.parseInt(subsubData[2]);
-        }
-        String[] projectileAndTargetData = subData[8].split(":");
-        String projectile = projectileAndTargetData[0];
-        String targetName = "";
-        if (projectileAndTargetData.length > 1)
-        {
-            targetName = projectileAndTargetData[1];
-        }
-        return (new PlayerDidAttack(itemManager, player, animation, tick, weapon, projectile, spotAnims, interactedIndex, interactedID, targetName, wornItems));
-    }
 
     private boolean parseMaiden()
     {
@@ -169,13 +114,17 @@ public class AdvancedTOBData
                     case MAIDEN_DESPAWNED:
                         break loop;
                     case PLAYER_ATTACK:
-                        maidenAttacks.add(getPlayerDidAttack(subData));
+                        attackData.get("Maiden").add(getPlayerDidAttack(subData, itemManager));
+                        log.info("Attack data size is now: " + attackData.get("Maiden").size());
                         break;
                     case UPDATE_HP:
-                        maidenHP.put(Integer.parseInt(subData[5]), Integer.parseInt(subData[4]));
+                        hpData.get("Maiden").put(Integer.parseInt(subData[5]), Integer.parseInt(subData[4]));
                         break;
                     case ADD_NPC_MAPPING:
-                        maidenNPCMapping.put(Integer.parseInt(subData[4]), subData[5]);
+                        npcIndexData.get("Maiden").put(Integer.parseInt(subData[4]), subData[5]);
+                        break;
+                    case THRALL_SPAWN:
+                        thrallOutlineBoxes.get("Maiden").add(new ThrallOutlineBox(subData[4], Integer.parseInt(subData[5]), Integer.parseInt(subData[6])));
                         break;
                 }
             }
@@ -205,10 +154,16 @@ public class AdvancedTOBData
                     case BLOAT_DESPAWN:
                         break loop;
                     case PLAYER_ATTACK:
-                        bloatAttacks.add(getPlayerDidAttack(subData));
+                        attackData.get("Bloat").add(getPlayerDidAttack(subData, itemManager));
                         break;
                     case UPDATE_HP:
-                        bloatHP.put(Integer.parseInt(subData[5]), Integer.parseInt(subData[4]));
+                        hpData.get("Bloat").put(Integer.parseInt(subData[5]), Integer.parseInt(subData[4]));
+                        break;
+                    case ADD_NPC_MAPPING:
+                        npcIndexData.get("Bloat").put(Integer.parseInt(subData[4]), subData[5]);
+                        break;
+                    case THRALL_SPAWN:
+                        thrallOutlineBoxes.get("Bloat").add(new ThrallOutlineBox(subData[4], Integer.parseInt(subData[5]), Integer.parseInt(subData[6])));
                         break;
                 }
             }
@@ -238,13 +193,16 @@ public class AdvancedTOBData
                     case NYLO_DESPAWNED:
                         break loop;
                     case PLAYER_ATTACK:
-                        nyloAttacks.add(getPlayerDidAttack(subData));
+                        attackData.get("Nylocas").add(getPlayerDidAttack(subData, itemManager));
                         break;
                     case UPDATE_HP:
-                        nyloHP.put(Integer.parseInt(subData[5]), Integer.parseInt(subData[4]));
+                        hpData.get("Nylocas").put(Integer.parseInt(subData[5]), Integer.parseInt(subData[4]));
                         break;
                     case ADD_NPC_MAPPING:
-                        nyloNPCMapping.put(Integer.parseInt(subData[4]), subData[5]);
+                        npcIndexData.get("Nylocas").put(Integer.parseInt(subData[4]), subData[5]);
+                        break;
+                    case THRALL_SPAWN:
+                        thrallOutlineBoxes.get("Nylocas").add(new ThrallOutlineBox(subData[4], Integer.parseInt(subData[5]), Integer.parseInt(subData[6])));
                         break;
                 }
             }
@@ -274,10 +232,16 @@ public class AdvancedTOBData
                     case SOTETSEG_ENDED:
                         break loop;
                     case PLAYER_ATTACK:
-                        soteAttacks.add(getPlayerDidAttack(subData));
+                        attackData.get("Sotetseg").add(getPlayerDidAttack(subData, itemManager));
                         break;
                     case UPDATE_HP:
-                        soteHP.put(Integer.parseInt(subData[5]), Integer.parseInt(subData[4]));
+                        hpData.get("Sotetseg").put(Integer.parseInt(subData[5]), Integer.parseInt(subData[4]));
+                        break;
+                    case ADD_NPC_MAPPING:
+                        npcIndexData.get("Sotetseg").put(Integer.parseInt(subData[4]), subData[5]);
+                        break;
+                    case THRALL_SPAWN:
+                        thrallOutlineBoxes.get("Sotetseg").add(new ThrallOutlineBox(subData[4], Integer.parseInt(subData[5]), Integer.parseInt(subData[6])));
                         break;
 
                 }
@@ -308,10 +272,16 @@ public class AdvancedTOBData
                     case XARPUS_DESPAWNED:
                         break loop;
                     case PLAYER_ATTACK:
-                        xarpAttacks.add(getPlayerDidAttack(subData));
+                        attackData.get("Xarpus").add(getPlayerDidAttack(subData, itemManager));
                         break;
                     case UPDATE_HP:
-                        xarpHP.put(Integer.parseInt(subData[5]), Integer.parseInt(subData[4]));
+                        hpData.get("Xarpus").put(Integer.parseInt(subData[5]), Integer.parseInt(subData[4]));
+                        break;
+                    case ADD_NPC_MAPPING:
+                        npcIndexData.get("Xarpus").put(Integer.parseInt(subData[4]), subData[5]);
+                        break;
+                    case THRALL_SPAWN:
+                        thrallOutlineBoxes.get("Xarpus").add(new ThrallOutlineBox(subData[4], Integer.parseInt(subData[5]), Integer.parseInt(subData[6])));
                         break;
                 }
             }
@@ -327,6 +297,7 @@ public class AdvancedTOBData
     private void parseVerzik()
     {
         int activeIndex = 0;
+        int phase = 1;
         for (String s : globalData)
         {
             String[] subData = s.split(",", -1);
@@ -338,19 +309,28 @@ public class AdvancedTOBData
                         globalData = new ArrayList<>(globalData.subList(activeIndex + 1, globalData.size()));
                         return;
                     case PLAYER_ATTACK:
-                        verzikAttacks.add(getPlayerDidAttack(subData));
+                        attackData.get("Verzik P" + phase).add(getPlayerDidAttack(subData, itemManager));
                         break;
                     case UPDATE_HP:
-                        verzikHP.put(Integer.parseInt(subData[5]), Integer.parseInt(subData[4]));
+                        hpData.get("Verzik P" + phase).put(Integer.parseInt(subData[5]), Integer.parseInt(subData[4]));
                         break;
                     case ADD_NPC_MAPPING:
-                        verzikNPCMapping.put(Integer.parseInt(subData[4]), subData[5]);
+                        npcIndexData.get("Verzik P" + phase).put(Integer.parseInt(subData[4]), subData[5]);
+                        break;
+                    case THRALL_SPAWN:
+                        thrallOutlineBoxes.get("Verzik P" + phase).add(new ThrallOutlineBox(subData[4], Integer.parseInt(subData[5]), Integer.parseInt(subData[6])));
                         break;
                     case VERZIK_BOUNCE:
                         if (!subData[5].equalsIgnoreCase(""))
                         { //use fake animation ID when bounce occurs
-                            verzikAttacks.add(new PlayerDidAttack(itemManager, subData[4], "100000", Integer.parseInt(subData[5]), "-1", "-1", "-1", -1, -1, "", ""));
+                            attackData.get("Verzik P2").add(new PlayerDidAttack(itemManager, subData[4], "100000", Integer.parseInt(subData[5]), -1, "-1", "-1", -1, -1, "", ""));
                         }
+                        break;
+                    case VERZIK_P1_DESPAWNED:
+                        phase = 2;
+                        break;
+                    case VERZIK_P2_END:
+                        phase = 3;
                         break;
 
                 }

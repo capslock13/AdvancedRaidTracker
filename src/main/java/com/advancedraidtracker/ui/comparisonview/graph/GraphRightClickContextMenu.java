@@ -1,6 +1,6 @@
 package com.advancedraidtracker.ui.comparisonview.graph;
 
-import com.advancedraidtracker.SimpleTOBData;
+import com.advancedraidtracker.SimpleRaidDataBase;
 import com.advancedraidtracker.AdvancedRaidTrackerConfig;
 import com.advancedraidtracker.ui.Raids;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +16,7 @@ public class GraphRightClickContextMenu extends JPopupMenu
 {
     JMenuItem item;
 
-    public GraphRightClickContextMenu(ArrayList<SimpleTOBData> raids, AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
+    public GraphRightClickContextMenu(ArrayList<SimpleRaidDataBase> raids, AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
     {
         item = new JMenuItem("Show Represented Raids In New Window");
         item.addActionListener(al ->

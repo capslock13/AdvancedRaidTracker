@@ -43,9 +43,21 @@ public enum WeaponAttack
     CONSUME("Food/Drink Consumed", "CS", new Color(110, 50, 60), -1),
     THRALL_CAST("Thrall Cast", "TC", new Color(20, 65, 187), -1),
     BLADE_OF_SAELDOR("Blade of Saeldor", "BS", new Color(67, 10, 45), 4),
-    FANG("Osmumten's Fang", "OF", new Color(10, 10, 100), 5),
+    FANG("Osmumten's Fang", "FNG", new Color(10, 10, 100), 5),
     TSOTD("Toxic Staff of the Dead", "TS", new Color(70, 10, 10), 4),
+    VOID_WAKER("Voidwaker", "vw", new Color(60, 30, 10), 4),
+    VOID_WAKER_SPEC("Voidwaker Spec", "VW", new Color(160, 70, 70), 4),
+    MINING("Mining", "M", new Color(30, 30, 30), 3),
+    DDS_SPEC("Dragon Dagger Spec", "DDS", new Color(140, 10, 10), 4),
+    DDS_POKE("Dragon Dagger poke", "dds", new Color(10, 10, 10), 4),
+    KERIS_BREACHING("Keris of the Breaching", "KB", new Color(140, 140, 30), 4),
+    KERIS_CORRUPTION("Keris of the Corruption", "kc", new Color(10, 140, 30), 4),
+    KERIS_SUN("Keris of the Sun", "ks", new Color(10, 140, 30), 4),
 
+    KERIS_CORRUPTION_SPEC("Keris of the Corruption spec", "KC", new Color(140, 140, 30), 4),
+    KERIS_SUN_SPEC("Keris of the Sun spec", "KS", new Color(140, 140, 30), 4),
+    PICKUP("Pickup Animation", "PCK", new Color(30, 30, 90), -1),
+    PUSH_JUG("Push Animation", "PSH", new Color(10, 10, 10), -1),
 
     ;
 

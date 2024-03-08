@@ -1,6 +1,6 @@
 package com.advancedraidtracker.utility.datautility;
 
-import com.advancedraidtracker.SimpleTOBData;
+import com.advancedraidtracker.SimpleRaidDataBase;
 import com.advancedraidtracker.ui.RaidTrackerSidePanel;
 import com.advancedraidtracker.utility.wrappers.RaidsArrayWrapper;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +16,7 @@ import java.util.Objects;
 import java.util.Scanner;
 
 import static com.advancedraidtracker.utility.datautility.DataWriter.PLUGIN_DIRECTORY;
+
 @Slf4j
 public class RaidsManager
 {
@@ -32,8 +33,8 @@ public class RaidsManager
             {
                 if (entry.isDirectory())
                 {
-                    ArrayList<SimpleTOBData> raids = new ArrayList<>();
-                    for(File raid : Objects.requireNonNull(entry.listFiles()))
+                    ArrayList<SimpleRaidDataBase> raids = new ArrayList<>();
+                    for (File raid : Objects.requireNonNull(entry.listFiles()))
                     {
                         try
                         {
@@ -72,7 +73,7 @@ public class RaidsManager
         return false;
     }
 
-    public static void saveOverwriteRaids(String name, ArrayList<SimpleTOBData> raids)
+    public static void saveOverwriteRaids(String name, ArrayList<SimpleRaidDataBase> raids)
     {
         try
         {
@@ -81,7 +82,7 @@ public class RaidsManager
             {
                 if(!directory.mkdirs()) {log.info("Could not make overwrite dir");}
             }
-            File raidsFile = new File(raidsFolder + name+"/");
+            File raidsFile = new File(raidsFolder + name + "/");
 
             if (raidsFile.exists())
             {
@@ -101,9 +102,9 @@ public class RaidsManager
         }
     }
 
-    private static void writeRaid(String name, ArrayList<SimpleTOBData> raids) throws IOException
+    private static void writeRaid(String name, ArrayList<SimpleRaidDataBase> raids) throws IOException
     {
-        for (SimpleTOBData raid : raids)
+        for (SimpleRaidDataBase raid : raids)
         {
             File newEntry = new File(raidsFolder + name + "/" + raid.fileName);
             Files.createFile(newEntry.toPath());
@@ -119,7 +120,7 @@ public class RaidsManager
         }
     }
 
-    public static void saveRaids(String name, ArrayList<SimpleTOBData> raids)
+    public static void saveRaids(String name, ArrayList<SimpleRaidDataBase> raids)
     {
         try
         {
@@ -131,7 +132,7 @@ public class RaidsManager
                     log.info("Could not make directory to save raid");
                 }
             }
-            File raidsFile = new File(raidsFolder + name+"/");
+            File raidsFile = new File(raidsFolder + name + "/");
             if (!raidsFile.exists())
             {
                 if(!raidsFile.mkdirs())

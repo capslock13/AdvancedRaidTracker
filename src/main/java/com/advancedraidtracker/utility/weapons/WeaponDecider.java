@@ -5,17 +5,15 @@ import java.util.List;
 
 public class WeaponDecider
 {
-    public static WeaponAttack getWeapon(String animationS, String graphics, String projectileS, String weaponS)
+    public static WeaponAttack getWeapon(String animationS, String graphics, String projectileS, int weaponS)
     { //todo redo all of this ** magic numbers will be fixed then too
         WeaponAttack weaponUsed = WeaponAttack.UNDECIDED;
         List<String> spotAnims = Arrays.asList(graphics.split(":"));
         int projectile;
-        int weapon;
         int animation;
         try
         {
             projectile = Integer.parseInt(projectileS);
-            weapon = Integer.parseInt(weaponS);
             animation = Integer.parseInt(animationS);
         } catch (Exception e)
         {
@@ -73,12 +71,32 @@ public class WeaponDecider
                 weaponUsed = WeaponAttack.HAMMER_BOP;
                 break;
             case 1378:
-                weaponUsed = WeaponAttack.HAMMER;
+                if (weapon == 27690)
+                {
+                    weaponUsed = WeaponAttack.VOID_WAKER_SPEC;
+                    break;
+                } else
+                {
+                    weaponUsed = WeaponAttack.HAMMER;
+                }
                 break;
             case 428:
             case 419:
+                if (weapon == 25981)
+                {
+                    weaponUsed = WeaponAttack.KERIS_BREACHING;
+                    break;
+                } else if (weapon == 27291)
+                {
+                    weaponUsed = WeaponAttack.KERIS_SUN;
+                    break;
+                } else if (weapon == 27287)
+                {
+                    weaponUsed = WeaponAttack.KERIS_CORRUPTION;
+                    break;
+                }
             case 440:
-                if(weapon == 12904)
+                if (weapon == 12904)
                 {
                     weaponUsed = WeaponAttack.TSOTD;
                     break;
@@ -89,17 +107,27 @@ public class WeaponDecider
                 weaponUsed = WeaponAttack.CHALLY_SPEC;
                 break;
             case 390:
+                if (weapon == 27690)
+                {
+                    weaponUsed = WeaponAttack.VOID_WAKER;
+                    break;
+                }
             case 9471:
-                if(weapon == 26219)
+                if (weapon == 26219 || weapon == 27246)
                 {
                     weaponUsed = WeaponAttack.FANG;
                     break;
                 }
             case 8288:
             case 386:
-                if(weapon == 23995 || weapon == 24551)
+                if (weapon == 23995 || weapon == 24551)
                 {
                     weaponUsed = WeaponAttack.BLADE_OF_SAELDOR;
+                    break;
+                }
+                if (weapon == 27690)
+                {
+                    weaponUsed = WeaponAttack.VOID_WAKER;
                     break;
                 }
                 weaponUsed = WeaponAttack.SWIFT_BLADE;
@@ -172,6 +200,42 @@ public class WeaponDecider
                 break;
             case 4409:
                 weaponUsed = WeaponAttack.HEAL_GROUP;
+                break;
+            case 9479:
+                weaponUsed = WeaponAttack.MINING;
+                break;
+            case 376:
+            case 377:
+                weaponUsed = WeaponAttack.DDS_POKE;
+                break;
+            case 1062:
+                weaponUsed = WeaponAttack.DDS_SPEC;
+                break;
+            case 381:
+                if (weapon == 25981)
+                {
+                    weaponUsed = WeaponAttack.KERIS_BREACHING;
+                    break;
+                } else if (weapon == 27291)
+                {
+                    weaponUsed = WeaponAttack.KERIS_SUN;
+                    break;
+                } else if (weapon == 27287)
+                {
+                    weaponUsed = WeaponAttack.KERIS_CORRUPTION;
+                    break;
+                }
+            case 827:
+                weaponUsed = WeaponAttack.PICKUP;
+                break;
+            case 9546:
+                weaponUsed = WeaponAttack.KERIS_SUN_SPEC;
+                break;
+            case 9544:
+                weaponUsed = WeaponAttack.KERIS_CORRUPTION_SPEC;
+                break;
+            case 832:
+                weaponUsed = WeaponAttack.PUSH_JUG;
                 break;
         }
         return weaponUsed;

@@ -1,5 +1,7 @@
 package com.advancedraidtracker.utility;
 
+import com.advancedraidtracker.constants.RaidType;
+import com.advancedraidtracker.constants.Room;
 import com.advancedraidtracker.constants.TobIDs;
 import net.runelite.api.Client;
 import net.runelite.api.Player;
@@ -88,7 +90,7 @@ public class RoomUtil
 
     public static String time(int ticks)
     {
-        return time((double)ticks);
+        return time((double) ticks);
     }
 
     public static String time(double ticks)
@@ -153,6 +155,27 @@ public class RoomUtil
             }
         }
         return false;
+    }
+
+    public static boolean inRegion(Client client, Room... rooms)
+    {
+        for (Room room : rooms)
+        {
+            if (inRegion(client, room))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean inRegion(Client client, Room room)
+    {
+        if (room.raidType.equals(RaidType.COX))
+        {
+            return false;
+        }
+        return inRegion(client, room.regions);
     }
 
     public static boolean inRegion(Client client, int... regions)

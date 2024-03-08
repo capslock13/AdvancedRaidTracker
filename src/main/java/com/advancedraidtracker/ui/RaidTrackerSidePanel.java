@@ -1,8 +1,6 @@
 package com.advancedraidtracker.ui;
 
-import com.advancedraidtracker.AdvancedRaidTrackerPlugin;
-import com.advancedraidtracker.SimpleTOBData;
-import com.advancedraidtracker.AdvancedRaidTrackerConfig;
+import com.advancedraidtracker.*;
 import com.advancedraidtracker.utility.wrappers.RaidsArrayWrapper;
 import com.advancedraidtracker.utility.datautility.RaidsManager;
 import com.google.inject.Inject;
@@ -11,6 +9,7 @@ import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.ui.PluginPanel;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -24,7 +23,8 @@ import static com.advancedraidtracker.utility.datautility.DataWriter.PLUGIN_DIRE
 public class RaidTrackerSidePanel extends PluginPanel
 {
     private JLabel raidCountLabel;
-    private ArrayList<SimpleTOBData> raidsData;
+    private final JLabel pleaseWait;
+    private ArrayList<SimpleRaidDataBase> raidsData;
     private JTable loadRaidsTable;
     private ArrayList<RaidsArrayWrapper> raidSets;
 
@@ -56,9 +56,9 @@ public class RaidTrackerSidePanel extends PluginPanel
         }).start();
     }
 
-    private ArrayList<SimpleTOBData> getAllRaids()
+    private ArrayList<SimpleRaidDataBase> getAllRaids()
     {
-        ArrayList<SimpleTOBData> raids = new ArrayList<>();
+        ArrayList<SimpleRaidDataBase> raids = new ArrayList<>();
         try
         {
             File logDirectory = new File(PLUGIN_DIRECTORY);
@@ -66,9 +66,9 @@ public class RaidTrackerSidePanel extends PluginPanel
             int raidCount = 0;
             if(logFiles != null)
             {
-                for(File file : logFiles)
+                for (File file : logFiles)
                 {
-                    if(file.isDirectory())
+                    if (file.isDirectory())
                     {
                         File subDirectory = new File(file.getAbsolutePath()+"/primary/");
                         File[] subDirectoryFiles = subDirectory.listFiles();
@@ -94,7 +94,7 @@ public class RaidTrackerSidePanel extends PluginPanel
                             {
                                 if (!dataFile.isDirectory())
                                 {
-                                    if (dataFile.getName().contains("tobdata"))
+                                    if (dataFile.getName().contains("data"))
                                     {
                                         File currentFile = new File(subDirectory.getAbsolutePath() + "/" + dataFile.getName());
                                         parseLogFile(raids, currentFile, subDirectory.getAbsolutePath() + "/" + dataFile.getName());
@@ -120,11 +120,11 @@ public class RaidTrackerSidePanel extends PluginPanel
             log.info("Could not retrieve raids");
             e.printStackTrace();
         }
-        raids.sort(Comparator.comparing(SimpleTOBData::getDate));
+        raids.sort(Comparator.comparing(SimpleRaidDataBase::getDate));
         return raids;
     }
 
-    public static void parseLogFile(ArrayList<SimpleTOBData> raids, File currentFile, String filePath) throws Exception
+    public static void parseLogFile(ArrayList<SimpleRaidDataBase> raids, File currentFile, String filePath) throws Exception
     {
         Scanner logReader = new Scanner(Files.newInputStream(currentFile.toPath()));
         ArrayList<String> raid = new ArrayList<>();
@@ -139,7 +139,7 @@ public class RaidTrackerSidePanel extends PluginPanel
             {
                 if (lineSplit.length > 3)
                 {
-                    if (Integer.parseInt(lineSplit[3]) == 0)
+                    if (Integer.parseInt(lineSplit[3]) == 0 || Integer.parseInt(lineSplit[3]) == 1000)
                     {
                         raid.add(line);
                         raidActive = true;
@@ -152,9 +152,9 @@ public class RaidTrackerSidePanel extends PluginPanel
                 if (lineSplit.length > 3)
                 {
                     int value = Integer.parseInt(lineSplit[3]);
-                    if(value != 0)
+                    if (value != 0)
                     {
-                        if(value != 801 && value != 576 && value != 587)
+                        if (value != 801 && value != 576 && value != 587)
                         {
                             if (Integer.parseInt(lineSplit[3]) == 99 && !spectate)
                             {
@@ -164,11 +164,17 @@ public class RaidTrackerSidePanel extends PluginPanel
                             {
                                 lateStart = true;
                                 raid.add(line);
-                            } else if (Integer.parseInt(lineSplit[3]) == 4)
+                            } else if (Integer.parseInt(lineSplit[3]) == 4 || Integer.parseInt(lineSplit[3]) == 1004)
                             {
                                 raid.add(line);
                                 raidActive = false;
-                                raids.add(new SimpleTOBData(raid.toArray(new String[0]), filePath, currentFile.getName()));
+                                if (Integer.parseInt(lineSplit[3]) == 4)
+                                {
+                                    raids.add(new SimpleTOBData(raid.toArray(new String[0]), filePath, currentFile.getName()));
+                                } else
+                                {
+                                    raids.add(new SimpleTOAData(raid.toArray(new String[0]), filePath, currentFile.getName()));
+                                }
                                 raid.clear();
                             } else if (value != 99 && value != 98)
                             {
@@ -282,7 +288,7 @@ public class RaidTrackerSidePanel extends PluginPanel
         return new DefaultTableModel(tableData, columnNames);
     }
 
-    private ArrayList<SimpleTOBData> getTableData()
+    private ArrayList<SimpleRaidDataBase> getTableData()
     {
         ArrayList<String> includedSets = new ArrayList<>();
         for (int i = 0; i < loadRaidsTable.getRowCount(); i++)
@@ -292,7 +298,7 @@ public class RaidTrackerSidePanel extends PluginPanel
                 includedSets.add((String) loadRaidsTable.getValueAt(i, 0));
             }
         }
-        ArrayList<SimpleTOBData> collectedRaids = new ArrayList<>();
+        ArrayList<SimpleRaidDataBase> collectedRaids = new ArrayList<>();
         for (RaidsArrayWrapper set : raidSets)
         {
             for (String s : includedSets)

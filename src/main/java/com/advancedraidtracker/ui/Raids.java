@@ -1,6 +1,7 @@
 package com.advancedraidtracker.ui;
 
 
+import com.advancedraidtracker.SimpleRaidDataBase;
 import com.advancedraidtracker.SimpleTOBData;
 import com.advancedraidtracker.AdvancedRaidTrackerConfig;
 import com.advancedraidtracker.filters.*;
@@ -14,6 +15,7 @@ import com.advancedraidtracker.ui.exportraids.SaveRaids;
 import com.advancedraidtracker.ui.filters.LoadFilter;
 import com.advancedraidtracker.ui.filters.SaveFilter;
 import com.advancedraidtracker.ui.statistics.StatisticTab;
+import com.advancedraidtracker.ui.summary.SummarizeRaids;
 import com.advancedraidtracker.utility.*;
 import com.advancedraidtracker.utility.datautility.DataPoint;
 import com.advancedraidtracker.utility.datautility.DataWriter;
@@ -45,7 +47,7 @@ public class Raids extends BaseFrame
 {
     private final ArrayList<Integer> filteredIndices;
     private JTable comparisonTable;
-    private final ArrayList<ArrayList<SimpleTOBData>> comparisons;
+    private final ArrayList<ArrayList<SimpleRaidDataBase>> comparisons;
 
     private final JTabbedPane tabbedPane = new JTabbedPane();
     public ArrayList<ImplicitFilter> activeFilters;
@@ -86,7 +88,7 @@ public class Raids extends BaseFrame
     JTable table;
     JPanel container;
     private JPanel filterTableContainer;
-    public ArrayList<SimpleTOBData> currentData;
+    public ArrayList<SimpleRaidDataBase> currentData;
     private JComboBox<String> timeFilterChoice;
     private JComboBox<String> timeFilterOperator;
     private JTextField timeFilterValue;
@@ -113,12 +115,12 @@ public class Raids extends BaseFrame
     private final ItemManager itemManager;
     private final ClientThread clientThread;
 
-    public String[] rooms = {"Maiden", "Bloat","Nylocas","Sotetseg","Xarpus","Verzik","Challenge"};
+    public String[] rooms = {"Maiden", "Bloat", "Nylocas", "Sotetseg", "Xarpus", "Verzik", "Challenge"};
     private final ConfigManager configManager;
 
     public Raids(AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
     {
-        for(String s : rooms)
+        for (String s : rooms)
         {
             averageLabels.put(s, getDarkJLabel("", SwingConstants.RIGHT));
             medianLabels.put(s, getDarkJLabel("", SwingConstants.RIGHT));
@@ -142,16 +144,24 @@ public class Raids extends BaseFrame
         this.setPreferredSize(new Dimension(1200, 820));
     }
 
-    public void updateCustomStats(ArrayList<SimpleTOBData> raids)
+    public void updateCustomStats(ArrayList<SimpleRaidDataBase> raids)
     {
+        ArrayList<SimpleTOBData> tobData = new ArrayList<>();
+        for (SimpleRaidDataBase raidData : raids)
+        {
+            if (raidData instanceof SimpleTOBData)
+            {
+                tobData.add((SimpleTOBData) raidData);
+            }
+        }
         DataPoint dataPoint = DataPoint.ATTEMPTED_BGS_BLOAT;
         boolean time = dataPoint.type == DataPoint.types.TIME;
 
-        double avg = StatisticGatherer.getGenericAverage(raids, dataPoint);
-        double med = StatisticGatherer.getGenericMedian(raids, dataPoint);
-        double mod = StatisticGatherer.getGenericMode(raids, dataPoint);
-        double min = StatisticGatherer.getGenericMin(raids, dataPoint);
-        double max = StatisticGatherer.getGenericMax(raids, dataPoint);
+        double avg = StatisticGatherer.getGenericAverage(tobData, dataPoint);
+        double med = StatisticGatherer.getGenericMedian(tobData, dataPoint);
+        double mod = StatisticGatherer.getGenericMode(tobData, dataPoint);
+        double min = StatisticGatherer.getGenericMin(tobData, dataPoint);
+        double max = StatisticGatherer.getGenericMax(tobData, dataPoint);
 
         String avgStr = (time) ? RoomUtil.time(avg) : String.valueOf(avg);
         String medStr = (time) ? RoomUtil.time(med) : String.valueOf(med);
@@ -187,8 +197,8 @@ public class Raids extends BaseFrame
     public void updateTable()
     {
         int completions = 0;
-        ArrayList<SimpleTOBData> tableData = new ArrayList<>();
-        for (SimpleTOBData data : currentData)
+        ArrayList<SimpleRaidDataBase> tableData = new ArrayList<>();
+        for (SimpleRaidDataBase data : currentData)
         {
             boolean shouldDataBeIncluded = true;
             if (filterSpectateOnly.isSelected())
@@ -221,14 +231,18 @@ public class Raids extends BaseFrame
             }
             if (filterPartialData.isSelected())
             {
-                if (!(data.maidenStartAccurate == data.maidenEndAccurate &&
-                        data.bloatStartAccurate == data.bloatEndAccurate &&
-                        data.nyloStartAccurate == data.nyloEndAccurate &&
-                        data.soteStartAccurate == data.soteEndAccurate &&
-                        data.xarpStartAccurate == data.xarpEndAccurate &&
-                        data.verzikStartAccurate == data.verzikEndAccurate))
+                if (data instanceof SimpleTOBData)
                 {
-                    shouldDataBeIncluded = false;
+                    SimpleTOBData tobData = (SimpleTOBData) data;
+                    if (!(tobData.maidenStartAccurate == tobData.maidenEndAccurate &&
+                            tobData.bloatStartAccurate == tobData.bloatEndAccurate &&
+                            tobData.nyloStartAccurate == tobData.nyloEndAccurate &&
+                            tobData.soteStartAccurate == tobData.soteEndAccurate &&
+                            tobData.xarpStartAccurate == tobData.xarpEndAccurate &&
+                            tobData.verzikStartAccurate == tobData.verzikEndAccurate))
+                    {
+                        shouldDataBeIncluded = false;
+                    }
                 }
             }
             if (shouldDataBeIncluded && filterTodayOnly.isSelected())
@@ -245,9 +259,13 @@ public class Raids extends BaseFrame
             }
             if (filterPartyOnly.isSelected())
             {
-                if (!data.maidenDefenseAccurate || !data.bloatDefenseAccurate || !data.nyloDefenseAccurate || !data.soteDefenseAccurate || !data.xarpDefenseAccurate)
+                if (data instanceof SimpleTOBData)
                 {
-                    shouldDataBeIncluded = false;
+                    SimpleTOBData tobData = (SimpleTOBData) data;
+                    if (!tobData.maidenDefenseAccurate || !tobData.bloatDefenseAccurate || !tobData.nyloDefenseAccurate || !tobData.soteDefenseAccurate || !tobData.xarpDefenseAccurate)
+                    {
+                        shouldDataBeIncluded = false;
+                    }
                 }
             }
             if (filterNormalOnly.isSelected())
@@ -259,56 +277,61 @@ public class Raids extends BaseFrame
             }
             if (filterPartialOnly.isSelected())
             {
-                switch (Objects.requireNonNull(viewByRaidComboBox.getSelectedItem()).toString())
+                if (data instanceof SimpleTOBData)
                 {
-                    case "Challenge Time":
-                        if (!data.getOverallTimeAccurate())
-                        {
-                            shouldDataBeIncluded = false;
-                        }
-                        break;
-                    case "Maiden Time":
-                        if (!data.maidenStartAccurate || !data.maidenEndAccurate)
-                        {
-                            shouldDataBeIncluded = false;
-                        }
-                        break;
-                    case "Bloat Time":
-                        if (!data.bloatStartAccurate || !data.bloatEndAccurate)
-                        {
-                            shouldDataBeIncluded = false;
-                        }
-                        break;
-                    case "Nylocas Time":
-                        if (!data.nyloStartAccurate || !data.nyloEndAccurate)
-                        {
-                            shouldDataBeIncluded = false;
-                        }
-                        break;
-                    case "Sotetseg Time":
-                        if (!data.soteStartAccurate || !data.soteEndAccurate)
-                        {
-                            shouldDataBeIncluded = false;
-                        }
-                        break;
-                    case "Xarpus Time":
-                        if (!data.xarpStartAccurate || !data.xarpEndAccurate)
-                        {
-                            shouldDataBeIncluded = false;
-                        }
-                        break;
-                    case "Verzik Time":
-                        if (!data.verzikStartAccurate || !data.verzikEndAccurate)
-                        {
-                            shouldDataBeIncluded = false;
-                        }
-                        break;
+                    SimpleTOBData tobData = (SimpleTOBData) data;
+                    switch (viewByRaidComboBox.getSelectedItem().toString())
+                    {
+                        case "Challenge Time":
+                            if (!data.getOverallTimeAccurate())
+                            {
+                                shouldDataBeIncluded = false;
+                            }
+                            break;
+                        case "Maiden Time":
+                            if (!tobData.maidenStartAccurate || !tobData.maidenEndAccurate)
+                            {
+                                shouldDataBeIncluded = false;
+                            }
+                            break;
+                        case "Bloat Time":
+                            if (!tobData.bloatStartAccurate || !tobData.bloatEndAccurate)
+                            {
+                                shouldDataBeIncluded = false;
+                            }
+                            break;
+                        case "Nylocas Time":
+                            if (!tobData.nyloStartAccurate || !tobData.nyloEndAccurate)
+                            {
+                                shouldDataBeIncluded = false;
+                            }
+                            break;
+                        case "Sotetseg Time":
+                            if (!tobData.soteStartAccurate || !tobData.soteEndAccurate)
+                            {
+                                shouldDataBeIncluded = false;
+                            }
+                            break;
+                        case "Xarpus Time":
+                            if (!tobData.xarpStartAccurate || !tobData.xarpEndAccurate)
+                            {
+                                shouldDataBeIncluded = false;
+                            }
+                            break;
+                        case "Verzik Time":
+                            if (!tobData.verzikStartAccurate || !tobData.verzikEndAccurate)
+                            {
+                                shouldDataBeIncluded = false;
+                            }
+                            break;
+                    }
                 }
             }
             if (shouldDataBeIncluded && filterCheckBoxScale.isSelected())
             {
                 shouldDataBeIncluded = filterComboBoxScale.getSelectedIndex() + 1 == data.getScale();
             }
+
             for (Integer i : filteredIndices)
             {
                 if (data.getValue(DataPoint.RAID_INDEX) == i)
@@ -316,9 +339,13 @@ public class Raids extends BaseFrame
                     shouldDataBeIncluded = false;
                 }
             }
-            if (!evaluateAllFilters(data))
+            if (data instanceof SimpleTOBData)
             {
-                shouldDataBeIncluded = false;
+                SimpleTOBData tobData = (SimpleTOBData) data;
+                if (!evaluateAllFilters(tobData))
+                {
+                    shouldDataBeIncluded = false;
+                }
             }
             if (shouldDataBeIncluded)
             {
@@ -331,38 +358,44 @@ public class Raids extends BaseFrame
         }
         if (sortOptionsBox.getSelectedIndex() == 0)
         {
-            if (sortOrderBox.getSelectedIndex() == 0)
+            try
             {
-                tableData.sort(Comparator.comparing(SimpleTOBData::getDate));
-            } else
+                if (sortOrderBox.getSelectedIndex() == 0)
+                {
+                    tableData.sort(Comparator.comparing(SimpleRaidDataBase::getDate));
+                } else
+                {
+                    tableData.sort(Comparator.comparing(SimpleRaidDataBase::getDate).reversed());
+                }
+            } catch (Exception e)
             {
-                tableData.sort(Comparator.comparing(SimpleTOBData::getDate).reversed());
+
             }
         } else if (sortOptionsBox.getSelectedIndex() == 1)
         {
             if (sortOrderBox.getSelectedIndex() == 0)
             {
-                for (SimpleTOBData data : tableData)
+                for (SimpleRaidDataBase data : tableData)
                 {
                     data.activeValue = Objects.requireNonNull(viewByRaidComboBox.getSelectedItem()).toString();
                 }
-                tableData.sort(Comparator.comparing(SimpleTOBData::getSpecificTime));
+                tableData.sort(Comparator.comparing(SimpleRaidDataBase::getSpecificTime));
             } else
             {
-                for (SimpleTOBData data : tableData)
+                for (SimpleRaidDataBase data : tableData)
                 {
                     data.activeValue = Objects.requireNonNull(viewByRaidComboBox.getSelectedItem()).toString();
                 }
-                tableData.sort(Comparator.comparing(SimpleTOBData::getSpecificTime).reversed());
+                tableData.sort(Comparator.comparing(SimpleRaidDataBase::getSpecificTime).reversed());
             }
         } else if (sortOptionsBox.getSelectedIndex() == 2)
         {
             if (sortOrderBox.getSelectedIndex() == 0)
             {
-                tableData.sort(Comparator.comparing(SimpleTOBData::getScale));
+                tableData.sort(Comparator.comparing(SimpleRaidDataBase::getScale));
             } else
             {
-                tableData.sort(Comparator.comparing(SimpleTOBData::getScale).reversed());
+                tableData.sort(Comparator.comparing(SimpleRaidDataBase::getScale).reversed());
             }
         }
 
@@ -385,7 +418,7 @@ public class Raids extends BaseFrame
             }
         }
         ArrayList<Object[]> tableBuilder = new ArrayList<>();
-        for (SimpleTOBData raid : tableData)
+        for (SimpleRaidDataBase raid : tableData)
         {
             ArrayList<Object> rowBuilder = new ArrayList<>();
             for (String column : columnNamesDynamic)
@@ -428,12 +461,12 @@ public class Raids extends BaseFrame
         container.repaint();
     }
 
-    public Object getRowData(String column, SimpleTOBData raid)
+    public Object getRowData(String column, SimpleRaidDataBase raid)
     {
         switch (column)
         {
             case "":
-                return raid.getValue(DataPoint.RAID_INDEX);
+                return raid.getIndex();
             case "Date":
                 Calendar cal = Calendar.getInstance();
                 cal.setTime(raid.raidStarted);
@@ -442,13 +475,10 @@ public class Raids extends BaseFrame
                 return raid.getScaleString();
             case "Status":
                 return raid.getRoomStatus();
+            case "Raid":
+                return raid.getRaidType();
             case "Players":
-                StringBuilder players = new StringBuilder();
-                for (String s : raid.players.keySet())
-                {
-                    players.append(s).append(", ");
-                }
-                return (players.length() > 2) ? players.substring(0, players.length() - 2) : "";
+                return raid.getPlayers();
             case "Spectate":
                 return (raid.spectated) ? "Yes" : "No";
             case "View":
@@ -511,15 +541,35 @@ public class Raids extends BaseFrame
         }
     }
 
-    private void updateTabNames(ArrayList<SimpleTOBData> data)
+    boolean isTime()
     {
+        if (!viewByRaidComboBox.getSelectedItem().toString().contains("Player:"))
+        {
+            return (Objects.requireNonNull(DataPoint.getValue(Objects.requireNonNull(viewByRaidComboBox.getSelectedItem()).toString())).type == DataPoint.types.TIME);
+        } else
+        {
+            return false;
+        }
+    }
+
+
+    private void updateTabNames(ArrayList<SimpleRaidDataBase> data)
+    {
+        ArrayList<SimpleTOBData> tobData = new ArrayList<>();
+        for (SimpleRaidDataBase raidData : data)
+        {
+            if (raidData instanceof SimpleTOBData)
+            {
+                tobData.add((SimpleTOBData) raidData);
+            }
+        }
         int maidenCount = 0;
         int bloatCount = 0;
         int nyloCount = 0;
         int soteCount = 0;
         int xarpCount = 0;
         int verzikCount = 0;
-        for (SimpleTOBData d : data)
+        for (SimpleTOBData d : tobData)
         {
             if (d.maidenStartAccurate && d.maidenEndAccurate)
             {
@@ -595,15 +645,23 @@ public class Raids extends BaseFrame
         }
     }
 
-    public void setLabels(ArrayList<SimpleTOBData> data)
+    public void setLabels(ArrayList<SimpleRaidDataBase> data)
     {
-        setOverallLabels(data);
-        maidenTab.updateTab(data);
-        bloatTab.updateTab(data);
-        nyloTab.updateTab(data);
-        soteTab.updateTab(data);
-        xarpTab.updateTab(data);
-        verzikTab.updateTab(data);
+        ArrayList<SimpleTOBData> tobData = new ArrayList<>();
+        for (SimpleRaidDataBase raidData : data)
+        {
+            if (raidData instanceof SimpleTOBData)
+            {
+                tobData.add((SimpleTOBData) raidData);
+            }
+        }
+        setOverallLabels(tobData);
+        maidenTab.updateTab(tobData);
+        bloatTab.updateTab(tobData);
+        nyloTab.updateTab(tobData);
+        soteTab.updateTab(tobData);
+        xarpTab.updateTab(tobData);
+        verzikTab.updateTab(tobData);
     }
 
     public void setOverallLabels(ArrayList<SimpleTOBData> data)
@@ -616,7 +674,7 @@ public class Raids extends BaseFrame
 
     public void setOverallAverageLabels(ArrayList<SimpleTOBData> data)
     {
-        for(String s : averageLabels.keySet())
+        for (String s : averageLabels.keySet())
         {
             averageLabels.get(s).setText(RoomUtil.time(StatisticGatherer.getGenericAverage(data, DataPoint.getValue(s + " Time"))));
         }
@@ -624,7 +682,7 @@ public class Raids extends BaseFrame
 
     public void setOverallMedianLabels(ArrayList<SimpleTOBData> data)
     {
-        for(String s : medianLabels.keySet())
+        for (String s : medianLabels.keySet())
         {
             medianLabels.get(s).setText(RoomUtil.time(StatisticGatherer.getGenericMedian(data, DataPoint.getValue(s + " Time"))));
         }
@@ -632,7 +690,7 @@ public class Raids extends BaseFrame
 
     public void setOverallMinLabels(ArrayList<SimpleTOBData> data)
     {
-        for(String s : minLabels.keySet())
+        for (String s : minLabels.keySet())
         {
             minLabels.get(s).setText(RoomUtil.time(StatisticGatherer.getGenericMin(data, DataPoint.getValue(s + " Time"))));
         }
@@ -640,7 +698,7 @@ public class Raids extends BaseFrame
 
     private void setOverallMaxLabels(ArrayList<SimpleTOBData> data)
     {
-        for(String s : maxLabels.keySet())
+        for (String s : maxLabels.keySet())
         {
             maxLabels.get(s).setText(RoomUtil.time(StatisticGatherer.getGenericMax(data, DataPoint.getValue(s + " Time"))));
         }
@@ -716,7 +774,7 @@ public class Raids extends BaseFrame
     private final Map<String, String[]> comboPopupData = new LinkedHashMap<>();
 
 
-    public  JPanel getOverallPanel(String title, Map<String, JLabel> labelMap)
+    public JPanel getOverallPanel(String title, Map<String, JLabel> labelMap)
     {
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
@@ -725,7 +783,7 @@ public class Raids extends BaseFrame
         JPanel subPanel = new JPanel();
         subPanel.setLayout(new GridLayout(7, 2));
 
-        for(String s : rooms)
+        for (String s : rooms)
         {
             JLabel leftLabel = new JLabel(roomColor + s);
             subPanel.add(leftLabel);
@@ -748,130 +806,36 @@ public class Raids extends BaseFrame
         close();
     }
 
-    public void createFrame(ArrayList<SimpleTOBData> data)
+    public void createFrame(ArrayList<SimpleRaidDataBase> data)
     {
-        comboPopupData.put("Room Times", DataPoint.getRoomTimes());
-        comboPopupData.put("Maiden", DataPoint.getMaidenNames());
-        comboPopupData.put("Bloat", DataPoint.getBloatNames());
-        comboPopupData.put("Nylocas", DataPoint.getNyloNames());
-        comboPopupData.put("Sotetseg", DataPoint.getSoteNames());
-        comboPopupData.put("Xarpus", DataPoint.getXarpNames());
-        comboPopupData.put("Verzik", DataPoint.getVerzikNames());
-        comboPopupData.put("Any", DataPoint.getAnyRoomNames());
         comboPopupMenu = new JPopupMenu();
         comboPopupMenu.setBorder(new MatteBorder(1, 1, 1, 1, Color.DARK_GRAY));
 
-        List<String> allComboValues = new ArrayList<>(comboPopupData.keySet());
+        comboPopupData.put("Room Times", DataPoint.getRoomTimes());
+        comboPopupData.put("Maiden", DataPoint.getSpecificNames(DataPoint.rooms.MAIDEN));
+        comboPopupData.put("Bloat", DataPoint.getSpecificNames(DataPoint.rooms.BLOAT));
+        comboPopupData.put("Nylocas", DataPoint.getSpecificNames(DataPoint.rooms.NYLOCAS));
+        comboPopupData.put("Sotetseg", DataPoint.getSpecificNames(DataPoint.rooms.SOTETSEG));
+        comboPopupData.put("Xarpus", DataPoint.getSpecificNames(DataPoint.rooms.XARPUS));
+        comboPopupData.put("Verzik", DataPoint.getSpecificNames(DataPoint.rooms.VERZIK));
+        comboPopupData.put("Any TOB", DataPoint.getSpecificNames(DataPoint.rooms.ANY_TOB));
+        comboPopupData.put("Apmeken", DataPoint.getSpecificNames(DataPoint.rooms.APMEKEN));
+        comboPopupData.put("Baba", DataPoint.getSpecificNames(DataPoint.rooms.BABA));
+        comboPopupData.put("Scabaras", DataPoint.getSpecificNames(DataPoint.rooms.SCABARAS));
+        comboPopupData.put("Kephri", DataPoint.getSpecificNames(DataPoint.rooms.KEPHRI));
+        comboPopupData.put("Crondis", DataPoint.getSpecificNames(DataPoint.rooms.CRONDIS));
+        comboPopupData.put("Zebak", DataPoint.getSpecificNames(DataPoint.rooms.ZEBAK));
+        comboPopupData.put("Het", DataPoint.getSpecificNames(DataPoint.rooms.HET));
+        comboPopupData.put("Akkha", DataPoint.getSpecificNames(DataPoint.rooms.AKKHA));
+        comboPopupData.put("Wardens", DataPoint.getSpecificNames(DataPoint.rooms.WARDENS));
+        comboPopupData.put("Any TOA", DataPoint.getSpecificNames(DataPoint.rooms.ANY_TOA));
+
+        List<String> allComboValues = new ArrayList<String>(comboPopupData.keySet());
 
         comboStrictData = new ArrayList<>();
 
-        for (String category : allComboValues)
-        {
-            JMenu menu = new JMenu(category);
-            menu.setBackground(Color.BLACK);
-            menu.setOpaque(true);
-            if (!category.equals("Room Times") && !category.equals("Any"))
-            {
-                JMenu timeMenu = new JMenu("Time");
-                timeMenu.setBackground(Color.BLACK);
-                timeMenu.setOpaque(true);
-                for (String itemName : DataPoint.filterTimes(comboPopupData.get(category)))
-                {
-                    timeMenu.add(createMenuItem(itemName));
-                    comboStrictData.add(itemName);
-                }
-                JMenu countMenu = new JMenu("Misc");
-                countMenu.setBackground(Color.BLACK);
-                countMenu.setOpaque(true);
-                for (String itemName : DataPoint.filterInt(comboPopupData.get(category)))
-                {
-                    countMenu.add(createMenuItem(itemName));
-                    comboStrictData.add(itemName);
-                }
-                JMenu thrallMenu = new JMenu("Thrall");
-                thrallMenu.setBackground(Color.BLACK);
-                thrallMenu.setOpaque(true);
-                for (String itemName : DataPoint.filterThrall(comboPopupData.get(category)))
-                {
-                    thrallMenu.add(createMenuItem(itemName));
-                    comboStrictData.add(itemName);
-                }
-                JMenu vengMenu = new JMenu("Veng");
-                vengMenu.setBackground(Color.BLACK);
-                vengMenu.setOpaque(true);
-                for (String itemName : DataPoint.filterVeng(comboPopupData.get(category)))
-                {
-                    vengMenu.add(createMenuItem(itemName));
-                    comboStrictData.add(itemName);
-                }
+        createComboBoxPopupMenu(allComboValues, comboPopupData, comboStrictData, comboPopupMenu);
 
-                JMenu specMenu = new JMenu("Spec");
-                specMenu.setBackground(Color.BLACK);
-                specMenu.setOpaque(true);
-                for (String itemName : DataPoint.filterSpecs(comboPopupData.get(category)))
-                {
-                    specMenu.add(createMenuItem(itemName));
-                    comboStrictData.add(itemName);
-                }
-
-                menu.add(timeMenu);
-                menu.add(countMenu);
-                menu.add(thrallMenu);
-                menu.add(vengMenu);
-                menu.add(specMenu);
-            } else
-            {
-                for (String itemName : comboPopupData.get(category))
-                {
-                    menu.add(createMenuItem(itemName));
-                    comboStrictData.add(itemName);
-                }
-            }
-            comboPopupMenu.add(menu);
-        }
-        JMenu playerSpecificMenu = new JMenu("Player Specific");
-        playerSpecificMenu.setBackground(Color.BLACK);
-        playerSpecificMenu.setOpaque(true);
-        String[] qualifiers = new String[]{"Maiden", "Bloat", "Nylo", "Sote", "Xarp", "Verz", "deaths"};
-
-        for (String s : qualifiers)
-        {
-            JMenu room = new JMenu(s);
-            room.setBackground(Color.BLACK);
-            room.setOpaque(true);
-            for (String qualified : DataPoint.getPlayerSpecific())
-            {
-                if (qualified.contains(s))
-                {
-                    room.add(createMenuItem("Player: " + qualified));
-                    comboStrictData.add("Player: " + qualified);
-                }
-            }
-            playerSpecificMenu.add(room);
-        }
-        JMenu room = new JMenu("Other");
-        room.setBackground(Color.BLACK);
-        room.setOpaque(true);
-        for (String qualified : DataPoint.getPlayerSpecific())
-        {
-            boolean anyFlagged = false;
-            for (String s : qualifiers)
-            {
-                if (qualified.contains(s))
-                {
-                    anyFlagged = true;
-                    break;
-                }
-            }
-            if (!anyFlagged)
-            {
-                room.add(createMenuItem("Player: " + qualified));
-                comboStrictData.add("Player: " + qualified);
-            }
-        }
-        playerSpecificMenu.add(room);
-
-        comboPopupMenu.add(playerSpecificMenu);
 
         viewByRaidComboBox = new JComboBox<>();
         viewByRaidComboBox.setEditable(true);
@@ -1073,7 +1037,7 @@ public class Raids extends BaseFrame
         JPanel overallAveragePanel = getOverallPanel("Average", averageLabels);
         JPanel overallMedianPanel = getOverallPanel("Median", medianLabels);
         JPanel overallMinPanel = getOverallPanel("Minimum", minLabels);
-        JPanel overallMaxPanel = getOverallPanel("Maximum",maxLabels);
+        JPanel overallMaxPanel = getOverallPanel("Maximum", maxLabels);
 
         JPanel topStatPanel = new JPanel();
         topStatPanel.setLayout(new GridLayout(1, 4));
@@ -1086,17 +1050,26 @@ public class Raids extends BaseFrame
         overallPanel.add(topStatPanel);
         overallPanel.add(overallCustomPanel);
 
-        maidenTab = new StatisticTab(data, DataPoint.rooms.MAIDEN);
+        ArrayList<SimpleTOBData> tobData = new ArrayList<>();
+        for (SimpleRaidDataBase raidData : data)
+        {
+            if (raidData instanceof SimpleTOBData)
+            {
+                tobData.add((SimpleTOBData) raidData);
+            }
+        }
+
+        maidenTab = new StatisticTab(tobData, DataPoint.rooms.MAIDEN);
         tabbedPane.addTab("Maiden", maidenTab);
-        bloatTab = new StatisticTab(data, DataPoint.rooms.BLOAT);
+        bloatTab = new StatisticTab(tobData, DataPoint.rooms.BLOAT);
         tabbedPane.addTab("Bloat", bloatTab);
-        nyloTab = new StatisticTab(data, DataPoint.rooms.NYLOCAS);
+        nyloTab = new StatisticTab(tobData, DataPoint.rooms.NYLOCAS);
         tabbedPane.addTab("Nylo", nyloTab);
-        soteTab = new StatisticTab(data, DataPoint.rooms.SOTETSEG);
+        soteTab = new StatisticTab(tobData, DataPoint.rooms.SOTETSEG);
         tabbedPane.addTab("Sotetseg", soteTab);
-        xarpTab = new StatisticTab(data, DataPoint.rooms.XARPUS);
+        xarpTab = new StatisticTab(tobData, DataPoint.rooms.XARPUS);
         tabbedPane.addTab("Xarpus", xarpTab);
-        verzikTab = new StatisticTab(data, DataPoint.rooms.VERZIK);
+        verzikTab = new StatisticTab(tobData, DataPoint.rooms.VERZIK);
         tabbedPane.addTab("Verzik", verzikTab);
 
         tabbedPane.setMinimumSize(new Dimension(100, 300));
@@ -1466,7 +1439,7 @@ public class Raids extends BaseFrame
             {
                 if (!sessions.containsKey(data12.players.size()))
                 {
-                    Map<String, ArrayList<SimpleTOBData>> scale = new LinkedHashMap<>();
+                    Map<String, ArrayList<SimpleRaidDataBase>> scale = new LinkedHashMap<>();
                     ArrayList<SimpleTOBData> list = new ArrayList<>();
                     list.add(data12);
                     scale.put(data12.getPlayerList(aliases), list);
@@ -1517,61 +1490,76 @@ public class Raids extends BaseFrame
 
         viewCharts.addActionListener(e ->
         {
-            ArrayList<SimpleTOBData> rows = new ArrayList<>();
             int[] toRemove = table.getSelectedRows();
-            for (int j : toRemove)
+            SimpleRaidDataBase raidData = null;
+            for (int i = 0; i < toRemove.length; i++)
             {
-                rows.add(currentData.get(Integer.parseInt(table.getModel().getValueAt(j, 0).toString())));
+                raidData = currentData.get(Integer.parseInt(table.getModel().getValueAt(toRemove[i], 0).toString()));
             }
-            ChartFrame roomCharts = new ChartFrame(rows, config, itemManager, clientThread, configManager);
-            roomCharts.open();
+            if (raidData != null)
+            {
+                ChartFrame roomCharts = new ChartFrame(raidData, config, itemManager, clientThread, configManager);
+                roomCharts.open();
+            }
         });
 
         viewGraphs.addActionListener(e ->
         {
-            ArrayList<String> labels = new ArrayList<>();
-            ArrayList<SimpleTOBData> rows = new ArrayList<>();
-            int[] toRemove = table.getSelectedRows();
-            for (int j : toRemove)
+            @Override
+            public void actionPerformed(ActionEvent e)
             {
-                rows.add(currentData.get(Integer.parseInt(table.getModel().getValueAt(j, 0).toString())));
-            }
-            if (rows.isEmpty())
-            {
-                new NoDataPopUp().open();
-            } else
-            {
-                labels.add("");
-                ArrayList<ArrayList<SimpleTOBData>> data1 = new ArrayList<>();
-                data1.add(rows);
-                ComparisonViewFrame graphView = new ComparisonViewFrame(data1, labels);
-                graphView.open();
+                ArrayList<String> labels = new ArrayList<>();
+                ArrayList<SimpleRaidDataBase> rows = new ArrayList<>();
+                int[] toRemove = table.getSelectedRows();
+                for (int i = 0; i < toRemove.length; i++)
+                {
+                    rows.add(currentData.get(Integer.parseInt(table.getModel().getValueAt(toRemove[i], 0).toString())));
+                }
+                if (rows.isEmpty())
+                {
+                    new NoDataPopUp().open();
+                } else
+                {
+                    labels.add("");
+                    ArrayList<ArrayList<SimpleRaidDataBase>> data = new ArrayList<>();
+                    data.add(rows);
+                    ComparisonViewFrame graphView = new ComparisonViewFrame(data, labels);
+                    graphView.open();
+                }
             }
         });
 
         addToComparison.addActionListener(e ->
         {
-            ArrayList<SimpleTOBData> rows = new ArrayList<>();
-            int[] toRemove = table.getSelectedRows();
-            for (int j : toRemove)
+            @Override
+            public void actionPerformed(ActionEvent e)
             {
-                rows.add(currentData.get(Integer.parseInt(table.getModel().getValueAt(j, 0).toString())));
+                ArrayList<SimpleRaidDataBase> rows = new ArrayList<>();
+                int[] toRemove = table.getSelectedRows();
+                for (int i = 0; i < toRemove.length; i++)
+                {
+                    rows.add(currentData.get(Integer.parseInt(table.getModel().getValueAt(toRemove[i], 0).toString())));
+                }
+                comparisons.add(rows);
+                updateComparisonTable();
             }
-            comparisons.add(rows);
-            updateComparisonTable();
         });
         JMenuItem exportRaids = new JMenuItem("Export Selected Raids to CSV");
         exportRaids.setBackground(Color.BLACK);
         exportRaids.setOpaque(true);
         exportRaids.addActionListener(e ->
         {
-            ArrayList<SimpleTOBData> rows = new ArrayList<>();
-            int[] toRemove = table.getSelectedRows();
-            for (int j : toRemove)
+            @Override
+            public void actionPerformed(ActionEvent e)
             {
-                rows.add(currentData.get(Integer.parseInt(table.getModel().getValueAt(j, 0).toString())));
+                ArrayList<SimpleRaidDataBase> rows = new ArrayList<>();
+                int[] toRemove = table.getSelectedRows();
+                for (int i = 0; i < toRemove.length; i++)
+                {
+                    rows.add(currentData.get(Integer.parseInt(table.getModel().getValueAt(toRemove[i], 0).toString())));
+                }
+                new SaveRaids(rows).open();
             }
-            new SaveRaids(rows).open();
         });
 
         JMenuItem filterRaids = new JMenuItem("Filter Selected Raids");
@@ -1618,13 +1606,21 @@ public class Raids extends BaseFrame
         analyzeCrabs.setBackground(Color.BLACK);
         analyzeCrabs.addActionListener(e ->
         {
-            ArrayList<ArrayList<StringInt>> crabData = new ArrayList<>();
-            int[] toRemove = table.getSelectedRows();
-            for (int j : toRemove)
+            @Override
+            public void actionPerformed(ActionEvent e)
             {
-                crabData.add(currentData.get(Integer.parseInt(table.getModel().getValueAt(j, 0).toString())).maidenCrabs);
+                ArrayList<ArrayList<StringInt>> crabData = new ArrayList<>();
+                int[] toRemove = table.getSelectedRows();
+                for (int i = 0; i < toRemove.length; i++)
+                {
+                    SimpleRaidDataBase row = currentData.get(Integer.parseInt(table.getModel().getValueAt(toRemove[i], 0).toString()));
+                    if (row instanceof SimpleTOBData)
+                    {
+                        crabData.add(((SimpleTOBData) row).maidenCrabs);
+                    }
+                }
+                new CrabLeakInfo(crabData);
             }
-            new CrabLeakInfo(crabData);
         });
 
         raidPopup.add(analyzeCrabs);
@@ -1651,19 +1647,19 @@ public class Raids extends BaseFrame
                 al ->
                 {
                     ArrayList<String> quickFiltersState = new ArrayList<>();
-                    quickFiltersState.add("QF-Spectate Only:"+filterSpectateOnly.isSelected());
-                    quickFiltersState.add("QF-In Raid Only:"+filterInRaidOnly.isSelected());
-                    quickFiltersState.add("QF-Completion Only:"+filterCompletionOnly.isSelected());
-                    quickFiltersState.add("QF-Wipe/Reset Only:"+filterWipeResetOnly.isSelected());
-                    quickFiltersState.add("QF-Today Only:"+filterTodayOnly.isSelected());
-                    quickFiltersState.add("QF-Party Only:"+filterPartyOnly.isSelected());
-                    quickFiltersState.add("QF-Partial Raids:"+filterPartialData.isSelected());
-                    quickFiltersState.add("QF-Partial Rooms:"+filterPartialOnly.isSelected());
-                    quickFiltersState.add("QF-Normal Mode Only:"+filterNormalOnly.isSelected());
-                    quickFiltersState.add("QF-Scale:"+filterCheckBoxScale.isSelected()+":"+filterComboBoxScale.getSelectedIndex());
-                    quickFiltersState.add("QF-View Raid By:"+viewByRaidComboBox.getItemAt(viewByRaidComboBox.getSelectedIndex()));
-                    quickFiltersState.add("QF-Table Sort By:"+sortOptionsBox.getItemAt(sortOptionsBox.getSelectedIndex()));
-                    quickFiltersState.add("QF-Table Sort:"+sortOrderBox.getItemAt(sortOrderBox.getSelectedIndex()));
+                    quickFiltersState.add("QF-Spectate Only:" + filterSpectateOnly.isSelected());
+                    quickFiltersState.add("QF-In Raid Only:" + filterInRaidOnly.isSelected());
+                    quickFiltersState.add("QF-Completion Only:" + filterCompletionOnly.isSelected());
+                    quickFiltersState.add("QF-Wipe/Reset Only:" + filterWipeResetOnly.isSelected());
+                    quickFiltersState.add("QF-Today Only:" + filterTodayOnly.isSelected());
+                    quickFiltersState.add("QF-Party Only:" + filterPartyOnly.isSelected());
+                    quickFiltersState.add("QF-Partial Raids:" + filterPartialData.isSelected());
+                    quickFiltersState.add("QF-Partial Rooms:" + filterPartialOnly.isSelected());
+                    quickFiltersState.add("QF-Normal Mode Only:" + filterNormalOnly.isSelected());
+                    quickFiltersState.add("QF-Scale:" + filterCheckBoxScale.isSelected() + ":" + filterComboBoxScale.getSelectedIndex());
+                    quickFiltersState.add("QF-View Raid By:" + viewByRaidComboBox.getItemAt(viewByRaidComboBox.getSelectedIndex()));
+                    quickFiltersState.add("QF-Table Sort By:" + sortOptionsBox.getItemAt(sortOptionsBox.getSelectedIndex()));
+                    quickFiltersState.add("QF-Table Sort:" + sortOrderBox.getItemAt(sortOrderBox.getSelectedIndex()));
                     SaveFilter saveFilter = new SaveFilter(activeFilters, quickFiltersState);
                     saveFilter.open();
                 });
@@ -1777,7 +1773,117 @@ public class Raids extends BaseFrame
         built = true;
     }
 
-    public String[] columnHeaderNames = new String[]{"Date", "Time", "Scale", "Status", "Players", "Spectate", "View"};
+    private void createComboBoxPopupMenu(List<String> allComboValues, Map<String, String[]> popupData, ArrayList<String> flatData, JPopupMenu popmenu)
+    {
+        for (String category : allComboValues)
+        {
+            JMenu menu = new JMenu(category);
+            menu.setBackground(Color.BLACK);
+            menu.setOpaque(true);
+            if (!category.equals("Room Times") && !category.equals("Any"))
+            {
+                JMenu timeMenu = new JMenu("Time");
+                timeMenu.setBackground(Color.BLACK);
+                timeMenu.setOpaque(true);
+                for (String itemName : DataPoint.filterTimes(popupData.get(category)))
+                {
+                    timeMenu.add(createMenuItem(itemName));
+                    flatData.add(itemName);
+                }
+                JMenu countMenu = new JMenu("Misc");
+                countMenu.setBackground(Color.BLACK);
+                countMenu.setOpaque(true);
+                for (String itemName : DataPoint.filterInt(popupData.get(category)))
+                {
+                    countMenu.add(createMenuItem(itemName));
+                    flatData.add(itemName);
+                }
+                JMenu thrallMenu = new JMenu("Thrall");
+                thrallMenu.setBackground(Color.BLACK);
+                thrallMenu.setOpaque(true);
+                for (String itemName : DataPoint.filterThrall(popupData.get(category)))
+                {
+                    thrallMenu.add(createMenuItem(itemName));
+                    flatData.add(itemName);
+                }
+                JMenu vengMenu = new JMenu("Veng");
+                vengMenu.setBackground(Color.BLACK);
+                vengMenu.setOpaque(true);
+                for (String itemName : DataPoint.filterVeng(popupData.get(category)))
+                {
+                    vengMenu.add(createMenuItem(itemName));
+                    flatData.add(itemName);
+                }
+
+                JMenu specMenu = new JMenu("Spec");
+                specMenu.setBackground(Color.BLACK);
+                specMenu.setOpaque(true);
+                for (String itemName : DataPoint.filterSpecs(popupData.get(category)))
+                {
+                    specMenu.add(createMenuItem(itemName));
+                    flatData.add(itemName);
+                }
+
+                menu.add(timeMenu);
+                menu.add(countMenu);
+                menu.add(thrallMenu);
+                menu.add(vengMenu);
+                menu.add(specMenu);
+            } else
+            {
+                for (String itemName : popupData.get(category))
+                {
+                    menu.add(createMenuItem(itemName));
+                    flatData.add(itemName);
+                }
+            }
+            popmenu.add(menu);
+        }
+        JMenu playerSpecificMenu = new JMenu("Player Specific");
+        playerSpecificMenu.setBackground(Color.BLACK);
+        playerSpecificMenu.setOpaque(true);
+        String[] qualifiers = new String[]{"Maiden", "Bloat", "Nylo", "Sote", "Xarp", "Verz", "deaths"};
+
+        for (String s : qualifiers)
+        {
+            JMenu room = new JMenu(s);
+            room.setBackground(Color.BLACK);
+            room.setOpaque(true);
+            for (String qualified : DataPoint.getPlayerSpecific())
+            {
+                if (qualified.contains(s))
+                {
+                    room.add(createMenuItem("Player: " + qualified));
+                    flatData.add("Player: " + qualified);
+                }
+            }
+            playerSpecificMenu.add(room);
+        }
+        JMenu room = new JMenu("Other");
+        room.setBackground(Color.BLACK);
+        room.setOpaque(true);
+        for (String qualified : DataPoint.getPlayerSpecific())
+        {
+            boolean anyFlagged = false;
+            for (String s : qualifiers)
+            {
+                if (qualified.contains(s))
+                {
+                    anyFlagged = true;
+                }
+            }
+            if (!anyFlagged)
+            {
+                room.add(createMenuItem("Player: " + qualified));
+                flatData.add("Player: " + qualified);
+            }
+        }
+        playerSpecificMenu.add(room);
+
+        popmenu.add(playerSpecificMenu);
+    }
+
+    public String[] columnHeaderNames = new String[]{"Date", "Raid", "Time", "Scale", "Status", "Players", "Spectate", "View"};
     public ArrayList<JCheckBoxMenuItem> columnHeaders;
 
     private void getUpdatedPopupMenu(String newItem)
@@ -1988,7 +2094,7 @@ public class Raids extends BaseFrame
         ArrayList<Object[]> tableData = new ArrayList<>();
 
         int index = 0;
-        for (ArrayList<SimpleTOBData> comparison : comparisons)
+        for (ArrayList<SimpleRaidDataBase> comparison : comparisons)
         {
             Object[] row = {comparison.size() + " raids averaging: " + RoomUtil.time(StatisticGatherer.getOverallTimeAverage(comparison)), "Set " + index, "Remove"};
             tableData.add(row);
@@ -2052,7 +2158,7 @@ public class Raids extends BaseFrame
                             filterNormalOnly.setSelected(Boolean.parseBoolean(data[1]));
                             break;
                         case "Scale":
-                            if(data.length > 2)
+                            if (data.length > 2)
                             {
                                 filterCheckBoxScale.setSelected(Boolean.parseBoolean(data[1]));
                                 filterComboBoxScale.setSelectedIndex(Integer.parseInt(data[2]));
@@ -2060,11 +2166,10 @@ public class Raids extends BaseFrame
                             break;
                         case "View Raid By":
                             viewByRaidComboBox.setEditable(true);
-                            if(!Objects.equals(data[1], "null"))
+                            if (!Objects.equals(data[1], "null"))
                             {
                                 viewByRaidComboBox.setSelectedItem(data[1]);
-                            }
-                            else
+                            } else
                             {
                                 viewByRaidComboBox.setSelectedItem("Challenge Time");
                             }
@@ -2079,8 +2184,7 @@ public class Raids extends BaseFrame
                     }
                 }
             }
-        }
-        catch (Exception e)
+        } catch (Exception e)
         {
             log.info("Failed to set filter state: " + state);
         }

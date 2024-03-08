@@ -1,11 +1,10 @@
 package com.advancedraidtracker.rooms.tob;
 
-import com.advancedraidtracker.AdvancedRaidTrackerPlugin;
 import com.advancedraidtracker.AdvancedRaidTrackerConfig;
 
+import com.advancedraidtracker.utility.RoomState;
 import com.advancedraidtracker.constants.TOBRoom;
 import com.advancedraidtracker.constants.TobIDs;
-import com.advancedraidtracker.utility.*;
 
 import com.advancedraidtracker.utility.datautility.DataWriter;
 import com.advancedraidtracker.utility.maidenbloodtracking.BloodDamageToBeApplied;
@@ -16,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.*;
+import com.advancedraidtracker.AdvancedRaidTrackerPlugin;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -31,7 +31,7 @@ import net.runelite.http.api.item.ItemEquipmentStats;
 import net.runelite.http.api.item.ItemStats;
 
 @Slf4j
-public class MaidenHandler extends RoomHandler
+public class MaidenHandler extends TOBRoomHandler
 {
     public RoomState.MaidenRoomState roomState;
 
@@ -163,7 +163,7 @@ public class MaidenHandler extends RoomHandler
         clog.addLine(ACCURATE_MAIDEN_END);
         clog.addLine(MAIDEN_0HP, String.valueOf(client.getTickCount() - maidenStartTick));
         plugin.addDelayedLine(TOBRoom.MAIDEN, client.getTickCount() - maidenStartTick, "Dead");
-        plugin.liveFrame.setMaidenFinished(maidenDeathTick - maidenStartTick);
+        plugin.liveFrame.setRoomFinished(getName(), maidenDeathTick - maidenStartTick);
     }
 
     private boolean didAuto = false;
@@ -192,8 +192,7 @@ public class MaidenHandler extends RoomHandler
         } else if (event.getActor().getAnimation() == DINHS_BULWARK_ANIMATION)
         {
             dinhsers.add((Player) event.getActor());
-        }
-        else if(event.getActor().getAnimation() == MAIDEN_AUTO_ANIMATION)
+        } else if (event.getActor().getAnimation() == MAIDEN_AUTO_ANIMATION)
         {
             didAuto = true;
         }
@@ -201,7 +200,7 @@ public class MaidenHandler extends RoomHandler
 
     public int getDrainedStat(Player player) //Assumes berserker/ultor
     {
-        if(player == null)
+        if (player == null)
         {
             return NONE;
         }
@@ -222,10 +221,10 @@ public class MaidenHandler extends RoomHandler
                 pc.getEquipmentId(KitType.HANDS),
                 pc.getEquipmentId(KitType.BOOTS)
         };
-        for(int item : wornItems)
+        for (int item : wornItems)
         {
             ItemStats itemStats = itemManager.getItemStats(item, false);
-            if(itemStats != null)
+            if (itemStats != null)
             {
                 ItemEquipmentStats itemEquipmentStats = itemStats.getEquipment();
                 stab += itemEquipmentStats.getAstab();
@@ -235,15 +234,13 @@ public class MaidenHandler extends RoomHandler
                 range += itemEquipmentStats.getArange();
             }
         }
-        if((stab >= magic && stab >= range) || (slash >= magic && slash >= range) || (crush >= magic && crush >= range))
+        if ((stab >= magic && stab >= range) || (slash >= magic && slash >= range) || (crush >= magic && crush >= range))
         {
             return MELEE;
-        }
-        else if(magic > range)
+        } else if (magic > range)
         {
             return MAGE;
-        }
-        else
+        } else
         {
             return RANGE;
         }
@@ -318,7 +315,7 @@ public class MaidenHandler extends RoomHandler
             case MAIDEN_MATOMENOS_HM:
             case MAIDEN_MATOMENOS_SM:
                 String crabName = identifySpawn(npc);
-                clog.addLine(ADD_NPC_MAPPING, String.valueOf(npc.getIndex()), crabName);
+                clog.addLine(ADD_NPC_MAPPING, String.valueOf(npc.getIndex()), crabName, getName());
                 plugin.liveFrame.getPanel(getName()).addNPCMapping(npc.getIndex(), crabName);
                 plugin.liveFrame.getPanel(getName()).addMaidenCrab(crabName);
                 MaidenCrab crab = new MaidenCrab(npc, AdvancedRaidTrackerPlugin.scale, crabName);
@@ -609,7 +606,7 @@ public class MaidenHandler extends RoomHandler
         assessBloodForNextTick();
         hitsplatsPerPlayer.clear();
         maidenHeals.clear();
-        if(didAuto)
+        if (didAuto)
         {
             Actor drained = maidenNPC.getInteracting();
             if (drained instanceof Player)

@@ -21,7 +21,7 @@ import static com.advancedraidtracker.constants.LogID.*;
 import static com.advancedraidtracker.constants.TobIDs.*;
 
 @Slf4j
-public class VerzikHandler extends RoomHandler
+public class VerzikHandler extends TOBRoomHandler
 {
     public RoomState.VerzikRoomState roomState;
     private final AdvancedRaidTrackerPlugin plugin;
@@ -196,7 +196,7 @@ public class VerzikHandler extends RoomHandler
         if (event.getActor().hasSpotAnim(VERZIK_BOUNCE_SPOT_ANIMATION))
         {
             clog.addLine(LogID.VERZIK_BOUNCE, event.getActor().getName(), String.valueOf(client.getTickCount() - verzikEntryTick));
-            plugin.liveFrame.addAttack(new PlayerDidAttack(itemManager, event.getActor().getName(), VERZIK_BOUNCE_ANIMATION, client.getTickCount() - verzikEntryTick, "-1", "-1", "-1", -1, -1, "", ""), "Verzik");
+            plugin.liveFrame.addAttack(new PlayerDidAttack(itemManager, event.getActor().getName(), VERZIK_BOUNCE_ANIMATION, client.getTickCount() - verzikEntryTick, -1, "-1", "-1", -1, -1, "", ""), "Verzik");
 
         }
     }
@@ -369,7 +369,7 @@ public class VerzikHandler extends RoomHandler
         sendTimeMessage("Wave 'Verzik phase 3' complete. Duration: ", verzikP3EndTick - verzikEntryTick, verzikP3EndTick - verzikP2EndTick);
         clog.addLine(VERZIK_P3_DESPAWNED, String.valueOf(verzikP3EndTick - verzikEntryTick));
         plugin.addDelayedLine(TOBRoom.VERZIK, client.getTickCount() - verzikEntryTick, "Dead");
-        plugin.liveFrame.setVerzFinished(verzikP3EndTick - verzikEntryTick);
+        plugin.liveFrame.setRoomFinished(getName(), verzikP3EndTick - verzikEntryTick);
 
     }
 }

@@ -1,6 +1,7 @@
 package com.advancedraidtracker;
 
 import com.advancedraidtracker.constants.LogID;
+import com.advancedraidtracker.constants.RaidType;
 import com.advancedraidtracker.constants.TOBRoom;
 import com.advancedraidtracker.utility.datautility.DataManager;
 import com.advancedraidtracker.utility.datautility.DataPoint;
@@ -8,14 +9,17 @@ import com.advancedraidtracker.utility.wrappers.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
+
 import static com.advancedraidtracker.constants.TOBRoom.*;
 import static com.advancedraidtracker.constants.TobIDs.EXIT_FLAG;
 import static com.advancedraidtracker.constants.TobIDs.SPECTATE_FLAG;
 import static com.advancedraidtracker.utility.datautility.DataPoint.*;
 
 @Slf4j
-public class SimpleTOBData
+public class SimpleTOBData extends SimpleRaidDataBase
 {
+    private final DataManager dataManager;
+
     public boolean maidenStartAccurate = false;
     public boolean bloatStartAccurate = false;
     public boolean nyloStartAccurate = false;
@@ -31,12 +35,9 @@ public class SimpleTOBData
     public boolean verzikEndAccurate = false;
     public boolean resetBeforeMaiden;
 
-    public boolean spectated = false;
     public boolean partyComplete;
     public boolean hardMode;
     public boolean storyMode;
-    public boolean raidCompleted;
-    public Date raidStarted;
     private ArrayList<String> globalData;
     public LinkedHashMap<String, Integer> players;
     public String filePath;
@@ -93,21 +94,29 @@ public class SimpleTOBData
     public ArrayList<PlayerDidAttack> attacksP1;
 
 
-
-
-    // Thrall tracking
-    public ArrayList<ThrallOutlineBox> maidenThrallSpawns;
-    public ArrayList<ThrallOutlineBox> bloatThrallSpawns;
-    public ArrayList<ThrallOutlineBox> nyloThrallSpawns;
-    public ArrayList<ThrallOutlineBox> soteThrallSpawns;
-    public ArrayList<ThrallOutlineBox> xarpusThrallSpawns;
-    public ArrayList<ThrallOutlineBox> verzikThrallSpawns;
-
     public Map<Integer, Integer> verzikHP = new HashMap<>();
 
+    @Override
     public Date getDate()
     {
         return raidStarted;
+    }
+
+    public ArrayList<String> getPlayersArray()
+    {
+        ArrayList<String> playerArray = new ArrayList<>();
+        playerArray.addAll(players.keySet());
+        return playerArray;
+    }
+
+    public String getPlayers()
+    {
+        StringBuilder playerString = new StringBuilder();
+        for (String s : players.keySet())
+        {
+            playerString.append(s).append(", ");
+        }
+        return (playerString.length() > 2) ? playerString.substring(0, playerString.length() - 2) : "";
     }
 
     public int getScale()
@@ -131,11 +140,17 @@ public class SimpleTOBData
                 return xarpStartAccurate && xarpEndAccurate;
             case VERZIK:
                 return verzikStartAccurate && verzikEndAccurate;
-            case ANY:
+            case ANY_TOB:
                 return true;
             default:
                 return false;
         }
+    }
+
+    @Override
+    public int getIndex()
+    {
+        return dataManager.get(RAID_INDEX);
     }
 
     public void setIndex(int index)
@@ -181,6 +196,12 @@ public class SimpleTOBData
         }
     }
 
+    @Override
+    public String getPlayerList()
+    {
+        return null;
+    }
+
     public PlayerCorrelatedPointData getSpecificTimeInactiveCorrelated(String inactive)
     {
         if (inactive.contains("Player: "))
@@ -215,11 +236,10 @@ public class SimpleTOBData
         {
             return getMaidenTime() + getBloatTime() + getNyloTime() + getSoteTime() + getXarpTime() + getVerzikTime();
         }
-        if(getTimeAccurate(Objects.requireNonNull(DataPoint.getValue(activeValue))))
+        if (getTimeAccurate(Objects.requireNonNull(DataPoint.getValue(activeValue))))
         {
             return getValue(DataPoint.getValue(activeValue));
-        }
-        else
+        } else
         {
             return Integer.MAX_VALUE;
         }
@@ -304,7 +324,6 @@ public class SimpleTOBData
         return true;
     }
 
-    private final DataManager dataManager;
 
     public int getValue(String name)
     {
@@ -316,28 +335,43 @@ public class SimpleTOBData
         return dataManager.get(point);
     }
 
+    @Override
+    public String getFilePath()
+    {
+        return this.filePath;
+    }
+
+    String red = "<html><font color='#FF0000'>";
+
+    @Override
+    public String getRaidType()
+    {
+        return red + raidType.name;
+    }
+
+    @Override
+    public String getFileName()
+    {
+        return this.fileName;
+    }
+
     public int getTimeSum()
     {
         return getMaidenTime() + getBloatTime() + getNyloTime() + getSoteTime() + getXarpTime() + getVerzikTime();
     }
+
     public SimpleTOBData(String[] parameters, String filePath, String fileName) throws Exception
     {
+        raidType = RaidType.TOB;
         this.filePath = filePath;
         this.fileName = fileName;
-        dataManager = new DataManager();
+        dataManager = new DataManager(RaidType.TOB);
         partyComplete = false;
         maidenDefenseAccurate = false;
         bloatDefenseAccurate = false;
         nyloDefenseAccurate = false;
         soteDefenseAccurate = false;
         xarpDefenseAccurate = false;
-
-        maidenThrallSpawns = new ArrayList<>();
-        bloatThrallSpawns = new ArrayList<>();
-        nyloThrallSpawns = new ArrayList<>();
-        soteThrallSpawns = new ArrayList<>();
-        xarpusThrallSpawns = new ArrayList<>();
-        verzikThrallSpawns = new ArrayList<>();
 
         hardMode = false;
         storyMode = false;
@@ -363,6 +397,9 @@ public class SimpleTOBData
                 {
                     endTime = new Date(Long.parseLong(subData[1]));
                 }
+            } catch (Exception e)
+            {
+
             }
             catch (Exception e)
             {
@@ -450,7 +487,7 @@ public class SimpleTOBData
                 case DWH:
                     dataManager.increment(Objects.requireNonNull(DataPoint.getValue(room + " hit hammers")));
                     dataManager.incrementPlayerSpecific(DataPoint.getValue(room + " hit hammers"), subData[4]);
-                    if(!room.equals("Verzik"))
+                    if (!room.equals("Verzik"))
                     {
                         dataManager.hammer(Objects.requireNonNull(DataPoint.getValue(room + " defense")));
                     }
@@ -461,7 +498,7 @@ public class SimpleTOBData
                         dataManager.increment(Objects.requireNonNull(DataPoint.getValue(room + " attempted BGS")));
                         dataManager.incrementPlayerSpecific(DataPoint.getValue(room + " attempted BGS"), subData[4]);
                     }
-                    if(!room.equals("Verzik"))
+                    if (!room.equals("Verzik"))
                     {
                         dataManager.bgs(Objects.requireNonNull(DataPoint.getValue(room + " defense")), Integer.parseInt(subData[5]));
                     }
@@ -522,8 +559,7 @@ public class SimpleTOBData
                     dataManager.incrementPlayerSpecific(DataPoint.CHALLY_POKE, subData[4]);
                     break;
             }
-        }
-        catch(Exception ignored)
+        } catch (Exception ignored)
         {
 
         }
@@ -575,7 +611,7 @@ public class SimpleTOBData
                     case VERZIK_P2_END:
                         dataManager.set(DataPoint.VERZIK_P2_SPLIT, Integer.parseInt(subData[4]));
                         dataManager.set(DataPoint.VERZIK_P2_DURATION, dataManager.get(DataPoint.VERZIK_P2_SPLIT) - dataManager.get(DataPoint.VERZIK_P1_SPLIT));
-                        dataManager.set(DataPoint.VERZIK_REDS_DURATION, dataManager.get(DataPoint.VERZIK_P2_SPLIT)-dataManager.get(VERZIK_REDS_SPLIT));
+                        dataManager.set(DataPoint.VERZIK_REDS_DURATION, dataManager.get(DataPoint.VERZIK_P2_SPLIT) - dataManager.get(VERZIK_REDS_SPLIT));
                         try
                         {
                             int hp = verzikHP.get(dataManager.get(VERZIK_REDS_SPLIT));
@@ -651,14 +687,10 @@ public class SimpleTOBData
                                 hp /= 10;
                                 dataManager.set(DataPoint.VERZIK_HP_AT_WEBS, hp);
                             }
-                        }
-                        catch(Exception ignored)
+                        } catch (Exception ignored)
                         {
 
                         }
-                        break;
-                    case THRALL_SPAWN:
-                        verzikThrallSpawns.add(new ThrallOutlineBox(subData[4], Integer.parseInt(subData[5]), Integer.parseInt(subData[6])));
                         break;
                 }
             } catch (Exception e)
@@ -764,12 +796,8 @@ public class SimpleTOBData
                         xarpTimeAccurate = xarpStartAccurate;
                         xarpEndAccurate = true;
                         break;
-                    case THRALL_SPAWN:
-                        xarpusThrallSpawns.add(new ThrallOutlineBox(subData[4], Integer.parseInt(subData[5]), Integer.parseInt(subData[6])));
-                        break;
                 }
-            }
-            catch(Exception e)
+            } catch (Exception e)
             {
                 log.info("Failed on " + s);
             }
@@ -892,13 +920,9 @@ public class SimpleTOBData
                             nyloTimeAccurate = true;
                         }
                         break;
-                    case THRALL_SPAWN:
-                        soteThrallSpawns.add(new ThrallOutlineBox(subData[4], Integer.parseInt(subData[5]), Integer.parseInt(subData[6])));
-                        break;
 
                 }
-            }
-            catch(Exception e)
+            } catch (Exception e)
             {
                 log.info("Failed on " + s);
             }
@@ -1022,12 +1046,8 @@ public class SimpleTOBData
                         nyloEndAccurate = true;
                         nyloTimeAccurate = nyloStartAccurate;
                         break;
-                    case THRALL_SPAWN:
-                        nyloThrallSpawns.add(new ThrallOutlineBox(subData[4], Integer.parseInt(subData[5]), Integer.parseInt(subData[6])));
-                        break;
                 }
-            }
-            catch(Exception e)
+            } catch (Exception e)
             {
                 log.info("Failed on " + s);
             }
@@ -1114,12 +1134,8 @@ public class SimpleTOBData
                         bloatEndAccurate = true;
                         bloatTimeAccurate = bloatStartAccurate;
                         break;
-                    case THRALL_SPAWN:
-                        bloatThrallSpawns.add(new ThrallOutlineBox(subData[4], Integer.parseInt(subData[5]), Integer.parseInt(subData[6])));
-                        break;
                 }
-            }
-            catch(Exception e)
+            } catch (Exception e)
             {
                 log.info("Failed on " + s);
             }
@@ -1257,9 +1273,9 @@ public class SimpleTOBData
                         if (!maidenScuffed)
                         {
                             firstMaidenCrabScuffed = lastProc;
-                            if(!maidenCrabSpawn.isEmpty())
+                            if (!maidenCrabSpawn.isEmpty())
                             {
-                                firstMaidenCrabScuffed = maidenCrabSpawn.get(maidenCrabSpawn.size()-1);
+                                firstMaidenCrabScuffed = maidenCrabSpawn.get(maidenCrabSpawn.size() - 1);
                             }
                         }
                         maidenScuffed = true;
@@ -1349,9 +1365,6 @@ public class SimpleTOBData
                         maidenEndAccurate = true;
                         maidenTimeAccurate = maidenStartAccurate;
                         break;
-                    case THRALL_SPAWN:
-                        maidenThrallSpawns.add(new ThrallOutlineBox(subData[4], Integer.parseInt(subData[5]), Integer.parseInt(subData[6])));
-                        break;
                     case PLAYER_STOOD_IN_THROWN_BLOOD:
                         dataManager.increment(DataPoint.MAIDEN_PLAYER_STOOD_IN_THROWN_BLOOD);
                         dataManager.increment(DataPoint.MAIDEN_HEALS_FROM_THROWN_BLOOD, Integer.parseInt(subData[5]));
@@ -1379,8 +1392,7 @@ public class SimpleTOBData
                         dataManager.incrementPlayerSpecific(DataPoint.MAIDEN_HEALS_FROM_ANY_BLOOD, subData[4], Integer.parseInt(subData[5]));
                         break;
                 }
-            }
-            catch(Exception e)
+            } catch (Exception e)
             {
                 log.info("Failed on " + s);
             }

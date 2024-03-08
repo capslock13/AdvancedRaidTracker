@@ -9,11 +9,11 @@ public class QueuedPlayerAttackLessProjectiles
     public String animation;
     public int tick;
     public String spotAnims;
-    public String weapon;
+    public int weapon;
 
     public WorldPoint location;
 
-    public QueuedPlayerAttackLessProjectiles(Player player, WorldPoint location, int tick, String spotAnims, String weapon, String animation)
+    public QueuedPlayerAttackLessProjectiles(Player player, WorldPoint location, int tick, String spotAnims, int weapon, String animation)
     {
         this.player = player;
         this.animation = animation;

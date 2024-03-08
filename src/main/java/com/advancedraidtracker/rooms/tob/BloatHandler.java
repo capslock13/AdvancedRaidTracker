@@ -1,7 +1,7 @@
 package com.advancedraidtracker.rooms.tob;
 
-import com.advancedraidtracker.AdvancedRaidTrackerPlugin;
 import com.advancedraidtracker.AdvancedRaidTrackerConfig;
+import com.advancedraidtracker.AdvancedRaidTrackerPlugin;
 import com.advancedraidtracker.constants.TOBRoom;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
@@ -20,7 +20,7 @@ import static com.advancedraidtracker.utility.RoomState.*;
 import static com.advancedraidtracker.utility.RoomState.BloatRoomState.*;
 
 @Slf4j
-public class BloatHandler extends RoomHandler
+public class BloatHandler extends TOBRoomHandler
 {
     public BloatRoomState roomState;
 
@@ -66,7 +66,7 @@ public class BloatHandler extends RoomHandler
         bloatDeathTick = client.getTickCount() + BLOAT_DEATH_ANIMATION_LENGTH;
         plugin.addDelayedLine(TOBRoom.BLOAT, client.getTickCount() - bloatStartTick, "Dead");
         clog.addLine(ACCURATE_BLOAT_END);
-        plugin.liveFrame.setBloatFinished(bloatDeathTick - bloatStartTick);
+        plugin.liveFrame.setRoomFinished(getName(), bloatDeathTick - bloatStartTick);
         if (bloatStartTick != -1)
         {
             sendTimeMessage("Wave 'Bloat last down' complete! Duration: ", splitLastDown(), " Room time: ", bloatDeathTick - bloatStartTick, true);
@@ -97,6 +97,7 @@ public class BloatHandler extends RoomHandler
     {
         bloatStartTick = client.getTickCount();
         roomStartTick = client.getTickCount();
+        clog.addLine(BLOAT_STARTED, client.getTickCount());
         roomState = WALKING;
     }
 
@@ -238,7 +239,7 @@ public class BloatHandler extends RoomHandler
         if(id == 1570 || id == 1571 || id == 1572 || id == 1573) //various bloat hands
         {
             WorldPoint wp = WorldPoint.fromLocal(client, event.getGraphicsObject().getLocation());
-            clog.addLine(BLOAT_HAND, String.valueOf(id), String.valueOf(wp.getRegionX()), String.valueOf(wp.getRegionY()), String.valueOf(client.getTickCount()-roomStartTick));
+            clog.addLine(BLOAT_HAND, String.valueOf(id), String.valueOf(wp.getRegionX()), String.valueOf(wp.getRegionY()), String.valueOf(client.getTickCount() - roomStartTick));
         }
     }
 }

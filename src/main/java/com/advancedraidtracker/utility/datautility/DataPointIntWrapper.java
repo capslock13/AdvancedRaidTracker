@@ -40,4 +40,9 @@ public class DataPointIntWrapper
     {
         value++;
     }
+
+    public void decrement()
+    {
+        value--;
+    }
 }

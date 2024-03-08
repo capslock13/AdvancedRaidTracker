@@ -1,6 +1,6 @@
 package com.advancedraidtracker.ui.filters;
 
-import com.advancedraidtracker.SimpleRaidData;
+import com.advancedraidtracker.SimpleRaidDataBase;
 import com.advancedraidtracker.filters.ImplicitFilter;
 import com.advancedraidtracker.filters.FilterManager;
 import com.advancedraidtracker.ui.BaseFrame;
@@ -35,7 +35,7 @@ public class ConfirmationDialog extends BaseFrame
         setLocationRelativeTo(null);
     }
 
-    public ConfirmationDialog(String raidsName, ArrayList<SimpleRaidData> raids, JFrame root, int mark)
+    public ConfirmationDialog(String raidsName, ArrayList<SimpleRaidDataBase> raids, JFrame root, int mark)
     {
         setTitle("Confirm");
         JPanel panelButtons = new JPanel(new GridLayout(1, 2));

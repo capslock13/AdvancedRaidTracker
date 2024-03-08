@@ -12,7 +12,7 @@ import static com.advancedraidtracker.constants.TobIDs.EXIT_FLAG;
 import static com.advancedraidtracker.constants.TobIDs.SPECTATE_FLAG;
 
 @Slf4j
-public class AdvancedTOBData extends AdvancedRaidData
+public class AdvancedTOBData extends AdvancedRaidDataBase
 {
     private final String[] names = {"Maiden", "Bloat", "Nylocas", "Sotetseg", "Xarpus", "Verzik P1", "Verzik P2", "Verzik P3"};
     private ArrayList<String> globalData;

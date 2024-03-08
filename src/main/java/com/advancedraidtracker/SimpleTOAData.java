@@ -12,7 +12,7 @@ import java.util.*;
 import static com.advancedraidtracker.utility.datautility.DataPoint.*;
 
 @Slf4j
-public class SimpleTOAData extends SimpleRaidData
+public class SimpleTOAData extends SimpleRaidDataBase
 {
     public final String filePath;
     public final String fileName;

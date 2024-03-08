@@ -2,7 +2,7 @@ package com.advancedraidtracker.ui.charts;
 
 import com.advancedraidtracker.*;
 import com.advancedraidtracker.ui.BaseFrame;
-import com.advancedraidtracker.AdvancedRaidData;
+import com.advancedraidtracker.AdvancedRaidDataBase;
 import com.advancedraidtracker.utility.datautility.DataPoint;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.callback.ClientThread;
@@ -16,16 +16,16 @@ import java.util.*;
 @Slf4j
 public class ChartFrame extends BaseFrame
 {
-    public ChartFrame(SimpleRaidData roomData, AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
+    public ChartFrame(SimpleRaidDataBase roomData, AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
     {
         JTabbedPane basepane = new JTabbedPane();
-        AdvancedRaidData raidData;
+        AdvancedRaidDataBase raidData;
         if (roomData instanceof SimpleTOBData)
         {
-            raidData = new AdvancedTOBData(AdvancedRaidData.getRaidStrings(roomData.getFilePath()), itemManager);
+            raidData = new AdvancedTOBData(AdvancedRaidDataBase.getRaidStrings(roomData.getFilePath()), itemManager);
         } else
         {
-            raidData = new AdvancedTOAData(AdvancedRaidData.getRaidStrings(roomData.getFilePath()), itemManager);
+            raidData = new AdvancedTOAData(AdvancedRaidDataBase.getRaidStrings(roomData.getFilePath()), itemManager);
         }
         for (String bossName : raidData.attackData.keySet())
         {

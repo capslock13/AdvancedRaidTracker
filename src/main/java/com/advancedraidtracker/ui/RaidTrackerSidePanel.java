@@ -1,7 +1,6 @@
 package com.advancedraidtracker.ui;
 
 import com.advancedraidtracker.*;
-import com.advancedraidtracker.utility.BloatHand;
 import com.advancedraidtracker.utility.wrappers.RaidsArrayWrapper;
 import com.advancedraidtracker.utility.datautility.RaidsManager;
 import com.google.inject.Inject;
@@ -25,7 +24,7 @@ public class RaidTrackerSidePanel extends PluginPanel
 {
     private JLabel raidCountLabel;
     private final JLabel pleaseWait;
-    private ArrayList<SimpleRaidData> raidsData;
+    private ArrayList<SimpleRaidDataBase> raidsData;
     private JTable loadRaidsTable;
     private ArrayList<RaidsArrayWrapper> raidSets;
 
@@ -57,11 +56,10 @@ public class RaidTrackerSidePanel extends PluginPanel
         }).start();
     }
 
-    private ArrayList<SimpleRaidData> getAllRaids(JLabel statusUpdate)
+    private ArrayList<SimpleRaidDataBase> getAllRaids(JLabel statusUpdate)
     {
         //todo reimplement status update
-        ArrayList<SimpleRaidData> raids = new ArrayList<>();
-        ArrayList<BloatHand> hands = new ArrayList<>();
+        ArrayList<SimpleRaidDataBase> raids = new ArrayList<>();
         try
         {
             File logDirectory = new File(PLUGIN_DIRECTORY);
@@ -83,7 +81,7 @@ public class RaidTrackerSidePanel extends PluginPanel
                                     if (dataFile.getName().contains("data"))
                                     {
                                         File currentFile = new File(subDirectory.getAbsolutePath() + "/" + dataFile.getName());
-                                        hands.addAll(parseLogFile(raids, currentFile, subDirectory.getAbsolutePath() + "/" + dataFile.getName()));
+                                        parseLogFile(raids, currentFile, subDirectory.getAbsolutePath() + "/" + dataFile.getName());
                                     }
                                 }
                             }
@@ -97,51 +95,16 @@ public class RaidTrackerSidePanel extends PluginPanel
         }
         try
         {
-            raids.sort(Comparator.comparing(SimpleRaidData::getDate));
+            raids.sort(Comparator.comparing(SimpleRaidDataBase::getDate));
         } catch (Exception e)
         {
 
         }
-        Map<String, Integer> handMap = new HashMap<>();
-        for (BloatHand bloatHand : hands)
-        {
-            String position = bloatHand.x + "," + bloatHand.y;
-            if (!handMap.containsKey(position))
-            {
-                handMap.put(position, 1);
-            } else
-            {
-                handMap.put(position, handMap.get(position) + 1);
-            }
-        }
-        for (String position : handMap.keySet())
-        {
-            // log.info(position + ": " + handMap.get(position));
-        }
-        //BaseFrame bf = new BaseFrame();
-        //bf.add(new BloatHandDataVisualizer(hands));
-        //bf.open();
         return raids;
     }
 
-    public static ArrayList<BloatHand> parseLogFile(ArrayList<SimpleRaidData> raids, File currentFile, String filePath) throws Exception
+    public static void parseLogFile(ArrayList<SimpleRaidDataBase> raids, File currentFile, String filePath) throws Exception
     {
-        ArrayList<BloatHand> hands = new ArrayList<>();
-        int lastProc = -1;
-        int handsTotal = 0;
-        int bottomLeftChunkCount = 0;
-        int bottomRightChunkCount = 0;
-        int topLeftChunkCount = 0;
-        int topRightChunkCount = 0;
-        int bltotal = 0;
-        int brtotal = 0;
-        int tltotal = 0;
-        int trtotal = 0;
-        Map<Integer, Integer> procCountMap = new HashMap<>();
-        Map<Integer, Integer> blProcMap = new HashMap<>();
-        Map<Integer, Integer> brProcMap = new HashMap<>();
-        Map<Integer, Integer> tlProcMap = new HashMap<>();
-        Map<Integer, Integer> trProcMap = new HashMap<>();
         Scanner logReader = new Scanner(Files.newInputStream(currentFile.toPath()));
         ArrayList<String> raid = new ArrayList<>();
         boolean raidActive = false;
@@ -197,157 +160,11 @@ public class RaidTrackerSidePanel extends PluginPanel
                                 raid.add(line);
                             }
                         }
-                        if (value == 975)
-                        {
-                            if (lineSplit.length > 6)
-                            {
-                                int x = Integer.parseInt(lineSplit[5]);
-                                int y = Integer.parseInt(lineSplit[6]);
-                                int id = Integer.parseInt(lineSplit[4]);
-                                hands.add(new BloatHand(x, y, id));
-                                if (lineSplit.length > 7)
-                                {
-                                    int proc = Integer.parseInt(lineSplit[7]);
-                                    if (lastProc != proc)
-                                    {
-
-                                        if (!procCountMap.containsKey(handsTotal))
-                                        {
-                                            procCountMap.put(handsTotal, 1);
-                                        } else
-                                        {
-                                            procCountMap.put(handsTotal, procCountMap.get(handsTotal) + 1);
-                                        }
-
-                                        if (!blProcMap.containsKey(bottomLeftChunkCount))
-                                        {
-                                            blProcMap.put(bottomLeftChunkCount, 1);
-                                        } else
-                                        {
-                                            blProcMap.put(bottomLeftChunkCount, blProcMap.get(bottomLeftChunkCount) + 1);
-                                        }
-
-                                        if (!brProcMap.containsKey(bottomRightChunkCount))
-                                        {
-                                            brProcMap.put(bottomRightChunkCount, 1);
-                                        } else
-                                        {
-                                            brProcMap.put(bottomRightChunkCount, brProcMap.get(bottomRightChunkCount) + 1);
-                                        }
-
-                                        if (!tlProcMap.containsKey(topLeftChunkCount))
-                                        {
-                                            tlProcMap.put(topLeftChunkCount, 1);
-                                        } else
-                                        {
-                                            tlProcMap.put(topLeftChunkCount, tlProcMap.get(topLeftChunkCount) + 1);
-                                        }
-
-                                        if (!trProcMap.containsKey(topRightChunkCount))
-                                        {
-                                            trProcMap.put(topRightChunkCount, 1);
-                                        } else
-                                        {
-                                            trProcMap.put(topRightChunkCount, trProcMap.get(topRightChunkCount) + 1);
-                                        }
-                                        if (handsTotal == 13)
-                                        {
-                                            if (hands.size() > 13)
-                                            {
-                                                //log.info("Last 13 hands: ");
-                                                boolean found1 = false;
-                                                boolean found2 = false;
-                                                for (int i = hands.size() - 13; i < hands.size(); i++)
-                                                {
-                                                    //log.info(hands.get(i).x + ", " + hands.get(i).y);
-                                                    if (hands.get(i).x == 28 && hands.get(i).y == 34)
-                                                    {
-                                                        found1 = true;
-                                                    }
-                                                    if (hands.get(i).x == 28 && hands.get(i).y == 25)
-                                                    {
-                                                        found2 = true;
-                                                    }
-                                                }
-                                                if (found1 && found2)
-                                                {
-                                                    //log.info("HAND FOUND ON BOTH SIDES OF CORNER");
-                                                }
-                                            }
-                                        }
-                                        //log.info(handsTotal + " in last proc on " + lastProc);
-                                        //log.info("Bottom Left: " + bottomLeftChunkCount);
-                                        //log.info("Bottom Right: " + bottomRightChunkCount);
-                                        //log.info("Top Left: " + topLeftChunkCount);
-                                        //log.info("Top Right: " + topRightChunkCount);
-                                        bltotal += bottomLeftChunkCount;
-                                        brtotal += bottomRightChunkCount;
-                                        tltotal += topLeftChunkCount;
-                                        trtotal += topRightChunkCount;
-
-                                        lastProc = proc;
-                                        handsTotal = 0;
-                                        bottomLeftChunkCount = 0;
-                                        bottomRightChunkCount = 0;
-                                        topLeftChunkCount = 0;
-                                        topRightChunkCount = 0;
-                                    } else
-                                    {
-                                        handsTotal++;
-                                        if (x < 32 && y < 32)
-                                        {
-                                            bottomLeftChunkCount++;
-                                        } else if (x < 32 && y > 31)
-                                        {
-                                            topLeftChunkCount++;
-                                        } else if (x > 31 && y < 32)
-                                        {
-                                            bottomRightChunkCount++;
-                                        } else if (x > 31 && y > 31)
-                                        {
-                                            topRightChunkCount++;
-                                        }
-                                    }
-                                }
-                            }
-                        }
                     }
                 }
             }
         }
-        int count = 0;
-        for (Integer i : procCountMap.keySet())
-        {
-            count += procCountMap.get(i);
-            //log.info(i + " hands procced " + procCountMap.get(i) + " times");
-        }
-
-        /*for(Integer i : blProcMap.keySet())
-        {
-            log.info(i + " hands spawned " + blProcMap.get(i) + " times (BL)");
-        }
-        for(Integer i : brProcMap.keySet())
-        {
-            log.info(i + " hands spawned " + brProcMap.get(i) + " times (BR)");
-        }
-        for(Integer i : tlProcMap.keySet())
-        {
-            log.info(i + " hands spawned " + tlProcMap.get(i) + " times (TL)");
-        }
-        for(Integer i : trProcMap.keySet())
-        {
-            log.info(i + " hands spawned " + trProcMap.get(i) + " times (TR)");
-        }*/
-        if (count != 0)
-        {
-            //log.info("Total procs: " + count);
-            //log.info("Bottom left total: " + bltotal);
-            //log.info("Bottom right total: " + brtotal);
-            //log.info("top left total: " + tltotal);
-            //log.info("top right total: " + trtotal);
-        }
         logReader.close();
-        return hands;
     }
 
     public void refreshRaids()
@@ -463,7 +280,7 @@ public class RaidTrackerSidePanel extends PluginPanel
         return new DefaultTableModel(tableData, columnNames);
     }
 
-    private ArrayList<SimpleRaidData> getTableData()
+    private ArrayList<SimpleRaidDataBase> getTableData()
     {
         ArrayList<String> includedSets = new ArrayList<>();
         for (int i = 0; i < loadRaidsTable.getRowCount(); i++)
@@ -473,7 +290,7 @@ public class RaidTrackerSidePanel extends PluginPanel
                 includedSets.add((String) loadRaidsTable.getValueAt(i, 0));
             }
         }
-        ArrayList<SimpleRaidData> collectedRaids = new ArrayList<>();
+        ArrayList<SimpleRaidDataBase> collectedRaids = new ArrayList<>();
         for (RaidsArrayWrapper set : raidSets)
         {
             for (String s : includedSets)

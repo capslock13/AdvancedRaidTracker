@@ -67,21 +67,8 @@ public class ItemReference
                     "dawnbringer"
             }
     };
-
     public static final int MELEE = 1;
     public static final int RANGE = 2;
     public static final int MAGE = 3;
     public static final int NONE = 0;
-
-    public static String getNameFromID(int id)
-    {
-        for (Items item : Items.values())
-        {
-            if (item.matches(id))
-            {
-                return item.getName();
-            }
-        }
-        return "Unknown";
-    }
 }

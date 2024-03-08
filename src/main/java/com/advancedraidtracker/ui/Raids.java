@@ -1,7 +1,7 @@
 package com.advancedraidtracker.ui;
 
 
-import com.advancedraidtracker.SimpleRaidData;
+import com.advancedraidtracker.SimpleRaidDataBase;
 import com.advancedraidtracker.SimpleTOBData;
 import com.advancedraidtracker.AdvancedRaidTrackerConfig;
 import com.advancedraidtracker.filters.*;
@@ -49,7 +49,7 @@ public class Raids extends BaseFrame
 {
     private final ArrayList<Integer> filteredIndices;
     private JTable comparisonTable;
-    private final ArrayList<ArrayList<SimpleRaidData>> comparisons;
+    private final ArrayList<ArrayList<SimpleRaidDataBase>> comparisons;
 
     private final JTabbedPane tabbedPane = new JTabbedPane();
     public ArrayList<ImplicitFilter> activeFilters;
@@ -90,7 +90,7 @@ public class Raids extends BaseFrame
     JTable table;
     JPanel container;
     private JPanel filterTableContainer;
-    public ArrayList<SimpleRaidData> currentData;
+    public ArrayList<SimpleRaidDataBase> currentData;
     private JComboBox<String> timeFilterChoice;
     private JComboBox<String> timeFilterOperator;
     private JTextField timeFilterValue;
@@ -147,10 +147,10 @@ public class Raids extends BaseFrame
         this.setPreferredSize(new Dimension(1200, 820));
     }
 
-    public void updateCustomStats(ArrayList<SimpleRaidData> raids)
+    public void updateCustomStats(ArrayList<SimpleRaidDataBase> raids)
     {
         ArrayList<SimpleTOBData> tobData = new ArrayList<>();
-        for (SimpleRaidData raidData : raids)
+        for (SimpleRaidDataBase raidData : raids)
         {
             if (raidData instanceof SimpleTOBData)
             {
@@ -201,8 +201,8 @@ public class Raids extends BaseFrame
     {
         String timeToDisplay = "0";
         int completions = 0;
-        ArrayList<SimpleRaidData> tableData = new ArrayList<>();
-        for (SimpleRaidData data : currentData)
+        ArrayList<SimpleRaidDataBase> tableData = new ArrayList<>();
+        for (SimpleRaidDataBase data : currentData)
         {
             boolean shouldDataBeIncluded = true;
             if (filterSpectateOnly.isSelected())
@@ -366,10 +366,10 @@ public class Raids extends BaseFrame
             {
                 if (sortOrderBox.getSelectedIndex() == 0)
                 {
-                    tableData.sort(Comparator.comparing(SimpleRaidData::getDate));
+                    tableData.sort(Comparator.comparing(SimpleRaidDataBase::getDate));
                 } else
                 {
-                    tableData.sort(Comparator.comparing(SimpleRaidData::getDate).reversed());
+                    tableData.sort(Comparator.comparing(SimpleRaidDataBase::getDate).reversed());
                 }
             } catch (Exception e)
             {
@@ -379,27 +379,27 @@ public class Raids extends BaseFrame
         {
             if (sortOrderBox.getSelectedIndex() == 0)
             {
-                for (SimpleRaidData data : tableData)
+                for (SimpleRaidDataBase data : tableData)
                 {
                     data.activeValue = viewByRaidComboBox.getSelectedItem().toString();
                 }
-                tableData.sort(Comparator.comparing(SimpleRaidData::getSpecificTime));
+                tableData.sort(Comparator.comparing(SimpleRaidDataBase::getSpecificTime));
             } else
             {
-                for (SimpleRaidData data : tableData)
+                for (SimpleRaidDataBase data : tableData)
                 {
                     data.activeValue = viewByRaidComboBox.getSelectedItem().toString();
                 }
-                tableData.sort(Comparator.comparing(SimpleRaidData::getSpecificTime).reversed());
+                tableData.sort(Comparator.comparing(SimpleRaidDataBase::getSpecificTime).reversed());
             }
         } else if (sortOptionsBox.getSelectedIndex() == 2)
         {
             if (sortOrderBox.getSelectedIndex() == 0)
             {
-                tableData.sort(Comparator.comparing(SimpleRaidData::getScale));
+                tableData.sort(Comparator.comparing(SimpleRaidDataBase::getScale));
             } else
             {
-                tableData.sort(Comparator.comparing(SimpleRaidData::getScale).reversed());
+                tableData.sort(Comparator.comparing(SimpleRaidDataBase::getScale).reversed());
             }
         }
 
@@ -422,7 +422,7 @@ public class Raids extends BaseFrame
             }
         }
         ArrayList<Object[]> tableBuilder = new ArrayList<>();
-        for (SimpleRaidData raid : tableData)
+        for (SimpleRaidDataBase raid : tableData)
         {
             ArrayList<Object> rowBuilder = new ArrayList<>();
             for (String column : columnNamesDynamic)
@@ -465,7 +465,7 @@ public class Raids extends BaseFrame
         container.repaint();
     }
 
-    public Object getRowData(String column, SimpleRaidData raid)
+    public Object getRowData(String column, SimpleRaidDataBase raid)
     {
         switch (column)
         {
@@ -557,10 +557,10 @@ public class Raids extends BaseFrame
     }
 
 
-    private void updateTabNames(ArrayList<SimpleRaidData> data)
+    private void updateTabNames(ArrayList<SimpleRaidDataBase> data)
     {
         ArrayList<SimpleTOBData> tobData = new ArrayList<>();
-        for (SimpleRaidData raidData : data)
+        for (SimpleRaidDataBase raidData : data)
         {
             if (raidData instanceof SimpleTOBData)
             {
@@ -649,10 +649,10 @@ public class Raids extends BaseFrame
         }
     }
 
-    public void setLabels(ArrayList<SimpleRaidData> data)
+    public void setLabels(ArrayList<SimpleRaidDataBase> data)
     {
         ArrayList<SimpleTOBData> tobData = new ArrayList<>();
-        for (SimpleRaidData raidData : data)
+        for (SimpleRaidDataBase raidData : data)
         {
             if (raidData instanceof SimpleTOBData)
             {
@@ -816,7 +816,7 @@ public class Raids extends BaseFrame
         close();
     }
 
-    public void createFrame(ArrayList<SimpleRaidData> data)
+    public void createFrame(ArrayList<SimpleRaidDataBase> data)
     {
         comboPopupMenu = new JPopupMenu();
         comboPopupMenu.setBorder(new MatteBorder(1, 1, 1, 1, Color.DARK_GRAY));
@@ -1077,7 +1077,7 @@ public class Raids extends BaseFrame
         overallPanel.add(overallCustomPanel);
 
         ArrayList<SimpleTOBData> tobData = new ArrayList<>();
-        for (SimpleRaidData raidData : data)
+        for (SimpleRaidDataBase raidData : data)
         {
             if (raidData instanceof SimpleTOBData)
             {
@@ -1494,19 +1494,19 @@ public class Raids extends BaseFrame
             public void actionPerformed(ActionEvent e)
             {
                 updateAliases();
-                ArrayList<SimpleRaidData> rows = new ArrayList<>();
+                ArrayList<SimpleRaidDataBase> rows = new ArrayList<>();
                 int[] toRemove = table.getSelectedRows();
                 for (int i = 0; i < toRemove.length; i++)
                 {
                     rows.add(currentData.get(Integer.parseInt(table.getModel().getValueAt(toRemove[i], 0).toString())));
                 }
-                Map<Integer, Map<String, ArrayList<SimpleRaidData>>> sessions = new LinkedHashMap<>();
-                for (SimpleRaidData data : rows)
+                Map<Integer, Map<String, ArrayList<SimpleRaidDataBase>>> sessions = new LinkedHashMap<>();
+                for (SimpleRaidDataBase data : rows)
                 {
                     if (!sessions.containsKey(data.players.size()))
                     {
-                        Map<String, ArrayList<SimpleRaidData>> scale = new LinkedHashMap<>();
-                        ArrayList<SimpleRaidData> list = new ArrayList<>();
+                        Map<String, ArrayList<SimpleRaidDataBase>> scale = new LinkedHashMap<>();
+                        ArrayList<SimpleRaidDataBase> list = new ArrayList<>();
                         list.add(data);
                         scale.put(data.getPlayerList(aliases), list);
                         sessions.put(data.players.size(), scale);
@@ -1514,7 +1514,7 @@ public class Raids extends BaseFrame
                     {
                         if (!sessions.get(data.players.size()).containsKey(data.getPlayerList(aliases)))
                         {
-                            ArrayList<SimpleRaidData> list = new ArrayList<>();
+                            ArrayList<SimpleRaidDataBase> list = new ArrayList<>();
                             list.add(data);
                             sessions.get(data.players.size()).put(data.getPlayerList(aliases), list);
                         } else
@@ -1524,10 +1524,10 @@ public class Raids extends BaseFrame
                     }
                 }
                 ArrayList<ArrayList<String>> labelSets = new ArrayList<>();
-                Map<Integer, ArrayList<ArrayList<SimpleRaidData>>> dataSets = new LinkedHashMap<>();
+                Map<Integer, ArrayList<ArrayList<SimpleRaidDataBase>>> dataSets = new LinkedHashMap<>();
                 for (Integer scale : sessions.keySet())
                 {
-                    ArrayList<ArrayList<SimpleRaidData>> scaleData = new ArrayList<>();
+                    ArrayList<ArrayList<SimpleRaidDataBase>> scaleData = new ArrayList<>();
                     ArrayList<String> labels = new ArrayList<>();
                     for (String playerList : sessions.get(scale).keySet())
                     {
@@ -1551,7 +1551,7 @@ public class Raids extends BaseFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                ArrayList<SimpleRaidData> rows = new ArrayList<>();
+                ArrayList<SimpleRaidDataBase> rows = new ArrayList<>();
                 int[] toRemove = table.getSelectedRows();
                 for (int i = 0; i < toRemove.length; i++)
                 {
@@ -1577,7 +1577,7 @@ public class Raids extends BaseFrame
         viewCharts.addActionListener(e ->
         {
             int[] toRemove = table.getSelectedRows();
-            SimpleRaidData raidData = null;
+            SimpleRaidDataBase raidData = null;
             for (int i = 0; i < toRemove.length; i++)
             {
                 raidData = currentData.get(Integer.parseInt(table.getModel().getValueAt(toRemove[i], 0).toString()));
@@ -1595,7 +1595,7 @@ public class Raids extends BaseFrame
             public void actionPerformed(ActionEvent e)
             {
                 ArrayList<String> labels = new ArrayList<>();
-                ArrayList<SimpleRaidData> rows = new ArrayList<>();
+                ArrayList<SimpleRaidDataBase> rows = new ArrayList<>();
                 int[] toRemove = table.getSelectedRows();
                 for (int i = 0; i < toRemove.length; i++)
                 {
@@ -1607,7 +1607,7 @@ public class Raids extends BaseFrame
                 } else
                 {
                     labels.add("");
-                    ArrayList<ArrayList<SimpleRaidData>> data = new ArrayList<>();
+                    ArrayList<ArrayList<SimpleRaidDataBase>> data = new ArrayList<>();
                     data.add(rows);
                     ComparisonViewFrame graphView = new ComparisonViewFrame(data, labels);
                     graphView.open();
@@ -1620,7 +1620,7 @@ public class Raids extends BaseFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                ArrayList<SimpleRaidData> rows = new ArrayList<>();
+                ArrayList<SimpleRaidDataBase> rows = new ArrayList<>();
                 int[] toRemove = table.getSelectedRows();
                 for (int i = 0; i < toRemove.length; i++)
                 {
@@ -1638,7 +1638,7 @@ public class Raids extends BaseFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                ArrayList<SimpleRaidData> rows = new ArrayList<>();
+                ArrayList<SimpleRaidDataBase> rows = new ArrayList<>();
                 int[] toRemove = table.getSelectedRows();
                 for (int i = 0; i < toRemove.length; i++)
                 {
@@ -1707,7 +1707,7 @@ public class Raids extends BaseFrame
                 int[] toRemove = table.getSelectedRows();
                 for (int i = 0; i < toRemove.length; i++)
                 {
-                    SimpleRaidData row = currentData.get(Integer.parseInt(table.getModel().getValueAt(toRemove[i], 0).toString()));
+                    SimpleRaidDataBase row = currentData.get(Integer.parseInt(table.getModel().getValueAt(toRemove[i], 0).toString()));
                     if (row instanceof SimpleTOBData)
                     {
                         crabData.add(((SimpleTOBData) row).maidenCrabs);
@@ -2197,7 +2197,7 @@ public class Raids extends BaseFrame
         ArrayList<Object[]> tableData = new ArrayList<>();
 
         int index = 0;
-        for (ArrayList<SimpleRaidData> comparison : comparisons)
+        for (ArrayList<SimpleRaidDataBase> comparison : comparisons)
         {
             Object[] row = {comparison.size() + " raids averaging: " + RoomUtil.time(StatisticGatherer.getOverallTimeAverage(comparison)), "Set " + index, "Remove"};
             tableData.add(row);

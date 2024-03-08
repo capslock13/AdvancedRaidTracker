@@ -6,7 +6,7 @@ import com.advancedraidtracker.utility.wrappers.PlayerCorrelatedPointData;
 
 import java.util.*;
 
-public abstract class SimpleRaidData
+public abstract class SimpleRaidDataBase
 {
     String red = "<html><font color='#FF0000'>";
     String green = "<html><font color='#33FF33'>";

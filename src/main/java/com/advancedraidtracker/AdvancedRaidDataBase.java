@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Scanner;
 
-public abstract class AdvancedRaidData
+public abstract class AdvancedRaidDataBase
 {
     public Map<String, ArrayList<PlayerDidAttack>> attackData;
     public Map<String, Map<Integer, Integer>> hpData;

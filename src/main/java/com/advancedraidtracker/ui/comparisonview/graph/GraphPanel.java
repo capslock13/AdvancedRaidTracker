@@ -1,6 +1,6 @@
 package com.advancedraidtracker.ui.comparisonview.graph;
 
-import com.advancedraidtracker.SimpleRaidData;
+import com.advancedraidtracker.SimpleRaidDataBase;
 import com.advancedraidtracker.AdvancedRaidTrackerConfig;
 import com.advancedraidtracker.utility.RoomUtil;
 import com.advancedraidtracker.utility.datautility.DataPoint;
@@ -62,7 +62,7 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
     private DataPoint activeKey;
     private boolean time = false;
     private final BufferedImage img = new BufferedImage(IMG_WIDTH, IMG_HEIGHT, BufferedImage.TYPE_INT_ARGB);
-    private final ArrayList<SimpleRaidData> internalData;
+    private final ArrayList<SimpleRaidDataBase> internalData;
     private final AdvancedRaidTrackerConfig config;
 
     private final ItemManager itemManager;
@@ -70,7 +70,7 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
     private final ClientThread clientThread;
     private final ConfigManager configManager;
 
-    public GraphPanel(ArrayList<SimpleRaidData> data, AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
+    public GraphPanel(ArrayList<SimpleRaidDataBase> data, AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
     {
         this.configManager = configManager;
         this.clientThread = clientThread;
@@ -333,7 +333,7 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
     public static GraphInternalBoundMatchedContainer getCounts(GraphInternalDataContainer data, int highestValue)
     {
         ArrayList<Integer> countedIntData = new ArrayList<>();
-        ArrayList<ArrayList<SimpleRaidData>> countedFullData = new ArrayList<>();
+        ArrayList<ArrayList<SimpleRaidDataBase>> countedFullData = new ArrayList<>();
         for (int i = 0; i < highestValue + 1; i++)
         {
             countedIntData.add(0);
@@ -405,7 +405,7 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
                         int right = left + barWidth;
                         int top = GRAPH_HEIGHT - GRAPH_YS - height;
                         int bottom = GRAPH_HEIGHT - GRAPH_YS;
-                        ArrayList<SimpleRaidData> summedRegionData;
+                        ArrayList<SimpleRaidDataBase> summedRegionData;
                         if (groupOffset == 0 || i != xScaleLow)
                         {
                             summedRegionData = sumRegionRaidData(countedDataSet, i, groupSize);
@@ -476,9 +476,9 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
         return sum;
     }
 
-    private ArrayList<SimpleRaidData> sumRegionRaidData(GraphInternalBoundMatchedContainer data, int index, int length)
+    private ArrayList<SimpleRaidDataBase> sumRegionRaidData(GraphInternalBoundMatchedContainer data, int index, int length)
     {
-        ArrayList<SimpleRaidData> summedData = new ArrayList<>();
+        ArrayList<SimpleRaidDataBase> summedData = new ArrayList<>();
         for (int i = index; i < index + length; i++)
         {
             if (i < data.fullData.size() && i > -1)
@@ -831,8 +831,8 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
     private GraphInternalDataContainer getInternalDataSet(DataPoint key)
     {
         ArrayList<Integer> intDataSet = new ArrayList<>();
-        ArrayList<SimpleRaidData> fullDataSet = new ArrayList<>();
-        for (SimpleRaidData data : internalData)
+        ArrayList<SimpleRaidDataBase> fullDataSet = new ArrayList<>();
+        for (SimpleRaidDataBase data : internalData)
         {
             if (data.getValue(key) != -1)
             {
@@ -973,9 +973,9 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
         }
     }
 
-    private ArrayList<SimpleRaidData> mergeSelectedData()
+    private ArrayList<SimpleRaidDataBase> mergeSelectedData()
     {
-        ArrayList<SimpleRaidData> mergedData = new ArrayList<>();
+        ArrayList<SimpleRaidDataBase> mergedData = new ArrayList<>();
         for (Bounds b : selectedBounds)
         {
             mergedData.addAll(b.raids);

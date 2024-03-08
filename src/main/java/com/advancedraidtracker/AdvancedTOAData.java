@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 @Slf4j
-public class AdvancedTOAData extends AdvancedRaidData
+public class AdvancedTOAData extends AdvancedRaidDataBase
 {
     private final String[] names = {"Apmeken", "Baba", "Scabaras", "Kephri", "Crondis", "Zebak", "Het", "Akkha", "Wardens P1", "Wardens P2", "Wardens P3"};
 

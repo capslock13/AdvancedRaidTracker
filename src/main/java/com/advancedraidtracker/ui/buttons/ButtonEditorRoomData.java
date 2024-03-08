@@ -1,6 +1,6 @@
 package com.advancedraidtracker.ui.buttons;
 
-import com.advancedraidtracker.SimpleRaidData;
+import com.advancedraidtracker.SimpleRaidDataBase;
 import com.advancedraidtracker.SimpleTOAData;
 import com.advancedraidtracker.SimpleTOBData;
 import com.advancedraidtracker.ui.viewraid.ViewTOARaid;
@@ -16,10 +16,10 @@ public class ButtonEditorRoomData extends DefaultCellEditor
     protected JButton button;
     private String label;
     private boolean isPushed;
-    private final ArrayList<SimpleRaidData> data;
+    private final ArrayList<SimpleRaidDataBase> data;
     int row;
 
-    public ButtonEditorRoomData(JCheckBox checkBox, ArrayList<SimpleRaidData> data)
+    public ButtonEditorRoomData(JCheckBox checkBox, ArrayList<SimpleRaidDataBase> data)
     {
         super(checkBox);
         this.data = data;

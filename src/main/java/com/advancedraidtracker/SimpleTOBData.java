@@ -16,7 +16,7 @@ import static com.advancedraidtracker.constants.TobIDs.SPECTATE_FLAG;
 import static com.advancedraidtracker.utility.datautility.DataPoint.*;
 
 @Slf4j
-public class SimpleTOBData extends SimpleRaidData
+public class SimpleTOBData extends SimpleRaidDataBase
 {
     private final DataManager dataManager;
 

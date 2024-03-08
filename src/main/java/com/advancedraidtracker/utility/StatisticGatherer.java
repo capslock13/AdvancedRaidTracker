@@ -1,6 +1,6 @@
 package com.advancedraidtracker.utility;
 
-import com.advancedraidtracker.SimpleRaidData;
+import com.advancedraidtracker.SimpleRaidDataBase;
 import com.advancedraidtracker.SimpleTOBData;
 import com.advancedraidtracker.utility.datautility.DataPoint;
 import lombok.extern.slf4j.Slf4j;
@@ -14,16 +14,16 @@ import java.util.stream.Collectors;
 @Slf4j
 public class StatisticGatherer
 {
-    public static double getOverallTimeAverage(ArrayList<SimpleRaidData> data)
+    public static double getOverallTimeAverage(ArrayList<SimpleRaidDataBase> data)
     {
-        data = data.stream().filter(SimpleRaidData::getOverallTimeAccurate).collect(Collectors.toCollection(ArrayList::new));
+        data = data.stream().filter(SimpleRaidDataBase::getOverallTimeAccurate).collect(Collectors.toCollection(ArrayList::new));
         if (data.isEmpty())
         {
             return -1;
         }
         double total = 0;
         double count = 0;
-        for (SimpleRaidData d : data)
+        for (SimpleRaidDataBase d : data)
         {
             total += d.getTimeSum();
             count++;
@@ -104,7 +104,7 @@ public class StatisticGatherer
     {
         if (parameter == DataPoint.CHALLENGE_TIME)
         {
-            ArrayList<SimpleRaidData> raidData = new ArrayList<>(data);
+            ArrayList<SimpleRaidDataBase> raidData = new ArrayList<>(data);
             return getOverallTimeAverage(raidData);
         }
         double total = 0;

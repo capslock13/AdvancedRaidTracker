@@ -4,7 +4,7 @@ import com.advancedraidtracker.AdvancedRaidTrackerConfig;
 import com.advancedraidtracker.AdvancedRaidTrackerPlugin;
 import com.advancedraidtracker.constants.LogID;
 import com.advancedraidtracker.utility.Point;
-import com.advancedraidtracker.constants.RoomState;
+import com.advancedraidtracker.utility.RoomState;
 import com.advancedraidtracker.utility.RoomUtil;
 import com.advancedraidtracker.utility.datautility.DataWriter;
 import lombok.extern.slf4j.Slf4j;

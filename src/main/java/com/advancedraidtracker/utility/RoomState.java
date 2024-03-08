@@ -1,4 +1,4 @@
-package com.advancedraidtracker.constants;
+package com.advancedraidtracker.utility;
 
 public class RoomState
 {

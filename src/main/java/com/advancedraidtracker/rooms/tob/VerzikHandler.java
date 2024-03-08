@@ -10,7 +10,7 @@ import com.advancedraidtracker.utility.wrappers.DawnSpec;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.events.*;
-import com.advancedraidtracker.constants.RoomState;
+import com.advancedraidtracker.utility.RoomState;
 import net.runelite.client.game.ItemManager;
 
 import java.util.ArrayList;

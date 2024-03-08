@@ -2,7 +2,7 @@ package com.advancedraidtracker.ui.charts;
 
 import com.advancedraidtracker.*;
 import com.advancedraidtracker.ui.BaseFrame;
-import com.advancedraidtracker.utility.AdvancedRaidData;
+import com.advancedraidtracker.AdvancedRaidData;
 import com.advancedraidtracker.utility.datautility.DataPoint;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.callback.ClientThread;

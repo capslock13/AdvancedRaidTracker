@@ -1,7 +1,6 @@
 package com.advancedraidtracker;
 
 import com.advancedraidtracker.constants.LogID;
-import com.advancedraidtracker.utility.AdvancedRaidData;
 import com.advancedraidtracker.utility.wrappers.ThrallOutlineBox;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.game.ItemManager;

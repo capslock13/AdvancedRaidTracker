@@ -12,13 +12,13 @@ import net.runelite.api.events.*;
 import com.advancedraidtracker.utility.Point;
 import com.advancedraidtracker.utility.RoomUtil;
 import com.advancedraidtracker.utility.datautility.DataWriter;
-import com.advancedraidtracker.constants.RoomState;
+import com.advancedraidtracker.utility.RoomState;
 
 import static com.advancedraidtracker.constants.LogID.*;
 import static com.advancedraidtracker.constants.LogID.ACCURATE_XARP_END;
 import static com.advancedraidtracker.constants.LogID.XARPUS_STARTED;
 import static com.advancedraidtracker.constants.TobIDs.*;
-import static com.advancedraidtracker.constants.RoomState.XarpusRoomState.FINISHED;
+import static com.advancedraidtracker.utility.RoomState.XarpusRoomState.FINISHED;
 
 @Slf4j
 public class XarpusHandler extends TOBRoomHandler

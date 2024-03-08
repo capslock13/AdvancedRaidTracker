@@ -16,8 +16,8 @@ import java.util.ArrayList;
 
 import static com.advancedraidtracker.constants.LogID.*;
 import static com.advancedraidtracker.constants.TobIDs.*;
-import static com.advancedraidtracker.constants.RoomState.*;
-import static com.advancedraidtracker.constants.RoomState.BloatRoomState.*;
+import static com.advancedraidtracker.utility.RoomState.*;
+import static com.advancedraidtracker.utility.RoomState.BloatRoomState.*;
 
 @Slf4j
 public class BloatHandler extends TOBRoomHandler

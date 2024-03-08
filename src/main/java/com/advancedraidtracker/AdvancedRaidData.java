@@ -1,4 +1,4 @@
-package com.advancedraidtracker.utility;
+package com.advancedraidtracker;
 
 import com.advancedraidtracker.utility.wrappers.PlayerDidAttack;
 import com.advancedraidtracker.utility.wrappers.ThrallOutlineBox;

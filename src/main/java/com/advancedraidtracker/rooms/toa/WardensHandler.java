@@ -3,7 +3,7 @@ package com.advancedraidtracker.rooms.toa;
 import com.advancedraidtracker.AdvancedRaidTrackerConfig;
 import com.advancedraidtracker.AdvancedRaidTrackerPlugin;
 import com.advancedraidtracker.constants.LogID;
-import com.advancedraidtracker.constants.RoomState;
+import com.advancedraidtracker.utility.RoomState;
 import com.advancedraidtracker.utility.datautility.DataWriter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
@@ -11,8 +11,8 @@ import net.runelite.api.events.AnimationChanged;
 import net.runelite.api.events.NpcDespawned;
 import net.runelite.api.events.NpcSpawned;
 
-import static com.advancedraidtracker.constants.RoomState.WardenRoomState.ENRAGED;
-import static com.advancedraidtracker.constants.RoomState.WardenRoomState.FINISHED;
+import static com.advancedraidtracker.utility.RoomState.WardenRoomState.ENRAGED;
+import static com.advancedraidtracker.utility.RoomState.WardenRoomState.FINISHED;
 
 @Slf4j
 public class WardensHandler extends TOARoomHandler

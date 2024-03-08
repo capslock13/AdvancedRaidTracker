@@ -2,7 +2,7 @@ package com.advancedraidtracker.rooms.tob;
 
 import com.advancedraidtracker.AdvancedRaidTrackerConfig;
 
-import com.advancedraidtracker.constants.RoomState;
+import com.advancedraidtracker.utility.RoomState;
 import com.advancedraidtracker.constants.TOBRoom;
 import com.advancedraidtracker.constants.TobIDs;
 

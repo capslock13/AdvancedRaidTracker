@@ -2,8 +2,8 @@ package com.TheatreTracker.constants;
 
 import lombok.Getter;
 
-import java.util.Arrays;
-import java.util.Optional;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.TheatreTracker.constants.TOBRoom.*;
 
@@ -302,6 +302,14 @@ public enum LogID
     final boolean simple;
 
     final String[] valueDescriptors;
+    private static final Map<Integer, LogID> mapper;
+
+    static {
+        mapper = new HashMap<>();
+        for (LogID id : values()) {
+            mapper.put(id.id, id);
+        }
+    }
 
 
     LogID(int id, boolean simple, TOBRoom room, String commonName, String... arguments)
@@ -320,7 +328,6 @@ public enum LogID
 
     public static LogID valueOf(int value)
     {
-        Optional<LogID> o = Arrays.stream(values()).filter(logid -> logid.getId() == value).findFirst();
-        return o.orElse(UNKNOWN);
+        return mapper.getOrDefault(value, UNKNOWN);
     }
 }

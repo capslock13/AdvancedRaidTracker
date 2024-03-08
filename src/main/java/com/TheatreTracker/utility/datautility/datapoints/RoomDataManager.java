@@ -1,8 +1,10 @@
 package com.TheatreTracker.utility.datautility.datapoints;
 
 import com.TheatreTracker.utility.wrappers.PlayerDidAttack;
-import com.google.common.collect.Multimap;
 import lombok.Getter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class RoomDataManager {
     /**
@@ -35,10 +37,15 @@ public abstract class RoomDataManager {
     @Getter
     protected int defence;
 
-    private Multimap<String, PlayerDidAttack> attacks;
+    @Getter
+    protected final List<PlayerDidAttack> attacks;
 
-    public RoomDataManager(int defence) {
+    protected List<LogEntry> roomData;
+
+    public RoomDataManager(int defence, List<LogEntry> roomData) {
         this.defence = defence;
+        this.roomData = roomData;
+        this.attacks = new ArrayList<>();
     }
 
     /**
@@ -61,6 +68,22 @@ public abstract class RoomDataManager {
      * Parses generic data.
      */
     public void parse() {
+        String affectedPlayer = "";
 
+        for (LogEntry entry : roomData) {
+            switch (entry.getLogEntry()) {
+                case PLAYER_ATTACK:
+                    PlayerDidAttack atk = new PlayerDidAttack(entry);
+                    this.attacks.add(atk);
+                    break;
+                case DWH:
+                    hammer();
+                    break;
+                case BGS:
+                    break;
+            }
+
+        }
     }
+
 }

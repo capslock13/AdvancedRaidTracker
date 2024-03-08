@@ -83,6 +83,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     private final Map<PlayerDidAttack, String> actions = new HashMap<>();
 
     private ConfigManager configManager;
+    private ItemManager itemManager;
 
     public void enableWrap()
     {
@@ -214,7 +215,9 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             {
                 attack.useUnkitted();
             }
-            clientThread.invoke(attack::setIcons);
+            clientThread.invoke(() -> {
+                attack.setIcons(itemManager);
+            });
             clientThread.invoke(attack::setWornNames);
         }
         WeaponAttack weaponAttack = WeaponDecider.getWeapon(attack.animation, attack.spotAnims, attack.projectile, attack.weapon);
@@ -367,8 +370,9 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     }
 
     private final ClientThread clientThread;
-    public ChartPanel(String room, boolean isLive, TheatreTrackerConfig config, ClientThread clientThread, ConfigManager configManager)
+    public ChartPanel(String room, boolean isLive, TheatreTrackerConfig config, ClientThread clientThread, ConfigManager configManager, ItemManager itemManager)
     {
+        this.itemManager = itemManager;
         this.configManager = configManager;
         this.config = config;
         this.clientThread = clientThread;

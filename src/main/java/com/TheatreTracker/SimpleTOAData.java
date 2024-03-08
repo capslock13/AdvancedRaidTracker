@@ -2,15 +2,13 @@ package com.TheatreTracker;
 
 import com.TheatreTracker.constants.LogID;
 import com.TheatreTracker.constants.RaidType;
+import com.TheatreTracker.utility.RoomUtil;
 import com.TheatreTracker.utility.datautility.DataManager;
 import com.TheatreTracker.utility.datautility.DataPoint;
 import com.TheatreTracker.utility.wrappers.PlayerCorrelatedPointData;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Map;
+import java.util.*;
 
 import static com.TheatreTracker.utility.datautility.DataPoint.*;
 
@@ -23,6 +21,9 @@ public class SimpleTOAData extends SimpleRaidData
     private ArrayList<String> globalData;
     private String raidStatus = "";
     private boolean hasExited = false;
+    private int lastStartTime = 0;
+    private int raidExitTime = 0;
+    private int raidStartTime = 0;
 
     public SimpleTOAData(String[] parameters, String filePath, String fileName)
     {
@@ -80,6 +81,7 @@ public class SimpleTOAData extends SimpleRaidData
             }
         }
         dataManager.set(CHALLENGE_TIME, getTimeSum());
+        dataManager.set(OVERALL_TIME, getOverallTime());
     }
 
     private void addColorToStatus(String color)
@@ -113,6 +115,9 @@ public class SimpleTOAData extends SimpleRaidData
                         break;
                     case INVOCATION_LEVEL:
                         dataManager.set(TOA_INVOCATION_LEVEL, Integer.parseInt(subData[4]));
+                        break;
+                    case TOA_TIMER_START:
+                        raidStartTime = Integer.parseInt(subData[4]);
                         break;
                 }
             }
@@ -149,48 +154,74 @@ public class SimpleTOAData extends SimpleRaidData
         boolean hasSeenNexus = false;
         for(String s : globalData)
         {
-            if(activeIndex == 0 && !LogID.valueOf(Integer.parseInt(s.split(",")[3])).equals(LogID.LEFT_TOA))
+            try
             {
-                activeIndex++;
-                continue;
-            }
-            String[] subData = s.split(",");
-            switch(LogID.valueOf(Integer.parseInt(subData[3])))
-            {
-                case LEFT_TOA:
-                    hasExited = true;
-                    if(hasSeenNexus)
-                    {
-                        addColorToStatus(orange);
-                    }
-                    else
-                    {
-                        addColorToStatus(red);
-                    }
-                    return;
-                case ENTERED_NEW_TOA_REGION:
-                    if(subData[4].equals("TOA Nexus"))
-                    {
-                        hasSeenNexus = true;
-                    }
-                    else if(!subData[4].equals("Zebak"))
-                    {
-                        addColorToStatus(green);
-                        globalData = new ArrayList<>(globalData.subList(activeIndex, globalData.size()));
+                if (activeIndex == 0 && !LogID.valueOf(Integer.parseInt(s.split(",")[3])).equals(LogID.LEFT_TOA))
+                {
+                    activeIndex++;
+                    continue;
+                }
+                String[] subData = s.split(",");
+                switch (LogID.valueOf(Integer.parseInt(subData[3])))
+                {
+                    case LEFT_TOA:
+                        hasExited = true;
+                        if (hasSeenNexus)
+                        {
+                            addColorToStatus(orange);
+                        } else
+                        {
+                            addColorToStatus(red);
+                        }
+                        raidExitTime = Integer.parseInt(subData[4]);
                         return;
-                    }
-                    break;
-                case TOA_CRONDIS_START:
-                    pathStartTick = Integer.parseInt(subData[4]);
-                    break;
-                case TOA_CRONDIS_FINISHED:
-                    dataManager.set(CRONDIS_TIME, Integer.parseInt(subData[4]));
-                    break;
-                case TOA_ZEBAK_FINISHED:
-                    dataManager.set(ZEBAK_TIME, Integer.parseInt(subData[4]));
-                    break;
+                    case ENTERED_NEW_TOA_REGION:
+                        if (subData[4].equals("TOA Nexus"))
+                        {
+                            hasSeenNexus = true;
+                        } else if (!subData[4].equals("Zebak"))
+                        {
+                            addColorToStatus(green);
+                            globalData = new ArrayList<>(globalData.subList(activeIndex, globalData.size()));
+                            return;
+                        }
+                        break;
+                    case TOA_CRONDIS_START:
+                    case TOA_ZEBAK_START:
+                        lastStartTime = Integer.parseInt(subData[4]);
+                        break;
+                    case TOA_CRONDIS_FINISHED:
+                        dataManager.set(CRONDIS_TIME, Integer.parseInt(subData[4]));
+                        break;
+                    case TOA_ZEBAK_FINISHED:
+                        dataManager.set(ZEBAK_TIME, Integer.parseInt(subData[4]));
+                        break;
+                    case TOA_CRONDIS_CROC_DAMAGE:
+                        dataManager.increment(CRONDIS_CROCODILE_DAMAGE, Integer.parseInt(subData[4]));
+                        break;
+                    case TOA_CRONDIS_WATER:
+                        int amount = Integer.parseInt(subData[4]);
+                        if (amount == 100)
+                        {
+                            dataManager.increment(CRONDIS_HEALS_100);
+                        } else if (amount == 50)
+                        {
+                            dataManager.increment(CRONDIS_HEALS_50);
+                        } else if (amount == 25)
+                        {
+                            dataManager.increment(CRONDIS_HEALS_25);
+                        }
+                        break;
+                    case TOA_ZEBAK_JUG_PUSHED:
+                        dataManager.increment(ZEBAK_JUGS_PUSHED);
+                        break;
+                }
+                activeIndex++;
             }
-            activeIndex++;
+            catch (Exception exception)
+            {
+
+            }
         }
     }
 
@@ -219,6 +250,7 @@ public class SimpleTOAData extends SimpleRaidData
                     {
                         addColorToStatus(red);
                     }
+                    raidExitTime = Integer.parseInt(subData[4]);
                     return;
                 case ENTERED_NEW_TOA_REGION:
                     if(subData[4].equals("TOA Nexus"))
@@ -254,6 +286,23 @@ public class SimpleTOAData extends SimpleRaidData
                     dataManager.set(KEPHRI_TIME, Integer.parseInt(subData[4]));
                     dataManager.set(KEPHRI_P3_DURATION, dataManager.get(KEPHRI_TIME)-dataManager.get(KEPHRI_P3_SPLIT));
                     break;
+                case TOA_KEPHRI_DUNG_THROWN:
+                    dataManager.increment(KEPHRI_DUNG_THROWN);
+                    break;
+                case TOA_KEPHRI_MELEE_HEAL:
+                    dataManager.increment(KEPHRI_MELEE_SCARAB_HEALS);
+                    dataManager.decrement(KEPHRI_SWARMS_HEALED);
+                    break;
+                case TOA_KEPHRI_HEAL:
+                    dataManager.increment(KEPHRI_SWARMS_HEALED);
+                    break;
+                case TOA_KEPHRI_SWARM_SPAWN:
+                    dataManager.increment(KEPHRI_SWARMS_TOTAL);
+                    break;
+                case TOA_KEPHRI_START:
+                case TOA_SCABARAS_START:
+                    lastStartTime = Integer.parseInt(subData[4]);
+                    break;
             }
             activeIndex++;
         }
@@ -284,6 +333,7 @@ public class SimpleTOAData extends SimpleRaidData
                     {
                         addColorToStatus(red);
                     }
+                    raidExitTime = Integer.parseInt(subData[4]);
                     return;
                 case ENTERED_NEW_TOA_REGION:
                     if(subData[4].equals("TOA Nexus"))
@@ -319,6 +369,25 @@ public class SimpleTOAData extends SimpleRaidData
                     dataManager.set(BABA_TIME, Integer.parseInt(subData[4]));
                     dataManager.set(BABA_P3_DURATION, dataManager.get(BABA_TIME) - dataManager.get(BABA_P3_SPLIT));
                     break;
+                case TOA_APMEKEN_CURSED_SPAWN:
+                    dataManager.increment(APMEKEN_CURSED_COUNT);
+                    break;
+                case TOA_APMEKEN_SHAMAN_SPAWN:
+                    dataManager.increment(APMEKEN_SHAMAN_COUNT);
+                    break;
+                case TOA_APMEKEN_VOLATILE_SPAWN:
+                    dataManager.increment(APMEKEN_VOLATILE_COUNT);
+                    break;
+                case TOA_BABA_BOULDER_THROW:
+                    dataManager.increment(BABA_BOULDERS_THROWN);
+                    break;
+                case TOA_BABA_BOULDER_BROKEN:
+                    dataManager.increment(BABA_BOULDERS_BROKEN);
+                    break;
+                case TOA_BABA_START:
+                case TOA_APMEKEN_START:
+                    lastStartTime = Integer.parseInt(subData[4]);
+                    break;
             }
             activeIndex++;
         }
@@ -349,6 +418,7 @@ public class SimpleTOAData extends SimpleRaidData
                     {
                         addColorToStatus(red);
                     }
+                    raidExitTime = Integer.parseInt(subData[4]);
                     return;
                 case ENTERED_NEW_TOA_REGION:
                     if(subData[4].equals("TOA Nexus"))
@@ -404,6 +474,10 @@ public class SimpleTOAData extends SimpleRaidData
                     dataManager.set(AKKHA_TIME, Integer.parseInt(subData[4]));
                     dataManager.set(AKKHA_FINAL_PHASE_DURATION, dataManager.get(AKKHA_TIME) - dataManager.get(AKKHA_FINAL_PHASE_SPLIT));
                     break;
+                case TOA_AKKHA_START:
+                case TOA_HET_START:
+                    lastStartTime = Integer.parseInt(subData[4]);
+                    break;
             }
             activeIndex++;
         }
@@ -433,6 +507,7 @@ public class SimpleTOAData extends SimpleRaidData
                     {
                         addColorToStatus(red);
                     }
+                    raidExitTime = Integer.parseInt(subData[4]);
                     return;
                 case ENTERED_NEW_TOA_REGION:
                     if(subData[4].equals("Tomb"))
@@ -456,6 +531,9 @@ public class SimpleTOAData extends SimpleRaidData
                     dataManager.set(WARDENS_TIME, Integer.parseInt(subData[4]));
                     dataManager.set(WARDENS_ENRAGED_DURATION, dataManager.get(WARDENS_TIME) - dataManager.get(WARDENS_ENRAGED_SPLIT));
                     dataManager.set(WARDENS_P3_DURATION, dataManager.get(WARDENS_TIME) - dataManager.get(WARDENS_P3_SPLIT));
+                    break;
+                case TOA_WARDENS_START:
+                    lastStartTime = Integer.parseInt(subData[4]);
                     break;
             }
             activeIndex++;
@@ -536,13 +614,13 @@ public class SimpleTOAData extends SimpleRaidData
     @Override
     public void setIndex(int index)
     {
-        dataManager.set(TOA_RAID_INDEX, index);
+        dataManager.set(RAID_INDEX, index);
     }
 
     @Override
     public int getIndex()
     {
-        return dataManager.get(TOA_RAID_INDEX);
+        return dataManager.get(RAID_INDEX);
     }
 
     @Override
@@ -560,6 +638,24 @@ public class SimpleTOAData extends SimpleRaidData
     public ArrayList<String> getPlayersArray()
     {
         return new ArrayList<>(players.keySet());
+    }
+
+    public String[] getCompletePlayerArray()
+    {
+        String[] playerArray = new String[8];
+        ArrayList<String> arrayListPlayers = getPlayersArray();
+        for(int i = 0; i < 8; i++)
+        {
+            if(i < arrayListPlayers.size())
+            {
+                playerArray[i] = arrayListPlayers.get(i);
+            }
+            else
+            {
+                playerArray[i] = "";
+            }
+        }
+        return playerArray;
     }
 
     @Override
@@ -637,5 +733,10 @@ public class SimpleTOAData extends SimpleRaidData
                 + dataManager.get(HET_TIME)
                 + dataManager.get(AKKHA_TIME)
                 + dataManager.get(WARDENS_TIME);
+    }
+
+    public int getOverallTime()
+    {
+        return (raidExitTime+lastStartTime-raidStartTime);
     }
 }

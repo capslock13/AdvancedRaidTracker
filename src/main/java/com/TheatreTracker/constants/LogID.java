@@ -155,8 +155,8 @@ public enum LogID
 
     TOA_CRONDIS_START(1010, true, CRONDIS, "Crondis Start", "Room Tick"),
     TOA_CRONDIS_FINISHED(1011, true, CRONDIS, "Crondis Finished", "Room Tick"),
-    TOA_CRONDIS_WATER(1022, true, CRONDIS, "Crondis Water", "Heal", "Room Tick"),
-    TOA_CRONDIS_CROC_DAMAGE(1023, true, CRONDIS, "Crondis Croc Damage", "Damage", "Room Tick"),
+    TOA_CRONDIS_WATER(1012, true, CRONDIS, "Crondis Water", "Heal", "Room Tick"),
+    TOA_CRONDIS_CROC_DAMAGE(1013, true, CRONDIS, "Crondis Croc Damage", "Damage", "Room Tick"),
 
     TOA_ZEBAK_START(1020, true, ZEBAK, "Zebak Start", "Room Tick"),
     TOA_ZEBAK_FINISHED(1021, true, ZEBAK, "Zebak Finished", "Room Tick"),

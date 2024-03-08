@@ -128,6 +128,17 @@ public class DataManager
         }
     }
 
+    public void decrement(DataPoint point)
+    {
+        for(DataPointIntWrapper pointWrapper : data)
+        {
+            if(pointWrapper.dataPoint.equals(point))
+            {
+                pointWrapper.decrement();
+            }
+        }
+    }
+
     public void hammer(DataPoint point)
     {
         for(DataPointIntWrapper pointWrapper : data)

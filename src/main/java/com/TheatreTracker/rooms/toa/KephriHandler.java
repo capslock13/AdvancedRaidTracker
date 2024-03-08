@@ -27,6 +27,8 @@ public class KephriHandler extends TOARoomHandler
     private int s2End = -1;
     private int meleeTicksAlive = 0;
     private boolean meleeAlive = false;
+    int swarms = 0;
+    int swarmsHealed = 0;
 
     public KephriHandler(Client client, DataWriter clog, TheatreTrackerConfig config, TheatreTrackerPlugin plugin, TOAHandler handler)
     {
@@ -43,6 +45,8 @@ public class KephriHandler extends TOARoomHandler
         s2End = -1;
         meleeTicksAlive = 0;
         meleeAlive = false;
+        swarms = 0;
+        swarmsHealed = 0;
     }
 
     @Override
@@ -67,6 +71,7 @@ public class KephriHandler extends TOARoomHandler
         {
             clog.addLine(LogID.TOA_KEPHRI_HEAL, String.valueOf(client.getTickCount()-roomStartTick), String.valueOf(applied.getHitsplat().getAmount()));
             log.info("Kephri healed " + applied.getHitsplat());
+            swarmsHealed++;
         }
     }
 
@@ -78,7 +83,7 @@ public class KephriHandler extends TOARoomHandler
             if(projectileMoved.getProjectile().getId() == 2150)
             {
                 clog.addLine(LogID.TOA_KEPHRI_MELEE_HEAL, client.getTickCount()-roomStartTick);
-                log.info("Melee heal");
+                swarmsHealed--;
             }
         }
     }
@@ -89,7 +94,7 @@ public class KephriHandler extends TOARoomHandler
         if(spawned.getNpc().getId() == 11723)
         {
             clog.addLine(LogID.TOA_KEPHRI_SWARM_SPAWN, client.getTickCount()-roomStartTick);
-            log.info("Swarm spawned");
+            swarms++;
         }
         else if(spawned.getNpc().getId() == 11724)
         {
@@ -169,6 +174,9 @@ public class KephriHandler extends TOARoomHandler
                 s1End = client.getTickCount()-roomStartTick;
                 sendTimeMessage("Kephri 'Swarm 1' Complete: ", s1End, s1End-p1End);
                 clog.addLine(LogID.TOA_KEPHRI_SWARM_1_END, s1End);
+                plugin.sendChatMessage("Swarms Healed: (" + swarmsHealed + "/" + swarms +")");
+                swarmsHealed = 0;
+                swarms = 0;
             }
         }
         else if(changed == 11721)
@@ -179,6 +187,9 @@ public class KephriHandler extends TOARoomHandler
                 s2End = client.getTickCount()-roomStartTick;
                 sendTimeMessage("Kephri 'Swarm 2' Complete: ", s2End, s2End-p2End);
                 clog.addLine(LogID.TOA_KEPHRI_SWARM_2_END, s2End);
+                plugin.sendChatMessage("Swarms Healed: (" + swarmsHealed + "/" + swarms +")");
+                swarmsHealed = 0;
+                swarms = 0;
             }
         }
         if(roomState == RoomState.KephriRoomState.PHASE_3 && changed == 11722)

@@ -3,6 +3,8 @@ package com.TheatreTracker.utility;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.awt.font.FontRenderContext;
+import java.awt.font.GlyphVector;
 
 public class UISwingUtility
 {
@@ -49,5 +51,19 @@ public class UISwingUtility
         JComboBox dark = new JComboBox(options);
         dark.addActionListener(actionListener);
         return dark;
+    }
+
+    public static int getStringWidth(Graphics2D g, String str)
+    {
+        FontRenderContext frc = g.getFontRenderContext();
+        GlyphVector gv = g.getFont().createGlyphVector(frc, str);
+        return gv.getPixelBounds(null, 0, 0).width;
+    }
+
+    public static int getStringHeight(Graphics2D g)
+    {
+        FontRenderContext frc = g.getFontRenderContext();
+        GlyphVector gv = g.getFont().createGlyphVector(frc, "A");
+        return gv.getPixelBounds(null, 0, 0).height;
     }
 }

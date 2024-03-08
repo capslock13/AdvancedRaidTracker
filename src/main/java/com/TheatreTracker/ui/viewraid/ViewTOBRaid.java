@@ -13,11 +13,11 @@ import java.util.Calendar;
 import static com.TheatreTracker.utility.datautility.DataPoint.NYLO_LAST_DEAD;
 
 @Slf4j
-public class ViewRaid extends BaseFrame
+public class ViewTOBRaid extends BaseFrame
 {
     String INCOMPLETE_MARKER = "-";
 
-    public ViewRaid(SimpleTOBData data)
+    public ViewTOBRaid(SimpleTOBData data)
     {
         String red = "<html><font color='#FF0000'>";
         String soft = "<html><font color='#666666'>";

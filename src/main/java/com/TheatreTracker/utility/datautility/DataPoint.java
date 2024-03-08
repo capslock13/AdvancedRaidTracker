@@ -9,7 +9,7 @@ import java.util.Objects;
 public enum DataPoint
 {
     CHALLENGE_TIME("Challenge Time", types.TIME, rooms.ANY),
-    OVERALL_TIME("Overall Time", types.TIME, rooms.ANY_TOB),
+    OVERALL_TIME("Overall Time", types.TIME, rooms.ANY),
     TIME_OUTSIDE_ROOMS("Time Outside Rooms", types.TIME, rooms.ANY_TOB),
     MAIDEN_TOTAL_TIME("Maiden Time", types.TIME, rooms.MAIDEN),
     BLOAT_TOTAL_TIME("Bloat Time", types.TIME, rooms.BLOAT),
@@ -41,7 +41,7 @@ public enum DataPoint
     MAIDEN_CHINS_THROWN("Maiden chins thrown", types.OTHER_INT, rooms.MAIDEN, true),
     MAIDEN_CHINS_THROWN_WRONG_DISTANCE("Maiden chins thrown wrong distance", types.OTHER_INT, rooms.MAIDEN, true),
     MAIDEN_CHIN_CORRECT_DISTANCE_PERCENT("Maiden chins correct distance %", types.OTHER_INT, rooms.MAIDEN, true),
-    RAID_INDEX("Raid Index", types.OTHER_INT, rooms.ANY_TOB),
+    RAID_INDEX("Raid Index", types.OTHER_INT, rooms.ANY),
     PARTY_SIZE("Party Size", types.OTHER_INT, rooms.ANY_TOB),
 
     BLOAT_DOWNS("Bloat downs", types.OTHER_INT, rooms.BLOAT),
@@ -259,6 +259,22 @@ public enum DataPoint
     WARDENS_UNTIL_ENRAGED_DURATION("Wardens Until Enraged Duration", types.TIME, rooms.WARDENS),
     WARDENS_P3_DURATION("Wardens P3 Time", types.TIME, rooms.WARDENS),
     WARDENS_ENRAGED_DURATION("Wardens Enraged Duration", types.TIME, rooms.WARDENS),
+    APMEKEN_VOLATILE_COUNT("Apmeken Volatile Count", types.OTHER_INT, rooms.APMEKEN),
+    APMEKEN_SHAMAN_COUNT("Apmeken Shaman Count", types.OTHER_INT, rooms.APMEKEN),
+    APMEKEN_CURSED_COUNT("Apmeken Cursed Count", types.OTHER_INT, rooms.APMEKEN),
+    BABA_BOULDERS_THROWN("Baba Boulders Thrown", types.OTHER_INT, rooms.BABA),
+    BABA_BOULDERS_BROKEN("Baba Boulders Broken", types.OTHER_INT, rooms.BABA),
+    KEPHRI_SWARMS_HEALED("Kephri Swarms Healed", types.OTHER_INT, rooms.KEPHRI),
+    KEPHRI_SWARMS_TOTAL("Kephri Swarms Total", types.OTHER_INT, rooms.KEPHRI),
+    KEPHRI_MELEE_SCARAB_HEALS("Kephri Melee Scarab Heals", types.OTHER_INT, rooms.KEPHRI),
+    KEPHRI_DUNG_THROWN("Kephri Dung Thrown", types.OTHER_INT, rooms.KEPHRI),
+    KEPHRI_MELEE_TICKS_ALIVE("Kephri Melee Ticks Alive", types.OTHER_INT, rooms.KEPHRI),
+    HET_DOWNS("Het Downs", types.OTHER_INT, rooms.HET),
+    CRONDIS_HEALS_100("Crondis Heals 100", types.OTHER_INT, rooms.CRONDIS),
+    CRONDIS_HEALS_50("Crondis Heals 50", types.OTHER_INT, rooms.CRONDIS),
+    CRONDIS_HEALS_25("Crondis Heals 25", types.OTHER_INT, rooms.CRONDIS),
+    CRONDIS_CROCODILE_DAMAGE("Crondis Damage from Crocodile", types.OTHER_INT, rooms.CRONDIS),
+    ZEBAK_JUGS_PUSHED("Zebak Jugs Pushed", types.OTHER_INT, rooms.ZEBAK)
 
 
 

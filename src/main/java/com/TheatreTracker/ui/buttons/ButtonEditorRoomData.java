@@ -1,8 +1,10 @@
 package com.TheatreTracker.ui.buttons;
 
 import com.TheatreTracker.SimpleRaidData;
+import com.TheatreTracker.SimpleTOAData;
 import com.TheatreTracker.SimpleTOBData;
-import com.TheatreTracker.ui.viewraid.ViewRaid;
+import com.TheatreTracker.ui.viewraid.ViewTOARaid;
+import com.TheatreTracker.ui.viewraid.ViewTOBRaid;
 
 import javax.swing.*;
 import java.awt.*;
@@ -53,8 +55,14 @@ public class ButtonEditorRoomData extends DefaultCellEditor
             if(data.get(row) instanceof SimpleTOBData)
             {
                 SimpleTOBData tobData = (SimpleTOBData) data.get(row);
-                ViewRaid raid = new ViewRaid(tobData);
+                ViewTOBRaid raid = new ViewTOBRaid(tobData);
                 //ViewRaidFrame raid = new ViewRaidFrame(data.get(row));
+                raid.open();
+            }
+            else if(data.get(row) instanceof SimpleTOAData)
+            {
+                SimpleTOAData toaData = (SimpleTOAData) data.get(row);
+                ViewTOARaid raid = new ViewTOARaid(toaData);
                 raid.open();
             }
         }

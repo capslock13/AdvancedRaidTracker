@@ -12,7 +12,6 @@ import java.util.Map;
 
 public class CrabLeakInfo extends BaseFrame
 {
-
     public CrabLeakInfo(ArrayList<ArrayList<StringInt>> crabs)
     {
         JPanel primary = new JPanel();

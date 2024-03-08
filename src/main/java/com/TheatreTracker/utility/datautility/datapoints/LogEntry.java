@@ -4,13 +4,15 @@ import com.TheatreTracker.constants.LogID;
 import lombok.Value;
 
 @Value
-public class LogEntry {
+public class LogEntry
+{
     long ts;
     int raid;
     LogID logEntry;
-    String []extra;
+    String[] extra;
 
-    LogEntry(String []line) {
+    LogEntry(String[] line)
+    {
         // line[0] is unused, essentially a UID
         ts = Long.parseLong(line[1]);
         raid = Integer.parseInt(line[2]);

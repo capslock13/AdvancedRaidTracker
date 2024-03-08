@@ -72,9 +72,9 @@ public class RaidTrackerSidePanel extends PluginPanel
                 {
                     if (file.isDirectory())
                     {
-                        File subDirectory = new File(file.getAbsolutePath()+"/primary/");
+                        File subDirectory = new File(file.getAbsolutePath() + "/primary/");
                         File[] subLogFiles = subDirectory.listFiles();
-                        if(subLogFiles != null)
+                        if (subLogFiles != null)
                         {
                             for (File dataFile : subLogFiles)
                             {
@@ -91,35 +91,32 @@ public class RaidTrackerSidePanel extends PluginPanel
                     }
                 }
             }
-        }
-        catch (Exception e)
+        } catch (Exception e)
         {
             e.printStackTrace();
         }
         try
         {
             raids.sort(Comparator.comparing(SimpleRaidData::getDate));
-        }
-        catch (Exception e)
+        } catch (Exception e)
         {
 
         }
         Map<String, Integer> handMap = new HashMap<>();
-        for(BloatHand bloatHand : hands)
+        for (BloatHand bloatHand : hands)
         {
             String position = bloatHand.x + "," + bloatHand.y;
-            if(!handMap.containsKey(position))
+            if (!handMap.containsKey(position))
             {
                 handMap.put(position, 1);
-            }
-            else
+            } else
             {
-                handMap.put(position, handMap.get(position)+1);
+                handMap.put(position, handMap.get(position) + 1);
             }
         }
-        for(String position : handMap.keySet())
+        for (String position : handMap.keySet())
         {
-           // log.info(position + ": " + handMap.get(position));
+            // log.info(position + ": " + handMap.get(position));
         }
         //BaseFrame bf = new BaseFrame();
         //bf.add(new BloatHandDataVisualizer(hands));
@@ -171,9 +168,9 @@ public class RaidTrackerSidePanel extends PluginPanel
                 if (lineSplit.length > 3)
                 {
                     int value = Integer.parseInt(lineSplit[3]);
-                    if(value != 0)
+                    if (value != 0)
                     {
-                        if(value != 801 && value != 576 && value != 587)
+                        if (value != 801 && value != 576 && value != 587)
                         {
                             if (Integer.parseInt(lineSplit[3]) == 99 && !spectate)
                             {
@@ -187,11 +184,10 @@ public class RaidTrackerSidePanel extends PluginPanel
                             {
                                 raid.add(line);
                                 raidActive = false;
-                                if(Integer.parseInt(lineSplit[3]) == 4)
+                                if (Integer.parseInt(lineSplit[3]) == 4)
                                 {
                                     raids.add(new SimpleTOBData(raid.toArray(new String[0]), filePath, currentFile.getName()));
-                                }
-                                else
+                                } else
                                 {
                                     raids.add(new SimpleTOAData(raid.toArray(new String[0]), filePath, currentFile.getName()));
                                 }
@@ -201,84 +197,79 @@ public class RaidTrackerSidePanel extends PluginPanel
                                 raid.add(line);
                             }
                         }
-                        if(value == 975)
+                        if (value == 975)
                         {
-                            if(lineSplit.length > 6)
+                            if (lineSplit.length > 6)
                             {
                                 int x = Integer.parseInt(lineSplit[5]);
                                 int y = Integer.parseInt(lineSplit[6]);
                                 int id = Integer.parseInt(lineSplit[4]);
                                 hands.add(new BloatHand(x, y, id));
-                                if(lineSplit.length > 7)
+                                if (lineSplit.length > 7)
                                 {
                                     int proc = Integer.parseInt(lineSplit[7]);
-                                    if(lastProc != proc)
+                                    if (lastProc != proc)
                                     {
 
-                                        if(!procCountMap.containsKey(handsTotal))
+                                        if (!procCountMap.containsKey(handsTotal))
                                         {
                                             procCountMap.put(handsTotal, 1);
-                                        }
-                                        else
+                                        } else
                                         {
-                                            procCountMap.put(handsTotal, procCountMap.get(handsTotal)+1);
+                                            procCountMap.put(handsTotal, procCountMap.get(handsTotal) + 1);
                                         }
 
-                                        if(!blProcMap.containsKey(bottomLeftChunkCount))
+                                        if (!blProcMap.containsKey(bottomLeftChunkCount))
                                         {
                                             blProcMap.put(bottomLeftChunkCount, 1);
-                                        }
-                                        else
+                                        } else
                                         {
-                                            blProcMap.put(bottomLeftChunkCount, blProcMap.get(bottomLeftChunkCount)+1);
+                                            blProcMap.put(bottomLeftChunkCount, blProcMap.get(bottomLeftChunkCount) + 1);
                                         }
 
-                                        if(!brProcMap.containsKey(bottomRightChunkCount))
+                                        if (!brProcMap.containsKey(bottomRightChunkCount))
                                         {
                                             brProcMap.put(bottomRightChunkCount, 1);
-                                        }
-                                        else
+                                        } else
                                         {
-                                            brProcMap.put(bottomRightChunkCount, brProcMap.get(bottomRightChunkCount)+1);
+                                            brProcMap.put(bottomRightChunkCount, brProcMap.get(bottomRightChunkCount) + 1);
                                         }
 
-                                        if(!tlProcMap.containsKey(topLeftChunkCount))
+                                        if (!tlProcMap.containsKey(topLeftChunkCount))
                                         {
                                             tlProcMap.put(topLeftChunkCount, 1);
-                                        }
-                                        else
+                                        } else
                                         {
-                                            tlProcMap.put(topLeftChunkCount, tlProcMap.get(topLeftChunkCount)+1);
+                                            tlProcMap.put(topLeftChunkCount, tlProcMap.get(topLeftChunkCount) + 1);
                                         }
 
-                                        if(!trProcMap.containsKey(topRightChunkCount))
+                                        if (!trProcMap.containsKey(topRightChunkCount))
                                         {
                                             trProcMap.put(topRightChunkCount, 1);
-                                        }
-                                        else
+                                        } else
                                         {
-                                            trProcMap.put(topRightChunkCount, trProcMap.get(topRightChunkCount)+1);
+                                            trProcMap.put(topRightChunkCount, trProcMap.get(topRightChunkCount) + 1);
                                         }
-                                        if(handsTotal == 13)
+                                        if (handsTotal == 13)
                                         {
-                                            if(hands.size() > 13)
+                                            if (hands.size() > 13)
                                             {
                                                 //log.info("Last 13 hands: ");
                                                 boolean found1 = false;
                                                 boolean found2 = false;
-                                                for(int i = hands.size()-13; i < hands.size(); i++)
+                                                for (int i = hands.size() - 13; i < hands.size(); i++)
                                                 {
                                                     //log.info(hands.get(i).x + ", " + hands.get(i).y);
-                                                    if(hands.get(i).x == 28 && hands.get(i).y == 34)
+                                                    if (hands.get(i).x == 28 && hands.get(i).y == 34)
                                                     {
                                                         found1 = true;
                                                     }
-                                                    if(hands.get(i).x == 28 && hands.get(i).y == 25)
+                                                    if (hands.get(i).x == 28 && hands.get(i).y == 25)
                                                     {
                                                         found2 = true;
                                                     }
                                                 }
-                                                if(found1 && found2)
+                                                if (found1 && found2)
                                                 {
                                                     //log.info("HAND FOUND ON BOTH SIDES OF CORNER");
                                                 }
@@ -300,23 +291,19 @@ public class RaidTrackerSidePanel extends PluginPanel
                                         bottomRightChunkCount = 0;
                                         topLeftChunkCount = 0;
                                         topRightChunkCount = 0;
-                                    }
-                                    else
+                                    } else
                                     {
                                         handsTotal++;
-                                        if(x < 32 && y < 32)
+                                        if (x < 32 && y < 32)
                                         {
                                             bottomLeftChunkCount++;
-                                        }
-                                        else if(x < 32 && y > 31)
+                                        } else if (x < 32 && y > 31)
                                         {
                                             topLeftChunkCount++;
-                                        }
-                                        else if(x > 31 && y < 32)
+                                        } else if (x > 31 && y < 32)
                                         {
                                             bottomRightChunkCount++;
-                                        }
-                                        else if(x > 31 && y > 31)
+                                        } else if (x > 31 && y > 31)
                                         {
                                             topRightChunkCount++;
                                         }
@@ -329,7 +316,7 @@ public class RaidTrackerSidePanel extends PluginPanel
             }
         }
         int count = 0;
-        for(Integer i : procCountMap.keySet())
+        for (Integer i : procCountMap.keySet())
         {
             count += procCountMap.get(i);
             //log.info(i + " hands procced " + procCountMap.get(i) + " times");
@@ -351,7 +338,7 @@ public class RaidTrackerSidePanel extends PluginPanel
         {
             log.info(i + " hands spawned " + trProcMap.get(i) + " times (TR)");
         }*/
-        if(count != 0)
+        if (count != 0)
         {
             //log.info("Total procs: " + count);
             //log.info("Bottom left total: " + bltotal);

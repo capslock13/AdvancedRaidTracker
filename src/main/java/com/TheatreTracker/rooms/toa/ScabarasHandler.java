@@ -20,6 +20,7 @@ public class ScabarasHandler extends TOARoomHandler
     {
         return "Scabaras";
     }
+
     public ScabarasHandler(Client client, DataWriter clog, TheatreTrackerConfig config, TheatreTrackerPlugin plugin, TOAHandler handler)
     {
         super(client, clog, config, plugin, handler);
@@ -28,7 +29,7 @@ public class ScabarasHandler extends TOARoomHandler
     @Override
     public void updateGameObjectSpawned(GameObjectSpawned event)
     {
-        if(event.getGameObject().getId() == SCABARAS_GATE_OBJECT && roomStartTick == -1)
+        if (event.getGameObject().getId() == SCABARAS_GATE_OBJECT && roomStartTick == -1)
         {
 
         }
@@ -37,9 +38,9 @@ public class ScabarasHandler extends TOARoomHandler
     @Override
     public void updateGameTick(GameTick event)
     {
-        if(!active)
+        if (!active)
         {
-            if(RoomUtil.crossedLine(14162, new Point(13, 26), new Point(13, 38), true, client))
+            if (RoomUtil.crossedLine(14162, new Point(13, 26), new Point(13, 38), true, client))
             {
                 roomStartTick = client.getTickCount();
                 active = true;
@@ -56,7 +57,7 @@ public class ScabarasHandler extends TOARoomHandler
     public void endScabaras()
     {
         active = false;
-        int scabarasDuration = client.getTickCount()-roomStartTick+1;
+        int scabarasDuration = client.getTickCount() - roomStartTick + 1;
         sendTimeMessage("Scabaras Puzzle time: ", scabarasDuration);
         clog.addLine(LogID.TOA_SCABARAS_FINISHED, scabarasDuration);
         plugin.liveFrame.setRoomFinished(getName(), scabarasDuration);
@@ -65,7 +66,7 @@ public class ScabarasHandler extends TOARoomHandler
     @Override
     public void updateGameObjectDespawned(GameObjectDespawned event)
     {
-        if(event.getGameObject().getId() == SCABARAS_GATE_OBJECT && event.getGameObject().getWorldLocation().getRegionX() == 55 && active && client.getTickCount()-roomStartTick > 20)
+        if (event.getGameObject().getId() == SCABARAS_GATE_OBJECT && event.getGameObject().getWorldLocation().getRegionX() == 55 && active && client.getTickCount() - roomStartTick > 20)
         {
             endScabaras();
         }

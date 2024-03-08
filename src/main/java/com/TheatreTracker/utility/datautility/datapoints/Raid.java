@@ -10,7 +10,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public abstract class Raid {
+public abstract class Raid
+{
     /**
      * Time for the entire raid.
      */
@@ -37,7 +38,8 @@ public abstract class Raid {
 
     protected final List<LogEntry> raidData;
 
-    protected Raid(List<LogEntry> raidData) {
+    protected Raid(List<LogEntry> raidData)
+    {
         this.raidData = raidData;
         this.players = new ArrayList<>();
     }
@@ -51,29 +53,36 @@ public abstract class Raid {
      * @param path path to log file
      * @return A raid for the log
      */
-    public static Raid getRaid(String path) {
+    public static Raid getRaid(String path)
+    {
         List<String> raidData = getRaidStrings(path);
         List<LogEntry> currentRaid = new ArrayList<>();
         Raid ret = null;
-        for (String line : raidData) {
-            String []split = line.split(",", -1);
+        for (String line : raidData)
+        {
+            String[] split = line.split(",", -1);
             LogEntry entry = new LogEntry(split);
             currentRaid.add(entry);
-            if (entry.getLogEntry() == LogID.LEFT_TOB) {
+            if (entry.getLogEntry() == LogID.LEFT_TOB)
+            {
                 ret = new Tob(currentRaid);
             }
         }
         return ret;
     }
-    public static List<Raid> getRaids(String path) {
+
+    public static List<Raid> getRaids(String path)
+    {
         List<String> raidData = getRaidStrings(path);
         List<Raid> raids = new ArrayList<>();
-        for (String line : raidData) {
+        for (String line : raidData)
+        {
 
         }
 
         return raids;
     }
+
     private static List<String> getRaidStrings(String path)
     {
         List<String> lines = new ArrayList<>();
@@ -81,12 +90,11 @@ public abstract class Raid {
         try
         {
             Scanner scanner = new Scanner(Files.newInputStream(file.toPath()));
-            while(scanner.hasNextLine())
+            while (scanner.hasNextLine())
             {
                 lines.add(scanner.nextLine());
             }
-        }
-        catch(Exception e)
+        } catch (Exception e)
         {
             System.err.println("Could not find file: " + path);
             System.err.println(Arrays.toString(e.getStackTrace()));
@@ -97,9 +105,12 @@ public abstract class Raid {
     /**
      * Parses a log file and fetches generic data points.
      */
-    public void parse() {
-        for (LogEntry entry : raidData) {
-            switch (entry.getLogEntry()) {
+    public void parse()
+    {
+        for (LogEntry entry : raidData)
+        {
+            switch (entry.getLogEntry())
+            {
                 case PARTY_MEMBERS:
                     // TODO: may need changing with toa/cox support
                     players.addAll(Stream.of(entry.getExtra()).filter(name -> !name.isEmpty()).collect(Collectors.toList()));

@@ -70,6 +70,7 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
 
     private final ClientThread clientThread;
     private final ConfigManager configManager;
+
     public GraphPanel(ArrayList<SimpleRaidData> data, TheatreTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
     {
         this.configManager = configManager;

@@ -100,32 +100,31 @@ public class SotetsegHandler extends TOBRoomHandler
 
     public void updateGroundObjectSpawned(GroundObjectSpawned event)
     {
-        if(!hasSteppedOnMaze)
+        if (!hasSteppedOnMaze)
         {
             if (event.getGroundObject().getId() == SOTETSEG_RED_TILE && lastRegion == SOTETSEG_OVERWORLD)
             {
                 hasSteppedOnMaze = true;
                 int ticksSinceLastProc = -1;
-                if(roomState == RoomState.SotetsegRoomState.MAZE_1)
+                if (roomState == RoomState.SotetsegRoomState.MAZE_1)
                 {
-                    ticksSinceLastProc = client.getTickCount()-soteFirstMazeStart;
-                }
-                else
+                    ticksSinceLastProc = client.getTickCount() - soteFirstMazeStart;
+                } else
                 {
-                    if(roomState == RoomState.SotetsegRoomState.MAZE_2)
+                    if (roomState == RoomState.SotetsegRoomState.MAZE_2)
                     {
-                        ticksSinceLastProc = client.getTickCount()-soteSecondMazeStart;
+                        ticksSinceLastProc = client.getTickCount() - soteSecondMazeStart;
                     }
                 }
-                if(ticksSinceLastProc != -1 && lastRegion == SOTETSEG_OVERWORLD)
+                if (ticksSinceLastProc != -1 && lastRegion == SOTETSEG_OVERWORLD)
                 {
-                    int distance = Math.abs(event.getGroundObject().getWorldLocation().getRegionX()-15);
+                    int distance = Math.abs(event.getGroundObject().getWorldLocation().getRegionX() - 15);
                     int stallDuration = 5;
-                    int tickOffset = 1 + stallDuration + (int)((distance-0.5)/2.0);
-                    if(ticksSinceLastProc > tickOffset)
+                    int tickOffset = 1 + stallDuration + (int) ((distance - 0.5) / 2.0);
+                    if (ticksSinceLastProc > tickOffset)
                     {
-                        String mazeRunner = (roomState== RoomState.SotetsegRoomState.MAZE_1) ? firstMazeChosen : secondMazeChosen;
-                        plugin.sendChatMessage(mazeRunner + " was late to first tile by " + (ticksSinceLastProc-tickOffset) + " ticks");
+                        String mazeRunner = (roomState == RoomState.SotetsegRoomState.MAZE_1) ? firstMazeChosen : secondMazeChosen;
+                        plugin.sendChatMessage(mazeRunner + " was late to first tile by " + (ticksSinceLastProc - tickOffset) + " ticks");
                     }
                     plugin.sendChatMessage("First tile was " + distance + " away, and showed up after " + ticksSinceLastProc + " ticks. Expected: " + tickOffset + ". X Position: " + event.getGroundObject().getWorldLocation().getRegionX());
                 }
@@ -147,16 +146,15 @@ public class SotetsegHandler extends TOBRoomHandler
     {
         ArrayList<Point> newTiles = new ArrayList<>();
         Point old = null;
-        for(Point p : tiles)
+        for (Point p : tiles)
         {
-            if(old != null)
+            if (old != null)
             {
-                if(!(p.getX() == old.getX() && p.getY() == old.getY()))
+                if (!(p.getX() == old.getX() && p.getY() == old.getY()))
                 {
                     newTiles.add(p);
                 }
-            }
-            else
+            } else
             {
                 newTiles.add(p);
             }
@@ -169,9 +167,9 @@ public class SotetsegHandler extends TOBRoomHandler
     {
         ArrayList<Point> allTiles = new ArrayList<>();
         Point previous = null;
-        for(Point p : tiles)
+        for (Point p : tiles)
         {
-            if(previous != null)
+            if (previous != null)
             {
                 allTiles.addAll(everyTileBetween(previous, p));
             }
@@ -179,9 +177,10 @@ public class SotetsegHandler extends TOBRoomHandler
         }
         return removeDuplicatePoints(allTiles);
     }
+
     public static ArrayList<Point> everyTileBetween(Point start, Point end)
     {
-        if(end.getY() < start.getY())
+        if (end.getY() < start.getY())
         {
             return new ArrayList<>();
         }
@@ -190,7 +189,7 @@ public class SotetsegHandler extends TOBRoomHandler
         //log.info("Trying every tile between " + start.getX() + ", " + start.getY() + " and " + end.getX() + ", " + end.getY());
         while (Math.abs(end.getX() - crossTiles.get(crossTiles.size() - 1).getX()) != end.getY() - crossTiles.get(crossTiles.size() - 1).getY())
         {
-            if(crossTiles.size() > 1000)
+            if (crossTiles.size() > 1000)
             {
                 //log.info("failed on " + start.getX() + ", " + start.getY() + " to " + end.getX() + ", " + end.getY());
                 return new ArrayList<>();
@@ -207,7 +206,7 @@ public class SotetsegHandler extends TOBRoomHandler
         }
         while (end.getX() != crossTiles.get(crossTiles.size() - 1).getX() && end.getY() != crossTiles.get(crossTiles.size() - 1).getY())
         {
-            int offset = (end.getX() - crossTiles.get(crossTiles.size()-1).getX() > 0) ? 1 : -1;
+            int offset = (end.getX() - crossTiles.get(crossTiles.size() - 1).getX() > 0) ? 1 : -1;
             crossTiles.add(new Point(crossTiles.get(crossTiles.size() - 1).getX() + offset, crossTiles.get(crossTiles.size() - 1).getY() + 1));
         }
         return crossTiles;
@@ -243,7 +242,7 @@ public class SotetsegHandler extends TOBRoomHandler
 
     public static void printMaze(ArrayList<Point> tiles)
     {
-        if(tiles != null)
+        if (tiles != null)
         {
             if (!tiles.isEmpty())
             {
@@ -306,7 +305,7 @@ public class SotetsegHandler extends TOBRoomHandler
     public void startEitherMaze()
     {
         playerTiles.clear();
-        for(String s : plugin.currentPlayers)
+        for (String s : plugin.currentPlayers)
         {
             playerTiles.put(s, new ArrayList<>());
         }
@@ -336,6 +335,7 @@ public class SotetsegHandler extends TOBRoomHandler
         sendTimeMessage("Wave 'Sotetseg phase 2' complete. Duration: ", soteSecondMazeStart - soteEntryTick, soteSecondMazeStart - soteFirstMazeEnd);
         plugin.addDelayedLine(TOBRoom.SOTETSEG, soteSecondMazeStart - soteEntryTick, "Maze2 Start");
     }
+
     private static ArrayList<Point> filterMaze(ArrayList<Point> tiles)
     {
         ArrayList<Point> filteredTiles = new ArrayList<Point>();
@@ -352,11 +352,11 @@ public class SotetsegHandler extends TOBRoomHandler
     public ArrayList<Point> findOverlappingTiles(ArrayList<Point> tiles1, ArrayList<Point> tiles2)
     {
         ArrayList<Point> overlap = new ArrayList<>();
-        for(Point p1 : tiles1)
+        for (Point p1 : tiles1)
         {
-            for(Point p2 : tiles2)
+            for (Point p2 : tiles2)
             {
-                if(p1.getX() == p2.getX() && p1.getY() == p2.getY())
+                if (p1.getX() == p2.getX() && p1.getY() == p2.getY())
                 {
                     overlap.add(p1);
                 }
@@ -368,17 +368,17 @@ public class SotetsegHandler extends TOBRoomHandler
     public ArrayList<Point> findNonOverlappingTiles(ArrayList<Point> tiles1, ArrayList<Point> tiles2)
     {
         ArrayList<Point> nonOverlappedTiles = new ArrayList<>();
-        for(Point p1 : tiles1)
+        for (Point p1 : tiles1)
         {
             boolean found = false;
-            for(Point p2 : tiles2)
+            for (Point p2 : tiles2)
             {
-                if(p2.getX() == p1.getX() && p2.getY() == p1.getY())
+                if (p2.getX() == p1.getX() && p2.getY() == p1.getY())
                 {
                     found = true;
                 }
             }
-            if(!found)
+            if (!found)
             {
                 nonOverlappedTiles.add(p1);
             }
@@ -390,11 +390,11 @@ public class SotetsegHandler extends TOBRoomHandler
     {
         //log.info("Recorded Maze: ");
         //printMaze(currentMaze);
-        if(!currentMaze.isEmpty())
+        if (!currentMaze.isEmpty())
         {
-            if(currentMaze.get(currentMaze.size()-1).getY() == 35)
+            if (currentMaze.get(currentMaze.size() - 1).getY() == 35)
             {
-                currentMaze.add(new Point(currentMaze.get(currentMaze.size()-1).getX(), 37));
+                currentMaze.add(new Point(currentMaze.get(currentMaze.size() - 1).getX(), 37));
             }
         }
         currentMaze = removeDuplicatePoints(currentMaze);
@@ -409,11 +409,11 @@ public class SotetsegHandler extends TOBRoomHandler
         //printMaze(overlap);
         //log.info("Nonoverlap: ");
         //printMaze(nonoverlap);
-        if(!overlap.isEmpty())
+        if (!overlap.isEmpty())
         {
             plugin.sendChatMessage(lastChosen + " ragged " + overlap.size() + " while running the maze");
         }
-        if(!nonoverlap.isEmpty())
+        if (!nonoverlap.isEmpty())
         {
             plugin.sendChatMessage("Players following the maze ragged " + nonoverlap.size() + " tiles");
         }
@@ -426,30 +426,30 @@ public class SotetsegHandler extends TOBRoomHandler
         excludedTiles = removeDuplicatePoints(excludedTiles);
         //log.info("excluded tiles: ");
         //printMaze(excludedTiles);
-        for(String s : playerTiles.keySet())
+        for (String s : playerTiles.keySet())
         {
             //log.info("Player " + s + " array size " + playerTiles.get(s).size());
-            for(Point p : playerTiles.get(s))
+            for (Point p : playerTiles.get(s))
             {
                 //log.info("Point: " + p.getX() + ", " + p.getY());
             }
         }
         playerTiles.replaceAll((s, v) -> addEveryTileBetween(removeDuplicatePoints(v)));
-        for(String s : playerTiles.keySet())
+        for (String s : playerTiles.keySet())
         {
             int ragged = 0;
-            for(Point tile : playerTiles.get(s))
+            for (Point tile : playerTiles.get(s))
             {
-                for(Point raggedTile : nonoverlap)
+                for (Point raggedTile : nonoverlap)
                 {
-                    if(tile.getX() == raggedTile.getX() && tile.getY() == raggedTile.getY())
+                    if (tile.getX() == raggedTile.getX() && tile.getY() == raggedTile.getY())
                     {
                         ragged++;
                         //log.info(s + " ragged tile: " + raggedTile.getX() + ", " + raggedTile.getY());
                     }
                 }
             }
-            if(ragged > 0)
+            if (ragged > 0)
             {
                 plugin.sendChatMessage(s + " ragged " + ragged + " tiles");
             }
@@ -468,17 +468,17 @@ public class SotetsegHandler extends TOBRoomHandler
 
     public String getAboveWorldChosen()
     {
-        for(String playerName : plugin.currentPlayers)
+        for (String playerName : plugin.currentPlayers)
         {
             boolean found = false;
-            for(Player player : client.getPlayers())
+            for (Player player : client.getPlayers())
             {
-                if(playerName.equals(player.getName()))
+                if (playerName.equals(player.getName()))
                 {
                     found = true;
                 }
             }
-            if(!found)
+            if (!found)
             {
                 return playerName;
             }
@@ -488,7 +488,7 @@ public class SotetsegHandler extends TOBRoomHandler
 
     public void updateGraphicsObjectCreated(GraphicsObjectCreated event)
     {
-        if(event.getGraphicsObject().getId() == 505)
+        if (event.getGraphicsObject().getId() == 505)
         {
             WorldPoint wp = WorldPoint.fromLocal(client, event.getGraphicsObject().getLocation());
             excludedTiles.add(new Point(wp.getRegionX(), wp.getRegionY()));
@@ -498,18 +498,17 @@ public class SotetsegHandler extends TOBRoomHandler
     public void updateGameTick(GameTick event)
     {
         lastRegion = client.isInInstancedRegion() ? WorldPoint.fromLocalInstance(client, client.getLocalPlayer().getLocalLocation()).getRegionID() : client.getLocalPlayer().getWorldLocation().getRegionID();
-        if(roomState == RoomState.SotetsegRoomState.MAZE_1 || roomState == RoomState.SotetsegRoomState.MAZE_2)
+        if (roomState == RoomState.SotetsegRoomState.MAZE_1 || roomState == RoomState.SotetsegRoomState.MAZE_2)
         {
             int ticksSinceLastProc = -1;
-            if(roomState == RoomState.SotetsegRoomState.MAZE_1)
+            if (roomState == RoomState.SotetsegRoomState.MAZE_1)
             {
-                ticksSinceLastProc = client.getTickCount()-soteFirstMazeStart;
-            }
-            else
+                ticksSinceLastProc = client.getTickCount() - soteFirstMazeStart;
+            } else
             {
                 ticksSinceLastProc = client.getTickCount() - soteSecondMazeStart;
             }
-            if(ticksSinceLastProc > 5)
+            if (ticksSinceLastProc > 5)
             {
                 for (Player player : client.getPlayers())
                 {
@@ -538,25 +537,22 @@ public class SotetsegHandler extends TOBRoomHandler
                 clog.addLine(LogID.ACCURATE_SOTE_START);
             }
         }
-        if(client.getTickCount() == soteFirstMazeStart+5)
+        if (client.getTickCount() == soteFirstMazeStart + 5)
         {
-            if(lastRegion == SOTETSEG_UNDERWORLD)
+            if (lastRegion == SOTETSEG_UNDERWORLD)
             {
                 firstMazeChosen = client.getLocalPlayer().getName();
-            }
-            else
+            } else
             {
                 firstMazeChosen = getAboveWorldChosen();
             }
             lastChosen = firstMazeChosen;
-        }
-        else if(client.getTickCount() == soteSecondMazeStart+5)
+        } else if (client.getTickCount() == soteSecondMazeStart + 5)
         {
-            if(lastRegion == SOTETSEG_UNDERWORLD)
+            if (lastRegion == SOTETSEG_UNDERWORLD)
             {
                 secondMazeChosen = client.getLocalPlayer().getName();
-            }
-            else
+            } else
             {
                 secondMazeChosen = getAboveWorldChosen();
             }

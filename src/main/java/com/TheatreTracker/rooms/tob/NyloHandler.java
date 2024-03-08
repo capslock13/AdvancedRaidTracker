@@ -176,7 +176,7 @@ public class NyloHandler extends TOBRoomHandler
             case NYLO_RANGE_SMALL_AGRO:
             case NYLO_MAGE_SMALL:
             case NYLO_MAGE_SMALL_AGRO:
-                if(pillarsSpawnedTick == -1)
+                if (pillarsSpawnedTick == -1)
                 {
                     startNylo();
                 }
@@ -251,7 +251,7 @@ public class NyloHandler extends TOBRoomHandler
             case NYLO_BOSS_RANGE_SM:
             case NYLO_BOSS_MAGE_SM:
                 bossSpawned();
-                if(pillarsSpawnedTick == -1)
+                if (pillarsSpawnedTick == -1)
                 {
                     startNylo();
                 }
@@ -384,8 +384,7 @@ public class NyloHandler extends TOBRoomHandler
         if (client.getNpcs().stream().anyMatch(p -> Objects.requireNonNull(p.getName()).toLowerCase().contains("nylo")))
         {
             accurateEntry = false;
-        }
-        else
+        } else
         {
             clog.addLine(ACCURATE_NYLO_START);
         }

@@ -6,7 +6,7 @@ import net.runelite.api.ItemID;
 
 public enum Items
 {
-    NONE("Nothing", new int[] {0}),
+    NONE("Nothing", new int[]{0}),
     SCYTHE("Scythe", new int[]{22325, 25736, 25739, 22664}, new int[]{8056}),
     UNCHARGED_SCYTHE("Uncharged Scythe", new int[]{22486, 25738, 25741}, new int[]{8056}),
     TORVA_HELM("Torva Helm", new int[]{ItemID.SANGUINE_TORVA_FULL_HELM, ItemID.TORVA_FULL_HELM}),
@@ -30,6 +30,7 @@ public enum Items
         this.itemIDs = itemIDs;
         this.animationIDs = animationIDs;
     }
+
     Items(String name, int[] itemIDs)
     {
         this.name = name;
@@ -38,9 +39,9 @@ public enum Items
 
     public boolean matches(int id)
     {
-        for(int i : itemIDs)
+        for (int i : itemIDs)
         {
-            if(i == id)
+            if (i == id)
             {
                 return true;
             }

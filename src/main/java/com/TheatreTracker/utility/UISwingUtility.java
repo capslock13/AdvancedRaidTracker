@@ -14,7 +14,9 @@ public class UISwingUtility
     {
         return "<html><font color='#" + Integer.toHexString(c.getRGB()).substring(2) + "'>";
     }
-    public  final static String roomColor = colorStr(new Color(200, 200, 200));
+
+    public final static String roomColor = colorStr(new Color(200, 200, 200));
+
     public static JLabel getDarkJLabel(String labelText)
     {
         JLabel darkLabel = new JLabel(labelText);

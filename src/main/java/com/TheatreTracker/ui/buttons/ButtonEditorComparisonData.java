@@ -4,6 +4,7 @@ import com.TheatreTracker.ui.Raids;
 
 import javax.swing.*;
 import java.awt.*;
+
 public class ButtonEditorComparisonData extends DefaultCellEditor
 {
     protected JButton button;

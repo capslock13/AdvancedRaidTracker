@@ -12,6 +12,7 @@ public enum TOBRoom
     ;
 
     public final int value;
+
     TOBRoom(int value)
     {
         this.value = value;

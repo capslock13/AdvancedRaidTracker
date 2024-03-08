@@ -148,7 +148,7 @@ public class FilterManager
                 filterWriter.write(filter.getFilterCSV());
                 filterWriter.newLine();
             }
-            for(String s : quickFiltersState)
+            for (String s : quickFiltersState)
             {
                 filterWriter.write(s);
                 filterWriter.newLine();

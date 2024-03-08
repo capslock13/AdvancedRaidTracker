@@ -10,21 +10,24 @@ import lombok.Getter;
 
 import java.util.List;
 
-public class MaidenData extends RoomDataManager {
+public class MaidenData extends RoomDataManager
+{
     /**
      * Holds room specific data
      */
     @Getter
     private final Multimap<LogID, Integer> data;
 
-    public MaidenData(List<LogEntry> roomData) {
+    public MaidenData(List<LogEntry> roomData)
+    {
         super(200, roomData);
         data = ArrayListMultimap.create();
         parse();
     }
 
     @Override
-    public void parse() {
+    public void parse()
+    {
         super.parse();
     }
 }

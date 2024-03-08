@@ -102,7 +102,7 @@ public class StatisticGatherer
 
     public static double getGenericAverage(ArrayList<SimpleTOBData> data, DataPoint parameter)
     {
-        if(parameter == DataPoint.CHALLENGE_TIME)
+        if (parameter == DataPoint.CHALLENGE_TIME)
         {
             ArrayList<SimpleRaidData> raidData = new ArrayList<>(data);
             return getOverallTimeAverage(raidData);
@@ -160,7 +160,7 @@ public class StatisticGatherer
 
     public static double getGenericMedian(ArrayList<SimpleTOBData> data, DataPoint param)
     {
-        if(param == DataPoint.OVERALL_TIME)
+        if (param == DataPoint.OVERALL_TIME)
         {
             return getOverallMedian(data);
         }
@@ -207,7 +207,7 @@ public class StatisticGatherer
 
     public static double getGenericMin(ArrayList<SimpleTOBData> data, DataPoint parameter)
     {
-        if(parameter == DataPoint.OVERALL_TIME)
+        if (parameter == DataPoint.OVERALL_TIME)
         {
             return getOverallTimeMin(data);
         }
@@ -246,7 +246,7 @@ public class StatisticGatherer
 
     public static double getGenericMax(ArrayList<SimpleTOBData> data, DataPoint parameter)
     {
-        if(parameter == DataPoint.OVERALL_TIME)
+        if (parameter == DataPoint.OVERALL_TIME)
         {
             return getOverallMax(data);
         }

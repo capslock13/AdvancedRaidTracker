@@ -30,6 +30,7 @@ public class ViewTOAPanel extends JPanel
             Color.decode("#7c1158"),
             Color.decode("#b30000"),
     };
+
     public ViewTOAPanel(SimpleTOAData toaData)
     {
         this.data = toaData;
@@ -61,40 +62,40 @@ public class ViewTOAPanel extends JPanel
         g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
         RenderingHints qualityHints = new RenderingHints(
                 RenderingHints.KEY_ANTIALIASING,
-                RenderingHints.VALUE_ANTIALIAS_ON );
+                RenderingHints.VALUE_ANTIALIAS_ON);
         qualityHints.put(
                 RenderingHints.KEY_RENDERING,
-                RenderingHints.VALUE_RENDER_QUALITY );
-        g.setRenderingHints( qualityHints);
+                RenderingHints.VALUE_RENDER_QUALITY);
+        g.setRenderingHints(qualityHints);
         g.setColor(new Color(20, 20, 20));
         g.fillRect(0, 0, width, height);
 
         //draw summary box
         g.setColor(new Color(80, 70, 60));
-        g.drawRoundRect(margin, margin, width-(2*margin), 150, 10, 10);
+        g.drawRoundRect(margin, margin, width - (2 * margin), 150, 10, 10);
         g.setColor(new Color(35, 35, 35));
-        g.fillRoundRect(margin+1, margin+1, width-(2*margin)-2, 150-2, 10, 10);
+        g.fillRoundRect(margin + 1, margin + 1, width - (2 * margin) - 2, 150 - 2, 10, 10);
 
         g.setFont(FontManager.getRunescapeBoldFont());
         int rowHeight = getStringHeight(g) + 6;
-        int currentXOffset = margin*2;
-        int currentYOffset = margin*2 + rowHeight/2;
+        int currentXOffset = margin * 2;
+        int currentYOffset = margin * 2 + rowHeight / 2;
         g.setColor(Color.WHITE);
         g.drawString("Date: " + getDateString(), currentXOffset, currentYOffset);
         currentYOffset += rowHeight;
         g.drawString("Scale: " + data.getScaleString(), currentXOffset, currentYOffset);
         currentYOffset += rowHeight;
         g.drawString("Status: " + getRaidStatusString(), currentXOffset, currentYOffset);
-        currentYOffset+= rowHeight;
+        currentYOffset += rowHeight;
         g.drawString("Overall Time: " + RoomUtil.time(data.getOverallTime()), currentXOffset, currentYOffset);
-        currentYOffset+= rowHeight;
+        currentYOffset += rowHeight;
         g.drawString("Challenge Time: " + RoomUtil.time(data.getTimeSum()), currentXOffset, currentYOffset);
         currentXOffset += 200;
-        currentYOffset = margin*2 + rowHeight/2;
+        currentYOffset = margin * 2 + rowHeight / 2;
         g.drawString("Players: ", currentXOffset, currentYOffset);
         currentYOffset += rowHeight;
         Random random = new Random();
-        for(int i = 0; i < 8; i++)
+        for (int i = 0; i < 8; i++)
         {
             final float hue = random.nextFloat();
 // Saturation between 0.1 and 0.3

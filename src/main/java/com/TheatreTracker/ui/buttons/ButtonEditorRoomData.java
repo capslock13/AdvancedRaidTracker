@@ -52,14 +52,13 @@ public class ButtonEditorRoomData extends DefaultCellEditor
     {
         if (isPushed)
         {
-            if(data.get(row) instanceof SimpleTOBData)
+            if (data.get(row) instanceof SimpleTOBData)
             {
                 SimpleTOBData tobData = (SimpleTOBData) data.get(row);
                 ViewTOBRaid raid = new ViewTOBRaid(tobData);
                 //ViewRaidFrame raid = new ViewRaidFrame(data.get(row));
                 raid.open();
-            }
-            else if(data.get(row) instanceof SimpleTOAData)
+            } else if (data.get(row) instanceof SimpleTOAData)
             {
                 SimpleTOAData toaData = (SimpleTOAData) data.get(row);
                 ViewTOARaid raid = new ViewTOARaid(toaData);

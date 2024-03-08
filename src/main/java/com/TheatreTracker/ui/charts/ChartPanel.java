@@ -207,13 +207,14 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
     public void addAttack(PlayerDidAttack attack)
     {
-        if(clientThread != null)
+        if (clientThread != null)
         {
-            if(config.useUnkitted())
+            if (config.useUnkitted())
             {
                 attack.useUnkitted();
             }
-            clientThread.invoke(() -> {
+            clientThread.invoke(() ->
+            {
                 attack.setIcons(itemManager);
             });
             clientThread.invoke(attack::setWornNames);
@@ -242,7 +243,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                 additionalText = getShortenedString(targetString, weaponAttack.name.length());
             } else if (targetString.contains("70s") || targetString.contains("50s") || targetString.contains("30s"))
             {
-                String shortenedString = targetString.substring(weaponAttack.name.length()+2);
+                String shortenedString = targetString.substring(weaponAttack.name.length() + 2);
                 shortenedString = shortenedString.substring(0, 2);
                 String proc = targetString.substring(targetString.indexOf("0s") - 1, targetString.indexOf("0s") + 1);
 
@@ -254,7 +255,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
     private static String getShortenedString(String targetString, int index)
     {
-        String shortenedString = targetString.substring(index+3);
+        String shortenedString = targetString.substring(index + 3);
         shortenedString = shortenedString.substring(0, shortenedString.indexOf(" "));
         if (targetString.contains("east small"))
         {
@@ -368,6 +369,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     }
 
     private final ClientThread clientThread;
+
     public ChartPanel(String room, boolean isLive, TheatreTrackerConfig config, ClientThread clientThread, ConfigManager configManager, ItemManager itemManager)
     {
         this.itemManager = itemManager;
@@ -495,11 +497,11 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
     public static BufferedImage getScaledImage(BufferedImage image, int width, int height) throws IOException
     {
-        int imageWidth  = image.getWidth();
+        int imageWidth = image.getWidth();
         int imageHeight = image.getHeight();
 
-        double scaleX = (double)width/imageWidth;
-        double scaleY = (double)height/imageHeight;
+        double scaleX = (double) width / imageWidth;
+        double scaleY = (double) height / imageHeight;
         AffineTransform scaleTransform = AffineTransform.getScaleInstance(scaleX, scaleY);
         AffineTransformOp bilinearScaleOp = new AffineTransformOp(scaleTransform, AffineTransformOp.TYPE_BILINEAR);
 
@@ -520,15 +522,15 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                 //g.drawLine(100, 30 + (j * boxHeight) + ((i + 2) * scale), boxWidth - scale, 30 + (j * boxHeight) + ((i + 2) * scale));
 
                 g.setColor(config.primaryLight());
-                g.fillRoundRect(5, ((j*boxHeight)+((i+2)*scale))+10-3, 90, scale-6, 10, 10);
+                g.fillRoundRect(5, ((j * boxHeight) + ((i + 2) * scale)) + 10 - 3, 90, scale - 6, 10, 10);
                 g.setColor(Color.WHITE);
                 Font oldFont = g.getFont();
                 g.setFont(FontManager.getRunescapeBoldFont());
                 int width = getStringWidth(g, players.get(i));
                 int margin = 5;
                 int subBoxWidth = 90;
-                int textPosition = margin + (subBoxWidth-width)/2;
-                g.drawString(players.get(i), textPosition, ((j * boxHeight) + ((i + 2) * scale) + (fontHeight) / 2) + (scale/2) + 8);
+                int textPosition = margin + (subBoxWidth - width) / 2;
+                g.drawString(players.get(i), textPosition, ((j * boxHeight) + ((i + 2) * scale) + (fontHeight) / 2) + (scale / 2) + 8);
 
                 if (i == 0)
                 {
@@ -594,36 +596,34 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             if (box.tick >= startTick && box.tick <= endTick)
             {
                 int xOffset = 100 + ((shouldWrap) ? ((box.tick - startTick) % 50) * scale : box.tick * scale);
-                if(playerOffsets.get(box.player) == null)
+                if (playerOffsets.get(box.player) == null)
                 {
                     continue;
                 }
                 int yOffset = ((playerOffsets.get(box.player) + 1) * scale + 30) + ((shouldWrap) ? ((box.tick - startTick) / 50) * boxHeight : 30);
-                if(config != null && config.useIconsOnChart())
+                if (config != null && config.useIconsOnChart())
                 {
                     try
                     {
-                        if(box.weaponAttack.attackTicks != -1)
+                        if (box.weaponAttack.attackTicks != -1)
                         {
                             int opacity = config.iconBackgroundOpacity();
                             opacity = Math.min(255, opacity);
                             opacity = Math.max(0, opacity);
                             g.setColor(new Color(box.color.getRed(), box.color.getGreen(), box.color.getBlue(), opacity));
                             g.fillRoundRect(xOffset + 2, yOffset + 2, scale - 3, scale - 3, 5, 5);
-                            BufferedImage scaled = getScaledImage(box.attack.img, scale-2, scale-2);
+                            BufferedImage scaled = getScaledImage(box.attack.img, scale - 2, scale - 2);
                             g.drawImage(createDropShadow(scaled), xOffset + 3, yOffset + 3, null);
-                            g.drawImage(scaled, xOffset+2, yOffset+1, null);
+                            g.drawImage(scaled, xOffset + 2, yOffset + 1, null);
                         }
-                    }
-                    catch(Exception e)
+                    } catch (Exception e)
                     {
 
                     }
-                }
-                else
+                } else
                 {
                     int opacity = 100;
-                    if(config != null)
+                    if (config != null)
                     {
                         opacity = config.letterBackgroundOpacity();
                         opacity = Math.min(255, opacity);
@@ -634,7 +634,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                     g.setColor((box.primaryTarget) ? Color.WHITE : new Color(0, 190, 255));
                     int textOffset = (scale / 2) - (getStringWidth(g, box.letter) / 2);
                     int primaryOffset = yOffset + (box.additionalText.isEmpty() ? (fontHeight / 2) : 0);
-                    g.drawString(box.letter, xOffset + textOffset-1, primaryOffset + (scale / 2)+1);
+                    g.drawString(box.letter, xOffset + textOffset - 1, primaryOffset + (scale / 2) + 1);
                     if (!box.additionalText.isEmpty())
                     {
                         Font f = g.getFont();
@@ -647,7 +647,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                 }
                 box.createOutline();
                 g.setColor(box.outlineColor);
-                g.drawRoundRect(xOffset+1, yOffset+1, scale-2, scale-2, 5, 5);
+                g.drawRoundRect(xOffset + 1, yOffset + 1, scale - 2, scale - 2, 5, 5);
             }
         }
     }
@@ -784,10 +784,10 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             {
                 hoverBox.addString(bossWouldHaveDied);
             }
-            int xPosition = xOffset+scale;
-            if(xPosition+hoverBox.getWidth(g) > img.getWidth())
+            int xPosition = xOffset + scale;
+            if (xPosition + hoverBox.getWidth(g) > img.getWidth())
             {
-                xPosition = xPosition-hoverBox.getWidth(g)-3*scale;
+                xPosition = xPosition - hoverBox.getWidth(g) - 3 * scale;
             }
             hoverBox.setPosition(xPosition, yOffset);
             hoverBox.draw(g);
@@ -804,14 +804,14 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                 Point location = getPoint(action.tick, action.player);
                 HoverBox hoverBox = new HoverBox(actions.get(action), config);
                 hoverBox.addString("");
-                for(String item : action.wornItemNames)
+                for (String item : action.wornItemNames)
                 {
-                    hoverBox.addString("."+item);
+                    hoverBox.addString("." + item);
                 }
-                int xPosition = location.getX()+10;
-                if(xPosition+hoverBox.getWidth(g) > img.getWidth())
+                int xPosition = location.getX() + 10;
+                if (xPosition + hoverBox.getWidth(g) > img.getWidth())
                 {
-                    xPosition = xPosition-hoverBox.getWidth(g)-scale*2;
+                    xPosition = xPosition - hoverBox.getWidth(g) - scale * 2;
                 }
                 hoverBox.setPosition(xPosition, location.getY() - 10);
                 hoverBox.draw(g);
@@ -828,7 +828,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         {
             for (Integer tick : lines.keySet())
             {
-                if(lines.get(tick).equals("Dead"))
+                if (lines.get(tick).equals("Dead"))
                 {
                     continue;
                 }
@@ -949,19 +949,19 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         Font oldFont = g.getFont();
         g.setFont(FontManager.getRunescapeBoldFont());
         g.drawString("Use Icons? ", 100, 20);
-        if(!checkBoxHovered)
+        if (!checkBoxHovered)
         {
             g.setColor(new Color(140, 140, 140));
         }
 
         g.drawRect(180, 2, 20, 20);
-        if(checkBoxHovered)
+        if (checkBoxHovered)
         {
             g.setColor(new Color(140, 140, 140));
             g.fillRect(181, 3, 19, 19);
         }
         g.setColor(Color.WHITE);
-        if(config.useIconsOnChart())
+        if (config.useIconsOnChart())
         {
             g.drawString("x", 186, 17);
         }
@@ -970,12 +970,12 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
     private void drawBaseBoxes(Graphics2D g)
     {
-        for(int i = startTick; i < endTick; i++)
+        for (int i = startTick; i < endTick; i++)
         {
-            for(int j = 0; j < playerOffsets.size(); j++)
+            for (int j = 0; j < playerOffsets.size(); j++)
             {
                 int xOffset = 100 + ((shouldWrap) ? ((i - startTick) % 50) * scale : i * scale);
-                if(playerOffsets.get(players.get(j)) == null)
+                if (playerOffsets.get(players.get(j)) == null)
                 {
                     continue;
                 }
@@ -993,11 +993,11 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
         RenderingHints qualityHints = new RenderingHints(
                 RenderingHints.KEY_ANTIALIASING,
-                RenderingHints.VALUE_ANTIALIAS_ON );
+                RenderingHints.VALUE_ANTIALIAS_ON);
         qualityHints.put(
                 RenderingHints.KEY_RENDERING,
-                RenderingHints.VALUE_RENDER_QUALITY );
-        g.setRenderingHints( qualityHints);
+                RenderingHints.VALUE_RENDER_QUALITY);
+        g.setRenderingHints(qualityHints);
         Color oldColor = g.getColor();
 
         g.setColor(config.primaryDark());
@@ -1068,7 +1068,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     @Override
     public void mouseClicked(MouseEvent e)
     {
-        if(checkBoxHovered)
+        if (checkBoxHovered)
         {
             configManager.setConfiguration("Advanced Raid Tracker", "useIconsOnChart", !config.useIconsOnChart());
             drawGraph();

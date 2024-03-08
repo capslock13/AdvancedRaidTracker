@@ -17,11 +17,12 @@ public class PlayerWornItems
     public int gloves = 0;
     public int boots = 0;
     private ItemManager itemManager;
+
     public PlayerWornItems(String s, ItemManager itemManager)
     {
         this.itemManager = itemManager;
         String[] items = s.split("~");
-        if(items.length == 9)
+        if (items.length == 9)
         {
             helmet = Integer.parseInt(items[0]);
             cape = Integer.parseInt(items[1]);
@@ -37,24 +38,23 @@ public class PlayerWornItems
 
     public static String getStringFromComposition(PlayerComposition pc)
     {
-        return pc.getEquipmentId(KitType.HEAD) +"~"
-                    + pc.getEquipmentId(KitType.CAPE) +"~"
-                    +pc.getEquipmentId(KitType.AMULET) + "~"
-                    +pc.getEquipmentId(KitType.WEAPON) +"~"
-                    +pc.getEquipmentId(KitType.TORSO)+"~"
-                    +pc.getEquipmentId(KitType.SHIELD)+"~"
-                    +pc.getEquipmentId(KitType.LEGS)+"~"
-                    +pc.getEquipmentId(KitType.HANDS)+"~"
-                    +pc.getEquipmentId(KitType.BOOTS);
+        return pc.getEquipmentId(KitType.HEAD) + "~"
+                + pc.getEquipmentId(KitType.CAPE) + "~"
+                + pc.getEquipmentId(KitType.AMULET) + "~"
+                + pc.getEquipmentId(KitType.WEAPON) + "~"
+                + pc.getEquipmentId(KitType.TORSO) + "~"
+                + pc.getEquipmentId(KitType.SHIELD) + "~"
+                + pc.getEquipmentId(KitType.LEGS) + "~"
+                + pc.getEquipmentId(KitType.HANDS) + "~"
+                + pc.getEquipmentId(KitType.BOOTS);
     }
 
     public String[] getAll()
     {
-        if(helmet+cape+amulet+weapon+torso+shield+legs+gloves+boots == 0)
+        if (helmet + cape + amulet + weapon + torso + shield + legs + gloves + boots == 0)
         {
             return new String[]{};
-        }
-        else
+        } else
         {
             return new String[]
                     {
@@ -73,11 +73,10 @@ public class PlayerWornItems
 
     public String getItemName(int id)
     {
-        if(id == -1)
+        if (id == -1)
         {
             return "None";
-        }
-        else
+        } else
         {
             return itemManager.getItemComposition(id).getName();
         }

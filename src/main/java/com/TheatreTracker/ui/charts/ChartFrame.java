@@ -45,12 +45,12 @@ public class ChartFrame extends BaseFrame
             chartPanel.setTick(((bossName.contains("Verzik") || bossName.contains("Wardens")) && !bossName.contains("P1"))
                     ? (bossName.contains("P2")) ? roomData.getValue(bossName + " Time") +
                     roomData.getValue(bossName.replace('2', '1') + " Time") :
-                    roomData.getValue(bossName.substring(0, bossName.length()-2) + "Time") : roomData.getValue(bossName + " Time"));
+                    roomData.getValue(bossName.substring(0, bossName.length() - 2) + "Time") : roomData.getValue(bossName + " Time"));
             chartPanel.addThrallBoxes(raidData.thrallOutlineBoxes.get(bossName));
 
             Map<Integer, String> lines = new LinkedHashMap<>();
             ArrayList<Integer> autos = new ArrayList<>();
-            if(roomData instanceof SimpleTOBData)
+            if (roomData instanceof SimpleTOBData)
             {
                 SimpleTOBData tobData = (SimpleTOBData) roomData;
                 switch (bossName)
@@ -157,11 +157,10 @@ public class ChartFrame extends BaseFrame
                         }
                         break;
                 }
-            }
-            else if(roomData instanceof SimpleTOAData)
+            } else if (roomData instanceof SimpleTOAData)
             {
                 SimpleTOAData toaData = (SimpleTOAData) roomData;
-                switch(bossName)
+                switch (bossName)
                 {
                     case "Baba":
                         lines.put(toaData.getValue(DataPoint.BABA_P1_DURATION), "Boulder 1 Start");

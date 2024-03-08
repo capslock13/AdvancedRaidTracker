@@ -20,7 +20,9 @@ public class ZebakHandler extends TOARoomHandler
     {
         return "Zebak";
     }
+
     RoomState.ZebakRoomState roomState = RoomState.ZebakRoomState.NOT_STARTED;
+
     public ZebakHandler(Client client, DataWriter clog, TheatreTrackerConfig config, TheatreTrackerPlugin plugin, TOAHandler handler)
     {
         super(client, clog, config, plugin, handler);
@@ -35,7 +37,7 @@ public class ZebakHandler extends TOARoomHandler
     @Override
     public void updateGameTick(GameTick gameTick)
     {
-        if(roomState == RoomState.ZebakRoomState.NOT_STARTED && RoomUtil.crossedLine(15700, new Point(37, 32), new Point(37, 32), true, client))
+        if (roomState == RoomState.ZebakRoomState.NOT_STARTED && RoomUtil.crossedLine(15700, new Point(37, 32), new Point(37, 32), true, client))
         {
             roomState = RoomState.ZebakRoomState.PHASE_1;
             roomStartTick = client.getTickCount();
@@ -51,11 +53,11 @@ public class ZebakHandler extends TOARoomHandler
     @Override
     public void updateAnimationChanged(AnimationChanged animationChanged)
     {
-        if(animationChanged.getActor() instanceof Player)
+        if (animationChanged.getActor() instanceof Player)
         {
-            if(animationChanged.getActor().getAnimation() == 832)
+            if (animationChanged.getActor().getAnimation() == 832)
             {
-                clog.addLine(LogID.TOA_ZEBAK_JUG_PUSHED, animationChanged.getActor().getName(), String.valueOf(client.getTickCount()-roomStartTick));
+                clog.addLine(LogID.TOA_ZEBAK_JUG_PUSHED, animationChanged.getActor().getName(), String.valueOf(client.getTickCount() - roomStartTick));
             }
         }
     }
@@ -63,10 +65,10 @@ public class ZebakHandler extends TOARoomHandler
     @Override
     public void handleNPCChanged(int changed)
     {
-        if(roomState == RoomState.ZebakRoomState.PHASE_1 && changed == 11733)
+        if (roomState == RoomState.ZebakRoomState.PHASE_1 && changed == 11733)
         {
             roomState = RoomState.ZebakRoomState.FINISHED;
-            int duration = client.getTickCount()-roomStartTick;
+            int duration = client.getTickCount() - roomStartTick;
             sendTimeMessage("Zebak Duration: ", duration);
             clog.addLine(LogID.TOA_ZEBAK_FINISHED, duration);
             plugin.liveFrame.setRoomFinished(getName(), duration);

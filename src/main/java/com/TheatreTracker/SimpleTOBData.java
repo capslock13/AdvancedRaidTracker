@@ -9,6 +9,7 @@ import com.TheatreTracker.utility.wrappers.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
+
 import static com.TheatreTracker.constants.TOBRoom.*;
 import static com.TheatreTracker.constants.TobIDs.EXIT_FLAG;
 import static com.TheatreTracker.constants.TobIDs.SPECTATE_FLAG;
@@ -90,8 +91,6 @@ public class SimpleTOBData extends SimpleRaidData
     public ArrayList<Integer> redsProc = new ArrayList<>();
     public ArrayList<Integer> dawnDrops;
     public ArrayList<PlayerDidAttack> attacksP1;
-
-
 
 
     public Map<Integer, Integer> verzikHP = new HashMap<>();
@@ -236,11 +235,10 @@ public class SimpleTOBData extends SimpleRaidData
         {
             return getMaidenTime() + getBloatTime() + getNyloTime() + getSoteTime() + getXarpTime() + getVerzikTime();
         }
-        if(getTimeAccurate(Objects.requireNonNull(DataPoint.getValue(activeValue))))
+        if (getTimeAccurate(Objects.requireNonNull(DataPoint.getValue(activeValue))))
         {
             return getValue(DataPoint.getValue(activeValue));
-        }
-        else
+        } else
         {
             return Integer.MAX_VALUE;
         }
@@ -341,11 +339,13 @@ public class SimpleTOBData extends SimpleRaidData
     {
         return this.filePath;
     }
+
     String red = "<html><font color='#FF0000'>";
+
     @Override
     public String getRaidType()
     {
-        return red+raidType.name;
+        return red + raidType.name;
     }
 
     @Override
@@ -358,6 +358,7 @@ public class SimpleTOBData extends SimpleRaidData
     {
         return getMaidenTime() + getBloatTime() + getNyloTime() + getSoteTime() + getXarpTime() + getVerzikTime();
     }
+
     public SimpleTOBData(String[] parameters, String filePath, String fileName) throws Exception
     {
         raidType = RaidType.TOB;
@@ -395,8 +396,7 @@ public class SimpleTOBData extends SimpleRaidData
                 {
                     endTime = new Date(Long.parseLong(subData[1]));
                 }
-            }
-            catch (Exception e)
+            } catch (Exception e)
             {
 
             }
@@ -483,7 +483,7 @@ public class SimpleTOBData extends SimpleRaidData
                 case DWH:
                     dataManager.increment(Objects.requireNonNull(DataPoint.getValue(room + " hit hammers")));
                     dataManager.incrementPlayerSpecific(DataPoint.getValue(room + " hit hammers"), subData[4]);
-                    if(!room.equals("Verzik"))
+                    if (!room.equals("Verzik"))
                     {
                         dataManager.hammer(Objects.requireNonNull(DataPoint.getValue(room + " defense")));
                     }
@@ -494,7 +494,7 @@ public class SimpleTOBData extends SimpleRaidData
                         dataManager.increment(Objects.requireNonNull(DataPoint.getValue(room + " attempted BGS")));
                         dataManager.incrementPlayerSpecific(DataPoint.getValue(room + " attempted BGS"), subData[4]);
                     }
-                    if(!room.equals("Verzik"))
+                    if (!room.equals("Verzik"))
                     {
                         dataManager.bgs(Objects.requireNonNull(DataPoint.getValue(room + " defense")), Integer.parseInt(subData[5]));
                     }
@@ -555,8 +555,7 @@ public class SimpleTOBData extends SimpleRaidData
                     dataManager.incrementPlayerSpecific(DataPoint.CHALLY_POKE, subData[4]);
                     break;
             }
-        }
-        catch(Exception ignored)
+        } catch (Exception ignored)
         {
 
         }
@@ -608,7 +607,7 @@ public class SimpleTOBData extends SimpleRaidData
                     case VERZIK_P2_END:
                         dataManager.set(DataPoint.VERZIK_P2_SPLIT, Integer.parseInt(subData[4]));
                         dataManager.set(DataPoint.VERZIK_P2_DURATION, dataManager.get(DataPoint.VERZIK_P2_SPLIT) - dataManager.get(DataPoint.VERZIK_P1_SPLIT));
-                        dataManager.set(DataPoint.VERZIK_REDS_DURATION, dataManager.get(DataPoint.VERZIK_P2_SPLIT)-dataManager.get(VERZIK_REDS_SPLIT));
+                        dataManager.set(DataPoint.VERZIK_REDS_DURATION, dataManager.get(DataPoint.VERZIK_P2_SPLIT) - dataManager.get(VERZIK_REDS_SPLIT));
                         try
                         {
                             int hp = verzikHP.get(dataManager.get(VERZIK_REDS_SPLIT));
@@ -684,8 +683,7 @@ public class SimpleTOBData extends SimpleRaidData
                                 hp /= 10;
                                 dataManager.set(DataPoint.VERZIK_HP_AT_WEBS, hp);
                             }
-                        }
-                        catch(Exception ignored)
+                        } catch (Exception ignored)
                         {
 
                         }
@@ -796,8 +794,7 @@ public class SimpleTOBData extends SimpleRaidData
                         xarpEndAccurate = true;
                         break;
                 }
-            }
-            catch(Exception e)
+            } catch (Exception e)
             {
                 log.info("Failed on " + s);
             }
@@ -923,8 +920,7 @@ public class SimpleTOBData extends SimpleRaidData
                         break;
 
                 }
-            }
-            catch(Exception e)
+            } catch (Exception e)
             {
                 log.info("Failed on " + s);
             }
@@ -1049,8 +1045,7 @@ public class SimpleTOBData extends SimpleRaidData
                         nyloTimeAccurate = nyloStartAccurate;
                         break;
                 }
-            }
-            catch(Exception e)
+            } catch (Exception e)
             {
                 log.info("Failed on " + s);
             }
@@ -1138,8 +1133,7 @@ public class SimpleTOBData extends SimpleRaidData
                         bloatTimeAccurate = bloatStartAccurate;
                         break;
                 }
-            }
-            catch(Exception e)
+            } catch (Exception e)
             {
                 log.info("Failed on " + s);
             }
@@ -1277,9 +1271,9 @@ public class SimpleTOBData extends SimpleRaidData
                         if (!maidenScuffed)
                         {
                             firstMaidenCrabScuffed = lastProc;
-                            if(!maidenCrabSpawn.isEmpty())
+                            if (!maidenCrabSpawn.isEmpty())
                             {
-                                firstMaidenCrabScuffed = maidenCrabSpawn.get(maidenCrabSpawn.size()-1);
+                                firstMaidenCrabScuffed = maidenCrabSpawn.get(maidenCrabSpawn.size() - 1);
                             }
                         }
                         maidenScuffed = true;
@@ -1396,8 +1390,7 @@ public class SimpleTOBData extends SimpleRaidData
                         dataManager.incrementPlayerSpecific(DataPoint.MAIDEN_HEALS_FROM_ANY_BLOOD, subData[4], Integer.parseInt(subData[5]));
                         break;
                 }
-            }
-            catch(Exception e)
+            } catch (Exception e)
             {
                 log.info("Failed on " + s);
             }

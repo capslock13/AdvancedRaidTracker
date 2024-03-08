@@ -20,6 +20,7 @@ public class HetHandler extends TOARoomHandler
     {
         return "Het";
     }
+
     public HetHandler(Client client, DataWriter clog, TheatreTrackerConfig config, TheatreTrackerPlugin plugin, TOAHandler handler)
     {
         super(client, clog, config, plugin, handler);
@@ -28,13 +29,14 @@ public class HetHandler extends TOARoomHandler
     @Override
     public void updateGameTick(GameTick event)
     {
-        if(!active && RoomUtil.crossedLine(14674, new Point(42, 31), new Point(42, 33), true, client))
+        if (!active && RoomUtil.crossedLine(14674, new Point(42, 31), new Point(42, 33), true, client))
         {
             active = true;
             roomStartTick = client.getTickCount();
             clog.addLine(LogID.TOA_HET_START, roomStartTick);
         }
     }
+
     public boolean isActive()
     {
         return active;
@@ -43,9 +45,9 @@ public class HetHandler extends TOARoomHandler
     @Override
     public void updateNpcDespawned(NpcDespawned despawned)
     {
-        if(active && despawned.getNpc().getName() != null && despawned.getNpc().getName().contains("Het's Seal"))
+        if (active && despawned.getNpc().getName() != null && despawned.getNpc().getName().contains("Het's Seal"))
         {
-            int duration = client.getTickCount()-roomStartTick;
+            int duration = client.getTickCount() - roomStartTick;
             sendTimeMessage("Het Duration: ", duration);
             clog.addLine(LogID.TOA_HET_FINISHED, duration);
             active = false;

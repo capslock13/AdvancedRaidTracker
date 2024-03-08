@@ -15,7 +15,9 @@ public abstract class SimpleRaidData
     String green = "<html><font color='#33FF33'>";
     String orange = "<html><font color='#FF7733'>";
     String yellow = "<html><font color='#FFFF33'>";
+
     public abstract String getRaidType();
+
     public RaidType raidType = RaidType.UNASSIGNED;
     public Date raidStarted = new Date(System.currentTimeMillis());
     public boolean spectated = false;
@@ -29,6 +31,7 @@ public abstract class SimpleRaidData
     public String filePath;
 
     public abstract String getFileName();
+
     public abstract String getFilePath();
 
     public abstract int getScale();

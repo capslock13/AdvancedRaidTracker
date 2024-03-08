@@ -118,12 +118,12 @@ public class Raids extends BaseFrame
     private final ItemManager itemManager;
     private ClientThread clientThread;
 
-    public String[] rooms = {"Maiden", "Bloat","Nylocas","Sotetseg","Xarpus","Verzik","Challenge"};
+    public String[] rooms = {"Maiden", "Bloat", "Nylocas", "Sotetseg", "Xarpus", "Verzik", "Challenge"};
     private final ConfigManager configManager;
 
     public Raids(TheatreTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
     {
-        for(String s : rooms)
+        for (String s : rooms)
         {
             averageLabels.put(s, getDarkJLabel("", SwingConstants.RIGHT));
             medianLabels.put(s, getDarkJLabel("", SwingConstants.RIGHT));
@@ -150,9 +150,9 @@ public class Raids extends BaseFrame
     public void updateCustomStats(ArrayList<SimpleRaidData> raids)
     {
         ArrayList<SimpleTOBData> tobData = new ArrayList<>();
-        for(SimpleRaidData raidData : raids)
+        for (SimpleRaidData raidData : raids)
         {
-            if(raidData instanceof SimpleTOBData)
+            if (raidData instanceof SimpleTOBData)
             {
                 tobData.add((SimpleTOBData) raidData);
             }
@@ -235,7 +235,7 @@ public class Raids extends BaseFrame
             }
             if (filterPartialData.isSelected())
             {
-                if(data instanceof SimpleTOBData)
+                if (data instanceof SimpleTOBData)
                 {
                     SimpleTOBData tobData = (SimpleTOBData) data;
                     if (!(tobData.maidenStartAccurate == tobData.maidenEndAccurate &&
@@ -263,7 +263,7 @@ public class Raids extends BaseFrame
             }
             if (filterPartyOnly.isSelected())
             {
-                if(data instanceof SimpleTOBData)
+                if (data instanceof SimpleTOBData)
                 {
                     SimpleTOBData tobData = (SimpleTOBData) data;
                     if (!tobData.maidenDefenseAccurate || !tobData.bloatDefenseAccurate || !tobData.nyloDefenseAccurate || !tobData.soteDefenseAccurate || !tobData.xarpDefenseAccurate)
@@ -281,7 +281,7 @@ public class Raids extends BaseFrame
             }
             if (filterPartialOnly.isSelected())
             {
-                if(data instanceof SimpleTOBData)
+                if (data instanceof SimpleTOBData)
                 {
                     SimpleTOBData tobData = (SimpleTOBData) data;
                     switch (viewByRaidComboBox.getSelectedItem().toString())
@@ -343,7 +343,7 @@ public class Raids extends BaseFrame
                     shouldDataBeIncluded = false;
                 }
             }
-            if(data instanceof SimpleTOBData)
+            if (data instanceof SimpleTOBData)
             {
                 SimpleTOBData tobData = (SimpleTOBData) data;
                 if (!evaluateAllFilters(tobData))
@@ -371,8 +371,7 @@ public class Raids extends BaseFrame
                 {
                     tableData.sort(Comparator.comparing(SimpleRaidData::getDate).reversed());
                 }
-            }
-            catch (Exception e)
+            } catch (Exception e)
             {
 
             }
@@ -561,9 +560,9 @@ public class Raids extends BaseFrame
     private void updateTabNames(ArrayList<SimpleRaidData> data)
     {
         ArrayList<SimpleTOBData> tobData = new ArrayList<>();
-        for(SimpleRaidData raidData : data)
+        for (SimpleRaidData raidData : data)
         {
-            if(raidData instanceof SimpleTOBData)
+            if (raidData instanceof SimpleTOBData)
             {
                 tobData.add((SimpleTOBData) raidData);
             }
@@ -653,9 +652,9 @@ public class Raids extends BaseFrame
     public void setLabels(ArrayList<SimpleRaidData> data)
     {
         ArrayList<SimpleTOBData> tobData = new ArrayList<>();
-        for(SimpleRaidData raidData : data)
+        for (SimpleRaidData raidData : data)
         {
-            if(raidData instanceof SimpleTOBData)
+            if (raidData instanceof SimpleTOBData)
             {
                 tobData.add((SimpleTOBData) raidData);
             }
@@ -679,7 +678,7 @@ public class Raids extends BaseFrame
 
     public void setOverallAverageLabels(ArrayList<SimpleTOBData> data)
     {
-        for(String s : averageLabels.keySet())
+        for (String s : averageLabels.keySet())
         {
             averageLabels.get(s).setText(RoomUtil.time(StatisticGatherer.getGenericAverage(data, DataPoint.getValue(s + " Time"))));
         }
@@ -687,7 +686,7 @@ public class Raids extends BaseFrame
 
     public void setOverallMedianLabels(ArrayList<SimpleTOBData> data)
     {
-        for(String s : medianLabels.keySet())
+        for (String s : medianLabels.keySet())
         {
             medianLabels.get(s).setText(RoomUtil.time(StatisticGatherer.getGenericMedian(data, DataPoint.getValue(s + " Time"))));
         }
@@ -695,7 +694,7 @@ public class Raids extends BaseFrame
 
     public void setOverallMinLabels(ArrayList<SimpleTOBData> data)
     {
-        for(String s : minLabels.keySet())
+        for (String s : minLabels.keySet())
         {
             minLabels.get(s).setText(RoomUtil.time(StatisticGatherer.getGenericMin(data, DataPoint.getValue(s + " Time"))));
         }
@@ -703,7 +702,7 @@ public class Raids extends BaseFrame
 
     private void setOverallMaxLabels(ArrayList<SimpleTOBData> data)
     {
-        for(String s : maxLabels.keySet())
+        for (String s : maxLabels.keySet())
         {
             maxLabels.get(s).setText(RoomUtil.time(StatisticGatherer.getGenericMax(data, DataPoint.getValue(s + " Time"))));
         }
@@ -791,7 +790,7 @@ public class Raids extends BaseFrame
     private final Map<String, String[]> comboPopupData = new LinkedHashMap<String, String[]>();
 
 
-    public  JPanel getOverallPanel(String title, Map<String, JLabel> labelMap)
+    public JPanel getOverallPanel(String title, Map<String, JLabel> labelMap)
     {
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
@@ -800,7 +799,7 @@ public class Raids extends BaseFrame
         JPanel subPanel = new JPanel();
         subPanel.setLayout(new GridLayout(7, 2));
 
-        for(String s : rooms)
+        for (String s : rooms)
         {
             JLabel leftLabel = new JLabel(roomColor + s);
             subPanel.add(leftLabel);
@@ -1064,7 +1063,7 @@ public class Raids extends BaseFrame
         JPanel overallAveragePanel = getOverallPanel("Average", averageLabels);
         JPanel overallMedianPanel = getOverallPanel("Median", medianLabels);
         JPanel overallMinPanel = getOverallPanel("Minimum", minLabels);
-        JPanel overallMaxPanel = getOverallPanel("Maximum",maxLabels);
+        JPanel overallMaxPanel = getOverallPanel("Maximum", maxLabels);
 
         JPanel topStatPanel = new JPanel();
         topStatPanel.setLayout(new GridLayout(1, 4));
@@ -1078,9 +1077,9 @@ public class Raids extends BaseFrame
         overallPanel.add(overallCustomPanel);
 
         ArrayList<SimpleTOBData> tobData = new ArrayList<>();
-        for(SimpleRaidData raidData : data)
+        for (SimpleRaidData raidData : data)
         {
-            if(raidData instanceof SimpleTOBData)
+            if (raidData instanceof SimpleTOBData)
             {
                 tobData.add((SimpleTOBData) raidData);
             }
@@ -1106,18 +1105,51 @@ public class Raids extends BaseFrame
         additionalFiltersPanel.setMinimumSize(new Dimension(200, 300));
         additionalFiltersPanel.setPreferredSize(new Dimension(200, 300));
 
-        filterSpectateOnly = getActionListenCheckBox("Spectate Only", al->{updateTable();});
-        filterInRaidOnly = getActionListenCheckBox("In Raid Only", al->{updateTable();});
-        filterCompletionOnly = getActionListenCheckBox("Completion Only", al->{updateTable();});
-        filterWipeResetOnly = getActionListenCheckBox("Wipe/Reset Only", al->{updateTable();});
-        filterComboBoxScale = getActionListenCheckBox(new String[]{"Solo", "Duo", "Trio", "4-Man", "5-Man"}, al->{updateTable();});
-        filterCheckBoxScale = getActionListenCheckBox("Scale", al -> {updateTable();});
-        filterTodayOnly = getActionListenCheckBox("Today Only", al -> {updateTable();});
-        filterPartyOnly = getActionListenCheckBox("Party Only", al -> {updateTable();});
-        filterPartialData = getActionListenCheckBox("Filter Partial Raids", al -> {updateTable();});
-        filterPartialOnly = getActionListenCheckBox("Filter Partial Rooms", al -> {updateTable();});
+        filterSpectateOnly = getActionListenCheckBox("Spectate Only", al ->
+        {
+            updateTable();
+        });
+        filterInRaidOnly = getActionListenCheckBox("In Raid Only", al ->
+        {
+            updateTable();
+        });
+        filterCompletionOnly = getActionListenCheckBox("Completion Only", al ->
+        {
+            updateTable();
+        });
+        filterWipeResetOnly = getActionListenCheckBox("Wipe/Reset Only", al ->
+        {
+            updateTable();
+        });
+        filterComboBoxScale = getActionListenCheckBox(new String[]{"Solo", "Duo", "Trio", "4-Man", "5-Man"}, al ->
+        {
+            updateTable();
+        });
+        filterCheckBoxScale = getActionListenCheckBox("Scale", al ->
+        {
+            updateTable();
+        });
+        filterTodayOnly = getActionListenCheckBox("Today Only", al ->
+        {
+            updateTable();
+        });
+        filterPartyOnly = getActionListenCheckBox("Party Only", al ->
+        {
+            updateTable();
+        });
+        filterPartialData = getActionListenCheckBox("Filter Partial Raids", al ->
+        {
+            updateTable();
+        });
+        filterPartialOnly = getActionListenCheckBox("Filter Partial Rooms", al ->
+        {
+            updateTable();
+        });
         filterPartialData.setToolTipText("Removes data sets that have any rooms that were partially completed");
-        filterNormalOnly = getActionListenCheckBox("Normal Mode Only", true, al->{updateTable();});
+        filterNormalOnly = getActionListenCheckBox("Normal Mode Only", true, al ->
+        {
+            updateTable();
+        });
 
         JPanel scaleContainer = new JPanel();
         scaleContainer.setLayout(new BoxLayout(scaleContainer, BoxLayout.X_AXIS));
@@ -1548,9 +1580,9 @@ public class Raids extends BaseFrame
             SimpleRaidData raidData = null;
             for (int i = 0; i < toRemove.length; i++)
             {
-                 raidData = currentData.get(Integer.parseInt(table.getModel().getValueAt(toRemove[i], 0).toString()));
+                raidData = currentData.get(Integer.parseInt(table.getModel().getValueAt(toRemove[i], 0).toString()));
             }
-            if(raidData != null)
+            if (raidData != null)
             {
                 ChartFrame roomCharts = new ChartFrame(raidData, config, itemManager, clientThread, configManager);
                 roomCharts.open();
@@ -1676,9 +1708,9 @@ public class Raids extends BaseFrame
                 for (int i = 0; i < toRemove.length; i++)
                 {
                     SimpleRaidData row = currentData.get(Integer.parseInt(table.getModel().getValueAt(toRemove[i], 0).toString()));
-                    if(row instanceof SimpleTOBData)
+                    if (row instanceof SimpleTOBData)
                     {
-                        crabData.add(((SimpleTOBData)row).maidenCrabs);
+                        crabData.add(((SimpleTOBData) row).maidenCrabs);
                     }
                 }
                 new CrabLeakInfo(crabData);
@@ -1710,19 +1742,19 @@ public class Raids extends BaseFrame
                 al ->
                 {
                     ArrayList<String> quickFiltersState = new ArrayList<>();
-                    quickFiltersState.add("QF-Spectate Only:"+filterSpectateOnly.isSelected());
-                    quickFiltersState.add("QF-In Raid Only:"+filterInRaidOnly.isSelected());
-                    quickFiltersState.add("QF-Completion Only:"+filterCompletionOnly.isSelected());
-                    quickFiltersState.add("QF-Wipe/Reset Only:"+filterWipeResetOnly.isSelected());
-                    quickFiltersState.add("QF-Today Only:"+filterTodayOnly.isSelected());
-                    quickFiltersState.add("QF-Party Only:"+filterPartyOnly.isSelected());
-                    quickFiltersState.add("QF-Partial Raids:"+filterPartialData.isSelected());
-                    quickFiltersState.add("QF-Partial Rooms:"+filterPartialOnly.isSelected());
-                    quickFiltersState.add("QF-Normal Mode Only:"+filterNormalOnly.isSelected());
-                    quickFiltersState.add("QF-Scale:"+filterCheckBoxScale.isSelected()+":"+filterComboBoxScale.getSelectedIndex());
-                    quickFiltersState.add("QF-View Raid By:"+viewByRaidComboBox.getItemAt(viewByRaidComboBox.getSelectedIndex()));
-                    quickFiltersState.add("QF-Table Sort By:"+sortOptionsBox.getItemAt(sortOptionsBox.getSelectedIndex()));
-                    quickFiltersState.add("QF-Table Sort:"+sortOrderBox.getItemAt(sortOrderBox.getSelectedIndex()));
+                    quickFiltersState.add("QF-Spectate Only:" + filterSpectateOnly.isSelected());
+                    quickFiltersState.add("QF-In Raid Only:" + filterInRaidOnly.isSelected());
+                    quickFiltersState.add("QF-Completion Only:" + filterCompletionOnly.isSelected());
+                    quickFiltersState.add("QF-Wipe/Reset Only:" + filterWipeResetOnly.isSelected());
+                    quickFiltersState.add("QF-Today Only:" + filterTodayOnly.isSelected());
+                    quickFiltersState.add("QF-Party Only:" + filterPartyOnly.isSelected());
+                    quickFiltersState.add("QF-Partial Raids:" + filterPartialData.isSelected());
+                    quickFiltersState.add("QF-Partial Rooms:" + filterPartialOnly.isSelected());
+                    quickFiltersState.add("QF-Normal Mode Only:" + filterNormalOnly.isSelected());
+                    quickFiltersState.add("QF-Scale:" + filterCheckBoxScale.isSelected() + ":" + filterComboBoxScale.getSelectedIndex());
+                    quickFiltersState.add("QF-View Raid By:" + viewByRaidComboBox.getItemAt(viewByRaidComboBox.getSelectedIndex()));
+                    quickFiltersState.add("QF-Table Sort By:" + sortOptionsBox.getItemAt(sortOptionsBox.getSelectedIndex()));
+                    quickFiltersState.add("QF-Table Sort:" + sortOrderBox.getItemAt(sortOrderBox.getSelectedIndex()));
                     SaveFilter saveFilter = new SaveFilter(activeFilters, quickFiltersState);
                     saveFilter.open();
                 });
@@ -2229,7 +2261,7 @@ public class Raids extends BaseFrame
                             filterNormalOnly.setSelected(Boolean.parseBoolean(data[1]));
                             break;
                         case "Scale":
-                            if(data.length > 2)
+                            if (data.length > 2)
                             {
                                 filterCheckBoxScale.setSelected(Boolean.parseBoolean(data[1]));
                                 filterComboBoxScale.setSelectedIndex(Integer.parseInt(data[2]));
@@ -2237,11 +2269,10 @@ public class Raids extends BaseFrame
                             break;
                         case "View Raid By":
                             viewByRaidComboBox.setEditable(true);
-                            if(!Objects.equals(data[1], "null"))
+                            if (!Objects.equals(data[1], "null"))
                             {
                                 viewByRaidComboBox.setSelectedItem(data[1]);
-                            }
-                            else
+                            } else
                             {
                                 viewByRaidComboBox.setSelectedItem("Challenge Time");
                             }
@@ -2256,8 +2287,7 @@ public class Raids extends BaseFrame
                     }
                 }
             }
-        }
-        catch (Exception e)
+        } catch (Exception e)
         {
             log.info("Failed to set filter state: " + state);
         }

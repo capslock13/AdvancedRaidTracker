@@ -86,6 +86,7 @@ public class ComparisonViewPanel extends JPanel
     private final ConfigManager configManager;
 
     private final ClientThread clientThread;
+
     public ComparisonViewPanel(ArrayList<ArrayList<SimpleRaidData>> raidData, ArrayList<String> names, TheatreTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
     {
         this.configManager = configManager;
@@ -565,7 +566,7 @@ public class ComparisonViewPanel extends JPanel
             {
                 if (!time || value != 0)
                 {
-                    if(raidData instanceof SimpleTOBData)
+                    if (raidData instanceof SimpleTOBData)
                     {
                         SimpleTOBData tobData = (SimpleTOBData) raidData;
                         switch ((Objects.requireNonNull(DataPoint.getValue(String.valueOf(compareByComboBox.getSelectedItem())))).room)

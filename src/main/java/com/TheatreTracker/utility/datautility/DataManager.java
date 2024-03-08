@@ -77,9 +77,9 @@ public class DataManager
 
     public void set(DataPoint point, int value) //todo revisit these, map(?)
     {
-        for(DataPointIntWrapper pointWrapper : data)
+        for (DataPointIntWrapper pointWrapper : data)
         {
-            if(pointWrapper.dataPoint.equals(point))
+            if (pointWrapper.dataPoint.equals(point))
             {
                 pointWrapper.setValue(value);
             }
@@ -88,13 +88,13 @@ public class DataManager
 
     public int get(DataPoint point)
     {
-        if(point == null)
+        if (point == null)
         {
             return -1;
         }
-        for(DataPointIntWrapper pointWrapper : data)
+        for (DataPointIntWrapper pointWrapper : data)
         {
-            if(pointWrapper.dataPoint.equals(point))
+            if (pointWrapper.dataPoint.equals(point))
             {
                 return pointWrapper.value;
             }
@@ -109,9 +109,9 @@ public class DataManager
 
     public void increment(DataPoint point, int valueAdded) //todo also revisit etc etc
     {
-        for(DataPointIntWrapper pointWrapper : data)
+        for (DataPointIntWrapper pointWrapper : data)
         {
-            if(pointWrapper.dataPoint.equals(point))
+            if (pointWrapper.dataPoint.equals(point))
             {
                 pointWrapper.increment(valueAdded);
             }
@@ -120,9 +120,9 @@ public class DataManager
 
     public void increment(DataPoint point)
     {
-        for(DataPointIntWrapper pointWrapper : data)
+        for (DataPointIntWrapper pointWrapper : data)
         {
-            if(pointWrapper.dataPoint.equals(point))
+            if (pointWrapper.dataPoint.equals(point))
             {
                 pointWrapper.increment();
             }
@@ -131,9 +131,9 @@ public class DataManager
 
     public void decrement(DataPoint point)
     {
-        for(DataPointIntWrapper pointWrapper : data)
+        for (DataPointIntWrapper pointWrapper : data)
         {
-            if(pointWrapper.dataPoint.equals(point))
+            if (pointWrapper.dataPoint.equals(point))
             {
                 pointWrapper.decrement();
             }
@@ -142,9 +142,9 @@ public class DataManager
 
     public void hammer(DataPoint point)
     {
-        for(DataPointIntWrapper pointWrapper : data)
+        for (DataPointIntWrapper pointWrapper : data)
         {
-            if(pointWrapper.dataPoint.equals(point))
+            if (pointWrapper.dataPoint.equals(point))
             {
                 pointWrapper.setValue((int) (data[point.ordinal()].value * 0.7));
             }
@@ -153,9 +153,9 @@ public class DataManager
 
     public void bgs(DataPoint point, int damage)
     {
-        for(DataPointIntWrapper pointWrapper : data)
+        for (DataPointIntWrapper pointWrapper : data)
         {
-            if(pointWrapper.dataPoint.equals(point))
+            if (pointWrapper.dataPoint.equals(point))
             {
                 pointWrapper.setValue(Math.max(0, data[point.ordinal()].value - damage));
             }

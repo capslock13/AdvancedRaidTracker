@@ -11,6 +11,7 @@ public class TOARoomHandler extends RoomHandler
 
     TheatreTrackerPlugin plugin;
     public TOAHandler handler;
+
     public TOARoomHandler(Client client, DataWriter clog, TheatreTrackerConfig config, TheatreTrackerPlugin plugin, TOAHandler handler)
     {
         super(client, clog, config);

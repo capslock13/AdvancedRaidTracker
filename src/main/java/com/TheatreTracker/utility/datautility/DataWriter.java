@@ -60,9 +60,9 @@ public class DataWriter
             }
         }
 
-        for(RaidType raidType : RaidType.values())
+        for (RaidType raidType : RaidType.values())
         {
-            if(!raidType.equals(RaidType.UNASSIGNED))
+            if (!raidType.equals(RaidType.UNASSIGNED))
             {
                 File logFile = new File(PLUGIN_DIRECTORY + name + "/primary/" + raidType.name + "data.log");
                 if (!logFile.exists())
@@ -109,7 +109,7 @@ public class DataWriter
             log.info("Could not rename primary log file");
         } else
         {
-            logFile = new File(PLUGIN_DIRECTORY + activeUsername + "/primary/" + currentRaidType.name +"data.log");
+            logFile = new File(PLUGIN_DIRECTORY + activeUsername + "/primary/" + currentRaidType.name + "data.log");
             if (!logFile.exists())
             {
                 try
@@ -178,9 +178,9 @@ public class DataWriter
             directory += "primary/";
         }
         File logDirectory = new File(directory);
-        if(!logDirectory.exists())
+        if (!logDirectory.exists())
         {
-            if(!logDirectory.mkdirs())
+            if (!logDirectory.mkdirs())
             {
                 log.info("Could not make directory to find log number");
             }
@@ -221,10 +221,11 @@ public class DataWriter
     {
         addLine(id, String.valueOf(value));
     }
+
     public void addLine(LogID id, String... params)
     {
         StringBuilder line = new StringBuilder(getUID() + "," + System.currentTimeMillis() + "," + currentRaidType.value + "," + id.getId());
-        for(String s : params)
+        for (String s : params)
         {
             line.append(",").append(s);
         }
@@ -291,7 +292,7 @@ public class DataWriter
         {
             try
             {
-                File logFile = new File(PLUGIN_DIRECTORY + activeUsername + "/primary/" + currentRaidType.name +"data.log");
+                File logFile = new File(PLUGIN_DIRECTORY + activeUsername + "/primary/" + currentRaidType.name + "data.log");
                 if (!logFile.exists())
                 {
                     if (!logFile.createNewFile())

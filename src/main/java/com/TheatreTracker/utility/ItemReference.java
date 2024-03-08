@@ -75,9 +75,9 @@ public class ItemReference
 
     public static String getNameFromID(int id)
     {
-        for(Items item : Items.values())
+        for (Items item : Items.values())
         {
-            if(item.matches(id))
+            if (item.matches(id))
             {
                 return item.getName();
             }

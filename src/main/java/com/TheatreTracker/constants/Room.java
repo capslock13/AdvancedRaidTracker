@@ -12,12 +12,12 @@ public enum Room
     BLOAT("Bloat", TOB, new int[]{13125}),
     NYLOCAS("Nylocas", TOB, new int[]{13122}),
     SOTETSEG("Sotetseg", TOB, new int[]{13123, 13379}),
-    XARPUS("Xarpus", TOB, new int[] {12612}),
+    XARPUS("Xarpus", TOB, new int[]{12612}),
     VERZIK("Verzik", TOB, new int[]{12611}),
     TOA_LOBBY("TOA Lobby", TOA, new int[]{13455}),
-    TOA_NEXUS("TOA Nexus", TOA, new int[] {14160}),
-    CRONDIS("Crondis", TOA, new int[] {15698}),
-    ZEBAK("Zebak", TOA, new int[] {15700}),
+    TOA_NEXUS("TOA Nexus", TOA, new int[]{14160}),
+    CRONDIS("Crondis", TOA, new int[]{15698}),
+    ZEBAK("Zebak", TOA, new int[]{15700}),
     SCABARAS("Scabaras", TOA, new int[]{14162}),
     KEPHRI("Kephri", TOA, new int[]{14164}),
     APMEKEN("Apmeken", TOA, new int[]{15186}),
@@ -46,18 +46,13 @@ public enum Room
     OLM("Olm", COX, InstanceTemplates.RAIDS_END),
 
 
-
-
-
-
-
-
     ;
 
     public final String name;
     public final RaidType raidType;
     public int[] regions = new int[]{};
     public InstanceTemplates instanceTemplates;
+
     Room(String name, RaidType raidType, int[] regions)
     {
         this.name = name;

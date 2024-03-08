@@ -11,15 +11,18 @@ public class TOAHandler
 
     private final Client client;
     private final DataWriter clog;
+
     public TOAHandler(Client client, DataWriter clog)
     {
         this.client = client;
         this.clog = clog;
     }
+
     public boolean isActive()
     {
         return started;
     }
+
     public void reset()
     {
         started = false;

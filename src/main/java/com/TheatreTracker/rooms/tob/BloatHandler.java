@@ -237,10 +237,10 @@ public class BloatHandler extends TOBRoomHandler
     public void updateGraphicsObjectCreated(GraphicsObjectCreated event)
     {
         int id = event.getGraphicsObject().getId();
-        if(id == 1570 || id == 1571 || id == 1572 || id == 1573)
+        if (id == 1570 || id == 1571 || id == 1572 || id == 1573)
         {
             WorldPoint wp = WorldPoint.fromLocal(client, event.getGraphicsObject().getLocation());
-            clog.addLine(BLOAT_HAND, String.valueOf(id), String.valueOf(wp.getRegionX()), String.valueOf(wp.getRegionY()), String.valueOf(client.getTickCount()-roomStartTick));
+            clog.addLine(BLOAT_HAND, String.valueOf(id), String.valueOf(wp.getRegionX()), String.valueOf(wp.getRegionY()), String.valueOf(client.getTickCount() - roomStartTick));
         }
     }
 }

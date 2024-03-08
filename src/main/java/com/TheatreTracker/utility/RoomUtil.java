@@ -90,7 +90,7 @@ public class RoomUtil
 
     public static String time(int ticks)
     {
-        return time((double)ticks);
+        return time((double) ticks);
     }
 
     public static String time(double ticks)
@@ -159,9 +159,9 @@ public class RoomUtil
 
     public static boolean inRegion(Client client, Room... rooms)
     {
-        for(Room room : rooms)
+        for (Room room : rooms)
         {
-            if(inRegion(client, room))
+            if (inRegion(client, room))
             {
                 return true;
             }
@@ -171,7 +171,7 @@ public class RoomUtil
 
     public static boolean inRegion(Client client, Room room)
     {
-        if(room.raidType.equals(RaidType.COX))
+        if (room.raidType.equals(RaidType.COX))
         {
             return false;
         }

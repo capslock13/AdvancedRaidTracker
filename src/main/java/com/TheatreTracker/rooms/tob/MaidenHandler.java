@@ -192,8 +192,7 @@ public class MaidenHandler extends TOBRoomHandler
         } else if (event.getActor().getAnimation() == DINHS_BULWARK_ANIMATION)
         {
             dinhsers.add((Player) event.getActor());
-        }
-        else if(event.getActor().getAnimation() == MAIDEN_AUTO_ANIMATION)
+        } else if (event.getActor().getAnimation() == MAIDEN_AUTO_ANIMATION)
         {
             didAuto = true;
         }
@@ -201,7 +200,7 @@ public class MaidenHandler extends TOBRoomHandler
 
     public int getDrainedStat(Player player) //Assumes berserker/ultor
     {
-        if(player == null)
+        if (player == null)
         {
             return NONE;
         }
@@ -222,10 +221,10 @@ public class MaidenHandler extends TOBRoomHandler
                 pc.getEquipmentId(KitType.HANDS),
                 pc.getEquipmentId(KitType.BOOTS)
         };
-        for(int item : wornItems)
+        for (int item : wornItems)
         {
             ItemStats itemStats = itemManager.getItemStats(item, false);
-            if(itemStats != null)
+            if (itemStats != null)
             {
                 ItemEquipmentStats itemEquipmentStats = itemStats.getEquipment();
                 stab += itemEquipmentStats.getAstab();
@@ -235,15 +234,13 @@ public class MaidenHandler extends TOBRoomHandler
                 range += itemEquipmentStats.getArange();
             }
         }
-        if((stab >= magic && stab >= range) || (slash >= magic && slash >= range) || (crush >= magic && crush >= range))
+        if ((stab >= magic && stab >= range) || (slash >= magic && slash >= range) || (crush >= magic && crush >= range))
         {
             return MELEE;
-        }
-        else if(magic > range)
+        } else if (magic > range)
         {
             return MAGE;
-        }
-        else
+        } else
         {
             return RANGE;
         }
@@ -609,7 +606,7 @@ public class MaidenHandler extends TOBRoomHandler
         assessBloodForNextTick();
         hitsplatsPerPlayer.clear();
         maidenHeals.clear();
-        if(didAuto)
+        if (didAuto)
         {
             Actor drained = maidenNPC.getInteracting();
             if (drained instanceof Player)

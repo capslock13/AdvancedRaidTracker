@@ -17,6 +17,7 @@ import java.util.Objects;
 import java.util.Scanner;
 
 import static com.TheatreTracker.utility.datautility.DataWriter.PLUGIN_DIRECTORY;
+
 @Slf4j
 public class RaidsManager
 {
@@ -34,7 +35,7 @@ public class RaidsManager
                 if (entry.isDirectory())
                 {
                     ArrayList<SimpleRaidData> raids = new ArrayList<>();
-                    for(File raid : Objects.requireNonNull(entry.listFiles()))
+                    for (File raid : Objects.requireNonNull(entry.listFiles()))
                     {
                         try
                         {
@@ -82,7 +83,7 @@ public class RaidsManager
             {
                 directory.mkdirs();
             }
-            File raidsFile = new File(raidsFolder + name+"/");
+            File raidsFile = new File(raidsFolder + name + "/");
 
             if (raidsFile.exists())
             {
@@ -123,7 +124,7 @@ public class RaidsManager
             {
                 directory.mkdirs();
             }
-            File raidsFile = new File(raidsFolder + name+"/");
+            File raidsFile = new File(raidsFolder + name + "/");
             if (!raidsFile.exists())
             {
                 raidsFile.mkdirs();

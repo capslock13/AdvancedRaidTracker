@@ -21,6 +21,7 @@ public class ApmekenHandler extends TOARoomHandler
     {
         return "Apmeken";
     }
+
     public ApmekenHandler(Client client, DataWriter clog, TheatreTrackerConfig config, TheatreTrackerPlugin plugin, TOAHandler handler)
     {
         super(client, clog, config, plugin, handler);
@@ -29,7 +30,7 @@ public class ApmekenHandler extends TOARoomHandler
     @Override
     public void updateGameTick(GameTick event)
     {
-        if(!active && RoomUtil.crossedLine(15186, new Point(21, 31), new Point(21, 33), true, client))
+        if (!active && RoomUtil.crossedLine(15186, new Point(21, 31), new Point(21, 33), true, client))
         {
             active = true;
             roomStartTick = client.getTickCount();
@@ -40,17 +41,15 @@ public class ApmekenHandler extends TOARoomHandler
     @Override
     public void updateNpcSpawned(NpcSpawned spawned)
     {
-        if(spawned.getNpc().getId() == 11715)
+        if (spawned.getNpc().getId() == 11715)
         {
-            clog.addLine(LogID.TOA_APMEKEN_SHAMAN_SPAWN, client.getTickCount()-roomStartTick);
-        }
-        else if(spawned.getNpc().getId() == 11716)
+            clog.addLine(LogID.TOA_APMEKEN_SHAMAN_SPAWN, client.getTickCount() - roomStartTick);
+        } else if (spawned.getNpc().getId() == 11716)
         {
-            clog.addLine(LogID.TOA_APMEKEN_VOLATILE_SPAWN, client.getTickCount()-roomStartTick);
-        }
-        else if(spawned.getNpc().getId() == 11717)
+            clog.addLine(LogID.TOA_APMEKEN_VOLATILE_SPAWN, client.getTickCount() - roomStartTick);
+        } else if (spawned.getNpc().getId() == 11717)
         {
-            clog.addLine(LogID.TOA_APMEKEN_CURSED_SPAWN, client.getTickCount()-roomStartTick);
+            clog.addLine(LogID.TOA_APMEKEN_CURSED_SPAWN, client.getTickCount() - roomStartTick);
         }
     }
 
@@ -62,11 +61,11 @@ public class ApmekenHandler extends TOARoomHandler
     @Override
     public void updateGameObjectDespawned(GameObjectDespawned gameObjectDespawned)
     {
-        if(active && gameObjectDespawned.getGameObject().getId() == 45135 && gameObjectDespawned.getGameObject().getWorldLocation().getRegionX() == 44 &&
-        gameObjectDespawned.getGameObject().getWorldLocation().getRegionY() == 32)
+        if (active && gameObjectDespawned.getGameObject().getId() == 45135 && gameObjectDespawned.getGameObject().getWorldLocation().getRegionX() == 44 &&
+                gameObjectDespawned.getGameObject().getWorldLocation().getRegionY() == 32)
         {
             active = false;
-            int duration = client.getTickCount()-roomStartTick;
+            int duration = client.getTickCount() - roomStartTick;
             sendTimeMessage("Apmeken Duration: ", duration);
             clog.addLine(LogID.TOA_APMEKEN_FINISHED, duration);
             plugin.liveFrame.setRoomFinished(getName(), duration);

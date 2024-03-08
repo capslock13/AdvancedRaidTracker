@@ -6,6 +6,7 @@ public enum RaidType
 
     public final int value;
     public final String name;
+
     RaidType(int value, String name)
     {
         this.value = value;

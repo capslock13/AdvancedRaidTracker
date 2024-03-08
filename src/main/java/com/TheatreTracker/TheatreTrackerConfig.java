@@ -60,7 +60,10 @@ public interface TheatreTrackerConfig extends Config
             name = "Don't load thrall/player attacks to memory",
             description = "Reduces memory load but makes charts inaccessible. Data is still recorded, enable this and hit view all raids again to access it."
     )
-    default  boolean reduceMemoryLoad() { return false; }
+    default boolean reduceMemoryLoad()
+    {
+        return false;
+    }
 
     @ConfigItem(
             position = 5,
@@ -68,7 +71,10 @@ public interface TheatreTrackerConfig extends Config
             name = "Use icons on chart",
             description = "Replaced letter/colors with icons"
     )
-    default boolean useIconsOnChart() { return true;}
+    default boolean useIconsOnChart()
+    {
+        return true;
+    }
 
     @ConfigItem(
             position = 6,
@@ -76,7 +82,10 @@ public interface TheatreTrackerConfig extends Config
             name = "Chart Dark Color",
             description = "Color to use as darkest on chart"
     )
-    default Color primaryDark() { return new Color(20, 20, 20);}
+    default Color primaryDark()
+    {
+        return new Color(20, 20, 20);
+    }
 
     @ConfigItem(
             position = 7,
@@ -84,7 +93,10 @@ public interface TheatreTrackerConfig extends Config
             name = "Chart Middle Color",
             description = "Color to use as Middle on chart"
     )
-    default Color primaryMiddle() { return new Color(30, 30, 30);}
+    default Color primaryMiddle()
+    {
+        return new Color(30, 30, 30);
+    }
 
     @ConfigItem(
             position = 8,
@@ -92,7 +104,10 @@ public interface TheatreTrackerConfig extends Config
             name = "Chart Light Color",
             description = "Color to use as lightest on chart"
     )
-    default Color primaryLight() { return new Color(40, 40, 40);}
+    default Color primaryLight()
+    {
+        return new Color(40, 40, 40);
+    }
 
     @ConfigItem(
             position = 9,
@@ -100,7 +115,10 @@ public interface TheatreTrackerConfig extends Config
             name = "Letter BG Opacity",
             description = "Opacity of letter background color on chart"
     )
-    default int letterBackgroundOpacity() { return 180;}
+    default int letterBackgroundOpacity()
+    {
+        return 180;
+    }
 
     @ConfigItem(
             position = 9,
@@ -108,7 +126,10 @@ public interface TheatreTrackerConfig extends Config
             name = "Icon BG Opacity",
             description = "Opacity of icon background color on chart"
     )
-    default int iconBackgroundOpacity() { return 180;}
+    default int iconBackgroundOpacity()
+    {
+        return 180;
+    }
 
     @ConfigItem(
             position = 10,
@@ -116,5 +137,8 @@ public interface TheatreTrackerConfig extends Config
             name = "Use unkitted icons",
             description = "Replaces kitted items with unkitted variants on chart icons"
     )
-    default boolean useUnkitted(){return false;}
+    default boolean useUnkitted()
+    {
+        return false;
+    }
 }

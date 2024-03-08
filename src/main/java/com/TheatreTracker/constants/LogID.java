@@ -16,16 +16,16 @@ public enum LogID
 {
     ENTERED_TOB(0, true, ANY_TOB, "Entered TOB"),
     PARTY_MEMBERS(1, true, ANY_TOB, "Party Members", "Player1", "Player2", "Player3", "Player4", "Player5"),
-    DWH(2, true, ANY_TOB,"DWH Hit", "Player", "Room Tick"),
-    BGS(3, true, ANY_TOB,"BGS Hit", "Player", "Damage", "Room Tick"),
-    LEFT_TOB(4, true, ANY_TOB,"Left TOB", "Last Room Tick", "Last Room Name"),
-    PLAYER_DIED(5, true, ANY_TOB,"Played Died", "Player", "Room Tick"),
-    ENTERED_NEW_TOB_REGION(6, true, ANY_TOB,"Entered New TOB Region", "Room (Int)"),
-    HAMMER_ATTEMPTED(7, true, ANY_TOB,"DWH Attempted", "Player"),
-    DAWN_DROPPED(800, false, VERZIK,"Dawnbringer appeared", "Room Tick"),
-    WEBS_STARTED(901, false, VERZIK,"Webs Thrown", "Room Tick"),
-    PLAYER_ATTACK(801, false, ANY,"Player Animation", "Player:Room Tick", "Animation:Worn Items ~ Separated", "Spot animations", "Weapon:Interated Index:Interacted ID", "Matched Projectile:Interacted Name", "Room Name"),
-    BLOOD_THROWN(9, true, MAIDEN,"Maiden blood thrown"),
+    DWH(2, true, ANY_TOB, "DWH Hit", "Player", "Room Tick"),
+    BGS(3, true, ANY_TOB, "BGS Hit", "Player", "Damage", "Room Tick"),
+    LEFT_TOB(4, true, ANY_TOB, "Left TOB", "Last Room Tick", "Last Room Name"),
+    PLAYER_DIED(5, true, ANY_TOB, "Played Died", "Player", "Room Tick"),
+    ENTERED_NEW_TOB_REGION(6, true, ANY_TOB, "Entered New TOB Region", "Room (Int)"),
+    HAMMER_ATTEMPTED(7, true, ANY_TOB, "DWH Attempted", "Player"),
+    DAWN_DROPPED(800, false, VERZIK, "Dawnbringer appeared", "Room Tick"),
+    WEBS_STARTED(901, false, VERZIK, "Webs Thrown", "Room Tick"),
+    PLAYER_ATTACK(801, false, ANY, "Player Animation", "Player:Room Tick", "Animation:Worn Items ~ Separated", "Spot animations", "Weapon:Interated Index:Interacted ID", "Matched Projectile:Interacted Name", "Room Name"),
+    BLOOD_THROWN(9, true, MAIDEN, "Maiden blood thrown"),
     BLOOD_SPAWNED(10, true, MAIDEN, "Blood Spawned"),
     CRAB_LEAK(11, true, MAIDEN, "Crab Leaked"),
     MAIDEN_SPAWNED(12, true, MAIDEN, "Spawned"),
@@ -125,7 +125,7 @@ public enum LogID
 
     PLAYER_STOOD_IN_THROWN_BLOOD(411, true, MAIDEN, "Player Stood In Thrown Blood", "Player", "Damage", "Ticks blood was alive for"), //player, damage, blood tick
     PLAYER_STOOD_IN_SPAWNED_BLOOD(412, true, MAIDEN, "Player Stood In Spawned Blood", "Player", "Damage"),  //player, damage
-    CRAB_HEALED_MAIDEN(413, true, MAIDEN, "Crab Healed Maiden"," Heal Amount"), //damage
+    CRAB_HEALED_MAIDEN(413, true, MAIDEN, "Crab Healed Maiden", " Heal Amount"), //damage
     VERZIK_PURPLE_HEAL(701, true, VERZIK, "Purple Heal"), //unimplemented
     VERZIK_RED_AUTO(702, true, VERZIK, "Red Auto"), //unimplemented
     VERZIK_THRALL_HEAL(703, true, VERZIK, "Thrall Heal"), //unimplemented
@@ -150,7 +150,7 @@ public enum LogID
     TOA_PARTY_MEMBERS(1001, true, ANY_TOB, "Party Members", "Player1", "Player2", "Player3", "Player4", "Player5", "Player6", "Player7", "Player8"),
     LEFT_TOA(1004, true, ANY_TOB, "Left TOA", "Room Tick", "Last Room"),
     ENTERED_NEW_TOA_REGION(1006, true, ANY_TOB, "Entered New TOA Region", "Region"),
-    INVOCATION_LEVEL(1100, true, ANY_TOB, "Invocation Level","Raid Level"),
+    INVOCATION_LEVEL(1100, true, ANY_TOB, "Invocation Level", "Raid Level"),
     TOA_TIMER_START(1101, true, ANY_TOB, "TOA Timer Start", "Client Tick"),
 
     TOA_CRONDIS_START(1010, true, CRONDIS, "Crondis Start", "Room Tick"),
@@ -216,8 +216,6 @@ public enum LogID
     TOA_WARDENS_P2_END(1202, true, WARDENS, "Wardens P2 End", "Room Tick"),
     TOA_WARDENS_ENRAGED(1203, true, WARDENS, "Wardens Enraged", "Room Tick"),
     TOA_WARDENS_FINISHED(1204, true, WARDENS, "Wardens Finished", "Room Tick"),
-
-
 
 
     ;
@@ -304,9 +302,11 @@ public enum LogID
     final String[] valueDescriptors;
     private static final Map<Integer, LogID> mapper;
 
-    static {
+    static
+    {
         mapper = new HashMap<>();
-        for (LogID id : values()) {
+        for (LogID id : values())
+        {
             mapper.put(id.id, id);
         }
     }

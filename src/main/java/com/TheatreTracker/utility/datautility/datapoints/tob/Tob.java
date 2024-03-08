@@ -9,15 +9,18 @@ import lombok.Getter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Tob extends Raid {
+public class Tob extends Raid
+{
     /**
      * Enum for what difficulty the raid is.
      */
-    public enum RaidMode {
+    public enum RaidMode
+    {
         ENTRY,
         NORMAL,
         HARD
     }
+
     @Getter
     private boolean spectate;
 
@@ -42,7 +45,8 @@ public class Tob extends Raid {
     @Getter
     private VerzikData verzikData;
 
-    public Tob(List<LogEntry> raidData) {
+    public Tob(List<LogEntry> raidData)
+    {
         super(raidData);
         parse();
     }
@@ -52,22 +56,26 @@ public class Tob extends Raid {
      * the room specific handlers.
      */
     @Override
-    public void parse() {
+    public void parse()
+    {
         // We want the generic class to handle all "generic" events such as party size etc.
         super.parse();
         List<LogEntry> roomData = null;
 
-        for (LogEntry entry : raidData) {
-            switch (entry.getLogEntry()) {
+        for (LogEntry entry : raidData)
+        {
+            switch (entry.getLogEntry())
+            {
                 case SPECTATE:
                     spectate = true;
                     continue;
 
             }
 
-            switch (entry.getLogEntry()) {
+            switch (entry.getLogEntry())
+            {
                 case MAIDEN_SPAWNED:
-                // TODO bloat
+                    // TODO bloat
                 case NYLO_PILLAR_SPAWN:
                 case SOTETSEG_STARTED:
                 case XARPUS_SPAWNED:
@@ -76,11 +84,13 @@ public class Tob extends Raid {
                     break;
             }
 
-            if (roomData != null) {
+            if (roomData != null)
+            {
                 roomData.add(entry);
             }
 
-            switch (entry.getLogEntry()) {
+            switch (entry.getLogEntry())
+            {
                 case MAIDEN_0HP:
                     maidenData = new MaidenData(roomData);
                     break;
@@ -107,7 +117,8 @@ public class Tob extends Raid {
     }
 
     @Override
-    public List<RoomDataManager> getAllData() {
+    public List<RoomDataManager> getAllData()
+    {
         return null;
     }
 }

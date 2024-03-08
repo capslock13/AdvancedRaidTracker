@@ -25,12 +25,11 @@ public abstract class AdvancedRaidData
         try
         {
             Scanner scanner = new Scanner(Files.newInputStream(file.toPath()));
-            while(scanner.hasNextLine())
+            while (scanner.hasNextLine())
             {
                 lines.add(scanner.nextLine());
             }
-        }
-        catch(Exception e)
+        } catch (Exception e)
         {
 
         }
@@ -42,9 +41,9 @@ public abstract class AdvancedRaidData
         String player = subData[4].split(":")[0];
         int tick = Integer.parseInt(subData[4].split(":")[1]);
         String wornItems = "";
-        String [] animationAndWorn = subData[5].split(":");
+        String[] animationAndWorn = subData[5].split(":");
         String animation = animationAndWorn[0];
-        if(animationAndWorn.length == 2)
+        if (animationAndWorn.length == 2)
         {
             wornItems = animationAndWorn[1];
         }

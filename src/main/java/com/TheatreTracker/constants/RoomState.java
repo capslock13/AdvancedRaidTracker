@@ -75,6 +75,7 @@ public class RoomState
         FINAL_PHASE,
         FINISHED
     }
+
     public enum BabaRoomState
     {
         NOT_STARTED,

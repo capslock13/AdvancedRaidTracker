@@ -2,6 +2,7 @@ package com.TheatreTracker.utility.thrallvengtracking;
 
 import net.runelite.api.Actor;
 import net.runelite.api.NPC;
+
 import java.util.ArrayList;
 
 import static com.TheatreTracker.constants.TobIDs.*;

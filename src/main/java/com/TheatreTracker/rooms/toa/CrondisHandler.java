@@ -20,6 +20,7 @@ public class CrondisHandler extends TOARoomHandler
     {
         return "Crondis";
     }
+
     public CrondisHandler(Client client, DataWriter clog, TheatreTrackerConfig config, TheatreTrackerPlugin plugin, TOAHandler handler)
     {
         super(client, clog, config, plugin, handler);
@@ -28,24 +29,26 @@ public class CrondisHandler extends TOARoomHandler
     @Override
     public void updateGameTick(GameTick event)
     {
-        if(!active && RoomUtil.crossedLine(15698, new Point(45, 31), new Point(45, 33), true, client))
+        if (!active && RoomUtil.crossedLine(15698, new Point(45, 31), new Point(45, 33), true, client))
         {
             active = true;
             roomStartTick = client.getTickCount();
             clog.addLine(LogID.TOA_CRONDIS_START, roomStartTick);
         }
     }
+
     public boolean isActive()
     {
         return active;
     }
+
     @Override
     public void handleNPCChanged(int npcChanged)
     {
-        if(npcChanged == 11704)
+        if (npcChanged == 11704)
         {
             active = false;
-            int duration = client.getTickCount()-roomStartTick;
+            int duration = client.getTickCount() - roomStartTick;
             sendTimeMessage("Crondis Duration: ", duration);
             clog.addLine(LogID.TOA_CRONDIS_FINISHED, duration);
             plugin.liveFrame.setRoomFinished(getName(), duration);
@@ -56,15 +59,14 @@ public class CrondisHandler extends TOARoomHandler
     public void updateHitsplatApplied(HitsplatApplied hitsplatApplied)
     {
         log.info(hitsplatApplied.getHitsplat().getAmount() + ", " + hitsplatApplied.getHitsplat().getHitsplatType());
-        if(hitsplatApplied.getActor().getName().contains("Palm"))
+        if (hitsplatApplied.getActor().getName().contains("Palm"))
         {
-            if(hitsplatApplied.getHitsplat().getHitsplatType() == 11)
+            if (hitsplatApplied.getHitsplat().getHitsplatType() == 11)
             {
-                clog.addLine(LogID.TOA_CRONDIS_WATER, String.valueOf(hitsplatApplied.getHitsplat().getAmount()), String.valueOf(client.getTickCount()-roomStartTick));
-            }
-            else if (hitsplatApplied.getHitsplat().getHitsplatType() == 15)
+                clog.addLine(LogID.TOA_CRONDIS_WATER, String.valueOf(hitsplatApplied.getHitsplat().getAmount()), String.valueOf(client.getTickCount() - roomStartTick));
+            } else if (hitsplatApplied.getHitsplat().getHitsplatType() == 15)
             {
-                clog.addLine(LogID.TOA_CRONDIS_CROC_DAMAGE, String.valueOf(hitsplatApplied.getHitsplat().getAmount()), String.valueOf(client.getTickCount()-roomStartTick));
+                clog.addLine(LogID.TOA_CRONDIS_CROC_DAMAGE, String.valueOf(hitsplatApplied.getHitsplat().getAmount()), String.valueOf(client.getTickCount() - roomStartTick));
             }
         }
     }

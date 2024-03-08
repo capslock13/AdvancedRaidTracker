@@ -77,11 +77,10 @@ public class ButtonEditorLoadFilters extends DefaultCellEditor
                 filteredRaidsFrame.activeFilters.clear();
             for (String s : data.get(row).getFilters())
             {
-                if(!s.startsWith("QF-"))
+                if (!s.startsWith("QF-"))
                 {
                     filteredRaidsFrame.activeFilters.add(new ImplicitFilter(s));
-                }
-                else
+                } else
                 {
                     filteredRaidsFrame.setFilterState(s.substring(3));
                 }

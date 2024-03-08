@@ -274,18 +274,14 @@ public enum DataPoint
     CRONDIS_HEALS_50("Crondis Heals 50", types.OTHER_INT, rooms.CRONDIS),
     CRONDIS_HEALS_25("Crondis Heals 25", types.OTHER_INT, rooms.CRONDIS),
     CRONDIS_CROCODILE_DAMAGE("Crondis Damage from Crocodile", types.OTHER_INT, rooms.CRONDIS),
-    ZEBAK_JUGS_PUSHED("Zebak Jugs Pushed", types.OTHER_INT, rooms.ZEBAK)
-
-
-
-;
+    ZEBAK_JUGS_PUSHED("Zebak Jugs Pushed", types.OTHER_INT, rooms.ZEBAK);
 
     public static ArrayList<DataPoint> getTOBValues()
     {
         ArrayList<DataPoint> dataPoints = new ArrayList<>();
-        for(DataPoint dataPoint : values())
+        for (DataPoint dataPoint : values())
         {
-            if(dataPoint.isTOB())
+            if (dataPoint.isTOB())
             {
                 dataPoints.add(dataPoint);
             }
@@ -296,9 +292,9 @@ public enum DataPoint
     public static ArrayList<DataPoint> getTOAValues()
     {
         ArrayList<DataPoint> dataPoints = new ArrayList<>();
-        for(DataPoint dataPoint : values())
+        for (DataPoint dataPoint : values())
         {
-            if(dataPoint.isTOA())
+            if (dataPoint.isTOA())
             {
                 dataPoints.add(dataPoint);
             }
@@ -556,9 +552,9 @@ public enum DataPoint
     public static String[] getSpecificNames(DataPoint.rooms room)
     {
         ArrayList<String> valuesToGather = new ArrayList<>();
-        for(DataPoint point : DataPoint.values())
+        for (DataPoint point : DataPoint.values())
         {
-            if(point.room.equals(room))
+            if (point.room.equals(room))
             {
                 valuesToGather.add(point.name);
             }
@@ -569,7 +565,7 @@ public enum DataPoint
     public static String[] getRoomTimes()
     {
         return new String[]{"Challenge Time", "Overall Time", "Time Outside Rooms", "Maiden Time", "Bloat Time", "Nylocas Time", "Sotetseg Time", "Xarpus Time", "Verzik Time",
-        "Scabaras Time", "Kephri Time", "Apmeken Time", "Baba Time", "Crondis Time", "Zebak Time", "Het Time", "Akkha Time", "Wardens Time"};
+                "Scabaras Time", "Kephri Time", "Apmeken Time", "Baba Time", "Crondis Time", "Zebak Time", "Het Time", "Akkha Time", "Wardens Time"};
     }
 
     public static ArrayList<String> getTimeNamesByRoom(rooms room)

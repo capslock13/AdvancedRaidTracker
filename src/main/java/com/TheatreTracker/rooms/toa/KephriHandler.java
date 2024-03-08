@@ -20,6 +20,7 @@ public class KephriHandler extends TOARoomHandler
     {
         return "Kephri";
     }
+
     RoomState.KephriRoomState roomState = RoomState.KephriRoomState.NOT_STARTED;
     private int p1End = -1;
     private int s1End = -1;
@@ -52,13 +53,13 @@ public class KephriHandler extends TOARoomHandler
     @Override
     public void updateGameTick(GameTick gameTick)
     {
-        if(roomState == RoomState.KephriRoomState.NOT_STARTED && RoomUtil.crossedLine(14164, new Point(25, 32), new Point(25, 32), true, client))
+        if (roomState == RoomState.KephriRoomState.NOT_STARTED && RoomUtil.crossedLine(14164, new Point(25, 32), new Point(25, 32), true, client))
         {
             roomState = RoomState.KephriRoomState.PHASE_1;
             roomStartTick = client.getTickCount();
             clog.addLine(LogID.TOA_KEPHRI_START, roomStartTick);
         }
-        if(meleeAlive)
+        if (meleeAlive)
         {
             meleeTicksAlive++;
         }
@@ -67,9 +68,9 @@ public class KephriHandler extends TOARoomHandler
     @Override
     public void updateHitsplatApplied(HitsplatApplied applied) //type 11 :)
     {
-        if(applied.getHitsplat().getHitsplatType() == 11)
+        if (applied.getHitsplat().getHitsplatType() == 11)
         {
-            clog.addLine(LogID.TOA_KEPHRI_HEAL, String.valueOf(client.getTickCount()-roomStartTick), String.valueOf(applied.getHitsplat().getAmount()));
+            clog.addLine(LogID.TOA_KEPHRI_HEAL, String.valueOf(client.getTickCount() - roomStartTick), String.valueOf(applied.getHitsplat().getAmount()));
             log.info("Kephri healed " + applied.getHitsplat());
             swarmsHealed++;
         }
@@ -78,11 +79,11 @@ public class KephriHandler extends TOARoomHandler
     @Override
     public void updateProjectileMoved(ProjectileMoved projectileMoved)
     {
-        if(projectileMoved.getProjectile().getEndCycle()-projectileMoved.getProjectile().getStartCycle() == projectileMoved.getProjectile().getRemainingCycles())
+        if (projectileMoved.getProjectile().getEndCycle() - projectileMoved.getProjectile().getStartCycle() == projectileMoved.getProjectile().getRemainingCycles())
         {
-            if(projectileMoved.getProjectile().getId() == 2150)
+            if (projectileMoved.getProjectile().getId() == 2150)
             {
-                clog.addLine(LogID.TOA_KEPHRI_MELEE_HEAL, client.getTickCount()-roomStartTick);
+                clog.addLine(LogID.TOA_KEPHRI_MELEE_HEAL, client.getTickCount() - roomStartTick);
                 swarmsHealed--;
             }
         }
@@ -91,12 +92,11 @@ public class KephriHandler extends TOARoomHandler
     @Override
     public void updateNpcSpawned(NpcSpawned spawned)
     {
-        if(spawned.getNpc().getId() == 11723)
+        if (spawned.getNpc().getId() == 11723)
         {
-            clog.addLine(LogID.TOA_KEPHRI_SWARM_SPAWN, client.getTickCount()-roomStartTick);
+            clog.addLine(LogID.TOA_KEPHRI_SWARM_SPAWN, client.getTickCount() - roomStartTick);
             swarms++;
-        }
-        else if(spawned.getNpc().getId() == 11724)
+        } else if (spawned.getNpc().getId() == 11724)
         {
             meleeAlive = true;
         }
@@ -105,7 +105,7 @@ public class KephriHandler extends TOARoomHandler
     @Override
     public void updateNpcDespawned(NpcDespawned spawned)
     {
-        if(spawned.getNpc().getId() == 11724)
+        if (spawned.getNpc().getId() == 11724)
         {
             log.info("Melee lived for " + meleeTicksAlive + " ticks");
             meleeAlive = false;
@@ -117,9 +117,9 @@ public class KephriHandler extends TOARoomHandler
     @Override
     public void updateAnimationChanged(AnimationChanged event)
     {
-        if(event.getActor().getName().contains("Kephri") && event.getActor().getAnimation() == 9578)
+        if (event.getActor().getName().contains("Kephri") && event.getActor().getAnimation() == 9578)
         {
-            clog.addLine(LogID.TOA_KEPHRI_DUNG_THROWN, client.getTickCount()-roomStartTick);
+            clog.addLine(LogID.TOA_KEPHRI_DUNG_THROWN, client.getTickCount() - roomStartTick);
             log.info("thrown dung");
         }
     }
@@ -127,12 +127,12 @@ public class KephriHandler extends TOARoomHandler
     @Override
     public void updateGraphicsObjectCreated(GraphicsObjectCreated go)
     {
-        if(go.getGraphicsObject().getId() == 2158 || go.getGraphicsObject().getId() == 2157)
+        if (go.getGraphicsObject().getId() == 2158 || go.getGraphicsObject().getId() == 2157)
         {
             WorldPoint wp = WorldPoint.fromLocal(client, go.getGraphicsObject().getLocation());
-            for(Player player : client.getPlayers())
+            for (Player player : client.getPlayers())
             {
-                if(player.getWorldLocation().distanceTo(wp) == 0)
+                if (player.getWorldLocation().distanceTo(wp) == 0)
                 {
                     //clog.addLine(LogID.TOA_KEPHRI_BOMB_TANKED, String.valueOf(client.getTickCount()-roomStartTick), player.getName());
                     //log.info(player.getName() + " tanked a bomb");
@@ -149,53 +149,50 @@ public class KephriHandler extends TOARoomHandler
     @Override
     public void handleNPCChanged(int changed)
     {
-        if(changed == 11720)
+        if (changed == 11720)
         {
-            if(roomState == RoomState.KephriRoomState.PHASE_1)
+            if (roomState == RoomState.KephriRoomState.PHASE_1)
             {
                 roomState = RoomState.KephriRoomState.SWARM_1;
-                p1End = client.getTickCount()-roomStartTick;
+                p1End = client.getTickCount() - roomStartTick;
                 sendTimeMessage("Kephri 'Phase 1' Complete: ", p1End);
                 clog.addLine(LogID.TOA_KEPHRI_PHASE_1_END, p1End);
-            }
-            else if(roomState == RoomState.KephriRoomState.PHASE_2)
+            } else if (roomState == RoomState.KephriRoomState.PHASE_2)
             {
                 roomState = RoomState.KephriRoomState.SWARM_2;
-                p2End = client.getTickCount()-roomStartTick;
-                sendTimeMessage("Kephri 'Phase 2' Complete: ", p2End, p2End-s1End);
+                p2End = client.getTickCount() - roomStartTick;
+                sendTimeMessage("Kephri 'Phase 2' Complete: ", p2End, p2End - s1End);
                 clog.addLine(LogID.TOA_KEPHRI_PHASE_2_END, p2End);
             }
-        }
-        else if(changed == 11719)
+        } else if (changed == 11719)
         {
-            if(roomState == RoomState.KephriRoomState.SWARM_1)
+            if (roomState == RoomState.KephriRoomState.SWARM_1)
             {
                 roomState = RoomState.KephriRoomState.PHASE_2;
-                s1End = client.getTickCount()-roomStartTick;
-                sendTimeMessage("Kephri 'Swarm 1' Complete: ", s1End, s1End-p1End);
+                s1End = client.getTickCount() - roomStartTick;
+                sendTimeMessage("Kephri 'Swarm 1' Complete: ", s1End, s1End - p1End);
                 clog.addLine(LogID.TOA_KEPHRI_SWARM_1_END, s1End);
-                plugin.sendChatMessage("Swarms Healed: (" + swarmsHealed + "/" + swarms +")");
+                plugin.sendChatMessage("Swarms Healed: (" + swarmsHealed + "/" + swarms + ")");
                 swarmsHealed = 0;
                 swarms = 0;
             }
-        }
-        else if(changed == 11721)
+        } else if (changed == 11721)
         {
-            if(roomState == RoomState.KephriRoomState.SWARM_2)
+            if (roomState == RoomState.KephriRoomState.SWARM_2)
             {
                 roomState = RoomState.KephriRoomState.PHASE_3;
-                s2End = client.getTickCount()-roomStartTick;
-                sendTimeMessage("Kephri 'Swarm 2' Complete: ", s2End, s2End-p2End);
+                s2End = client.getTickCount() - roomStartTick;
+                sendTimeMessage("Kephri 'Swarm 2' Complete: ", s2End, s2End - p2End);
                 clog.addLine(LogID.TOA_KEPHRI_SWARM_2_END, s2End);
-                plugin.sendChatMessage("Swarms Healed: (" + swarmsHealed + "/" + swarms +")");
+                plugin.sendChatMessage("Swarms Healed: (" + swarmsHealed + "/" + swarms + ")");
                 swarmsHealed = 0;
                 swarms = 0;
             }
         }
-        if(roomState == RoomState.KephriRoomState.PHASE_3 && changed == 11722)
+        if (roomState == RoomState.KephriRoomState.PHASE_3 && changed == 11722)
         {
-            int duration = client.getTickCount()-roomStartTick+3;
-            sendTimeMessage("Kephri Duration: ", duration, duration-s2End);
+            int duration = client.getTickCount() - roomStartTick + 3;
+            sendTimeMessage("Kephri Duration: ", duration, duration - s2End);
             clog.addLine(LogID.TOA_KEPHRI_FINISHED, duration);
             plugin.liveFrame.setRoomFinished(getName(), duration);
         }

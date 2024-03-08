@@ -38,9 +38,9 @@ public class OutlineBox
 
     private boolean anyMatch(String item, String[] items)
     {
-        for(String s : items)
+        for (String s : items)
         {
-            if(item.toLowerCase().contains(s))
+            if (item.toLowerCase().contains(s))
             {
                 return true;
             }
@@ -50,66 +50,65 @@ public class OutlineBox
 
     private void setStyle(String weapon)
     {
-        if(anyMatch(weapon, ItemReference.ITEMS[MELEE]))
+        if (anyMatch(weapon, ItemReference.ITEMS[MELEE]))
         {
             style = MELEE;
-        }
-        else if(anyMatch(weapon, ItemReference.ITEMS[RANGE]))
+        } else if (anyMatch(weapon, ItemReference.ITEMS[RANGE]))
         {
             style = RANGE;
-        }
-        else if(anyMatch(weapon, ItemReference.ITEMS[MAGE]))
+        } else if (anyMatch(weapon, ItemReference.ITEMS[MAGE]))
         {
             style = MAGE;
         }
     }
+
     public void createOutline()
     {
-        if(letter.equals("VS") || letter.equals("AO") || letter.equals("HU") || letter.equals("MI") || letter.equals("DB") || letter.equals("SS"))
+        if (letter.equals("VS") || letter.equals("AO") || letter.equals("HU") || letter.equals("MI") || letter.equals("DB") || letter.equals("SS"))
         {
             return;
         }
         int correctItems = 0;
         boolean voidHelmWorn = false;
-        if(attack.wornItemNames.length == 9)
+        if (attack.wornItemNames.length == 9)
         {
             setStyle(attack.wornItemNames[3]);
-            if(attack.wornItemNames[0].toLowerCase().contains("void"))
+            if (attack.wornItemNames[0].toLowerCase().contains("void"))
             {
                 voidHelmWorn = true;
             }
-            for(String s : attack.wornItemNames)
+            for (String s : attack.wornItemNames)
             {
-                if(anyMatch(s, ItemReference.ITEMS[style]) || (voidHelmWorn && s.toLowerCase().contains("void")))
+                if (anyMatch(s, ItemReference.ITEMS[style]) || (voidHelmWorn && s.toLowerCase().contains("void")))
                 {
                     correctItems++;
                 }
             }
-            if(attack.wornItemNames[2].toLowerCase().contains("blood fury") && style == MELEE)
+            if (attack.wornItemNames[2].toLowerCase().contains("blood fury") && style == MELEE)
             {
                 correctItems++;
             }
         }
-        switch(style)
+        switch (style)
         {
             case MELEE:
-                if(correctItems < 8)
+                if (correctItems < 8)
                 {
-                    int opacity = (int)((255)*((8-correctItems)/8.0));
+                    int opacity = (int) ((255) * ((8 - correctItems) / 8.0));
                     opacity = Math.max(opacity, 150);
                     outlineColor = new Color(255, 255, 0, opacity);
                 }
                 break;
             case RANGE:
-                if(correctItems < 6)
+                if (correctItems < 6)
                 {
-                    outlineColor = new Color(255, 255, 0, (int)((255)*((6-correctItems)/6.0)));
+                    outlineColor = new Color(255, 255, 0, (int) ((255) * ((6 - correctItems) / 6.0)));
                 }
                 break;
             case MAGE:
-                if(correctItems < 5)
+                if (correctItems < 5)
                 {
-                    outlineColor = new Color(255, 255, 0, (int)((255)*((5-correctItems)/5.0)));
+                    outlineColor = new Color(255, 255, 0, (int) ((255) * ((5 - correctItems) / 5.0)));
                 }
                 break;
         }

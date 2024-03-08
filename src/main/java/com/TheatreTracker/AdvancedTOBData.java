@@ -20,6 +20,7 @@ public class AdvancedTOBData extends AdvancedRaidData
     private final String[] names = {"Maiden", "Bloat", "Nylocas", "Sotetseg", "Xarpus", "Verzik P1", "Verzik P2", "Verzik P3"};
     private ArrayList<String> globalData;
     private final ItemManager itemManager;
+
     public AdvancedTOBData(ArrayList<String> globalData, ItemManager itemManager)
     {
         this.itemManager = itemManager;
@@ -28,7 +29,7 @@ public class AdvancedTOBData extends AdvancedRaidData
         hpData = new LinkedHashMap<>();
         npcIndexData = new LinkedHashMap<>();
         thrallOutlineBoxes = new LinkedHashMap<>();
-        for(String name : names)
+        for (String name : names)
         {
             attackData.put(name, new ArrayList<>());
             hpData.put(name, new LinkedHashMap<>());
@@ -129,8 +130,7 @@ public class AdvancedTOBData extends AdvancedRaidData
                         thrallOutlineBoxes.get("Maiden").add(new ThrallOutlineBox(subData[4], Integer.parseInt(subData[5]), Integer.parseInt(subData[6])));
                         break;
                 }
-            }
-            catch(Exception e)
+            } catch (Exception e)
             {
             }
             activeIndex++;
@@ -168,8 +168,7 @@ public class AdvancedTOBData extends AdvancedRaidData
                         thrallOutlineBoxes.get("Bloat").add(new ThrallOutlineBox(subData[4], Integer.parseInt(subData[5]), Integer.parseInt(subData[6])));
                         break;
                 }
-            }
-            catch(Exception e)
+            } catch (Exception e)
             {
             }
             activeIndex++;
@@ -207,8 +206,7 @@ public class AdvancedTOBData extends AdvancedRaidData
                         thrallOutlineBoxes.get("Nylocas").add(new ThrallOutlineBox(subData[4], Integer.parseInt(subData[5]), Integer.parseInt(subData[6])));
                         break;
                 }
-            }
-            catch(Exception e)
+            } catch (Exception e)
             {
             }
             activeIndex++;
@@ -247,8 +245,7 @@ public class AdvancedTOBData extends AdvancedRaidData
                         break;
 
                 }
-            }
-            catch(Exception e)
+            } catch (Exception e)
             {
             }
             activeIndex++;
@@ -286,8 +283,7 @@ public class AdvancedTOBData extends AdvancedRaidData
                         thrallOutlineBoxes.get("Xarpus").add(new ThrallOutlineBox(subData[4], Integer.parseInt(subData[5]), Integer.parseInt(subData[6])));
                         break;
                 }
-            }
-            catch(Exception e)
+            } catch (Exception e)
             {
             }
             activeIndex++;

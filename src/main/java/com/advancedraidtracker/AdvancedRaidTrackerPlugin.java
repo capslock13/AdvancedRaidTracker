@@ -2,6 +2,7 @@ package com.advancedraidtracker;
 
 import com.advancedraidtracker.constants.TobIDs;
 import com.advancedraidtracker.constants.TOBRoom;
+import com.advancedraidtracker.rooms.tob.*;
 import com.advancedraidtracker.ui.charts.LiveChart;
 import com.advancedraidtracker.ui.RaidTrackerSidePanel;
 import com.advancedraidtracker.utility.*;
@@ -34,7 +35,6 @@ import net.runelite.client.party.events.UserPart;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.plugins.PluginManager;
-import com.advancedraidtracker.rooms.*;
 import net.runelite.client.plugins.specialcounter.SpecialCounterUpdate;
 import net.runelite.client.plugins.specialcounter.SpecialWeapon;
 import net.runelite.client.ui.ClientToolbar;

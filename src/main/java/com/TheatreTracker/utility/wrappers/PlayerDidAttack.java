@@ -19,7 +19,7 @@ public class PlayerDidAttack
     public String player;
     public String animation;
     public int tick;
-    public String weapon;
+    public int weapon;
     public String projectile;
     public String spotAnims;
     public int targetedIndex;
@@ -40,7 +40,7 @@ public class PlayerDidAttack
     private static Set<Integer> claws = new HashSet<>(Collections.singletonList(ItemID.CORRUPTED_DRAGON_CLAWS));
     private static Set<Integer> dwh = new HashSet<>(Arrays.asList(ItemID.DRAGON_WARHAMMER_CR, ItemID.DRAGON_WARHAMMER_OR));
 
-    public PlayerDidAttack(ItemManager itemManager, String player, String animation, int tick, String weapon, String projectile, String spotAnims, int targetedIndex, int targetedID, String targetName, String worn)
+    public PlayerDidAttack(ItemManager itemManager, String player, String animation, int tick, int weapon, String projectile, String spotAnims, int targetedIndex, int targetedID, String targetName, String worn)
     {
         this.itemManager = itemManager;
         this.player = player;
@@ -96,7 +96,7 @@ public class PlayerDidAttack
 
     public void setIcons()
     {
-        int weaponID = Integer.parseInt(this.weapon);
+        int weaponID = this.weapon;
         if(setUnkitted)
         {
             weaponID = getReplacement(weaponID);

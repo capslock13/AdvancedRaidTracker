@@ -50,7 +50,7 @@ public abstract class AdvancedRaidData
         }
         String spotAnims = subData[6];
         String[] subsubData = subData[7].split(":");
-        String weapon = subsubData[0];
+        int weapon = Integer.parseInt(subsubData[0]);
         int interactedIndex = -1;
         int interactedID = -1;
         if (subsubData.length > 2)

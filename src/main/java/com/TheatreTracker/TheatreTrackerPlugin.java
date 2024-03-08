@@ -1023,7 +1023,7 @@ public class TheatreTrackerPlugin extends Plugin
             }
             lastTickPlayer.put(p.getName(), new PlayerCopy(
                     p.getName(), interactedIndex, interactedID, targetName, p.getAnimation(), PlayerWornItems.getStringFromComposition(p.getPlayerComposition()
-            ), String.valueOf(p.getPlayerComposition().getEquipmentId(KitType.WEAPON))));
+            ), p.getPlayerComposition().getEquipmentId(KitType.WEAPON)));
         }
     }
 
@@ -1121,7 +1121,7 @@ public class TheatreTrackerPlugin extends Plugin
                     { //Can be ZCB, Sang, or Dawnbringer. We only care about projectile for dawnbringer or ZCB. Sang & dawnbringer share animation
                         //so this filters powered staves unless it's dawnbringer
                         WorldPoint worldPoint = p.getWorldLocation();
-                        playersAttacked.add(new QueuedPlayerAttackLessProjectiles(p, worldPoint, 1, animations.toString(), String.valueOf(p.getPlayerComposition().getEquipmentId(KitType.WEAPON)), String.valueOf(p.getAnimation())));
+                        playersAttacked.add(new QueuedPlayerAttackLessProjectiles(p, worldPoint, 1, animations.toString(), p.getPlayerComposition().getEquipmentId(KitType.WEAPON), String.valueOf(p.getAnimation())));
                     }
                     else
                     {
@@ -1173,7 +1173,7 @@ public class TheatreTrackerPlugin extends Plugin
                         }
                         lastTickPlayer.put(p.getName(), new PlayerCopy(
                                 p.getName(), interactedIndex, interactedID, targetName, p.getAnimation(), PlayerWornItems.getStringFromComposition(p.getPlayerComposition()
-                        ), String.valueOf(p.getPlayerComposition().getEquipmentId(KitType.WEAPON))));
+                        ), p.getPlayerComposition().getEquipmentId(KitType.WEAPON)));
                     }
                     else
                     {
@@ -1416,7 +1416,7 @@ public class TheatreTrackerPlugin extends Plugin
                 String.valueOf(p.getName()),
                 String.valueOf(p.getAnimation()),
                 0,
-                String.valueOf(p.getPlayerComposition().getEquipmentId(KitType.WEAPON)),
+                p.getPlayerComposition().getEquipmentId(KitType.WEAPON),
                 "-1",
                 animations,
                 interactedIndex,

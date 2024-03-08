@@ -1,7 +1,7 @@
 package com.advancedraidtracker.ui.buttons;
 
 import com.advancedraidtracker.SimpleRaidData;
-import com.advancedraidtracker.ui.viewraid.ViewRaid;
+import com.advancedraidtracker.ui.viewraid.ViewTOBRaid;
 
 import javax.swing.*;
 import java.awt.*;
@@ -49,7 +49,7 @@ public class ButtonEditorRoomData extends DefaultCellEditor
     {
         if (isPushed)
         {
-            ViewRaid raid = new ViewRaid(data.get(row));
+            ViewTOBRaid raid = new ViewTOBRaid(data.get(row));
             //ViewRaidFrame raid = new ViewRaidFrame(data.get(row));
             raid.open();
         }

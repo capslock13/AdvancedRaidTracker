@@ -27,33 +27,33 @@ public class ChartFrame extends BaseFrame
         {
             raidData = new AdvancedTOAData(AdvancedRaidData.getRaidStrings(roomData.getFilePath()), itemManager);
         }
-        for (String s : raidData.attackData.keySet())
+        for (String bossName : raidData.attackData.keySet())
         {
             JPanel tab = new JPanel();
             tab.setLayout(new GridLayout(1, 2));
             JPanel chart = new JPanel();
             chart.setLayout(new BoxLayout(chart, BoxLayout.Y_AXIS));
-            ChartPanel chartPanel = new ChartPanel(s, false, config, clientThread, configManager);
-            chartPanel.setNPCMappings(raidData.npcIndexData.get(s));
-            chartPanel.addAttacks(raidData.attackData.get(s));
-            chartPanel.setRoomHP(raidData.hpData.get(s));
+            ChartPanel chartPanel = new ChartPanel(bossName, false, config, clientThread, configManager, itemManager);
+            chartPanel.setNPCMappings(raidData.npcIndexData.get(bossName));
+            chartPanel.addAttacks(raidData.attackData.get(bossName));
+            chartPanel.setRoomHP(raidData.hpData.get(bossName));
             chartPanel.setPlayers(roomData.getPlayersArray());
             chartPanel.enableWrap();
-            chartPanel.setStartTick((s.contains("Verzik") || s.contains("Wardens")) ? //Just trust
-                    (s.contains("P1") ? 1 : (s.contains("P2") ? roomData.getValue(s.replace('2', '1') + " Time") :
-                            roomData.getValue(s.replace('3', '1') + " Time") + roomData.getValue(s.replace('3', '2') + " Time"))) : 1);
-            chartPanel.setTick(((s.contains("Verzik") || s.contains("Wardens")) && !s.contains("P1"))
-                    ? (s.contains("P2")) ? roomData.getValue(s + " Time") +
-                    roomData.getValue(s.replace('2', '1') + " Time") :
-                    roomData.getValue(s.substring(0, s.length()-2) + "Time") : roomData.getValue(s + " Time"));
-            chartPanel.addThrallBoxes(raidData.thrallOutlineBoxes.get(s));
+            chartPanel.setStartTick((bossName.contains("Verzik") || bossName.contains("Wardens")) ? //Just trust
+                    (bossName.contains("P1") ? 1 : (bossName.contains("P2") ? roomData.getValue(bossName.replace('2', '1') + " Time") :
+                            roomData.getValue(bossName.replace('3', '1') + " Time") + roomData.getValue(bossName.replace('3', '2') + " Time"))) : 1);
+            chartPanel.setTick(((bossName.contains("Verzik") || bossName.contains("Wardens")) && !bossName.contains("P1"))
+                    ? (bossName.contains("P2")) ? roomData.getValue(bossName + " Time") +
+                    roomData.getValue(bossName.replace('2', '1') + " Time") :
+                    roomData.getValue(bossName.substring(0, bossName.length()-2) + "Time") : roomData.getValue(bossName + " Time"));
+            chartPanel.addThrallBoxes(raidData.thrallOutlineBoxes.get(bossName));
 
             Map<Integer, String> lines = new LinkedHashMap<>();
             ArrayList<Integer> autos = new ArrayList<>();
             if(roomData instanceof SimpleTOBData)
             {
                 SimpleTOBData tobData = (SimpleTOBData) roomData;
-                switch (s)
+                switch (bossName)
                 {
                     case "Maiden":
                         lines.put(roomData.getValue(DataPoint.MAIDEN_70_SPLIT), "70s");
@@ -161,7 +161,7 @@ public class ChartFrame extends BaseFrame
             else if(roomData instanceof SimpleTOAData)
             {
                 SimpleTOAData toaData = (SimpleTOAData) roomData;
-                switch(s)
+                switch(bossName)
                 {
                     case "Baba":
                         lines.put(toaData.getValue(DataPoint.BABA_P1_DURATION), "Boulder 1 Start");
@@ -198,7 +198,7 @@ public class ChartFrame extends BaseFrame
             basepane.addChangeListener(cl -> chartPanel.redraw());
             chart.add(chartPanel);
             tab.add(new JScrollPane(chart));
-            basepane.add(s, tab);
+            basepane.add(bossName, tab);
             add(basepane);
             pack();
         }

@@ -5,17 +5,15 @@ import java.util.List;
 
 public class WeaponDecider
 {
-    public static WeaponAttack getWeapon(String animationS, String graphics, String projectileS, String weaponS)
+    public static WeaponAttack getWeapon(String animationS, String graphics, String projectileS, int weapon)
     { //todo redo all of this once the incorrect weapon worn if same tick swap is fixed, magic numbers will be fixed then too
         WeaponAttack weaponUsed = WeaponAttack.UNDECIDED;
         List<String> spotAnims = Arrays.asList(graphics.split(":"));
         int projectile;
-        int weapon;
         int animation;
         try
         {
             projectile = Integer.parseInt(projectileS);
-            weapon = Integer.parseInt(weaponS);
             animation = Integer.parseInt(animationS);
         } catch (Exception e)
         {

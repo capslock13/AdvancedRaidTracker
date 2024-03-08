@@ -1,7 +1,7 @@
 package com.TheatreTracker.utility.wrappers;
 
 import com.TheatreTracker.utility.PlayerWornItems;
-import com.google.inject.Inject;
+import com.TheatreTracker.utility.datautility.datapoints.LogEntry;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.ItemID;
 import net.runelite.client.callback.ClientThread;
@@ -19,7 +19,7 @@ public class PlayerDidAttack
     public String player;
     public String animation;
     public int tick;
-    public String weapon;
+    public int weapon;
     public String projectile;
     public String spotAnims;
     public int targetedIndex;
@@ -40,7 +40,42 @@ public class PlayerDidAttack
     private static Set<Integer> claws = new HashSet<>(Collections.singletonList(ItemID.CORRUPTED_DRAGON_CLAWS));
     private static Set<Integer> dwh = new HashSet<>(Arrays.asList(ItemID.DRAGON_WARHAMMER_CR, ItemID.DRAGON_WARHAMMER_OR));
 
-    public PlayerDidAttack(ItemManager itemManager, String player, String animation, int tick, String weapon, String projectile, String spotAnims, int targetedIndex, int targetedID, String targetName, String worn)
+    public PlayerDidAttack(LogEntry entry) {
+        // TODO: make all of the "strings" into integers
+        String []extra = entry.getExtra();
+
+        String []playerDetails = extra[0].split(":");
+
+        this.player = playerDetails[0];
+        this.tick = Integer.parseInt(playerDetails[1]);
+
+        String []animationDetails = extra[1].split(":");
+        this.animation = animationDetails[0];
+        if (animationDetails.length > 1) {
+            this.wornItems = animationDetails[1];
+        }
+
+        this.spotAnims = extra[2];
+        String []weaponDetails = extra[3].split(":");
+
+        switch (weaponDetails.length) {
+            case 3:
+                this.targetedID = Integer.parseInt(weaponDetails[2]); // fallthrough
+            case 2:
+                this.targetedIndex = Integer.parseInt(weaponDetails[1]); // fallthrough
+            case 1:
+                this.weapon = Integer.parseInt(weaponDetails[0]);
+                break;
+        }
+
+        String []projectileDetails = extra[4].split(":");
+        if (projectileDetails.length == 2) {
+            this.targetName = projectileDetails[1];
+        }
+        this.projectile = projectileDetails[0];
+    }
+
+    public PlayerDidAttack(ItemManager itemManager, String player, String animation, int tick, int weapon, String projectile, String spotAnims, int targetedIndex, int targetedID, String targetName, String worn)
     {
         this.itemManager = itemManager;
         this.player = player;
@@ -96,7 +131,11 @@ public class PlayerDidAttack
 
     public void setIcons()
     {
-        int weaponID = Integer.parseInt(this.weapon);
+        setIcons(itemManager);
+    }
+
+    public void setIcons(ItemManager itemManager) {
+        int weaponID = this.weapon;
         if(setUnkitted)
         {
             weaponID = getReplacement(weaponID);

@@ -325,7 +325,7 @@ public class AdvancedTOBData extends AdvancedRaidData
                     case VERZIK_BOUNCE:
                         if (!subData[5].equalsIgnoreCase(""))
                         { //use fake animation ID when bounce occurs
-                            attackData.get("Verzik P2").add(new PlayerDidAttack(itemManager, subData[4], "100000", Integer.parseInt(subData[5]), "-1", "-1", "-1", -1, -1, "", ""));
+                            attackData.get("Verzik P2").add(new PlayerDidAttack(itemManager, subData[4], "100000", Integer.parseInt(subData[5]), -1, "-1", "-1", -1, -1, "", ""));
                         }
                         break;
                     case VERZIK_P1_DESPAWNED:

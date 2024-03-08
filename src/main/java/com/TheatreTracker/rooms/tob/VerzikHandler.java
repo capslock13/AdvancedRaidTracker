@@ -201,7 +201,7 @@ public class VerzikHandler extends TOBRoomHandler
         if (event.getActor().hasSpotAnim(VERZIK_BOUNCE_SPOT_ANIMATION))
         {
             clog.addLine(LogID.VERZIK_BOUNCE, event.getActor().getName(), String.valueOf(client.getTickCount() - verzikEntryTick));
-            plugin.liveFrame.addAttack(new PlayerDidAttack(itemManager, event.getActor().getName(), VERZIK_BOUNCE_ANIMATION, client.getTickCount() - verzikEntryTick, "-1", "-1", "-1", -1, -1, "", ""), "Verzik");
+            plugin.liveFrame.addAttack(new PlayerDidAttack(itemManager, event.getActor().getName(), VERZIK_BOUNCE_ANIMATION, client.getTickCount() - verzikEntryTick, -1, "-1", "-1", -1, -1, "", ""), "Verzik");
 
         }
     }

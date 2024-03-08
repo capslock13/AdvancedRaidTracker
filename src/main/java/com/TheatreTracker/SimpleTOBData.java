@@ -17,6 +17,8 @@ import static com.TheatreTracker.utility.datautility.DataPoint.*;
 @Slf4j
 public class SimpleTOBData extends SimpleRaidData
 {
+    private final DataManager dataManager;
+
     public boolean maidenStartAccurate = false;
     public boolean bloatStartAccurate = false;
     public boolean nyloStartAccurate = false;
@@ -323,7 +325,6 @@ public class SimpleTOBData extends SimpleRaidData
         return true;
     }
 
-    private final DataManager dataManager;
 
     public int getValue(String name)
     {

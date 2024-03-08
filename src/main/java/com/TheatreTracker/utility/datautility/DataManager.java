@@ -1,9 +1,10 @@
 package com.TheatreTracker.utility.datautility;
 
 import com.TheatreTracker.constants.RaidType;
+import com.TheatreTracker.utility.datautility.datapoints.Raid;
+import com.TheatreTracker.utility.datautility.datapoints.tob.Tob;
 import com.TheatreTracker.utility.wrappers.PlayerCorrelatedPointData;
 import lombok.extern.slf4j.Slf4j;
-import net.runelite.client.plugins.raids.Raid;
 
 import java.util.ArrayList;
 

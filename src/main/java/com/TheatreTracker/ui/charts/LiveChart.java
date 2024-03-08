@@ -44,14 +44,14 @@ public class LiveChart extends BaseFrame
 
         for(String name : tob)
         {
-            ChartPanel chartPanel = new ChartPanel(name, true, config, clientThread, configManager);
+            ChartPanel chartPanel = new ChartPanel(name, true, config, clientThread, configManager, itemManager);
             tobPanels.put(name, chartPanel);
             tobScrollPanes.put(name, new JScrollPane(chartPanel));
         }
 
         for(String name : toa)
         {
-            ChartPanel chartPanel = new ChartPanel(name, true, config, clientThread, configManager);
+            ChartPanel chartPanel = new ChartPanel(name, true, config, clientThread, configManager, itemManager);
             toaPanels.put(name, chartPanel);
             toaScrollPanes.put(name, new JScrollPane(chartPanel));
         }
@@ -108,7 +108,7 @@ public class LiveChart extends BaseFrame
         }
         else
         {
-            return new ChartPanel("", true, config, clientThread, configManager);
+            return new ChartPanel("", true, config, clientThread, configManager, itemManager);
         }
     }
 

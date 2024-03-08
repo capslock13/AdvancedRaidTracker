@@ -1128,15 +1128,7 @@ public class TheatreTrackerPlugin extends Plugin
                         int interactedIndex = -1;
                         int interactedID = -1;
                         Actor interacted = p.getInteracting();
-                        String targetName = "";
-                        if (interacted instanceof NPC)
-                        {
-                            NPC npc = (NPC) interacted;
-                            interactedID = npc.getId();
-                            interactedIndex = npc.getIndex();
-                            targetName = npc.getName();
-                        }
-                        generatePlayerAttackInfo(p, animations.toString(), interactedIndex, interactedID, interacted, targetName);
+                        generatePlayerAttackInfo(p, animations.toString(), interacted);
                     }
                 }
                 else if (p.getAnimation() != -1)
@@ -1144,35 +1136,20 @@ public class TheatreTrackerPlugin extends Plugin
                     int interactedIndex = -1;
                     int interactedID = -1;
                     Actor interacted = p.getInteracting();
-                    String targetName = "";
-                    if (interacted instanceof NPC)
-                    {
-                        NPC npc = (NPC) interacted;
-                        interactedID = npc.getId();
-                        interactedIndex = npc.getIndex();
-                    }
-                    generatePlayerAttackInfo(p, animations.toString(), interactedIndex, interactedID, interacted, targetName);
+                    generatePlayerAttackInfo(p, animations.toString(), interacted);
                     if (p.getAnimation() == BLOWPIPE_ANIMATION || p.getAnimation() == BLOWPIPE_ANIMATION_OR)
                     {
                         activelyPiping.put(p, client.getTickCount());
-                        interactedIndex = -1;
-                        interactedID = -1;
-                        targetName = "";
-                        interacted = p.getInteracting();
+                        String targetName = interacted.getName();
                         if (interacted instanceof NPC)
                         {
                             NPC npc = (NPC) interacted;
                             interactedID = npc.getId();
                             interactedIndex = npc.getIndex();
-                            targetName = npc.getName();
-                        }
-                        if (interacted instanceof Player)
-                        {
-                            Player player = (Player) interacted;
-                            targetName = player.getName();
                         }
                         lastTickPlayer.put(p.getName(), new PlayerCopy(
-                                p.getName(), interactedIndex, interactedID, targetName, p.getAnimation(), PlayerWornItems.getStringFromComposition(p.getPlayerComposition()
+                                p.getName(), interactedIndex, interactedID, targetName,
+                                p.getAnimation(), PlayerWornItems.getStringFromComposition(p.getPlayerComposition()
                         ), p.getPlayerComposition().getEquipmentId(KitType.WEAPON)));
                     }
                     else
@@ -1399,13 +1376,24 @@ public class TheatreTrackerPlugin extends Plugin
         }
     }
 
-    private void generatePlayerAttackInfo(Player p, String animations, int interactedIndex, int interactedID, Actor interacted, String targetName)
+    /**
+     * Generates a PlayerDidAttack entry into the log.
+     * @param p the current player
+     * @param animations animations happening
+     * @param interacted Actor (Player or NPC) that was interacted with.
+     */
+    private void generatePlayerAttackInfo(Player p, String animations, Actor interacted)
     {
-        if (interacted instanceof Player)
-        {
-            Player player = (Player) interacted;
-            targetName = player.getName();
+        int interactedIndex = -1;
+        int interactedID = -1;
+        String targetName = interacted.getName();
+
+        if (interacted instanceof NPC) {
+            NPC npc = (NPC) interacted;
+            interactedID = npc.getId();
+            interactedIndex = npc.getIndex();
         }
+
         clog.addLine(PLAYER_ATTACK,
                 p.getName() + ":" + (client.getTickCount() - currentRoom.roomStartTick),
                 p.getAnimation()+":"+PlayerWornItems.getStringFromComposition(p.getPlayerComposition()),

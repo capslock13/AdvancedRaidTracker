@@ -31,10 +31,8 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @Slf4j
@@ -56,7 +54,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     int startTick;
     public int endTick;
     @Setter
-    ArrayList<String> players = new ArrayList<>();
+    List<String> players = new ArrayList<>();
     String room;
     WeaponAttack[] weaponAttacks;
     int keyColumns;
@@ -286,7 +284,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         addAttack(new PlayerDidAttack(attack.itemManager, attack.player, attack.animation, attack.tick, attack.weapon, attack.projectile, attack.spotAnims, attack.targetedIndex, attack.targetedID, attack.targetName, attack.wornItems));
     }
 
-    public void addAttacks(ArrayList<PlayerDidAttack> attacks)
+    public void addAttacks(Collection<PlayerDidAttack> attacks)
     {
         for (PlayerDidAttack attack : attacks)
         {

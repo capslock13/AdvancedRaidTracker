@@ -120,6 +120,11 @@ public class RoomHandler
         }
     }
 
+    public void updateChatMessage(ChatMessage message)
+    {
+
+    }
+
     public void handleNPCChanged(int id)
     {
     }

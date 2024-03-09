@@ -46,7 +46,7 @@ public class BabaHandler extends TOARoomHandler
     public void updateGameTick(GameTick gameTick)
     {
         log.info("Room state: " + roomState + ", Tile: " + client.getLocalPlayer().getWorldLocation().getRegionX() + ", " + client.getLocalPlayer().getWorldLocation().getRegionY());
-        if (roomState == RoomState.BabaRoomState.NOT_STARTED && RoomUtil.crossedLine(15188, new Point(24, 32), new Point(24, 32), true, client))
+        if (roomState == RoomState.BabaRoomState.NOT_STARTED && RoomUtil.playerPastLine(15188, 23, true, client))
         {
             roomState = RoomState.BabaRoomState.PHASE_1;
             roomStartTick = client.getTickCount();

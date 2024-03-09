@@ -234,6 +234,15 @@ public class AdvancedRaidTrackerPlugin extends Plugin
     }
 
     @Subscribe
+    public void onChatMessage(ChatMessage message)
+    {
+        if(inTheatre)
+        {
+            currentRoom.updateChatMessage(message);
+        }
+    }
+
+    @Subscribe
     public void onGameStateChanged(GameStateChanged gameStateChanged)
     {
         if (gameStateChanged.getGameState().equals(GameState.LOGGED_IN))
@@ -289,7 +298,7 @@ public class AdvancedRaidTrackerPlugin extends Plugin
         } else if (previous == lobbyTOA && inRegion(client, TOA_NEXUS))
         {
             clog.setRaidType(RaidType.TOA);
-            deferredTick = client.getTickCount() + 5;
+            deferredTick = client.getTickCount() + 5; //check for player names in orbs 5t after entry
             clog.checkForEndFlag();
             clog.migrateToNewRaid();
             clog.addLine(ENTERED_TOA);
@@ -305,6 +314,7 @@ public class AdvancedRaidTrackerPlugin extends Plugin
                     currentRoom = maiden;
                     enteredMaiden();
                     liveFrame.resetAll();
+                    liveFrame.switchToTOB();
                 }
                 activeState = true;
                 break;

@@ -35,7 +35,6 @@ public class MaidenHandler extends TOBRoomHandler
 {
     public RoomState.MaidenRoomState roomState;
 
-    int maidenStartTick;
     int p70;
     int p50;
     int p30;
@@ -73,7 +72,7 @@ public class MaidenHandler extends TOBRoomHandler
         p70 = -1;
         p50 = -1;
         p30 = -1;
-        maidenStartTick = -1;
+        roomStartTick = -1;
         maidenDeathTick = -1;
         accurateEntry = true;
         hitsplatsPerPlayer = new ArrayList<>();
@@ -103,7 +102,7 @@ public class MaidenHandler extends TOBRoomHandler
         p70 = -1;
         p50 = -1;
         p30 = -1;
-        maidenStartTick = -1;
+        roomStartTick = -1;
         maidenDeathTick = -1;
         hitsplatsPerPlayer.clear();
         thrownBloodLocations.clear();
@@ -118,19 +117,19 @@ public class MaidenHandler extends TOBRoomHandler
 
     public void startMaiden()
     {
-        maidenStartTick = client.getTickCount();
         roomStartTick = client.getTickCount();
-        deferVarbitCheck = maidenStartTick + 2;
+        roomStartTick = client.getTickCount();
+        deferVarbitCheck = roomStartTick + 2;
     }
 
     public void proc70()
     {
         p70 = super.client.getTickCount();
         roomState = RoomState.MaidenRoomState.PHASE_2;
-        if (maidenStartTick != -1)
-            sendTimeMessage("Wave 'Maiden phase 1' complete! Duration: ", p70 - maidenStartTick);
-        clog.addLine(MAIDEN_70S, String.valueOf(p70 - maidenStartTick));
-        plugin.addDelayedLine(TOBRoom.MAIDEN, p70 - maidenStartTick - 2, "70s");
+        if (roomStartTick != -1)
+            sendTimeMessage("Wave 'Maiden phase 1' complete! Duration: ", p70 - roomStartTick);
+        clog.addLine(MAIDEN_70S, String.valueOf(p70 - roomStartTick));
+        plugin.addDelayedLine(TOBRoom.MAIDEN, p70 - roomStartTick - 2, "70s");
 
     }
 
@@ -138,32 +137,32 @@ public class MaidenHandler extends TOBRoomHandler
     {
         p50 = super.client.getTickCount();
         roomState = RoomState.MaidenRoomState.PHASE_3;
-        if (maidenStartTick != -1)
-            sendTimeMessage("Wave 'Maiden phase 2' complete! Duration: ", p50 - maidenStartTick, p50 - p70);
-        clog.addLine(MAIDEN_50S, String.valueOf(p50 - maidenStartTick));
-        plugin.addDelayedLine(TOBRoom.MAIDEN, p50 - maidenStartTick - 2, "50s");
+        if (roomStartTick != -1)
+            sendTimeMessage("Wave 'Maiden phase 2' complete! Duration: ", p50 - roomStartTick, p50 - p70);
+        clog.addLine(MAIDEN_50S, String.valueOf(p50 - roomStartTick));
+        plugin.addDelayedLine(TOBRoom.MAIDEN, p50 - roomStartTick - 2, "50s");
     }
 
     public void proc30()
     {
         p30 = super.client.getTickCount();
         roomState = RoomState.MaidenRoomState.PHASE_4;
-        if (maidenStartTick != -1)
-            sendTimeMessage("Wave 'Maiden phase 3' complete! Duration: ", p30 - maidenStartTick, p30 - p50);
-        clog.addLine(MAIDEN_30S, String.valueOf(p30 - maidenStartTick));
-        plugin.addDelayedLine(TOBRoom.MAIDEN, p30 - maidenStartTick - 2, "30s");
+        if (roomStartTick != -1)
+            sendTimeMessage("Wave 'Maiden phase 3' complete! Duration: ", p30 - roomStartTick, p30 - p50);
+        clog.addLine(MAIDEN_30S, String.valueOf(p30 - roomStartTick));
+        plugin.addDelayedLine(TOBRoom.MAIDEN, p30 - roomStartTick - 2, "30s");
     }
 
     public void endMaiden()
     {
         roomState = RoomState.MaidenRoomState.FINISHED;
         maidenDeathTick = client.getTickCount() + MAIDEN_DEATH_ANIMATION_LENGTH;
-        if (maidenStartTick != -1)
-            sendTimeMessage("Wave 'Maiden Skip' complete! Duration: ", maidenDeathTick - maidenStartTick, maidenDeathTick - p30, false);
+        if (roomStartTick != -1)
+            sendTimeMessage("Wave 'Maiden Skip' complete! Duration: ", maidenDeathTick - roomStartTick, maidenDeathTick - p30, false);
         clog.addLine(ACCURATE_MAIDEN_END);
-        clog.addLine(MAIDEN_0HP, String.valueOf(client.getTickCount() - maidenStartTick));
-        plugin.addDelayedLine(TOBRoom.MAIDEN, client.getTickCount() - maidenStartTick, "Dead");
-        plugin.liveFrame.setRoomFinished(getName(), maidenDeathTick - maidenStartTick);
+        clog.addLine(MAIDEN_0HP, String.valueOf(client.getTickCount() - roomStartTick));
+        plugin.addDelayedLine(TOBRoom.MAIDEN, client.getTickCount() - roomStartTick, "Dead");
+        plugin.liveFrame.setRoomFinished(getName(), maidenDeathTick - roomStartTick);
     }
 
     private boolean didAuto = false;
@@ -269,7 +268,7 @@ public class MaidenHandler extends TOBRoomHandler
             case TobIDs.MAIDEN_P3_SM:
             case TobIDs.MAIDEN_PRE_DEAD_SM:
             case TobIDs.MAIDEN_DEAD_SM:
-                clog.addLine(MAIDEN_DESPAWNED, String.valueOf(client.getTickCount() - maidenStartTick));
+                clog.addLine(MAIDEN_DESPAWNED, String.valueOf(client.getTickCount() - roomStartTick));
                 break;
             case MAIDEN_MATOMENOS:
             case MAIDEN_MATOMENOS_HM:

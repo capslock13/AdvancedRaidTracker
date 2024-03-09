@@ -23,7 +23,6 @@ import static com.advancedraidtracker.constants.TobIDs.*;
 public class SotetsegHandler extends TOBRoomHandler
 {
     public RoomState.SotetsegRoomState roomState = RoomState.SotetsegRoomState.NOT_STARTED;
-    private int soteEntryTick = -1;
     private int soteFirstMazeStart = -1;
     private int soteSecondMazeStart = -1;
     private int soteFirstMazeEnd = -1;
@@ -65,7 +64,7 @@ public class SotetsegHandler extends TOBRoomHandler
         lastChosen = "";
         excludedTiles.clear();
         accurateTimer = true;
-        soteEntryTick = -1;
+        roomStartTick = -1;
         roomState = RoomState.SotetsegRoomState.NOT_STARTED;
         soteFirstMazeStart = -1;
         soteSecondMazeStart = -1;
@@ -214,22 +213,22 @@ public class SotetsegHandler extends TOBRoomHandler
 
     public void startSotetseg()
     {
-        soteEntryTick = client.getTickCount();
         roomStartTick = client.getTickCount();
-        deferTick = soteEntryTick + 2;
+        roomStartTick = client.getTickCount();
+        deferTick = roomStartTick + 2;
         roomState = RoomState.SotetsegRoomState.PHASE_1;
         clog.addLine(LogID.SOTETSEG_STARTED);
     }
 
     public void endSotetseg()
     {
-        plugin.addDelayedLine(TOBRoom.SOTETSEG, client.getTickCount() - soteEntryTick, "Dead");
+        plugin.addDelayedLine(TOBRoom.SOTETSEG, client.getTickCount() - roomStartTick, "Dead");
         soteDeathTick = client.getTickCount() + SOTETSEG_DEATH_ANIMATION_LENGTH;
         roomState = RoomState.SotetsegRoomState.FINISHED;
         clog.addLine(LogID.ACCURATE_SOTE_END);
-        clog.addLine(LogID.SOTETSEG_ENDED, String.valueOf(soteDeathTick - soteEntryTick));
-        plugin.liveFrame.setRoomFinished(getName(), soteDeathTick - soteEntryTick);
-        sendTimeMessage("Wave 'Sotetseg phase 3' complete. Duration: ", soteDeathTick - soteEntryTick, soteDeathTick - soteSecondMazeEnd, false);
+        clog.addLine(LogID.SOTETSEG_ENDED, String.valueOf(soteDeathTick - roomStartTick));
+        plugin.liveFrame.setRoomFinished(getName(), soteDeathTick - roomStartTick);
+        sendTimeMessage("Wave 'Sotetseg phase 3' complete. Duration: ", soteDeathTick - roomStartTick, soteDeathTick - soteSecondMazeEnd, false);
     }
 
     public void startFirstMaze()
@@ -241,10 +240,10 @@ public class SotetsegHandler extends TOBRoomHandler
         firstMazeChosen = "";
         hasSteppedOnMaze = false;
         soteFirstMazeStart = client.getTickCount();
-        clog.addLine(LogID.SOTETSEG_FIRST_MAZE_STARTED, String.valueOf(soteFirstMazeStart - soteEntryTick));
+        clog.addLine(LogID.SOTETSEG_FIRST_MAZE_STARTED, String.valueOf(soteFirstMazeStart - roomStartTick));
         roomState = RoomState.SotetsegRoomState.MAZE_1;
-        sendTimeMessage("Wave 'Sotetseg phase 1' complete. Duration: ", soteFirstMazeStart - soteEntryTick);
-        plugin.addDelayedLine(TOBRoom.SOTETSEG, soteFirstMazeStart - soteEntryTick, "Maze1 Start");
+        sendTimeMessage("Wave 'Sotetseg phase 1' complete. Duration: ", soteFirstMazeStart - roomStartTick);
+        plugin.addDelayedLine(TOBRoom.SOTETSEG, soteFirstMazeStart - roomStartTick, "Maze1 Start");
     }
 
     public void startEitherMaze()
@@ -260,10 +259,10 @@ public class SotetsegHandler extends TOBRoomHandler
     {
         endEitherMaze();
         soteFirstMazeEnd = client.getTickCount();
-        clog.addLine(LogID.SOTETSEG_FIRST_MAZE_ENDED, String.valueOf(soteFirstMazeEnd - soteEntryTick));
+        clog.addLine(LogID.SOTETSEG_FIRST_MAZE_ENDED, String.valueOf(soteFirstMazeEnd - roomStartTick));
         roomState = RoomState.SotetsegRoomState.PHASE_2;
-        sendTimeMessage("Wave 'Sotetseg maze 1' complete. Duration: ", soteFirstMazeEnd - soteEntryTick, soteFirstMazeEnd - soteFirstMazeStart);
-        plugin.addDelayedLine(TOBRoom.SOTETSEG, soteFirstMazeEnd - soteEntryTick, "Maze1 End");
+        sendTimeMessage("Wave 'Sotetseg maze 1' complete. Duration: ", soteFirstMazeEnd - roomStartTick, soteFirstMazeEnd - soteFirstMazeStart);
+        plugin.addDelayedLine(TOBRoom.SOTETSEG, soteFirstMazeEnd - roomStartTick, "Maze1 End");
     }
 
     public void startSecondMaze()
@@ -275,10 +274,10 @@ public class SotetsegHandler extends TOBRoomHandler
         secondMazeChosen = "";
         hasSteppedOnMaze = false;
         soteSecondMazeStart = client.getTickCount();
-        clog.addLine(LogID.SOTETSEG_SECOND_MAZE_STARTED, String.valueOf(soteSecondMazeStart - soteEntryTick));
+        clog.addLine(LogID.SOTETSEG_SECOND_MAZE_STARTED, String.valueOf(soteSecondMazeStart - roomStartTick));
         roomState = RoomState.SotetsegRoomState.MAZE_2;
-        sendTimeMessage("Wave 'Sotetseg phase 2' complete. Duration: ", soteSecondMazeStart - soteEntryTick, soteSecondMazeStart - soteFirstMazeEnd);
-        plugin.addDelayedLine(TOBRoom.SOTETSEG, soteSecondMazeStart - soteEntryTick, "Maze2 Start");
+        sendTimeMessage("Wave 'Sotetseg phase 2' complete. Duration: ", soteSecondMazeStart - roomStartTick, soteSecondMazeStart - soteFirstMazeEnd);
+        plugin.addDelayedLine(TOBRoom.SOTETSEG, soteSecondMazeStart - roomStartTick, "Maze2 Start");
     }
 
     private static ArrayList<Point> filterMaze(ArrayList<Point> tiles)
@@ -380,10 +379,10 @@ public class SotetsegHandler extends TOBRoomHandler
     {
         endEitherMaze();
         soteSecondMazeEnd = client.getTickCount();
-        clog.addLine(LogID.SOTETSEG_SECOND_MAZE_ENDED, String.valueOf(soteSecondMazeEnd - soteEntryTick));
+        clog.addLine(LogID.SOTETSEG_SECOND_MAZE_ENDED, String.valueOf(soteSecondMazeEnd - roomStartTick));
         roomState = RoomState.SotetsegRoomState.PHASE_3;
-        sendTimeMessage("Wave 'Sotetseg maze 2' complete. Duration: ", soteSecondMazeEnd - soteEntryTick, soteSecondMazeEnd - soteSecondMazeStart);
-        plugin.addDelayedLine(TOBRoom.SOTETSEG, soteSecondMazeEnd - soteEntryTick, "Maze2 End");
+        sendTimeMessage("Wave 'Sotetseg maze 2' complete. Duration: ", soteSecondMazeEnd - roomStartTick, soteSecondMazeEnd - soteSecondMazeStart);
+        plugin.addDelayedLine(TOBRoom.SOTETSEG, soteSecondMazeEnd - roomStartTick, "Maze2 End");
     }
 
     public String getAboveWorldChosen()

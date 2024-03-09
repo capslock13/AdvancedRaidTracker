@@ -248,7 +248,7 @@ public class TobIDs
     public final static int VERZIK_MAGE_NYLO_SM = 10843;
 
     public final static int VERZIK_BOUNCE_SPOT_ANIMATION = 245;
-    public final static int VERZIK_BECOMES_SPIDER = 8128;
+    public final static int VERZIK_BECOMES_BAT = 8128;
 
     public final static int VERZIK_P1_INACTIVE = 8369;
     public final static int VERZIK_P1_INACTIVE_HM = 10847;

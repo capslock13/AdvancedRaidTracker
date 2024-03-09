@@ -41,7 +41,6 @@ public class NyloHandler extends TOBRoomHandler
     }
 
     public static int instanceStart = -1;
-    private int pillarsSpawnedTick = -1;
     private int instanceReference = -1;
     private int bossSpawn = -1;
     private int lastDead = -1;
@@ -59,7 +58,7 @@ public class NyloHandler extends TOBRoomHandler
     {
         currentWave = 0;
         roomState = NOT_STARTED;
-        pillarsSpawnedTick = -1;
+        roomStartTick = -1;
         instanceReference = -1;
         instanceStart = -1;
         bossSpawn = -1;
@@ -110,15 +109,15 @@ public class NyloHandler extends TOBRoomHandler
                     }
                 }
                 currentWave = wave.getWave();
-                plugin.addDelayedLine(TOBRoom.NYLOCAS, client.getTickCount() - pillarsSpawnedTick, "W" + currentWave);
-                clog.addLine(NYLO_WAVE, String.valueOf(currentWave), String.valueOf(client.getTickCount() - pillarsSpawnedTick));
+                plugin.addDelayedLine(TOBRoom.NYLOCAS, client.getTickCount() - roomStartTick, "W" + currentWave);
+                clog.addLine(NYLO_WAVE, String.valueOf(currentWave), String.valueOf(client.getTickCount() - roomStartTick));
             }
             buildWave.clear();
         }
         if (client.getTickCount() == expectedWaveTick && currentWave != 31)
         {
-            clog.addLine(NYLO_STALL, String.valueOf(currentWave), String.valueOf(client.getTickCount() - pillarsSpawnedTick), String.valueOf(nylosAlive.size()));
-            plugin.addDelayedLine(TOBRoom.NYLOCAS, client.getTickCount() - pillarsSpawnedTick, "Stall");
+            clog.addLine(NYLO_STALL, String.valueOf(currentWave), String.valueOf(client.getTickCount() - roomStartTick), String.valueOf(nylosAlive.size()));
+            plugin.addDelayedLine(TOBRoom.NYLOCAS, client.getTickCount() - roomStartTick, "Stall");
             expectedWaveTick += 4;
         }
     }
@@ -176,7 +175,7 @@ public class NyloHandler extends TOBRoomHandler
             case NYLO_RANGE_SMALL_AGRO:
             case NYLO_MAGE_SMALL:
             case NYLO_MAGE_SMALL_AGRO:
-                if (pillarsSpawnedTick == -1)
+                if (roomStartTick == -1)
                 {
                     startNylo();
                 }
@@ -219,7 +218,7 @@ public class NyloHandler extends TOBRoomHandler
                         case NYLO_MELEE_SMALL_AGRO_HM:
                         case NYLO_MELEE_SMALL_SM:
                         case NYLO_MELEE_SMALL_AGRO_SM:
-                            clog.addLine(MELEE_SPLIT, String.valueOf(currentWave), String.valueOf(client.getTickCount() - pillarsSpawnedTick));
+                            clog.addLine(MELEE_SPLIT, String.valueOf(currentWave), String.valueOf(client.getTickCount() - roomStartTick));
                             break;
                         case NYLO_RANGE_SMALL:
                         case NYLO_RANGE_SMALL_AGRO:
@@ -227,7 +226,7 @@ public class NyloHandler extends TOBRoomHandler
                         case NYLO_RANGE_SMALL_AGRO_HM:
                         case NYLO_RANGE_SMALL_SM:
                         case NYLO_RANGE_SMALL_AGRO_SM:
-                            clog.addLine(RANGE_SPLIT, String.valueOf(currentWave), String.valueOf(client.getTickCount() - pillarsSpawnedTick));
+                            clog.addLine(RANGE_SPLIT, String.valueOf(currentWave), String.valueOf(client.getTickCount() - roomStartTick));
                             break;
                         case NYLO_MAGE_SMALL:
                         case NYLO_MAGE_SMALL_AGRO:
@@ -235,7 +234,7 @@ public class NyloHandler extends TOBRoomHandler
                         case NYLO_MAGE_SMALL_AGRO_HM:
                         case NYLO_MAGE_SMALL_SM:
                         case NYLO_MAGE_SMALL_AGRO_SM:
-                            clog.addLine(MAGE_SPLIT, String.valueOf(currentWave), String.valueOf(client.getTickCount() - pillarsSpawnedTick));
+                            clog.addLine(MAGE_SPLIT, String.valueOf(currentWave), String.valueOf(client.getTickCount() - roomStartTick));
                             break;
                     }
                 }
@@ -251,7 +250,7 @@ public class NyloHandler extends TOBRoomHandler
             case NYLO_BOSS_RANGE_SM:
             case NYLO_BOSS_MAGE_SM:
                 bossSpawned();
-                if (pillarsSpawnedTick == -1)
+                if (roomStartTick == -1)
                 {
                     startNylo();
                 }
@@ -259,7 +258,7 @@ public class NyloHandler extends TOBRoomHandler
             case NYLO_PILLAR:
             case NYLO_PILLAR_HM:
             case NYLO_PILLAR_SM:
-                if (pillarsSpawnedTick == -1)
+                if (roomStartTick == -1)
                 {
                     startNylo();
                 }
@@ -282,7 +281,7 @@ public class NyloHandler extends TOBRoomHandler
             case NYLO_PILLAR:
             case NYLO_PILLAR_HM:
             case NYLO_PILLAR_SM:
-                clog.addLine(NYLO_PILLAR_DESPAWNED, String.valueOf(client.getTickCount() - pillarsSpawnedTick));
+                clog.addLine(NYLO_PILLAR_DESPAWNED, String.valueOf(client.getTickCount() - roomStartTick));
                 break;
             case NYLO_BOSS_MELEE:
             case NYLO_BOSS_RANGE:
@@ -361,20 +360,20 @@ public class NyloHandler extends TOBRoomHandler
             case NYLO_BOSS_MELEE:
             case NYLO_BOSS_MELEE_HM:
             case NYLO_BOSS_MELEE_SM:
-                clog.addLine(MELEE_PHASE, String.valueOf(client.getTickCount() - pillarsSpawnedTick));
-                plugin.addDelayedLine(TOBRoom.NYLOCAS, client.getTickCount() - pillarsSpawnedTick, "Phase");
+                clog.addLine(MELEE_PHASE, String.valueOf(client.getTickCount() - roomStartTick));
+                plugin.addDelayedLine(TOBRoom.NYLOCAS, client.getTickCount() - roomStartTick, "Phase");
                 break;
             case NYLO_BOSS_MAGE:
             case NYLO_BOSS_MAGE_HM:
             case NYLO_BOSS_MAGE_SM:
-                clog.addLine(MAGE_PHASE, String.valueOf(client.getTickCount() - pillarsSpawnedTick));
-                plugin.addDelayedLine(TOBRoom.NYLOCAS, client.getTickCount() - pillarsSpawnedTick, "Phase");
+                clog.addLine(MAGE_PHASE, String.valueOf(client.getTickCount() - roomStartTick));
+                plugin.addDelayedLine(TOBRoom.NYLOCAS, client.getTickCount() - roomStartTick, "Phase");
                 break;
             case NYLO_BOSS_RANGE:
             case NYLO_BOSS_RANGE_HM:
             case NYLO_BOSS_RANGE_SM:
-                clog.addLine(RANGE_PHASE, String.valueOf(client.getTickCount() - pillarsSpawnedTick));
-                plugin.addDelayedLine(TOBRoom.NYLOCAS, client.getTickCount() - pillarsSpawnedTick, "Phase");
+                clog.addLine(RANGE_PHASE, String.valueOf(client.getTickCount() - roomStartTick));
+                plugin.addDelayedLine(TOBRoom.NYLOCAS, client.getTickCount() - roomStartTick, "Phase");
                 break;
         }
     }
@@ -390,23 +389,23 @@ public class NyloHandler extends TOBRoomHandler
         }
         clog.addLine(NYLO_PILLAR_SPAWN);
         roomState = WAVES;
-        pillarsSpawnedTick = client.getTickCount();
+        roomStartTick = client.getTickCount();
         roomStartTick = client.getTickCount();
     }
 
     private void wave1Spawn()
     {
         instanceReference = client.getTickCount();
-        entryTickOffset = (instanceReference - pillarsSpawnedTick - 4);
+        entryTickOffset = (instanceReference - roomStartTick - 4);
     }
 
     private void wave31Spawn()
     {
-        clog.addLine(LAST_WAVE, String.valueOf(client.getTickCount() - pillarsSpawnedTick));
+        clog.addLine(LAST_WAVE, String.valueOf(client.getTickCount() - roomStartTick));
         roomState = CLEANUP;
-        int stalls = (client.getTickCount() - pillarsSpawnedTick - entryTickOffset - 236) / 4;
+        int stalls = (client.getTickCount() - roomStartTick - entryTickOffset - 236) / 4;
         wave31 = client.getTickCount();
-        sendTimeMessage("Wave 'Nylocas last wave' complete! Duration: ", wave31 - pillarsSpawnedTick, " Stalls: ", stalls);
+        sendTimeMessage("Wave 'Nylocas last wave' complete! Duration: ", wave31 - roomStartTick, " Stalls: ", stalls);
     }
 
     private void cleanupOver()
@@ -414,17 +413,17 @@ public class NyloHandler extends TOBRoomHandler
         roomState = WAITING_FOR_BOSS;
         lastDead = client.getTickCount();
         clog.addLine(ACCURATE_NYLO_END);
-        clog.addLine(LAST_DEAD, String.valueOf(lastDead - pillarsSpawnedTick));
-        sendTimeMessage("Wave 'Nylocas waves and cleanup' complete! Duration: ", lastDead - pillarsSpawnedTick, lastDead - wave31);
+        clog.addLine(LAST_DEAD, String.valueOf(lastDead - roomStartTick));
+        sendTimeMessage("Wave 'Nylocas waves and cleanup' complete! Duration: ", lastDead - roomStartTick, lastDead - wave31);
     }
 
     private void bossSpawned()
     {
-        clog.addLine(BOSS_SPAWN, String.valueOf(client.getTickCount() - pillarsSpawnedTick));
+        clog.addLine(BOSS_SPAWN, String.valueOf(client.getTickCount() - roomStartTick));
         roomState = BOSS;
         bossSpawn = client.getTickCount() - 2;
-        plugin.addDelayedLine(TOBRoom.NYLOCAS, client.getTickCount() - pillarsSpawnedTick - 2, "W" + currentWave);
-        sendTimeMessage("Wave 'Nylocas boss spawn' complete! Duration: ", bossSpawn - pillarsSpawnedTick, bossSpawn - lastDead);
+        plugin.addDelayedLine(TOBRoom.NYLOCAS, client.getTickCount() - roomStartTick - 2, "W" + currentWave);
+        sendTimeMessage("Wave 'Nylocas boss spawn' complete! Duration: ", bossSpawn - roomStartTick, bossSpawn - lastDead);
     }
 
     private void bossKilled()
@@ -436,8 +435,8 @@ public class NyloHandler extends TOBRoomHandler
         {
             offset1 = 0;
         }
-        plugin.liveFrame.setRoomFinished(getName(), deathTick - pillarsSpawnedTick + offset1);
-        sendTimeMessage("Wave 'Nylocas boss' complete! Duration: ", deathTick - pillarsSpawnedTick + offset1, deathTick + offset1 - bossSpawn, false);
-        clog.addLine(NYLO_DESPAWNED, String.valueOf(deathTick - pillarsSpawnedTick + offset1));
+        plugin.liveFrame.setRoomFinished(getName(), deathTick - roomStartTick + offset1);
+        sendTimeMessage("Wave 'Nylocas boss' complete! Duration: ", deathTick - roomStartTick + offset1, deathTick + offset1 - bossSpawn, false);
+        clog.addLine(NYLO_DESPAWNED, String.valueOf(deathTick - roomStartTick + offset1));
     }
 }

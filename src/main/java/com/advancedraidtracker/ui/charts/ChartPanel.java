@@ -288,7 +288,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
     public Rectangle getViewRect()
     {
-        return new Rectangle(0, (boxCount > 0) ? (boxCount - 1) * boxHeight : 0, boxWidth, boxHeight);
+        return new Rectangle(0, (boxCount > 0) ? (boxCount - 1) * boxHeight + 10 + scale : 0, boxWidth, boxHeight);
     }
 
     public void incrementTick()

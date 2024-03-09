@@ -157,6 +157,62 @@ public class RoomUtil
         return false;
     }
 
+    public static boolean crossedLineNew(int region, Point start, Point end, boolean vertical, Client client)
+    {
+        if (inRegion(client, region))
+        {
+            for (Player p : client.getPlayers())
+            {
+                WorldPoint wp = p.getWorldLocation();
+                int x = wp.getRegionX();
+                int y = wp.getRegionY();
+                if(vertical)
+                {
+                    if(x == start.getX() && y >= start.getY() && y <= end.getY())
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+                    if(y == start.getY() && x >= start.getX() && x <= end.getX())
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    public static boolean playerPastLine(int region, int regionXY, boolean vertical, Client client)
+    {
+        if(inRegion(client, region))
+        {
+            for(Player p : client.getPlayers())
+            {
+                WorldPoint wp = p.getWorldLocation();
+                int x = wp.getRegionX();
+                int y = wp.getRegionY();
+                if(vertical)
+                {
+                    if(x > regionXY)
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+                    if(y > regionXY)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     public static boolean inRegion(Client client, Room... rooms)
     {
         for (Room room : rooms)

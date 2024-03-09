@@ -8,6 +8,9 @@ import com.advancedraidtracker.utility.RoomUtil;
 import com.advancedraidtracker.utility.datautility.DataWriter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
+import net.runelite.api.GameObject;
+import net.runelite.api.Tile;
+import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.*;
 
 import static com.advancedraidtracker.constants.ToaIDs.SCABARAS_GATE_OBJECT;
@@ -26,14 +29,13 @@ public class ScabarasHandler extends TOARoomHandler
     }
 
     @Override
-    public void updateGameObjectSpawned(GameObjectSpawned event)
+    public void updateChatMessage(ChatMessage message)
     {
-        if (event.getGameObject().getId() == SCABARAS_GATE_OBJECT && roomStartTick == -1)
+        if(active && message.getSender().equals("null") && message.getMessage().startsWith("Challenge complete: Path of Scabaras."))
         {
-
+            endScabaras();
         }
     }
-
     @Override
     public void updateGameTick(GameTick event)
     {
@@ -56,18 +58,9 @@ public class ScabarasHandler extends TOARoomHandler
     public void endScabaras()
     {
         active = false;
-        int scabarasDuration = client.getTickCount() - roomStartTick + 1;
+        int scabarasDuration = client.getTickCount() - roomStartTick;
         sendTimeMessage("Scabaras Puzzle time: ", scabarasDuration);
         clog.addLine(LogID.TOA_SCABARAS_FINISHED, scabarasDuration);
         plugin.liveFrame.setRoomFinished(getName(), scabarasDuration);
-    }
-
-    @Override
-    public void updateGameObjectDespawned(GameObjectDespawned event)
-    {
-        if (event.getGameObject().getId() == SCABARAS_GATE_OBJECT && event.getGameObject().getWorldLocation().getRegionX() == 55 && active && client.getTickCount() - roomStartTick > 20)
-        {
-            endScabaras();
-        }
     }
 }

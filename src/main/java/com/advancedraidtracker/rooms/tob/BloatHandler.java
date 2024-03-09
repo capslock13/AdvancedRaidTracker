@@ -26,7 +26,6 @@ public class BloatHandler extends TOBRoomHandler
 
     private final ArrayList<Integer> walks = new ArrayList<>();
     private final ArrayList<Integer> downs = new ArrayList<>();
-    private int bloatStartTick = -1;
     private int bloatDeferTick = -1;
     private int bloatDeathTick = -1;
     private final AdvancedRaidTrackerPlugin plugin;
@@ -53,7 +52,7 @@ public class BloatHandler extends TOBRoomHandler
         roomState = NOT_STARTED;
         bloatDeferTick = -1;
         accurateEntry = true;
-        bloatStartTick = -1;
+        roomStartTick = -1;
         bloatDeathTick = -1;
         walks.clear();
         downs.clear();
@@ -64,12 +63,12 @@ public class BloatHandler extends TOBRoomHandler
     {
         roomState = FINISHED;
         bloatDeathTick = client.getTickCount() + BLOAT_DEATH_ANIMATION_LENGTH;
-        plugin.addDelayedLine(TOBRoom.BLOAT, client.getTickCount() - bloatStartTick, "Dead");
+        plugin.addDelayedLine(TOBRoom.BLOAT, client.getTickCount() - roomStartTick, "Dead");
         clog.addLine(ACCURATE_BLOAT_END);
-        plugin.liveFrame.setRoomFinished(getName(), bloatDeathTick - bloatStartTick);
-        if (bloatStartTick != -1)
+        plugin.liveFrame.setRoomFinished(getName(), bloatDeathTick - roomStartTick);
+        if (roomStartTick != -1)
         {
-            sendTimeMessage("Wave 'Bloat last down' complete! Duration: ", splitLastDown(), " Room time: ", bloatDeathTick - bloatStartTick, true);
+            sendTimeMessage("Wave 'Bloat last down' complete! Duration: ", splitLastDown(), " Room time: ", bloatDeathTick - roomStartTick, true);
         }
     }
 
@@ -95,7 +94,6 @@ public class BloatHandler extends TOBRoomHandler
 
     public void start()
     {
-        bloatStartTick = client.getTickCount();
         roomStartTick = client.getTickCount();
         clog.addLine(BLOAT_STARTED, client.getTickCount());
         roomState = WALKING;
@@ -116,7 +114,7 @@ public class BloatHandler extends TOBRoomHandler
     {
         if (!downs.isEmpty())
         {
-            return downs.get(downs.size() - 1) - bloatStartTick;
+            return downs.get(downs.size() - 1) - roomStartTick;
         } else
         {
             return -1;
@@ -127,7 +125,7 @@ public class BloatHandler extends TOBRoomHandler
 
     public void down()
     {
-        clog.addLine(BLOAT_DOWN, String.valueOf(client.getTickCount() - bloatStartTick));
+        clog.addLine(BLOAT_DOWN, String.valueOf(client.getTickCount() - roomStartTick));
         if (downs.isEmpty())
         {
             int currentBloatHP = client.getVarbitValue(HP_VARBIT);
@@ -135,18 +133,18 @@ public class BloatHandler extends TOBRoomHandler
         }
         downs.add(client.getTickCount());
         roomState = DOWN;
-        if (bloatStartTick != -1)
+        if (roomStartTick != -1)
         {
             deferHP = client.getVarbitValue(HP_VARBIT) / 10.0;
             bloatDeferTick = client.getTickCount() + 5; //delay so that the chat message can't be used to know immediately know when bloat has gone down
         }
-        plugin.addDelayedLine(TOBRoom.BLOAT, client.getTickCount() - bloatStartTick, "Down");
+        plugin.addDelayedLine(TOBRoom.BLOAT, client.getTickCount() - roomStartTick, "Down");
     }
 
     public void walk()
     {
         walks.add(client.getTickCount());
-        plugin.addDelayedLine(TOBRoom.BLOAT, client.getTickCount() - bloatStartTick, "Moving");
+        plugin.addDelayedLine(TOBRoom.BLOAT, client.getTickCount() - roomStartTick, "Moving");
         roomState = WALKING;
     }
 
@@ -157,7 +155,7 @@ public class BloatHandler extends TOBRoomHandler
             sendTimeMessage("Wave 'Bloat walk' complete! Duration: ", getLastWalk(), getLastDownTime(), true, ", HP: " + deferHP + "%");
             bloatDeferTick = -1;
         }
-        if (bloatStartTick == -1)
+        if (roomStartTick == -1)
         { //room time starts when player enters either gate in the bloat region
             if (RoomUtil.crossedLine(BLOAT_REGION, new Point(39, 30), new Point(39, 33), true, client)
                     || RoomUtil.crossedLine(BLOAT_REGION, new Point(24, 30), new Point(24, 33), true, client))
@@ -194,7 +192,7 @@ public class BloatHandler extends TOBRoomHandler
             if (event.getActor() instanceof Player)
             {
                 Player p = (Player) event.getActor();
-                clog.addLine(BLOAT_SCYTHE_1ST_WALK, p.getName(), String.valueOf(client.getTickCount() - bloatStartTick));
+                clog.addLine(BLOAT_SCYTHE_1ST_WALK, p.getName(), String.valueOf(client.getTickCount() - roomStartTick));
             }
         }
     }
@@ -229,7 +227,7 @@ public class BloatHandler extends TOBRoomHandler
         int id = event.getNpc().getId();
         if (id == BLOAT || id == BLOAT_HM || id == BLOAT_SM)
         {
-            clog.addLine(BLOAT_DESPAWN, String.valueOf(client.getTickCount() - bloatStartTick));
+            clog.addLine(BLOAT_DESPAWN, String.valueOf(client.getTickCount() - roomStartTick));
         }
     }
 

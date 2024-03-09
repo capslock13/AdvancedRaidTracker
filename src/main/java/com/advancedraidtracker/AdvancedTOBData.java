@@ -115,7 +115,6 @@ public class AdvancedTOBData extends AdvancedRaidDataBase
                         break loop;
                     case PLAYER_ATTACK:
                         attackData.get("Maiden").add(getPlayerDidAttack(subData, itemManager));
-                        log.info("Attack data size is now: " + attackData.get("Maiden").size());
                         break;
                     case UPDATE_HP:
                         hpData.get("Maiden").put(Integer.parseInt(subData[5]), Integer.parseInt(subData[4]));

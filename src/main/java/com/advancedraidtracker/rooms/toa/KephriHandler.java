@@ -117,7 +117,7 @@ public class KephriHandler extends TOARoomHandler
     @Override
     public void updateAnimationChanged(AnimationChanged event)
     {
-        if (event.getActor().getName().contains("Kephri") && event.getActor().getAnimation() == 9578)
+        if (event.getActor().getName() != null && event.getActor().getName().contains("Kephri") && event.getActor().getAnimation() == 9578)
         {
             clog.addLine(LogID.TOA_KEPHRI_DUNG_THROWN, client.getTickCount() - roomStartTick);
             log.info("thrown dung");

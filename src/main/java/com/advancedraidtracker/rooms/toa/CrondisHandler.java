@@ -57,8 +57,7 @@ public class CrondisHandler extends TOARoomHandler
     @Override
     public void updateHitsplatApplied(HitsplatApplied hitsplatApplied)
     {
-        log.info(hitsplatApplied.getHitsplat().getAmount() + ", " + hitsplatApplied.getHitsplat().getHitsplatType());
-        if (hitsplatApplied.getActor().getName().contains("Palm"))
+        if (hitsplatApplied.getActor().getName() != null && hitsplatApplied.getActor().getName().contains("Palm"))
         {
             if (hitsplatApplied.getHitsplat().getHitsplatType() == 11)
             {

@@ -301,6 +301,7 @@ public class AdvancedRaidTrackerPlugin extends Plugin
             case MAIDEN:
                 if (previous != maiden)
                 {
+                    clog.setRaidType(RaidType.TOB);
                     currentRoom = maiden;
                     enteredMaiden();
                     liveFrame.resetAll();
@@ -1374,7 +1375,7 @@ public class AdvancedRaidTrackerPlugin extends Plugin
     {
         int interactedIndex = -1;
         int interactedID = -1;
-        String targetName = interacted.getName();
+        String targetName = "";
 
         if (interacted instanceof NPC)
         {

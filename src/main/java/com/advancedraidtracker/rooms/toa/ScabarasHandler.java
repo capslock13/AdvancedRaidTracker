@@ -31,7 +31,7 @@ public class ScabarasHandler extends TOARoomHandler
     @Override
     public void updateChatMessage(ChatMessage message)
     {
-        if(active && message.getSender().equals("null") && message.getMessage().startsWith("Challenge complete: Path of Scabaras."))
+        if(active && message.getSender() == null && message.getMessage().startsWith("Challenge complete: Path of Scabaras."))
         {
             endScabaras();
         }

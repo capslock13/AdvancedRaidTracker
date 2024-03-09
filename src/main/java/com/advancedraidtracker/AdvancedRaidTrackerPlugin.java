@@ -1386,7 +1386,10 @@ public class AdvancedRaidTrackerPlugin extends Plugin
         int interactedIndex = -1;
         int interactedID = -1;
         String targetName = "";
-
+        if(interacted != null && interacted.getName() != null)
+        {
+            targetName = interacted.getName();
+        }
         if (interacted instanceof NPC)
         {
             NPC npc = (NPC) interacted;

@@ -1,5 +1,6 @@
 package com.advancedraidtracker.utility.datautility.datapoints.tob;
 
+import com.advancedraidtracker.constants.LogID;
 import com.advancedraidtracker.utility.datautility.datapoints.LogEntry;
 import com.advancedraidtracker.utility.datautility.datapoints.Raid;
 import com.advancedraidtracker.utility.datautility.datapoints.RoomDataManager;
@@ -71,16 +72,9 @@ public class Tob extends Raid
 
             }
 
-            switch (entry.getLogEntry())
+            if (didRoomStart(entry.getLogEntry()))
             {
-                case MAIDEN_SPAWNED:
-                    // TODO bloat
-                case NYLO_PILLAR_SPAWN:
-                case SOTETSEG_STARTED:
-                case XARPUS_SPAWNED:
-                case VERZIK_P1_START:
-                    roomData = new ArrayList<>();
-                    break;
+                roomData = new ArrayList<>();
             }
 
             if (roomData != null)
@@ -113,6 +107,21 @@ public class Tob extends Raid
             }
 
         }
+    }
+
+    /**
+     * Checks whether a room has started.
+     * @param entry Log entry to compare
+     * @return true if it has begun, false if not.
+     */
+    private boolean didRoomStart(LogID entry)
+    {
+        // TODO sote
+        return  entry == LogID.MAIDEN_SPAWNED ||
+                entry == LogID.NYLO_PILLAR_SPAWN ||
+                entry == LogID.XARPUS_SPAWNED ||
+                entry == LogID.SOTETSEG_STARTED ||
+                entry == LogID.VERZIK_P1_START;
     }
 
     @Override

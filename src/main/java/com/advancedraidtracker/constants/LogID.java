@@ -147,6 +147,7 @@ public enum LogID
     UNKNOWN(-1, false, ANY_TOB, "Unknown"),
 
     ENTERED_TOA(1000, true, ANY_TOB, "Entered TOA"),
+    @Deprecated
     TOA_PARTY_MEMBERS(1001, true, ANY_TOB, "Party Members", "Player1", "Player2", "Player3", "Player4", "Player5", "Player6", "Player7", "Player8"),
     LEFT_TOA(1004, true, ANY_TOB, "Left TOA", "Room Tick", "Last Room"),
     ENTERED_NEW_TOA_REGION(1006, true, ANY_TOB, "Entered New TOA Region", "Region"),

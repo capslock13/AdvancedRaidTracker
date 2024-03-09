@@ -113,7 +113,9 @@ public abstract class Raid
             {
                 case PARTY_MEMBERS:
                     // TODO: may need changing with toa/cox support
-                    players.addAll(Stream.of(entry.getExtra()).filter(name -> !name.isEmpty()).collect(Collectors.toList()));
+                    players.addAll(entry.getExtra().stream()
+                            .filter(name -> !name.isEmpty())
+                            .collect(Collectors.toList()));
                     break;
             }
         }

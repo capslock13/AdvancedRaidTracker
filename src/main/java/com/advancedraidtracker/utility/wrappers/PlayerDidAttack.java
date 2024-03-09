@@ -7,10 +7,7 @@ import net.runelite.api.ItemID;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.util.AsyncBufferedImage;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Slf4j
 public class PlayerDidAttack
@@ -41,22 +38,22 @@ public class PlayerDidAttack
     public PlayerDidAttack(LogEntry entry)
     {
         // TODO: make all of the "strings" into integers
-        String[] extra = entry.getExtra();
+        List<String> extra = entry.getExtra();
 
-        String[] playerDetails = extra[0].split(":");
+        String[] playerDetails = extra.get(0).split(":");
 
         this.player = playerDetails[0];
         this.tick = Integer.parseInt(playerDetails[1]);
 
-        String[] animationDetails = extra[1].split(":");
+        String[] animationDetails = extra.get(1).split(":");
         this.animation = animationDetails[0];
         if (animationDetails.length > 1)
         {
             this.wornItems = animationDetails[1];
         }
 
-        this.spotAnims = extra[2];
-        String[] weaponDetails = extra[3].split(":");
+        this.spotAnims = extra.get(2);
+        String[] weaponDetails = extra.get(3).split(":");
 
         switch (weaponDetails.length)
         {
@@ -69,7 +66,7 @@ public class PlayerDidAttack
                 break;
         }
 
-        String[] projectileDetails = extra[4].split(":");
+        String[] projectileDetails = extra.get(4).split(":");
         if (projectileDetails.length == 2)
         {
             this.targetName = projectileDetails[1];

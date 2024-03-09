@@ -5,7 +5,7 @@ import java.util.List;
 
 public class WeaponDecider
 {
-    public static WeaponAttack getWeapon(String animationS, String graphics, String projectileS, int weaponS)
+    public static WeaponAttack getWeapon(String animationS, String graphics, String projectileS, int weapon)
     { //todo redo all of this ** magic numbers will be fixed then too
         WeaponAttack weaponUsed = WeaponAttack.UNDECIDED;
         List<String> spotAnims = Arrays.asList(graphics.split(":"));

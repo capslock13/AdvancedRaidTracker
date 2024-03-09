@@ -1,27 +1,35 @@
 package com.advancedraidtracker.utility.datautility;
 
+import com.advancedraidtracker.constants.RaidType;
 import com.advancedraidtracker.utility.wrappers.PlayerCorrelatedPointData;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.ArrayList;
+
 @Slf4j
 public class DataManager
 {
 
     private final DataPointIntWrapper[] data;
     private final DataPointPlayerData[] playerSpecificData;
+    public final RaidType raidType;
 
 
-    public DataManager()
+    public DataManager(RaidType raidType)
     {
-        data = new DataPointIntWrapper[DataPoint.values().length];
-        for (int i = 0; i < DataPoint.values().length; i++)
+        this.raidType = raidType;
+        ArrayList<DataPoint> dataPoints = (raidType.equals(RaidType.TOB)) ? DataPoint.getTOBValues() : DataPoint.getTOAValues();
+        data = new DataPointIntWrapper[dataPoints.size()];
+        for (int i = 0; i < dataPoints.size(); i++)
         {
-            data[i] = new DataPointIntWrapper(DataPoint.values()[i]);
+            data[i] = new DataPointIntWrapper(dataPoints.get(i));
         }
 
-        playerSpecificData = new DataPointPlayerData[DataPoint.getPlayerSpecific().length];
-        for (int i = 0; i < DataPoint.getPlayerSpecific().length; i++)
+        String[] playerSpecificRaidSpecific = DataPoint.getPlayerSpecific(raidType);
+        playerSpecificData = new DataPointPlayerData[playerSpecificRaidSpecific.length];
+        for (int i = 0; i < playerSpecificRaidSpecific.length; i++)
         {
-            playerSpecificData[i] = new DataPointPlayerData(DataPoint.getValue(DataPoint.getPlayerSpecific()[i]));
+            playerSpecificData[i] = new DataPointPlayerData(DataPoint.getValue(playerSpecificRaidSpecific[i]));
         }
     }
 
@@ -44,7 +52,7 @@ public class DataManager
     int getPlayerSpecificIndex(DataPoint point)
     {
         int index = 0;
-        for (String datapoint : DataPoint.getPlayerSpecific())
+        for (String datapoint : DataPoint.getPlayerSpecific(raidType))
         {
             if (datapoint.equalsIgnoreCase(point.name))
             {
@@ -65,47 +73,90 @@ public class DataManager
         playerSpecificData[getPlayerSpecificIndex(dataPoint)].increment(player, valueAdded);
     }
 
-    public void set(DataPoint point, int value)
+    public void set(DataPoint point, int value) //todo revisit these, map(?)
     {
-        data[point.ordinal()].setValue(value);
+        for (DataPointIntWrapper pointWrapper : data)
+        {
+            if (pointWrapper.dataPoint.equals(point))
+            {
+                pointWrapper.setValue(value);
+            }
+        }
     }
 
     public int get(DataPoint point)
     {
-        if(point == null)
+        if (point == null)
         {
             return -1;
         }
-        return data[point.ordinal()].value;
+        for (DataPointIntWrapper pointWrapper : data)
+        {
+            if (pointWrapper.dataPoint.equals(point))
+            {
+                return pointWrapper.value;
+            }
+        }
+        return -1;
     }
 
     public int get(String point)
     {
-        DataPoint dataPoint = DataPoint.getValue(point);
-        if (dataPoint != null)
-        {
-            return data[dataPoint.ordinal()].value;
-        }
-        return 0;
+        return get(DataPoint.getValue(point));
     }
 
-    public void increment(DataPoint point, int valueAdded)
+    public void increment(DataPoint point, int valueAdded) //todo also revisit etc etc
     {
-        data[point.ordinal()].increment(valueAdded);
+        for (DataPointIntWrapper pointWrapper : data)
+        {
+            if (pointWrapper.dataPoint.equals(point))
+            {
+                pointWrapper.increment(valueAdded);
+            }
+        }
     }
 
     public void increment(DataPoint point)
     {
-        data[point.ordinal()].increment();
+        for (DataPointIntWrapper pointWrapper : data)
+        {
+            if (pointWrapper.dataPoint.equals(point))
+            {
+                pointWrapper.increment();
+            }
+        }
+    }
+
+    public void decrement(DataPoint point)
+    {
+        for (DataPointIntWrapper pointWrapper : data)
+        {
+            if (pointWrapper.dataPoint.equals(point))
+            {
+                pointWrapper.decrement();
+            }
+        }
     }
 
     public void hammer(DataPoint point)
     {
-        data[point.ordinal()].setValue((int) (data[point.ordinal()].value * 0.7));
+        for (DataPointIntWrapper pointWrapper : data)
+        {
+            if (pointWrapper.dataPoint.equals(point))
+            {
+                pointWrapper.setValue((int) (data[point.ordinal()].value * 0.7));
+            }
+        }
     }
 
     public void bgs(DataPoint point, int damage)
     {
-        data[point.ordinal()].setValue(Math.max(0, data[point.ordinal()].value - damage));
+        for (DataPointIntWrapper pointWrapper : data)
+        {
+            if (pointWrapper.dataPoint.equals(point))
+            {
+                pointWrapper.setValue(Math.max(0, data[point.ordinal()].value - damage));
+            }
+        }
     }
 }

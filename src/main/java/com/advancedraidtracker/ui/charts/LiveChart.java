@@ -6,91 +6,108 @@ import com.advancedraidtracker.utility.wrappers.PlayerDidAttack;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
+import net.runelite.client.game.ItemManager;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @Slf4j
 public class LiveChart extends BaseFrame
 {
-    ChartPanel maidenPanel;
-    ChartPanel bloatPanel;
-    ChartPanel nyloPanel;
-    ChartPanel sotetsegPanel;
-    ChartPanel xarpPanel;
-    ChartPanel verzPanel;
-    JScrollPane maidenScroll;
-    JScrollPane bloatScroll;
-    JScrollPane nyloScroll;
-    JScrollPane sotetsegScroll;
-    JScrollPane xarpusScroll;
-    JScrollPane verzikScroll;
     public JTabbedPane tabbedPane;
 
     private final AdvancedRaidTrackerConfig config;
+    private final ItemManager itemManager;
     private final ClientThread clientThread;
     private final ConfigManager configManager;
+    String[] tob = {"Maiden", "Bloat", "Nylocas", "Sotetseg", "Xarpus", "Verzik"};
+    String[] toa = {"Apmeken", "Baba", "Scabaras", "Kephri", "Crondis", "Zebak", "Het", "Akkha", "Wardens"};
+    Map<String, ChartPanel> toaPanels;
+    Map<String, ChartPanel> tobPanels;
+    Map<String, JScrollPane> toaScrollPanes;
+    Map<String, JScrollPane> tobScrollPanes;
 
-    public LiveChart(AdvancedRaidTrackerConfig config, ClientThread clientThread, ConfigManager configManager)
+    public LiveChart(AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
     {
         this.configManager = configManager;
         this.clientThread = clientThread;
         this.config = config;
-        maidenPanel = new ChartPanel("Maiden", true, config, clientThread, configManager);
-        bloatPanel = new ChartPanel("Bloat", true, config, clientThread, configManager);
-        nyloPanel = new ChartPanel("Nylocas", true, config, clientThread, configManager);
-        sotetsegPanel = new ChartPanel("Sotetseg", true, config, clientThread, configManager);
-        xarpPanel = new ChartPanel("Xarpus", true, config, clientThread, configManager);
-        verzPanel = new ChartPanel("Verzik", true, config, clientThread,  configManager);
+        this.itemManager = itemManager;
 
-        maidenScroll = new JScrollPane(maidenPanel);
-        bloatScroll = new JScrollPane(bloatPanel);
-        nyloScroll = new JScrollPane(nyloPanel);
-        sotetsegScroll = new JScrollPane(sotetsegPanel);
-        xarpusScroll = new JScrollPane(xarpPanel);
-        verzikScroll = new JScrollPane(verzPanel);
+        toaPanels = new LinkedHashMap<>();
+        tobPanels = new LinkedHashMap<>();
+        toaScrollPanes = new LinkedHashMap<>();
+        tobScrollPanes = new LinkedHashMap<>();
 
+        for (String name : tob)
+        {
+            ChartPanel chartPanel = new ChartPanel(name, true, config, clientThread, configManager, itemManager);
+            tobPanels.put(name, chartPanel);
+            tobScrollPanes.put(name, new JScrollPane(chartPanel));
+        }
+
+        for (String name : toa)
+        {
+            ChartPanel chartPanel = new ChartPanel(name, true, config, clientThread, configManager, itemManager);
+            toaPanels.put(name, chartPanel);
+            toaScrollPanes.put(name, new JScrollPane(chartPanel));
+        }
 
         tabbedPane = new JTabbedPane();
-        tabbedPane.addChangeListener(cl->
+        tabbedPane.addChangeListener(cl ->
         {
-            maidenPanel.redraw();
-            bloatPanel.redraw();
-            nyloPanel.redraw();
-            sotetsegPanel.redraw();
-            xarpPanel.redraw();
-            verzPanel.redraw();
+            for (String name : tobPanels.keySet())
+            {
+                tobPanels.get(name).redraw();
+            }
+            for (String name : toaPanels.keySet())
+            {
+                toaPanels.get(name).redraw();
+            }
         });
-        tabbedPane.add("Maiden", maidenScroll);
-        tabbedPane.add("Bloat", bloatScroll);
-        tabbedPane.add("Nylocas", nyloScroll);
-        tabbedPane.add("Sotetseg", sotetsegScroll);
-        tabbedPane.add("Xarpus", xarpusScroll);
-        tabbedPane.add("Verzik", verzikScroll);
+
+        for (String name : tobScrollPanes.keySet())
+        {
+            tabbedPane.add(name, tobScrollPanes.get(name));
+        }
 
         add(tabbedPane);
         pack();
     }
 
+    public void switchToTOB()
+    {
+        tabbedPane.removeAll();
+        for (String name : tobScrollPanes.keySet())
+        {
+            tabbedPane.add(name, tobScrollPanes.get(name));
+        }
+    }
+
+    public void switchToTOA()
+    {
+        tabbedPane.removeAll();
+        for (String name : toaScrollPanes.keySet())
+        {
+            tabbedPane.add(name, toaScrollPanes.get(name));
+        }
+    }
+
     public ChartPanel getPanel(String room)
     {
-        switch (room)
+        if (tobPanels.containsKey(room))
         {
-            case "Maiden":
-                return maidenPanel;
-            case "Bloat":
-                return bloatPanel;
-            case "Nylocas":
-                return nyloPanel;
-            case "Sotetseg":
-                return sotetsegPanel;
-            case "Xarpus":
-                return xarpPanel;
-            case "Verzik":
-                return verzPanel;
+            return tobPanels.get(room);
+        } else if (toaPanels.containsKey(room))
+        {
+            return toaPanels.get(room);
+        } else
+        {
+            return new ChartPanel("", true, config, clientThread, configManager, itemManager);
         }
-        return new ChartPanel("", true, config, clientThread, configManager);
     }
 
     public void incrementTick(String room)
@@ -98,12 +115,14 @@ public class LiveChart extends BaseFrame
         getPanel(room).incrementTick();
         if (getPanel(room).endTick % 50 == 0)
         {
-            maidenScroll.getViewport().setViewPosition(new Point(maidenPanel.getViewRect().x, maidenPanel.getViewRect().y));
-            bloatScroll.getViewport().setViewPosition(new Point(bloatPanel.getViewRect().x, bloatPanel.getViewRect().y));
-            nyloScroll.getViewport().setViewPosition(new Point(nyloPanel.getViewRect().x, nyloPanel.getViewRect().y));
-            sotetsegScroll.getViewport().setViewPosition(new Point(sotetsegPanel.getViewRect().x, sotetsegPanel.getViewRect().y));
-            xarpusScroll.getViewport().setViewPosition(new Point(xarpPanel.getViewRect().x, xarpPanel.getViewRect().y));
-            verzikScroll.getViewport().setViewPosition(new Point(verzPanel.getViewRect().x, verzPanel.getViewRect().y));
+            for (String name : tobPanels.keySet())
+            {
+                tobScrollPanes.get(name).getViewport().setViewPosition(new Point(tobPanels.get(name).getViewRect().x, tobPanels.get(name).getViewRect().y));
+            }
+            for (String name : toaPanels.keySet())
+            {
+                toaScrollPanes.get(name).getViewport().setViewPosition(new Point(toaPanels.get(name).getViewRect().x, toaPanels.get(name).getViewRect().y));
+            }
         }
     }
 
@@ -112,91 +131,40 @@ public class LiveChart extends BaseFrame
         getPanel(room).addLiveAttack(attack);
     }
 
-    public void addMaidenLine(int value, String description)
+    public void addLine(String room, int value, String description)
     {
-        maidenPanel.addLine(value, description);
+        getPanel(room).addLine(value, description);
     }
 
-    public void addBloatLine(int value, String description)
+    public void setRoomFinished(String room, int tick)
     {
-        bloatPanel.addLine(value, description);
-    }
-
-    public void addNyloLine(int value, String description)
-    {
-        nyloPanel.addLine(value, description);
-    }
-
-    public void addSoteLine(int value, String description)
-    {
-        sotetsegPanel.addLine(value, description);
-    }
-
-    public void addXarpLine(int value, String description)
-    {
-        xarpPanel.addLine(value, description);
-    }
-
-    public void addVerzikLine(int value, String description)
-    {
-        verzPanel.addLine(value, description);
-    }
-
-    public void setMaidenFinished(int tick)
-    {
-        maidenPanel.setRoomFinished(tick);
-    }
-
-    public void setBloatFinished(int tick)
-    {
-        bloatPanel.setRoomFinished(tick);
-    }
-
-    public void setNyloFinished(int tick)
-    {
-        nyloPanel.setRoomFinished(tick);
-    }
-
-    public void setSoteFinished(int tick)
-    {
-        sotetsegPanel.setRoomFinished(tick);
-    }
-
-    public void setXarpFinished(int tick)
-    {
-        xarpPanel.setRoomFinished(tick);
-    }
-
-    public void setVerzFinished(int tick)
-    {
-        verzPanel.setRoomFinished(tick);
+        getPanel(room).setRoomFinished(tick);
     }
 
     public void resetAll()
     {
-        maidenPanel.resetGraph();
-        bloatPanel.resetGraph();
-        nyloPanel.resetGraph();
-        sotetsegPanel.resetGraph();
-        xarpPanel.resetGraph();
-        verzPanel.resetGraph();
-
-        maidenScroll.getVerticalScrollBar().setValue(0);
-        bloatScroll.getVerticalScrollBar().setValue(0);
-        nyloScroll.getVerticalScrollBar().setValue(0);
-        sotetsegScroll.getVerticalScrollBar().setValue(0);
-        xarpusScroll.getVerticalScrollBar().setValue(0);
-        verzikScroll.getVerticalScrollBar().setValue(0);
+        for (String name : tobPanels.keySet())
+        {
+            tobScrollPanes.get(name).getVerticalScrollBar().setValue(0);
+            tobPanels.get(name).resetGraph();
+        }
+        for (String name : toaPanels.keySet())
+        {
+            toaScrollPanes.get(name).getVerticalScrollBar().setValue(0);
+            toaPanels.get(name).resetGraph();
+        }
     }
 
     public void redrawAll()
     {
-        maidenPanel.redraw();
-        bloatPanel.redraw();
-        nyloPanel.redraw();
-        sotetsegPanel.redraw();
-        xarpPanel.redraw();
-        verzPanel.redraw();
+        for (String name : tobPanels.keySet())
+        {
+            tobPanels.get(name).redraw();
+        }
+        for (String name : toaPanels.keySet())
+        {
+            toaPanels.get(name).redraw();
+        }
     }
 
     public void setPlayers(ArrayList<String> players)
@@ -206,11 +174,14 @@ public class LiveChart extends BaseFrame
         {
             cleanedPlayers.add(s.replaceAll(String.valueOf((char) 160), String.valueOf((char) 32)));
         }
-        maidenPanel.setPlayers(cleanedPlayers);
-        bloatPanel.setPlayers(cleanedPlayers);
-        nyloPanel.setPlayers(cleanedPlayers);
-        sotetsegPanel.setPlayers(cleanedPlayers);
-        xarpPanel.setPlayers(cleanedPlayers);
-        verzPanel.setPlayers(cleanedPlayers);
+        for (String name : tobPanels.keySet())
+        {
+            tobPanels.get(name).setPlayers(cleanedPlayers);
+        }
+        for (String name : toaPanels.keySet())
+        {
+            toaPanels.get(name).setPlayers(cleanedPlayers);
+        }
+
     }
 }

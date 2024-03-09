@@ -397,12 +397,9 @@ public class SimpleTOBData extends SimpleRaidDataBase
                 {
                     endTime = new Date(Long.parseLong(subData[1]));
                 }
-            } catch (Exception e)
+            } catch (Exception ignored)
             {
 
-            }
-            catch (Exception e)
-            {
             }
         }
         if (room > 0)

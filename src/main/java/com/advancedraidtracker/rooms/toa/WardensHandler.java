@@ -44,6 +44,10 @@ public class WardensHandler extends TOARoomHandler
     @Override
     public void handleNPCChanged(int changed)
     {
+        if(roomState == ENRAGED)
+        {
+            log.info("NPC changed: " + changed);
+        }
         if (roomState == RoomState.WardenRoomState.NOT_STARTED && changed == 11751)
         {
             roomState = RoomState.WardenRoomState.PHASE_1;
@@ -84,12 +88,19 @@ public class WardensHandler extends TOARoomHandler
     @Override
     public void updateNpcSpawned(NpcSpawned event)
     {
-
+        if(roomState == ENRAGED)
+        {
+            log.info("NPC Spawned: " + event.getNpc().getName() + ", ID: " + event.getNpc().getId());
+        }
     }
 
     @Override
     public void updateNpcDespawned(NpcDespawned event)
     {
+        if(roomState == ENRAGED)
+        {
+            log.info("NPC Despawned: " + event.getNpc().getName() + ", ID: " + event.getNpc().getId());
+        }
         if (roomState == ENRAGED && event.getNpc().getId() == 11761) //todo investigate
         {
             sendTimeMessage("Wardens Duration: ", client.getTickCount() - roomStartTick, client.getTickCount() - enraged);

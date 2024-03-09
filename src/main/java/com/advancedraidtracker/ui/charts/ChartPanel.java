@@ -13,6 +13,7 @@ import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.ui.FontManager;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -23,10 +24,9 @@ import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.io.IOException;
+import java.util.*;
+import java.util.List;
 
 @Slf4j
 public class ChartPanel extends JPanel implements MouseListener, MouseMotionListener
@@ -73,7 +73,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     Map<String, Integer> playerOffsets = new LinkedHashMap<>();
     private final Map<PlayerDidAttack, String> actions = new HashMap<>();
 
-    private final ConfigManager configManager;
+    private ConfigManager configManager;
     private ItemManager itemManager;
 
     public void enableWrap()
@@ -107,6 +107,11 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     public void addRoomHP(int tick, int hp)
     {
         roomHP.put(tick, hp);
+    }
+
+    public void addAuto(int autoTick)
+    {
+        autos.add(autoTick);
     }
 
     public void addAutos(ArrayList<Integer> autos)
@@ -405,6 +410,28 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         return gv.getPixelBounds(null, 0, 0).width;
     }
 
+    private void drawKey(Graphics2D g)
+    {
+        g.drawRect(boxWidth + (keyMargin / 2), keyMargin, (keyColumns * 150) - 10, (keyRows * (scale + 10)));
+        int currentColumn = 0;
+        int currentRow = 0;
+        for (int i = 0; i < keyCount; i++)
+        {
+            WeaponAttack attack = weaponAttacks[i];
+            g.setColor(attack.color);
+            g.fillRect(boxWidth + keyMargin + (currentColumn * 150) + 2, keyMargin + (currentRow * (scale + 10)) + 7, scale, scale);
+            g.setColor(Color.WHITE);
+            g.drawString(attack.shorthand, boxWidth + keyMargin + (currentColumn * 150) + 3, keyMargin + (currentRow * (scale + 10)) + scale + 2);
+            g.drawString(attack.name, boxWidth + keyMargin + (currentColumn * 150) + 33, keyMargin + (currentRow * (scale + 10)) + scale + 2);
+            currentRow++;
+            if (currentRow + 1 > keyRows)
+            {
+                currentColumn++;
+                currentRow = 0;
+            }
+        }
+    }
+
     int getYOffset(int tick)
     {
         return (shouldWrap) ? (((tick - startTick) / 50) * boxHeight) + 20 : 10;
@@ -461,7 +488,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         }
     }
 
-    public static BufferedImage getScaledImage(BufferedImage image, int width, int height)
+    public static BufferedImage getScaledImage(BufferedImage image, int width, int height) throws IOException
     {
         int imageWidth = image.getWidth();
         int imageHeight = image.getHeight();
@@ -582,8 +609,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                             g.drawImage(createDropShadow(scaled), xOffset + 3, yOffset + 3, null);
                             g.drawImage(scaled, xOffset + 2, yOffset + 1, null);
                         }
-                    }
-                    catch(Exception ignored)
+                    } catch (Exception e)
                     {
 
                     }
@@ -816,6 +842,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                 crabOffsetY = 11;
                 g.drawOval(xOffset + crabOffsetX, yOffset + crabOffsetY, 7, 7);
 
+                crabOffsetX = 9;
                 crabOffsetY = 20;
                 g.drawOval(xOffset + crabOffsetX, yOffset + crabOffsetY, 7, 7);
 
@@ -823,6 +850,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                 crabOffsetY = 11;
                 g.drawOval(xOffset + crabOffsetX, yOffset + crabOffsetY, 7, 7);
 
+                crabOffsetX = 18;
                 crabOffsetY = 20;
                 g.drawOval(xOffset + crabOffsetX, yOffset + crabOffsetY, 7, 7);
 
@@ -830,12 +858,15 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                 crabOffsetY = 2;
                 g.drawOval(xOffset + crabOffsetX, yOffset + crabOffsetY, 7, 7);
 
+                crabOffsetX = 27;
                 crabOffsetY = 20;
                 g.drawOval(xOffset + crabOffsetX, yOffset + crabOffsetY, 7, 7);
 
+                crabOffsetX = 27;
                 crabOffsetY = 11;
                 g.drawOval(xOffset + crabOffsetX, yOffset + crabOffsetY, 7, 7);
 
+                crabOffsetX = 27;
                 crabOffsetY = 29;
                 g.drawOval(xOffset + crabOffsetX, yOffset + crabOffsetY, 7, 7);
 

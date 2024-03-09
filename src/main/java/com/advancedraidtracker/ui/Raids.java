@@ -35,6 +35,8 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
 import javax.swing.text.BadLocationException;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.*;
@@ -1428,19 +1430,19 @@ public class Raids extends BaseFrame
         analyzeSessions.addActionListener(e ->
         {
             updateAliases();
-            ArrayList<SimpleTOBData> rows = new ArrayList<>();
+            ArrayList<SimpleRaidDataBase> rows = new ArrayList<>();
             int[] toRemove = table.getSelectedRows();
             for (int j : toRemove)
             {
                 rows.add(currentData.get(Integer.parseInt(table.getModel().getValueAt(j, 0).toString())));
             }
-            Map<Integer, Map<String, ArrayList<SimpleTOBData>>> sessions = new LinkedHashMap<>();
-            for (SimpleTOBData data12 : rows)
+            Map<Integer, Map<String, ArrayList<SimpleRaidDataBase>>> sessions = new LinkedHashMap<>();
+            for (SimpleRaidDataBase data12 : rows)
             {
                 if (!sessions.containsKey(data12.players.size()))
                 {
                     Map<String, ArrayList<SimpleRaidDataBase>> scale = new LinkedHashMap<>();
-                    ArrayList<SimpleTOBData> list = new ArrayList<>();
+                    ArrayList<SimpleRaidDataBase> list = new ArrayList<>();
                     list.add(data12);
                     scale.put(data12.getPlayerList(aliases), list);
                     sessions.put(data12.players.size(), scale);
@@ -1448,7 +1450,7 @@ public class Raids extends BaseFrame
                 {
                     if (!sessions.get(data12.players.size()).containsKey(data12.getPlayerList(aliases)))
                     {
-                        ArrayList<SimpleTOBData> list = new ArrayList<>();
+                        ArrayList<SimpleRaidDataBase> list = new ArrayList<>();
                         list.add(data12);
                         sessions.get(data12.players.size()).put(data12.getPlayerList(aliases), list);
                     } else
@@ -1458,10 +1460,10 @@ public class Raids extends BaseFrame
                 }
             }
             ArrayList<ArrayList<String>> labelSets = new ArrayList<>();
-            Map<Integer, ArrayList<ArrayList<SimpleTOBData>>> dataSets = new LinkedHashMap<>();
+            Map<Integer, ArrayList<ArrayList<SimpleRaidDataBase>>> dataSets = new LinkedHashMap<>();
             for (Integer scale : sessions.keySet())
             {
-                ArrayList<ArrayList<SimpleTOBData>> scaleData = new ArrayList<>();
+                ArrayList<ArrayList<SimpleRaidDataBase>> scaleData = new ArrayList<>();
                 ArrayList<String> labels = new ArrayList<>();
                 for (String playerList : sessions.get(scale).keySet())
                 {
@@ -1505,61 +1507,49 @@ public class Raids extends BaseFrame
 
         viewGraphs.addActionListener(e ->
         {
-            @Override
-            public void actionPerformed(ActionEvent e)
+            ArrayList<String> labels = new ArrayList<>();
+            ArrayList<SimpleRaidDataBase> rows = new ArrayList<>();
+            int[] toRemove = table.getSelectedRows();
+            for (int i = 0; i < toRemove.length; i++)
             {
-                ArrayList<String> labels = new ArrayList<>();
-                ArrayList<SimpleRaidDataBase> rows = new ArrayList<>();
-                int[] toRemove = table.getSelectedRows();
-                for (int i = 0; i < toRemove.length; i++)
-                {
-                    rows.add(currentData.get(Integer.parseInt(table.getModel().getValueAt(toRemove[i], 0).toString())));
-                }
-                if (rows.isEmpty())
-                {
-                    new NoDataPopUp().open();
-                } else
-                {
-                    labels.add("");
-                    ArrayList<ArrayList<SimpleRaidDataBase>> data = new ArrayList<>();
-                    data.add(rows);
-                    ComparisonViewFrame graphView = new ComparisonViewFrame(data, labels);
-                    graphView.open();
-                }
+                rows.add(currentData.get(Integer.parseInt(table.getModel().getValueAt(toRemove[i], 0).toString())));
+            }
+            if (rows.isEmpty())
+            {
+                new NoDataPopUp().open();
+            } else
+            {
+                labels.add("");
+                ArrayList<ArrayList<SimpleRaidDataBase>> data1 = new ArrayList<>();
+                data1.add(rows);
+                ComparisonViewFrame graphView = new ComparisonViewFrame(data1, labels);
+                graphView.open();
             }
         });
 
         addToComparison.addActionListener(e ->
         {
-            @Override
-            public void actionPerformed(ActionEvent e)
+            ArrayList<SimpleRaidDataBase> rows = new ArrayList<>();
+            int[] toRemove = table.getSelectedRows();
+            for (int i = 0; i < toRemove.length; i++)
             {
-                ArrayList<SimpleRaidDataBase> rows = new ArrayList<>();
-                int[] toRemove = table.getSelectedRows();
-                for (int i = 0; i < toRemove.length; i++)
-                {
-                    rows.add(currentData.get(Integer.parseInt(table.getModel().getValueAt(toRemove[i], 0).toString())));
-                }
-                comparisons.add(rows);
-                updateComparisonTable();
+                rows.add(currentData.get(Integer.parseInt(table.getModel().getValueAt(toRemove[i], 0).toString())));
             }
+            comparisons.add(rows);
+            updateComparisonTable();
         });
         JMenuItem exportRaids = new JMenuItem("Export Selected Raids to CSV");
         exportRaids.setBackground(Color.BLACK);
         exportRaids.setOpaque(true);
         exportRaids.addActionListener(e ->
         {
-            @Override
-            public void actionPerformed(ActionEvent e)
+            ArrayList<SimpleRaidDataBase> rows = new ArrayList<>();
+            int[] toRemove = table.getSelectedRows();
+            for (int i = 0; i < toRemove.length; i++)
             {
-                ArrayList<SimpleRaidDataBase> rows = new ArrayList<>();
-                int[] toRemove = table.getSelectedRows();
-                for (int i = 0; i < toRemove.length; i++)
-                {
-                    rows.add(currentData.get(Integer.parseInt(table.getModel().getValueAt(toRemove[i], 0).toString())));
-                }
-                new SaveRaids(rows).open();
+                rows.add(currentData.get(Integer.parseInt(table.getModel().getValueAt(toRemove[i], 0).toString())));
             }
+            new SaveRaids(rows).open();
         });
 
         JMenuItem filterRaids = new JMenuItem("Filter Selected Raids");
@@ -1606,21 +1596,17 @@ public class Raids extends BaseFrame
         analyzeCrabs.setBackground(Color.BLACK);
         analyzeCrabs.addActionListener(e ->
         {
-            @Override
-            public void actionPerformed(ActionEvent e)
+            ArrayList<ArrayList<StringInt>> crabData = new ArrayList<>();
+            int[] toRemove = table.getSelectedRows();
+            for (int i = 0; i < toRemove.length; i++)
             {
-                ArrayList<ArrayList<StringInt>> crabData = new ArrayList<>();
-                int[] toRemove = table.getSelectedRows();
-                for (int i = 0; i < toRemove.length; i++)
+                SimpleRaidDataBase row = currentData.get(Integer.parseInt(table.getModel().getValueAt(toRemove[i], 0).toString()));
+                if (row instanceof SimpleTOBData)
                 {
-                    SimpleRaidDataBase row = currentData.get(Integer.parseInt(table.getModel().getValueAt(toRemove[i], 0).toString()));
-                    if (row instanceof SimpleTOBData)
-                    {
-                        crabData.add(((SimpleTOBData) row).maidenCrabs);
-                    }
+                    crabData.add(((SimpleTOBData) row).maidenCrabs);
                 }
-                new CrabLeakInfo(crabData);
             }
+            new CrabLeakInfo(crabData);
         });
 
         raidPopup.add(analyzeCrabs);

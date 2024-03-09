@@ -23,7 +23,6 @@ import static com.advancedraidtracker.utility.datautility.DataWriter.PLUGIN_DIRE
 public class RaidTrackerSidePanel extends PluginPanel
 {
     private JLabel raidCountLabel;
-    private final JLabel pleaseWait;
     private ArrayList<SimpleRaidDataBase> raidsData;
     private JTable loadRaidsTable;
     private ArrayList<RaidsArrayWrapper> raidSets;
@@ -35,7 +34,7 @@ public class RaidTrackerSidePanel extends PluginPanel
     private static ItemManager itemManager;
     private final ConfigManager configManager;
 
-    private JLabel pleaseWait = new JLabel("Parsing Files...", SwingConstants.CENTER);
+    private final JLabel pleaseWait = new JLabel("Parsing Files...", SwingConstants.CENTER);
 
     @Inject
     RaidTrackerSidePanel(AdvancedRaidTrackerPlugin plugin, AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)

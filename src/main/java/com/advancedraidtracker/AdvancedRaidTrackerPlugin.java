@@ -197,7 +197,7 @@ public class AdvancedRaidTrackerPlugin extends Plugin
         RaidTrackerSidePanel timersPanelPrimary = injector.getInstance(RaidTrackerSidePanel.class);
         partyIntact = false;
         activelyPiping = new LinkedHashMap<>();
-        liveFrame = new LiveChart(config, clientThread, configManager);
+        liveFrame = new LiveChart(config, itemManager, clientThread, configManager);
         playersTextChanged = new ArrayList<>();
         clog = new DataWriter(config);
 

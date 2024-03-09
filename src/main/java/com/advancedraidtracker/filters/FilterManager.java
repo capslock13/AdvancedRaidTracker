@@ -1,5 +1,7 @@
 package com.advancedraidtracker.filters;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;

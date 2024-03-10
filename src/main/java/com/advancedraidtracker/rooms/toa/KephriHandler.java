@@ -66,12 +66,11 @@ public class KephriHandler extends TOARoomHandler
     }
 
     @Override
-    public void updateHitsplatApplied(HitsplatApplied applied) //type 11 :)
+    public void updateHitsplatApplied(HitsplatApplied applied)
     {
         if (applied.getHitsplat().getHitsplatType() == 11)
         {
             clog.addLine(LogID.TOA_KEPHRI_HEAL, String.valueOf(client.getTickCount() - roomStartTick), String.valueOf(applied.getHitsplat().getAmount()));
-            log.info("Kephri healed " + applied.getHitsplat());
             swarmsHealed++;
         }
     }
@@ -107,7 +106,6 @@ public class KephriHandler extends TOARoomHandler
     {
         if (spawned.getNpc().getId() == 11724)
         {
-            log.info("Melee lived for " + meleeTicksAlive + " ticks");
             meleeAlive = false;
             clog.addLine(LogID.TOA_KEPHRI_MELEE_ALIVE_TICKS, meleeTicksAlive);
             meleeTicksAlive = 0;
@@ -120,7 +118,6 @@ public class KephriHandler extends TOARoomHandler
         if (event.getActor().getName() != null && event.getActor().getName().contains("Kephri") && event.getActor().getAnimation() == 9578)
         {
             clog.addLine(LogID.TOA_KEPHRI_DUNG_THROWN, client.getTickCount() - roomStartTick);
-            log.info("thrown dung");
         }
     }
 

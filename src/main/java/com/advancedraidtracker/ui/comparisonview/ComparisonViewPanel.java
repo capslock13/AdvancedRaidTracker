@@ -227,6 +227,16 @@ public class ComparisonViewPanel extends JPanel
         comboPopupData.put("Xarpus", DataPoint.getSpecificNames(DataPoint.rooms.XARPUS));
         comboPopupData.put("Verzik", DataPoint.getSpecificNames(DataPoint.rooms.VERZIK));
         comboPopupData.put("Any TOB", DataPoint.getSpecificNames(DataPoint.rooms.ANY_TOB));
+        comboPopupData.put("Apmeken", DataPoint.getSpecificNames(DataPoint.rooms.APMEKEN));
+        comboPopupData.put("Baba", DataPoint.getSpecificNames(DataPoint.rooms.BABA));
+        comboPopupData.put("Scabaras", DataPoint.getSpecificNames(DataPoint.rooms.SCABARAS));
+        comboPopupData.put("Kephri", DataPoint.getSpecificNames(DataPoint.rooms.KEPHRI));
+        comboPopupData.put("Crondis", DataPoint.getSpecificNames(DataPoint.rooms.CRONDIS));
+        comboPopupData.put("Zebak", DataPoint.getSpecificNames(DataPoint.rooms.ZEBAK));
+        comboPopupData.put("Het", DataPoint.getSpecificNames(DataPoint.rooms.HET));
+        comboPopupData.put("Akkha", DataPoint.getSpecificNames(DataPoint.rooms.AKKHA));
+        comboPopupData.put("Wardens", DataPoint.getSpecificNames(DataPoint.rooms.WARDENS));
+        comboPopupData.put("Any TOA", DataPoint.getSpecificNames(DataPoint.rooms.ANY_TOA));
 
         comboPopupMenu = new JPopupMenu();
         comboPopupMenu.setBorder(new MatteBorder(1, 1, 1, 1, Color.DARK_GRAY));

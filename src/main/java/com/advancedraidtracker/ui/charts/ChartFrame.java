@@ -162,6 +162,12 @@ public class ChartFrame extends BaseFrame
                 SimpleTOAData toaData = (SimpleTOAData) roomData;
                 switch (bossName)
                 {
+                    case "Het":
+                        for(Integer i : toaData.hetDowns)
+                        {
+                            lines.put(i, "Obelisk Weakened");
+                        }
+                        break;
                     case "Baba":
                         lines.put(toaData.getValue(DataPoint.BABA_P1_DURATION), "Boulder 1 Start");
                         lines.put(toaData.getValue(DataPoint.BABA_P2_SPLIT), "Boulder 1 End");
@@ -182,12 +188,65 @@ public class ChartFrame extends BaseFrame
                         lines.put(toaData.getValue(DataPoint.AKKHA_TIME), "End");
                         break;
                     case "Kephri":
+                        for(Integer i : toaData.dungThrows)
+                        {
+                            lines.put(i, "Dung");
+                        }
                         lines.put(toaData.getValue(DataPoint.KEPHRI_P1_DURATION), "Swarm1 Start");
                         lines.put(toaData.getValue(DataPoint.KEPHRI_P2_SPLIT), "Swarm1 End");
                         lines.put(toaData.getValue(DataPoint.KEPHRI_SWARM2_SPLIT), "Swarm2 Start");
                         lines.put(toaData.getValue(DataPoint.KEPHRI_P3_SPLIT), "Swarm2 End");
                         lines.put(toaData.getValue(DataPoint.KEPHRI_P3_SPLIT), "Final Phase");
                         lines.put(toaData.getValue(DataPoint.KEPHRI_TIME), "End");
+                        break;
+                    case "Crondis": //Tick perfect actions; solo is 2t faster due to not delaying for pid reasons
+                        lines.put(8, "Pickup water");
+                        if(toaData.getScale() == 1)
+                        {
+                            lines.put(19, "First Fill");
+                            lines.put(30, "First Watering");
+                            lines.put(43, "Second Fill");
+                            lines.put(54, "Second Watering");
+                        }
+                        else
+                        {
+                            lines.put(20, "First Fill");
+                            lines.put(31, "First Watering");
+                            lines.put(45, "Second Fill");
+                            lines.put(56, "Second Watering");
+                        }
+                        break;
+                    case "Zebak":
+                        for(Integer i : toaData.zebakWaterfalls)
+                        {
+                            lines.put(i, "Waterfall");
+                        }
+                        for(Integer i : toaData.zebakBoulders)
+                        {
+                            lines.put(i, "Jugs");
+                        }
+                        lines.put(toaData.getValue(DataPoint.ZEBAK_ENRAGED_SPLIT), "Enraged");
+                        break;
+                    case "Wardens P2":
+                        for(Integer i : toaData.wardenCoreStarts)
+                        {
+                            lines.put(i, "Core Start");
+                        }
+                        for(Integer i : toaData.wardenCoreEnds)
+                        {
+                            lines.put(i, "Core Ends");
+                        }
+                        break;
+                    case "Wardens P3":
+                        lines.put(toaData.getValue(DataPoint.WARDENS_ENRAGED_SPLIT), "Enraged");
+                        for(int i = 1; i < 5; i++)
+                        {
+                            int p3Start = toaData.getValue(DataPoint.WARDENS_P3_SPLIT);
+                            int skullStart = toaData.getValue("Wardens Skull " + i + " Split");
+                            int skullDuration = toaData.getValue("Wardens Skull " + i + " Duration");
+                            lines.put(p3Start+skullStart, "Skull Start");
+                            lines.put(p3Start+skullStart+skullDuration, "Skull End");
+                        }
                         break;
                 }
             }

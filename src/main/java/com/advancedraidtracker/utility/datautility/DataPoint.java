@@ -198,6 +198,8 @@ public enum DataPoint
 
     CRONDIS_TIME("Crondis Time", types.TIME, rooms.CRONDIS),
     ZEBAK_TIME("Zebak Time", types.TIME, rooms.ZEBAK),
+    ZEBAK_ENRAGED_SPLIT("Zebak Enraged Split", types.TIME, rooms.ZEBAK),
+    ZEBAK_ENRAGED_DURATION("Zebak Enraged Duration", types.TIME, rooms.ZEBAK),
 
     SCABARAS_TIME("Scabaras Time", types.TIME, rooms.SCABARAS),
 
@@ -250,6 +252,7 @@ public enum DataPoint
 
     AKKHA_FINAL_PHASE_SPLIT("Akkha Final Phase Split", types.TIME, rooms.AKKHA),
     AKKHA_FINAL_PHASE_DURATION("Akkha Final Phase Duration", types.TIME, rooms.AKKHA),
+    AKKHA_NULL_HIT("Akkha Null Hit", types.TIME, rooms.AKKHA, true),
 
     WARDENS_TIME("Wardens Time", types.TIME, rooms.WARDENS),
     WARDENS_P1_DURATION("Wardens P1 Time", types.TIME, rooms.WARDENS),
@@ -259,6 +262,15 @@ public enum DataPoint
     WARDENS_UNTIL_ENRAGED_DURATION("Wardens Until Enraged Duration", types.TIME, rooms.WARDENS),
     WARDENS_P3_DURATION("Wardens P3 Time", types.TIME, rooms.WARDENS),
     WARDENS_ENRAGED_DURATION("Wardens Enraged Duration", types.TIME, rooms.WARDENS),
+    WARDENS_SKULL_1_SPLIT("Wardens Skull 1 Split", types.TIME, rooms.WARDENS),
+    WARDENS_SKULL_1_DURATION("Wardens Skull 1 Duration", types.TIME, rooms.WARDENS),
+    WARDENS_SKULL_2_SPLIT("Wardens Skull 2 Split", types.TIME, rooms.WARDENS),
+    WARDENS_SKULL_2_DURATION("Wardens Skull 2 Duration", types.TIME, rooms.WARDENS),
+    WARDENS_SKULL_3_SPLIT("Wardens Skull 3 Split", types.TIME, rooms.WARDENS),
+    WARDENS_P2_DOWNS("Wardens P2 Downs", types.OTHER_INT, rooms.WARDENS),
+    WARDENS_SKULL_3_DURATION("Wardens Skull 3 Duration", types.TIME, rooms.WARDENS),
+    WARDENS_SKULL_4_SPLIT("Wardens Skull 4 Split", types.TIME, rooms.WARDENS),
+    WARDENS_SKULL_4_DURATION("Wardens Skull 4 Duration", types.TIME, rooms.WARDENS),
     APMEKEN_VOLATILE_COUNT("Apmeken Volatile Count", types.OTHER_INT, rooms.APMEKEN),
     APMEKEN_SHAMAN_COUNT("Apmeken Shaman Count", types.OTHER_INT, rooms.APMEKEN),
     APMEKEN_CURSED_COUNT("Apmeken Cursed Count", types.OTHER_INT, rooms.APMEKEN),
@@ -274,8 +286,12 @@ public enum DataPoint
     CRONDIS_HEALS_50("Crondis Heals 50", types.OTHER_INT, rooms.CRONDIS),
     CRONDIS_HEALS_25("Crondis Heals 25", types.OTHER_INT, rooms.CRONDIS),
     CRONDIS_CROCODILE_DAMAGE("Crondis Damage from Crocodile", types.OTHER_INT, rooms.CRONDIS),
-    ZEBAK_JUGS_PUSHED("Zebak Jugs Pushed", types.OTHER_INT, rooms.ZEBAK);
+    ZEBAK_JUGS_PUSHED("Zebak Jugs Pushed", types.OTHER_INT, rooms.ZEBAK),
+    ZEBAK_BOULDER_ATTACKS("Zebak Boulder Attacks", types.OTHER_INT, rooms.ZEBAK),
+    ZEBAK_WATERFALL_ATTACKS("Zebak Waterfall Attacks", types.OTHER_INT, rooms.ZEBAK),
 
+
+    ;
     public static ArrayList<DataPoint> getTOBValues()
     {
         ArrayList<DataPoint> dataPoints = new ArrayList<>();

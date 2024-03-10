@@ -45,7 +45,6 @@ public class BabaHandler extends TOARoomHandler
     @Override
     public void updateGameTick(GameTick gameTick)
     {
-        log.info("Room state: " + roomState + ", Tile: " + client.getLocalPlayer().getWorldLocation().getRegionX() + ", " + client.getLocalPlayer().getWorldLocation().getRegionY());
         if (roomState == RoomState.BabaRoomState.NOT_STARTED && RoomUtil.playerPastLine(15188, 23, true, client))
         {
             roomState = RoomState.BabaRoomState.PHASE_1;
@@ -72,7 +71,6 @@ public class BabaHandler extends TOARoomHandler
         } else if (spawned.getNpc().getId() == 11783)
         {
             clog.addLine(LogID.TOA_BABA_BOULDER_THROW, client.getTickCount() - roomStartTick);
-            log.info("boulder thrown");
         }
     }
 
@@ -84,7 +82,6 @@ public class BabaHandler extends TOARoomHandler
             if (spawned.getNpc().getWorldLocation().getRegionX() > 23)
             {
                 clog.addLine(LogID.TOA_BABA_BOULDER_BROKEN, client.getTickCount() - roomStartTick);
-                log.info("Boulder broken");
             }
         }
     }

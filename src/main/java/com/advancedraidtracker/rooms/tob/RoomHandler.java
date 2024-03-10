@@ -17,7 +17,7 @@ public class RoomHandler
     public int roomStartTick = -1;
     protected boolean active = false;
 
-    private final AdvancedRaidTrackerConfig config;
+    protected final AdvancedRaidTrackerConfig config;
     protected boolean accurateTimer = true;
     protected boolean accurateEntry = true;
     @Getter

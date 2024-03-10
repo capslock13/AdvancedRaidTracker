@@ -7,12 +7,12 @@ import com.advancedraidtracker.utility.RoomState;
 import com.advancedraidtracker.utility.datautility.DataWriter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
+import net.runelite.api.NpcID;
 import net.runelite.api.events.AnimationChanged;
 import net.runelite.api.events.NpcDespawned;
 import net.runelite.api.events.NpcSpawned;
 
-import static com.advancedraidtracker.utility.RoomState.WardenRoomState.ENRAGED;
-import static com.advancedraidtracker.utility.RoomState.WardenRoomState.FINISHED;
+import static com.advancedraidtracker.utility.RoomState.WardenRoomState.*;
 
 @Slf4j
 public class WardensHandler extends TOARoomHandler
@@ -25,6 +25,8 @@ public class WardensHandler extends TOARoomHandler
     private int p1End = -1;
     private int p2End = -1;
     private int enraged = -1;
+    private boolean skullsActive = false;
+    private boolean coreActive = false;
     RoomState.WardenRoomState roomState = RoomState.WardenRoomState.NOT_STARTED;
 
     public WardensHandler(Client client, DataWriter clog, AdvancedRaidTrackerConfig config, AdvancedRaidTrackerPlugin plugin, TOAHandler handler)
@@ -39,15 +41,13 @@ public class WardensHandler extends TOARoomHandler
         p1End = -1;
         p2End = -1;
         enraged = -1;
+        skullsActive = false;
+        coreActive = false;
     }
 
     @Override
     public void handleNPCChanged(int changed)
     {
-        if(roomState == ENRAGED)
-        {
-            log.info("NPC changed: " + changed);
-        }
         if (roomState == RoomState.WardenRoomState.NOT_STARTED && changed == 11751)
         {
             roomState = RoomState.WardenRoomState.PHASE_1;
@@ -59,6 +59,25 @@ public class WardensHandler extends TOARoomHandler
             p1End = client.getTickCount() - roomStartTick;
             sendTimeMessage("Wardens 'Phase 1' Completed: ", p1End);
             clog.addLine(LogID.TOA_WARDENS_P1_END, p1End);
+        }
+        else if(roomState == PHASE_3 || roomState == ENRAGED)
+        {
+            if(!skullsActive)
+            {
+                if (changed == 11763 || changed == 11764)
+                {
+                    clog.addLine(LogID.TOA_WARDENS_SKULLS_STARTED, client.getTickCount() - roomStartTick);
+                    skullsActive = true;
+                }
+            }
+            else
+            {
+                if(changed == 11761 || changed ==11762)
+                {
+                    clog.addLine(LogID.TOA_WARDENS_SKULLS_ENDED, client.getTickCount()-roomStartTick);
+                    skullsActive = false;
+                }
+            }
         }
     }
 
@@ -88,21 +107,27 @@ public class WardensHandler extends TOARoomHandler
     @Override
     public void updateNpcSpawned(NpcSpawned event)
     {
-        if(roomState == ENRAGED)
+        if(!coreActive && (event.getNpc().getId() == 11770 || event.getNpc().getId() == 11771))
         {
-            log.info("NPC Spawned: " + event.getNpc().getName() + ", ID: " + event.getNpc().getId());
+            coreActive = true;
+            clog.addLine(LogID.TOA_WARDENS_CORE_SPAWNED, client.getTickCount()-roomStartTick);
         }
     }
 
     @Override
     public void updateNpcDespawned(NpcDespawned event)
     {
-        if (roomState == ENRAGED && (event.getNpc().getId() == 11761 || event.getNpc().getId() == 11762)) //todo investigate
+        if (roomState == ENRAGED && (event.getNpc().getId() == 11761 || event.getNpc().getId() == 11762))
         {
             sendTimeMessage("Wardens Duration: ", client.getTickCount() - roomStartTick, client.getTickCount() - enraged);
             clog.addLine(LogID.TOA_WARDENS_FINISHED, client.getTickCount() - roomStartTick);
             roomState = FINISHED;
             plugin.liveFrame.setRoomFinished(getName(), client.getTickCount() - roomStartTick);
+        }
+        else if(coreActive && (event.getNpc().getId() == 11770 || event.getNpc().getId() == 11771))
+        {
+            coreActive = false;
+            clog.addLine(LogID.TOA_WARDENS_CORE_DESPAWNED, client.getTickCount()-roomStartTick);
         }
     }
 }

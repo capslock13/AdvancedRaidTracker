@@ -161,6 +161,9 @@ public enum LogID
     TOA_ZEBAK_START(1020, true, ZEBAK, "Zebak Start", "Room Tick"),
     TOA_ZEBAK_FINISHED(1021, true, ZEBAK, "Zebak Finished", "Room Tick"),
     TOA_ZEBAK_JUG_PUSHED(1022, true, ZEBAK, "Zebak Jug Pushed", "Player", "Room Tick"),
+    TOA_ZEBAK_ENRAGED(1023, true, ZEBAK, "Zebak Enraged", "Room Tick"),
+    TOA_ZEBAK_BOULDER_ATTACK(1024, true, ZEBAK, "Zebak Boulder Attack", "Room Tick"),
+    TOA_ZEBAK_WATERFALL_ATTACK(1025, true, ZEBAK, "Zebak Waterfall Attack", "Room Tick"),
 
     TOA_SCABARAS_START(1030, true, SCABARAS, "Scabaras Start", "Room Tick"),
     TOA_SCABARAS_FINISHED(1031, true, SCABARAS, "Scabaras End", "Room Tick"),
@@ -197,6 +200,7 @@ public enum LogID
     TOA_HET_START(1070, true, HET, "Het Start", "Client Tick"),
     TOA_HET_FINISHED(1071, true, HET, "Het Finished", "Room Tick"),
     TOA_HET_PLAYED_MINED_OBELISK(1072, true, HET, "Het Player Mined Obelisk", "Player", "Room Tick"),
+    TOA_HET_DOWN(1073, true, HET, "Het Down", "Room Tick"),
 
     TOA_AKKHA_START(1080, true, AKKHA, "Akkha Start", "Client Tick"),
     TOA_AKKHA_PHASE_1_END(1081, true, AKKHA, "Akkha P1 End", "Room Tick"),
@@ -209,13 +213,18 @@ public enum LogID
     TOA_AKKHA_SHADOW_4_END(1088, true, AKKHA, "Akkha Shadow4 End", "Room Tick"),
     TOA_AKKHA_PHASE_5_END(1089, true, AKKHA, "Akkha P5 End", "Room Tick"),
     TOA_AKKHA_FINISHED(1090, true, AKKHA, "Akkha Finished", "Room Tick"),
-    TOA_AKKHA_NULLED_HIT(1091, true, AKKHA, "Akkha nulled hit"), //not implemented yet todo
+    TOA_AKKHA_NULLED_HIT_ON_SHADOW(1091, true, AKKHA, "Shadow nulled hit", "Player", "Room Tick", "Weapon"),
+    TOA_AKKHA_NULLED_HIT_ON_AKKHA(1092, true, AKKHA, "Akkha nulled hit", "Player", "Room Tick", "Weapon"),
 
     TOA_WARDENS_START(1200, true, WARDENS, "Wardens Start", "Client Tick"),
     TOA_WARDENS_P1_END(1201, true, WARDENS, "Wardens P1 End", "Room Tick"),
     TOA_WARDENS_P2_END(1202, true, WARDENS, "Wardens P2 End", "Room Tick"),
     TOA_WARDENS_ENRAGED(1203, true, WARDENS, "Wardens Enraged", "Room Tick"),
     TOA_WARDENS_FINISHED(1204, true, WARDENS, "Wardens Finished", "Room Tick"),
+    TOA_WARDENS_SKULLS_STARTED(1205, true, WARDENS, "Wardens Skull Started", "Room Tick"),
+    TOA_WARDENS_SKULLS_ENDED(1206, true, WARDENS, "Wardens Skulls Ended", "Room Tick"),
+    TOA_WARDENS_CORE_SPAWNED(1207, true, WARDENS, "Wardens Core Spawned", "Room Tick"),
+    TOA_WARDENS_CORE_DESPAWNED(1208, true, WARDENS, "Wardens Core Despawned", "Room Tick"),
 
 
     ;

@@ -11,6 +11,8 @@ import net.runelite.api.Client;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.NpcDespawned;
 
+import static com.advancedraidtracker.constants.LogID.TOA_HET_DOWN;
+
 @Slf4j
 public class HetHandler extends TOARoomHandler
 {
@@ -38,6 +40,15 @@ public class HetHandler extends TOARoomHandler
     public boolean isActive()
     {
         return active;
+    }
+
+    @Override
+    public void handleNPCChanged(int changed)
+    {
+        if(changed == 11707)
+        {
+            clog.addLine(TOA_HET_DOWN, client.getTickCount()-roomStartTick);
+        }
     }
 
     @Override

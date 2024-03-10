@@ -12,6 +12,11 @@ import net.runelite.api.Client;
 import net.runelite.api.Player;
 import net.runelite.api.events.AnimationChanged;
 import net.runelite.api.events.GameTick;
+import net.runelite.api.events.NpcSpawned;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Slf4j
 public class ZebakHandler extends TOARoomHandler
@@ -20,6 +25,8 @@ public class ZebakHandler extends TOARoomHandler
     {
         return "Zebak";
     }
+    private int lastJugSpecialTick = -1;
+    private int lastWaterfallSpecialTick = -1;
 
     RoomState.ZebakRoomState roomState = RoomState.ZebakRoomState.NOT_STARTED;
 
@@ -63,6 +70,21 @@ public class ZebakHandler extends TOARoomHandler
     }
 
     @Override
+    public void updateNpcSpawned(NpcSpawned spawned)
+    {
+        if(lastJugSpecialTick+5 < client.getTickCount() && spawned.getNpc().getId() == 11737)
+        {
+            lastJugSpecialTick = client.getTickCount();
+            clog.addLine(LogID.TOA_ZEBAK_BOULDER_ATTACK, client.getTickCount()-roomStartTick);
+        }
+        else if(lastWaterfallSpecialTick != client.getTickCount() && spawned.getNpc().getId() == 11738)
+        {
+            lastWaterfallSpecialTick = client.getTickCount();
+            clog.addLine(LogID.TOA_ZEBAK_WATERFALL_ATTACK, client.getTickCount()-roomStartTick);
+        }
+    }
+
+    @Override
     public void handleNPCChanged(int changed)
     {
         if (roomState == RoomState.ZebakRoomState.PHASE_1 && changed == 11733)
@@ -72,6 +94,10 @@ public class ZebakHandler extends TOARoomHandler
             sendTimeMessage("Zebak Duration: ", duration);
             clog.addLine(LogID.TOA_ZEBAK_FINISHED, duration);
             plugin.liveFrame.setRoomFinished(getName(), duration);
+        }
+        if(changed == 11732)
+        {
+            clog.addLine(LogID.TOA_ZEBAK_ENRAGED, client.getTickCount()-roomStartTick);
         }
     }
 }

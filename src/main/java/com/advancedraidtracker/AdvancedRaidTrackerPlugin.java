@@ -223,7 +223,7 @@ public class AdvancedRaidTrackerPlugin extends Plugin
         apmeken = new ApmekenHandler(client, clog, config, this, toaHandler);
         baba = new BabaHandler(client, clog, config, this, toaHandler);
         het = new HetHandler(client, clog, config, this, toaHandler);
-        akkha = new AkkhaHandler(client, clog, config, this, toaHandler);
+        akkha = new AkkhaHandler(client, clog, config, this, toaHandler, itemManager);
         wardens = new WardensHandler(client, clog, config, this, toaHandler);
 
         inTheatre = false;

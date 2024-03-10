@@ -23,6 +23,12 @@ public class SimpleTOAData extends SimpleRaidDataBase
     private int lastStartTime = 0;
     private int raidExitTime = 0;
     private int raidStartTime = 0;
+    public List<Integer> zebakWaterfalls = new ArrayList<>();
+    public List<Integer> zebakBoulders = new ArrayList<>();
+    public List<Integer> wardenCoreStarts = new ArrayList<>();
+    public List<Integer> wardenCoreEnds = new ArrayList<>();
+    public List<Integer> hetDowns = new ArrayList<>();
+    public List<Integer> dungThrows = new ArrayList<>();
 
     public SimpleTOAData(String[] parameters, String filePath, String fileName)
     {
@@ -193,6 +199,10 @@ public class SimpleTOAData extends SimpleRaidDataBase
                         break;
                     case TOA_ZEBAK_FINISHED:
                         dataManager.set(ZEBAK_TIME, Integer.parseInt(subData[4]));
+                        dataManager.set(ZEBAK_ENRAGED_DURATION, dataManager.get(ZEBAK_TIME)-dataManager.get(ZEBAK_ENRAGED_SPLIT));
+                        break;
+                    case TOA_ZEBAK_ENRAGED:
+                        dataManager.set(ZEBAK_ENRAGED_SPLIT, Integer.parseInt(subData[4]));
                         break;
                     case TOA_CRONDIS_CROC_DAMAGE:
                         dataManager.increment(CRONDIS_CROCODILE_DAMAGE, Integer.parseInt(subData[4]));
@@ -212,6 +222,14 @@ public class SimpleTOAData extends SimpleRaidDataBase
                         break;
                     case TOA_ZEBAK_JUG_PUSHED:
                         dataManager.increment(ZEBAK_JUGS_PUSHED);
+                        break;
+                    case TOA_ZEBAK_BOULDER_ATTACK:
+                        zebakBoulders.add(Integer.parseInt(subData[4]));
+                        dataManager.increment(ZEBAK_BOULDER_ATTACKS);
+                        break;
+                    case TOA_ZEBAK_WATERFALL_ATTACK:
+                        zebakWaterfalls.add(Integer.parseInt(subData[4]));
+                        dataManager.increment(ZEBAK_WATERFALL_ATTACKS);
                         break;
                 }
                 activeIndex++;
@@ -283,6 +301,7 @@ public class SimpleTOAData extends SimpleRaidDataBase
                     break;
                 case TOA_KEPHRI_DUNG_THROWN:
                     dataManager.increment(KEPHRI_DUNG_THROWN);
+                    dungThrows.add(Integer.parseInt(subData[4]));
                     break;
                 case TOA_KEPHRI_MELEE_HEAL:
                     dataManager.increment(KEPHRI_MELEE_SCARAB_HEALS);
@@ -426,6 +445,10 @@ public class SimpleTOAData extends SimpleRaidDataBase
                 case TOA_HET_FINISHED:
                     dataManager.set(HET_TIME, Integer.parseInt(subData[4]));
                     break;
+                case TOA_HET_DOWN:
+                    dataManager.increment(HET_DOWNS);
+                    hetDowns.add(Integer.parseInt(subData[4]));
+                    break;
                 case TOA_AKKHA_PHASE_1_END:
                     dataManager.set(AKKHA_P1_DURATION, Integer.parseInt(subData[4]));
                     break;
@@ -469,6 +492,11 @@ public class SimpleTOAData extends SimpleRaidDataBase
                 case TOA_HET_START:
                     lastStartTime = Integer.parseInt(subData[4]);
                     break;
+                case TOA_AKKHA_NULLED_HIT_ON_AKKHA:
+                case TOA_AKKHA_NULLED_HIT_ON_SHADOW:
+                    dataManager.increment(AKKHA_NULL_HIT);
+                    dataManager.incrementPlayerSpecific(AKKHA_NULL_HIT, subData[4]);
+                    break;
             }
             activeIndex++;
         }
@@ -476,6 +504,7 @@ public class SimpleTOAData extends SimpleRaidDataBase
 
     public void parseWardens()
     {
+        int lastSkullCount = 1;
         raidStatus += "W";
         int activeIndex = 0;
         for (String s : globalData)
@@ -522,6 +551,26 @@ public class SimpleTOAData extends SimpleRaidDataBase
                     dataManager.set(WARDENS_ENRAGED_DURATION, dataManager.get(WARDENS_TIME) - dataManager.get(WARDENS_ENRAGED_SPLIT));
                     dataManager.set(WARDENS_P3_DURATION, dataManager.get(WARDENS_TIME) - dataManager.get(WARDENS_P3_SPLIT));
                     break;
+                case TOA_WARDENS_SKULLS_STARTED:
+                    dataManager.set(DataPoint.getValue("Wardens Skull " + lastSkullCount + " Split"), Integer.parseInt(subData[4])-dataManager.get(WARDENS_P3_SPLIT));
+                    break;
+                case TOA_WARDENS_SKULLS_ENDED:
+                    dataManager.set(DataPoint.getValue("Wardens Skull " + lastSkullCount + " Duration"), Integer.parseInt(subData[4]) - dataManager.get("Wardens Skull " + lastSkullCount + " Split") - dataManager.get(WARDENS_P3_SPLIT));
+                    lastSkullCount++;
+                    break;
+                case TOA_WARDENS_CORE_SPAWNED:
+                    if(subData.length > 4)
+                    {
+                        wardenCoreStarts.add(Integer.parseInt(subData[4]));
+                    }
+                    break;
+                case TOA_WARDENS_CORE_DESPAWNED:
+                    if(subData.length > 4)
+                    {
+                        wardenCoreEnds.add(Integer.parseInt(subData[4]));
+                        dataManager.increment(WARDENS_P2_DOWNS);
+                    }
+                    break;
                 case TOA_WARDENS_START:
                     lastStartTime = Integer.parseInt(subData[4]);
                     break;
@@ -551,7 +600,7 @@ public class SimpleTOAData extends SimpleRaidDataBase
     @Override
     public int getScale()
     {
-        return dataManager.get(TOA_PARTY_SIZE);
+        return players.size();
     }
 
     @Override

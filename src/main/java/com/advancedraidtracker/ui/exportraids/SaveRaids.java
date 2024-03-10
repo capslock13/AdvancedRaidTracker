@@ -1,9 +1,9 @@
 package com.advancedraidtracker.ui.exportraids;
 
-import com.advancedraidtracker.SimpleRaidDataBase;
 import com.advancedraidtracker.ui.BaseFrame;
 import com.advancedraidtracker.ui.filters.ConfirmationDialog;
 import com.advancedraidtracker.utility.datautility.RaidsManager;
+import com.advancedraidtracker.utility.datautility.datapoints.Raid;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,7 +13,7 @@ public class SaveRaids extends BaseFrame
 {
     private final JTextField field;
 
-    public SaveRaids(ArrayList<SimpleRaidDataBase> raids)
+    public SaveRaids(ArrayList<Raid> raids)
     {
         getContentPane().removeAll();
         setTitle("Save Raids");
@@ -33,7 +33,7 @@ public class SaveRaids extends BaseFrame
         repaint();
     }
 
-    private JButton getSaveButton(ArrayList<SimpleRaidDataBase> raids)
+    private JButton getSaveButton(ArrayList<Raid> raids)
     {
         JButton saveButton = new JButton("Save");
         saveButton.addActionListener(e ->

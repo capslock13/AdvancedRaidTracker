@@ -3,6 +3,7 @@ package com.advancedraidtracker.ui.comparisonview;
 import com.advancedraidtracker.SimpleRaidDataBase;
 import com.advancedraidtracker.AdvancedRaidTrackerConfig;
 import com.advancedraidtracker.ui.BaseFrame;
+import com.advancedraidtracker.utility.datautility.datapoints.Raid;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
@@ -16,7 +17,7 @@ import java.util.Map;
 @Slf4j
 public class ComparisonViewFrame extends BaseFrame
 {
-    public ComparisonViewFrame(ArrayList<ArrayList<SimpleRaidDataBase>> data, ArrayList<String> labels)
+    public ComparisonViewFrame(ArrayList<ArrayList<Raid>> data, ArrayList<String> labels)
     {
         add(new ComparisonViewPanel(data, labels, config, itemManager, clientThread, configManager));
         pack();
@@ -27,7 +28,7 @@ public class ComparisonViewFrame extends BaseFrame
     private ClientThread clientThread;
     private ConfigManager configManager;
 
-    public ComparisonViewFrame(Map<Integer, ArrayList<ArrayList<SimpleRaidDataBase>>> dataSets, ArrayList<ArrayList<String>> labelSets, AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
+    public ComparisonViewFrame(Map<Integer, ArrayList<ArrayList<Raid>>> dataSets, ArrayList<ArrayList<String>> labelSets, AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
     {
         this.configManager = configManager;
         this.clientThread = clientThread;

@@ -1,8 +1,11 @@
 package com.advancedraidtracker.ui;
 
 import com.advancedraidtracker.*;
+import com.advancedraidtracker.utility.datautility.datapoints.Raid;
+import com.advancedraidtracker.utility.datautility.datapoints.tob.Tob;
 import com.advancedraidtracker.utility.wrappers.RaidsArrayWrapper;
 import com.advancedraidtracker.utility.datautility.RaidsManager;
+import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.callback.ClientThread;
@@ -15,7 +18,12 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.advancedraidtracker.utility.datautility.DataWriter.PLUGIN_DIRECTORY;
 
@@ -23,7 +31,7 @@ import static com.advancedraidtracker.utility.datautility.DataWriter.PLUGIN_DIRE
 public class RaidTrackerSidePanel extends PluginPanel
 {
     private JLabel raidCountLabel;
-    private ArrayList<SimpleRaidDataBase> raidsData;
+    private List<Raid> raidsData;
     private JTable loadRaidsTable;
     private ArrayList<RaidsArrayWrapper> raidSets;
 
@@ -46,7 +54,6 @@ public class RaidTrackerSidePanel extends PluginPanel
             RaidTrackerSidePanel.config = config;
             this.plugin = plugin;
             RaidTrackerSidePanel.itemManager = itemManager;
-            raidsData = new ArrayList<>();
             raidsData = getAllRaids();
             raids = new Raids(config, itemManager, clientThread, configManager);
             removeAll();
@@ -55,72 +62,41 @@ public class RaidTrackerSidePanel extends PluginPanel
         }).start();
     }
 
-    private ArrayList<SimpleRaidDataBase> getAllRaids()
+    /**
+     * Folder structure is the following:
+     *
+     * advancedraidtracker/
+     *   <username>/
+     *       primary/ <------ a mix of coxdata.log, tobdata.log, toadata.log
+     *   legacy-files/
+     *       primary/ <---- any tobdata.log that existed in /theatretracker/ gets moved here
+     *   misc-dir/
+     *       alias/alias.log <---- used to track aliases in main window
+     *       filters/ <---<filtername>.filter, saved filters
+     *       raids/ <--- folders created with name saved when you export raid, each folder has all the individual tobdata.logs that were exported
+     *
+     * @return A list of all the current raids
+     */
+    private List<Raid> getAllRaids()
     {
-        ArrayList<SimpleRaidDataBase> raids = new ArrayList<>();
-        try
-        {
-            File logDirectory = new File(PLUGIN_DIRECTORY);
-            File[] logFiles = logDirectory.listFiles();
-            int raidCount = 0;
-            if(logFiles != null)
-            {
-                for (File file : logFiles)
-                {
-                    if (file.isDirectory())
-                    {
-                        File subDirectory = new File(file.getAbsolutePath()+"/primary/");
-                        File[] subDirectoryFiles = subDirectory.listFiles();
-                        if(subDirectoryFiles != null)
-                        {
-                            raidCount += subDirectoryFiles.length;
-                        }
-                    }
-                }
-            }
-            int index = 0;
-            if (logFiles != null)
-            {
-                for (File file : logFiles)
-                {
-                    if (file.isDirectory())
-                    {
-                        File subDirectory = new File(file.getAbsolutePath()+"/primary/");
-                        File[] subLogFiles = subDirectory.listFiles();
-                        if(subLogFiles != null)
-                        {
-                            for (File dataFile : subLogFiles)
-                            {
-                                if (!dataFile.isDirectory())
-                                {
-                                    if (dataFile.getName().contains("data"))
-                                    {
-                                        File currentFile = new File(subDirectory.getAbsolutePath() + "/" + dataFile.getName());
-                                        parseLogFile(raids, currentFile, subDirectory.getAbsolutePath() + "/" + dataFile.getName());
-                                        index++;
-                                        if(raidCountLabel != null)
-                                        {
-                                            raidCountLabel.setText("Refreshing...(" + index + "/" + raidCount + ")");
-                                        }
-                                        else if(pleaseWait != null)
-                                        {
-                                            pleaseWait.setText("Parsing Files...(" + index + "/" + raidCount + ")");
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+        try {
+            Stream<Path> subLogFiles = Files.walk(Paths.get(PLUGIN_DIRECTORY));
+            List<Raid> logs = subLogFiles
+                    .filter(file -> !file.equals(Paths.get(PLUGIN_DIRECTORY, "misc-dir")) && !Files.isDirectory(file))
+                    .map(Raid::getRaid)
+                    .filter(Objects::nonNull) // For now, as only tob is supported, filter out cox/toa logs
+                    .collect(Collectors.toList());
+
+
+            logs.forEach(Raid::parse);
+            return logs;
         }
         catch (Exception e)
         {
             log.info("Could not retrieve raids");
             e.printStackTrace();
         }
-        raids.sort(Comparator.comparing(SimpleRaidDataBase::getDate));
-        return raids;
+        return null;
     }
 
     public static void parseLogFile(ArrayList<SimpleRaidDataBase> raids, File currentFile, String filePath) throws Exception
@@ -287,7 +263,10 @@ public class RaidTrackerSidePanel extends PluginPanel
         return new DefaultTableModel(tableData, columnNames);
     }
 
-    private ArrayList<SimpleRaidDataBase> getTableData()
+    /**
+     * @return data in the table
+     */
+    private ArrayList<Raid> getTableData()
     {
         ArrayList<String> includedSets = new ArrayList<>();
         for (int i = 0; i < loadRaidsTable.getRowCount(); i++)
@@ -297,17 +276,7 @@ public class RaidTrackerSidePanel extends PluginPanel
                 includedSets.add((String) loadRaidsTable.getValueAt(i, 0));
             }
         }
-        ArrayList<SimpleRaidDataBase> collectedRaids = new ArrayList<>();
-        for (RaidsArrayWrapper set : raidSets)
-        {
-            for (String s : includedSets)
-            {
-                if (s.equals(set.filename))
-                {
-                    collectedRaids.addAll(set.data);
-                }
-            }
-        }
+        ArrayList<Raid> collectedRaids = new ArrayList<>();
         return collectedRaids;
     }
 

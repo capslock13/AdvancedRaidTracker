@@ -4,6 +4,7 @@ import com.advancedraidtracker.SimpleRaidDataBase;
 import com.advancedraidtracker.AdvancedRaidTrackerConfig;
 import com.advancedraidtracker.utility.RoomUtil;
 import com.advancedraidtracker.utility.datautility.DataPoint;
+import com.advancedraidtracker.utility.datautility.datapoints.Raid;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
@@ -62,7 +63,7 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
     private DataPoint activeKey;
     private boolean time = false;
     private final BufferedImage img = new BufferedImage(IMG_WIDTH, IMG_HEIGHT, BufferedImage.TYPE_INT_ARGB);
-    private final ArrayList<SimpleRaidDataBase> internalData;
+    private final ArrayList<Raid> internalData;
     private final AdvancedRaidTrackerConfig config;
 
     private final ItemManager itemManager;
@@ -70,7 +71,7 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
     private final ClientThread clientThread;
     private final ConfigManager configManager;
 
-    public GraphPanel(ArrayList<SimpleRaidDataBase> data, AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
+    public GraphPanel(ArrayList<Raid> data, AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
     {
         this.configManager = configManager;
         this.clientThread = clientThread;
@@ -405,7 +406,7 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
                         int right = left + barWidth;
                         int top = GRAPH_HEIGHT - GRAPH_YS - height;
                         int bottom = GRAPH_HEIGHT - GRAPH_YS;
-                        ArrayList<SimpleRaidDataBase> summedRegionData;
+                        ArrayList<Raid> summedRegionData;
                         if (groupOffset == 0 || i != xScaleLow)
                         {
                             summedRegionData = sumRegionRaidData(countedDataSet, i, groupSize);
@@ -422,7 +423,7 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
                     int right = left + barWidth;
                     int top = GRAPH_HEIGHT - GRAPH_YS - height;
                     int bottom = GRAPH_HEIGHT - GRAPH_YS;
-                    bounds.add(new Bounds(left, right, bottom, top, countedDataSet.fullData.get(i)));
+                    //bounds.add(new Bounds(left, right, bottom, top, countedDataSet.fullData.get(i)));
                 }
             }
         }
@@ -469,14 +470,14 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
         return sum;
     }
 
-    private ArrayList<SimpleRaidDataBase> sumRegionRaidData(GraphInternalBoundMatchedContainer data, int index, int length)
+    private ArrayList<Raid> sumRegionRaidData(GraphInternalBoundMatchedContainer data, int index, int length)
     {
-        ArrayList<SimpleRaidDataBase> summedData = new ArrayList<>();
+        ArrayList<Raid> summedData = new ArrayList<>();
         for (int i = index; i < index + length; i++)
         {
             if (i < data.fullData.size() && i > -1)
             {
-                summedData.addAll(data.fullData.get(i));
+                //summedData.addAll(data.fullData.get(i));
             }
         }
         return summedData;
@@ -825,7 +826,8 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
     {
         ArrayList<Integer> intDataSet = new ArrayList<>();
         ArrayList<SimpleRaidDataBase> fullDataSet = new ArrayList<>();
-        for (SimpleRaidDataBase data : internalData)
+        /*
+        for (Raid data : internalData)
         {
             if (data.getValue(key) != -1)
             {
@@ -836,6 +838,7 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
                 }
             }
         }
+         */
         return new GraphInternalDataContainer(fullDataSet, intDataSet);
     }
 
@@ -966,9 +969,9 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
         }
     }
 
-    private ArrayList<SimpleRaidDataBase> mergeSelectedData()
+    private ArrayList<Raid> mergeSelectedData()
     {
-        ArrayList<SimpleRaidDataBase> mergedData = new ArrayList<>();
+        ArrayList<Raid> mergedData = new ArrayList<>();
         for (Bounds b : selectedBounds)
         {
             mergedData.addAll(b.raids);

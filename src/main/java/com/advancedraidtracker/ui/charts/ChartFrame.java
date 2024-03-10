@@ -4,6 +4,8 @@ import com.advancedraidtracker.*;
 import com.advancedraidtracker.ui.BaseFrame;
 import com.advancedraidtracker.AdvancedRaidDataBase;
 import com.advancedraidtracker.utility.datautility.DataPoint;
+import com.advancedraidtracker.utility.datautility.datapoints.Raid;
+import com.advancedraidtracker.utility.datautility.datapoints.RoomDataManager;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
@@ -16,40 +18,34 @@ import java.util.*;
 @Slf4j
 public class ChartFrame extends BaseFrame
 {
-    public ChartFrame(SimpleRaidDataBase roomData, AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
+    public ChartFrame(Raid roomData, AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
     {
         JTabbedPane basepane = new JTabbedPane();
-        AdvancedRaidDataBase raidData;
-        if (roomData instanceof SimpleTOBData)
-        {
-            raidData = new AdvancedTOBData(AdvancedRaidDataBase.getRaidStrings(roomData.getFilePath()), itemManager);
-        } else
-        {
-            raidData = new AdvancedTOAData(AdvancedRaidDataBase.getRaidStrings(roomData.getFilePath()), itemManager);
-        }
-        for (String bossName : raidData.attackData.keySet())
-        {
-            JPanel tab = new JPanel();
-            tab.setLayout(new GridLayout(1, 2));
-            JPanel chart = new JPanel();
-            chart.setLayout(new BoxLayout(chart, BoxLayout.Y_AXIS));
-            ChartPanel chartPanel = new ChartPanel(bossName, false, config, clientThread, configManager, itemManager);
-            chartPanel.setNPCMappings(raidData.npcIndexData.get(bossName));
-            chartPanel.addAttacks(raidData.attackData.get(bossName));
-            chartPanel.setRoomHP(raidData.hpData.get(bossName));
-            chartPanel.setPlayers(roomData.getPlayersArray());
-            chartPanel.enableWrap();
-            chartPanel.setStartTick((bossName.contains("Verzik") || bossName.contains("Wardens")) ? //Just trust
-                    (bossName.contains("P1") ? 1 : (bossName.contains("P2") ? roomData.getValue(bossName.replace('2', '1') + " Time") :
-                            roomData.getValue(bossName.replace('3', '1') + " Time") + roomData.getValue(bossName.replace('3', '2') + " Time"))) : 1);
-            chartPanel.setTick(((bossName.contains("Verzik") || bossName.contains("Wardens")) && !bossName.contains("P1"))
-                    ? (bossName.contains("P2")) ? roomData.getValue(bossName + " Time") +
-                    roomData.getValue(bossName.replace('2', '1') + " Time") :
-                    roomData.getValue(bossName.substring(0, bossName.length() - 2) + "Time") : roomData.getValue(bossName + " Time"));
-            chartPanel.addThrallBoxes(raidData.thrallOutlineBoxes.get(bossName));
 
+        /*
+        JPanel tab = new JPanel();
+        tab.setLayout(new GridLayout(1, 2));
+        JPanel chart = new JPanel();
+        chart.setLayout(new BoxLayout(chart, BoxLayout.Y_AXIS));
+        ChartPanel chartPanel = new ChartPanel(bossName, false, config, clientThread, configManager, itemManager);
+        chartPanel.setNPCMappings(raidData.npcIndexData.get(bossName));
+        chartPanel.addAttacks(raidData.attackData.get(bossName));
+        chartPanel.setRoomHP(raidData.hpData.get(bossName));
+        chartPanel.setPlayers(roomData.getPlayersArray());
+        chartPanel.enableWrap();
+        chartPanel.setStartTick((bossName.contains("Verzik") || bossName.contains("Wardens")) ? //Just trust
+                (bossName.contains("P1") ? 1 : (bossName.contains("P2") ? roomData.getValue(bossName.replace('2', '1') + " Time") :
+                        roomData.getValue(bossName.replace('3', '1') + " Time") + roomData.getValue(bossName.replace('3', '2') + " Time"))) : 1);
+        chartPanel.setTick(((bossName.contains("Verzik") || bossName.contains("Wardens")) && !bossName.contains("P1"))
+                ? (bossName.contains("P2")) ? roomData.getValue(bossName + " Time") +
+                roomData.getValue(bossName.replace('2', '1') + " Time") :
+                roomData.getValue(bossName.substring(0, bossName.length() - 2) + "Time") : roomData.getValue(bossName + " Time"));
+        chartPanel.addThrallBoxes(raidData.thrallOutlineBoxes.get(bossName));
+
+         */
             Map<Integer, String> lines = new LinkedHashMap<>();
             ArrayList<Integer> autos = new ArrayList<>();
+            /*
             if (roomData instanceof SimpleTOBData)
             {
                 SimpleTOBData tobData = (SimpleTOBData) roomData;
@@ -256,9 +252,13 @@ public class ChartFrame extends BaseFrame
             basepane.addChangeListener(cl -> chartPanel.redraw());
             chart.add(chartPanel);
             tab.add(new JScrollPane(chart));
-            basepane.add(bossName, tab);
+             */
+            //basepane.add(bossName, tab);
             add(basepane);
             pack();
-        }
+    }
+
+    private void addChartPane(RoomDataManager data) {
+
     }
 }

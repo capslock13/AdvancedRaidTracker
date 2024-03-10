@@ -5,10 +5,12 @@ import com.advancedraidtracker.SimpleTOAData;
 import com.advancedraidtracker.SimpleTOBData;
 import com.advancedraidtracker.ui.viewraid.ViewTOARaid;
 import com.advancedraidtracker.ui.viewraid.ViewTOBRaid;
+import com.advancedraidtracker.utility.datautility.datapoints.Raid;
+import com.advancedraidtracker.utility.datautility.datapoints.tob.Tob;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
+import java.util.List;
 
 public class ButtonEditorRoomData extends DefaultCellEditor
 {
@@ -16,10 +18,10 @@ public class ButtonEditorRoomData extends DefaultCellEditor
     protected JButton button;
     private String label;
     private boolean isPushed;
-    private final ArrayList<SimpleRaidDataBase> data;
+    private final List<Raid> data;
     int row;
 
-    public ButtonEditorRoomData(JCheckBox checkBox, ArrayList<SimpleRaidDataBase> data)
+    public ButtonEditorRoomData(JCheckBox checkBox, List<Raid> data)
     {
         super(checkBox);
         this.data = data;
@@ -52,18 +54,21 @@ public class ButtonEditorRoomData extends DefaultCellEditor
     {
         if (isPushed)
         {
-            if (data.get(row) instanceof SimpleTOBData)
+            if (data.get(row) instanceof Tob)
             {
-                SimpleTOBData tobData = (SimpleTOBData) data.get(row);
+                Tob tobData = (Tob) data.get(row);
                 ViewTOBRaid raid = new ViewTOBRaid(tobData);
                 //ViewRaidFrame raid = new ViewRaidFrame(data.get(row));
                 raid.open();
-            } else if (data.get(row) instanceof SimpleTOAData)
+            }
+            /* todo
+            else if (data.get(row) instanceof Raid)
             {
                 SimpleTOAData toaData = (SimpleTOAData) data.get(row);
                 ViewTOARaid raid = new ViewTOARaid(toaData);
                 raid.open();
             }
+             */
         }
         isPushed = false;
         return label;

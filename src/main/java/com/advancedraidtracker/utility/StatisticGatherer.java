@@ -3,6 +3,7 @@ package com.advancedraidtracker.utility;
 import com.advancedraidtracker.SimpleRaidDataBase;
 import com.advancedraidtracker.SimpleTOBData;
 import com.advancedraidtracker.utility.datautility.DataPoint;
+import com.advancedraidtracker.utility.datautility.datapoints.Raid;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -14,18 +15,18 @@ import java.util.stream.Collectors;
 @Slf4j
 public class StatisticGatherer
 {
-    public static double getOverallTimeAverage(ArrayList<SimpleRaidDataBase> data)
+    public static double getOverallTimeAverage(ArrayList<Raid> data)
     {
-        data = data.stream().filter(SimpleRaidDataBase::getOverallTimeAccurate).collect(Collectors.toCollection(ArrayList::new));
+        data = data.stream().filter(Raid::isAccurate).collect(Collectors.toCollection(ArrayList::new));
         if (data.isEmpty())
         {
             return -1;
         }
         double total = 0;
         double count = 0;
-        for (SimpleRaidDataBase d : data)
+        for (Raid d : data)
         {
-            total += d.getTimeSum();
+            //total += d.getTimeSum();
             count++;
         }
         return total / count;
@@ -100,17 +101,18 @@ public class StatisticGatherer
         return total / count;
     }
 
-    public static double getGenericAverage(ArrayList<SimpleTOBData> data, DataPoint parameter)
+    public static double getGenericAverage(ArrayList<Raid> data, DataPoint parameter)
     {
         if (parameter == DataPoint.CHALLENGE_TIME)
         {
-            ArrayList<SimpleRaidDataBase> raidData = new ArrayList<>(data);
+            ArrayList<Raid> raidData = new ArrayList<>(data);
             return getOverallTimeAverage(raidData);
         }
         double total = 0;
-        double count = 0;
-        for (SimpleTOBData room : data)
+        double count = 1;
+        for (Raid room : data)
         {
+            /*
             if (!room.getTimeAccurate(parameter))
             {
                 continue;
@@ -124,6 +126,7 @@ public class StatisticGatherer
                     count++;
                 }
             }
+             */
         }
         return total / count;
     }

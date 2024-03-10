@@ -2,6 +2,7 @@ package com.advancedraidtracker.utility.datautility;
 
 import com.advancedraidtracker.SimpleRaidDataBase;
 import com.advancedraidtracker.ui.RaidTrackerSidePanel;
+import com.advancedraidtracker.utility.datautility.datapoints.Raid;
 import com.advancedraidtracker.utility.wrappers.RaidsArrayWrapper;
 import lombok.extern.slf4j.Slf4j;
 
@@ -73,7 +74,7 @@ public class RaidsManager
         return false;
     }
 
-    public static void saveOverwriteRaids(String name, ArrayList<SimpleRaidDataBase> raids)
+    public static void saveOverwriteRaids(String name, ArrayList<Raid> raids)
     {
         try
         {
@@ -102,14 +103,14 @@ public class RaidsManager
         }
     }
 
-    private static void writeRaid(String name, ArrayList<SimpleRaidDataBase> raids) throws IOException
+    private static void writeRaid(String name, ArrayList<Raid> raids) throws IOException
     {
-        for (SimpleRaidDataBase raid : raids)
+        for (Raid raid : raids)
         {
-            File newEntry = new File(raidsFolder + name + "/" + raid.fileName);
+            File newEntry = raid.getFilepath().toFile();
             Files.createFile(newEntry.toPath());
             BufferedWriter fileWriter = new BufferedWriter(new OutputStreamWriter(Files.newOutputStream(newEntry.toPath())));
-            File file = new File(raid.filePath);
+            File file = raid.getFilepath().toFile();
             Scanner logReader = new Scanner(Files.newInputStream(file.toPath()));
             while (logReader.hasNextLine())
             {
@@ -120,7 +121,7 @@ public class RaidsManager
         }
     }
 
-    public static void saveRaids(String name, ArrayList<SimpleRaidDataBase> raids)
+    public static void saveRaids(String name, ArrayList<Raid> raids)
     {
         try
         {

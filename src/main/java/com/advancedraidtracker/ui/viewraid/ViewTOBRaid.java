@@ -4,11 +4,17 @@ import com.advancedraidtracker.SimpleTOBData;
 import com.advancedraidtracker.ui.BaseFrame;
 import com.advancedraidtracker.utility.RoomUtil;
 import com.advancedraidtracker.utility.datautility.DataPoint;
+import com.advancedraidtracker.utility.datautility.datapoints.RoomDataManager;
+import com.advancedraidtracker.utility.datautility.datapoints.tob.*;
+import com.google.common.collect.Multimap;
+import com.sun.jna.platform.win32.Variant;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.Calendar;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.advancedraidtracker.utility.datautility.DataPoint.NYLO_LAST_DEAD;
 
@@ -16,15 +22,15 @@ import static com.advancedraidtracker.utility.datautility.DataPoint.NYLO_LAST_DE
 public class ViewTOBRaid extends BaseFrame
 {
     String INCOMPLETE_MARKER = "-";
+    private final Color red = Color.red;
+    private final Color soft = Color.decode("#666666");
+    private final Color dark = Color.decode("#404040");
+    private final Color green = Color.decode("#33FF33");
+    private final Color blue = Color.decode("#6666DD");
+    private final Color white = Color.decode("#BBBBBB");
 
-    public ViewTOBRaid(SimpleTOBData data)
+    public ViewTOBRaid(Tob data)
     {
-        String red = "<html><font color='#FF0000'>";
-        String soft = "<html><font color='#666666'>";
-        String dark = "<html><font color='#404040'>";
-        String green = "<html><font color='#33FF33'>";
-        String blue = "<html><font color='#6666DD'>";
-        String white = "<html><font color='#BBBBBB'>";
 
         setTitle("View Raid");
         setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
@@ -32,37 +38,35 @@ public class ViewTOBRaid extends BaseFrame
         JPanel thisSubPanel = new JPanel();
         thisSubPanel.setLayout(new GridLayout(2, 3));
 
-        String maidenColor = (data.maidenTimeAccurate) ? green : (data.maidenStartAccurate || data.maidenEndAccurate) ? blue : red;
+
+        /*
         String bloatColor = (data.bloatTimeAccurate) ? green : (data.bloatStartAccurate || data.bloatEndAccurate) ? blue : red;
         String nyloColor = (data.nyloTimeAccurate) ? green : (data.nyloStartAccurate || data.nyloEndAccurate) ? blue : red;
         String soteColor = (data.soteTimeAccurate) ? green : (data.soteStartAccurate || data.soteEndAccurate) ? blue : red;
         String xarpColor = (data.xarpTimeAccurate) ? green : (data.xarpStartAccurate || data.xarpEndAccurate) ? blue : red;
         String verzikColor = (data.verzikTimeAccurate) ? green : (data.verzikStartAccurate || data.verzikEndAccurate) ? blue : red;
 
-        String maidenBodyColor = (data.maidenTimeAccurate) ? white : (data.maidenStartAccurate || data.maidenEndAccurate) ? soft : dark;
         String bloatBodyColor = (data.bloatTimeAccurate) ? white : (data.bloatStartAccurate || data.bloatEndAccurate) ? soft : dark;
         String nyloBodyColor = (data.nyloTimeAccurate) ? white : (data.nyloStartAccurate || data.nyloEndAccurate) ? soft : dark;
         String soteBodyColor = (data.soteTimeAccurate) ? white : (data.soteStartAccurate || data.soteEndAccurate) ? soft : dark;
         String xarpBodyColor = (data.xarpTimeAccurate) ? white : (data.xarpStartAccurate || data.xarpEndAccurate) ? soft : dark;
         String verzikBodyColor = (data.verzikTimeAccurate) ? white : (data.verzikStartAccurate || data.verzikEndAccurate) ? soft : dark;
 
-        JPanel maidenPanel = new JPanel();
-        maidenPanel.setLayout(new BorderLayout());
+         */
 
-        int maidenEntry = 0;
-        int maidenSplit = data.getMaidenTime();
 
-        int bloatEntry = maidenEntry + maidenSplit;
-        int bloatSplit = data.getBloatTime();
+
+        int bloatEntry = data.getMaidenData().getTime();
+        int bloatSplit = data.getBloatData().getTime();
 
         int nyloEntry = bloatEntry + bloatSplit;
-        int nyloSplit = data.getNyloTime();
+        int nyloSplit = data.getNylocasData().getTime();
 
         int soteEntry = nyloEntry + nyloSplit;
-        int soteSplit = data.getSoteTime();
+        int soteSplit = data.getSotetsegData().getTime();
 
         int xarpEntry = soteEntry + soteSplit;
-        int xarpSplit = data.getXarpTime();
+        int xarpSplit = data.getXarpusData().getTime();
 
         int verzikEntry = xarpEntry + xarpSplit;
 
@@ -79,8 +83,8 @@ public class ViewTOBRaid extends BaseFrame
 
         String verzikEntryStr = RoomUtil.time(verzikEntry);
 
-        maidenPanel.setBorder(BorderFactory.createTitledBorder(maidenColor + "Maiden" + ((data.maidenScuffed) ? " (Scuffed after " + data.firstMaidenCrabScuffed + ")" : "")));
 
+        /*
         JPanel bloatPanel = new JPanel();
         bloatPanel.setLayout(new BorderLayout());
         bloatPanel.setBorder(BorderFactory.createTitledBorder(bloatColor + "Bloat - " + bloatBodyColor + nyloEntryStr + " (" + bloatSplitStr + ")"));
@@ -101,43 +105,10 @@ public class ViewTOBRaid extends BaseFrame
         verzikPanel.setLayout(new BorderLayout());
         verzikPanel.setBorder(BorderFactory.createTitledBorder(verzikColor + "Verzik"));
 
-        JPanel maidenSubPanel = new JPanel();
-        GridLayout gl = new GridLayout(10, 2);
-        maidenSubPanel.setLayout(gl);
-
-        maidenSubPanel.add(new JLabel(maidenBodyColor + "Blood Spawned (thrown)"));
-        maidenSubPanel.add(new JLabel(maidenBodyColor + data.getValue(DataPoint.MAIDEN_BLOOD_SPAWNED) + " (" + data.getValue(DataPoint.MAIDEN_BLOOD_THROWN) + ")"));
-
-
-        maidenSubPanel.add(new JLabel(maidenBodyColor + "Defense"));
-        maidenSubPanel.add(new JLabel(maidenBodyColor + ((data.maidenDefenseAccurate) ? data.getValue(DataPoint.MAIDEN_DEFENSE) : INCOMPLETE_MARKER)));
-
-        maidenSubPanel.add(new JLabel(maidenBodyColor + "Crabs leaked"));
-        maidenSubPanel.add(new JLabel(maidenBodyColor + data.getValue(DataPoint.MAIDEN_CRABS_LEAKED) + ", HP: " + data.getValue(DataPoint.MAIDEN_HP_HEALED)));
-
-        maidenSubPanel.add(new JLabel(maidenBodyColor + "100% leaked"));
-        maidenSubPanel.add(new JLabel(maidenBodyColor + data.getValue(DataPoint.MAIDEN_CRABS_LEAKED_FULL_HP)));
-
-        maidenSubPanel.add(new JLabel(maidenBodyColor + "Scuffed?"));
-        maidenSubPanel.add(new JLabel(maidenBodyColor + ((data.maidenScuffed) ? data.firstMaidenCrabScuffed : "No")));
-
-        maidenSubPanel.add(new JLabel(maidenBodyColor + "Deaths"));
-        maidenSubPanel.add(new JLabel(maidenBodyColor + data.getValue(DataPoint.MAIDEN_DEATHS)));
-
-        maidenSubPanel.add(new JLabel(maidenBodyColor + "70s"));
-        maidenSubPanel.add(new JLabel(maidenBodyColor + RoomUtil.time(data.getValue(DataPoint.MAIDEN_70_SPLIT))));
-
-        maidenSubPanel.add(new JLabel(maidenBodyColor + "50s"));
-        maidenSubPanel.add(new JLabel(maidenBodyColor + RoomUtil.time(data.getValue(DataPoint.MAIDEN_50_SPLIT)) + " (" + RoomUtil.time(data.getValue(DataPoint.MAIDEN_50_SPLIT) - data.getValue(DataPoint.MAIDEN_70_SPLIT)) + ")"));
-
-        maidenSubPanel.add(new JLabel(maidenBodyColor + "30s"));
-        maidenSubPanel.add(new JLabel(maidenBodyColor + RoomUtil.time(data.getValue(DataPoint.MAIDEN_30_SPLIT)) + " (" + RoomUtil.time(data.getValue(DataPoint.MAIDEN_30_SPLIT) - data.getValue(DataPoint.MAIDEN_50_SPLIT)) + ")"));
-
-        maidenSubPanel.add(new JLabel(maidenBodyColor + "Room time"));
-        maidenSubPanel.add(new JLabel(maidenBodyColor + RoomUtil.time(data.getMaidenTime()) + " (" + RoomUtil.time(data.getMaidenTime() - data.getValue(DataPoint.MAIDEN_30_SPLIT)) + ")"));
 
         JPanel bloatSubPanel = new JPanel();
         bloatSubPanel.setLayout(new GridLayout(8, 2));
+        /*
 
         bloatSubPanel.add(new JLabel(bloatBodyColor + "Downs"));
         bloatSubPanel.add(new JLabel(bloatBodyColor + data.getValue(DataPoint.BLOAT_DOWNS)));
@@ -308,26 +279,30 @@ public class ViewTOBRaid extends BaseFrame
         verzikSubPanel.add(new JLabel(verzikBodyColor + "Time"));
         verzikSubPanel.add(new JLabel(verzikBodyColor + RoomUtil.time(data.getVerzikTime()) + " (" + RoomUtil.time(data.getVerzikTime() - data.getValue(DataPoint.VERZIK_P2_SPLIT)) + ")"));
 
-        maidenPanel.add(maidenSubPanel);
         bloatPanel.add(bloatSubPanel);
         nylocasPanel.add(nylocasSubPanel);
         sotetsegPanel.add(sotetsegSubPanel);
         xarpusPanel.add(xarpusSubPanel);
         verzikPanel.add(verzikSubPanel);
 
-        thisSubPanel.add(maidenPanel);
+         */
+
+        thisSubPanel.add(createMaidenPanel(data));
+
+        /*
         thisSubPanel.add(bloatPanel);
         thisSubPanel.add(nylocasPanel);
         thisSubPanel.add(sotetsegPanel);
         thisSubPanel.add(xarpusPanel);
         thisSubPanel.add(verzikPanel);
+         */
 
         JPanel summaryPanel = new JPanel();
         summaryPanel.setLayout(new BorderLayout());
         summaryPanel.setBorder(BorderFactory.createTitledBorder("Summary"));
         summaryPanel.setMinimumSize(new Dimension(100, 30));
         Calendar cal = Calendar.getInstance();
-        cal.setTime(data.raidStarted);
+        cal.setTime(data.getDate());
         String dateString = (cal.get(Calendar.MONTH) + 1) + "-" + cal.get(Calendar.DAY_OF_MONTH) + "-" + cal.get(Calendar.YEAR);
         JPanel summarySubPanel = new JPanel(new GridLayout(10, 1));
         summarySubPanel.add(new JLabel("Date: " + dateString));
@@ -352,11 +327,11 @@ public class ViewTOBRaid extends BaseFrame
         }
         summarySubPanel.add(new JLabel("Scale: " + scaleString));
         setSummaryStatus(data, summarySubPanel);
-        summarySubPanel.add(new JLabel("Time: " + RoomUtil.time(data.getTimeSum())));
+        summarySubPanel.add(new JLabel("Time: " + RoomUtil.time(data.getChallengeTime())));
         summarySubPanel.add(new JLabel("Players:"));
-        for (String player : data.players.keySet())
+        for (String player : data.getPlayers())
         {
-            summarySubPanel.add(new JLabel("        " + player + " (" + data.players.get(player) + ")"));
+            summarySubPanel.add(new JLabel("        " + player + " (" + player + ")"));
         }
 
         summaryPanel.add(summarySubPanel);
@@ -369,9 +344,13 @@ public class ViewTOBRaid extends BaseFrame
         thrallsPanel.setBorder(BorderFactory.createTitledBorder("Thralls"));
         thrallsPanel.setLayout(new GridLayout(7, 2));
 
-        thrallsPanel.add(new JLabel("Total Thrall Hits: "));
-        thrallsPanel.add(new JLabel(String.valueOf(data.getValue(DataPoint.THRALL_ATTACKS_TOTAL)), SwingConstants.RIGHT));
+        Multimap<String, Integer> thrallAttacks = data.getThrallAttacks();
+        long totalThrallHits = thrallAttacks.values().stream().filter(hit -> hit > 0).count();
 
+        thrallsPanel.add(new JLabel("Total Thrall Hits: "));
+        thrallsPanel.add(new JLabel(String.valueOf(totalThrallHits), SwingConstants.RIGHT));
+
+        /*
         thrallsPanel.add(new JLabel("Maiden Thrall Hits: "));
         thrallsPanel.add(new JLabel(String.valueOf(data.getValue(DataPoint.THRALL_ATTACKS_MAIDEN)), SwingConstants.RIGHT));
 
@@ -419,8 +398,11 @@ public class ViewTOBRaid extends BaseFrame
         vengPanel.add(new JLabel("Verzik"));
         vengPanel.add(new JLabel("(" + data.getValue(DataPoint.VENG_PROCS_VERZIK) + "/" + data.getValue(DataPoint.VENG_CASTS_VERZIK) + "): " + data.getValue(DataPoint.VENG_DAMAGE_VERZIK), SwingConstants.RIGHT));
 
-        topPanel.add(thrallsPanel);
         topPanel.add(vengPanel);
+         */
+
+        topPanel.add(thrallsPanel);
+
 
         add(topPanel);
         add(thisSubPanel);
@@ -428,46 +410,113 @@ public class ViewTOBRaid extends BaseFrame
         pack();
     }
 
-    private static void setSummaryStatus(SimpleTOBData data, JPanel summarySubPanel)
+    private Color getColor(RoomDataManager data)
     {
-        String raidStatusString;
-        if (data.maidenWipe)
+        Color color = green;
+        if (!data.isAccurate())
         {
-            raidStatusString = "Maiden Wipe";
-        } else if (data.maidenReset)
-        {
-            raidStatusString = "Maiden Reset";
-        } else if (data.bloatWipe)
-        {
-            raidStatusString = "Bloat Wipe";
-        } else if (data.bloatReset)
-        {
-            raidStatusString = "Bloat Reset";
-        } else if (data.nyloWipe)
-        {
-            raidStatusString = "Nylo Wipe";
-        } else if (data.nyloReset)
-        {
-            raidStatusString = "Nylo Reset";
-        } else if (data.soteWipe)
-        {
-            raidStatusString = "Sotetseg Wipe";
-        } else if (data.soteReset)
-        {
-            raidStatusString = "Sotetseg Reset";
-        } else if (data.xarpWipe)
-        {
-            raidStatusString = "Xarpus Wipe";
-        } else if (data.xarpReset)
-        {
-            raidStatusString = "Xarpus Reset";
-        } else if (data.verzikWipe)
-        {
-            raidStatusString = "Verzik Wipe";
-        } else
-        {
-            raidStatusString = "Completion";
+            color = (data.isStartAccurate() || data.isEndAccurate()) ? blue : red;
         }
+        return color;
+    }
+
+    private Color getBodyColor(RoomDataManager data)
+    {
+        Color color = white;
+        if (!data.isAccurate())
+        {
+            color = (data.isStartAccurate() || data.isEndAccurate()) ? soft : dark;
+        }
+        return color;
+    }
+
+    private JLabel createLabel(String text, Color color) {
+        JLabel label = new JLabel(text);
+        label.setForeground(color);
+        return label;
+    }
+
+    private JPanel createMaidenPanel(Tob raid)
+    {
+        MaidenData data = raid.getMaidenData();
+
+        JPanel maidenPanel = new JPanel();
+        maidenPanel.setLayout(new BorderLayout());
+        Color color = getColor(data);
+        Color bodyColor = getBodyColor(data);
+        JPanel maidenSubPanel = new JPanel();
+        GridLayout gl = new GridLayout(10, 2);
+        maidenSubPanel.setLayout(gl);
+
+        maidenSubPanel.add(createLabel("Blood Spawned (thrown)", bodyColor));
+        maidenSubPanel.add(createLabel(data.getBloodSpawned() + " (" + data.getBloodThrown() + ")", bodyColor));
+
+
+        maidenSubPanel.add(createLabel("Defense", bodyColor));
+        maidenSubPanel.add(createLabel(((data.isDefenceAccurate()) ? String.valueOf(data.getDefence()) : INCOMPLETE_MARKER), bodyColor));
+
+        List<Integer> leaks = data.getCrabsLeaked();
+        final int crabHealth;
+        switch (raid.getScale()) {
+            case 4:
+                crabHealth = 87;
+                break;
+
+            case 5:
+                crabHealth = 100;
+                break;
+
+            default: // 1, 2, 3
+                crabHealth = 75;
+                break;
+        }
+        maidenSubPanel.add(createLabel( "Crabs leaked", bodyColor));
+        maidenSubPanel.add(createLabel(leaks.size() + ", HP: " + leaks.stream().reduce(Integer::sum), bodyColor));
+
+        maidenSubPanel.add(createLabel("100% leaked", bodyColor));
+        maidenSubPanel.add(createLabel(String.valueOf(data.getCrabsLeaked().stream().filter(health -> health == crabHealth).count()), bodyColor));
+
+        maidenSubPanel.add(createLabel("Scuffed?", bodyColor));
+        maidenSubPanel.add(createLabel(((data.isScuffed()) ? data.getScuffedAfter() : "No"), bodyColor));
+
+        maidenSubPanel.add(createLabel("Deaths", bodyColor));
+        maidenSubPanel.add(createLabel(String.valueOf(data.getDeaths().values().stream().reduce(Integer::sum)), bodyColor));
+
+        Integer []splits = data.getSplits();
+        maidenSubPanel.add(createLabel("70s", bodyColor));
+        maidenSubPanel.add(createLabel(RoomUtil.time(splits[0]), bodyColor));
+
+        maidenSubPanel.add(createLabel("50s", bodyColor));
+        maidenSubPanel.add(createLabel(RoomUtil.time(splits[1]) + " (" + RoomUtil.time(splits[1] - splits[0]) + ")", bodyColor));
+
+        maidenSubPanel.add(createLabel("30s", bodyColor));
+        maidenSubPanel.add(createLabel(RoomUtil.time(splits[2]) + " (" + RoomUtil.time(splits[2] - splits[1]) + ")", bodyColor));
+
+        maidenSubPanel.add(createLabel("Room time", bodyColor));
+        maidenSubPanel.add(createLabel(RoomUtil.time(data.getTime()) + " (" + RoomUtil.time(data.getTime() - splits[2]) + ")", bodyColor));
+        maidenPanel.setBorder(BorderFactory.createTitledBorder("Maiden" + ((data.isScuffed()) ? " (Scuffed after " + data.getScuffedAfter() + ")" : "")));
+        maidenPanel.add(maidenSubPanel);
+        return maidenPanel;
+    }
+
+    private void createBloatPanel(BloatData data)
+    {}
+
+    private void createNyloPanel(NylocasData data)
+    {}
+
+    private void createSotePanel(SotetsegData data)
+    {}
+    private void createXarpPanel(XarpusData data)
+    {}
+
+    private void createVerzikPanel(VerzikData data)
+    {}
+
+    private static void setSummaryStatus(Tob data, JPanel summarySubPanel)
+    {
+        String raidStatusString = data.getRoomStatus();
+
         summarySubPanel.add(new JLabel("Raid Status: " + raidStatusString));
     }
 }

@@ -58,6 +58,7 @@ public enum WeaponAttack
     KERIS_SUN_SPEC("Keris of the Sun spec", "KS", new Color(140, 140, 30), 4),
     PICKUP("Pickup Animation", "PCK", new Color(30, 30, 90), -1),
     PUSH_JUG("Push Animation", "PSH", new Color(10, 10, 10), -1),
+    INQ_MACE("Inquisitor's Mace", "IQM", new Color(180, 50, 30), 4),
 
     ;
 

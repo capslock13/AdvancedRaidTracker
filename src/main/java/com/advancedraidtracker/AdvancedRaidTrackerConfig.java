@@ -68,7 +68,7 @@ public interface AdvancedRaidTrackerConfig extends Config
     @ConfigItem(
             position = 6,
             keyName = "primaryDark",
-            name = "Chart Dark Color",
+            name = "Theme Dark Color",
             description = "Color to use as darkest on chart"
     )
     default Color primaryDark()
@@ -79,7 +79,7 @@ public interface AdvancedRaidTrackerConfig extends Config
     @ConfigItem(
             position = 7,
             keyName = "primaryMiddle",
-            name = "Chart Middle Color",
+            name = "Theme Middle Color",
             description = "Color to use as Middle on chart"
     )
     default Color primaryMiddle()
@@ -90,7 +90,7 @@ public interface AdvancedRaidTrackerConfig extends Config
     @ConfigItem(
             position = 8,
             keyName = "primaryLight",
-            name = "Chart Light Color",
+            name = "Theme Light Color",
             description = "Color to use as lightest on chart"
     )
     default Color primaryLight()

@@ -64,7 +64,7 @@ public class OutlineBox
 
     public void createOutline()
     {
-        if (letter.equals("VS") || letter.equals("AO") || letter.equals("HU") || letter.equals("MI") || letter.equals("DB") || letter.equals("SS"))
+        if(weaponAttack.attackTicks == -1)
         {
             return;
         }

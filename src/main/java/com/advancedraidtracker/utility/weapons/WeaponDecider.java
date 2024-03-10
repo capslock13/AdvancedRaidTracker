@@ -237,6 +237,10 @@ public class WeaponDecider
             case 832:
                 weaponUsed = WeaponAttack.PUSH_JUG;
                 break;
+            case 4503:
+            case 400:
+                weaponUsed = WeaponAttack.INQ_MACE;
+                break;
         }
         return weaponUsed;
     }

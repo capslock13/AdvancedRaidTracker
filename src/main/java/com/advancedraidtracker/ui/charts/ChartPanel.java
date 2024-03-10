@@ -37,6 +37,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     int boxCount;
     int boxHeight;
     int boxWidth;
+    int instanceTime = 0;
 
     int selectedTick = -1;
     String selectedPlayer = "";
@@ -444,6 +445,16 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
     private void drawTicks(Graphics2D g)
     {
+        if(room.equals("Nylocas"))
+        {
+            for(Integer i : lines.keySet())
+            {
+                if(lines.get(i).equals("W1"))
+                {
+                    instanceTime = i%4;
+                }
+            }
+        }
         for (int i = startTick; i < endTick; i++)
         {
             int xOffset = getXOffset(i);
@@ -455,7 +466,22 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             Font oldFont = g.getFont();
             g.setFont(oldFont.deriveFont(10.0f));
             int strWidth = getStringBounds(g, String.valueOf(i)).width;
-            g.drawString(String.valueOf(i), 100 + xOffset + (scale / 2) - (strWidth / 2), yOffset + (fontHeight / 2));
+            int stallsUntilThisPoint = 0;
+            if(room.equals("Nylocas"))
+            {
+                for(Integer s : lines.keySet())
+                {
+                    if(s<(i-3))
+                    {
+                        if(lines.get(s).equals("Stall"))
+                        {
+                            stallsUntilThisPoint++;
+                        }
+                    }
+                }
+            }
+            String tick = String.valueOf(i-(stallsUntilThisPoint*4));
+            g.drawString(tick, 100 + xOffset + (scale / 2) - (strWidth / 2), yOffset + (fontHeight / 2));
             g.setFont(oldFont);
         }
     }
@@ -527,6 +553,10 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
                 if (i == 0)
                 {
+                    if(room.equals("Nylocas"))
+                    {
+                        roomSpecificText = "Instance Time";
+                    }
                     g.drawString(roomSpecificText, 5, j * boxHeight + ((players.size() + 2) * scale) + (fontHeight / 2) + 20);
                 }
                 g.setFont(oldFont);
@@ -537,15 +567,32 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
     private void drawRoomSpecificData(Graphics2D g)
     {
-        for (Integer i : specific.keySet())
+        if(room.equals("Nylocas"))
         {
-            int xOffset = getXOffset(i);
-            int yOffset = getYOffset(i);
-            xOffset += 100;
-            yOffset += (playerOffsets.size() + 2) * scale - 10;
-            g.setColor(Color.WHITE);
-            int strWidth = getStringBounds(g, "X").width;
-            g.drawString("X", xOffset + (scale / 2) - (strWidth / 2), yOffset + (fontHeight / 2) + 10);
+            for (int i = startTick; i < endTick; i++)
+            {
+                int xOffset = getXOffset(i);
+                int yOffset = getYOffset(i);
+                xOffset += 100;
+                yOffset += (playerOffsets.size() + 2) * scale - 10;
+                g.setColor(Color.WHITE);
+                String time = String.valueOf(((i+instanceTime)%4)+1);
+                int strWidth = getStringBounds(g, time).width;
+                g.drawString(time, xOffset + (scale / 2) - (strWidth / 2), yOffset + (fontHeight / 2) + 10);
+            }
+        }
+        else
+        {
+            for (Integer i : specific.keySet())
+            {
+                int xOffset = getXOffset(i);
+                int yOffset = getYOffset(i);
+                xOffset += 100;
+                yOffset += (playerOffsets.size() + 2) * scale - 10;
+                g.setColor(Color.WHITE);
+                int strWidth = getStringBounds(g, "X").width;
+                g.drawString("X", xOffset + (scale / 2) - (strWidth / 2), yOffset + (fontHeight / 2) + 10);
+            }
         }
     }
 

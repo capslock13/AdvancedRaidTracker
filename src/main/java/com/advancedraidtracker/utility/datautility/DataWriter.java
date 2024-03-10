@@ -7,8 +7,10 @@ import com.advancedraidtracker.constants.LogID;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.Scanner;
 
 @Slf4j
 public class DataWriter
@@ -80,12 +82,31 @@ public class DataWriter
     //if an active datafile and if so it adds an exit flag to the end
     public void checkForEndFlag()
     {
-        File logFile = new File(PLUGIN_DIRECTORY + activeUsername + "/primary/tobdata.log");
+        File logFile = new File(PLUGIN_DIRECTORY + activeUsername + "/primary/" + currentRaidType.name + "data.log");
         if (logFile.exists())
         {
             if (logFile.length() > 0)
             {
-                currentBuffer.add("," + System.currentTimeMillis() + ",1," + 4 + "," + "," + "," + "," + ",");
+                Long lastTime = System.currentTimeMillis();
+                String lastLine = "";
+                try
+                {
+                    Scanner reader = new Scanner(Files.newInputStream(logFile.toPath()));
+                    while(reader.hasNextLine())
+                    {
+                        lastLine = reader.nextLine();
+                    }
+                    String[] lineSplit = lastLine.split(",");
+                    if(lineSplit.length > 1)
+                    {
+                        lastTime = Long.parseLong(lineSplit[1]);
+                    }
+                }
+                catch (Exception e)
+                {
+                    log.info("Could not parse file " + logFile.getAbsolutePath() + ", last line: " + lastLine);
+                }
+                currentBuffer.add("," + lastTime + "," + currentRaidType.value +"," + ((1000*(currentRaidType.value-1))+4) + "," + "," + "," + "," + ",");
                 writeFile();
             }
         }
@@ -199,10 +220,10 @@ public class DataWriter
     {
         try
         {
-            File aliasFile = new File(PLUGIN_DIRECTORY + "alias/alias.log");
+            File aliasFile = new File(PLUGIN_DIRECTORY + "misc-dir/alias/alias.log");
             if (!aliasFile.exists())
             {
-                File directory = new File(PLUGIN_DIRECTORY + "alias/");
+                File directory = new File(PLUGIN_DIRECTORY + "misc-dir/alias/");
                 if (!directory.exists())
                 {
                     if (!directory.mkdirs())
@@ -215,7 +236,7 @@ public class DataWriter
                     log.info("Failed to create alias file");
                 }
             }
-            BufferedWriter logger = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(PLUGIN_DIRECTORY + "alias/alias.log", false), StandardCharsets.UTF_8));
+            BufferedWriter logger = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(PLUGIN_DIRECTORY + "misc-dir/alias/alias.log", false), StandardCharsets.UTF_8));
             logger.write(aliasText);
             logger.close();
         } catch (IOException e)
@@ -230,7 +251,7 @@ public class DataWriter
         BufferedReader reader;
         try
         {
-            reader = new BufferedReader(new FileReader(PLUGIN_DIRECTORY + "alias/alias.log"));
+            reader = new BufferedReader(new FileReader(PLUGIN_DIRECTORY + "misc-dir/alias/alias.log"));
             String line = reader.readLine();
             while (line != null)
             {

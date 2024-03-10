@@ -88,24 +88,24 @@ public class Tob extends Raid
 
             switch (entry.getLogEntry())
             {
-                case MAIDEN_0HP:
+                case MAIDEN_DESPAWNED:
                     maidenData = new MaidenData(roomData);
                     break;
-                case BLOAT_0HP:
+                case BLOAT_DESPAWN:
                     bloatData = new BloatData(roomData);
                     break;
-                case NYLO_0HP:
+                case NYLO_DESPAWNED:
                     nylocasData = new NylocasData(roomData);
                     break;
                 case SOTETSEG_ENDED:
-                    // TODO
+                    sotetsegData = new SotetsegData(roomData);
                     break;
-                case XARPUS_0HP:
-                    // TODO
+                case XARPUS_DESPAWNED:
+                    xarpusData = new XarpusData(roomData);
                     break;
-                case VERZIK_P3_0HP:
-                    // TODO
-                    break;
+                case VERZIK_P3_DESPAWNED:
+                    verzikData = new VerzikData(roomData);
+                    return;
                 default:
                     break;
             }

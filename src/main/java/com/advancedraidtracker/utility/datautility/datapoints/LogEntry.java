@@ -26,9 +26,20 @@ public class LogEntry
 
     public Map<String, String> parseExtra()
     {
+        // TODO add shorthands for common ones like room tick
         Map<String, String> map = new HashMap<>();
         String []descriptors = logEntry.getValueDescriptors();
         Streams.forEachPair(Arrays.stream(descriptors).map(String::toLowerCase), extra.stream(), map::put);
         return map;
+    }
+
+    public Integer getRoomTick() {
+        Map<String, String> logData = parseExtra();
+        return Integer.valueOf(logData.get("room tick"));
+    }
+
+    public static Integer getRoomTick(Map<String, String> logData)
+    {
+        return Integer.valueOf(logData.get("room tick"));
     }
 }

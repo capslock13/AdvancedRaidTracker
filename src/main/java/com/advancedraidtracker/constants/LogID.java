@@ -27,7 +27,7 @@ public enum LogID
     PLAYER_ATTACK(801, false, ANY, "Player Animation", "Player:Room Tick", "Animation:Worn Items ~ Separated", "Spot animations", "Weapon:Interated Index:Interacted ID", "Matched Projectile:Interacted Name", "Room Name"),
     BLOOD_THROWN(9, true, MAIDEN, "Maiden blood thrown"),
     BLOOD_SPAWNED(10, true, MAIDEN, "Blood Spawned"),
-    CRAB_LEAK(11, true, MAIDEN, "Crab Leaked"),
+    CRAB_LEAK(11, true, MAIDEN, "Crab Leaked", "Health"),
     MAIDEN_SPAWNED(12, true, MAIDEN, "Spawned"),
     MAIDEN_70S(13, true, MAIDEN, "70s", "Room Tick"),
     MAIDEN_50S(14, true, MAIDEN, "50s", "Room Tick"),

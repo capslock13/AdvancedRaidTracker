@@ -1,17 +1,33 @@
 package com.advancedraidtracker.utility.datautility.datapoints;
 
 import com.advancedraidtracker.constants.LogID;
+import com.advancedraidtracker.constants.RaidType;
 import com.advancedraidtracker.utility.datautility.datapoints.tob.Tob;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import lombok.Getter;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public abstract class Raid
 {
+    /**
+     * Path to the log file.
+     */
+    @Getter
+    private final Path filepath;
+
+    /**
+     * Date the raid was run.
+     */
+    @Getter
+    protected Date date;
+
     /**
      * Time for the entire raid.
      */
@@ -31,19 +47,44 @@ public abstract class Raid
     protected int afkTime;
 
     /**
+     * If all the times are accurate.
+     */
+    @Getter
+    protected boolean accurate;
+
+    /**
+     * Was the raid completed.
+     */
+    @Getter
+    protected boolean completed;
+
+    /**
+     * If the player was in a runelite party to get precise defence tracking.
+     */
+    @Getter
+    protected boolean inParty;
+
+    /**
      * Amount of players in the raid.
      */
     @Getter
     protected final List<String> players;
 
+    /**
+     * Log entries for the raid.
+     */
     protected final List<LogEntry> raidData;
 
-    protected Raid(List<LogEntry> raidData)
+    protected Raid(Path filepath, List<LogEntry> raidData)
     {
         this.raidData = raidData;
+        this.filepath = filepath;
         this.players = new ArrayList<>();
     }
 
+    /**
+     * @return A list that contains the data for all rooms.
+     */
     public abstract List<RoomDataManager> getAllData();
 
     /**
@@ -53,7 +94,7 @@ public abstract class Raid
      * @param path path to log file
      * @return A raid for the log
      */
-    public static Raid getRaid(String path)
+    public static Raid getRaid(Path path)
     {
         List<String> raidData = getRaidStrings(path);
         List<LogEntry> currentRaid = new ArrayList<>();
@@ -65,28 +106,23 @@ public abstract class Raid
             currentRaid.add(entry);
             if (entry.getLogEntry() == LogID.LEFT_TOB)
             {
-                ret = new Tob(currentRaid);
+                ret = new Tob(path, currentRaid);
             }
         }
         return ret;
     }
 
-    public static List<Raid> getRaids(String path)
-    {
-        List<String> raidData = getRaidStrings(path);
-        List<Raid> raids = new ArrayList<>();
-        for (String line : raidData)
-        {
-
-        }
-
-        return raids;
-    }
-
-    private static List<String> getRaidStrings(String path)
+    /**
+     * Goes through the file and returns an arraylist containing all of the lines in the file.
+     *
+     * TODO find out if this is something that should simply be done in `getRaid` to not parse it twice.
+     * @param path Path to log file.
+     * @return A list of all lines in the log file.
+     */
+    private static List<String> getRaidStrings(Path path)
     {
         List<String> lines = new ArrayList<>();
-        File file = new File(path);
+        File file = path.toFile();
         try
         {
             Scanner scanner = new Scanner(Files.newInputStream(file.toPath()));
@@ -119,5 +155,45 @@ public abstract class Raid
                     break;
             }
         }
+    }
+
+    /**
+     * Determines what the status of the raid was when it was left
+     *
+     * @return A string with the final status of the raid.
+     */
+    public abstract String getRoomStatus();
+
+    /**
+     * Determines what type of raid it is. Used as a shorthand for the UI.
+     *
+     * @return TOB/TOA/COX.
+     */
+    public abstract RaidType getRaidType();
+
+    /**
+     * Fetches the thrall attacks done throughout the raid.
+     *
+     * @return A map of each players thrall attacks.
+     */
+    public Multimap<String, Integer> getThrallAttacks() {
+        List<RoomDataManager> data = getAllData();
+        Multimap<String, Integer> attacks = ArrayListMultimap.create();
+
+        for (RoomDataManager room : data)
+        {
+            attacks.putAll(room.getThrallAttacks());
+        }
+
+        return attacks;
+    }
+
+
+    /**
+     * @return Amount of players in a raid.
+     */
+    public int getScale()
+    {
+        return players.size();
     }
 }

@@ -1,13 +1,14 @@
 package com.advancedraidtracker.utility.datautility.datapoints.tob;
 
 import com.advancedraidtracker.constants.LogID;
+import com.advancedraidtracker.constants.RaidType;
 import com.advancedraidtracker.utility.datautility.datapoints.LogEntry;
 import com.advancedraidtracker.utility.datautility.datapoints.Raid;
 import com.advancedraidtracker.utility.datautility.datapoints.RoomDataManager;
 import lombok.Getter;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.nio.file.Path;
+import java.util.*;
 
 public class Tob extends Raid
 {
@@ -22,7 +23,7 @@ public class Tob extends Raid
     }
 
     @Getter
-    private boolean spectate;
+    private boolean spectated;
 
     @Getter
     private RaidMode mode;
@@ -45,9 +46,9 @@ public class Tob extends Raid
     @Getter
     private VerzikData verzikData;
 
-    public Tob(List<LogEntry> raidData)
+    public Tob(Path logfile, List<LogEntry> raidData)
     {
-        super(raidData);
+        super(logfile, raidData);
         parse();
     }
 
@@ -66,8 +67,11 @@ public class Tob extends Raid
         {
             switch (entry.getLogEntry())
             {
+                case ENTERED_TOB:
+                    this.date = new Date(entry.getTs());
+                    continue;
                 case SPECTATE:
-                    spectate = true;
+                    spectated = true;
                     continue;
 
             }
@@ -109,6 +113,11 @@ public class Tob extends Raid
         }
     }
 
+    @Override
+    public String getRoomStatus() {
+        return "";
+    }
+
     /**
      * Checks whether a room has started.
      * @param entry Log entry to compare
@@ -127,6 +136,11 @@ public class Tob extends Raid
     @Override
     public List<RoomDataManager> getAllData()
     {
-        return null;
+        return Arrays.asList(maidenData, bloatData, nylocasData, sotetsegData, xarpusData, verzikData);
+    }
+
+    @Override
+    public RaidType getRaidType() {
+        return RaidType.TOB;
     }
 }

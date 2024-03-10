@@ -82,7 +82,9 @@ public class RaidTrackerSidePanel extends PluginPanel
         try {
             Stream<Path> subLogFiles = Files.walk(Paths.get(PLUGIN_DIRECTORY));
             List<Raid> logs = subLogFiles
-                    .filter(file -> !file.equals(Paths.get(PLUGIN_DIRECTORY, "misc-dir")) && !Files.isDirectory(file))
+                    .filter(file -> !file.toAbsolutePath()
+                            .startsWith(Paths.get(PLUGIN_DIRECTORY, "misc-dir").toString())
+                            && !Files.isDirectory(file))
                     .map(Raid::getRaid)
                     .filter(Objects::nonNull) // For now, as only tob is supported, filter out cox/toa logs
                     .collect(Collectors.toList());

@@ -127,6 +127,7 @@ public class Tob extends Raid
     {
         // TODO sote
         return  entry == LogID.MAIDEN_SPAWNED ||
+                entry == LogID.BLOAT_STARTED ||
                 entry == LogID.NYLO_PILLAR_SPAWN ||
                 entry == LogID.XARPUS_SPAWNED ||
                 entry == LogID.SOTETSEG_STARTED ||

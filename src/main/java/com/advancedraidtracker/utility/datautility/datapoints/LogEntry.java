@@ -1,13 +1,11 @@
 package com.advancedraidtracker.utility.datautility.datapoints;
 
 import com.advancedraidtracker.constants.LogID;
+import com.google.common.collect.Streams;
 import lombok.Value;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @Value
 public class LogEntry
@@ -24,5 +22,13 @@ public class LogEntry
         raid = Integer.parseInt(line[2]);
         logEntry = LogID.valueOf(Integer.parseInt(line[3]));
         extra = Arrays.stream(line, 4, line.length).collect(Collectors.toList());
+    }
+
+    public Map<String, String> parseExtra()
+    {
+        Map<String, String> map = new HashMap<>();
+        String []descriptors = logEntry.getValueDescriptors();
+        Streams.forEachPair(Arrays.stream(descriptors).map(String::toLowerCase), extra.stream(), map::put);
+        return map;
     }
 }

@@ -68,7 +68,7 @@ public abstract class Raid
      * Amount of players in the raid.
      */
     @Getter
-    protected final List<String> players;
+    protected final Set<String> players;
 
     /**
      * Log entries for the raid.
@@ -79,7 +79,7 @@ public abstract class Raid
     {
         this.raidData = raidData;
         this.filepath = filepath;
-        this.players = new ArrayList<>();
+        this.players = new HashSet<>();
     }
 
     /**
@@ -150,8 +150,9 @@ public abstract class Raid
                 case PARTY_MEMBERS:
                     // TODO: may need changing with toa/cox support
                     players.addAll(entry.getExtra().stream()
+                            .map(name -> name.replaceAll("\\P{Print}", ""))
                             .filter(name -> !name.isEmpty())
-                            .collect(Collectors.toList()));
+                            .collect(Collectors.toSet()));
                     break;
             }
         }

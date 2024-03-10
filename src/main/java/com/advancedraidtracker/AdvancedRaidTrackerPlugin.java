@@ -1,6 +1,7 @@
 package com.advancedraidtracker;
 
 import com.advancedraidtracker.constants.*;
+import com.advancedraidtracker.rooms.cox.*;
 import com.advancedraidtracker.rooms.toa.*;
 import com.advancedraidtracker.rooms.tob.*;
 import com.advancedraidtracker.ui.charts.LiveChart;
@@ -119,6 +120,25 @@ public class AdvancedRaidTrackerPlugin extends Plugin
     private WardensHandler wardens;
     private TOAHandler toaHandler;
 
+    private COXHandler coxHandler;
+    private CrabsHandler crabs;
+    private FirstResourceRoomHandler firstResourceRoom;
+    private FirstScavengersHandler firstScavengers;
+    private GuardiansHandler guardians;
+    private IceDemonHandler iceDemon;
+    private MuttadileHandler muttadile;
+    private MysticsHandler mystics;
+    private OlmHandler olm;
+    private SecondResourceRoomHandler secondResourceRoom;
+    private SecondSavengersHandler secondSavengers;
+    private ShamansHandler shamans;
+    private TektonHandler tekton;
+    private ThievingHandler thieving;
+    private TightRopeHandler tightRope;
+    private VanguardsHandler vanguards;
+    private VasaHandler vasa;
+    private VespulaHandler vespula;
+
 
     private ArrayList<DamageQueueShell> queuedThrallDamage;
 
@@ -225,6 +245,8 @@ public class AdvancedRaidTrackerPlugin extends Plugin
         het = new HetHandler(client, clog, config, this, toaHandler);
         akkha = new AkkhaHandler(client, clog, config, this, toaHandler, itemManager);
         wardens = new WardensHandler(client, clog, config, this, toaHandler);
+        coxHandler = new COXHandler();
+        tekton = new TektonHandler(client, clog, config);
 
         inTheatre = false;
         wasInTheatre = false;

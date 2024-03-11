@@ -253,32 +253,32 @@ public class SimpleTOBData extends SimpleRaidDataBase
 
     public int getMaidenTime()
     {
-        return (maidenStartAccurate && maidenEndAccurate) ? getValue(DataPoint.MAIDEN_TOTAL_TIME) : 0;
+        return -1; //(maidenStartAccurate && maidenEndAccurate) ? getValue(DataPoint.MAIDEN_TOTAL_TIME) : 0;
     }
 
     public int getBloatTime()
     {
-        return (bloatStartAccurate && bloatEndAccurate) ? getValue(DataPoint.BLOAT_TOTAL_TIME) : 0;
+        return -1; //(bloatStartAccurate && bloatEndAccurate) ? getValue(DataPoint.BLOAT_TOTAL_TIME) : 0;
     }
 
     public int getNyloTime()
     {
-        return (nyloStartAccurate && nyloEndAccurate) ? getValue(DataPoint.NYLO_TOTAL_TIME) : 0;
+        return -1 ;//(nyloStartAccurate && nyloEndAccurate) ? getValue(DataPoint.NYLO_TOTAL_TIME) : 0;
     }
 
     public int getSoteTime()
     {
-        return (soteStartAccurate && soteEndAccurate) ? getValue(DataPoint.SOTE_TOTAL_TIME) : 0;
+        return -1 ;//(soteStartAccurate && soteEndAccurate) ? getValue(DataPoint.SOTE_TOTAL_TIME) : 0;
     }
 
     public int getXarpTime()
     {
-        return (xarpStartAccurate && xarpEndAccurate) ? getValue(DataPoint.XARP_TOTAL_TIME) : 0;
+        return -1 ;//(xarpStartAccurate && xarpEndAccurate) ? getValue(DataPoint.XARP_TOTAL_TIME) : 0;
     }
 
     public int getVerzikTime()
     {
-        return (verzikStartAccurate && verzikEndAccurate) ? getValue(DataPoint.VERZIK_TOTAL_TIME) : 0;
+        return -1; //(verzikStartAccurate && verzikEndAccurate) ? getValue(DataPoint.VERZIK_TOTAL_TIME) : 0;
     }
 
     public boolean getOverallTimeAccurate()
@@ -468,7 +468,7 @@ public class SimpleTOBData extends SimpleRaidDataBase
         {
             switch (LogID.valueOf(Integer.parseInt(subData[3])))
             {
-                case ENTERED_TOB:
+                case ENTERED_RAID:
                     raidStarted = new Date(Long.parseLong(subData[1]));
                     break;
                 case PARTY_MEMBERS:
@@ -481,7 +481,7 @@ public class SimpleTOBData extends SimpleRaidDataBase
                         }
                     }
                     break;
-                case DWH:
+                case HAMMER_HIT:
                     dataManager.increment(Objects.requireNonNull(DataPoint.getValue(room + " hit hammers")));
                     dataManager.incrementPlayerSpecific(DataPoint.getValue(room + " hit hammers"), subData[4]);
                     if (!room.equals("Verzik"))
@@ -489,7 +489,7 @@ public class SimpleTOBData extends SimpleRaidDataBase
                         dataManager.hammer(Objects.requireNonNull(DataPoint.getValue(room + " defense")));
                     }
                     break;
-                case BGS:
+                case BGS_HIT:
                     if (!room.equals("Bloat") || dataManager.get(DataPoint.BLOAT_DOWNS) == 0)
                     {
                         dataManager.increment(Objects.requireNonNull(DataPoint.getValue(room + " attempted BGS")));
@@ -574,7 +574,7 @@ public class SimpleTOBData extends SimpleRaidDataBase
                 switch (LogID.valueOf(Integer.parseInt(subData[3])))
                 {
                     case LEFT_TOB:
-                        if (dataManager.get(DataPoint.VERZIK_TOTAL_TIME) == 0)
+                        //if (dataManager.get(DataPoint.VERZIK_TOTAL_TIME) == 0)
                         {
                             if (!verzikStarted)
                             {
@@ -583,16 +583,16 @@ public class SimpleTOBData extends SimpleRaidDataBase
                             {
                                 verzikWipe = true;
                             }
-                        } else
+                        } //else
                         {
                             return true;
                         }
-                        globalData = new ArrayList<>(globalData.subList(activeIndex + 1, globalData.size()));
-                        Date endTime = new Date(Long.parseLong(subData[1]));
-                        long difference = endTime.getTime() - raidStarted.getTime();
-                        int ticks = (int) (difference / 600);
-                        dataManager.set(DataPoint.OVERALL_TIME, ticks);
-                        return false;
+                        //globalData = new ArrayList<>(globalData.subList(activeIndex + 1, globalData.size()));
+                        //Date endTime = new Date(Long.parseLong(subData[1]));
+                        //long difference = endTime.getTime() - raidStarted.getTime();
+                        //int ticks = (int) (difference / 600);
+                        //dataManager.set(DataPoint.OVERALL_TIME, ticks);
+                        //return false;
                     case DAWN_DROPPED:
                         if (verzikStarted)
                         {
@@ -603,12 +603,12 @@ public class SimpleTOBData extends SimpleRaidDataBase
                         verzikStarted = true;
                         break;
                     case VERZIK_P1_DESPAWNED:
-                        dataManager.set(DataPoint.VERZIK_P1_SPLIT, Integer.parseInt(subData[4]) - 13);
+                        dataManager.set(DataPoint.VERZIK_P2_SPLIT, Integer.parseInt(subData[4]) - 13);
                         break;
                     case VERZIK_P2_END:
-                        dataManager.set(DataPoint.VERZIK_P2_SPLIT, Integer.parseInt(subData[4]));
-                        dataManager.set(DataPoint.VERZIK_P2_DURATION, dataManager.get(DataPoint.VERZIK_P2_SPLIT) - dataManager.get(DataPoint.VERZIK_P1_SPLIT));
-                        dataManager.set(DataPoint.VERZIK_REDS_DURATION, dataManager.get(DataPoint.VERZIK_P2_SPLIT) - dataManager.get(VERZIK_REDS_SPLIT));
+                        dataManager.set(DataPoint.VERZIK_P3_SPLIT, Integer.parseInt(subData[4]));
+                        dataManager.set(DataPoint.VERZIK_P2_DURATION, dataManager.get(DataPoint.VERZIK_P3_SPLIT) - dataManager.get(DataPoint.VERZIK_P2_SPLIT));
+                        dataManager.set(DataPoint.VERZIK_REDS_DURATION, dataManager.get(DataPoint.VERZIK_P3_SPLIT) - dataManager.get(VERZIK_REDS_SPLIT));
                         try
                         {
                             int hp = verzikHP.get(dataManager.get(VERZIK_REDS_SPLIT));
@@ -620,14 +620,14 @@ public class SimpleTOBData extends SimpleRaidDataBase
                         }
                         break;
                     case VERZIK_P3_DESPAWNED:
-                        dataManager.set(DataPoint.VERZIK_TOTAL_TIME, Integer.parseInt(subData[4]));
-                        dataManager.set(DataPoint.VERZIK_P3_DURATION, dataManager.get(DataPoint.VERZIK_TOTAL_TIME) - dataManager.get(DataPoint.VERZIK_P2_SPLIT));
+                        //dataManager.set(DataPoint.VERZIK_TOTAL_TIME, Integer.parseInt(subData[4]));
+                        //dataManager.set(DataPoint.VERZIK_P3_DURATION, dataManager.get(DataPoint.VERZIK_TOTAL_TIME) - dataManager.get(DataPoint.VERZIK_P3_SPLIT));
                         dataManager.set(DataPoint.CHALLENGE_TIME, (Integer.parseInt(subData[4]) + dataManager.get(DataPoint.VERZIK_ENTRY)));
                         break;
                     case VERZIK_CRAB_SPAWNED:
                         if (!subData[4].equalsIgnoreCase(""))
                         {
-                            if (dataManager.get(DataPoint.VERZIK_P2_SPLIT) > 1)
+                            if (dataManager.get(DataPoint.VERZIK_P3_SPLIT) > 1)
                             {
                                 if (!p3Crabs.contains(Integer.parseInt(subData[4])))
                                 {
@@ -647,7 +647,7 @@ public class SimpleTOBData extends SimpleRaidDataBase
                         if (dataManager.get(VERZIK_REDS_SPLIT) == 0)
                         {
                             dataManager.set(VERZIK_REDS_SPLIT, Integer.parseInt(subData[4]));
-                            dataManager.set(VERZIK_P2_TILL_REDS, Integer.parseInt(subData[4]) - dataManager.get(DataPoint.VERZIK_P1_SPLIT));
+                            dataManager.set(VERZIK_P2_TILL_REDS, Integer.parseInt(subData[4]) - dataManager.get(DataPoint.VERZIK_P2_SPLIT));
                         }
                         redsProc.add(Integer.parseInt(subData[4]));
                         dataManager.increment(DataPoint.VERZIK_REDS_SETS);
@@ -748,10 +748,10 @@ public class SimpleTOBData extends SimpleRaidDataBase
                 switch (LogID.valueOf(Integer.parseInt(subData[3])))
                 {
                     case LEFT_TOB:
-                        if (dataManager.get(DataPoint.XARP_TOTAL_TIME) != 0)
+                        //if (dataManager.get(DataPoint.XARP_TOTAL_TIME) != 0)
                         {
                             xarpReset = true;
-                        } else
+                        } //else
                         {
                             if (!xarpStarted)
                             {
@@ -781,8 +781,8 @@ public class SimpleTOBData extends SimpleRaidDataBase
                         dataManager.set(DataPoint.XARP_SCREECH, Integer.parseInt(subData[4]));
                         break;
                     case XARPUS_DESPAWNED:
-                        dataManager.set(DataPoint.XARP_TOTAL_TIME, Integer.parseInt(subData[4]));
-                        dataManager.set(DataPoint.XARP_POST_SCREECH, dataManager.get(DataPoint.XARP_TOTAL_TIME) - dataManager.get(DataPoint.XARP_SCREECH));
+                        //dataManager.set(DataPoint.XARP_TOTAL_TIME, Integer.parseInt(subData[4]));
+                        //dataManager.set(DataPoint.XARP_POST_SCREECH, dataManager.get(DataPoint.XARP_TOTAL_TIME) - dataManager.get(DataPoint.XARP_SCREECH));
                         if (isTimeAccurateThroughRoom(SOTETSEG))
                             dataManager.set(DataPoint.VERZIK_ENTRY, Integer.parseInt(subData[4]) + dataManager.get(DataPoint.XARP_ENTRY));
                         break loop;
@@ -840,7 +840,7 @@ public class SimpleTOBData extends SimpleRaidDataBase
             {
                 switch (LogID.valueOf(Integer.parseInt(subData[3])))
                 {
-                    case DWH:
+                    case HAMMER_HIT:
                         if (dataManager.get(DataPoint.SOTE_P1_SPLIT) == 0)
                         {
                             dataManager.increment(DataPoint.SOTE_SPECS_P1);
@@ -856,10 +856,10 @@ public class SimpleTOBData extends SimpleRaidDataBase
                         }
                         break;
                     case LEFT_TOB:
-                        if (dataManager.get(DataPoint.SOTE_TOTAL_TIME) != 0)
+                        //if (dataManager.get(DataPoint.SOTE_TOTAL_TIME) != 0)
                         {
                             soteReset = true;
-                        } else
+                        } //else
                         {
                             if (!soteStarted)
                             {
@@ -899,8 +899,8 @@ public class SimpleTOBData extends SimpleRaidDataBase
                         dataManager.set(DataPoint.SOTE_MAZE_SUM, dataManager.get(DataPoint.SOTE_M1_DURATION) + dataManager.get(DataPoint.SOTE_M2_DURATION));
                         break;
                     case SOTETSEG_ENDED:
-                        dataManager.set(DataPoint.SOTE_TOTAL_TIME, Integer.parseInt(subData[4]));
-                        dataManager.set(DataPoint.SOTE_P3_DURATION, dataManager.get(DataPoint.SOTE_TOTAL_TIME) - dataManager.get(DataPoint.SOTE_M2_SPLIT));
+                        //dataManager.set(DataPoint.SOTE_TOTAL_TIME, Integer.parseInt(subData[4]));
+                        //dataManager.set(DataPoint.SOTE_P3_DURATION, dataManager.get(DataPoint.SOTE_TOTAL_TIME) - dataManager.get(DataPoint.SOTE_M2_SPLIT));
                         if (isTimeAccurateThroughRoom(NYLOCAS))
                             dataManager.set(DataPoint.XARP_ENTRY, Integer.parseInt(subData[4]) + dataManager.get(DataPoint.SOTE_ENTRY));
                         break loop;
@@ -945,12 +945,12 @@ public class SimpleTOBData extends SimpleRaidDataBase
                         if (dataManager.get(NYLOCAS_PILLAR_DESPAWN_TICK) - 5 < dataManager.get(DataPoint.NYLO_BOSS_SPAWN))
                         {
                             dataManager.set(DataPoint.NYLO_BOSS_SPAWN, 0);
-                            dataManager.set(DataPoint.NYLO_TOTAL_TIME, 0);
+                            //dataManager.set(DataPoint.NYLO_TOTAL_TIME, 0);
                         }
-                        if (dataManager.get(DataPoint.NYLO_TOTAL_TIME) != 0)
+                        //if (dataManager.get(DataPoint.NYLO_TOTAL_TIME) != 0)
                         {
                             nyloReset = true;
-                        } else
+                        } //else
                         {
                             if (!nyloStarted)
                             {
@@ -1027,15 +1027,15 @@ public class SimpleTOBData extends SimpleRaidDataBase
                     case NYLO_DESPAWNED:
                         if (Integer.parseInt(subData[4]) - dataManager.get(DataPoint.NYLO_BOSS_SPAWN) > 30)
                         {
-                            dataManager.set(DataPoint.NYLO_TOTAL_TIME, Integer.parseInt(subData[4]));
-                            dataManager.set(DataPoint.NYLO_BOSS_DURATION, dataManager.get(DataPoint.NYLO_TOTAL_TIME) - dataManager.get(DataPoint.NYLO_BOSS_SPAWN));
+                            //dataManager.set(DataPoint.NYLO_TOTAL_TIME, Integer.parseInt(subData[4]));
+                            //dataManager.set(DataPoint.NYLO_BOSS_DURATION, dataManager.get(DataPoint.NYLO_TOTAL_TIME) - dataManager.get(DataPoint.NYLO_BOSS_SPAWN));
                             if (isTimeAccurateThroughRoom(BLOAT))
                                 dataManager.set(DataPoint.SOTE_ENTRY, Integer.parseInt(subData[4]) + dataManager.get(DataPoint.NYLO_ENTRY));
                         }
                         break loop;
-                    case NYLO_PILLAR_DESPAWNED:
-                        dataManager.set(NYLOCAS_PILLAR_DESPAWN_TICK, Integer.parseInt(subData[4]));
-                        break;
+                    //case NYLO_PILLAR_DESPAWNED:
+                        //dataManager.set(NYLOCAS_PILLAR_DESPAWN_TICK, Integer.parseInt(subData[4]));
+                        //break;
                     case ACCURATE_NYLO_START:
                         nyloStartAccurate = true;
                         break;
@@ -1073,8 +1073,8 @@ public class SimpleTOBData extends SimpleRaidDataBase
                     case BLOAT_SCYTHE_1ST_WALK:
                         if (dataManager.get(DataPoint.BLOAT_DOWNS) == 0)
                         {
-                            dataManager.increment(DataPoint.BLOAT_FIRST_WALK_SCYTHES);
-                            dataManager.incrementPlayerSpecific(DataPoint.BLOAT_FIRST_WALK_SCYTHES, subData[4]);
+                            //dataManager.increment(DataPoint.BLOAT_FIRST_WALK_SCYTHES);
+                            //dataManager.incrementPlayerSpecific(DataPoint.BLOAT_FIRST_WALK_SCYTHES, subData[4]);
                         }
                         break;
                     case LEFT_TOB:
@@ -1100,8 +1100,8 @@ public class SimpleTOBData extends SimpleRaidDataBase
                     case PLAYER_DIED:
                         if (dataManager.get(DataPoint.BLOAT_DOWNS) == 0)
                         {
-                            dataManager.increment(DataPoint.BLOAT_FIRST_WALK_DEATHS);
-                            dataManager.incrementPlayerSpecific(DataPoint.BLOAT_FIRST_WALK_DEATHS, subData[4]);
+                            //dataManager.increment(DataPoint.BLOAT_FIRST_WALK_DEATHS);
+                            //dataManager.incrementPlayerSpecific(DataPoint.BLOAT_FIRST_WALK_DEATHS, subData[4]);
                         }
                         break;
                     case BLOAT_SPAWNED:
@@ -1120,9 +1120,9 @@ public class SimpleTOBData extends SimpleRaidDataBase
                         bloatDowns.add(Integer.parseInt(subData[4]));
                         break;
                     case BLOAT_DESPAWN:
-                        dataManager.set(DataPoint.BLOAT_TOTAL_TIME, Integer.parseInt(subData[4]));
+                        //dataManager.set(DataPoint.BLOAT_TOTAL_TIME, Integer.parseInt(subData[4]));
                         if (isTimeAccurateThroughRoom(MAIDEN))
-                            dataManager.set(DataPoint.NYLO_ENTRY, Integer.parseInt(subData[4]) + dataManager.get(DataPoint.MAIDEN_TOTAL_TIME));
+                            //dataManager.set(DataPoint.NYLO_ENTRY, Integer.parseInt(subData[4]) + dataManager.get(DataPoint.MAIDEN_TOTAL_TIME));
                         break loop;
                     case ACCURATE_BLOAT_START:
                         bloatStartAccurate = true;
@@ -1163,10 +1163,10 @@ public class SimpleTOBData extends SimpleRaidDataBase
                             percent = (int) percentDouble;
                         }
                         dataManager.set(DataPoint.MAIDEN_CHIN_CORRECT_DISTANCE_PERCENT, percent);
-                        if (dataManager.get(DataPoint.MAIDEN_TOTAL_TIME) != 0)
+                        //if (dataManager.get(DataPoint.MAIDEN_TOTAL_TIME) != 0)
                         {
                             maidenReset = true;
-                        } else
+                        } //else
                         {
                             if (!maidenSpawned)
                             {
@@ -1190,7 +1190,7 @@ public class SimpleTOBData extends SimpleRaidDataBase
                         dataManager.increment(DataPoint.MAIDEN_BLOOD_SPAWNED);
                         break;
                     case CRAB_LEAK:
-                        if (dataManager.get(DataPoint.MAIDEN_TOTAL_TIME) == 0) //TODO: see case 16 fix
+                        //if (dataManager.get(DataPoint.MAIDEN_TOTAL_TIME) == 0) //TODO: see case 16 fix
                         {
                             dataManager.increment(DataPoint.MAIDEN_CRABS_LEAKED);
                             int crabHP = -1;
@@ -1243,7 +1243,7 @@ public class SimpleTOBData extends SimpleRaidDataBase
                         break;
                     case MAIDEN_50S:
                         dataManager.set(DataPoint.MAIDEN_50_SPLIT, Integer.parseInt(subData[4]));
-                        dataManager.set(DataPoint.MAIDEN_7050_SPLIT, Integer.parseInt(subData[4]) - dataManager.get(DataPoint.MAIDEN_70_SPLIT));
+                        dataManager.set(DataPoint.MAIDEN_7050_DURATION, Integer.parseInt(subData[4]) - dataManager.get(DataPoint.MAIDEN_70_SPLIT));
                         lastProc = " 50s";
                         break;
                     case MAIDEN_30S:
@@ -1251,15 +1251,15 @@ public class SimpleTOBData extends SimpleRaidDataBase
                         dataManager.set(DataPoint.MAIDEN_5030_SPLIT, Integer.parseInt(subData[4]) - dataManager.get(DataPoint.MAIDEN_50_SPLIT));
                         lastProc = " 30s";
                         break;
-                    case MAIDEN_0HP:
-                        dataManager.set(DataPoint.MAIDEN_TOTAL_TIME, Integer.parseInt(subData[4]) + 7);
-                        dataManager.set(DataPoint.MAIDEN_SKIP_SPLIT, dataManager.get(DataPoint.MAIDEN_TOTAL_TIME) - dataManager.get(DataPoint.MAIDEN_30_SPLIT));
-                        if (globalData.get(activeIndex + 1).split(",", -1)[3].equals("4"))
-                            maidenReset = true;
-                        break loop;
+                    //case MAIDEN_0HP:
+                        //dataManager.set(DataPoint.MAIDEN_TOTAL_TIME, Integer.parseInt(subData[4]) + 7);
+                        //dataManager.set(DataPoint.MAIDEN_SKIP_SPLIT, dataManager.get(DataPoint.MAIDEN_TOTAL_TIME) - dataManager.get(DataPoint.MAIDEN_30_SPLIT));
+                        //if (globalData.get(activeIndex + 1).split(",", -1)[3].equals("4"))
+                            //maidenReset = true;
+                       //break loop;
                     case MAIDEN_DESPAWNED:
-                        dataManager.set(DataPoint.MAIDEN_TOTAL_TIME, Integer.parseInt(subData[4]));
-                        dataManager.set(DataPoint.MAIDEN_SKIP_SPLIT, dataManager.get(DataPoint.MAIDEN_TOTAL_TIME) - dataManager.get(DataPoint.MAIDEN_30_SPLIT));
+                        //dataManager.set(DataPoint.MAIDEN_TOTAL_TIME, Integer.parseInt(subData[4]));
+                        //dataManager.set(DataPoint.MAIDEN_SKIP_SPLIT, dataManager.get(DataPoint.MAIDEN_TOTAL_TIME) - dataManager.get(DataPoint.MAIDEN_30_SPLIT));
                         if (globalData.get(activeIndex + 1).split(",", -1)[3].equals("4"))
                             maidenReset = true;
                         break loop;

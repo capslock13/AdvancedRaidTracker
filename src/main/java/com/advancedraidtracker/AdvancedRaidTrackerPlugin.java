@@ -233,6 +233,7 @@ public class AdvancedRaidTrackerPlugin extends Plugin
         sote = new SotetsegHandler(client, clog, config, this);
         xarpus = new XarpusHandler(client, clog, config, this);
         verzik = new VerzikHandler(client, clog, config, this, itemManager);
+
         toaHandler = new TOAHandler(client, clog);
         lobbyTOA = new TOALobbyHandler(client, clog, config, this, toaHandler);
         nexus = new NexusHandler(client, clog, config, this, toaHandler);
@@ -308,7 +309,7 @@ public class AdvancedRaidTrackerPlugin extends Plugin
             deferredTick = client.getTickCount() + 2; //Check two ticks from now for player names in orbs
             clog.checkForEndFlag();
             clog.migrateToNewRaid();
-            clog.addLine(ENTERED_TOB);
+            clog.addLine(ENTERED_RAID);
             clog.addLine(SPECTATE);
             clog.addLine(LATE_START, room.name);
             liveFrame.resetAll();
@@ -576,7 +577,7 @@ public class AdvancedRaidTrackerPlugin extends Plugin
     {
         clog.checkForEndFlag();
         clog.migrateToNewRaid();
-        clog.addLine(ENTERED_TOB);
+        clog.addLine(ENTERED_RAID);
         liveFrame.switchToTOB();
         deferredTick = client.getTickCount() + 2;
         maiden.reset();
@@ -647,11 +648,11 @@ public class AdvancedRaidTrackerPlugin extends Plugin
             {
                 if (event.getWeapon().equals(SpecialWeapon.BANDOS_GODSWORD))
                 {
-                    clog.addLine(BGS, name, String.valueOf(event.getHit()), String.valueOf(client.getTickCount() - currentRoom.roomStartTick));
+                    clog.addLine(BGS_HIT, name, String.valueOf(event.getHit()), String.valueOf(client.getTickCount() - currentRoom.roomStartTick));
                 }
                 if (event.getWeapon().equals(SpecialWeapon.DRAGON_WARHAMMER))
                 {
-                    clog.addLine(DWH, name, String.valueOf(client.getTickCount() - currentRoom.roomStartTick));
+                    clog.addLine(HAMMER_HIT, name, String.valueOf(client.getTickCount() - currentRoom.roomStartTick));
                 }
             }
         }
@@ -853,7 +854,7 @@ public class AdvancedRaidTrackerPlugin extends Plugin
                         }
                     }
                     liveFrame.setPlayers(currentPlayers);
-                    clog.addLine(TOA_PARTY_MEMBERS, players[0], players[1], players[2], players[3], players[4], players[5], players[6], players[7]);
+                    clog.addLine(PARTY_MEMBERS, players[0], players[1], players[2], players[3], players[4], players[5], players[6], players[7]);
                     clog.addLine(INVOCATION_LEVEL, String.valueOf(client.getVarbitValue(TOA_RAID_LEVEL)));
                 } else
                 {

@@ -120,7 +120,7 @@ public class SimpleTOAData extends SimpleRaidDataBase
                     case INVOCATION_LEVEL:
                         dataManager.set(TOA_INVOCATION_LEVEL, Integer.parseInt(subData[4]));
                         break;
-                    case TOA_TIMER_START:
+                    case RAID_TIMER_START:
                         raidStartTime = Integer.parseInt(subData[4]);
                         break;
                 }

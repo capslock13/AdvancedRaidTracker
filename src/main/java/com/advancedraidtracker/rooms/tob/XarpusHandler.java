@@ -134,7 +134,8 @@ public class XarpusHandler extends TOBRoomHandler
             case TobIDs.XARPUS_P1:
             case TobIDs.XARPUS_P23:
             case TobIDs.XARPUS_DEAD:
-                clog.addLine(XARPUS_SPAWNED);
+                //clog.addLine(XARPUS_SPAWNED);
+                break;
         }
     }
 

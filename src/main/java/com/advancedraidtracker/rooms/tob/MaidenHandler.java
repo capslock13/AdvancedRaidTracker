@@ -160,7 +160,7 @@ public class MaidenHandler extends TOBRoomHandler
         if (roomStartTick != -1)
             sendTimeMessage("Wave 'Maiden Skip' complete! Duration: ", maidenDeathTick - roomStartTick, maidenDeathTick - p30, false);
         clog.addLine(ACCURATE_MAIDEN_END);
-        clog.addLine(MAIDEN_0HP, String.valueOf(client.getTickCount() - roomStartTick));
+        //clog.addLine(MAIDEN_0HP, String.valueOf(client.getTickCount() - roomStartTick));
         plugin.addDelayedLine(TOBRoom.MAIDEN, client.getTickCount() - roomStartTick, "Dead");
         plugin.liveFrame.setRoomFinished(getName(), maidenDeathTick - roomStartTick);
     }

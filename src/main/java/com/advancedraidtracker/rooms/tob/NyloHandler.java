@@ -281,7 +281,7 @@ public class NyloHandler extends TOBRoomHandler
             case NYLO_PILLAR:
             case NYLO_PILLAR_HM:
             case NYLO_PILLAR_SM:
-                clog.addLine(NYLO_PILLAR_DESPAWNED, String.valueOf(client.getTickCount() - roomStartTick));
+                //clog.addLine(NYLO_PILLAR_DESPAWNED, String.valueOf(client.getTickCount() - roomStartTick));
                 break;
             case NYLO_BOSS_MELEE:
             case NYLO_BOSS_RANGE:

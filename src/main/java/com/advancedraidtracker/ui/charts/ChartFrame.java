@@ -2,17 +2,13 @@ package com.advancedraidtracker.ui.charts;
 
 import com.advancedraidtracker.*;
 import com.advancedraidtracker.ui.BaseFrame;
-import com.advancedraidtracker.AdvancedRaidDataBase;
-import com.advancedraidtracker.utility.datautility.DataPoint;
 import com.advancedraidtracker.utility.datautility.datapoints.Raid;
-import com.advancedraidtracker.utility.datautility.datapoints.RoomDataManager;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.game.ItemManager;
 
 import javax.swing.*;
-import java.awt.*;
 import java.util.*;
 
 @Slf4j
@@ -258,7 +254,4 @@ public class ChartFrame extends BaseFrame
             pack();
     }
 
-    private void addChartPane(RoomDataManager data) {
-
-    }
 }

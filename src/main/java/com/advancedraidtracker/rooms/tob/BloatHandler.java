@@ -95,7 +95,7 @@ public class BloatHandler extends TOBRoomHandler
     public void start()
     {
         roomStartTick = client.getTickCount();
-        clog.addLine(BLOAT_STARTED, client.getTickCount());
+        //clog.addLine(BLOAT_STARTED, client.getTickCount());
         roomState = WALKING;
     }
 
@@ -216,7 +216,7 @@ public class BloatHandler extends TOBRoomHandler
                 } else
                 {
                     clog.addLine(ACCURATE_BLOAT_START);
-                    clog.addLine(BLOAT_DIRECTION, String.valueOf(event.getNpc().getCurrentOrientation()), String.valueOf(event.getNpc().getIndex()));
+                    //clog.addLine(BLOAT_DIRECTION, String.valueOf(event.getNpc().getCurrentOrientation()), String.valueOf(event.getNpc().getIndex()));
                 }
                 break;
         }
@@ -237,7 +237,7 @@ public class BloatHandler extends TOBRoomHandler
         if(id == 1570 || id == 1571 || id == 1572 || id == 1573) //various bloat hands
         {
             WorldPoint wp = WorldPoint.fromLocal(client, event.getGraphicsObject().getLocation());
-            clog.addLine(BLOAT_HAND, String.valueOf(id), String.valueOf(wp.getRegionX()), String.valueOf(wp.getRegionY()), String.valueOf(client.getTickCount() - roomStartTick));
+            //clog.addLine(BLOAT_HAND, String.valueOf(id), String.valueOf(wp.getRegionX()), String.valueOf(wp.getRegionY()), String.valueOf(client.getTickCount() - roomStartTick));
         }
     }
 }

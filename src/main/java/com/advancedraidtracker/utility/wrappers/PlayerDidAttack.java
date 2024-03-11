@@ -37,6 +37,7 @@ public class PlayerDidAttack
 
     public PlayerDidAttack(LogEntry entry)
     {
+        /*
         // TODO: make all of the "strings" into integers
         List<String> extra = entry.getExtra();
 
@@ -72,6 +73,8 @@ public class PlayerDidAttack
             this.targetName = projectileDetails[1];
         }
         this.projectile = projectileDetails[0];
+        */
+
     }
 
     public PlayerDidAttack(ItemManager itemManager, String player, String animation, int tick, int weapon, String projectile, String spotAnims, int targetedIndex, int targetedID, String targetName, String worn)

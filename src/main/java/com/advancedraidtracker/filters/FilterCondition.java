@@ -1,5 +1,6 @@
 package com.advancedraidtracker.filters;
 
+
 import com.advancedraidtracker.SimpleTOBData;
 
 public abstract class FilterCondition

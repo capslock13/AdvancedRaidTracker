@@ -4,6 +4,7 @@ package com.advancedraidtracker.ui;
 import com.advancedraidtracker.SimpleRaidDataBase;
 import com.advancedraidtracker.SimpleTOBData;
 import com.advancedraidtracker.AdvancedRaidTrackerConfig;
+import com.advancedraidtracker.constants.TOBRoom;
 import com.advancedraidtracker.filters.*;
 import com.advancedraidtracker.ui.buttons.*;
 import com.advancedraidtracker.ui.charts.ChartFrame;
@@ -26,6 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.game.ItemManager;
+import net.runelite.client.util.Text;
 
 import javax.swing.*;
 import javax.swing.border.MatteBorder;
@@ -277,50 +279,13 @@ public class Raids extends BaseFrame
                 if (data instanceof Tob)
                 {
                     Tob tobData = (Tob) data;
-                    switch (viewByRaidComboBox.getSelectedItem().toString())
+                    String comboText = viewByRaidComboBox.getSelectedItem().toString();
+                    if(comboText.endsWith("Time"))
                     {
-                        case "Challenge Time":
-                            if (!data.isAccurate())
-                            {
-                                shouldDataBeIncluded = false;
-                            }
-                            break;
-                        case "Maiden Time":
-                            if (tobData.getMaidenData().isAccurate())
-                            {
-                                shouldDataBeIncluded = false;
-                            }
-                            break;
-                        case "Bloat Time":
-                            if (tobData.getBloatData().isAccurate())
-                            {
-                                shouldDataBeIncluded = false;
-                            }
-                            break;
-                        case "Nylocas Time":
-                            if (tobData.getNylocasData().isAccurate())
-                            {
-                                shouldDataBeIncluded = false;
-                            }
-                            break;
-                        case "Sotetseg Time":
-                            if (tobData.getSotetsegData().isAccurate())
-                            {
-                                shouldDataBeIncluded = false;
-                            }
-                            break;
-                        case "Xarpus Time":
-                            if (tobData.getXarpusData().isAccurate())
-                            {
-                                shouldDataBeIncluded = false;
-                            }
-                            break;
-                        case "Verzik Time":
-                            if (tobData.getVerzikData().isAccurate())
-                            {
-                                shouldDataBeIncluded = false;
-                            }
-                            break;
+                        if(!data.getRoomAccurate(TOBRoom.valueOf(comboText.split(",")[0])))
+                        {
+                            shouldDataBeIncluded = false;
+                        }
                     }
                 }
             }
@@ -332,7 +297,7 @@ public class Raids extends BaseFrame
             for (Integer i : filteredIndices)
             {
                 // TODO what is this?
-                if (false) //
+                if (data.get(DataPoint.RAID_INDEX) == i)
                 {
                     shouldDataBeIncluded = false;
                 }
@@ -455,21 +420,20 @@ public class Raids extends BaseFrame
         switch (column)
         {
             case "":
-                return 0;
+                return raid.getIndex();
             case "Date":
                 LocalDate date = raid.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
                 DateTimeFormatter formatter =
                         DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(Locale.getDefault());
-
                 return formatter.format(date);
             case "Scale":
-                return raid.getScale();
+                return raid.getScaleString();
             case "Status":
                 return raid.getRoomStatus();
             case "Raid":
-                return raid.getRaidType().toString();
+                return raid.getRaidType().colorName();
             case "Players":
-                return raid.getPlayers();
+                return Text.toJagexName(String.join(",",raid.getPlayers()).replaceAll(String.valueOf((char) 160), String.valueOf(' ')));
             case "Spectate":
                 return (raid instanceof Tob && ((Tob) raid).isSpectated()) ? "Yes" : "No";
             case "View":
@@ -493,22 +457,7 @@ public class Raids extends BaseFrame
         String valueToDisplay = "(?)";
         try
         {
-            /*
-            PlayerCorrelatedPointData pointData = raid.getSpecificTimeInactiveCorrelated(column);
-            if (pointData == null)
-            {
-                valueToDisplay = String.valueOf(raid.getSpecificTimeInactive(column));
-            } else
-            {
-                if (pointData.value == 0)
-                {
-                    valueToDisplay = "0";
-                } else
-                {
-                    valueToDisplay = pointData.value + " (" + pointData.player + ")";
-                }
-            }
-             */
+            valueToDisplay = String.valueOf(raid.get(column));
         } catch (Exception ignored)
         {
 
@@ -869,7 +818,7 @@ public class Raids extends BaseFrame
 
         for (int i = 0; i < data.size(); i++)
         {
-            //data.get(i).setIndex(i);
+            data.get(i).setIndex(i);
         }
 
         int completions = 0;

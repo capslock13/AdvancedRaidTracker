@@ -1,22 +1,18 @@
 package com.advancedraidtracker.ui.viewraid;
 
-import com.advancedraidtracker.SimpleTOBData;
+import com.advancedraidtracker.constants.TOBRoom;
 import com.advancedraidtracker.ui.BaseFrame;
 import com.advancedraidtracker.utility.RoomUtil;
 import com.advancedraidtracker.utility.datautility.DataPoint;
-import com.advancedraidtracker.utility.datautility.datapoints.RoomDataManager;
+import com.advancedraidtracker.utility.datautility.datapoints.Raid;
 import com.advancedraidtracker.utility.datautility.datapoints.tob.*;
 import com.google.common.collect.Multimap;
-import com.sun.jna.platform.win32.Variant;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.Calendar;
 import java.util.List;
-import java.util.stream.Collectors;
-
-import static com.advancedraidtracker.utility.datautility.DataPoint.NYLO_LAST_DEAD;
 
 @Slf4j
 public class ViewTOBRaid extends BaseFrame
@@ -55,7 +51,7 @@ public class ViewTOBRaid extends BaseFrame
          */
 
 
-
+/*
         int bloatEntry = data.getMaidenData().getTime();
         int bloatSplit = data.getBloatData().getTime();
 
@@ -83,7 +79,7 @@ public class ViewTOBRaid extends BaseFrame
 
         String verzikEntryStr = RoomUtil.time(verzikEntry);
 
-
+*/
         /*
         JPanel bloatPanel = new JPanel();
         bloatPanel.setLayout(new BorderLayout());
@@ -344,11 +340,6 @@ public class ViewTOBRaid extends BaseFrame
         thrallsPanel.setBorder(BorderFactory.createTitledBorder("Thralls"));
         thrallsPanel.setLayout(new GridLayout(7, 2));
 
-        Multimap<String, Integer> thrallAttacks = data.getThrallAttacks();
-        long totalThrallHits = thrallAttacks.values().stream().filter(hit -> hit > 0).count();
-
-        thrallsPanel.add(new JLabel("Total Thrall Hits: "));
-        thrallsPanel.add(new JLabel(String.valueOf(totalThrallHits), SwingConstants.RIGHT));
 
         /*
         thrallsPanel.add(new JLabel("Maiden Thrall Hits: "));
@@ -410,22 +401,22 @@ public class ViewTOBRaid extends BaseFrame
         pack();
     }
 
-    private Color getColor(RoomDataManager data)
+    private Color getColor(Raid data, TOBRoom room)
     {
         Color color = green;
         if (!data.isAccurate())
         {
-            color = (data.isStartAccurate() || data.isEndAccurate()) ? blue : red;
+            color = data.getRoomPartiallyAccurate(room) ? blue : red;
         }
         return color;
     }
 
-    private Color getBodyColor(RoomDataManager data)
+    private Color getBodyColor(Raid data, TOBRoom room)
     {
         Color color = white;
         if (!data.isAccurate())
         {
-            color = (data.isStartAccurate() || data.isEndAccurate()) ? soft : dark;
+            color = data.getRoomPartiallyAccurate(room) ? soft : dark;
         }
         return color;
     }
@@ -436,20 +427,18 @@ public class ViewTOBRaid extends BaseFrame
         return label;
     }
 
-    private JPanel createMaidenPanel(Tob raid)
-    {
-        MaidenData data = raid.getMaidenData();
-
+    private JPanel createMaidenPanel(Tob data)
+    { /*
         JPanel maidenPanel = new JPanel();
         maidenPanel.setLayout(new BorderLayout());
-        Color color = getColor(data);
-        Color bodyColor = getBodyColor(data);
+        Color color = getColor(data, TOBRoom.MAIDEN);
+        Color bodyColor = getBodyColor(data, TOBRoom.MAIDEN);
         JPanel maidenSubPanel = new JPanel();
         GridLayout gl = new GridLayout(10, 2);
         maidenSubPanel.setLayout(gl);
 
         maidenSubPanel.add(createLabel("Blood Spawned (thrown)", bodyColor));
-        maidenSubPanel.add(createLabel(data.getBloodSpawned() + " (" + data.getBloodThrown() + ")", bodyColor));
+        maidenSubPanel.add(createLabel(data.get(DataPoint.MAIDEN_BLOOD_THROWN) + " (" + data.getBloodThrown() + ")", bodyColor));
 
 
         maidenSubPanel.add(createLabel("Defense", bodyColor));
@@ -496,22 +485,9 @@ public class ViewTOBRaid extends BaseFrame
         maidenSubPanel.add(createLabel(RoomUtil.time(data.getTime()) + " (" + RoomUtil.time(data.getTime() - splits[2]) + ")", bodyColor));
         maidenPanel.setBorder(BorderFactory.createTitledBorder("Maiden" + ((data.isScuffed()) ? " (Scuffed after " + data.getScuffedAfter() + ")" : "")));
         maidenPanel.add(maidenSubPanel);
-        return maidenPanel;
+        return maidenPanel;*/
+        return null;
     }
-
-    private void createBloatPanel(BloatData data)
-    {}
-
-    private void createNyloPanel(NylocasData data)
-    {}
-
-    private void createSotePanel(SotetsegData data)
-    {}
-    private void createXarpPanel(XarpusData data)
-    {}
-
-    private void createVerzikPanel(VerzikData data)
-    {}
 
     private static void setSummaryStatus(Tob data, JPanel summarySubPanel)
     {

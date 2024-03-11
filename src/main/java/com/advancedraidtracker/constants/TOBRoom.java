@@ -23,4 +23,10 @@ public enum TOBRoom
         Optional<TOBRoom> o = Arrays.stream(values()).filter(room -> room.value == number).findFirst();
         return o.orElse(UNKNOWN);
     }
+
+
+    public static TOBRoom getRoom(String room)
+    {
+        return TOBRoom.valueOf(room.toUpperCase());
+    }
 }

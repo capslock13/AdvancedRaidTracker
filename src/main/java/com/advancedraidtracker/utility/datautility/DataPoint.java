@@ -4,6 +4,7 @@ import com.advancedraidtracker.constants.RaidType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 public enum DataPoint
@@ -11,12 +12,6 @@ public enum DataPoint
     CHALLENGE_TIME("Challenge Time", types.TIME, rooms.ANY),
     OVERALL_TIME("Overall Time", types.TIME, rooms.ANY),
     TIME_OUTSIDE_ROOMS("Time Outside Rooms", types.TIME, rooms.ANY_TOB),
-    MAIDEN_TOTAL_TIME("Maiden Time", types.TIME, rooms.MAIDEN),
-    BLOAT_TOTAL_TIME("Bloat Time", types.TIME, rooms.BLOAT),
-    NYLO_TOTAL_TIME("Nylocas Time", types.TIME, rooms.NYLOCAS),
-    XARP_TOTAL_TIME("Xarpus Time", types.TIME, rooms.XARPUS),
-    SOTE_TOTAL_TIME("Sotetseg Time", types.TIME, rooms.SOTETSEG),
-    VERZIK_TOTAL_TIME("Verzik Time", types.TIME, rooms.VERZIK),
     MAIDEN_BLOOD_SPAWNED("Maiden blood spawned", types.OTHER_INT, rooms.MAIDEN),
     MAIDEN_BLOOD_THROWN("Maiden blood thrown", types.OTHER_INT, rooms.MAIDEN),
     MAIDEN_PLAYER_STOOD_IN_THROWN_BLOOD("Maiden player stood in thrown blood", types.OTHER_INT, rooms.MAIDEN, true),
@@ -29,8 +24,6 @@ public enum DataPoint
     MAIDEN_CRABS_LEAKED("Maiden crabs leaked", types.OTHER_INT, rooms.MAIDEN),
     MAIDEN_CRABS_LEAKED_FULL_HP("Maiden crabs leaked full", types.OTHER_INT, rooms.MAIDEN),
     MAIDEN_HP_HEALED("Maiden HP healed", types.OTHER_INT, rooms.MAIDEN),
-    MAIDEN_DEFENSE("Maiden defense", types.OTHER_INT, rooms.MAIDEN, 200),
-    MAIDEN_DEATHS("Maiden deaths", types.OTHER_INT, rooms.MAIDEN, true),
     MAIDEN_DINHS_SPECS("Maiden dinhs specs", types.OTHER_INT, rooms.MAIDEN, true),
     MAIDEN_DINHS_CRABS_HIT("Maiden dinhs crabs Hit", types.OTHER_INT, rooms.MAIDEN, true),
     MAIDEN_DINHS_TARGETS_HIT("Maiden dinhs targets hit", types.OTHER_INT, rooms.MAIDEN, true),
@@ -46,10 +39,6 @@ public enum DataPoint
 
     BLOAT_DOWNS("Bloat downs", types.OTHER_INT, rooms.BLOAT),
     BLOAT_HP_FIRST_DOWN("Bloat HP% 1st down", types.OTHER_INT, rooms.BLOAT),
-    BLOAT_FIRST_WALK_SCYTHES("Bloat 1st walk scythes", types.OTHER_INT, rooms.BLOAT, true),
-    BLOAT_FIRST_WALK_DEATHS("Bloat 1st walk deaths", types.OTHER_INT, rooms.BLOAT, true),
-    BLOAT_DEFENSE("Bloat defense", types.OTHER_INT, rooms.BLOAT, 100),
-    BLOAT_DEATHS("Bloat deaths", types.OTHER_INT, rooms.BLOAT, true),
     NYLO_STALLS_PRE_20("Nylo stalls pre 20", types.OTHER_INT, rooms.NYLOCAS),
     NYLO_STALLS_POST_20("Nylo stalls post 20", types.OTHER_INT, rooms.NYLOCAS),
     NYLO_STALLS_TOTAL("Nylo stalls total", types.OTHER_INT, rooms.NYLOCAS),
@@ -59,28 +48,27 @@ public enum DataPoint
     NYLO_ROTATIONS_RANGE("Nylo rotations range", types.OTHER_INT, rooms.NYLOCAS),
     NYLO_ROTATIONS_MAGE("Nylo rotations mage", types.OTHER_INT, rooms.NYLOCAS),
     NYLO_ROTATIONS_MELEE("Nylo rotations melee", types.OTHER_INT, rooms.NYLOCAS),
+    NYLO_ROTATIONS_TOTAL("Nylo total rotations", types.OTHER_INT, rooms.NYLOCAS),
     NYLO_DEFENSE("Nylo defense", types.OTHER_INT, rooms.NYLOCAS, 50),
     NYLO_DEATHS("Nylo deaths", types.OTHER_INT, rooms.NYLOCAS, true),
     SOTE_SPECS_P1("Sote specs p1", types.OTHER_INT, rooms.SOTETSEG),
     SOTE_SPECS_P2("Sote specs p2", types.OTHER_INT, rooms.SOTETSEG),
     SOTE_SPECS_P3("Sote specs p3", types.OTHER_INT, rooms.SOTETSEG),
     SOTE_SPECS_TOTAL("Sote specs total", types.OTHER_INT, rooms.SOTETSEG),
-    SOTE_DEATHS("Sote deaths", types.OTHER_INT, rooms.SOTETSEG, true),
     XARP_HEALING("Xarp Healing", types.OTHER_INT, rooms.XARPUS),
-    XARP_DEFENSE("Xarp defense", types.OTHER_INT, rooms.XARPUS, 250),
-    XARP_DEATHS("Xarp deaths", types.OTHER_INT, rooms.XARPUS, true),
     VERZIK_BOUNCES("Verzik bounces", types.OTHER_INT, rooms.VERZIK, true),
     VERZIK_CRABS_SPAWNED("Verzik crabs spawned", types.OTHER_INT, rooms.VERZIK),
+    VERZIK_P2_CRABS_SPAWNED("Verzik P2 crabs spawned", types.OTHER_INT, rooms.VERZIK),
+    VERZIK_P3_CRABS_SPAWNED("Verzik P3 crabs spawned", types.OTHER_INT, rooms.VERZIK),
     VERZIK_REDS_SETS("Verzik Red Sets", types.OTHER_INT, rooms.VERZIK),
     VERZIK_REDS_PROC_PERCENT("Verzik Red Proc Percent", types.OTHER_INT, rooms.VERZIK),
-    VERZIK_DEATHS("Verzik deaths", types.OTHER_INT, rooms.VERZIK, true),
     VERZIK_HP_AT_WEBS("Verzik HP% at webs", types.OTHER_INT, rooms.VERZIK),
-    MAIDEN_70_SPLIT("Maiden 70s split", types.TIME, rooms.MAIDEN),
-    MAIDEN_7050_SPLIT("Maiden 70-50s split", types.TIME, rooms.MAIDEN),
-    MAIDEN_50_SPLIT("Maiden 50s split", types.TIME, rooms.MAIDEN),
-    MAIDEN_5030_SPLIT("Maiden 50-30s split", types.TIME, rooms.MAIDEN),
+    MAIDEN_70_SPLIT("Maiden 70s split", types.TIME_SPLIT, rooms.MAIDEN),
+    MAIDEN_7050_DURATION("Maiden 70-50s split", types.TIME_DURATION, rooms.MAIDEN),
+    MAIDEN_50_SPLIT("Maiden 50s split", types.TIME_SPLIT, rooms.MAIDEN),
+    MAIDEN_5030_SPLIT("Maiden 50-30s split", types.TIME_DURATION, rooms.MAIDEN),
     MAIDEN_30_SPLIT("Maiden 30s split", types.TIME, rooms.MAIDEN),
-    MAIDEN_SKIP_SPLIT("Maiden Skip split", types.TIME, rooms.MAIDEN),
+    MAIDEN_SKIP_SPLIT("Maiden Skip split", types.TIME_SPLIT, rooms.MAIDEN),
     BLOAT_FIRST_DOWN_TIME("Bloat 1st down time", types.OTHER_INT, rooms.BLOAT),
     NYLO_BOSS_SPAWN("Nylo boss spawn", types.TIME, rooms.NYLOCAS),
     NYLO_BOSS_DURATION("Nylo boss duration", types.TIME, rooms.NYLOCAS),
@@ -97,15 +85,16 @@ public enum DataPoint
     SOTE_M1_DURATION("Sote maze1 Duration", types.TIME, rooms.SOTETSEG),
     SOTE_M2_SPLIT("Sote maze2 split", types.TIME, rooms.SOTETSEG),
     SOTE_M2_DURATION("Sote maze2 duration", types.TIME, rooms.SOTETSEG),
+    SOTE_P3_SPLIT("Sote P3 split", types.TIME, rooms.SOTETSEG),
     SOTE_MAZE_SUM("Sote mazes combined", types.TIME, rooms.SOTETSEG),
     XARP_SCREECH("Xarp screech", types.TIME, rooms.XARPUS),
     XARP_POST_SCREECH("Xarp post screech", types.TIME, rooms.XARPUS),
-    VERZIK_P1_SPLIT("Verzik P1 Time", types.TIME, rooms.VERZIK),
+    VERZIK_P2_SPLIT("Verzik P1 Time", types.TIME, rooms.VERZIK),
 
     VERZIK_P2_TILL_REDS("Verzik P2 until reds split", types.TIME, rooms.VERZIK),
     VERZIK_REDS_SPLIT("Verzik reds split", types.TIME, rooms.VERZIK),
     VERZIK_REDS_DURATION("Verzik reds duration", types.TIME, rooms.VERZIK),
-    VERZIK_P2_SPLIT("Verzik P2 split", types.TIME, rooms.VERZIK),
+    VERZIK_P3_SPLIT("Verzik P2 split", types.TIME, rooms.VERZIK),
     VERZIK_P2_DURATION("Verzik P2 Time", types.TIME, rooms.VERZIK),
     VERZIK_P3_DURATION("Verzik P3 Time", types.TIME, rooms.VERZIK),
 
@@ -114,18 +103,6 @@ public enum DataPoint
     XARP_ENTRY("Xarp Entry", types.TIME, rooms.XARPUS),
     VERZIK_ENTRY("Verzik Entry", types.TIME, rooms.VERZIK),
 
-    ATTEMPTED_HAMMERS_MAIDEN("Maiden attempted hammers", types.OTHER_INT, rooms.MAIDEN, true),
-    ATTEMPTED_HAMMERS_BLOAT("Bloat attempted hammers", types.OTHER_INT, rooms.BLOAT, true),
-    ATTEMPTED_HAMMERS_NYLO("Nylo attempted hammers", types.OTHER_INT, rooms.NYLOCAS, true),
-    ATTEMPTED_HAMMERS_SOTE("Sote attempted hammers", types.OTHER_INT, rooms.SOTETSEG, true),
-    ATTEMPTED_HAMMERS_XARP("Xarp attempted hammers", types.OTHER_INT, rooms.XARPUS, true),
-    ATTEMPTED_HAMMERS_VERZIK("Verzik attempted hammers", types.OTHER_INT, rooms.VERZIK, true),
-    HIT_HAMMERS_MAIDEN("Maiden hit hammers", types.OTHER_INT, rooms.MAIDEN, true),
-    HIT_HAMMERS_BLOAT("Bloat hit hammers", types.OTHER_INT, rooms.BLOAT, true),
-    HIT_HAMMERS_NYLO("Nylo hit hammers", types.OTHER_INT, rooms.NYLOCAS, true),
-    HIT_HAMMERS_SOTE("Sote hit hammers", types.OTHER_INT, rooms.SOTETSEG, true),
-    HIT_HAMMERS_XARP("Xarp hit hammers", types.OTHER_INT, rooms.XARPUS, true),
-    HIT_HAMMERS_VERZIK("Verzik hit hammers", types.OTHER_INT, rooms.VERZIK, true),
 
     ATTEMPTED_BGS_MAIDEN("Maiden attempted BGS", types.OTHER_INT, rooms.MAIDEN, true),
     BGS_DAMAGE_MAIDEN("Maiden BGS damage", types.OTHER_INT, rooms.MAIDEN, true),
@@ -381,16 +358,16 @@ public enum DataPoint
 
     public enum rooms
     {
-        ANY_TOB,
-        MAIDEN,
-        BLOAT,
-        NYLOCAS,
-        SOTETSEG,
-        XARPUS,
-        VERZIK,
-        ALL_TOB,
-        ANY_TOA,
-        CRONDIS,
+        ANY_TOB("Any TOB"),
+        MAIDEN("Maiden"),
+        BLOAT("Bloat"),
+        NYLOCAS("Nylocas"),
+        SOTETSEG("Sotetseg"),
+        XARPUS("Xarpus"),
+        VERZIK("Verzik"),
+        ALL_TOB("All TOB"),
+        ANY_TOA("Any TOA"),
+        CRONDIS("Crondis"),
         ZEBAK,
         SCABARAS,
         KEPHRI,
@@ -399,12 +376,23 @@ public enum DataPoint
         HET,
         AKKHA,
         WARDENS,
-        ALL_TOA, ANY,
+        ALL_TOA,
+        ANY;
+        rooms(String name)
+        {
+            this.name = name;
+        }
+        rooms()
+        {
+            this.name = "";
+        }
+        public final String name;
+
     }
 
     public enum types
     {
-        OTHER_INT, OTHER_BOOL, TIME
+        OTHER_INT, OTHER_BOOL, TIME_DURATION, TIME_SPLIT, TIME
     }
 
     public final String name;
@@ -487,12 +475,30 @@ public enum DataPoint
         ArrayList<String> valuesToGather = new ArrayList<>();
         for (DataPoint point : DataPoint.values())
         {
-            if (point.type.equals(types.TIME))
+            if (point.type.equals(types.TIME) || point.type.equals(types.TIME_SPLIT) || point.type.equals(types.TIME_DURATION))
             {
                 valuesToGather.add(point.name);
             }
         }
         return Arrays.copyOf(valuesToGather.toArray(), valuesToGather.size(), String[].class);
+    }
+
+    public static List<DataPoint> getRoomPoints(rooms room)
+    {
+        List<DataPoint> points = new ArrayList<>();
+        for(DataPoint point : values())
+        {
+            if(point.room == room)
+            {
+                points.add(point);
+            }
+        }
+        return points;
+    }
+
+    public boolean isTime()
+    {
+        return type.equals(types.TIME) || type.equals(types.TIME_DURATION) || type.equals(types.TIME_SPLIT);
     }
 
     public static String[] filterTimes(String[] data)

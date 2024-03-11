@@ -13,7 +13,7 @@ public class DataPointIntWrapper
     public DataPointIntWrapper(DataPoint point)
     {
         dataPoint = point;
-        if (point.equals(DataPoint.MAIDEN_DEFENSE))
+        /*if (point.equals(DataPoint.MAIDEN_DEFENSE))
         {
             value = 200;
         } else if (point.equals(DataPoint.BLOAT_DEFENSE))
@@ -28,7 +28,7 @@ public class DataPointIntWrapper
         } else if (point.equals(DataPoint.VERZIK_HP_AT_WEBS))
         {
             value = -1;
-        }
+        }*/
     }
 
     public void increment(int valueAdded)

@@ -33,6 +33,6 @@ public class TOAHandler
     {
         started = true;
         startTick = client.getTickCount();
-        clog.addLine(LogID.TOA_TIMER_START, startTick);
+        clog.addLine(LogID.RAID_TIMER_START, startTick);
     }
 }

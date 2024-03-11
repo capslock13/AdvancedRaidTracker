@@ -109,7 +109,7 @@ public class AdvancedTOBData extends AdvancedRaidDataBase
                     case LEFT_TOB:
                         globalData = new ArrayList<>(globalData.subList(activeIndex + 1, globalData.size()));
                         return false;
-                    case MAIDEN_0HP:
+                    //case MAIDEN_0HP:
                     case BLOAT_SPAWNED:
                     case MAIDEN_DESPAWNED:
                         break loop;

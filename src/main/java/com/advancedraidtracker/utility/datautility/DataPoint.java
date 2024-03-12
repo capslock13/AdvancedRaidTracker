@@ -14,7 +14,9 @@ public enum DataPoint
 {
     CHALLENGE_TIME("Challenge Time", types.TIME, ANY),
     OVERALL_TIME("Overall Time", types.TIME, ANY),
-    TIME_OUTSIDE_ROOMS("Time Outside Rooms", types.TIME, ANY_TOB),
+    TIME("Time", types.TIME, ALL),
+    DEFENSE("Defense", types.OTHER_INT, ALL),
+    TIME_OUTSIDE_ROOMS("Time Outside Rooms", types.TIME, ANY),
     MAIDEN_BLOOD_SPAWNED("Maiden blood spawned", types.OTHER_INT, MAIDEN),
     MAIDEN_BLOOD_THROWN("Maiden blood thrown", types.OTHER_INT, MAIDEN),
     MAIDEN_PLAYER_STOOD_IN_THROWN_BLOOD("Maiden player stood in thrown blood", types.OTHER_INT, MAIDEN, true),
@@ -40,7 +42,8 @@ public enum DataPoint
     RAID_INDEX("Raid Index", types.OTHER_INT, ANY),
     PARTY_SIZE("Party Size", types.OTHER_INT, ANY_TOB),
 
-    BLOAT_DOWNS("Bloat downs", types.OTHER_INT, BLOAT),
+    BLOAT_DOWNS("Bloat downs", types.INT_MAP, BLOAT),
+    BLOAT_FIRST_WALK_SCYTHES("Bloat 1st Walk Scythes", types.OTHER_INT, BLOAT, true),
     BLOAT_HP_FIRST_DOWN("Bloat HP% 1st down", types.OTHER_INT, BLOAT),
     NYLO_STALLS_PRE_20("Nylo stalls pre 20", types.OTHER_INT, NYLOCAS),
     NYLO_STALLS_POST_20("Nylo stalls post 20", types.OTHER_INT, NYLOCAS),
@@ -59,7 +62,7 @@ public enum DataPoint
     SOTE_SPECS_P3("Sote specs p3", types.OTHER_INT, SOTETSEG),
     SOTE_SPECS_TOTAL("Sote specs total", types.OTHER_INT, SOTETSEG),
     XARP_HEALING("Xarp Healing", types.OTHER_INT, XARPUS),
-    VERZIK_BOUNCES("Verzik bounces", types.OTHER_INT, VERZIK, true),
+    VERZIK_BOUNCES("Verzik bounces", types.INT_MAP, VERZIK, true),
     VERZIK_CRABS_SPAWNED("Verzik crabs spawned", types.OTHER_INT, VERZIK),
     VERZIK_P2_CRABS_SPAWNED("Verzik P2 crabs spawned", types.OTHER_INT, VERZIK),
     VERZIK_P3_CRABS_SPAWNED("Verzik P3 crabs spawned", types.OTHER_INT, VERZIK),
@@ -106,40 +109,16 @@ public enum DataPoint
     XARP_ENTRY("Xarp Entry", types.TIME, XARPUS),
     VERZIK_ENTRY("Verzik Entry", types.TIME, VERZIK),
 
+    PLAYER_HAMMER_ATTEMPTED("Hammer Attempted", types.OTHER_INT, ANY),
+    PLAYER_HAMMER_HIT_COUNT("Hammer Hit", types.OTHER_INT, ANY),
+    PLAYER_BGS_HIT_COUNT("BGS Hits", types.OTHER_INT, ANY),
+    PLAYER_BGS_DAMAGE("BGS Damage", types.OTHER_INT, ANY),
 
-    ATTEMPTED_BGS_MAIDEN("Maiden attempted BGS", types.OTHER_INT, MAIDEN, true),
-    BGS_DAMAGE_MAIDEN("Maiden BGS damage", types.OTHER_INT, MAIDEN, true),
+    DEATHS("Deaths", types.OTHER_INT, ANY, true),
 
-    ATTEMPTED_BGS_BLOAT("Bloat attempted BGS", types.OTHER_INT, BLOAT, true),
-    BGS_DAMAGE_BLOAT("Bloat BGS damage", types.OTHER_INT, BLOAT, true),
+    THRALL_ATTACKS("thrall attacks", types.OTHER_INT, ANY, true),
 
-    ATTEMPTED_BGS_NYLO("Nylo attempted BGS", types.OTHER_INT, NYLOCAS, true),
-    BGS_DAMAGE_NYLO("Nylo BGS damage", types.OTHER_INT, NYLOCAS, true),
-
-    ATTEMPTED_BGS_SOTE("Sote attempted BGS", types.OTHER_INT, SOTETSEG, true),
-    BGS_DAMAGE_SOTE("Sote BGS damage", types.OTHER_INT, SOTETSEG, true),
-
-    ATTEMPTED_BGS_XARP("Xarp attempted BGS", types.OTHER_INT, XARPUS, true),
-    BGS_DAMAGE_XARP("Xarp BGS damage", types.OTHER_INT, XARPUS, true),
-
-    ATTEMPTED_BGS_VERZ("Verzik attempted BGS", types.OTHER_INT, VERZIK, true),
-    BGS_DAMAGE_VERZ("Verzik BGS damage", types.OTHER_INT, VERZIK, true),
-
-    THRALL_ATTACKS_TOTAL("Total thrall attacks", types.OTHER_INT, ANY_TOB, true),
-    THRALL_ATTACKS_MAIDEN("Maiden thrall attacks", types.OTHER_INT, MAIDEN, true),
-    THRALL_ATTACKS_BLOAT("Bloat thrall attacks", types.OTHER_INT, BLOAT, true),
-    THRALL_ATTACKS_NYLO("Nylo thrall attacks", types.OTHER_INT, NYLOCAS, true),
-    THRALL_ATTACKS_SOTE("Sote thrall attacks", types.OTHER_INT, SOTETSEG, true),
-    THRALL_ATTACKS_XARP("Xarp thrall attacks", types.OTHER_INT, XARPUS, true),
-    THRALL_ATTACKS_VERZIK("Verzik thrall attacks", types.OTHER_INT, VERZIK, true),
-
-    THRALL_DAMAGE_TOTAL("Total thrall damage", types.OTHER_INT, ANY_TOB, true),
-    THRALL_DAMAGE_MAIDEN("Maiden thrall damage", types.OTHER_INT, MAIDEN, true),
-    THRALL_DAMAGE_BLOAT("Bloat thrall damage", types.OTHER_INT, BLOAT, true),
-    THRALL_DAMAGE_NYLO("Nylo thrall damage", types.OTHER_INT, NYLOCAS, true),
-    THRALL_DAMAGE_SOTE("Sote thrall damage", types.OTHER_INT, SOTETSEG, true),
-    THRALL_DAMAGE_XARP("Xarp thrall damage", types.OTHER_INT, XARPUS, true),
-    THRALL_DAMAGE_VERZIK("Verzik thrall damage", types.OTHER_INT, VERZIK, true),
+    THRALL_DAMAGE("thrall damage", types.OTHER_INT, ANY, true),
 
     VENG_DAMAGE_TOTAL("Total veng damage", types.OTHER_INT, ANY_TOB),
     VENG_DAMAGE_MAIDEN("Maiden veng damage", types.OTHER_INT, MAIDEN),
@@ -169,8 +148,9 @@ public enum DataPoint
     CHALLY_POKE("Chally pokes", types.OTHER_INT, ANY_TOB, true),
     BGS_WHACKS("BGS whacks", types.OTHER_INT, ANY_TOB, true),
     TOTAL_DEATHS("Total deaths", types.OTHER_INT, ANY_TOB, true),
-    DEATHS("Alternate Deaths", types.OTHER_INT, ALL, true),
     UNKNOWN("Unknown", types.OTHER_BOOL, ANY_TOB),
+    DAWN_DROPS("Dawn Drops", types.INT_MAP, VERZIK),
+    WEBS_THROWN("Webs Thrown", types.INT_MAP, VERZIK),
 
     TOA_PARTY_SIZE("TOA Party Size", types.OTHER_INT, ANY_TOA),
     TOA_RAID_INDEX("TOA Raid Index", types.OTHER_INT, ANY_TOA),
@@ -361,7 +341,7 @@ public enum DataPoint
 
     public enum types
     {
-        OTHER_INT, OTHER_BOOL, TIME_DURATION, TIME_SPLIT, TIME
+        OTHER_INT, OTHER_BOOL, TIME_DURATION, TIME_SPLIT, INT_MAP, TIME
     }
 
     public final String name;

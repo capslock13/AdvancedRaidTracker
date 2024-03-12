@@ -13,12 +13,18 @@ public abstract class RoomParser
 
 
     public RoomDataManager data;
-    private RaidRoom room;
+    protected RaidRoom room;
 
     public RoomParser()
     {
         room = RaidRoom.ANY;
         data = new RoomDataManager();
+        data.init(room);
+    }
+
+    public void init()
+    {
+        data.init(room);
     }
 
     public int getRoomTime()

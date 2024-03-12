@@ -11,16 +11,20 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Calendar;
 
+import static com.advancedraidtracker.constants.RaidRoom.*;
+
 @Slf4j
 public class ViewTOBRaid extends BaseFrame
 {
     String INCOMPLETE_MARKER = "-";
-    private final Color red = Color.red;
-    private final Color soft = Color.decode("#666666");
-    private final Color dark = Color.decode("#404040");
-    private final Color green = Color.decode("#33FF33");
-    private final Color blue = Color.decode("#6666DD");
-    private final Color white = Color.decode("#BBBBBB");
+    String red = "<html><font color='#FF0000'>";
+    String soft = "<html><font color='#666666'>";
+    String dark = "<html><font color='#404040'>";
+    String green = "<html><font color='#33FF33'>";
+    String blue = "<html><font color='#6666DD'>";
+    String white = "<html><font color='#BBBBBB'>";
+
+
 
     public ViewTOBRaid(Tob data)
     {
@@ -32,20 +36,20 @@ public class ViewTOBRaid extends BaseFrame
         thisSubPanel.setLayout(new GridLayout(2, 3));
 
 
-        /*
-        String bloatColor = (data.bloatTimeAccurate) ? green : (data.bloatStartAccurate || data.bloatEndAccurate) ? blue : red;
-        String nyloColor = (data.nyloTimeAccurate) ? green : (data.nyloStartAccurate || data.nyloEndAccurate) ? blue : red;
-        String soteColor = (data.soteTimeAccurate) ? green : (data.soteStartAccurate || data.soteEndAccurate) ? blue : red;
-        String xarpColor = (data.xarpTimeAccurate) ? green : (data.xarpStartAccurate || data.xarpEndAccurate) ? blue : red;
-        String verzikColor = (data.verzikTimeAccurate) ? green : (data.verzikStartAccurate || data.verzikEndAccurate) ? blue : red;
 
-        String bloatBodyColor = (data.bloatTimeAccurate) ? white : (data.bloatStartAccurate || data.bloatEndAccurate) ? soft : dark;
-        String nyloBodyColor = (data.nyloTimeAccurate) ? white : (data.nyloStartAccurate || data.nyloEndAccurate) ? soft : dark;
-        String soteBodyColor = (data.soteTimeAccurate) ? white : (data.soteStartAccurate || data.soteEndAccurate) ? soft : dark;
-        String xarpBodyColor = (data.xarpTimeAccurate) ? white : (data.xarpStartAccurate || data.xarpEndAccurate) ? soft : dark;
-        String verzikBodyColor = (data.verzikTimeAccurate) ? white : (data.verzikStartAccurate || data.verzikEndAccurate) ? soft : dark;
+        String bloatColor = (data.getRoomAccurate(BLOAT)) ? green : data.getRoomPartiallyAccurate(BLOAT) ? blue : red;
+        String nyloColor = (data.getRoomAccurate(NYLOCAS)) ? green : data.getRoomPartiallyAccurate(BLOAT) ? blue : red;
+        String soteColor = (data.getRoomAccurate(SOTETSEG)) ? green : data.getRoomPartiallyAccurate(BLOAT) ? blue : red;
+        String xarpColor = (data.getRoomAccurate(XARPUS)) ? green : data.getRoomPartiallyAccurate(BLOAT) ? blue : red;
+        String verzikColor = (data.getRoomAccurate(VERZIK)) ? green : data.getRoomPartiallyAccurate(BLOAT) ? blue : red;
 
-         */
+        String bloatBodyColor = (data.getRoomAccurate(BLOAT)) ? white : data.getRoomPartiallyAccurate(BLOAT) ? soft : dark;
+        String nyloBodyColor = (data.getRoomAccurate(NYLOCAS)) ? white : data.getRoomPartiallyAccurate(BLOAT) ? soft : dark;
+        String soteBodyColor = (data.getRoomAccurate(SOTETSEG)) ? white : data.getRoomPartiallyAccurate(BLOAT) ? soft : dark;
+        String xarpBodyColor = (data.getRoomAccurate(XARPUS)) ? white : data.getRoomPartiallyAccurate(BLOAT) ? soft : dark;
+        String verzikBodyColor = (data.getRoomAccurate(VERZIK)) ? white : data.getRoomPartiallyAccurate(BLOAT) ? soft : dark;
+
+
 
 
 /*
@@ -398,7 +402,7 @@ public class ViewTOBRaid extends BaseFrame
         pack();
     }
 
-    private Color getColor(Raid data, RaidRoom room)
+    /*private Color getColor(Raid data, RaidRoom room)
     {
         Color color = green;
         if (!data.isAccurate())
@@ -416,7 +420,7 @@ public class ViewTOBRaid extends BaseFrame
             color = data.getRoomPartiallyAccurate(room) ? soft : dark;
         }
         return color;
-    }
+    }*/
 
     private JLabel createLabel(String text, Color color) {
         JLabel label = new JLabel(text);

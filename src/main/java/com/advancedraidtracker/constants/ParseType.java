@@ -21,6 +21,9 @@ public enum ParseType
     ACCURATE_START(0),
     ACCURATE_END(0),
     MANUAL_PARSE(0),
+    MAP(0),
+    ENTERED_RAID(0),
+    LEFT_RAID(0),
     ;
     public final int offset;
     ParseType(int offset)

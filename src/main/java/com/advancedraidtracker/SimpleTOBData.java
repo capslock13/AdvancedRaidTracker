@@ -522,12 +522,12 @@ public class SimpleTOBData extends SimpleRaidDataBase
                     break;
                 case THRALL_ATTACKED:
                     dataManager.increment(Objects.requireNonNull(DataPoint.getValue(room + " thrall attacks")));
-                    dataManager.increment(DataPoint.THRALL_ATTACKS_TOTAL);
+                    //dataManager.increment(DataPoint.THRALL_ATTACKS_TOTAL);
                     break;
                 case THRALL_DAMAGED:
                     int amount = Integer.parseInt(subData[5]);
                     dataManager.increment(Objects.requireNonNull(DataPoint.getValue(room + " thrall damage")), amount);
-                    dataManager.increment(DataPoint.THRALL_DAMAGE_TOTAL, amount);
+                    //dataManager.increment(DataPoint.THRALL_DAMAGE_TOTAL, amount);
                     break;
                 case VENG_WAS_CAST:
                     dataManager.increment(Objects.requireNonNull(DataPoint.getValue(room + " veng casts")));

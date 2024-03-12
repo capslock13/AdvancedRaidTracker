@@ -17,8 +17,7 @@ import com.advancedraidtracker.ui.filters.LoadFilter;
 import com.advancedraidtracker.ui.filters.SaveFilter;
 import com.advancedraidtracker.ui.statistics.StatisticTab;
 import com.advancedraidtracker.utility.*;
-import com.advancedraidtracker.utility.datautility.DataPoint;
-import com.advancedraidtracker.utility.datautility.DataWriter;
+import com.advancedraidtracker.utility.datautility.*;
 import com.advancedraidtracker.utility.datautility.datapoints.Raid;
 import com.advancedraidtracker.utility.datautility.datapoints.tob.Tob;
 import com.advancedraidtracker.utility.wrappers.StringInt;
@@ -161,8 +160,8 @@ public class Raids extends BaseFrame
                 tobData.add((Tob) raidData);
             }
         }
-        DataPoint dataPoint = DataPoint.ATTEMPTED_BGS_BLOAT;
-        boolean time = dataPoint.type == DataPoint.types.TIME;
+        //DataPoint dataPoint = DataPoint.ATTEMPTED_BGS_BLOAT;
+        //boolean time = dataPoint.type == DataPoint.types.TIME;
 
         /*
         double avg = StatisticGatherer.getGenericAverage(tobData, dataPoint);
@@ -429,7 +428,7 @@ public class Raids extends BaseFrame
             case "Scale":
                 return raid.getScaleString();
             case "Status":
-                return raid.getRoomStatus();
+                return raid.roomStatus;
             case "Raid":
                 return raid.getRaidType().colorName();
             case "Players":
@@ -763,24 +762,10 @@ public class Raids extends BaseFrame
         comboPopupMenu = new JPopupMenu();
         comboPopupMenu.setBorder(new MatteBorder(1, 1, 1, 1, Color.DARK_GRAY));
 
-        comboPopupData.put("Room Times", DataPoint.getRoomTimes());
-        comboPopupData.put("Maiden", DataPoint.getSpecificNames(MAIDEN));
-        comboPopupData.put("Bloat", DataPoint.getSpecificNames(BLOAT));
-        comboPopupData.put("Nylocas", DataPoint.getSpecificNames(NYLOCAS));
-        comboPopupData.put("Sotetseg", DataPoint.getSpecificNames(SOTETSEG));
-        comboPopupData.put("Xarpus", DataPoint.getSpecificNames(XARPUS));
-        comboPopupData.put("Verzik", DataPoint.getSpecificNames(VERZIK));
-        comboPopupData.put("Any TOB", DataPoint.getSpecificNames(ANY_TOB));
-        comboPopupData.put("Apmeken", DataPoint.getSpecificNames(APMEKEN));
-        comboPopupData.put("Baba", DataPoint.getSpecificNames(BABA));
-        comboPopupData.put("Scabaras", DataPoint.getSpecificNames(SCABARAS));
-        comboPopupData.put("Kephri", DataPoint.getSpecificNames(KEPHRI));
-        comboPopupData.put("Crondis", DataPoint.getSpecificNames(CRONDIS));
-        comboPopupData.put("Zebak", DataPoint.getSpecificNames(ZEBAK));
-        comboPopupData.put("Het", DataPoint.getSpecificNames(HET));
-        comboPopupData.put("Akkha", DataPoint.getSpecificNames(AKKHA));
-        comboPopupData.put("Wardens", DataPoint.getSpecificNames(WARDENS));
-        comboPopupData.put("Any TOA", DataPoint.getSpecificNames(ANY_TOA));
+        for(RaidRoom room : RaidRoom.values())
+        {
+            comboPopupData.put(room.name(), DataPoint.getSpecificNames(room));
+        }
 
         List<String> allComboValues = new ArrayList<String>(comboPopupData.keySet());
 

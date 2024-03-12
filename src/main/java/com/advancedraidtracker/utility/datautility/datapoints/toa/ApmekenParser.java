@@ -1,5 +1,6 @@
 package com.advancedraidtracker.utility.datautility.datapoints.toa;
 
+import com.advancedraidtracker.constants.RaidRoom;
 import com.advancedraidtracker.utility.datautility.datapoints.RoomParser;
 
 import java.util.Map;
@@ -10,5 +11,9 @@ public class ApmekenParser extends RoomParser
     public Map<Integer, String> getLines()
     {
         return null;
+    }
+    public void init()
+    {
+        data.init(RaidRoom.APMEKEN);
     }
 }

@@ -1,9 +1,7 @@
 package com.advancedraidtracker.utility.datautility.datapoints;
 
 import com.advancedraidtracker.constants.RaidRoom;
-import com.advancedraidtracker.utility.datautility.DataPoint;
-import com.advancedraidtracker.utility.datautility.MultiRoomDataPoint;
-import com.advancedraidtracker.utility.datautility.MultiRoomPlayerDataPoint;
+import com.advancedraidtracker.utility.datautility.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;
@@ -12,19 +10,20 @@ import java.util.Map;
 public class RoomDataManager
 {
     Map<DataPoint, Integer> map;
-    Map<MultiRoomDataPoint, Integer> roomSpecificMap;
-    Map<MultiRoomPlayerDataPoint, Map<String, Integer>> roomPlayerSpecificMap;
+    Map<DataPoint, Map<String, Integer>> playerSpecificMap;
+    Map<DataPoint, Integer> tickMap;
+    RaidRoom room = null;
 
     public RoomDataManager()
     {
         map = new HashMap<>();
-        roomSpecificMap = new HashMap<>();
-        roomPlayerSpecificMap = new HashMap<>();
+        playerSpecificMap = new HashMap<>();
+        tickMap = new HashMap<>();
     }
 
-    public void increment(MultiRoomPlayerDataPoint point, String player)
+    public void init(RaidRoom room)
     {
-        incrementBy(point, 1, player);
+        this.room = room;
     }
 
     public void increment(DataPoint point, String player)
@@ -32,14 +31,21 @@ public class RoomDataManager
         incrementBy(point, 1, player);
     }
 
-    public void incrementBy(DataPoint point, int value, String player)
+    public void incrementBy(DataPoint point, int value)
     {
         map.merge(point, value, Integer::sum);
     }
 
-    public void incrementBy(MultiRoomPlayerDataPoint point, int value, String player)
+    public void incrementBy(DataPoint point, int value, String player)
     {
-        roomPlayerSpecificMap.getOrDefault(point, new HashMap<>()).merge(player, value, Integer::sum);
+        if(player.isEmpty())
+        {
+            incrementBy(point, value);
+            return;
+        }
+        Map<String, Integer> playerMap = playerSpecificMap.getOrDefault(point, new HashMap<>());
+        playerMap.merge(player,value, Integer::sum);
+        playerSpecificMap.put(point, playerMap);
     }
 
     public void set(DataPoint point, int value)
@@ -47,38 +53,42 @@ public class RoomDataManager
         map.put(point, value);
     }
 
-    public void set(MultiRoomDataPoint point, int value)
+    public void set(DataPoint point, int value, String player)
     {
-        roomSpecificMap.put(point, value);
+        map.put(point, value);
     }
 
     public int get(DataPoint point)
     {
+        if(point.playerSpecific)
+        {
+            int sum = 0;
+            for(String name : playerSpecificMap.get(point).keySet())
+            {
+                sum += playerSpecificMap.get(point).get(name);
+            }
+            return sum;
+        }
         return map.getOrDefault(point, -1);
     }
 
-    public int get(String point)
+    public int get(DataPoint point, String player)
     {
-        return get(DataPoint.getValue(point)); // todo make more efficient
+        return playerSpecificMap.getOrDefault(point, new HashMap<>()).getOrDefault(player, 0);
     }
 
-    public void dwh(MultiRoomDataPoint point)
+    public void dwh(DataPoint point)
     {
-        double defense = roomSpecificMap.getOrDefault(point, 0); //fix defense todo
+        double defense = map.getOrDefault(point, 0); //fix defense todo
         defense *= .7;
-        roomSpecificMap.put(point, (int)defense);
+        map.put(point, (int)defense);
     }
 
-    public void bgs(MultiRoomDataPoint point, int damage)
+    public void bgs(DataPoint point, int damage)
     {
-        int defense = roomSpecificMap.getOrDefault(point, 0); //todo fix defense
+        int defense = map.getOrDefault(point, 0); //todo fix defense
         defense = Math.max(defense-damage, 0);
-        roomSpecificMap.put(point, defense);
-    }
-
-    public int get(MultiRoomDataPoint point, RaidRoom room)
-    {
-        return roomSpecificMap.getOrDefault(point, 0);
+        map.put(point, defense);
     }
 
     public void dumpValues() //used for testing only
@@ -88,17 +98,12 @@ public class RoomDataManager
         {
             log.info(point.name + ": " + map.get(point));
         }
-        log.info("MultiRoomDataPoint: ");
-        for(MultiRoomDataPoint point : roomSpecificMap.keySet())
+        log.info("Player Specific DataPoint: ");
+        for(DataPoint point : playerSpecificMap.keySet())
         {
-            log.info(point.name + ": " + roomSpecificMap.get(point));
-        }
-        log.info("MultiRoomPlayerDataPoint: ");
-        for(MultiRoomPlayerDataPoint point : roomPlayerSpecificMap.keySet())
-        {
-            for(String player : roomPlayerSpecificMap.get(point).keySet())
+            for(String name : playerSpecificMap.get(point).keySet())
             {
-                log.info("Player: " + player + ", " + point.name() + ": " + roomPlayerSpecificMap.get(point).get(player));
+                log.info(name + ", " + point.name + ": " + playerSpecificMap.get(point).get(name));
             }
         }
     }

@@ -5,17 +5,19 @@ import java.util.Optional;
 
 public enum RaidRoom
 {
-    MAIDEN(0), BLOAT(1), NYLOCAS(2), SOTETSEG(3), XARPUS(4), VERZIK(5), UNKNOWN(-1), ANY_TOB(6),
-    CRONDIS(7), ZEBAK(8), SCABARAS(9), KEPHRI(10), APMEKEN(11), BABA(12), HET(13), AKKHA(14), WARDENS(15), ANY_TOA(16),
-    ANY(17), ALL(18),
+    MAIDEN(0, "Maiden"), BLOAT(1, "Bloat"), NYLOCAS(2, "Nylocas"), SOTETSEG(3, "Sotetseg"), XARPUS(4, "Xarpus"), VERZIK(5, "Verzik"), UNKNOWN(-1, "Unknown"), ANY_TOB(6, "Any TOB"),
+    CRONDIS(7, "Crondis"), ZEBAK(8, "Zebak"), SCABARAS(9, "Scabaras"), KEPHRI(10, "Kephri"), APMEKEN(11, "Apmeken"), BABA(12, "Baba"), HET(13, "Het"), AKKHA(14, "Akkha"), WARDENS(15, "Wardens"), ANY_TOA(16, "Any TOA"),
+    ANY(17, "Any"), ALL(18, "All"),
 
     ;
 
     public final int value;
+    public final String name;
 
-    RaidRoom(int value)
+    RaidRoom(int value, String name)
     {
         this.value = value;
+        this.name = name;
     }
 
     public static RaidRoom valueOf(int number)

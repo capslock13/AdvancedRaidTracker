@@ -1,5 +1,6 @@
 package com.advancedraidtracker.utility.datautility.datapoints.toa;
 
+import com.advancedraidtracker.constants.RaidRoom;
 import com.advancedraidtracker.utility.datautility.datapoints.RoomParser;
 
 import java.util.HashMap;
@@ -12,5 +13,9 @@ public class AkkhaParser extends RoomParser
     {
         Map<Integer, String> lines = new HashMap<>();
         return null;
+    }
+    public void init()
+    {
+        data.init(RaidRoom.AKKHA);
     }
 }

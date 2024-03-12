@@ -1,9 +1,7 @@
 package com.advancedraidtracker.utility.datautility.datapoints;
 
 import com.advancedraidtracker.constants.*;
-import com.advancedraidtracker.utility.datautility.DataPoint;
-import com.advancedraidtracker.utility.datautility.MultiRoomDataPoint;
-import com.advancedraidtracker.utility.datautility.MultiRoomPlayerDataPoint;
+import com.advancedraidtracker.utility.datautility.*;
 import com.advancedraidtracker.utility.datautility.datapoints.toa.Toa;
 import com.advancedraidtracker.utility.datautility.datapoints.tob.Tob;
 import lombok.Getter;
@@ -15,6 +13,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
+import static com.advancedraidtracker.constants.RaidRoom.ANY;
+import static com.advancedraidtracker.constants.RaidRoom.VERZIK;
 import static com.advancedraidtracker.utility.datautility.DataPoint.*;
 
 @Slf4j
@@ -90,20 +90,96 @@ public abstract class Raid
     protected Map<RaidRoom, RoomParser> roomParsers;
     private List<LogEntry> raidData;
     DefaultParser defaultParser;
+    UnknownParser unknownParser;
+
+    String red = "<html><font color='#FF0000'>";
+    String green = "<html><font color='#44AF33'>";
+    String orange = "<html><font color='#FF7733'>";
+    String yellow = "<html><font color='#FFFF33'>";
+
+    private boolean lastRoomStarted = false;
+    private boolean wasReset = false;
+    private boolean wasWipe = false;
+    private boolean wasCompletion = false;
+    private String lastRoom = "";
+    public String roomStatus = "";
 
     protected Raid(Path filepath, List<LogEntry> raidData)
     {
         defaultParser = new DefaultParser();
+        unknownParser = new UnknownParser();
         roomParsers = new HashMap<>();
+        roomParsers.put(ANY, defaultParser);
         this.raidData = raidData;
         date = new Date(0L); //figure out why dates dont parse properly on some raids
         this.filepath = filepath;
         this.players = new HashSet<>();
     }
 
+    public int get(String datapoint)
+    {
+        DataPoint point = DataPoint.getValue(datapoint);
+        if(point.room.equals(RaidRoom.ALL))
+        {
+            int sum = 0;
+            for(RaidRoom room : RaidRoom.values())
+            {
+                if(point.playerSpecific)
+                {
+                    RoomDataManager rdm = getParser(room).data;
+                    for(String player : rdm.playerSpecificMap.get(point).keySet())
+                    {
+                        sum += rdm.playerSpecificMap.get(point).get(player);
+                    }
+                }
+                else
+                {
+                    sum += getParser(room).data.get(point);
+                }
+            }
+            return sum;
+        }
+        else
+        {
+            if(point.playerSpecific)
+            {
+                int sum = 0;
+                RoomDataManager rdm = getParser(point.room).data;
+                for(String player : rdm.playerSpecificMap.get(point).keySet())
+                {
+                    sum += rdm.playerSpecificMap.get(point).get(player);
+                }
+                return sum;
+            }
+            else
+            {
+                return getParser(point.room).data.get(point);
+            }
+        }
+    }
+
+    public int get(String datapoint, String player)
+    {
+        DataPoint point = DataPoint.getValue(datapoint);
+        if(point.room.equals(RaidRoom.ALL))
+        {
+            int sum = 0;
+            for(RaidRoom room : RaidRoom.values())
+            {
+                sum+= getParser(room).data.get(point, player);
+            }
+            return sum;
+        }
+        else
+        {
+            return getParser(point.room).data.get(point, player);
+        }
+    }
+
+
     public RoomParser getParser(RaidRoom room)
     {
-        return roomParsers.getOrDefault(room, defaultParser);
+        return roomParsers.getOrDefault(room, unknownParser);
     }
 
     /**
@@ -185,27 +261,17 @@ public abstract class Raid
             RoomParser parser = getParser(room);
             for(ParseObject po : entry.logEntry.parseObjects)
             {
+                if(po.dataPoint1 != null && po.dataPoint1.room.equals(ANY))
+                {
+                    parser = defaultParser;
+                }
                 switch (po.type)
                 {
                     case ADD_TO_VALUE:
-                        if(po.mrpdPoint != null)
-                        {
-                            parser.data.incrementBy(po.mrpdPoint, entry.getFirstInt(), entry.getValue("Player"));
-                        }
-                        else if(po.dataPoint1 != null)
-                        {
-                            parser.data.incrementBy(po.dataPoint1, entry.getFirstInt(), entry.getValue("Player"));
-                        }
+                        parser.data.incrementBy(po.dataPoint1, entry.getFirstInt(), entry.getValue("Player"));
                         break;
                     case INCREMENT:
-                        if(po.mrpdPoint != null)
-                        {
-                            parser.data.increment(po.mrpdPoint, entry.getValue("Player"));
-                        }
-                        else if(po.dataPoint1 != null)
-                        {
-                            parser.data.increment(po.dataPoint1, entry.getValue("Player"));
-                        }
+                        parser.data.increment(po.dataPoint1, entry.getValue("Player"));
                         break;
                     case INCREMENT_IF_GREATER_THAN:
                         if (((po.marker != null) ? Integer.parseInt(entry.values.get(po.marker)) : parser.data.get(po.dataPoint1)) > po.value)
@@ -220,39 +286,28 @@ public abstract class Raid
                         }
                         break;
                     case SET:
-                        if (po.dataPoint1 != null)
-                        {
-                            parser.data.set(po.dataPoint1, entry.getFirstInt());
-                        }
-                        else if (po.mrdPoint != null)
-                        {
-                            parser.data.set(po.mrdPoint, entry.getFirstInt());
-                        }
+                        parser.data.set(po.dataPoint1, entry.getFirstInt());
                         break;
                     case SUM:
                         parser.data.set(po.dataPoint1, parser.data.get(po.dataPoint2) + parser.data.get(po.dataPoint3));
                         break;
                     case SPLIT:
-                        if (po.dataPoint3 != null)
-                        {
-                            parser.data.set(po.dataPoint1, entry.getFirstInt());
-                            parser.data.set(po.dataPoint2, parser.data.get(po.dataPoint1) - parser.data.get(po.dataPoint3));
-                        } else
-                        {
-                            parser.data.set(po.mrdPoint, entry.getFirstInt());
-                            parser.data.set(po.dataPoint1, parser.data.get(po.mrdPoint, entry.logEntry.getRoom()) - parser.data.get(po.dataPoint2));
-                        }
+                        parser.data.set(po.dataPoint1, entry.getFirstInt());
+                        parser.data.set(po.dataPoint2, parser.data.get(po.dataPoint1) - parser.data.get(po.dataPoint3));
                         break;
                     case DWH:
-                        parser.data.dwh(po.mrdPoint);
+                        parser.data.dwh(po.dataPoint1);
                         break;
                     case BGS:
-                        parser.data.bgs(po.mrdPoint, entry.getFirstInt());
+                        parser.data.bgs(po.dataPoint1, entry.getFirstInt());
                         break;
                     case ROOM_END_FLAG:
-                        //not sure what this needs to be used for yet
+                        lastRoom = entry.logEntry.getRoom().name;
+                        wasReset = true;
                         break;
                     case ROOM_START_FLAG: //todo use this to track raid status
+                        wasReset = false;
+                        lastRoomStarted = true;
                         break;
                     case AGNOSTIC:
                         handleRaidAgnosticLogEntry(entry);
@@ -267,7 +322,25 @@ public abstract class Raid
                         break;
                     case MANUAL_PARSE:
                         return false;
+                    case LEFT_RAID:
+                        if(wasReset)
+                        {
+                            if(lastRoom.equals(VERZIK.name))
+                            {
+                                roomStatus = green + "Completion";
+                            }
+                            else
+                            {
+                                roomStatus = yellow + lastRoom + " Reset";
+                            }
+                        }
+                        else
+                        {
+                            roomStatus = red + lastRoom + " Wipe";
+                        }
+                        return true;
                 }
+                parser = getParser(room);
             }
             return true;
         } catch (Exception e)
@@ -309,15 +382,9 @@ public abstract class Raid
                     for(RaidRoom room : RaidRoom.values())
                     {
                         RoomParser parser = ret.getParser(room);
-                        if(!(parser instanceof DefaultParser))
-                        {
-                            log.info("Dumping room: " + room.name());
-                            parser.data.dumpValues();
-                        }
-                        else
-                        {
-                            log.info(room.name() + " has default parser");
-                        }
+                        //log.info("Dumping room: " + room.name());
+                        //parser.data.dumpValues();
+
                     }
                 } else if (entry.logEntry == LogID.LEFT_TOA)
                 {
@@ -402,11 +469,6 @@ public abstract class Raid
             scale += " (" + data.get(TOA_INVOCATION_LEVEL) + ")"; //todo do this as an override in Toa
         }*/
         return scale;
-    }
-
-    public int get(String datapoint)
-    {
-        return getParser(getValue(datapoint).room).data.get(datapoint);
     }
 
     public void setIndex(int index)

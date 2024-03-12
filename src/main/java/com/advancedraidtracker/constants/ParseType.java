@@ -22,12 +22,9 @@ public enum ParseType
     ACCURATE_END(0),
     MANUAL_PARSE(0),
     ;
-
     public final int offset;
     ParseType(int offset)
     {
         this.offset = offset;
     }
-
-
 }

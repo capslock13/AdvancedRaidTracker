@@ -1,6 +1,7 @@
 package com.advancedraidtracker.utility.datautility.datapoints;
 
 import com.advancedraidtracker.constants.LogID;
+import com.advancedraidtracker.constants.ParseType;
 import com.formdev.flatlaf.util.StringUtils;
 import com.google.common.collect.Streams;
 import lombok.Value;
@@ -10,15 +11,14 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 @Slf4j
-@Value
 public class LogEntry
 {
     private final static HashSet<String> intValues = new HashSet<>(Arrays.asList("Damage", "Room Tick"));
     long ts;
     int raid;
     LogID logEntry;
-    Map<String, String> values;
-    String[] lines; // debug only
+    public Map<String, String> values;
+    String[] lines; // debug only todo remove
 
     LogEntry(String[] line)
     {
@@ -28,40 +28,28 @@ public class LogEntry
         raid = Integer.parseInt(line[2]);
         logEntry = LogID.valueOf(Integer.parseInt(line[3]));
         values = new LinkedHashMap<>();
-        if (logEntry.isSimple())
+        if(!logEntry.parseObjects.isEmpty() && logEntry.parseObjects.get(0).type.equals(ParseType.MANUAL_PARSE))
         {
-            int index = Integer.MAX_VALUE;
-            boolean stringFound = false;
-            for (int i = 0; i < logEntry.arguments.length; i++) //find first index of consecutive strings to end the arguments
-            {
-                if (!stringFound && logEntry.arguments[i] instanceof String)
-                {
-                    stringFound = true;
-                    index = i;
-                } else if (stringFound && !(logEntry.arguments[i] instanceof String))
-                {
-                    stringFound = false;
-                }
-            }
-            index++;
-            for (int i = index; i < logEntry.arguments.length; i++)
+            return;
+        }
+        for(int i = 4; i < line.length; i++)
+        {
+            if(!line[i].isEmpty())
             {
                 try
                 {
-                    if (logEntry.equals(LogID.PARTY_MEMBERS))
-                    {
-                        if (4 + i - index < line.length)
-                        {
-                            values.put((String) logEntry.arguments[i], line[4 + i - index]);
-                        }
-                    } else
-                    {
-                        values.put((String) logEntry.arguments[i], line[4 + i - index]);
-                    }
-                } catch (Exception e)
+                    values.put(logEntry.getStringArgs().get(i - 4), line[i]);
+                }
+                catch (Exception e)
                 {
-                    log.info("Mismatch between LogID format and provided values: " + String.join(",", line));
-                    log.info("Expected start index was: " + index + " and end index: " + logEntry.arguments.length + ". Failed on index : " + i);
+                    if(logEntry.getStringArgs().size() != line.length-4)
+                    {
+                        log.info("Mismatch, args.size(): " + logEntry.getStringArgs().size() + ", line length-4: " + (line.length-4) + ", value: " + String.join(",",line));
+                    }
+                    else
+                    {
+                        log.info("Not mismatch: " + String.join(",",line));
+                    }
                 }
             }
         }

@@ -2,7 +2,9 @@ package com.advancedraidtracker.constants;
 
 import lombok.Getter;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.advancedraidtracker.constants.ParseType.*;
@@ -23,210 +25,199 @@ import static com.advancedraidtracker.utility.datautility.SingleRoomPlayerDataPo
 public enum LogID
 {
     ENTERED_RAID(0, true, ANY,
-            AGNOSTIC,
+            new ParseObject(AGNOSTIC),
             "Entered Raid"),
     PARTY_MEMBERS(1, true, ANY,
-            AGNOSTIC,
+            new ParseObject(AGNOSTIC),
             "Party Members", "Player1", "Player2", "Player3", "Player4", "Player5", "Player6", "Player7", "Player8"),
     HAMMER_HIT(2, true, ANY,
-            INCREMENT, PLAYER_HAMMER_HIT_COUNT,
-            DWH, ROOM_DEFENSE,
+            new ParseObject(INCREMENT, PLAYER_HAMMER_HIT_COUNT),
+            new ParseObject(DWH, ROOM_DEFENSE),
             "Hammer Hit", "Player", "Room Tick"),
     BGS_HIT(3, true, ANY_TOB,
-            INCREMENT, PLAYER_BGS_HIT_COUNT,
-            ADD_TO_VALUE, PLAYER_BGS_DAMAGE,
-            BGS, ROOM_DEFENSE,
+            new ParseObject(INCREMENT, PLAYER_BGS_HIT_COUNT),
+            new ParseObject(ADD_TO_VALUE, PLAYER_BGS_DAMAGE),
+            new ParseObject(BGS, ROOM_DEFENSE),
             "BGS Hit", "Player", "Damage", "Room Tick"),
     LEFT_TOB(4, true, ANY_TOB,
-            RAID_SPECIFIC,
+            new ParseObject(RAID_SPECIFIC),
             "Left TOB", "Last Room Tick", "Last Room Name"),
     PLAYER_DIED(5, true, ANY,
-            INCREMENT, PLAYER_DEATHS,
+            new ParseObject(INCREMENT, PLAYER_DEATHS),
             "Played Died", "Player", "Room Tick"),
     ENTERED_NEW_TOB_REGION(6, true, ANY_TOB,
-            RAID_SPECIFIC,
+            new ParseObject(RAID_SPECIFIC),
             "Entered New TOB Region", "Room (Int)"),
     HAMMER_ATTEMPTED(7, true, ANY,
-            INCREMENT, PLAYER_HAMMER_ATTEMPTED,
+            new ParseObject(INCREMENT, PLAYER_HAMMER_ATTEMPTED),
             "DWH Attempted", "Player"),
     DAWN_DROPPED(800, false, VERZIK,
-            MANUAL_PARSE,
-            DAWN_DROPS,
+            new ParseObject(DAWN_DROPS),
             "Dawnbringer appeared", "Room Tick"),
     WEBS_STARTED(901, false, VERZIK,
-            MANUAL_PARSE,
-            WEBS_THROWN,
+            new ParseObject(WEBS_THROWN),
             "Webs Thrown", "Room Tick"),
     PLAYER_ATTACK(801, false, ANY,
-            MANUAL_PARSE,
+            new ParseObject(MANUAL_PARSE),
             "Player Animation", "Player:Room Tick", "Animation:Worn Items ~ Separated", "Spot animations", "Weapon:Interated Index:Interacted ID", "Matched Projectile:Interacted Name", "Room Name"),
     BLOOD_THROWN(9, true, MAIDEN,
-            INCREMENT, MAIDEN_BLOOD_THROWN,
+            new ParseObject(INCREMENT, MAIDEN_BLOOD_THROWN),
             "Maiden blood thrown"),
     BLOOD_SPAWNED(10, true, MAIDEN,
-            INCREMENT, MAIDEN_BLOOD_SPAWNED,
+            new ParseObject(INCREMENT, MAIDEN_BLOOD_SPAWNED),
             "Blood Spawned"),
     CRAB_LEAK(11, true, MAIDEN,
-            MANUAL_PARSE,
+            new ParseObject(MANUAL_PARSE),
             "Crab Leaked", "Position", "Health"),
     MAIDEN_SPAWNED(12, true, MAIDEN,
-            ROOM_START_FLAG,
+            new ParseObject(ROOM_START_FLAG),
             "Spawned"),
     MAIDEN_70S(13, true, MAIDEN,
-            SET, MAIDEN_70_SPLIT,
+            new ParseObject(SET, MAIDEN_70_SPLIT),
             "70s", "Room Tick"),
     MAIDEN_50S(14, true, MAIDEN,
-            SPLIT, MAIDEN_50_SPLIT, MAIDEN_7050_DURATION, MAIDEN_70_SPLIT,
+            new ParseObject(SPLIT, MAIDEN_50_SPLIT, MAIDEN_7050_DURATION, MAIDEN_70_SPLIT),
             "50s", "Room Tick"),
     MAIDEN_30S(15, true, MAIDEN,
-            SPLIT, MAIDEN_30_SPLIT, MAIDEN_5030_SPLIT, MAIDEN_50_SPLIT,
+            new ParseObject(SPLIT, MAIDEN_30_SPLIT, MAIDEN_5030_SPLIT, MAIDEN_50_SPLIT),
             "30s", "Room Tick"),
-    //DEPRECATED_MAIDEN_0HP(16, true, MAIDEN, "0 HP", "Room Tick"),
     MAIDEN_DESPAWNED(17, true, MAIDEN,
-            SPLIT, ROOM_TIME, MAIDEN_SKIP_SPLIT, MAIDEN_30_SPLIT,
-            ADD_TO_VALUE, CHALLENGE_TIME,
-            ROOM_END_FLAG,
+            new ParseObject(SPLIT, ROOM_TIME, MAIDEN_SKIP_SPLIT, MAIDEN_30_SPLIT),
+            new ParseObject(ADD_TO_VALUE, CHALLENGE_TIME),
+            new ParseObject(ROOM_END_FLAG),
             "Despawned", "Room Tick"),
     MATOMENOS_SPAWNED(18, true, MAIDEN,
-            MANUAL_PARSE,
+            new ParseObject(MANUAL_PARSE),
             "Crab Spawned", "Crab Description"),
     MAIDEN_SCUFFED(19, true, MAIDEN,
-            MANUAL_PARSE,
+            new ParseObject(MANUAL_PARSE),
             "Scuffed", "Current Proc"),
-    //DEPRECATED_BLOAT_STARTED(26, true, BLOAT, "Bloat Started", "Client Tick"),
     BLOAT_SPAWNED(20, true, BLOAT,
-            ROOM_START_FLAG,
+            new ParseObject(ROOM_START_FLAG),
             "Spawned"),
     BLOAT_DOWN(21, true, BLOAT,
-            INCREMENT, BLOAT_DOWNS,
+            new ParseObject(INCREMENT, BLOAT_DOWNS),
             "Down", "Room Tick"),
-    //DEPRECATED_BLOAT_0HP(22, true, BLOAT, "0 HP"),
     BLOAT_DESPAWN(23, true, BLOAT,
-            SET, ROOM_TIME,
-            ADD_TO_VALUE, CHALLENGE_TIME,
-            ROOM_END_FLAG,
+            new ParseObject(SET, ROOM_TIME),
+            new ParseObject(ADD_TO_VALUE, CHALLENGE_TIME),
+            new ParseObject(ROOM_END_FLAG),
             "Despawned", "Room Tick"),
     BLOAT_HP_1ST_DOWN(24, true, BLOAT,
-            SET, BLOAT_HP_FIRST_DOWN,
-            "HP at First Down", "Bloat HP"), //Jagex format, 744 -> 74.4%
+            new ParseObject(SET, BLOAT_HP_FIRST_DOWN),
+            "HP at First Down", "Bloat HP"),
     BLOAT_SCYTHE_1ST_WALK(25, true, BLOAT,
-            INCREMENT, PLAYER_FIRST_WALK_SCYTHES,
+            new ParseObject(INCREMENT, PLAYER_FIRST_WALK_SCYTHES),
             "First Walk Scythes", "Player", "Room Tick"),
     NYLO_PILLAR_SPAWN(30, true, NYLOCAS,
-            ROOM_START_FLAG,
+            new ParseObject(ROOM_START_FLAG),
             "Pillar Spawn"),
     NYLO_STALL(31, true, NYLOCAS,
-            INCREMENT, NYLO_STALLS_TOTAL,
-            INCREMENT_IF_GREATER_THAN, NYLO_STALLS_POST_20, "Stall", 19,
-            INCREMENT_IF_LESS_THAN, NYLO_STALLS_PRE_20, "Stall", 20,
+            new ParseObject(INCREMENT, NYLO_STALLS_TOTAL),
+            new ParseObject(INCREMENT_IF_GREATER_THAN, NYLO_STALLS_POST_20, "Wave", 19),
+            new ParseObject(INCREMENT_IF_LESS_THAN, NYLO_STALLS_PRE_20, "Wave", 20),
             "Stall", "Wave", "Room Tick", "Nylos Alive"),
     RANGE_SPLIT(32, true, NYLOCAS,
-            INCREMENT, NYLO_SPLITS_RANGE,
+            new ParseObject(INCREMENT, NYLO_SPLITS_RANGE),
             "Range Split", "Wave", "Room Tick"),
     MAGE_SPLIT(33, true, NYLOCAS,
-            INCREMENT, NYLO_SPLITS_MAGE,
+            new ParseObject(INCREMENT, NYLO_SPLITS_MAGE),
             "Mage Split", "Wave", "Room Tick"),
     MELEE_SPLIT(34, true, NYLOCAS,
-            INCREMENT, NYLO_SPLITS_MELEE,
+            new ParseObject(INCREMENT, NYLO_SPLITS_MELEE),
             "Melee Split", "Wave", "Room Tick"),
     LAST_WAVE(35, true, NYLOCAS,
-            SET, NYLO_LAST_WAVE,
+            new ParseObject(SET, NYLO_LAST_WAVE),
             "Last Wave", "Room Tick"),
     LAST_DEAD(36, true, NYLOCAS,
-            SPLIT, NYLO_LAST_DEAD, NYLO_CLEANUP, NYLO_LAST_WAVE,
+            new ParseObject(SPLIT, NYLO_LAST_DEAD, NYLO_CLEANUP, NYLO_LAST_WAVE),
             "Last Dead", "Room Tick"),
     NYLO_WAVE(37, true, NYLOCAS,
-            MANUAL_PARSE,
+            new ParseObject(MANUAL_PARSE),
             "Wave", "Wave Number", "Room Tick"),
     BOSS_SPAWN(40, true, NYLOCAS,
-            SPLIT, NYLO_BOSS_SPAWN, NYLO_CLEANUP, NYLO_LAST_WAVE,
+            new ParseObject(SPLIT, NYLO_BOSS_SPAWN, NYLO_CLEANUP, NYLO_LAST_WAVE),
             "Boss Spawn", "Room Tick"),
     MELEE_PHASE(41, true, NYLOCAS,
-            INCREMENT, NYLO_ROTATIONS_TOTAL,
-            INCREMENT, NYLO_ROTATIONS_MELEE,
+            new ParseObject(INCREMENT, NYLO_ROTATIONS_TOTAL),
+            new ParseObject(INCREMENT, NYLO_ROTATIONS_MELEE),
             "Melee Phase", "Room Tick"),
     MAGE_PHASE(42, true, NYLOCAS,
-            INCREMENT, NYLO_ROTATIONS_TOTAL,
-            INCREMENT, NYLO_ROTATIONS_MAGE,
+            new ParseObject(INCREMENT, NYLO_ROTATIONS_TOTAL),
+            new ParseObject(INCREMENT, NYLO_ROTATIONS_MAGE),
             "Mage Phase", "Room Tick"),
     RANGE_PHASE(43, true, NYLOCAS,
-            INCREMENT, NYLO_ROTATIONS_TOTAL,
-                       INCREMENT, NYLO_ROTATIONS_RANGE,
+            new ParseObject(INCREMENT, NYLO_ROTATIONS_TOTAL),
+            new ParseObject(INCREMENT, NYLO_ROTATIONS_RANGE),
             "Range Phase", "Room Tick"),
-    //DEPRECATED_NYLO_0HP(44, true, NYLOCAS, "0 HP"),
     NYLO_DESPAWNED(45, true, NYLOCAS,
-            SPLIT, ROOM_TIME, NYLO_BOSS_DURATION, NYLO_BOSS_SPAWN,
-            ADD_TO_VALUE, CHALLENGE_TIME,
+            new ParseObject(SPLIT, ROOM_TIME, NYLO_BOSS_DURATION, NYLO_BOSS_SPAWN),
+            new ParseObject(ADD_TO_VALUE, CHALLENGE_TIME),
             "Despawn", "Room Tick"),
     //POSSIBLY_DEPRECATED_NYLO_PILLAR_DESPAWNED(46, true, NYLOCAS, "Pillar Despawn", "Room Tick"),
     SOTETSEG_STARTED(51, true, SOTETSEG,
-            ROOM_START_FLAG,
+            new ParseObject(ROOM_START_FLAG),
             "Started"),
     SOTETSEG_FIRST_MAZE_STARTED(52, true, SOTETSEG,
-            SET, SOTE_M1_SPLIT,
+            new ParseObject(SET, SOTE_M1_SPLIT),
             "First Maze Start", "Room Tick"),
     SOTETSEG_FIRST_MAZE_ENDED(53, true, SOTETSEG,
-            SPLIT, SOTE_P2_SPLIT, SOTE_M1_DURATION, SOTE_M1_SPLIT,
+            new ParseObject(SPLIT, SOTE_P2_SPLIT, SOTE_M1_DURATION, SOTE_M1_SPLIT),
             "First Maze End", "Room Tick"),
     SOTETSEG_SECOND_MAZE_STARTED(54, true, SOTETSEG,
-            SPLIT, SOTE_M2_SPLIT, SOTE_P2_DURATION, SOTE_P2_SPLIT,
+            new ParseObject(SPLIT, SOTE_M2_SPLIT, SOTE_P2_DURATION, SOTE_P2_SPLIT),
             "Second Maze Start", "Room Tick"),
     SOTETSEG_SECOND_MAZE_ENDED(55, true, SOTETSEG,
-            SPLIT, SOTE_P3_SPLIT, SOTE_M2_DURATION, SOTE_M2_SPLIT,
-            SUM, SOTE_MAZE_SUM, SOTE_M1_DURATION, SOTE_M2_DURATION,
+            new ParseObject(SPLIT, SOTE_P3_SPLIT, SOTE_M2_DURATION, SOTE_M2_SPLIT),
+            new ParseObject(SUM, SOTE_MAZE_SUM, SOTE_M1_DURATION, SOTE_M2_DURATION),
             "Second Maze End", "Room Tick"),
     SOTETSEG_ENDED(57, true, SOTETSEG,
-            SPLIT, ROOM_TIME, SOTE_P3_DURATION, SOTE_P3_SPLIT,
-            ADD_TO_VALUE, CHALLENGE_TIME,
+            new ParseObject(SPLIT, ROOM_TIME, SOTE_P3_DURATION, SOTE_P3_SPLIT),
+            new ParseObject(ADD_TO_VALUE, CHALLENGE_TIME),
             "Room End", "Room Tick"),
-    //DEPRECATED_XARPUS_SPAWNED(60, true, XARPUS, "Spawned"),
     XARPUS_STARTED(61, true, XARPUS,
-            ROOM_START_FLAG,
+            new ParseObject(ROOM_START_FLAG),
             "Started"),
     XARPUS_HEAL(62, true, XARPUS,
-            ADD_TO_VALUE, XARP_HEALING,
+            new ParseObject(ADD_TO_VALUE, XARP_HEALING),
             "Heal"),
     XARPUS_SCREECH(63, true, XARPUS,
-            SET, XARP_SCREECH,
+            new ParseObject(SET, XARP_SCREECH),
             "Screech", "Room Tick"),
-    //DEPRECATED_XARPUS_0HP(64, true, XARPUS, "0 HP"),
     XARPUS_DESPAWNED(65, true, XARPUS,
-            SPLIT, ROOM_TIME, XARP_POST_SCREECH, XARP_SCREECH,
+            new ParseObject(SPLIT, ROOM_TIME, XARP_POST_SCREECH, XARP_SCREECH),
             "Despawned", "Room Tick"),
     //DEPRECATED_VERZIK_SPAWNED(70, true, VERZIK, "Spawned"),
     VERZIK_P1_START(71, true, VERZIK,
-            ROOM_START_FLAG,
+            new ParseObject(ROOM_START_FLAG),
             "P1 Start"),
-    //DEPRECATED_VERZIK_P1_0HP(72, true, VERZIK, "P1 0 HP"),
     VERZIK_P1_DESPAWNED(73, true, VERZIK,
-            SET, VERZIK_P2_SPLIT, -13,
+            new ParseObject(SET, VERZIK_P2_SPLIT, -13),
             "P1 Despawned", "Room Tick"),
-    VERZIK_P2_END(74, true, VERZIK, //todo revist red split?
-            SPLIT, VERZIK_P3_SPLIT, VERZIK_P2_DURATION, VERZIK_P2_SPLIT,
+    VERZIK_P2_END(74, true, VERZIK,
+            new ParseObject(SPLIT, VERZIK_P3_SPLIT, VERZIK_P2_DURATION, VERZIK_P2_SPLIT),
             "P2 End", "Room Tick"),
-    //DEPRECATED_VERZIK_P3_0HP(75, true, VERZIK, "P2 0 HP"),
     VERZIK_P3_DESPAWNED(76, true, VERZIK,
-            SPLIT, ROOM_TIME, VERZIK_P3_DURATION, VERZIK_P3_SPLIT,
-            ADD_TO_VALUE, CHALLENGE_TIME,
+            new ParseObject(SPLIT, ROOM_TIME, VERZIK_P3_DURATION, VERZIK_P3_SPLIT),
+            new ParseObject(ADD_TO_VALUE, CHALLENGE_TIME),
             "P3 Despawned", "Room Tick"),
     VERZIK_BOUNCE(77, true, VERZIK,
-            INCREMENT, PLAYER_BOUNCES_VERZIK,
+            new ParseObject(INCREMENT, PLAYER_BOUNCES_VERZIK),
             VERZIK_BOUNCES,
             "Bounce", "Player", "Room Tick"),
     VERZIK_CRAB_SPAWNED(78, true, VERZIK,
-            INCREMENT_IF_GREATER_THAN, VERZIK_P3_CRABS_SPAWNED, VERZIK_P2_DURATION, 1,
-            INCREMENT_IF_LESS_THAN, VERZIK_P2_CRABS_SPAWNED, VERZIK_P2_DURATION, 2,
-            INCREMENT, VERZIK_CRABS_SPAWNED,
+            new ParseObject(INCREMENT_IF_GREATER_THAN, VERZIK_P3_CRABS_SPAWNED, VERZIK_P2_DURATION, 1),
+            new ParseObject(INCREMENT_IF_LESS_THAN, VERZIK_P2_CRABS_SPAWNED, VERZIK_P2_DURATION, 2),
+            new ParseObject(INCREMENT, VERZIK_CRABS_SPAWNED),
             "Crab Spawned", "Room Tick"),
     VERZIK_P2_REDS_PROC(80, true, VERZIK,
-            MANUAL_PARSE,
+            new ParseObject(MANUAL_PARSE),
             "Reds Proc", "Room Tick"),
-
     LATE_START(98, true, ANY_TOB,
-            RAID_SPECIFIC,
+            new ParseObject(RAID_SPECIFIC),
             "Joined Raid After Start", "Room Name"),
     SPECTATE(99, true, ANY_TOB,
-        RAID_SPECIFIC,
+            new ParseObject(RAID_SPECIFIC),
             "Is Spectating"),
     //DEPRECATED_1(998, true, ANY_TOB, "DEPRECATED"),
     //DEPRECATED_2(999, true, ANY_TOB, "DEPRECATED"),
@@ -338,7 +329,7 @@ public enum LogID
             "Chally Poke", "Players"),
     THRALL_SPAWN(410, false, ANY_TOB,
             MANUAL_PARSE,
-            "Thrall Spawn", "Owner", "Room Tick", "Npc ID", "Room"),
+            "Thrall Spawn", "Owner", "Room Tick", "Npc ID", "Room Name"),
     THRALL_DESPAWN(498, false, ANY_TOB,
             MANUAL_PARSE,
             "Thrall Despawn", "Owner", "Room Tick"),
@@ -649,11 +640,7 @@ public enum LogID
     305 accurate xarp end
     306 accurate verzik end
     */
-    final int id;
-    String commonName;
-    final RaidRoom room;
-    final boolean simple;
-    public final Object[] arguments;
+    //public final Object[] arguments;
 
     private static final Map<Integer, LogID> mapper;
 
@@ -665,6 +652,12 @@ public enum LogID
             mapper.put(id.id, id);
         }
     }
+    final int id;
+    String commonName;
+    final RaidRoom room;
+    final boolean simple;
+    public final List<ParseObject> parseObjects = new ArrayList<>();
+    public final List<String> stringArgs = new ArrayList<>();
 
     LogID(int id, boolean simple, RaidRoom room, Object... arguments)
     {
@@ -672,14 +665,24 @@ public enum LogID
         this.simple = simple;
         this.room = room;
         commonName = "unknown";
-        for(Object o : arguments)
+        for(Object obj : arguments)
         {
-            if(o instanceof String)
+            if(obj instanceof ParseObject)
             {
-                commonName = (String) o;
+                parseObjects.add((ParseObject) obj);
+            }
+            else if(obj instanceof String)
+            {
+                if(commonName.equals("unknown"))
+                {
+                    commonName = (String) obj;
+                }
+                else
+                {
+                    stringArgs.add((String)obj);
+                }
             }
         }
-        this.arguments = arguments;
     }
 
     public static boolean isSimple(int value)

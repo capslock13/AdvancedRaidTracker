@@ -22,21 +22,24 @@ public class RoomDataManager
         roomPlayerSpecificMap = new HashMap<>();
     }
 
-    public void increment(Object point, String player)
+    public void increment(MultiRoomPlayerDataPoint point, String player)
     {
         incrementBy(point, 1, player);
     }
 
-    public void incrementBy(Object point, int value, String player)
+    public void increment(DataPoint point, String player)
     {
-        if(point instanceof DataPoint)
-        {
-            map.merge((DataPoint) point, value, Integer::sum);
-        }
-        else if(point instanceof MultiRoomPlayerDataPoint)
-        {
-            roomPlayerSpecificMap.getOrDefault((MultiRoomPlayerDataPoint) point, new HashMap<>()).merge(player, value, Integer::sum);
-        }
+        incrementBy(point, 1, player);
+    }
+
+    public void incrementBy(DataPoint point, int value, String player)
+    {
+        map.merge(point, value, Integer::sum);
+    }
+
+    public void incrementBy(MultiRoomPlayerDataPoint point, int value, String player)
+    {
+        roomPlayerSpecificMap.getOrDefault(point, new HashMap<>()).merge(player, value, Integer::sum);
     }
 
     public void set(DataPoint point, int value)
@@ -80,13 +83,23 @@ public class RoomDataManager
 
     public void dumpValues() //used for testing only
     {
+        log.info("DataPoint: ");
         for(DataPoint point : map.keySet())
         {
             log.info(point.name + ": " + map.get(point));
         }
+        log.info("MultiRoomDataPoint: ");
         for(MultiRoomDataPoint point : roomSpecificMap.keySet())
         {
             log.info(point.name + ": " + roomSpecificMap.get(point));
+        }
+        log.info("MultiRoomPlayerDataPoint: ");
+        for(MultiRoomPlayerDataPoint point : roomPlayerSpecificMap.keySet())
+        {
+            for(String player : roomPlayerSpecificMap.get(point).keySet())
+            {
+                log.info("Player: " + player + ", " + point.name() + ": " + roomPlayerSpecificMap.get(point).get(player));
+            }
         }
     }
 

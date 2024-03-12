@@ -1,11 +1,9 @@
 package com.advancedraidtracker.utility.datautility.datapoints;
 
-import com.advancedraidtracker.constants.LogID;
-import com.advancedraidtracker.constants.ParseType;
-import com.advancedraidtracker.constants.RaidType;
-import com.advancedraidtracker.constants.RaidRoom;
+import com.advancedraidtracker.constants.*;
 import com.advancedraidtracker.utility.datautility.DataPoint;
 import com.advancedraidtracker.utility.datautility.MultiRoomDataPoint;
+import com.advancedraidtracker.utility.datautility.MultiRoomPlayerDataPoint;
 import com.advancedraidtracker.utility.datautility.datapoints.toa.Toa;
 import com.advancedraidtracker.utility.datautility.datapoints.tob.Tob;
 import lombok.Getter;
@@ -144,22 +142,23 @@ public abstract class Raid
 
     /**
      * Handles log entries which are the same regardless of raid
+     *
      * @param entry raid agnostic log entry to be parsed
      */
     private void handleRaidAgnosticLogEntry(LogEntry entry)
     {
-        switch (entry.getLogEntry())
+        switch (entry.logEntry)
         {
             case ENTERED_RAID:
             case ENTERED_TOA:
-                date = new Date(entry.getTs());
+                date = new Date(entry.ts);
                 break;
             case PARTY_MEMBERS:
             case TOA_PARTY_MEMBERS:
-                for(int i = 1; i < 9; i++)
+                for (int i = 1; i < 9; i++)
                 {
-                    String player = entry.getValue("Player"+i);
-                    if(!player.isEmpty())
+                    String player = entry.getValue("Player" + i);
+                    if (!player.isEmpty())
                     {
                         players.add(Text.toJagexName(player));
                     }
@@ -175,98 +174,108 @@ public abstract class Raid
 
     /**
      * Uses the operators encoded in the enum to automatically parse the logID to the corresponding datapoint(s)
+     *
      * @param entry entry to parse
      */
     protected boolean parseLogEntry(LogEntry entry)
     {
         try
         {
-            Object[] args = entry.getLogEntry().arguments;
-            RaidRoom room = entry.getLogEntry().getRoom();
+            RaidRoom room = entry.logEntry.getRoom();
             RoomParser parser = getParser(room);
-            for (int i = 0; i < args.length; i++)
+            for(ParseObject po : entry.logEntry.parseObjects)
             {
-                if (args[i] instanceof ParseType)
+                log.info("Type: " + String.valueOf(po.type) + ", PointType: " + String.valueOf(po.pointType) + ", DataPoint1: " + String.valueOf(po.dataPoint1.name) + ", DataPoint2: " + String.valueOf(po.dataPoint2.name)
+                + ", DataPoint3: " + String.valueOf(po.dataPoint3.name) + ", Marker: " + String.valueOf(po.marker) + ", Value: " + String.valueOf(po.value) + ", SRMPoint" + String.valueOf(po.srmdPoint.name) +
+                        ", SRPDPoint: " + String.valueOf(po.srpdPoint.name) + ", MRDPoint: " + String.valueOf(po.mrdPoint.name) + ", " + "MDPDPoint: " + String.valueOf(po.mrpdPoint));
+                switch (po.type)
                 {
-                    ParseType parseType = (ParseType) args[i];
-                    switch ((ParseType) args[i])
-                    {
-                        case ADD_TO_VALUE:
-                            parser.data.incrementBy(args[i + 1], entry.getFirstInt(), entry.getValue("Player"));
-                            break;
-                        case INCREMENT:
-                                parser.data.increment(args[i + 1], entry.getValue("Player"));
-                            break;
-                        case INCREMENT_IF_GREATER_THAN:
-                            if (((args[i + 2] instanceof String) ? entry.getValueAsInt((String) args[i + 2]) : parser.data.get((DataPoint) args[i + 2])) > (Integer) args[i + 3])
-                            {
-                                parser.data.increment(args[i + 1], entry.getValue("Player"));
-                            }
-                            break;
-                        case INCREMENT_IF_LESS_THAN:
-                            if (((args[i + 2] instanceof String) ? entry.getValueAsInt((String) args[i + 2]) : parser.data.get((DataPoint) args[i + 2])) < (Integer) args[i + 3])
-                            {
-                                parser.data.increment(args[i + 1], entry.getValue("Player"));
-                            }
-                            break;
-                        case SET:
-                            if (args[i + 1] instanceof DataPoint)
-                            {
-                                parser.data.set((DataPoint) args[i + 1], entry.getFirstInt());
-                            } else if (args[i + 1] instanceof MultiRoomDataPoint)
-                            {
-                                parser.data.set((MultiRoomDataPoint) args[i + 1], entry.getFirstInt());
-                            }
-                            break;
-                        case SUM:
-                            parser.data.set((DataPoint) args[i + 1], parser.data.get((DataPoint) args[i + 2]) + parser.data.get((DataPoint) args[i + 3]));
-                            break;
-                        case SPLIT:
-                            if(args[i+1] instanceof DataPoint)
-                            {
-                                parser.data.set((DataPoint) args[i + 1], entry.getFirstInt());
-                                parser.data.set((DataPoint) args[i + 2], parser.data.get((DataPoint) args[i + 1]) - parser.data.get((DataPoint) args[i + 3]));
-                            }
-                            else if(args[i+1] instanceof MultiRoomDataPoint)
-                            {
-                                parser.data.set((MultiRoomDataPoint) args[i + 1], entry.getFirstInt());
-                                parser.data.set((DataPoint) args[i + 2], parser.data.get((MultiRoomDataPoint) args[i + 1], entry.getLogEntry().getRoom()) - parser.data.get((DataPoint) args[i + 3]));
-                            }
-                            break;
-                        case DWH:
-                            parser.data.dwh((MultiRoomDataPoint) args[i + 1]);
-                            break;
-                        case BGS:
-                            parser.data.bgs((MultiRoomDataPoint) args[i + 1], entry.getFirstInt());
-                            break;
-                        case ROOM_END_FLAG:
-                            //not sure what this needs to be used for yet
-                            break;
-                        case ROOM_START_FLAG: //todo use this to track raid status
-                            break;
-                        case AGNOSTIC:
-                            handleRaidAgnosticLogEntry(entry);
-                            break;
-                        case RAID_SPECIFIC: //let it be handled by the raid specific parser TODO
-                            return false;
-                        case ACCURATE_START:
-                            setRoomStartAccurate(entry.getLogEntry().getRoom());
-                            break;
-                        case ACCURATE_END:
-                            setRoomEndAccurate(entry.getLogEntry().getRoom());
-                            break;
-                        case MANUAL_PARSE:
-                            return false;
-                    }
-                    i += parseType.offset;
+                    case ADD_TO_VALUE:
+                        if(po.pointType.equals(MultiRoomPlayerDataPoint.class.toString()))
+                        {
+                            parser.data.incrementBy(po.mrpdPoint, entry.getFirstInt(), entry.getValue("Player"));
+                        }
+                        else if(po.pointType.equals(DataPoint.class.toString()))
+                        {
+                            parser.data.incrementBy(po.dataPoint1, entry.getFirstInt(), entry.getValue("Player"));
+                        }
+                        break;
+                    case INCREMENT:
+                        if(po.pointType.equals(MultiRoomPlayerDataPoint.class.toString()))
+                        {
+                            parser.data.increment(po.mrpdPoint, entry.getValue("Player"));
+                        }
+                        else if(po.pointType.equals(DataPoint.class.toString()))
+                        {
+                            parser.data.increment(po.dataPoint1, entry.getValue("Player"));
+                        }
+                        break;
+                    case INCREMENT_IF_GREATER_THAN:
+                        if (((po.marker != null) ? Integer.parseInt(entry.values.get(po.marker)) : parser.data.get(po.dataPoint1)) > po.value)
+                        {
+                            parser.data.increment(po.dataPoint1, entry.getValue("Player"));
+                        }
+                        break;
+                    case INCREMENT_IF_LESS_THAN:
+                        if (((po.marker != null) ? Integer.parseInt(entry.values.get(po.marker)) : parser.data.get(po.dataPoint1)) < po.value)
+                        {
+                            parser.data.increment(po.dataPoint1, entry.getValue("Player"));
+                        }
+                        break;
+                    case SET:
+                        if (po.dataPoint1 != null)
+                        {
+                            parser.data.set(po.dataPoint1, entry.getFirstInt());
+                        }
+                        else if (po.mrdPoint != null)
+                        {
+                            parser.data.set(po.mrdPoint, entry.getFirstInt());
+                        }
+                        break;
+                    case SUM:
+                        parser.data.set(po.dataPoint1, parser.data.get(po.dataPoint2) + parser.data.get(po.dataPoint3));
+                        break;
+                    case SPLIT:
+                        if (po.pointType.equals(DataPoint.class.toString()))
+                        {
+                            parser.data.set(po.dataPoint1, entry.getFirstInt());
+                            parser.data.set(po.dataPoint2, parser.data.get(po.dataPoint1) - parser.data.get(po.dataPoint3));
+                        } else if (po.pointType.equals(MultiRoomDataPoint.class.toString()))
+                        {
+                            parser.data.set(po.mrdPoint, entry.getFirstInt());
+                            parser.data.set(po.dataPoint1, parser.data.get(po.mrdPoint, entry.logEntry.getRoom()) - parser.data.get(po.dataPoint2));
+                        }
+                        break;
+                    case DWH:
+                        parser.data.dwh(po.mrdPoint);
+                        break;
+                    case BGS:
+                        parser.data.bgs(po.mrdPoint, entry.getFirstInt());
+                        break;
+                    case ROOM_END_FLAG:
+                        //not sure what this needs to be used for yet
+                        break;
+                    case ROOM_START_FLAG: //todo use this to track raid status
+                        break;
+                    case AGNOSTIC:
+                        handleRaidAgnosticLogEntry(entry);
+                        break;
+                    case RAID_SPECIFIC: //let it be handled by the raid specific parser TODO
+                        return false;
+                    case ACCURATE_START:
+                        setRoomStartAccurate(entry.logEntry.getRoom());
+                        break;
+                    case ACCURATE_END:
+                        setRoomEndAccurate(entry.logEntry.getRoom());
+                        break;
+                    case MANUAL_PARSE:
+                        return false;
                 }
             }
             return true;
-        }
-        catch (Exception e)
+        } catch (Exception e)
         {
-            log.info("Could not parse: " + String.join(",", entry.getLines()));
-            e.printStackTrace();
+            log.info("Could not parse: " + String.join(",", entry.lines));
             return false;
         }
     }
@@ -286,16 +295,34 @@ public abstract class Raid
         for (String line : raidData)
         {
             String[] split = line.split(",", -1);
+            if(split[3].equals("801") || split[3].equals("975") || split[3].equals("8") || split[3].equals("998") || split[3].equals("999")
+            || split[3].equals("976") || split[3].equals("16") || split[3].equals("26") || split[3].equals("46"))
+                //legacy or otherwise ignored values to be excluded while testing parser
+            {
+                continue; //todo remove
+            }
             LogEntry entry = new LogEntry(split);
-            if(entry.getLogEntry().isSimple()) //Do not load chart data; that is pulled on demand
+            if (entry.logEntry.isSimple()) //Do not load chart data; that is pulled on demand
             {
                 currentRaid.add(entry);
-                if (entry.getLogEntry() == LogID.LEFT_TOB)
+                if (entry.logEntry == LogID.LEFT_TOB)
                 {
                     ret = new Tob(path, currentRaid);
                     ret.parseAllEntries();
-                }
-                else if(entry.getLogEntry() == LogID.LEFT_TOA)
+                    for(RaidRoom room : RaidRoom.values())
+                    {
+                        RoomParser parser = ret.getParser(room);
+                        if(!(parser instanceof DefaultParser))
+                        {
+                            log.info("Dumping room: " + room.name());
+                            parser.data.dumpValues();
+                        }
+                        else
+                        {
+                            log.info(room.name() + " has default parser");
+                        }
+                    }
+                } else if (entry.logEntry == LogID.LEFT_TOA)
                 {
                     ret = new Toa(path, currentRaid);
                     ret.parseAllEntries();
@@ -307,8 +334,9 @@ public abstract class Raid
 
     /**
      * Goes through the file and returns an arraylist containing all of the lines in the file.
-     *
+     * <p>
      * TODO find out if this is something that should simply be done in `getRaid` to not parse it twice.
+     *
      * @param path Path to log file.
      * @return A list of all lines in the log file.
      */

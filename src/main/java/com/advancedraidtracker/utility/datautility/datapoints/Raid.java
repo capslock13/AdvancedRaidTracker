@@ -185,27 +185,24 @@ public abstract class Raid
             RoomParser parser = getParser(room);
             for(ParseObject po : entry.logEntry.parseObjects)
             {
-                log.info("Type: " + String.valueOf(po.type) + ", PointType: " + String.valueOf(po.pointType) + ", DataPoint1: " + String.valueOf(po.dataPoint1.name) + ", DataPoint2: " + String.valueOf(po.dataPoint2.name)
-                + ", DataPoint3: " + String.valueOf(po.dataPoint3.name) + ", Marker: " + String.valueOf(po.marker) + ", Value: " + String.valueOf(po.value) + ", SRMPoint" + String.valueOf(po.srmdPoint.name) +
-                        ", SRPDPoint: " + String.valueOf(po.srpdPoint.name) + ", MRDPoint: " + String.valueOf(po.mrdPoint.name) + ", " + "MDPDPoint: " + String.valueOf(po.mrpdPoint));
                 switch (po.type)
                 {
                     case ADD_TO_VALUE:
-                        if(po.pointType.equals(MultiRoomPlayerDataPoint.class.toString()))
+                        if(po.mrpdPoint != null)
                         {
                             parser.data.incrementBy(po.mrpdPoint, entry.getFirstInt(), entry.getValue("Player"));
                         }
-                        else if(po.pointType.equals(DataPoint.class.toString()))
+                        else if(po.dataPoint1 != null)
                         {
                             parser.data.incrementBy(po.dataPoint1, entry.getFirstInt(), entry.getValue("Player"));
                         }
                         break;
                     case INCREMENT:
-                        if(po.pointType.equals(MultiRoomPlayerDataPoint.class.toString()))
+                        if(po.mrpdPoint != null)
                         {
                             parser.data.increment(po.mrpdPoint, entry.getValue("Player"));
                         }
-                        else if(po.pointType.equals(DataPoint.class.toString()))
+                        else if(po.dataPoint1 != null)
                         {
                             parser.data.increment(po.dataPoint1, entry.getValue("Player"));
                         }
@@ -236,11 +233,11 @@ public abstract class Raid
                         parser.data.set(po.dataPoint1, parser.data.get(po.dataPoint2) + parser.data.get(po.dataPoint3));
                         break;
                     case SPLIT:
-                        if (po.pointType.equals(DataPoint.class.toString()))
+                        if (po.dataPoint3 != null)
                         {
                             parser.data.set(po.dataPoint1, entry.getFirstInt());
                             parser.data.set(po.dataPoint2, parser.data.get(po.dataPoint1) - parser.data.get(po.dataPoint3));
-                        } else if (po.pointType.equals(MultiRoomDataPoint.class.toString()))
+                        } else
                         {
                             parser.data.set(po.mrdPoint, entry.getFirstInt());
                             parser.data.set(po.dataPoint1, parser.data.get(po.mrdPoint, entry.logEntry.getRoom()) - parser.data.get(po.dataPoint2));

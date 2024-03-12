@@ -26,6 +26,16 @@ public enum RaidRoom
         return o.orElse(UNKNOWN);
     }
 
+    public boolean isTOA()
+    {
+        return this.equals(CRONDIS) || this.equals(ZEBAK) || this.equals(SCABARAS) || this.equals(KEPHRI) || this.equals(APMEKEN) || this.equals(BABA) || this.equals(HET) || this.equals(AKKHA) || this.equals(WARDENS) || this.equals(ANY_TOA);
+    }
+
+    public boolean isTOABoss()
+    {
+        return this.equals(ZEBAK) || this.equals(KEPHRI) || this.equals(BABA) || this.equals(AKKHA) || this.equals(WARDENS);
+    }
+
 
     public static RaidRoom getRoom(String room)
     {

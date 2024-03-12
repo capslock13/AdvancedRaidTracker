@@ -13,8 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
-import static com.advancedraidtracker.constants.RaidRoom.ANY;
-import static com.advancedraidtracker.constants.RaidRoom.VERZIK;
+import static com.advancedraidtracker.constants.RaidRoom.*;
 import static com.advancedraidtracker.utility.datautility.DataPoint.*;
 
 @Slf4j
@@ -259,55 +258,65 @@ public abstract class Raid
         {
             RaidRoom room = entry.logEntry.getRoom();
             RoomParser parser = getParser(room);
-            for(ParseObject po : entry.logEntry.parseObjects)
+            for(ParseInstruction instruction : entry.logEntry.parseInstructions)
             {
-                if(po.dataPoint1 != null && po.dataPoint1.room.equals(ANY))
+                if(instruction.dataPoint1 != null && instruction.dataPoint1.room.equals(ANY))
                 {
                     parser = defaultParser;
                 }
-                switch (po.type)
+                switch (instruction.type)
                 {
                     case ADD_TO_VALUE:
-                        parser.data.incrementBy(po.dataPoint1, entry.getFirstInt(), entry.getValue("Player"));
+                        parser.data.incrementBy(instruction.dataPoint1, entry.getFirstInt(), entry.getValue("Player"));
                         break;
                     case INCREMENT:
-                        parser.data.increment(po.dataPoint1, entry.getValue("Player"));
+                        parser.data.increment(instruction.dataPoint1, entry.getValue("Player"));
                         break;
                     case INCREMENT_IF_GREATER_THAN:
-                        if (((po.marker != null) ? Integer.parseInt(entry.values.get(po.marker)) : parser.data.get(po.dataPoint1)) > po.value)
+                        if (((instruction.marker != null) ? Integer.parseInt(entry.values.get(instruction.marker)) : parser.data.get(instruction.dataPoint1)) > instruction.value)
                         {
-                            parser.data.increment(po.dataPoint1, entry.getValue("Player"));
+                            parser.data.increment(instruction.dataPoint1, entry.getValue("Player"));
                         }
                         break;
                     case INCREMENT_IF_LESS_THAN:
-                        if (((po.marker != null) ? Integer.parseInt(entry.values.get(po.marker)) : parser.data.get(po.dataPoint1)) < po.value)
+                        if (((instruction.marker != null) ? Integer.parseInt(entry.values.get(instruction.marker)) : parser.data.get(instruction.dataPoint1)) < instruction.value)
                         {
-                            parser.data.increment(po.dataPoint1, entry.getValue("Player"));
+                            parser.data.increment(instruction.dataPoint1, entry.getValue("Player"));
+                        }
+                        break;
+                    case INCREMENT_IF_EQUALS:
+                        if(instruction.value == Integer.parseInt(entry.values.get(instruction.marker)))
+                        {
+                            parser.data.incrementBy(instruction.dataPoint1, entry.getFirstInt());
                         }
                         break;
                     case SET:
-                        parser.data.set(po.dataPoint1, entry.getFirstInt());
+                        parser.data.set(instruction.dataPoint1, entry.getFirstInt());
                         break;
                     case SUM:
-                        parser.data.set(po.dataPoint1, parser.data.get(po.dataPoint2) + parser.data.get(po.dataPoint3));
+                        parser.data.set(instruction.dataPoint1, parser.data.get(instruction.dataPoint2) + parser.data.get(instruction.dataPoint3));
                         break;
                     case SPLIT:
-                        parser.data.set(po.dataPoint1, entry.getFirstInt());
-                        parser.data.set(po.dataPoint2, parser.data.get(po.dataPoint1) - parser.data.get(po.dataPoint3));
+                        parser.data.set(instruction.dataPoint1, entry.getFirstInt());
+                        parser.data.set(instruction.dataPoint2, parser.data.get(instruction.dataPoint1) - parser.data.get(instruction.dataPoint3));
                         break;
                     case DWH:
-                        parser.data.dwh(po.dataPoint1);
+                        parser.data.dwh(instruction.dataPoint1);
                         break;
                     case BGS:
-                        parser.data.bgs(po.dataPoint1, entry.getFirstInt());
+                        parser.data.bgs(instruction.dataPoint1, entry.getFirstInt());
                         break;
                     case ROOM_END_FLAG:
                         lastRoom = entry.logEntry.getRoom().name;
                         wasReset = true;
                         break;
-                    case ROOM_START_FLAG: //todo use this to track raid status
+                    case ROOM_START_FLAG:
                         wasReset = false;
                         lastRoomStarted = true;
+                        if(entry.logEntry.getRoom().isTOABoss())
+                        {
+                            roomStatus += entry.logEntry.getRoom().name.substring(0, 1);
+                        }
                         break;
                     case AGNOSTIC:
                         handleRaidAgnosticLogEntry(entry);
@@ -323,22 +332,27 @@ public abstract class Raid
                     case MANUAL_PARSE:
                         return false;
                     case LEFT_RAID:
-                        if(wasReset)
+                        if(!entry.logEntry.getRoom().isTOA()) //todo move this out of Raid
                         {
-                            if(lastRoom.equals(VERZIK.name))
+                            if (wasReset)
                             {
-                                roomStatus = green + "Completion";
-                            }
-                            else
+                                if (lastRoom.equals(VERZIK.name) || lastRoom.equals(WARDENS.name))
+                                {
+                                    roomStatus = green + "Completion";
+                                } else
+                                {
+                                    roomStatus = yellow + lastRoom + " Reset";
+                                }
+                            } else
                             {
-                                roomStatus = yellow + lastRoom + " Reset";
+                                roomStatus = red + lastRoom + " Wipe";
                             }
+                            return true;
                         }
                         else
                         {
-                            roomStatus = red + lastRoom + " Wipe";
+
                         }
-                        return true;
                 }
                 parser = getParser(room);
             }

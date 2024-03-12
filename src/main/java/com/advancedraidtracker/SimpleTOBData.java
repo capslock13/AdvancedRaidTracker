@@ -531,13 +531,13 @@ public class SimpleTOBData extends SimpleRaidDataBase
                     break;
                 case VENG_WAS_CAST:
                     dataManager.increment(Objects.requireNonNull(DataPoint.getValue(room + " veng casts")));
-                    dataManager.increment(DataPoint.VENG_CASTS_TOTAL);
+                    //dataManager.increment(DataPoint.VENG_CASTS_TOTAL);
                     break;
                 case VENG_WAS_PROCCED:
                     dataManager.increment(Objects.requireNonNull(DataPoint.getValue(room + " veng procs")));
-                    dataManager.increment(DataPoint.VENG_PROCS_TOTAL);
+                    //dataManager.increment(DataPoint.VENG_PROCS_TOTAL);
                     dataManager.increment(Objects.requireNonNull(DataPoint.getValue(room + " veng damage")), Integer.parseInt(subData[5]));
-                    dataManager.increment(DataPoint.VENG_DAMAGE_TOTAL, Integer.parseInt(subData[5]));
+                    //dataManager.increment(DataPoint.VENG_DAMAGE_TOTAL, Integer.parseInt(subData[5]));
                     break;
                 case KODAI_BOP:
                     dataManager.increment(DataPoint.KODAI_BOPS);

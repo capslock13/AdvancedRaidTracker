@@ -9,6 +9,8 @@ public enum ParseType
     INCREMENT(1),
     INCREMENT_IF_GREATER_THAN(3),
     INCREMENT_IF_LESS_THAN(3),
+    INCREMENT_IF_EQUALS(0),
+    DECREMENT(0),
     SET(1),
     SUM(3),
     SPLIT(3),

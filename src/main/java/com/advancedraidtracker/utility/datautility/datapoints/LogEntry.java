@@ -2,14 +2,10 @@ package com.advancedraidtracker.utility.datautility.datapoints;
 
 import com.advancedraidtracker.constants.LogID;
 import com.advancedraidtracker.constants.ParseType;
-import com.formdev.flatlaf.util.StringUtils;
-import com.google.common.collect.Streams;
-import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
+
 @Slf4j
 public class LogEntry
 {
@@ -28,7 +24,7 @@ public class LogEntry
         raid = Integer.parseInt(line[2]);
         logEntry = LogID.valueOf(Integer.parseInt(line[3]));
         values = new LinkedHashMap<>();
-        if(!logEntry.parseObjects.isEmpty() && logEntry.parseObjects.get(0).type.equals(ParseType.MANUAL_PARSE))
+        if(!logEntry.parseInstructions.isEmpty() && logEntry.parseInstructions.get(0).type.equals(ParseType.MANUAL_PARSE))
         {
             return;
         }

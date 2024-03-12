@@ -3,7 +3,7 @@ package com.advancedraidtracker.rooms.tob;
 import com.advancedraidtracker.AdvancedRaidTrackerConfig;
 import com.advancedraidtracker.AdvancedRaidTrackerPlugin;
 import com.advancedraidtracker.constants.LogID;
-import com.advancedraidtracker.constants.TOBRoom;
+import com.advancedraidtracker.constants.RaidRoom;
 import com.advancedraidtracker.utility.Point;
 import com.advancedraidtracker.utility.datautility.DataWriter;
 import lombok.extern.slf4j.Slf4j;
@@ -222,7 +222,7 @@ public class SotetsegHandler extends TOBRoomHandler
 
     public void endSotetseg()
     {
-        plugin.addDelayedLine(TOBRoom.SOTETSEG, client.getTickCount() - roomStartTick, "Dead");
+        plugin.addDelayedLine(RaidRoom.SOTETSEG, client.getTickCount() - roomStartTick, "Dead");
         soteDeathTick = client.getTickCount() + SOTETSEG_DEATH_ANIMATION_LENGTH;
         roomState = RoomState.SotetsegRoomState.FINISHED;
         clog.addLine(LogID.ACCURATE_SOTE_END);
@@ -243,7 +243,7 @@ public class SotetsegHandler extends TOBRoomHandler
         clog.addLine(LogID.SOTETSEG_FIRST_MAZE_STARTED, String.valueOf(soteFirstMazeStart - roomStartTick));
         roomState = RoomState.SotetsegRoomState.MAZE_1;
         sendTimeMessage("Wave 'Sotetseg phase 1' complete. Duration: ", soteFirstMazeStart - roomStartTick);
-        plugin.addDelayedLine(TOBRoom.SOTETSEG, soteFirstMazeStart - roomStartTick, "Maze1 Start");
+        plugin.addDelayedLine(RaidRoom.SOTETSEG, soteFirstMazeStart - roomStartTick, "Maze1 Start");
     }
 
     public void startEitherMaze()
@@ -262,7 +262,7 @@ public class SotetsegHandler extends TOBRoomHandler
         clog.addLine(LogID.SOTETSEG_FIRST_MAZE_ENDED, String.valueOf(soteFirstMazeEnd - roomStartTick));
         roomState = RoomState.SotetsegRoomState.PHASE_2;
         sendTimeMessage("Wave 'Sotetseg maze 1' complete. Duration: ", soteFirstMazeEnd - roomStartTick, soteFirstMazeEnd - soteFirstMazeStart);
-        plugin.addDelayedLine(TOBRoom.SOTETSEG, soteFirstMazeEnd - roomStartTick, "Maze1 End");
+        plugin.addDelayedLine(RaidRoom.SOTETSEG, soteFirstMazeEnd - roomStartTick, "Maze1 End");
     }
 
     public void startSecondMaze()
@@ -277,7 +277,7 @@ public class SotetsegHandler extends TOBRoomHandler
         clog.addLine(LogID.SOTETSEG_SECOND_MAZE_STARTED, String.valueOf(soteSecondMazeStart - roomStartTick));
         roomState = RoomState.SotetsegRoomState.MAZE_2;
         sendTimeMessage("Wave 'Sotetseg phase 2' complete. Duration: ", soteSecondMazeStart - roomStartTick, soteSecondMazeStart - soteFirstMazeEnd);
-        plugin.addDelayedLine(TOBRoom.SOTETSEG, soteSecondMazeStart - roomStartTick, "Maze2 Start");
+        plugin.addDelayedLine(RaidRoom.SOTETSEG, soteSecondMazeStart - roomStartTick, "Maze2 Start");
     }
 
     private static ArrayList<Point> filterMaze(ArrayList<Point> tiles)
@@ -382,7 +382,7 @@ public class SotetsegHandler extends TOBRoomHandler
         clog.addLine(LogID.SOTETSEG_SECOND_MAZE_ENDED, String.valueOf(soteSecondMazeEnd - roomStartTick));
         roomState = RoomState.SotetsegRoomState.PHASE_3;
         sendTimeMessage("Wave 'Sotetseg maze 2' complete. Duration: ", soteSecondMazeEnd - roomStartTick, soteSecondMazeEnd - soteSecondMazeStart);
-        plugin.addDelayedLine(TOBRoom.SOTETSEG, soteSecondMazeEnd - roomStartTick, "Maze2 End");
+        plugin.addDelayedLine(RaidRoom.SOTETSEG, soteSecondMazeEnd - roomStartTick, "Maze2 End");
     }
 
     public String getAboveWorldChosen()

@@ -1,6 +1,7 @@
 package com.advancedraidtracker.ui.viewraid;
 
 import com.advancedraidtracker.SimpleTOBData;
+import com.advancedraidtracker.constants.RaidRoom;
 import com.advancedraidtracker.utility.datautility.DataPoint;
 import com.advancedraidtracker.utility.RoomUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -160,7 +161,7 @@ public class ViewRaidPanel extends JPanel implements MouseListener, MouseMotionL
         }
         for (DataPoint point : DataPoint.values())
         {
-            if (point.room == DataPoint.rooms.values()[selectedRoom])
+            if (point.room == RaidRoom.values()[selectedRoom])
             {
                 String name = (selectedRoom == 0) ? point.name : point.name.substring(point.name.indexOf(" ") + 1);
                 name = name.substring(0, 1).toUpperCase() + name.substring(1);

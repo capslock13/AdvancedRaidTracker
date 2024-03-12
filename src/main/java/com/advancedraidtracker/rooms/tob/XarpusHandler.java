@@ -2,7 +2,7 @@ package com.advancedraidtracker.rooms.tob;
 
 import com.advancedraidtracker.AdvancedRaidTrackerConfig;
 import com.advancedraidtracker.AdvancedRaidTrackerPlugin;
-import com.advancedraidtracker.constants.TOBRoom;
+import com.advancedraidtracker.constants.RaidRoom;
 import com.advancedraidtracker.constants.TobIDs;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.ChatMessageType;
@@ -150,7 +150,7 @@ public class XarpusHandler extends TOBRoomHandler
         }
         if (xarpusScreechTick != -1 && xarpusScreechTick != 0 && client.getTickCount() != xarpusScreechTick && (client.getTickCount() - xarpusScreechTick) % 8 == 0 && isActive())
         {
-            plugin.addDelayedLine(TOBRoom.XARPUS, client.getTickCount() - xarpusEntryTick, "Turn");
+            plugin.addDelayedLine(RaidRoom.XARPUS, client.getTickCount() - xarpusEntryTick, "Turn");
         }
     }
 
@@ -161,7 +161,7 @@ public class XarpusHandler extends TOBRoomHandler
         xarpusScreechTick = client.getTickCount();
         String splitMessage = "Wave 'Xarpus phase 2' complete. Duration: " + timeColor() + RoomUtil.time(xarpusScreechTick - xarpusEntryTick) + " (" + RoomUtil.time(xarpusScreechTick - xarpusExhumedsEnd) + ")";
         this.client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", splitMessage, null, false);
-        plugin.addDelayedLine(TOBRoom.XARPUS, xarpusScreechTick - xarpusEntryTick, "SCREECH");
+        plugin.addDelayedLine(RaidRoom.XARPUS, xarpusScreechTick - xarpusEntryTick, "SCREECH");
     }
 
     private void startXarpus()
@@ -179,7 +179,7 @@ public class XarpusHandler extends TOBRoomHandler
         xarpusExhumedsEnd = client.getTickCount();
         String splitMessage = "Wave 'Xarpus phase 1' complete. Duration: " + timeColor() + RoomUtil.time(xarpusExhumedsEnd - xarpusEntryTick);
         this.client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", splitMessage, null, false);
-        plugin.addDelayedLine(TOBRoom.XARPUS, client.getTickCount() - xarpusEntryTick + 1, "Exhumeds End");
+        plugin.addDelayedLine(RaidRoom.XARPUS, client.getTickCount() - xarpusEntryTick + 1, "Exhumeds End");
     }
 
     private void endXarpus()

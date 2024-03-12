@@ -16,8 +16,8 @@ public class ChartFrame extends BaseFrame
 {
     public ChartFrame(Raid roomData, AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
     {
+        SimpleRaidDataBase b;
         JTabbedPane basepane = new JTabbedPane();
-
         /*
         JPanel tab = new JPanel();
         tab.setLayout(new GridLayout(1, 2));

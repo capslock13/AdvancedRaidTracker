@@ -3,7 +3,7 @@ package com.advancedraidtracker.rooms.tob;
 import com.advancedraidtracker.AdvancedRaidTrackerConfig;
 
 import com.advancedraidtracker.utility.RoomState;
-import com.advancedraidtracker.constants.TOBRoom;
+import com.advancedraidtracker.constants.RaidRoom;
 import com.advancedraidtracker.constants.TobIDs;
 
 import com.advancedraidtracker.utility.datautility.DataWriter;
@@ -129,7 +129,7 @@ public class MaidenHandler extends TOBRoomHandler
         if (roomStartTick != -1)
             sendTimeMessage("Wave 'Maiden phase 1' complete! Duration: ", p70 - roomStartTick);
         clog.addLine(MAIDEN_70S, String.valueOf(p70 - roomStartTick));
-        plugin.addDelayedLine(TOBRoom.MAIDEN, p70 - roomStartTick - 2, "70s");
+        plugin.addDelayedLine(RaidRoom.MAIDEN, p70 - roomStartTick - 2, "70s");
 
     }
 
@@ -140,7 +140,7 @@ public class MaidenHandler extends TOBRoomHandler
         if (roomStartTick != -1)
             sendTimeMessage("Wave 'Maiden phase 2' complete! Duration: ", p50 - roomStartTick, p50 - p70);
         clog.addLine(MAIDEN_50S, String.valueOf(p50 - roomStartTick));
-        plugin.addDelayedLine(TOBRoom.MAIDEN, p50 - roomStartTick - 2, "50s");
+        plugin.addDelayedLine(RaidRoom.MAIDEN, p50 - roomStartTick - 2, "50s");
     }
 
     public void proc30()
@@ -150,7 +150,7 @@ public class MaidenHandler extends TOBRoomHandler
         if (roomStartTick != -1)
             sendTimeMessage("Wave 'Maiden phase 3' complete! Duration: ", p30 - roomStartTick, p30 - p50);
         clog.addLine(MAIDEN_30S, String.valueOf(p30 - roomStartTick));
-        plugin.addDelayedLine(TOBRoom.MAIDEN, p30 - roomStartTick - 2, "30s");
+        plugin.addDelayedLine(RaidRoom.MAIDEN, p30 - roomStartTick - 2, "30s");
     }
 
     public void endMaiden()
@@ -161,7 +161,7 @@ public class MaidenHandler extends TOBRoomHandler
             sendTimeMessage("Wave 'Maiden Skip' complete! Duration: ", maidenDeathTick - roomStartTick, maidenDeathTick - p30, false);
         clog.addLine(ACCURATE_MAIDEN_END);
         //clog.addLine(MAIDEN_0HP, String.valueOf(client.getTickCount() - roomStartTick));
-        plugin.addDelayedLine(TOBRoom.MAIDEN, client.getTickCount() - roomStartTick, "Dead");
+        plugin.addDelayedLine(RaidRoom.MAIDEN, client.getTickCount() - roomStartTick, "Dead");
         plugin.liveFrame.setRoomFinished(getName(), maidenDeathTick - roomStartTick);
     }
 

@@ -2,7 +2,7 @@ package com.advancedraidtracker;
 
 import com.advancedraidtracker.constants.LogID;
 import com.advancedraidtracker.constants.RaidType;
-import com.advancedraidtracker.constants.TOBRoom;
+import com.advancedraidtracker.constants.RaidRoom;
 import com.advancedraidtracker.utility.datautility.DataManager;
 import com.advancedraidtracker.utility.datautility.DataPoint;
 import com.advancedraidtracker.utility.wrappers.*;
@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
 
-import static com.advancedraidtracker.constants.TOBRoom.*;
+import static com.advancedraidtracker.constants.RaidRoom.*;
 import static com.advancedraidtracker.constants.TobIDs.EXIT_FLAG;
 import static com.advancedraidtracker.constants.TobIDs.SPECTATE_FLAG;
 import static com.advancedraidtracker.utility.datautility.DataPoint.*;
@@ -291,7 +291,7 @@ public class SimpleTOBData extends SimpleRaidDataBase
                 && verzikStartAccurate && verzikEndAccurate;
     }
 
-    public boolean checkExit(TOBRoom room)
+    public boolean checkExit(RaidRoom room)
     {
         if (globalData.isEmpty() || globalData.get(0).split(",", -1)[3].equals(EXIT_FLAG))
         {
@@ -700,7 +700,7 @@ public class SimpleTOBData extends SimpleRaidDataBase
         return true;
     }
 
-    private boolean isTimeAccurateThroughRoom(TOBRoom room)
+    private boolean isTimeAccurateThroughRoom(RaidRoom room)
     {
         switch (room)
         {

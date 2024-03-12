@@ -4,7 +4,7 @@ package com.advancedraidtracker.ui;
 import com.advancedraidtracker.SimpleRaidDataBase;
 import com.advancedraidtracker.SimpleTOBData;
 import com.advancedraidtracker.AdvancedRaidTrackerConfig;
-import com.advancedraidtracker.constants.TOBRoom;
+import com.advancedraidtracker.constants.RaidRoom;
 import com.advancedraidtracker.filters.*;
 import com.advancedraidtracker.ui.buttons.*;
 import com.advancedraidtracker.ui.charts.ChartFrame;
@@ -27,7 +27,6 @@ import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.game.ItemManager;
-import net.runelite.client.util.Text;
 
 import javax.swing.*;
 import javax.swing.border.MatteBorder;
@@ -47,6 +46,7 @@ import java.time.format.FormatStyle;
 import java.util.*;
 import java.util.List;
 
+import static com.advancedraidtracker.constants.RaidRoom.*;
 import static com.advancedraidtracker.utility.UISwingUtility.*;
 
 @Slf4j
@@ -282,7 +282,7 @@ public class Raids extends BaseFrame
                     String comboText = viewByRaidComboBox.getSelectedItem().toString();
                     if(comboText.endsWith("Time"))
                     {
-                        if(!data.getRoomAccurate(TOBRoom.valueOf(comboText.split(",")[0])))
+                        if(!data.getRoomAccurate(RaidRoom.valueOf(comboText.split(",")[0])))
                         {
                             shouldDataBeIncluded = false;
                         }
@@ -297,7 +297,7 @@ public class Raids extends BaseFrame
             for (Integer i : filteredIndices)
             {
                 // TODO what is this?
-                if (data.get(DataPoint.RAID_INDEX) == i)
+                if (data.getIndex() == i)
                 {
                     shouldDataBeIncluded = false;
                 }
@@ -433,7 +433,7 @@ public class Raids extends BaseFrame
             case "Raid":
                 return raid.getRaidType().colorName();
             case "Players":
-                return Text.toJagexName(String.join(",",raid.getPlayers()).replaceAll(String.valueOf((char) 160), String.valueOf(' ')));
+                return (String.join(",",raid.getPlayers()).replaceAll(String.valueOf((char) 160), String.valueOf(' ')));
             case "Spectate":
                 return (raid instanceof Tob && ((Tob) raid).isSpectated()) ? "Yes" : "No";
             case "View":
@@ -457,7 +457,8 @@ public class Raids extends BaseFrame
         String valueToDisplay = "(?)";
         try
         {
-            valueToDisplay = String.valueOf(raid.get(column));
+            DataPoint point = DataPoint.getValue(column);
+            valueToDisplay = String.valueOf(raid.getParser(point.room).data.get(point));
         } catch (Exception ignored)
         {
 
@@ -471,7 +472,7 @@ public class Raids extends BaseFrame
         {
             if (!value.contains("Player:"))
             {
-                return DataPoint.getValue(value).type == DataPoint.types.TIME;
+                return DataPoint.getValue(value).isTime();
             }
             else
             {
@@ -763,23 +764,23 @@ public class Raids extends BaseFrame
         comboPopupMenu.setBorder(new MatteBorder(1, 1, 1, 1, Color.DARK_GRAY));
 
         comboPopupData.put("Room Times", DataPoint.getRoomTimes());
-        comboPopupData.put("Maiden", DataPoint.getSpecificNames(DataPoint.rooms.MAIDEN));
-        comboPopupData.put("Bloat", DataPoint.getSpecificNames(DataPoint.rooms.BLOAT));
-        comboPopupData.put("Nylocas", DataPoint.getSpecificNames(DataPoint.rooms.NYLOCAS));
-        comboPopupData.put("Sotetseg", DataPoint.getSpecificNames(DataPoint.rooms.SOTETSEG));
-        comboPopupData.put("Xarpus", DataPoint.getSpecificNames(DataPoint.rooms.XARPUS));
-        comboPopupData.put("Verzik", DataPoint.getSpecificNames(DataPoint.rooms.VERZIK));
-        comboPopupData.put("Any TOB", DataPoint.getSpecificNames(DataPoint.rooms.ANY_TOB));
-        comboPopupData.put("Apmeken", DataPoint.getSpecificNames(DataPoint.rooms.APMEKEN));
-        comboPopupData.put("Baba", DataPoint.getSpecificNames(DataPoint.rooms.BABA));
-        comboPopupData.put("Scabaras", DataPoint.getSpecificNames(DataPoint.rooms.SCABARAS));
-        comboPopupData.put("Kephri", DataPoint.getSpecificNames(DataPoint.rooms.KEPHRI));
-        comboPopupData.put("Crondis", DataPoint.getSpecificNames(DataPoint.rooms.CRONDIS));
-        comboPopupData.put("Zebak", DataPoint.getSpecificNames(DataPoint.rooms.ZEBAK));
-        comboPopupData.put("Het", DataPoint.getSpecificNames(DataPoint.rooms.HET));
-        comboPopupData.put("Akkha", DataPoint.getSpecificNames(DataPoint.rooms.AKKHA));
-        comboPopupData.put("Wardens", DataPoint.getSpecificNames(DataPoint.rooms.WARDENS));
-        comboPopupData.put("Any TOA", DataPoint.getSpecificNames(DataPoint.rooms.ANY_TOA));
+        comboPopupData.put("Maiden", DataPoint.getSpecificNames(MAIDEN));
+        comboPopupData.put("Bloat", DataPoint.getSpecificNames(BLOAT));
+        comboPopupData.put("Nylocas", DataPoint.getSpecificNames(NYLOCAS));
+        comboPopupData.put("Sotetseg", DataPoint.getSpecificNames(SOTETSEG));
+        comboPopupData.put("Xarpus", DataPoint.getSpecificNames(XARPUS));
+        comboPopupData.put("Verzik", DataPoint.getSpecificNames(VERZIK));
+        comboPopupData.put("Any TOB", DataPoint.getSpecificNames(ANY_TOB));
+        comboPopupData.put("Apmeken", DataPoint.getSpecificNames(APMEKEN));
+        comboPopupData.put("Baba", DataPoint.getSpecificNames(BABA));
+        comboPopupData.put("Scabaras", DataPoint.getSpecificNames(SCABARAS));
+        comboPopupData.put("Kephri", DataPoint.getSpecificNames(KEPHRI));
+        comboPopupData.put("Crondis", DataPoint.getSpecificNames(CRONDIS));
+        comboPopupData.put("Zebak", DataPoint.getSpecificNames(ZEBAK));
+        comboPopupData.put("Het", DataPoint.getSpecificNames(HET));
+        comboPopupData.put("Akkha", DataPoint.getSpecificNames(AKKHA));
+        comboPopupData.put("Wardens", DataPoint.getSpecificNames(WARDENS));
+        comboPopupData.put("Any TOA", DataPoint.getSpecificNames(ANY_TOA));
 
         List<String> allComboValues = new ArrayList<String>(comboPopupData.keySet());
 
@@ -1011,17 +1012,17 @@ public class Raids extends BaseFrame
             }
         }
          */
-        maidenTab = new StatisticTab(tobData, DataPoint.rooms.MAIDEN);
+        maidenTab = new StatisticTab(tobData, MAIDEN);
         tabbedPane.addTab("Maiden", maidenTab);
-        bloatTab = new StatisticTab(tobData, DataPoint.rooms.BLOAT);
+        bloatTab = new StatisticTab(tobData, BLOAT);
         tabbedPane.addTab("Bloat", bloatTab);
-        nyloTab = new StatisticTab(tobData, DataPoint.rooms.NYLOCAS);
+        nyloTab = new StatisticTab(tobData, NYLOCAS);
         tabbedPane.addTab("Nylo", nyloTab);
-        soteTab = new StatisticTab(tobData, DataPoint.rooms.SOTETSEG);
+        soteTab = new StatisticTab(tobData, SOTETSEG);
         tabbedPane.addTab("Sotetseg", soteTab);
-        xarpTab = new StatisticTab(tobData, DataPoint.rooms.XARPUS);
+        xarpTab = new StatisticTab(tobData, XARPUS);
         tabbedPane.addTab("Xarpus", xarpTab);
-        verzikTab = new StatisticTab(tobData, DataPoint.rooms.VERZIK);
+        verzikTab = new StatisticTab(tobData, VERZIK);
         tabbedPane.addTab("Verzik", verzikTab);
 
         tabbedPane.setMinimumSize(new Dimension(100, 300));

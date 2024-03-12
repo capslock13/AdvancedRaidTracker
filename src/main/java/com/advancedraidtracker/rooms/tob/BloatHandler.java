@@ -2,7 +2,7 @@ package com.advancedraidtracker.rooms.tob;
 
 import com.advancedraidtracker.AdvancedRaidTrackerConfig;
 import com.advancedraidtracker.AdvancedRaidTrackerPlugin;
-import com.advancedraidtracker.constants.TOBRoom;
+import com.advancedraidtracker.constants.RaidRoom;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.Player;
@@ -63,7 +63,7 @@ public class BloatHandler extends TOBRoomHandler
     {
         roomState = FINISHED;
         bloatDeathTick = client.getTickCount() + BLOAT_DEATH_ANIMATION_LENGTH;
-        plugin.addDelayedLine(TOBRoom.BLOAT, client.getTickCount() - roomStartTick, "Dead");
+        plugin.addDelayedLine(RaidRoom.BLOAT, client.getTickCount() - roomStartTick, "Dead");
         clog.addLine(ACCURATE_BLOAT_END);
         plugin.liveFrame.setRoomFinished(getName(), bloatDeathTick - roomStartTick);
         if (roomStartTick != -1)
@@ -138,13 +138,13 @@ public class BloatHandler extends TOBRoomHandler
             deferHP = client.getVarbitValue(HP_VARBIT) / 10.0;
             bloatDeferTick = client.getTickCount() + 5; //delay so that the chat message can't be used to know immediately know when bloat has gone down
         }
-        plugin.addDelayedLine(TOBRoom.BLOAT, client.getTickCount() - roomStartTick, "Down");
+        plugin.addDelayedLine(RaidRoom.BLOAT, client.getTickCount() - roomStartTick, "Down");
     }
 
     public void walk()
     {
         walks.add(client.getTickCount());
-        plugin.addDelayedLine(TOBRoom.BLOAT, client.getTickCount() - roomStartTick, "Moving");
+        plugin.addDelayedLine(RaidRoom.BLOAT, client.getTickCount() - roomStartTick, "Moving");
         roomState = WALKING;
     }
 

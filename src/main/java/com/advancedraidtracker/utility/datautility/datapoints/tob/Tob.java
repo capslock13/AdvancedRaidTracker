@@ -1,6 +1,7 @@
 package com.advancedraidtracker.utility.datautility.datapoints.tob;
 
 import com.advancedraidtracker.constants.LogID;
+import com.advancedraidtracker.constants.RaidRoom;
 import com.advancedraidtracker.constants.RaidType;
 import com.advancedraidtracker.utility.datautility.datapoints.LogEntry;
 import com.advancedraidtracker.utility.datautility.datapoints.Raid;
@@ -8,6 +9,8 @@ import lombok.Getter;
 
 import java.nio.file.Path;
 import java.util.*;
+
+import static com.advancedraidtracker.constants.RaidRoom.*;
 
 public class Tob extends Raid
 {
@@ -27,9 +30,35 @@ public class Tob extends Raid
     @Getter
     private RaidMode mode;
 
+    private MaidenParser maidenParser = new MaidenParser();
+    private BloatParser bloatParser = new BloatParser();
+    private NylocasParser nylocasParser = new NylocasParser();
+    private SotetsegParser sotetsegParser = new SotetsegParser();
+    private XarpusParser xarpusParser = new XarpusParser();
+    private VerzikParser verzikParser = new VerzikParser();
+
     public Tob(Path logfile, List<LogEntry> raidData)
     {
         super(logfile, raidData);
+        roomParsers.put(MAIDEN, maidenParser);
+        roomParsers.put(BLOAT, bloatParser);
+        roomParsers.put(NYLOCAS, nylocasParser);
+        roomParsers.put(SOTETSEG, sotetsegParser);
+        roomParsers.put(XARPUS, xarpusParser);
+        roomParsers.put(VERZIK, verzikParser);
+    }
+
+    @Override
+    protected boolean parseLogEntry(LogEntry entry)
+    {
+        super.parseLogEntry(entry);
+        return true;
+    }
+
+    @Override
+    public void parseAllEntries()
+    {
+        super.parseAllEntries();
     }
 
     @Override
@@ -45,14 +74,7 @@ public class Tob extends Raid
      */
     private boolean didRoomStart(LogID entry)
     {
-        return true;
-        // TODO sote
-        /*return  entry == LogID.MAIDEN_SPAWNED ||
-                entry == LogID.BLOAT_STARTED ||
-                entry == LogID.NYLO_PILLAR_SPAWN ||
-                entry == LogID.XARPUS_SPAWNED ||
-                entry == LogID.SOTETSEG_STARTED ||
-                entry == LogID.VERZIK_P1_START;*/
+        return false;
     }
 
 

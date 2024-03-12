@@ -1,8 +1,10 @@
 package com.advancedraidtracker.utility.datautility;
-import com.advancedraidtracker.utility.datautility.DataPoint.rooms;
 
-import static com.advancedraidtracker.utility.datautility.DataPoint.rooms.BLOAT;
-import static com.advancedraidtracker.utility.datautility.DataPoint.rooms.VERZIK;
+
+import com.advancedraidtracker.constants.RaidRoom;
+
+import static com.advancedraidtracker.constants.RaidRoom.BLOAT;
+import static com.advancedraidtracker.constants.RaidRoom.VERZIK;
 
 public enum SingleRoomPlayerDataPoint
 {
@@ -11,8 +13,8 @@ public enum SingleRoomPlayerDataPoint
 
     ;
     public String name;
-    rooms room;
-    SingleRoomPlayerDataPoint(String time, rooms room)
+    final RaidRoom room;
+    SingleRoomPlayerDataPoint(String time, RaidRoom room)
     {
         this.room = room;
         this.name = time;

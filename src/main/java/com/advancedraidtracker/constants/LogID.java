@@ -1,14 +1,12 @@
 package com.advancedraidtracker.constants;
 
-import com.advancedraidtracker.utility.datautility.DataPoint;
 import lombok.Getter;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 import static com.advancedraidtracker.constants.ParseType.*;
-import static com.advancedraidtracker.constants.TOBRoom.*;
+import static com.advancedraidtracker.constants.RaidRoom.*;
 import static com.advancedraidtracker.utility.datautility.DataPoint.*;
 import static com.advancedraidtracker.utility.datautility.MultiRoomDataPoint.*;
 import static com.advancedraidtracker.utility.datautility.MultiRoomPlayerDataPoint.*;
@@ -372,13 +370,13 @@ public enum LogID
 
     @Deprecated
     ENTERED_TOA(1000, true, ANY_TOA,
-            MANUAL_PARSE,
+            AGNOSTIC,
             "Entered TOA"),
     @Deprecated
-    TOA_PARTY_MEMBERS(1001, true, ANY_TOB,
-            MANUAL_PARSE,
+    TOA_PARTY_MEMBERS(1001, true, ANY_TOA,
+            AGNOSTIC,
             "Party Members", "Player1", "Player2", "Player3", "Player4", "Player5", "Player6", "Player7", "Player8"),
-
+    @Deprecated
     LEFT_TOA(1004, true, ANY_TOA,
             RAID_SPECIFIC,
             "Left TOA", "Room Tick", "Last Room"),
@@ -653,7 +651,7 @@ public enum LogID
     */
     final int id;
     String commonName;
-    final TOBRoom room;
+    final RaidRoom room;
     final boolean simple;
     public final Object[] arguments;
 
@@ -668,7 +666,7 @@ public enum LogID
         }
     }
 
-    LogID(int id, boolean simple, TOBRoom room, Object... arguments)
+    LogID(int id, boolean simple, RaidRoom room, Object... arguments)
     {
         this.id = id;
         this.simple = simple;

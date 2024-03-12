@@ -49,10 +49,10 @@ import java.util.List;
 
 import static com.advancedraidtracker.constants.LogID.*;
 import static com.advancedraidtracker.constants.Room.*;
-import static com.advancedraidtracker.constants.TOBRoom.NYLOCAS;
-import static com.advancedraidtracker.constants.TOBRoom.SOTETSEG;
-import static com.advancedraidtracker.constants.TOBRoom.VERZIK;
-import static com.advancedraidtracker.constants.TOBRoom.XARPUS;
+import static com.advancedraidtracker.constants.RaidRoom.NYLOCAS;
+import static com.advancedraidtracker.constants.RaidRoom.SOTETSEG;
+import static com.advancedraidtracker.constants.RaidRoom.VERZIK;
+import static com.advancedraidtracker.constants.RaidRoom.XARPUS;
 import static com.advancedraidtracker.constants.TobIDs.*;
 import static com.advancedraidtracker.utility.RoomUtil.inRegion;
 import static com.advancedraidtracker.utility.datautility.LegacyFileUtility.splitLegacyFiles;
@@ -586,7 +586,7 @@ public class AdvancedRaidTrackerPlugin extends Plugin
 
     private void enteredBloat()
     {
-        clog.addLine(ENTERED_NEW_TOB_REGION, String.valueOf(TOBRoom.BLOAT.ordinal()));
+        clog.addLine(ENTERED_NEW_TOB_REGION, String.valueOf(RaidRoom.BLOAT.ordinal()));
         maiden.reset();
         bloat.reset();
         liveFrame.tabbedPane.setSelectedIndex(1);
@@ -744,9 +744,9 @@ public class AdvancedRaidTrackerPlugin extends Plugin
         activeVenges.removeIf(vengDamageQueue -> vengDamageQueue.appliedTick <= client.getTickCount());
     }
 
-    public void addDelayedLine(TOBRoom room, int value, String description)
+    public void addDelayedLine(RaidRoom room, int value, String description)
     {
-        switch (TOBRoom.valueOf(room.value))
+        switch (RaidRoom.valueOf(room.value))
         {
             case MAIDEN:
                 liveFrame.addLine("Maiden", value, description);

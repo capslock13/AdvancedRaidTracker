@@ -1,18 +1,15 @@
 package com.advancedraidtracker.ui.viewraid;
 
-import com.advancedraidtracker.constants.TOBRoom;
+import com.advancedraidtracker.constants.RaidRoom;
 import com.advancedraidtracker.ui.BaseFrame;
 import com.advancedraidtracker.utility.RoomUtil;
-import com.advancedraidtracker.utility.datautility.DataPoint;
 import com.advancedraidtracker.utility.datautility.datapoints.Raid;
 import com.advancedraidtracker.utility.datautility.datapoints.tob.*;
-import com.google.common.collect.Multimap;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.Calendar;
-import java.util.List;
 
 @Slf4j
 public class ViewTOBRaid extends BaseFrame
@@ -401,7 +398,7 @@ public class ViewTOBRaid extends BaseFrame
         pack();
     }
 
-    private Color getColor(Raid data, TOBRoom room)
+    private Color getColor(Raid data, RaidRoom room)
     {
         Color color = green;
         if (!data.isAccurate())
@@ -411,7 +408,7 @@ public class ViewTOBRaid extends BaseFrame
         return color;
     }
 
-    private Color getBodyColor(Raid data, TOBRoom room)
+    private Color getBodyColor(Raid data, RaidRoom room)
     {
         Color color = white;
         if (!data.isAccurate())

@@ -717,7 +717,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         {
             g.setColor(new Color(box.getColor().getRed(), box.getColor().getGreen(), box.getColor().getBlue(), 30));
 
-            int maxTick = getMaxTick(box);
+            int maxTick = getMaxTick(box.owner, box.spawnTick);
             int lastEndTick = box.spawnTick;
             while (lastEndTick < maxTick)
             {
@@ -744,14 +744,20 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         }
     }
 
-    private int getMaxTick(ThrallOutlineBox box)
+    /**
+     *  Finds the highest tick that doesn't overlap if they summoned a thrall in the future before this one would naturally expire
+     * @param owner player who summoned this thrall
+     * @param startTick tick the thrall was summoned
+     * @return
+     */
+    private int getMaxTick(String owner, int startTick)
     {
-        int maxTick = box.spawnTick + 99;
+        int maxTick = startTick + 99;
         for (ThrallOutlineBox boxCompare : thrallOutlineBoxes)
         {
-            if (box.owner.equalsIgnoreCase(boxCompare.owner))
+            if (owner.equalsIgnoreCase(boxCompare.owner))
             {
-                if (boxCompare.spawnTick > box.spawnTick && boxCompare.spawnTick < (box.spawnTick + 99))
+                if (boxCompare.spawnTick > startTick && boxCompare.spawnTick < (startTick + 99))
                 {
                     maxTick = boxCompare.spawnTick;
                 }

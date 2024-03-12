@@ -20,6 +20,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.*;
 
+import static com.advancedraidtracker.constants.RaidRoom.*;
+
 @Slf4j
 public class ComparisonViewPanel extends JPanel
 {
@@ -221,23 +223,23 @@ public class ComparisonViewPanel extends JPanel
 
         Map<String, String[]> comboPopupData = new LinkedHashMap<>();
         comboPopupData.put("Room Times", DataPoint.getRoomTimes());
-        comboPopupData.put("Maiden", DataPoint.getSpecificNames(DataPoint.rooms.MAIDEN));
-        comboPopupData.put("Bloat", DataPoint.getSpecificNames(DataPoint.rooms.BLOAT));
-        comboPopupData.put("Nylocas", DataPoint.getSpecificNames(DataPoint.rooms.NYLOCAS));
-        comboPopupData.put("Sotetseg", DataPoint.getSpecificNames(DataPoint.rooms.SOTETSEG));
-        comboPopupData.put("Xarpus", DataPoint.getSpecificNames(DataPoint.rooms.XARPUS));
-        comboPopupData.put("Verzik", DataPoint.getSpecificNames(DataPoint.rooms.VERZIK));
-        comboPopupData.put("Any TOB", DataPoint.getSpecificNames(DataPoint.rooms.ANY_TOB));
-        comboPopupData.put("Apmeken", DataPoint.getSpecificNames(DataPoint.rooms.APMEKEN));
-        comboPopupData.put("Baba", DataPoint.getSpecificNames(DataPoint.rooms.BABA));
-        comboPopupData.put("Scabaras", DataPoint.getSpecificNames(DataPoint.rooms.SCABARAS));
-        comboPopupData.put("Kephri", DataPoint.getSpecificNames(DataPoint.rooms.KEPHRI));
-        comboPopupData.put("Crondis", DataPoint.getSpecificNames(DataPoint.rooms.CRONDIS));
-        comboPopupData.put("Zebak", DataPoint.getSpecificNames(DataPoint.rooms.ZEBAK));
-        comboPopupData.put("Het", DataPoint.getSpecificNames(DataPoint.rooms.HET));
-        comboPopupData.put("Akkha", DataPoint.getSpecificNames(DataPoint.rooms.AKKHA));
-        comboPopupData.put("Wardens", DataPoint.getSpecificNames(DataPoint.rooms.WARDENS));
-        comboPopupData.put("Any TOA", DataPoint.getSpecificNames(DataPoint.rooms.ANY_TOA));
+        comboPopupData.put("Maiden", DataPoint.getSpecificNames(MAIDEN));
+        comboPopupData.put("Bloat", DataPoint.getSpecificNames(BLOAT));
+        comboPopupData.put("Nylocas", DataPoint.getSpecificNames(NYLOCAS));
+        comboPopupData.put("Sotetseg", DataPoint.getSpecificNames(SOTETSEG));
+        comboPopupData.put("Xarpus", DataPoint.getSpecificNames(XARPUS));
+        comboPopupData.put("Verzik", DataPoint.getSpecificNames(VERZIK));
+        comboPopupData.put("Any TOB", DataPoint.getSpecificNames(ANY_TOB));
+        comboPopupData.put("Apmeken", DataPoint.getSpecificNames(APMEKEN));
+        comboPopupData.put("Baba", DataPoint.getSpecificNames(BABA));
+        comboPopupData.put("Scabaras", DataPoint.getSpecificNames(SCABARAS));
+        comboPopupData.put("Kephri", DataPoint.getSpecificNames(KEPHRI));
+        comboPopupData.put("Crondis", DataPoint.getSpecificNames(CRONDIS));
+        comboPopupData.put("Zebak", DataPoint.getSpecificNames(ZEBAK));
+        comboPopupData.put("Het", DataPoint.getSpecificNames(HET));
+        comboPopupData.put("Akkha", DataPoint.getSpecificNames(AKKHA));
+        comboPopupData.put("Wardens", DataPoint.getSpecificNames(WARDENS));
+        comboPopupData.put("Any TOA", DataPoint.getSpecificNames(ANY_TOA));
 
         comboPopupMenu = new JPopupMenu();
         comboPopupMenu.setBorder(new MatteBorder(1, 1, 1, 1, Color.DARK_GRAY));

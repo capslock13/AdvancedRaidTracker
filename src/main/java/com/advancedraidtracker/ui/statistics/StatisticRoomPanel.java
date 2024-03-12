@@ -1,6 +1,7 @@
 package com.advancedraidtracker.ui.statistics;
 
 import com.advancedraidtracker.SimpleTOBData;
+import com.advancedraidtracker.constants.RaidRoom;
 import com.advancedraidtracker.utility.RoomUtil;
 import com.advancedraidtracker.utility.datautility.DataPoint;
 import com.advancedraidtracker.utility.StatisticGatherer;
@@ -29,7 +30,7 @@ public class StatisticRoomPanel extends JPanel
     private final ArrayList<String> labelNames;
     private final stat type;
 
-    public StatisticRoomPanel(ArrayList<SimpleTOBData> data, stat type, DataPoint.rooms room)
+    public StatisticRoomPanel(ArrayList<SimpleTOBData> data, stat type, RaidRoom room)
     {
         super();
         JPanel subPanel = new JPanel();

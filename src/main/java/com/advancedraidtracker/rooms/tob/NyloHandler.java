@@ -2,7 +2,7 @@ package com.advancedraidtracker.rooms.tob;
 
 import com.advancedraidtracker.AdvancedRaidTrackerConfig;
 import com.advancedraidtracker.AdvancedRaidTrackerPlugin;
-import com.advancedraidtracker.constants.TOBRoom;
+import com.advancedraidtracker.constants.RaidRoom;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.NPC;
@@ -109,7 +109,7 @@ public class NyloHandler extends TOBRoomHandler
                     }
                 }
                 currentWave = wave.getWave();
-                plugin.addDelayedLine(TOBRoom.NYLOCAS, client.getTickCount() - roomStartTick, "W" + currentWave);
+                plugin.addDelayedLine(RaidRoom.NYLOCAS, client.getTickCount() - roomStartTick, "W" + currentWave);
                 clog.addLine(NYLO_WAVE, String.valueOf(currentWave), String.valueOf(client.getTickCount() - roomStartTick));
             }
             buildWave.clear();
@@ -117,7 +117,7 @@ public class NyloHandler extends TOBRoomHandler
         if (client.getTickCount() == expectedWaveTick && currentWave != 31)
         {
             clog.addLine(NYLO_STALL, String.valueOf(currentWave), String.valueOf(client.getTickCount() - roomStartTick), String.valueOf(nylosAlive.size()));
-            plugin.addDelayedLine(TOBRoom.NYLOCAS, client.getTickCount() - roomStartTick, "Stall");
+            plugin.addDelayedLine(RaidRoom.NYLOCAS, client.getTickCount() - roomStartTick, "Stall");
             expectedWaveTick += 4;
         }
     }
@@ -361,19 +361,19 @@ public class NyloHandler extends TOBRoomHandler
             case NYLO_BOSS_MELEE_HM:
             case NYLO_BOSS_MELEE_SM:
                 clog.addLine(MELEE_PHASE, String.valueOf(client.getTickCount() - roomStartTick));
-                plugin.addDelayedLine(TOBRoom.NYLOCAS, client.getTickCount() - roomStartTick, "Phase");
+                plugin.addDelayedLine(RaidRoom.NYLOCAS, client.getTickCount() - roomStartTick, "Phase");
                 break;
             case NYLO_BOSS_MAGE:
             case NYLO_BOSS_MAGE_HM:
             case NYLO_BOSS_MAGE_SM:
                 clog.addLine(MAGE_PHASE, String.valueOf(client.getTickCount() - roomStartTick));
-                plugin.addDelayedLine(TOBRoom.NYLOCAS, client.getTickCount() - roomStartTick, "Phase");
+                plugin.addDelayedLine(RaidRoom.NYLOCAS, client.getTickCount() - roomStartTick, "Phase");
                 break;
             case NYLO_BOSS_RANGE:
             case NYLO_BOSS_RANGE_HM:
             case NYLO_BOSS_RANGE_SM:
                 clog.addLine(RANGE_PHASE, String.valueOf(client.getTickCount() - roomStartTick));
-                plugin.addDelayedLine(TOBRoom.NYLOCAS, client.getTickCount() - roomStartTick, "Phase");
+                plugin.addDelayedLine(RaidRoom.NYLOCAS, client.getTickCount() - roomStartTick, "Phase");
                 break;
         }
     }
@@ -422,7 +422,7 @@ public class NyloHandler extends TOBRoomHandler
         clog.addLine(BOSS_SPAWN, String.valueOf(client.getTickCount() - roomStartTick));
         roomState = BOSS;
         bossSpawn = client.getTickCount() - 2;
-        plugin.addDelayedLine(TOBRoom.NYLOCAS, client.getTickCount() - roomStartTick - 2, "W" + currentWave);
+        plugin.addDelayedLine(RaidRoom.NYLOCAS, client.getTickCount() - roomStartTick - 2, "W" + currentWave);
         sendTimeMessage("Wave 'Nylocas boss spawn' complete! Duration: ", bossSpawn - roomStartTick, bossSpawn - lastDead);
     }
 

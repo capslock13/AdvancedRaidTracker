@@ -16,6 +16,10 @@ public class ChartFrame extends BaseFrame
 {
     public ChartFrame(Raid roomData, AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
     {
+        //todo @fisu charts I feel like are a priority to get working again...
+        //todo should use the method I put a skeleton for in datareader
+        //todo lines migrated to specific class parsing files
+        //todo I havent finished parsing certain data i consider mapped data e.g. bloat downs, het downs, dawn drops, etc
         SimpleRaidDataBase b;
         JTabbedPane basepane = new JTabbedPane();
         /*

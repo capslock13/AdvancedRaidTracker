@@ -1,6 +1,7 @@
 package com.advancedraidtracker.filters;
 
 import com.advancedraidtracker.SimpleTOBData;
+import com.advancedraidtracker.utility.datautility.datapoints.Raid;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -25,11 +26,11 @@ public class FilterDate extends FilterCondition
     }
 
     @Override
-    public boolean evaluate(SimpleTOBData data)
+    public boolean evaluate(Raid data)
     {
         Calendar cal = Calendar.getInstance();
         Calendar cal2 = Calendar.getInstance();
-        cal.setTime(data.raidStarted);
+        cal.setTime(data.getDate());
         cal2.setTime(date);
         switch (qualifier)
         {
@@ -38,9 +39,9 @@ public class FilterDate extends FilterCondition
                         cal.get(Calendar.DAY_OF_MONTH) == cal2.get(Calendar.DAY_OF_MONTH) &&
                         cal.get(Calendar.YEAR) == cal2.get(Calendar.YEAR));
             case 1:
-                return data.raidStarted.before(date);
+                return data.getDate().before(date);
             case 2:
-                return data.raidStarted.after(date);
+                return data.getDate().after(date);
             default:
                 throw new IllegalStateException("Unexpected value: " + qualifier);
         }

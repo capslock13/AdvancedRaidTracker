@@ -53,7 +53,7 @@ public abstract class Raid
      * If all the times are accurate.
      */
     @Getter
-    protected boolean accurate;
+    protected boolean accurate; //todo
 
     /**
      * Was the raid completed.
@@ -91,17 +91,19 @@ public abstract class Raid
     DefaultParser defaultParser;
     UnknownParser unknownParser;
 
-    String red = "<html><font color='#FF0000'>";
+    public boolean isHardMode = false;//todo move these to raid specific
+    public boolean isStoryMode = false;
+    public boolean isSpectate = false;
+
+    String red = "<html><font color='#FF0000'>"; //todo convert along with usages to colors (looking @ you fisu)
     String green = "<html><font color='#44AF33'>";
     String orange = "<html><font color='#FF7733'>";
     String yellow = "<html><font color='#FFFF33'>";
 
-    private boolean lastRoomStarted = false;
-    private boolean wasReset = false;
-    private boolean wasWipe = false;
-    private boolean wasCompletion = false;
+    private boolean wasReset = false; //todo idk where these belong tbh
     private String lastRoom = "";
-    public String roomStatus = "";
+    public String roomStatus = orange;
+
 
     protected Raid(Path filepath, List<LogEntry> raidData)
     {
@@ -110,14 +112,13 @@ public abstract class Raid
         roomParsers = new HashMap<>();
         roomParsers.put(ANY, defaultParser);
         this.raidData = raidData;
-        date = new Date(0L); //figure out why dates dont parse properly on some raids
+        date = new Date(0L); //todo figure out why dates dont parse properly on some raids
         this.filepath = filepath;
         this.players = new HashSet<>();
     }
 
-    public int get(String datapoint)
+    public int get(DataPoint point)
     {
-        DataPoint point = DataPoint.getValue(datapoint);
         if(point.room.equals(RaidRoom.ALL))
         {
             int sum = 0;
@@ -157,9 +158,14 @@ public abstract class Raid
         }
     }
 
-    public int get(String datapoint, String player)
+    public int get(String datapoint)
     {
         DataPoint point = DataPoint.getValue(datapoint);
+        return get(point);
+    }
+
+    public int get(DataPoint point, String player)
+    {
         if(point.room.equals(RaidRoom.ALL))
         {
             int sum = 0;
@@ -173,6 +179,11 @@ public abstract class Raid
         {
             return getParser(point.room).data.get(point, player);
         }
+    }
+
+    public int get(String datapoint, String player)
+    {
+        return get(DataPoint.getValue(datapoint), player);
     }
 
 
@@ -220,7 +231,7 @@ public abstract class Raid
      *
      * @param entry raid agnostic log entry to be parsed
      */
-    private void handleRaidAgnosticLogEntry(LogEntry entry)
+    private void handleRaidAgnosticLogEntry(LogEntry entry) //todo most of this should really be in subclass
     {
         switch (entry.logEntry)
         {
@@ -239,6 +250,16 @@ public abstract class Raid
                     }
                 }
                 break;
+            case IS_HARD_MODE:
+                isHardMode = true;
+                break;
+            case IS_STORY_MODE:
+                isStoryMode = true;
+                break;
+            case SPECTATE:
+                isSpectate = true;
+                break;
+
         }
     }
 
@@ -312,7 +333,6 @@ public abstract class Raid
                         break;
                     case ROOM_START_FLAG:
                         wasReset = false;
-                        lastRoomStarted = true;
                         if(entry.logEntry.getRoom().isTOABoss())
                         {
                             roomStatus += entry.logEntry.getRoom().name.substring(0, 1);
@@ -321,7 +341,14 @@ public abstract class Raid
                     case AGNOSTIC:
                         handleRaidAgnosticLogEntry(entry);
                         break;
-                    case RAID_SPECIFIC: //let it be handled by the raid specific parser TODO
+                    case RAID_SPECIFIC: //todo move this to raid specific file
+                        if(entry.logEntry.equals(LogID.ENTERED_NEW_TOA_REGION))
+                        {
+                            if(entry.getValue("Region").equals("TOA Nexus") && !roomStatus.isEmpty())
+                            {
+                                addColorToStatus(green);
+                            }
+                        }
                         return false;
                     case ACCURATE_START:
                         setRoomStartAccurate(entry.logEntry.getRoom());
@@ -339,6 +366,7 @@ public abstract class Raid
                                 if (lastRoom.equals(VERZIK.name) || lastRoom.equals(WARDENS.name))
                                 {
                                     roomStatus = green + "Completion";
+                                    completed = true;
                                 } else
                                 {
                                     roomStatus = yellow + lastRoom + " Reset";
@@ -351,8 +379,24 @@ public abstract class Raid
                         }
                         else
                         {
-
+                            if(wasReset)
+                            {
+                                if(lastRoom.equals(WARDENS.name))
+                                {
+                                    addColorToStatus(green);
+                                    completed = true;
+                                }
+                                else
+                                {
+                                    addColorToStatus(orange);
+                                }
+                            }
+                            else
+                            {
+                                addColorToStatus(red);
+                            }
                         }
+                        return true;
                 }
                 parser = getParser(room);
             }
@@ -364,78 +408,6 @@ public abstract class Raid
         }
     }
 
-    /**
-     * Gets a raid from a single log file, current structure is that each
-     * raid has its own log file.
-     *
-     * @param path path to log file
-     * @return A raid for the log
-     */
-    public static Raid getRaid(Path path)
-    {
-        List<String> raidData = getRaidStrings(path);
-        List<LogEntry> currentRaid = new ArrayList<>();
-        Raid ret = null;
-        for (String line : raidData)
-        {
-            String[] split = line.split(",", -1);
-            if(split[3].equals("801") || split[3].equals("975") || split[3].equals("8") || split[3].equals("998") || split[3].equals("999")
-            || split[3].equals("976") || split[3].equals("16") || split[3].equals("26") || split[3].equals("46"))
-                //legacy or otherwise ignored values to be excluded while testing parser
-            {
-                continue; //todo remove
-            }
-            LogEntry entry = new LogEntry(split);
-            if (entry.logEntry.isSimple()) //Do not load chart data; that is pulled on demand
-            {
-                currentRaid.add(entry);
-                if (entry.logEntry == LogID.LEFT_TOB)
-                {
-                    ret = new Tob(path, currentRaid);
-                    ret.parseAllEntries();
-                    for(RaidRoom room : RaidRoom.values())
-                    {
-                        RoomParser parser = ret.getParser(room);
-                        //log.info("Dumping room: " + room.name());
-                        //parser.data.dumpValues();
-
-                    }
-                } else if (entry.logEntry == LogID.LEFT_TOA)
-                {
-                    ret = new Toa(path, currentRaid);
-                    ret.parseAllEntries();
-                }
-            }
-        }
-        return ret;
-    }
-
-    /**
-     * Goes through the file and returns an arraylist containing all of the lines in the file.
-     * <p>
-     * TODO find out if this is something that should simply be done in `getRaid` to not parse it twice.
-     *
-     * @param path Path to log file.
-     * @return A list of all lines in the log file.
-     */
-    private static List<String> getRaidStrings(Path path)
-    {
-        List<String> lines = new ArrayList<>();
-        File file = path.toFile();
-        try
-        {
-            Scanner scanner = new Scanner(Files.newInputStream(file.toPath()));
-            while (scanner.hasNextLine())
-            {
-                lines.add(scanner.nextLine());
-            }
-        } catch (Exception e)
-        {
-            System.err.println("Could not find file: " + path);
-            System.err.println(Arrays.toString(e.getStackTrace()));
-        }
-        return lines;
-    }
 
     /**
      * Determines what the status of the raid was when it was left
@@ -483,6 +455,15 @@ public abstract class Raid
             scale += " (" + data.get(TOA_INVOCATION_LEVEL) + ")"; //todo do this as an override in Toa
         }*/
         return scale;
+    }
+
+    private void addColorToStatus(String color)
+    {
+        if(!roomStatus.isEmpty() && !roomStatus.endsWith(">"))
+        {
+            String lastLetter = roomStatus.substring(roomStatus.length() - 1);
+            roomStatus = roomStatus.substring(0, roomStatus.length() - 1) + color + lastLetter;
+        }
     }
 
     public void setIndex(int index)

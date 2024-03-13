@@ -64,7 +64,7 @@ public class Tob extends Raid
     @Override
     public String getRoomStatus()
     {
-        return "";
+        return roomStatus;
     }
 
     /**

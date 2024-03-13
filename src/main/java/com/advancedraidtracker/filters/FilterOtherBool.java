@@ -1,6 +1,7 @@
 package com.advancedraidtracker.filters;
 
 import com.advancedraidtracker.SimpleTOBData;
+import com.advancedraidtracker.utility.datautility.datapoints.Raid;
 
 public class FilterOtherBool extends FilterCondition
 {
@@ -22,8 +23,8 @@ public class FilterOtherBool extends FilterCondition
     }
 
     @Override
-    public boolean evaluate(SimpleTOBData data)
-    {
+    public boolean evaluate(Raid data) //TODO
+    { /*
         switch (param)
         {
             case 0:
@@ -52,7 +53,7 @@ public class FilterOtherBool extends FilterCondition
                 return data.verzikWipe == value;
             case 12:
                 return data.maidenScuffed == value;
-        }
+        }*/
         return false;
     }
 

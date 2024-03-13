@@ -38,7 +38,7 @@ public class Toa extends Raid
     @Override
     public String getRoomStatus()
     {
-        return null;
+        return roomStatus;
     }
 
     @Override

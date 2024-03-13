@@ -19,7 +19,7 @@ import java.util.Scanner;
 import static com.advancedraidtracker.utility.datautility.DataWriter.PLUGIN_DIRECTORY;
 
 @Slf4j
-public class RaidsManager
+public class RaidsManager //todo merge this with datareader?
 {
     private static final String raidsFolder = PLUGIN_DIRECTORY + "/misc-dir/raids/";
 

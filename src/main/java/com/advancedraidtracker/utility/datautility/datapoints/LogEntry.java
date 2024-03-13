@@ -12,11 +12,11 @@ public class LogEntry
     private final static HashSet<String> intValues = new HashSet<>(Arrays.asList("Damage", "Room Tick"));
     long ts;
     int raid;
-    LogID logEntry;
+    public LogID logEntry;
     public Map<String, String> values;
     String[] lines; // debug only todo remove
 
-    LogEntry(String[] line)
+    public LogEntry(String[] line)
     {
         this.lines = line;
         // line[0] is unused, essentially a UID

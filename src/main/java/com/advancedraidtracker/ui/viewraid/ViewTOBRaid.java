@@ -14,7 +14,7 @@ import java.util.Calendar;
 import static com.advancedraidtracker.constants.RaidRoom.*;
 
 @Slf4j
-public class ViewTOBRaid extends BaseFrame
+public class ViewTOBRaid extends BaseFrame //todo @fisu not sure if you wanted to tackle this but this is a big one that needs fixing post migration
 {
     String INCOMPLETE_MARKER = "-";
     String red = "<html><font color='#FF0000'>";

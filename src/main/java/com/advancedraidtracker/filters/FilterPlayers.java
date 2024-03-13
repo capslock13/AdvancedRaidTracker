@@ -1,6 +1,7 @@
 package com.advancedraidtracker.filters;
 
 import com.advancedraidtracker.SimpleTOBData;
+import com.advancedraidtracker.utility.datautility.datapoints.Raid;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -25,9 +26,9 @@ public class FilterPlayers extends FilterCondition
         stringValue = val;
     }
 
-    private boolean cleanContains(SimpleTOBData data, String player)
+    private boolean cleanContains(Raid data, String player) //todo test if this is necessary?
     {
-        for (String p : data.players.keySet())
+        for (String p : data.getPlayers())
         {
             if (p.replaceAll(String.valueOf((char) 160), String.valueOf((char) 32)).toLowerCase().equals(player))
             {
@@ -44,12 +45,12 @@ public class FilterPlayers extends FilterCondition
     }
 
     @Override
-    public boolean evaluate(SimpleTOBData data)
+    public boolean evaluate(Raid data)
     {
         switch (operator)
         {
             case 0:
-                if (data.players.size() == players.size())
+                if (data.getPlayers().size() == players.size())
                 {
                     for (String p : players)
                     {

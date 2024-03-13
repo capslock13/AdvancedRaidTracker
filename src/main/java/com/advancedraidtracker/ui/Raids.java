@@ -19,6 +19,7 @@ import com.advancedraidtracker.ui.statistics.StatisticTab;
 import com.advancedraidtracker.utility.*;
 import com.advancedraidtracker.utility.datautility.*;
 import com.advancedraidtracker.utility.datautility.datapoints.Raid;
+import com.advancedraidtracker.utility.datautility.datapoints.toa.Toa;
 import com.advancedraidtracker.utility.datautility.datapoints.tob.Tob;
 import com.advancedraidtracker.utility.wrappers.StringInt;
 import com.google.common.collect.Multimap;
@@ -160,7 +161,7 @@ public class Raids extends BaseFrame
                 tobData.add((Tob) raidData);
             }
         }
-        //DataPoint dataPoint = DataPoint.ATTEMPTED_BGS_BLOAT;
+        //DataPoint dataPoint = DataPoint.ATTEMPTED_BGS_BLOAT; //todo not sure yet. Have an idea though
         //boolean time = dataPoint.type == DataPoint.types.TIME;
 
         /*
@@ -190,7 +191,7 @@ public class Raids extends BaseFrame
          */
     }
 
-    private boolean evaluateAllFilters(SimpleTOBData data)
+    private boolean evaluateAllFilters(Raid data)
     {
         for (ImplicitFilter filter : activeFilters)
         {
@@ -211,7 +212,7 @@ public class Raids extends BaseFrame
             boolean shouldDataBeIncluded = true;
             if (filterSpectateOnly.isSelected())
             {
-                if (data instanceof Tob && !((Tob) data).isSpectated())
+                if (!(data instanceof Tob) || !((Tob) data).isSpectated())
                 {
                     shouldDataBeIncluded = false;
                 }
@@ -265,15 +266,16 @@ public class Raids extends BaseFrame
             }
             if (filterNormalOnly.isSelected())
             {
-                /*
-                if (data.storyMode || data.hardMode)
+                if (data instanceof Tob && (data.isStoryMode || data.isHardMode))
                 {
                     shouldDataBeIncluded = false;
                 }
-
-                 */
+                else if(data instanceof Toa && data.get(DataPoint.TOA_INVOCATION_LEVEL) >= 150 && data.get(DataPoint.TOA_INVOCATION_LEVEL) < 300)
+                {
+                    shouldDataBeIncluded = false;
+                }
             }
-            if (filterPartialOnly.isSelected())
+            if (filterPartialOnly.isSelected()) //todo
             {
                 if (data instanceof Tob)
                 {
@@ -295,7 +297,6 @@ public class Raids extends BaseFrame
 
             for (Integer i : filteredIndices)
             {
-                // TODO what is this?
                 if (data.getIndex() == i)
                 {
                     shouldDataBeIncluded = false;
@@ -304,13 +305,10 @@ public class Raids extends BaseFrame
             if (data instanceof Tob)
             {
                 Tob tobData = (Tob) data;
-                /*
-                TODO
                 if (!evaluateAllFilters(tobData))
                 {
                     shouldDataBeIncluded = false;
                 }
-                 */
             }
             if (shouldDataBeIncluded)
             {
@@ -336,14 +334,14 @@ public class Raids extends BaseFrame
             {
 
             }
-        } else if (sortOptionsBox.getSelectedIndex() == 1)
+        } else if (sortOptionsBox.getSelectedIndex() == 1) //todo
         {
             if (sortOrderBox.getSelectedIndex() == 0)
             {
             } else
             {
             }
-        } else if (sortOptionsBox.getSelectedIndex() == 2)
+        } else if (sortOptionsBox.getSelectedIndex() == 2) //todo
         {
             if (sortOrderBox.getSelectedIndex() == 0)
             {
@@ -428,7 +426,7 @@ public class Raids extends BaseFrame
             case "Scale":
                 return raid.getScaleString();
             case "Status":
-                return raid.roomStatus;
+                return raid.getRoomStatus();
             case "Raid":
                 return raid.getRaidType().colorName();
             case "Players":
@@ -764,7 +762,7 @@ public class Raids extends BaseFrame
 
         for(RaidRoom room : RaidRoom.values())
         {
-            comboPopupData.put(room.name(), DataPoint.getSpecificNames(room));
+            comboPopupData.put(room.name, DataPoint.getSpecificNames(room));
         }
 
         List<String> allComboValues = new ArrayList<String>(comboPopupData.keySet());
@@ -1703,6 +1701,18 @@ public class Raids extends BaseFrame
 
     private void createComboBoxPopupMenu(List<String> allComboValues, Map<String, String[]> popupData, ArrayList<String> flatData, JPopupMenu popmenu)
     {
+        JMenu topLevelMenuAll = new JMenu("All");
+        topLevelMenuAll.setBackground(Color.BLACK);
+        topLevelMenuAll.setOpaque(true);
+        JMenu topLevelMenuToA = new JMenu("ToA");
+        topLevelMenuToA.setBackground(Color.BLACK);
+        topLevelMenuToA.setOpaque(true);
+        JMenu topLevelMenuToB = new JMenu("ToB");
+        topLevelMenuToB.setBackground(Color.BLACK);
+        topLevelMenuToB.setOpaque(true);
+        JMenu topLevelMenuCoX = new JMenu("CoX");
+        topLevelMenuCoX.setBackground(Color.BLACK);
+        topLevelMenuCoX.setOpaque(true);
         for (String category : allComboValues)
         {
             JMenu menu = new JMenu(category);
@@ -1765,8 +1775,27 @@ public class Raids extends BaseFrame
                     flatData.add(itemName);
                 }
             }
-            popmenu.add(menu);
+            if(RaidRoom.getRoom(category).isTOA())
+            {
+                topLevelMenuToA.add(menu);
+            }
+            else if(RaidRoom.getRoom(category).isTOB())
+            {
+                topLevelMenuToB.add(menu);
+            }
+            else if(RaidRoom.getRoom(category).isCOX())
+            {
+                topLevelMenuCoX.add(menu);
+            }
+            else
+            {
+                topLevelMenuAll.add(menu);
+            }
         }
+        popmenu.add(topLevelMenuAll);
+        popmenu.add(topLevelMenuToA);
+        popmenu.add(topLevelMenuToB);
+        popmenu.add(topLevelMenuCoX);
         JMenu playerSpecificMenu = new JMenu("Player Specific");
         playerSpecificMenu.setBackground(Color.BLACK);
         playerSpecificMenu.setOpaque(true);

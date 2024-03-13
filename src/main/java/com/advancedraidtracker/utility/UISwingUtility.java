@@ -8,7 +8,7 @@ import java.awt.font.GlyphVector;
 
 public class UISwingUtility
 {
-    public static String colorStr(Color c)
+    public static String colorStr(Color c) //todo @fisu it looks like I already had a method for this..........
     {
         return "<html><font color='#" + Integer.toHexString(c.getRGB()).substring(2) + "'>";
     }

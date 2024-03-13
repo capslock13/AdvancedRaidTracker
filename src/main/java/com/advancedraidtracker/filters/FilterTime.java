@@ -1,6 +1,7 @@
 package com.advancedraidtracker.filters;
 
 import com.advancedraidtracker.utility.datautility.DataPoint;
+import com.advancedraidtracker.utility.datautility.datapoints.Raid;
 import lombok.extern.slf4j.Slf4j;
 import com.advancedraidtracker.SimpleTOBData;
 
@@ -27,9 +28,9 @@ public class FilterTime extends FilterCondition
     }
 
     @Override
-    public boolean evaluate(SimpleTOBData data)
+    public boolean evaluate(Raid data)
     {
-        int checkValue = data.getValue(split);
+        int checkValue = data.get(split);
         return FilterUtil.compare(compare, time, checkValue);
     }
 

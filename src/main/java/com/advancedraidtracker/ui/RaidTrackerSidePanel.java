@@ -1,6 +1,7 @@
 package com.advancedraidtracker.ui;
 
 import com.advancedraidtracker.*;
+import com.advancedraidtracker.utility.datautility.DataReader;
 import com.advancedraidtracker.utility.datautility.datapoints.Raid;
 import com.advancedraidtracker.utility.datautility.datapoints.tob.Tob;
 import com.advancedraidtracker.utility.wrappers.RaidsArrayWrapper;
@@ -81,14 +82,14 @@ public class RaidTrackerSidePanel extends PluginPanel
     {
         try
         {
-            Stream<Path> subLogFiles = Files.walk(Paths.get(PLUGIN_DIRECTORY));
+            Stream<Path> subLogFiles = Files.walk(Paths.get(PLUGIN_DIRECTORY)); //todo try-with-resources
 
-            // For now, as only tob is supported, filter out cox/toa logs
+            // For now, as only tob is supported, filter out cox/toa logs todo investigate this comment, afaik this does not filter COX/TOA
             return subLogFiles
                     .filter(file -> !file.toAbsolutePath()
                             .startsWith(Paths.get(PLUGIN_DIRECTORY, "misc-dir").toString())
                             && !Files.isDirectory(file))
-                    .map(Raid::getRaid)
+                    .map(DataReader::getRaid)
                     .filter(Objects::nonNull).sorted(Comparator.comparing(Raid::getDate)).collect(Collectors.toList());
         }
         catch (Exception e)
@@ -114,7 +115,7 @@ public class RaidTrackerSidePanel extends PluginPanel
             {
                 if (lineSplit.length > 3)
                 {
-                    if (Integer.parseInt(lineSplit[3]) == 0 || Integer.parseInt(lineSplit[3]) == 1000)
+                    if (Integer.parseInt(lineSplit[3]) == 0 || Integer.parseInt(lineSplit[3]) == 1000) //todo %1000 == 0? or something else idk
                     {
                         raid.add(line);
                         raidActive = true;
@@ -126,7 +127,7 @@ public class RaidTrackerSidePanel extends PluginPanel
             {
                 if (lineSplit.length > 3)
                 {
-                    int value = Integer.parseInt(lineSplit[3]);
+                    int value = Integer.parseInt(lineSplit[3]); //todo magic numbers
                     if (value != 0)
                     {
                         if (value != 801 && value != 576 && value != 587)

@@ -14,7 +14,13 @@ public enum DataPoint
 {
     CHALLENGE_TIME("Challenge Time", types.TIME, ANY),
     OVERALL_TIME("Overall Time", types.TIME, ANY),
-    TIME("Time", types.TIME, ALL),
+    //TIME("Time", types.TIME, ALL),
+    MAIDEN_TIME("Maiden Time", types.TIME, MAIDEN),
+    BLOAT_TIME("Bloat Time", types.TIME, BLOAT),
+    NYLOCAS_TIME("Nylocas Time", types.TIME, NYLOCAS),
+    SOTETSEG_TIME("Sotetseg Time", types.TIME, SOTETSEG),
+    XARPUS_TIME("Xarpus Time", types.TIME, XARPUS),
+    VERZIK_TIME("Verzik Time", types.TIME, VERZIK),
     DEFENSE("Defense", types.OTHER_INT, ALL),
     TIME_OUTSIDE_ROOMS("Time Outside Rooms", types.TIME, ANY),
     MAIDEN_BLOOD_SPAWNED("Maiden blood spawned", types.OTHER_INT, MAIDEN),
@@ -287,6 +293,21 @@ public enum DataPoint
                 || room.equals(WARDENS)
                 || room.equals(ALL)
                 || room.equals(ANY);
+    }
+
+    public boolean isExclusivelyTOA()
+    {
+        return isTOA() && !(room.equals(ANY) || room.equals(ALL));
+    }
+
+    public boolean isExclusivelyTOB()
+    {
+        return isTOB() && !(room.equals(ANY) || room.equals(ALL));
+    }
+
+    public boolean isExclusivelyCOX()
+    {
+        return isCOX() && !(room.equals(ANY) || room.equals(ALL));
     }
 
     public boolean isCOX()

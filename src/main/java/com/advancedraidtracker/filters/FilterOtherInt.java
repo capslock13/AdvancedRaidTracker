@@ -2,6 +2,7 @@ package com.advancedraidtracker.filters;
 
 import com.advancedraidtracker.SimpleTOBData;
 import com.advancedraidtracker.utility.datautility.DataPoint;
+import com.advancedraidtracker.utility.datautility.datapoints.Raid;
 
 public class FilterOtherInt extends FilterCondition
 {
@@ -25,9 +26,9 @@ public class FilterOtherInt extends FilterCondition
     }
 
     @Override
-    public boolean evaluate(SimpleTOBData data)
-    {
-        int checkValue = data.getValue(param);
+    public boolean evaluate(Raid data) //todo
+    { /*
+        int checkValue = data.get(param);
         if (data.getTimeAccurate(param) && value != -1)
         {
             return FilterUtil.compare(qualifier, value, checkValue);
@@ -35,7 +36,7 @@ public class FilterOtherInt extends FilterCondition
         } else
         {
             return false;
-        }
+        }*/ return false;
     }
 
     public String getFilterCSV()

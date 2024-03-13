@@ -36,9 +36,25 @@ public enum RaidRoom
         return this.equals(ZEBAK) || this.equals(KEPHRI) || this.equals(BABA) || this.equals(AKKHA) || this.equals(WARDENS);
     }
 
-
-    public static RaidRoom getRoom(String room)
+    public boolean isTOB()
     {
-        return RaidRoom.valueOf(room.toUpperCase());
+        return this.equals(MAIDEN) || this.equals(BLOAT) || this.equals(NYLOCAS) || this.equals(SOTETSEG) || this.equals(XARPUS) || this.equals(VERZIK);
+    }
+
+    public boolean isCOX()
+    {
+        return false;
+    }
+
+    public static RaidRoom getRoom(String name)
+    {
+        for(RaidRoom room : RaidRoom.values())
+        {
+            if(room.name.equals(name))
+            {
+                return room;
+            }
+        }
+        return UNKNOWN;
     }
 }

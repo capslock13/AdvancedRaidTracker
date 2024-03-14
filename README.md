@@ -1,4 +1,8 @@
 # Advanced Raid Tracker
+
+Testing information:
+https://discord.gg/D8gpPBAsRe
+
 This plugin tracks various advanced statistics and data about your theatre of blood runs.
 
 ## User Interface

@@ -9,6 +9,8 @@ import net.runelite.client.config.ConfigManager;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 
 @Slf4j
@@ -32,6 +34,7 @@ public class LiveChart extends BaseFrame
     private final ClientThread clientThread;
     private final ConfigManager configManager;
 
+    private final String[] names = {"Maiden", "Bloat", "Nylocas", "Sotetseg", "Xarpus", "Verzik"};
     public LiveChart(AdvancedRaidTrackerConfig config, ClientThread clientThread, ConfigManager configManager)
     {
         this.configManager = configManager;
@@ -55,12 +58,19 @@ public class LiveChart extends BaseFrame
         tabbedPane = new JTabbedPane();
         tabbedPane.addChangeListener(cl->
         {
-            maidenPanel.redraw();
-            bloatPanel.redraw();
-            nyloPanel.redraw();
-            sotetsegPanel.redraw();
-            xarpPanel.redraw();
-            verzPanel.redraw();
+            String activePanel = names[tabbedPane.getSelectedIndex()];
+            for(String panelNames : names)
+            {
+                if(activePanel.equals(panelNames))
+                {
+                    getPanel(panelNames).setActive(true);
+                    getPanel(panelNames).redraw();
+                }
+                else
+                {
+                    getPanel(panelNames).setActive(false);
+                }
+            }
         });
         tabbedPane.add("Maiden", maidenScroll);
         tabbedPane.add("Bloat", bloatScroll);
@@ -68,9 +78,35 @@ public class LiveChart extends BaseFrame
         tabbedPane.add("Sotetseg", sotetsegScroll);
         tabbedPane.add("Xarpus", xarpusScroll);
         tabbedPane.add("Verzik", verzikScroll);
+        addWindowListener(new WindowAdapter()
+        {
+            @Override
+            public void windowClosing(WindowEvent e)
+            {
+                super.windowClosing(e);
+                for(String panelNames : names)
+                {
+                    getPanel(panelNames).setActive(false);
+                }
+            }
 
+            @Override
+            public void windowOpened(WindowEvent e)
+            {
+                super.windowOpened(e);
+                String activePanel = names[tabbedPane.getSelectedIndex()];
+                getPanel(activePanel).setActive(true);
+                getPanel(activePanel).redraw();
+            }
+        });
         add(tabbedPane);
         pack();
+    }
+
+    @Override
+    public void close()
+    {
+        super.close();
     }
 
     public ChartPanel getPanel(String room)
@@ -106,6 +142,7 @@ public class LiveChart extends BaseFrame
             verzikScroll.getViewport().setViewPosition(new Point(verzPanel.getViewRect().x, verzPanel.getViewRect().y));
         }
     }
+
 
     public void addAttack(PlayerDidAttack attack, String room)
     {

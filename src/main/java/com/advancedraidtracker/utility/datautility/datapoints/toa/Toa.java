@@ -21,12 +21,6 @@ public class Toa extends Raid
     private ScabarasParser scabarasParser = new ScabarasParser();
     private KephriParser kephriParser = new KephriParser();
     private HetParser hetParser = new HetParser();
-    private AkkhaParser akkhaParser = new AkkhaParser();
-    private CrondisParser crondisParser = new CrondisParser();
-    private ZebakParser zebakParser = new ZebakParser();
-    private WardensParser wardensParser = new WardensParser();
-
-    private ToaParser toaParser = new ToaParser();
 
     public Toa(Path filepath, List<LogEntry> raidData)
     {
@@ -36,10 +30,15 @@ public class Toa extends Raid
         roomParsers.put(SCABARAS, scabarasParser);
         roomParsers.put(KEPHRI, kephriParser);
         roomParsers.put(HET, hetParser);
+        AkkhaParser akkhaParser = new AkkhaParser();
         roomParsers.put(AKKHA, akkhaParser);
+        CrondisParser crondisParser = new CrondisParser();
         roomParsers.put(CRONDIS, crondisParser);
+        ZebakParser zebakParser = new ZebakParser();
         roomParsers.put(ZEBAK, zebakParser);
+        WardensParser wardensParser = new WardensParser();
         roomParsers.put(WARDENS, wardensParser);
+        ToaParser toaParser = new ToaParser();
         roomParsers.put(ANY_TOA, toaParser);
     }
 

@@ -28,7 +28,7 @@ public class ApmekenHandler extends TOARoomHandler
     @Override
     public void updateGameTick(GameTick event)
     {
-        if (!active && RoomUtil.crossedLine(15186, new Point(21, 31), new Point(21, 33), true, client))
+        if (!active && RoomUtil.playerPastLine(15186, 21, true, client))
         {
             active = true;
             roomStartTick = client.getTickCount();

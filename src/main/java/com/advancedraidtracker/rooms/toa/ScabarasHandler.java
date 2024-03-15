@@ -142,7 +142,7 @@ public class ScabarasHandler extends TOARoomHandler
         //log.info("Tick: " + client.getTickCount() + ", Location:" + wp.getRegionX() + ", " + wp.getRegionY());
         if (!active)
         {
-            if (RoomUtil.crossedLine(14162, new Point(13, 26), new Point(13, 38), true, client))
+            if (RoomUtil.playerPastLine(14162, 13, true, client))
             {
                 roomStartTick = client.getTickCount();
                 active = true;

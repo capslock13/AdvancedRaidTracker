@@ -698,7 +698,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         {
             for (Integer i : lines.keySet())
             {
-                if(i < endTick)
+                if(i < endTick && i > startTick)
                 {
                     int xOffset = getXOffset(i);
                     int yOffset = getYOffset(i);

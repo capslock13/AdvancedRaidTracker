@@ -6,6 +6,7 @@ import com.advancedraidtracker.constants.RaidType;
 import com.advancedraidtracker.utility.datautility.DataPoint;
 import com.advancedraidtracker.utility.datautility.datapoints.LogEntry;
 import com.advancedraidtracker.utility.datautility.datapoints.Raid;
+import lombok.extern.slf4j.Slf4j;
 
 import java.nio.file.Path;
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.Objects;
 
 import static com.advancedraidtracker.constants.ParseType.*;
 import static com.advancedraidtracker.constants.RaidRoom.*;
-
+@Slf4j
 public class Toa extends Raid
 {
     private ApmekenParser apmekenParser = new ApmekenParser();
@@ -104,8 +105,18 @@ public class Toa extends Raid
                         {
                             if(getParser(WARDENS).data.get(DataPoint.getValue("Wardens Skull " + i + " Split")) < 1)
                             {
-                                getParser(WARDENS).data.set(DataPoint.getValue("Wardens Skull " + i + " Split"), Integer.parseInt(entry.getValue("Room Tick")));
-                                getParser(WARDENS).data.set(DataPoint.getValue("Wardens Skull " + i + " Duration"), Integer.parseInt(entry.getValue("Room Tick")) - getParser(WARDENS).data.get(DataPoint.getValue("Wardens Skull " + i + " Split")));
+                                getParser(WARDENS).data.set(DataPoint.getValue("Wardens Skull " + i + " Split"), entry.getFirstInt());
+                                break;
+                            }
+                        }
+                    }
+                    if(entry.logEntry.equals(LogID.TOA_WARDENS_SKULLS_ENDED)) //todo revisit when not cooked //todo pt2 also it just doesnt work
+                    {
+                        for(int i = 1; i < 5; i++)
+                        {
+                            if(getParser(WARDENS).data.get(DataPoint.getValue("Wardens Skull " + i + " Duration")) < 1)
+                            {
+                                getParser(WARDENS).data.set(DataPoint.getValue("Wardens Skull " + i + " Duration"), entry.getFirstInt() - getParser(WARDENS).data.get(DataPoint.getValue("Wardens Skull " + i + " Split")));
                                 break;
                             }
                         }
@@ -115,7 +126,7 @@ public class Toa extends Raid
         }
         catch (Exception ignored)
         {
-
+            ignored.printStackTrace();
         }
         return true;
     }

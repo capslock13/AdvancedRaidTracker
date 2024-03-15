@@ -214,7 +214,6 @@ public class SotetsegHandler extends TOBRoomHandler
     public void startSotetseg()
     {
         roomStartTick = client.getTickCount();
-        roomStartTick = client.getTickCount();
         deferTick = roomStartTick + 2;
         roomState = RoomState.SotetsegRoomState.PHASE_1;
         clog.addLine(LogID.SOTETSEG_STARTED);

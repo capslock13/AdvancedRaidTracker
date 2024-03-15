@@ -14,7 +14,7 @@ public class LogEntry
     int raid;
     public LogID logEntry;
     public Map<String, String> values;
-    String[] lines; // debug only todo remove
+    public String[] lines; // debug only todo remove
 
     public LogEntry(String[] line)
     {
@@ -24,10 +24,6 @@ public class LogEntry
         raid = Integer.parseInt(line[2]);
         logEntry = LogID.valueOf(Integer.parseInt(line[3]));
         values = new LinkedHashMap<>();
-        if(!logEntry.parseInstructions.isEmpty() && logEntry.parseInstructions.get(0).type.equals(ParseType.MANUAL_PARSE))
-        {
-            return;
-        }
         for(int i = 4; i < line.length; i++)
         {
             if(!line[i].isEmpty())

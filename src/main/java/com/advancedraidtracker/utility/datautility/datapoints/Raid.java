@@ -450,10 +450,7 @@ public abstract class Raid
         {
             scale = players.size() + " Man";
         }
-        /*if(data.get(TOA_INVOCATION_LEVEL) >= 0)
-        {
-            scale += " (" + data.get(TOA_INVOCATION_LEVEL) + ")"; //todo do this as an override in Toa
-        }*/
+
         return scale;
     }
 

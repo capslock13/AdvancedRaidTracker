@@ -1,6 +1,7 @@
 package com.advancedraidtracker.utility.datautility.datapoints.toa;
 
 import com.advancedraidtracker.constants.RaidType;
+import com.advancedraidtracker.utility.datautility.DataPoint;
 import com.advancedraidtracker.utility.datautility.datapoints.LogEntry;
 import com.advancedraidtracker.utility.datautility.datapoints.Raid;
 
@@ -45,5 +46,11 @@ public class Toa extends Raid
     public RaidType getRaidType()
     {
         return RaidType.TOA;
+    }
+
+    @Override
+    public String getScaleString()
+    {
+        return super.getScaleString() + " (" + (get(DataPoint.TOA_INVOCATION_LEVEL)) + ")";
     }
 }

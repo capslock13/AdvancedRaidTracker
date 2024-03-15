@@ -28,7 +28,7 @@ public class CrondisHandler extends TOARoomHandler
     @Override
     public void updateGameTick(GameTick event)
     {
-        if (!active && RoomUtil.playerPastLine(15698, 45, true, client))
+        if (!active && RoomUtil.playerPastLine(15698, 44, true, client))
         {
             active = true;
             roomStartTick = client.getTickCount();

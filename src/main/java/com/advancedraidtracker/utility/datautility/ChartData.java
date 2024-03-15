@@ -14,6 +14,7 @@ public class ChartData
     private final Map<RaidRoom, List<PlayerDidAttack>> attacks;
 
     private final Map<RaidRoom, List<ThrallOutlineBox>> thrallBoxes;
+    public final List<String> maidenCrabs = new ArrayList<>();
 
 
     public ChartData()
@@ -62,6 +63,11 @@ public class ChartData
     public List<ThrallOutlineBox> getThralls(RaidRoom room)
     {
         return thrallBoxes.getOrDefault(room, new ArrayList<>());
+    }
+
+    public void addMaidenCrab(String crab)
+    {
+        maidenCrabs.add(crab);
     }
 
     public static PlayerDidAttack getPlayerDidAttack(String[] subData, ItemManager itemManager)

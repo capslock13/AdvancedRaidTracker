@@ -6,7 +6,9 @@ import com.advancedraidtracker.ui.BaseFrame;
 import com.advancedraidtracker.utility.datautility.ChartData;
 import com.advancedraidtracker.utility.datautility.DataReader;
 import com.advancedraidtracker.utility.datautility.datapoints.Raid;
+import com.advancedraidtracker.utility.datautility.datapoints.RoomParser;
 import com.advancedraidtracker.utility.datautility.datapoints.toa.Toa;
+import com.advancedraidtracker.utility.datautility.datapoints.tob.MaidenParser;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
@@ -30,6 +32,7 @@ public class ChartFrame extends BaseFrame
         for(String bossName : ((roomData instanceof Toa) ? TOARooms : TOBRooms))
         {
             RaidRoom room = RaidRoom.getRoom(bossName);
+            RoomParser parser = roomData.getParser(room);
             JPanel tab = new JPanel();
             tab.setLayout(new GridLayout(1, 2));
             JPanel chart = new JPanel();
@@ -48,7 +51,10 @@ public class ChartFrame extends BaseFrame
                     roomData.get(bossName.replace('2', '1') + " Time") :
                     roomData.get(bossName.substring(0, bossName.length() - 2) + "Time") : roomData.get(bossName + " Time"));
             chartPanel.addThrallBoxes(chartData.getThralls(room));
-            chartPanel.addLines(roomData.getParser(room).getLines());
+            chartPanel.addLines(parser.getLines());
+
+            chartPanel.addMaidenCrabs(chartData.maidenCrabs);
+
             chartPanel.redraw();
             basepane.addChangeListener(cl -> chartPanel.redraw());
             chart.add(chartPanel);

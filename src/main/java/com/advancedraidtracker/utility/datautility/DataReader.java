@@ -119,26 +119,29 @@ public class DataReader //todo move any methods that read files to here. I belie
                 String[] line = scanner.nextLine().split(",");
                 switch (line[3])
                 {
-                    case "587":
+                    case "587": //Add NPC Mapping
                         chartData.addNPCMapping(currentRoom, Integer.parseInt(line[4]), line[5]);
                         break;
-                    case "576":
+                    case "576": //Update HP
                         chartData.addHPMapping(currentRoom, Integer.parseInt(line[4]), Integer.parseInt(line[5]));
                         break;
-                    case "801":
+                    case "801": //Player Attacked
                         chartData.addAttack(currentRoom, ChartData.getPlayerDidAttack(line, itemManager));
                         break;
-                    case "410":
+                    case "410": //Thrall Spawned
                         chartData.addThrallOutlineBox(currentRoom, line[4], Integer.parseInt(line[5]), Integer.parseInt(line[6]));
                         break;
-                    case "6":
+                    case "6": //TOB New Region
                         currentRoom = RaidRoom.values()[Integer.parseInt(line[4])];
                         break;
-                    case "1006":
+                    case "1006": //TOA New Region
                         currentRoom = RaidRoom.getRoom(line[4]);
                         break;
-                    case "12":
+                    case "12": //Maiden Spawned
                         currentRoom = RaidRoom.MAIDEN;
+                        break;
+                    case "18": //Maiden Crab Spawn:
+                        chartData.addMaidenCrab(line[4]);
                         break;
 
                 }

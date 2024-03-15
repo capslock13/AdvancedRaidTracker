@@ -174,7 +174,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         recalculateSize();
     }
 
-    public void addMaidenCrabs(ArrayList<String> crabDescriptions)
+    public void addMaidenCrabs(List<String> crabDescriptions)
     {
         this.crabDescriptions.addAll(crabDescriptions);
     }

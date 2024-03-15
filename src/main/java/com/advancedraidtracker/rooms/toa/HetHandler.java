@@ -29,7 +29,7 @@ public class HetHandler extends TOARoomHandler
     @Override
     public void updateGameTick(GameTick event)
     {
-        if (!active && RoomUtil.playerPastLine(14674, 42, true, client))
+        if (!active && RoomUtil.playerPastLine(14674, 41, true, client))
         {
             active = true;
             roomStartTick = client.getTickCount();

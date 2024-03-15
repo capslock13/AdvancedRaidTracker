@@ -1,16 +1,22 @@
 package com.advancedraidtracker.utility.datautility.datapoints.tob;
 
 import com.advancedraidtracker.constants.LogID;
+import com.advancedraidtracker.constants.ParseInstruction;
 import com.advancedraidtracker.constants.RaidRoom;
 import com.advancedraidtracker.constants.RaidType;
+import com.advancedraidtracker.utility.datautility.DataPoint;
 import com.advancedraidtracker.utility.datautility.datapoints.LogEntry;
 import com.advancedraidtracker.utility.datautility.datapoints.Raid;
+import com.advancedraidtracker.utility.datautility.datapoints.RoomParser;
 import lombok.Getter;
 
 import java.nio.file.Path;
 import java.util.*;
 
+import static com.advancedraidtracker.constants.ParseType.LEFT_RAID;
+import static com.advancedraidtracker.constants.ParseType.MANUAL_PARSE;
 import static com.advancedraidtracker.constants.RaidRoom.*;
+import static com.advancedraidtracker.utility.datautility.DataPoint.*;
 
 public class Tob extends Raid
 {
@@ -49,16 +55,60 @@ public class Tob extends Raid
     }
 
     @Override
-    protected boolean parseLogEntry(LogEntry entry)
+    public boolean isAccurate()
     {
-        super.parseLogEntry(entry);
-        return true;
+        return (getRoomAccurate(MAIDEN) && getRoomAccurate(BLOAT) && getRoomAccurate(NYLOCAS) && getRoomAccurate(SOTETSEG) && getRoomAccurate(XARPUS) && getRoomAccurate(VERZIK));
     }
 
     @Override
     public void parseAllEntries()
     {
         super.parseAllEntries();
+    }
+
+    @Override
+    protected boolean parseLogEntry(LogEntry entry)
+    {
+        try
+        {
+            for (ParseInstruction instruction : entry.logEntry.parseInstructions)
+            {
+                if (Objects.requireNonNull(instruction.type) == LEFT_RAID)
+                {
+                    if (wasReset)
+                    {
+                        if (lastRoom.equals(VERZIK.name) || lastRoom.equals(WARDENS.name))
+                        {
+                            roomStatus = green + "Completion";
+                            completed = true;
+                        } else
+                        {
+                            roomStatus = yellow + lastRoom + " Reset";
+                        }
+                    } else
+                    {
+                        roomStatus = red + lastRoom + " Wipe";
+                    }
+                }
+                else if(Objects.requireNonNull(instruction.type) == MANUAL_PARSE)
+                {
+                    if(entry.logEntry.equals(LogID.VERZIK_P2_REDS_PROC))
+                    {
+                        RoomParser parser = getParser(VERZIK);
+                        if(parser.data.get(VERZIK_REDS_SPLIT) < 1)
+                        {
+                            parser.data.set(VERZIK_REDS_SPLIT, entry.getFirstInt());
+                            parser.data.set(VERZIK_P2_TILL_REDS, entry.getFirstInt() - parser.data.get(VERZIK_P2_SPLIT));
+                        }
+                    }
+                }
+            }
+        }
+        catch (Exception ignored)
+        {
+
+        }
+        return super.parseLogEntry(entry);
     }
 
     @Override

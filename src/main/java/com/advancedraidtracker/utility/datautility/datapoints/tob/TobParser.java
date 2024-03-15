@@ -10,7 +10,7 @@ public class TobParser extends RoomParser
     @Override
     public Map<Integer, String> getLines()
     {
-        return null;
+        return lines;
     }
     public void init()
     {

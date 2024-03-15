@@ -125,7 +125,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         thrallOutlineBoxes.add(thrallOutlineBox);
     }
 
-    public void addThrallBoxes(ArrayList<ThrallOutlineBox> outlineBoxes)
+    public void addThrallBoxes(List<ThrallOutlineBox> outlineBoxes)
     {
         thrallOutlineBoxes.addAll(outlineBoxes);
     }
@@ -698,15 +698,18 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         {
             for (Integer i : lines.keySet())
             {
-                int xOffset = getXOffset(i);
-                int yOffset = getYOffset(i);
-                xOffset += 100;
-                yOffset += (scale / 2);
-                g.setColor(new Color(255, 0, 0));
-                g.drawLine(xOffset, yOffset, xOffset, yOffset + boxHeight - 20);
-                int stringLength = getStringBounds(g, lines.get(i)).width;
-                g.setColor(Color.WHITE);
-                g.drawString(lines.get(i), xOffset - (stringLength / 2), yOffset - 1);
+                if(i < endTick)
+                {
+                    int xOffset = getXOffset(i);
+                    int yOffset = getYOffset(i);
+                    xOffset += 100;
+                    yOffset += (scale / 2);
+                    g.setColor(new Color(255, 0, 0));
+                    g.drawLine(xOffset, yOffset, xOffset, yOffset + boxHeight - 20);
+                    int stringLength = getStringBounds(g, lines.get(i)).width;
+                    g.setColor(Color.WHITE);
+                    g.drawString(lines.get(i), xOffset - (stringLength / 2), yOffset - 1);
+                }
             }
         }
     }

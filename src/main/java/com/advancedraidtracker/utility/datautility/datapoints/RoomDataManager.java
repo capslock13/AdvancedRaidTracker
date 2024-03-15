@@ -2,9 +2,13 @@ package com.advancedraidtracker.utility.datautility.datapoints;
 
 import com.advancedraidtracker.constants.RaidRoom;
 import com.advancedraidtracker.utility.datautility.*;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 @Slf4j
 public class RoomDataManager
@@ -12,6 +16,7 @@ public class RoomDataManager
     Map<DataPoint, Integer> map;
     Map<DataPoint, Map<String, Integer>> playerSpecificMap;
     Map<DataPoint, Integer> tickMap;
+    Multimap<DataPoint, Integer> intList = ArrayListMultimap.create();
     RaidRoom room = null;
 
     public RoomDataManager()
@@ -106,6 +111,16 @@ public class RoomDataManager
                 log.info(name + ", " + point.name + ": " + playerSpecificMap.get(point).get(name));
             }
         }
+    }
+
+    public void addToList(DataPoint point, Integer value)
+    {
+        intList.put(point, value);
+    }
+
+    public List<Integer> getList(DataPoint point)
+    {
+        return new ArrayList<>(intList.get(point));
     }
 
 }

@@ -2,14 +2,11 @@ package com.advancedraidtracker.utility.datautility.datapoints;
 
 import com.advancedraidtracker.constants.*;
 import com.advancedraidtracker.utility.datautility.*;
-import com.advancedraidtracker.utility.datautility.datapoints.toa.Toa;
-import com.advancedraidtracker.utility.datautility.datapoints.tob.Tob;
+import com.google.common.collect.ImmutableMap;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.util.Text;
 
-import java.io.File;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
@@ -19,6 +16,7 @@ import static com.advancedraidtracker.utility.datautility.DataPoint.*;
 @Slf4j
 public abstract class Raid
 {
+    protected Map<String, String> roomLetters = ImmutableMap.of("Scabaras", "K", "Apmeken", "B", "Het", "A", "Crondis", "Z", "Wardens", "W");
     /**
      * Path to the log file.
      */
@@ -87,7 +85,7 @@ public abstract class Raid
      * Parsers for specific rooms
      */
     protected Map<RaidRoom, RoomParser> roomParsers;
-    private List<LogEntry> raidData;
+    private final List<LogEntry> raidData;
     DefaultParser defaultParser;
     UnknownParser unknownParser;
 
@@ -95,14 +93,14 @@ public abstract class Raid
     public boolean isStoryMode = false;
     public boolean isSpectate = false;
 
-    String red = "<html><font color='#FF0000'>"; //todo convert along with usages to colors (looking @ you fisu)
-    String green = "<html><font color='#44AF33'>";
-    String orange = "<html><font color='#FF7733'>";
-    String yellow = "<html><font color='#FFFF33'>";
+    protected String red = "<html><font color='#FF0000'>"; //todo convert along with usages to colors (looking @ you fisu)
+    protected String green = "<html><font color='#44AF33'>";
+    protected String orange = "<html><font color='#FF7733'>";
+    protected String yellow = "<html><font color='#FFFF33'>";
 
-    private boolean wasReset = false; //todo idk where these belong tbh
-    private String lastRoom = "";
-    public String roomStatus = orange;
+    protected boolean wasReset = false; //todo idk where these belong tbh
+    protected String lastRoom = "";
+    protected String roomStatus = orange;
 
 
     protected Raid(Path filepath, List<LogEntry> raidData)
@@ -114,7 +112,7 @@ public abstract class Raid
         this.raidData = raidData;
         date = new Date(0L); //todo figure out why dates dont parse properly on some raids
         this.filepath = filepath;
-        this.players = new HashSet<>();
+        this.players = new LinkedHashSet<>();
     }
 
     public int get(DataPoint point)
@@ -259,7 +257,6 @@ public abstract class Raid
             case SPECTATE:
                 isSpectate = true;
                 break;
-
         }
     }
 
@@ -333,23 +330,10 @@ public abstract class Raid
                         break;
                     case ROOM_START_FLAG:
                         wasReset = false;
-                        if(entry.logEntry.getRoom().isTOABoss())
-                        {
-                            roomStatus += entry.logEntry.getRoom().name.substring(0, 1);
-                        }
                         break;
                     case AGNOSTIC:
                         handleRaidAgnosticLogEntry(entry);
                         break;
-                    case RAID_SPECIFIC: //todo move this to raid specific file
-                        if(entry.logEntry.equals(LogID.ENTERED_NEW_TOA_REGION))
-                        {
-                            if(entry.getValue("Region").equals("TOA Nexus") && !roomStatus.isEmpty())
-                            {
-                                addColorToStatus(green);
-                            }
-                        }
-                        return false;
                     case ACCURATE_START:
                         setRoomStartAccurate(entry.logEntry.getRoom());
                         break;
@@ -357,46 +341,11 @@ public abstract class Raid
                         setRoomEndAccurate(entry.logEntry.getRoom());
                         break;
                     case MANUAL_PARSE:
-                        return false;
-                    case LEFT_RAID:
-                        if(!entry.logEntry.getRoom().isTOA()) //todo move this out of Raid
-                        {
-                            if (wasReset)
-                            {
-                                if (lastRoom.equals(VERZIK.name) || lastRoom.equals(WARDENS.name))
-                                {
-                                    roomStatus = green + "Completion";
-                                    completed = true;
-                                } else
-                                {
-                                    roomStatus = yellow + lastRoom + " Reset";
-                                }
-                            } else
-                            {
-                                roomStatus = red + lastRoom + " Wipe";
-                            }
-                            return true;
-                        }
-                        else
-                        {
-                            if(wasReset)
-                            {
-                                if(lastRoom.equals(WARDENS.name))
-                                {
-                                    addColorToStatus(green);
-                                    completed = true;
-                                }
-                                else
-                                {
-                                    addColorToStatus(orange);
-                                }
-                            }
-                            else
-                            {
-                                addColorToStatus(red);
-                            }
-                        }
-                        return true;
+                        break;
+                    case MAP:
+                        parser.data.increment(instruction.dataPoint1, entry.getValue("Player"));
+                        parser.data.addToList(instruction.dataPoint1, Integer.parseInt(entry.getValue("Room Tick")));
+                        break;
                 }
                 parser = getParser(room);
             }
@@ -454,7 +403,7 @@ public abstract class Raid
         return scale;
     }
 
-    private void addColorToStatus(String color)
+    protected void addColorToStatus(String color)
     {
         if(!roomStatus.isEmpty() && !roomStatus.endsWith(">"))
         {

@@ -12,6 +12,7 @@ public enum ParseType
     INCREMENT_IF_EQUALS(0),
     DECREMENT(0),
     SET(1),
+    SET_IF(0),
     SUM(3),
     SPLIT(3),
     DWH(1),

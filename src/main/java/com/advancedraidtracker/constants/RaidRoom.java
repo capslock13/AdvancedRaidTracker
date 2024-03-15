@@ -31,9 +31,9 @@ public enum RaidRoom
         return this.equals(CRONDIS) || this.equals(ZEBAK) || this.equals(SCABARAS) || this.equals(KEPHRI) || this.equals(APMEKEN) || this.equals(BABA) || this.equals(HET) || this.equals(AKKHA) || this.equals(WARDENS) || this.equals(ANY_TOA);
     }
 
-    public boolean isTOABoss()
+    public boolean isTOAPath()
     {
-        return this.equals(ZEBAK) || this.equals(KEPHRI) || this.equals(BABA) || this.equals(AKKHA) || this.equals(WARDENS);
+        return this.equals(CRONDIS) || this.equals(SCABARAS) || this.equals(APMEKEN) || this.equals(HET) || this.equals(WARDENS);
     }
 
     public boolean isTOB()
@@ -48,9 +48,14 @@ public enum RaidRoom
 
     public static RaidRoom getRoom(String name)
     {
+        String compareName = name;
+        if(compareName.contains(" "))
+        {
+            compareName = compareName.substring(0, compareName.length()-3);
+        }
         for(RaidRoom room : RaidRoom.values())
         {
-            if(room.name.equals(name))
+            if(room.name.equals(compareName))
             {
                 return room;
             }

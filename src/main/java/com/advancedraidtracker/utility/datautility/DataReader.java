@@ -2,20 +2,22 @@ package com.advancedraidtracker.utility.datautility;
 
 import com.advancedraidtracker.constants.LogID;
 import com.advancedraidtracker.constants.RaidRoom;
+import com.advancedraidtracker.utility.PlayerWornItems;
 import com.advancedraidtracker.utility.datautility.datapoints.LogEntry;
 import com.advancedraidtracker.utility.datautility.datapoints.Raid;
 import com.advancedraidtracker.utility.datautility.datapoints.RoomParser;
 import com.advancedraidtracker.utility.datautility.datapoints.toa.Toa;
 import com.advancedraidtracker.utility.datautility.datapoints.tob.Tob;
+import com.advancedraidtracker.utility.wrappers.PlayerDidAttack;
+import lombok.extern.slf4j.Slf4j;
+import net.runelite.client.game.ItemManager;
 
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
+@Slf4j
 public class DataReader //todo move any methods that read files to here. I believe Raid side panel and the filter manager class has some?
 {
     /**
@@ -54,13 +56,18 @@ public class DataReader //todo move any methods that read files to here. I belie
                     {
                         RoomParser parser = ret.getParser(room);
                         //log.info("Dumping room: " + room.name());
-                        //parser.data.dumpValues(); //todo remove later, this was for testing the parser
-
+                       // parser.data.dumpValues(); //todo remove later, this was for testing the parser
                     }
                 } else if (entry.logEntry == LogID.LEFT_TOA) //todo look into what needs to be done to handle this post deprecation
                 {
                     ret = new Toa(path, currentRaid);
                     ret.parseAllEntries();
+                    for(RaidRoom room : RaidRoom.values())
+                    {
+                        RoomParser parser = ret.getParser(room);
+                      //  log.info("Dumping room: " + room.name());
+                       // parser.data.dumpValues(); //todo remove later, this was for testing the parser
+                    }
                 }
             }
         }
@@ -94,7 +101,7 @@ public class DataReader //todo move any methods that read files to here. I belie
         return lines;
     }
 
-    private static void getChartData(Path path)
+    public static ChartData getChartData(Path path, ItemManager itemManager)
     {
         //todo read file from path looking only for !logEntry.isSimple()
         //todo...maybe create a class that wraps the values needed?
@@ -102,6 +109,46 @@ public class DataReader //todo move any methods that read files to here. I belie
         //todo maybe you want to find your own way of handling it per room @fisu
         //todo TOA can be done via the 6th parameter of Player attack / last param npc mapping / last param update hp which was added right before toa
         //todo tob needs to have state tracking to tell what room the data goes to....
+        ChartData chartData = new ChartData();
+        try
+        {
+            Scanner scanner = new Scanner(Files.newInputStream(path));
+            RaidRoom currentRoom = RaidRoom.UNKNOWN;
+            while(scanner.hasNextLine())
+            {
+                String[] line = scanner.nextLine().split(",");
+                switch (line[3])
+                {
+                    case "587":
+                        chartData.addNPCMapping(currentRoom, Integer.parseInt(line[4]), line[5]);
+                        break;
+                    case "576":
+                        chartData.addHPMapping(currentRoom, Integer.parseInt(line[4]), Integer.parseInt(line[5]));
+                        break;
+                    case "801":
+                        chartData.addAttack(currentRoom, ChartData.getPlayerDidAttack(line, itemManager));
+                        break;
+                    case "410":
+                        chartData.addThrallOutlineBox(currentRoom, line[4], Integer.parseInt(line[5]), Integer.parseInt(line[6]));
+                        break;
+                    case "6":
+                        currentRoom = RaidRoom.values()[Integer.parseInt(line[4])];
+                        break;
+                    case "1006":
+                        currentRoom = RaidRoom.getRoom(line[4]);
+                        break;
+                    case "12":
+                        currentRoom = RaidRoom.MAIDEN;
+                        break;
+
+                }
+            }
+        }
+        catch (Exception ignore)
+        {
+            log.info("Failed to parse!");
+        }
+        return chartData;
     }
 
 }

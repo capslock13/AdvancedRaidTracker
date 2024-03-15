@@ -13,8 +13,7 @@ import lombok.Getter;
 import java.nio.file.Path;
 import java.util.*;
 
-import static com.advancedraidtracker.constants.ParseType.LEFT_RAID;
-import static com.advancedraidtracker.constants.ParseType.MANUAL_PARSE;
+import static com.advancedraidtracker.constants.ParseType.*;
 import static com.advancedraidtracker.constants.RaidRoom.*;
 import static com.advancedraidtracker.utility.datautility.DataPoint.*;
 

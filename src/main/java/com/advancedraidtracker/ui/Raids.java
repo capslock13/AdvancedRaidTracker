@@ -212,7 +212,7 @@ public class Raids extends BaseFrame
             boolean shouldDataBeIncluded = true;
             if (filterSpectateOnly.isSelected())
             {
-                if (!(data instanceof Tob) || !((Tob) data).isSpectated())
+                if (!data.isSpectate)
                 {
                     shouldDataBeIncluded = false;
                 }
@@ -432,7 +432,7 @@ public class Raids extends BaseFrame
             case "Players":
                 return (String.join(",",raid.getPlayers()).replaceAll(String.valueOf((char) 160), String.valueOf(' ')));
             case "Spectate":
-                return (raid instanceof Tob && ((Tob) raid).isSpectated()) ? "Yes" : "No";
+                return (raid.isSpectate) ? "Yes" : "No";
             case "View":
                 return "View";
             case "Time":

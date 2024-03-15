@@ -26,6 +26,12 @@ public class ApmekenHandler extends TOARoomHandler
     }
 
     @Override
+    public void reset()
+    {
+        active = false;
+    }
+
+    @Override
     public void updateGameTick(GameTick event)
     {
         if (!active && RoomUtil.playerPastLine(15186, 21, true, client))

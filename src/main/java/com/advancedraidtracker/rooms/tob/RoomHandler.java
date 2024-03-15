@@ -200,6 +200,7 @@ public class RoomHandler
     public void reset()
     {
         roomStartTick = -1;
+        active = false;
     }
 
     public void updateGroundObjectDespawned(GroundObjectDespawned event)

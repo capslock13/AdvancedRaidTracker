@@ -134,12 +134,7 @@ public class Raids extends BaseFrame
             }
             index++;
         }
-        /*{
-            averageLabels.put(s, getDarkJLabel("", SwingConstants.RIGHT));
-            medianLabels.put(s, getDarkJLabel("", SwingConstants.RIGHT));
-            minLabels.put(s, getDarkJLabel("", SwingConstants.RIGHT));
-            maxLabels.put(s, getDarkJLabel("", SwingConstants.RIGHT));
-        }*/
+
         this.clientThread = clientThread;
         this.itemManager = itemManager;
         this.configManager = configManager;
@@ -345,6 +340,25 @@ public class Raids extends BaseFrame
                 table.getColumn(table.getColumnName(i)).setCellRenderer(new StripedTableRowCellRenderer());
             }
         }
+        setupTableHeaderListener();
+
+        resizeColumnWidth(table);
+        table.setFillsViewportHeight(true);
+        setLabels(tableData);
+        container.validate();
+        container.repaint();
+    }
+
+    /**
+     * We want the custom column to have a dropdown arrow so the user knows if they click it they can switch which data point is shown in that column
+     * That combobox is for the renderer only, the actual drop down happens as a JPopUpMenu so that we can get sub layers (e.g. toa->kephri->time)
+     * The issue is that we set the table to sort rows when the column header is clicked. So we want to only sort the column if the click does not
+     * happen within the last 20 pixels of the custom column (where the dropdown arrow is), and since on table refresh the sort defaults to on
+     * we just disable the table sorter if the click happens on the dropdown arrow. A similar method to determine if the popupmenu should be shown
+     * is in DynamicTableHeaderRenderer.
+     */
+    private void setupTableHeaderListener()
+    {
         setTableSorterActive(true);
         table.getTableHeader().addMouseListener(new MouseAdapter()
         {
@@ -369,12 +383,6 @@ public class Raids extends BaseFrame
                 }
             }
         });
-
-        resizeColumnWidth(table);
-        table.setFillsViewportHeight(true);
-        setLabels(tableData);
-        container.validate();
-        container.repaint();
     }
 
     public Object getRowData(String column, Raid raid)
@@ -442,7 +450,7 @@ public class Raids extends BaseFrame
         return (isTime(column) ? RoomUtil.time(valueToDisplay) : valueToDisplay);
     }
 
-    boolean isTime(String value)
+    boolean isTime(String value) //todo what is the purpose?
     {
         try
         {
@@ -785,7 +793,7 @@ public class Raids extends BaseFrame
 
     public void createFrame(List<Raid> data)
     {
-        customColumnComboBox.setEnabled(true); //todo override renderer to show visible always
+        customColumnComboBox.setEnabled(true);
         customColumnComboBox.addItem("Challenge Time");
 
 
@@ -823,42 +831,6 @@ public class Raids extends BaseFrame
         toaTabSubpanel.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
         coxTabSubpanel.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 
-
-        /*tabbedPane.addChangeListener(e -> //todo
-        {
-            if (timeFollowsTab.isSelected())
-            {
-                if (built)
-                {
-                    switch (tabbedPane.getSelectedIndex())
-                    {
-                        case 0:
-                            customColumnComboBox.setSelectedItem("Challenge Time");
-                            break;
-                        case 1:
-                            customColumnComboBox.setSelectedItem("Maiden Time");
-                            break;
-                        case 2:
-                            customColumnComboBox.setSelectedItem("Bloat Time");
-                            break;
-                        case 3:
-                            customColumnComboBox.setSelectedItem("Nylocas Time");
-                            break;
-                        case 4:
-                            customColumnComboBox.setSelectedItem("Sotetseg Time");
-                            break;
-                        case 5:
-                            customColumnComboBox.setSelectedItem("Xarpus Time");
-                            break;
-                        case 6:
-                            customColumnComboBox.setSelectedItem("Verzik Time");
-                            break;
-
-                    }
-                    updateTable();
-                }
-            }
-        });*/
         List<JPanel> overallPanels = new ArrayList<>();
         for(int k = 0; k < 3; k++)
         {
@@ -884,7 +856,7 @@ public class Raids extends BaseFrame
                 panel.setLayout(new BorderLayout());
                 panel.setBorder(BorderFactory.createTitledBorder("Test"));
                 JPanel subPanel = new JPanel();
-                subPanel.setLayout(new GridLayout(7, 2));
+                subPanel.setLayout(new GridLayout(0, 2));
                 for (String s : rooms)
                 {
                     JLabel leftLabel = new JLabel(roomColor + s);
@@ -894,12 +866,11 @@ public class Raids extends BaseFrame
                 panel.add(subPanel);
                 topStatPanel.add(panel);
             }
-
-            overallPanel.add(topStatPanel);
+            JScrollPane scrollPane = new JScrollPane(topStatPanel);
+            scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+            overallPanel.add(scrollPane);
             overallPanels.add(overallPanel);
         }
-        //tabbedPane.addTab("Overall", overallPanel);
-        //overallPanel.setLayout(new GridLayout(1, 1));
 
 
         List<Raid> tobData = new ArrayList<>();
@@ -1009,8 +980,8 @@ public class Raids extends BaseFrame
         tabbedPane.addTab("", coxTabSubpanel);
 
         tabbedPane.setIconAt(0, new ImageIcon(itemManager.getImage(ItemID.SCYTHE_OF_VITUR)));
-        tabbedPane.setIconAt(1, new ImageIcon(itemManager.getImage(ItemID.TWISTED_BOW)));
-        tabbedPane.setIconAt(2, new ImageIcon(itemManager.getImage(ItemID.TUMEKENS_SHADOW)));
+        tabbedPane.setIconAt(1, new ImageIcon(itemManager.getImage(ItemID.TUMEKENS_SHADOW)));
+        tabbedPane.setIconAt(2, new ImageIcon(itemManager.getImage(ItemID.TWISTED_BOW)));
 
         topContainer.add(tabbedPane);
         topContainer.add(additionalFiltersPanel);

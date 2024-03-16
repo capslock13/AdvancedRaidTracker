@@ -256,6 +256,7 @@ public class AdvancedRaidTrackerPlugin extends Plugin
         playersAttacked = new ArrayList<>();
     }
 
+
     @Subscribe
     public void onChatMessage(ChatMessage message)
     {

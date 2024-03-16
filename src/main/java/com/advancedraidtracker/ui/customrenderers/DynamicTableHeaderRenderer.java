@@ -94,6 +94,13 @@ public class DynamicTableHeaderRenderer implements TableCellRenderer
             this.column = column;
             this.editor = editor;
             this.menu = menu;
+            menu.addPropertyChangeListener(pcl ->
+            {
+                if(menu.isVisible())
+                {
+                    window.setTableSorterActive(true);
+                }
+            });
         }
 
         private void setDispatchComponent(MouseEvent e)
@@ -143,10 +150,8 @@ public class DynamicTableHeaderRenderer implements TableCellRenderer
                     Rectangle rect = header.getTable().getCellRect(0, header.getColumnModel().getColumnIndexAtX(e.getX()), true);
                     if(e.getX() > rect.getX()+rect.getWidth()-20)
                     {
-                        log.info(e.getX() + ", " + rect.getWidth() + ", " + menu.getWidth());
-                        menu.show(editor, (int)rect.getWidth()-menu.getWidth(), editor.getHeight());
-                        e.consume();
-                        window.setTableSorterActive(true);
+                        menu.show(editor, (int)rect.getWidth()-menu.getPreferredSize().width, editor.getHeight());
+                        window.setTableSorterActive(false);
                     }
                 }
                 catch (Exception ignore)

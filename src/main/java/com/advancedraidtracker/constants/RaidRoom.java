@@ -1,12 +1,18 @@
 package com.advancedraidtracker.constants;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public enum RaidRoom
 {
     MAIDEN(0, "Maiden"), BLOAT(1, "Bloat"), NYLOCAS(2, "Nylocas"), SOTETSEG(3, "Sotetseg"), XARPUS(4, "Xarpus"), VERZIK(5, "Verzik"), UNKNOWN(-1, "Unknown"), ANY_TOB(6, "Any TOB"),
     CRONDIS(7, "Crondis"), ZEBAK(8, "Zebak"), SCABARAS(9, "Scabaras"), KEPHRI(10, "Kephri"), APMEKEN(11, "Apmeken"), BABA(12, "Baba"), HET(13, "Het"), AKKHA(14, "Akkha"), WARDENS(15, "Wardens"), ANY_TOA(16, "Any TOA"),
+
+    TEKTON(19, "Tekton"), CRABS(20, "Crabs"), ICE_DEMON(21, "Ice Demon"), SHAMANS(22, "Shamans"), VANGUARDS(23, "Vanguards"), THIEVING(24, "Thieving"), VESPULA(25, "Vespula"),
+    TIGHT_ROPE(26, "Tight Rope"), GUARDIANS(27, "Guardians"), VASA_NISTIRIO(28, "Vasa Nistirio"), SKELETAL_MYSTICS(29, "Skeletal Mystics"), MUTTADILES(30, "Muttadiles"), OLM(31, "Olm"),
     ANY(17, "Any"), ALL(18, "All"),
 
     ;
@@ -26,9 +32,23 @@ public enum RaidRoom
         return o.orElse(UNKNOWN);
     }
 
+    public static List<RaidRoom> getRaidRoomsForRaidType(RaidType type)
+    {
+        switch(type)
+        {
+            case COX:
+                return Arrays.stream(RaidRoom.values()).filter(RaidRoom::isCOX).collect(Collectors.toList());
+            case TOB:
+                return Arrays.stream(RaidRoom.values()).filter(RaidRoom::isTOB).collect(Collectors.toList());
+            case TOA:
+                return Arrays.stream(RaidRoom.values()).filter(RaidRoom::isTOA).collect(Collectors.toList());
+        }
+        return new ArrayList<>();
+    }
+
     public boolean isTOA()
     {
-        return this.equals(CRONDIS) || this.equals(ZEBAK) || this.equals(SCABARAS) || this.equals(KEPHRI) || this.equals(APMEKEN) || this.equals(BABA) || this.equals(HET) || this.equals(AKKHA) || this.equals(WARDENS) || this.equals(ANY_TOA);
+        return this.equals(CRONDIS) || this.equals(ZEBAK) || this.equals(SCABARAS) || this.equals(KEPHRI) || this.equals(APMEKEN) || this.equals(BABA) || this.equals(HET) || this.equals(AKKHA) || this.equals(WARDENS)/* || this.equals(ANY_TOA)*/; //todo investigate why this was here
     }
 
     public boolean isTOAPath()
@@ -43,7 +63,9 @@ public enum RaidRoom
 
     public boolean isCOX()
     {
-        return false;
+        return this.value >= TEKTON.value && this.value <= OLM.value;
+        //return this.equals(TEKTON) || this.equals(CRABS) || this.equals(ICE_DEMON) || this.equals(SHAMANS) || this.equals(VANGUARDS) || this.equals(THIEVING) ||
+          //      this.equals(VESPULA) || this.equals(TIGHT_ROPE) || this.equals(GUARDIANS) || this.equals(VASA_NISTIRIO) || this.equals(SKELETAL_MYSTICS) || this.equals(MUTTADILES) || this.equals(OLM);
     }
 
     public static RaidRoom getRoom(String name)

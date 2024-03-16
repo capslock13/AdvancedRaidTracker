@@ -1,17 +1,15 @@
 package com.advancedraidtracker.ui;
 
 import com.advancedraidtracker.constants.RaidRoom;
-import com.advancedraidtracker.ui.comparisonview.ComparisonViewPanel;
 import com.advancedraidtracker.utility.datautility.DataPoint;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
+
 @Slf4j
 public class DataPointMenu
 {
@@ -181,8 +179,8 @@ public class DataPointMenu
         //ComparisonViewPanel.addComboItems(name, items, flatData, comboBox);
         //comboBox.addItem(name);
         //comboBox.setSelectedItem(name);
-        window.example.addItem(name);
-        window.example.setSelectedItem(name);
+        window.customColumnComboBox.addItem(name);
+        window.customColumnComboBox.setSelectedItem(name);
         window.updateTable();
     }
 

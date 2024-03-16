@@ -3,6 +3,8 @@ package com.advancedraidtracker.ui.statistics;
 import com.advancedraidtracker.SimpleTOBData;
 import com.advancedraidtracker.constants.RaidRoom;
 import com.advancedraidtracker.utility.datautility.DataPoint;
+import com.advancedraidtracker.utility.datautility.datapoints.Raid;
+import com.advancedraidtracker.utility.datautility.datapoints.tob.Tob;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,9 +14,9 @@ public class StatisticTab extends JPanel
 {
     private final ArrayList<StatisticRoomPanel> panels;
     RaidRoom room;
-    ArrayList<SimpleTOBData> data;
+    java.util.List<Raid> data;
 
-    public StatisticTab(ArrayList<SimpleTOBData> data, RaidRoom room)
+    public StatisticTab(java.util.List<Raid> data, RaidRoom room)
     {
         this.room = room;
         this.data = data;
@@ -39,7 +41,7 @@ public class StatisticTab extends JPanel
         repaint();
     }
 
-    public void updateTab(ArrayList<SimpleTOBData> data)
+    public void updateTab(java.util.List<Raid> data)
     {
         for (StatisticRoomPanel roomPanel : panels)
         {

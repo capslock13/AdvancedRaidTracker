@@ -102,6 +102,7 @@ public abstract class Raid
     protected String lastRoom = "";
     protected String roomStatus = orange;
 
+    public abstract int getTimeSum();
 
     protected Raid(Path filepath, List<LogEntry> raidData)
     {
@@ -113,6 +114,11 @@ public abstract class Raid
         date = new Date(0L); //todo figure out why dates dont parse properly on some raids
         this.filepath = filepath;
         this.players = new LinkedHashSet<>();
+    }
+
+    public boolean getOverallTimeAccurate()
+    {
+        return false;
     }
 
     public int get(DataPoint point)
@@ -222,6 +228,11 @@ public abstract class Raid
     public boolean getRoomPartiallyAccurate(RaidRoom room)
     {
         return roomStartAccurate.getOrDefault(room, false) || roomEndAccurate.getOrDefault(room, false);
+    }
+
+    public boolean getTimeAccurate(DataPoint point)
+    {
+        return getRoomAccurate(point.room);
     }
 
     /**

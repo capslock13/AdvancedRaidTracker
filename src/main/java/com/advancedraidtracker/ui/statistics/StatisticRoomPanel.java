@@ -5,11 +5,14 @@ import com.advancedraidtracker.constants.RaidRoom;
 import com.advancedraidtracker.utility.RoomUtil;
 import com.advancedraidtracker.utility.datautility.DataPoint;
 import com.advancedraidtracker.utility.StatisticGatherer;
+import com.advancedraidtracker.utility.datautility.datapoints.Raid;
+import com.advancedraidtracker.utility.datautility.datapoints.tob.Tob;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import static com.advancedraidtracker.utility.UISwingUtility.getDarkJLabel;
@@ -26,11 +29,11 @@ public class StatisticRoomPanel extends JPanel
         MAXIMUM
     }
 
-    private final ArrayList<JLabel> timeLabels;
-    private final ArrayList<String> labelNames;
+    private final List<JLabel> timeLabels;
+    private final List<String> labelNames;
     private final stat type;
 
-    public StatisticRoomPanel(ArrayList<SimpleTOBData> data, stat type, RaidRoom room)
+    public StatisticRoomPanel(List<Raid> data, stat type, RaidRoom room)
     {
         super();
         JPanel subPanel = new JPanel();
@@ -83,18 +86,18 @@ public class StatisticRoomPanel extends JPanel
         updateLabels(data);
     }
 
-    public void updateLabels(ArrayList<SimpleTOBData> data)
+    public void updateLabels(java.util.List<Raid> data)
     {
         for (int i = 0; i < labelNames.size(); i++)
         {
             ArrayList<Integer> collectedData = new ArrayList<>();
-            for (SimpleTOBData d : data)
+            for (Raid d : data)
             {
                 if (d.getTimeAccurate(Objects.requireNonNull(DataPoint.getValue(labelNames.get(i)))))
                 {
-                    if (Objects.requireNonNull(DataPoint.getValue(labelNames.get(i))).type != DataPoint.types.TIME || d.getValue(labelNames.get(i)) != 0)
+                    if (Objects.requireNonNull(DataPoint.getValue(labelNames.get(i))).type != DataPoint.types.TIME || d.get(labelNames.get(i)) != 0)
                     {
-                        collectedData.add(d.getValue(labelNames.get(i)));
+                        collectedData.add(d.get(labelNames.get(i)));
                     }
                 }
             }

@@ -5,7 +5,9 @@ import com.advancedraidtracker.SimpleRaidDataBase;
 import com.advancedraidtracker.SimpleTOBData;
 import com.advancedraidtracker.AdvancedRaidTrackerConfig;
 import com.advancedraidtracker.constants.RaidRoom;
+import com.advancedraidtracker.constants.RaidType;
 import com.advancedraidtracker.filters.*;
+import com.advancedraidtracker.rooms.cox.Cox;
 import com.advancedraidtracker.ui.customrenderers.*;
 import com.advancedraidtracker.ui.charts.ChartFrame;
 import com.advancedraidtracker.ui.comparisonview.ComparisonViewFrame;
@@ -23,12 +25,12 @@ import com.advancedraidtracker.utility.datautility.datapoints.tob.Tob;
 import com.advancedraidtracker.utility.wrappers.StringInt;
 import com.google.common.collect.Multimap;
 import lombok.extern.slf4j.Slf4j;
+import net.runelite.api.ItemID;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.game.ItemManager;
 
 import javax.swing.*;
-import javax.swing.border.MatteBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.*;
@@ -36,6 +38,7 @@ import javax.swing.text.BadLocationException;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -54,24 +57,18 @@ public class Raids extends BaseFrame
     private final ArrayList<ArrayList<Raid>> comparisons;
 
     private final JTabbedPane tabbedPane = new JTabbedPane();
+    private final JTabbedPane raidTypeTabbedPane = new JTabbedPane();
     public ArrayList<ImplicitFilter> activeFilters;
-    private final JLabel raidsFoundLabel = new JLabel("", SwingConstants.LEFT);
-    private final JLabel completionsFound = new JLabel("", SwingConstants.LEFT);
-    private JComboBox<String> viewByRaidComboBox;
-
-    private JComboBox<String> sortOrderBox;
-    private JComboBox<String> sortOptionsBox;
 
     Map<String, JLabel> averageLabels = new LinkedHashMap<>();
     Map<String, JLabel> medianLabels = new LinkedHashMap<>();
     Map<String, JLabel> minLabels = new LinkedHashMap<>();
     Map<String, JLabel> maxLabels = new LinkedHashMap<>();
-    public JComboBox<String> statisticsBox;
-    public JLabel customAverageLabel = new JLabel("", SwingConstants.RIGHT);
-    public JLabel customMedianLabel = new JLabel("", SwingConstants.RIGHT);
-    public JLabel customModeLabel = new JLabel("", SwingConstants.RIGHT);
-    public JLabel customMinLabel = new JLabel("", SwingConstants.RIGHT);
-    public JLabel customMaxLabel = new JLabel("", SwingConstants.RIGHT);
+
+    List<Map<String, JLabel>> averageLabels2 = new ArrayList<>();
+    List<Map<String, JLabel>> medianLabels2 = new ArrayList<>();
+    List<Map<String, JLabel>> minLabels2 = new ArrayList<>();
+    List<Map<String, JLabel>> maxLabels2 = new ArrayList<>();
 
     private final ArrayList<Map<String, ArrayList<String>>> aliases;
 
@@ -100,12 +97,6 @@ public class Raids extends BaseFrame
     private JComboBox<String> playerFilterOperator;
     private JTextField playerFilterValue;
     private JCheckBox timeFollowsTab;
-    private StatisticTab maidenTab;
-    private StatisticTab bloatTab;
-    private StatisticTab nyloTab;
-    private StatisticTab soteTab;
-    private StatisticTab xarpTab;
-    private StatisticTab verzikTab;
     private boolean built = false;
     private JComboBox<String> dateFilterOperator;
     private JComboBox<String> otherIntFilterChoice;
@@ -126,13 +117,29 @@ public class Raids extends BaseFrame
 
     public Raids(AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
     {
-        for (String s : rooms)
+        int index = 0;
+        for (RaidType raidType : RaidType.values())
         {
+            averageLabels2.add(new LinkedHashMap<>());
+            medianLabels2.add(new LinkedHashMap<>());
+            maxLabels2.add(new LinkedHashMap<>());
+            minLabels2.add(new LinkedHashMap<>());
+
+            for(RaidRoom room : RaidRoom.getRaidRoomsForRaidType(raidType))
+            {
+                averageLabels2.get(index).put(room.name, getDarkJLabel("", SwingConstants.RIGHT));
+                medianLabels2.get(index).put(room.name, getDarkJLabel("", SwingConstants.RIGHT));
+                maxLabels2.get(index).put(room.name, getDarkJLabel("", SwingConstants.RIGHT));
+                minLabels2.get(index).put(room.name, getDarkJLabel("", SwingConstants.RIGHT));
+            }
+            index++;
+        }
+        /*{
             averageLabels.put(s, getDarkJLabel("", SwingConstants.RIGHT));
             medianLabels.put(s, getDarkJLabel("", SwingConstants.RIGHT));
             minLabels.put(s, getDarkJLabel("", SwingConstants.RIGHT));
             maxLabels.put(s, getDarkJLabel("", SwingConstants.RIGHT));
-        }
+        }*/
         this.clientThread = clientThread;
         this.itemManager = itemManager;
         this.configManager = configManager;
@@ -150,47 +157,7 @@ public class Raids extends BaseFrame
         this.setPreferredSize(new Dimension(1200, 820));
     }
 
-    public void updateCustomStats(List<Raid> raids)
-    {
-        List<Tob> tobData = new ArrayList<>();
-        for (Raid raidData : raids)
-        {
-            if (raidData instanceof Tob)
-            {
-                tobData.add((Tob) raidData);
-            }
-        }
-        //DataPoint dataPoint = DataPoint.ATTEMPTED_BGS_BLOAT; //todo not sure yet. Have an idea though
-        //boolean time = dataPoint.type == DataPoint.types.TIME;
-
-        /*
-        double avg = StatisticGatherer.getGenericAverage(tobData, dataPoint);
-        double med = StatisticGatherer.getGenericMedian(tobData, dataPoint);
-        double mod = StatisticGatherer.getGenericMode(tobData, dataPoint);
-        double min = StatisticGatherer.getGenericMin(tobData, dataPoint);
-        double max = StatisticGatherer.getGenericMax(tobData, dataPoint);
-
-        String avgStr = (time) ? RoomUtil.time(avg) : String.valueOf(avg);
-        String medStr = (time) ? RoomUtil.time(med) : String.valueOf(med);
-        String modStr = (time) ? RoomUtil.time(mod) : String.valueOf(mod);
-        String minStr = (time) ? RoomUtil.time(min) : String.valueOf(min);
-        String maxStr = (time) ? RoomUtil.time(max) : String.valueOf(max);
-
-        if (avg == -1) avgStr = "-";
-        if (med == -1) medStr = "-";
-        if (mod == -1) modStr = "-";
-        if (min == -1) minStr = "-";
-        if (max == -1) maxStr = "-";
-
-        customAverageLabel.setText(avgStr);
-        customMedianLabel.setText(medStr);
-        customModeLabel.setText(modStr);
-        customMinLabel.setText(minStr);
-        customMaxLabel.setText(maxStr);
-         */
-    }
-
-    public JComboBox<String> example = new JComboBox<>();
+    public JComboBox<String> customColumnComboBox = new JComboBox<>();
 
     private boolean evaluateAllFilters(Raid data)
     {
@@ -283,7 +250,7 @@ public class Raids extends BaseFrame
                 if (data instanceof Tob)
                 {
                     Tob tobData = (Tob) data;
-                    String comboText = example.getSelectedItem().toString();
+                    String comboText = customColumnComboBox.getSelectedItem().toString();
                     if(comboText.endsWith("Time"))
                     {
                         if(!data.getRoomAccurate(RaidRoom.valueOf(comboText.split(",")[0])))
@@ -318,40 +285,7 @@ public class Raids extends BaseFrame
                 }
             }
         }
-        if (sortOptionsBox.getSelectedIndex() == 0)
-        {
-            try
-            {
-                if (sortOrderBox.getSelectedIndex() == 0)
-                {
-                    tableData.sort(Comparator.comparing(Raid::getDate));
-                } else
-                {
-                    tableData.sort(Comparator.comparing(Raid::getDate).reversed());
-                }
-            } catch (Exception e)
-            {
-
-            }
-        } else if (sortOptionsBox.getSelectedIndex() == 1) //todo
-        {
-            if (sortOrderBox.getSelectedIndex() == 0)
-            {
-            } else
-            {
-            }
-        } else if (sortOptionsBox.getSelectedIndex() == 2) //todo
-        {
-            if (sortOrderBox.getSelectedIndex() == 0)
-            {
-            } else
-            {
-            }
-        }
-
-        updateCustomStats(tableData);
-        raidsFoundLabel.setText("Raids Found: " + tableData.size());
-        completionsFound.setText("Completions Found: " + completions);
+        setTitle("Raids: " + table.getRowCount() + ", Completions: " + completions);
         updateTabNames(tableData);
 
         ArrayList<String> columnNamesDynamic = new ArrayList<>();
@@ -402,7 +336,7 @@ public class Raids extends BaseFrame
             {
                 table.getColumn(table.getColumnName(i)).setCellEditor(new NonEditableCell(new JTextField()));
                 table.getColumn(table.getColumnName(i)).setCellRenderer(new StripedTableRowCellRenderer());
-                table.getColumn(table.getColumnName(i)).setHeaderRenderer(new DynamicTableHeaderRenderer(example, this));
+                table.getColumn(table.getColumnName(i)).setHeaderRenderer(new DynamicTableHeaderRenderer(customColumnComboBox, this));
 
             }
             else
@@ -486,7 +420,7 @@ public class Raids extends BaseFrame
                 String dataPointName = "";
                 try
                 {
-                    dataPointName = example.getSelectedItem().toString();
+                    dataPointName = customColumnComboBox.getSelectedItem().toString();
                     DataPoint point = DataPoint.getValue(dataPointName);
                     valueToDisplay = String.valueOf(raid.getParser(point.room).data.get(point));
                 } catch (Exception ignored)
@@ -528,9 +462,9 @@ public class Raids extends BaseFrame
 
     boolean isTime()
     {
-        if (!example.getSelectedItem().toString().contains("Player:"))
+        if (!customColumnComboBox.getSelectedItem().toString().contains("Player:"))
         {
-            return (Objects.requireNonNull(DataPoint.getValue(Objects.requireNonNull(example.getSelectedItem()).toString())).type == DataPoint.types.TIME);
+            return (Objects.requireNonNull(DataPoint.getValue(Objects.requireNonNull(customColumnComboBox.getSelectedItem()).toString())).type == DataPoint.types.TIME);
         } else
         {
             return false;
@@ -585,12 +519,12 @@ public class Raids extends BaseFrame
             }
         }
         tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
-        tabbedPane.setTitleAt(1, "Maiden (" + maidenCount + ")");
+        /*tabbedPane.setTitleAt(1, "Maiden (" + maidenCount + ")");
         tabbedPane.setTitleAt(2, "Bloat (" + bloatCount + ")");
         tabbedPane.setTitleAt(3, "Nylo (" + nyloCount + ")");
         tabbedPane.setTitleAt(4, "Sotetseg (" + soteCount + ")");
         tabbedPane.setTitleAt(5, "Xarpus (" + xarpCount + ")");
-        tabbedPane.setTitleAt(6, "Verzik (" + verzikCount + ")");
+        tabbedPane.setTitleAt(6, "Verzik (" + verzikCount + ")");*/
     }
 
     public void resizeColumnWidthFilters(JTable table)
@@ -625,9 +559,14 @@ public class Raids extends BaseFrame
                 Component comp = table.prepareRenderer(renderer, row, column);
                 width = Math.max(comp.getPreferredSize().width + 1, width);
             }
-            if (width > 500)
+            if(table.getColumnName(column).equals("Custom"))
             {
-                width = 500;
+                width = Math.max(width, ((String) customColumnComboBox.getSelectedItem()).length()*14);
+            }
+            width = Math.max(table.getColumnModel().getColumn(column).getPreferredWidth(), width);
+            if (width > 400)
+            {
+                width = 400;
             }
             columnModel.getColumn(column).setPreferredWidth(width);
         }
@@ -635,66 +574,74 @@ public class Raids extends BaseFrame
 
     public void setLabels(List<Raid> data)
     {
-        ArrayList<SimpleTOBData> tobData = new ArrayList<>();
+        List<Raid> tobData = new ArrayList<>();
         for (Raid raidData : data)
         {
-            /*
-            if (raidData instanceof SimpleTOBData)
+
+            if (raidData instanceof Tob)
             {
-                tobData.add((SimpleTOBData) raidData);
+                tobData.add(raidData);
             }
 
-             */
         }
-        //setOverallLabels(tobData);
-        maidenTab.updateTab(tobData);
-        bloatTab.updateTab(tobData);
-        nyloTab.updateTab(tobData);
-        soteTab.updateTab(tobData);
-        xarpTab.updateTab(tobData);
-        verzikTab.updateTab(tobData);
+        setOverallLabels(data);
+        for(StatisticTab tab : tobTabs)
+        {
+            tab.updateTab(tobData);
+        }
     }
 
-    public void setOverallLabels(ArrayList<Raid> data)
+    public void setOverallLabels(List<Raid> data)
     {
-        /*
+
         setOverallAverageLabels(data);
         setOverallMedianLabels(data);
         setOverallMinLabels(data);
         setOverallMaxLabels(data);
 
-         */
     }
 
-    public void setOverallAverageLabels(ArrayList<Raid> data)
+    public void setOverallAverageLabels(List<Raid> data)
     {
-        for (String s : averageLabels.keySet())
+        for(Map<String, JLabel> labelMap : averageLabels2)
         {
-            averageLabels.get(s).setText(RoomUtil.time(StatisticGatherer.getGenericAverage(data, DataPoint.getValue(s + " Time"))));
+            for(String s : labelMap.keySet())
+            {
+                labelMap.get(s).setText(RoomUtil.time(StatisticGatherer.getGenericAverage(data, DataPoint.getValue(s + " Time"))));
+            }
         }
     }
 
-    public void setOverallMedianLabels(ArrayList<SimpleTOBData> data)
+    public void setOverallMedianLabels(List<Raid> data)
     {
-        for (String s : medianLabels.keySet())
+        for(Map<String, JLabel> labelMap : medianLabels2)
         {
-            medianLabels.get(s).setText(RoomUtil.time(StatisticGatherer.getGenericMedian(data, DataPoint.getValue(s + " Time"))));
+            for(String s : labelMap.keySet())
+            {
+                labelMap.get(s).setText(RoomUtil.time(StatisticGatherer.getGenericMedian(data, DataPoint.getValue(s + " Time"))));
+            }
         }
     }
 
-    public void setOverallMinLabels(ArrayList<SimpleTOBData> data)
+    public void setOverallMinLabels(List<Raid> data)
     {
-        for (String s : minLabels.keySet())
+        for(Map<String, JLabel> labelMap : minLabels2)
         {
-            minLabels.get(s).setText(RoomUtil.time(StatisticGatherer.getGenericMin(data, DataPoint.getValue(s + " Time"))));
+            for(String s : labelMap.keySet())
+            {
+                labelMap.get(s).setText(RoomUtil.time(StatisticGatherer.getGenericMin(data, DataPoint.getValue(s + " Time"))));
+            }
         }
     }
 
-    private void setOverallMaxLabels(ArrayList<SimpleTOBData> data)
+    private void setOverallMaxLabels(List<Raid> data)
     {
-        for (String s : maxLabels.keySet())
+        for(Map<String, JLabel> labelMap : maxLabels2)
         {
-            maxLabels.get(s).setText(RoomUtil.time(StatisticGatherer.getGenericMax(data, DataPoint.getValue(s + " Time"))));
+            for(String s : labelMap.keySet())
+            {
+                labelMap.get(s).setText(RoomUtil.time(StatisticGatherer.getGenericMax(data, DataPoint.getValue(s + " Time"))));
+            }
         }
     }
 
@@ -752,7 +699,7 @@ public class Raids extends BaseFrame
         JPanel subPanel = new JPanel();
         subPanel.setLayout(new GridLayout(7, 2));
 
-        for (String s : rooms)
+        for (String s : labelMap.keySet())
         {
             JLabel leftLabel = new JLabel(roomColor + s);
             subPanel.add(leftLabel);
@@ -790,7 +737,6 @@ public class Raids extends BaseFrame
                     if (!shouldNotBeSortedByTicks.contains(table.getColumnName(i)))
                     {
                         indiciesToSortByTimeValue.add(i);
-                        log.info("Adding column: " + i + ", " + table.getColumnName(i));
                     }
                 }
                 catch (Exception ignore)
@@ -801,7 +747,6 @@ public class Raids extends BaseFrame
             try
             {
                 dateIndex = table.getColumnModel().getColumnIndex("Date");
-                log.info("Date index: " + dateIndex);
             }
             catch (Exception ignore)
             {
@@ -811,7 +756,6 @@ public class Raids extends BaseFrame
             {
                 sorter.setComparator(dateIndex, (Comparator<String>) (date1, date2) ->
                 {
-
                     DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(Locale.getDefault());
                     LocalDate time1 = LocalDate.parse(date1, formatter);
                     LocalDate time2 = LocalDate.parse(date2, formatter);
@@ -835,29 +779,14 @@ public class Raids extends BaseFrame
         }
     }
 
+    public List<StatisticTab> tobTabs =  new ArrayList<>();
+    public List<StatisticTab> toaTabs = new ArrayList<>();
+    public List<StatisticTab> coxTabs = new ArrayList<>();
+
     public void createFrame(List<Raid> data)
     {
-        example.addItem("Challenge Time");
-        example.addActionListener(
-                al ->
-                        updateTable());
-        comboPopupMenu = new JPopupMenu();
-        comboPopupMenu.setBorder(new MatteBorder(1, 1, 1, 1, Color.DARK_GRAY));
-
-        for(RaidRoom room : RaidRoom.values())
-        {
-            comboPopupData.put(room.name, DataPoint.getSpecificNames(room));
-        }
-
-        List<String> allComboValues = new ArrayList<String>(comboPopupData.keySet());
-
-        comboStrictData = new ArrayList<>();
-        viewByRaidComboBox = new JComboBox<>();
-        viewByRaidComboBox.setEditable(true);
-        viewByRaidComboBox.setPrototypeDisplayValue("Challenge Time");
-        viewByRaidComboBox.setSelectedItem("Challenge Time");
-        viewByRaidComboBox.setEditable(false);
-        dataPointMenu = new DataPointMenu(allComboValues, comboPopupData, comboStrictData, comboPopupMenu, viewByRaidComboBox, this);
+        customColumnComboBox.setEnabled(true); //todo override renderer to show visible always
+        customColumnComboBox.addItem("Challenge Time");
 
 
         timeFollowsTab = new JCheckBox("Time Follows Tab");
@@ -868,9 +797,7 @@ public class Raids extends BaseFrame
             data.get(i).setIndex(i);
         }
 
-        int completions = 0;
         currentData = data;
-        setTitle("Raids");
 
         JPopupMenu tstMenu = getjPopupMenu();
 
@@ -887,190 +814,150 @@ public class Raids extends BaseFrame
 
         container = new JPanel();
         container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
-        tabbedPane.addChangeListener(e ->
+
+        JTabbedPane tobTabSubpanel = new JTabbedPane();
+        JTabbedPane toaTabSubpanel = new JTabbedPane();
+        JTabbedPane coxTabSubpanel = new JTabbedPane();
+
+        tobTabSubpanel.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+        toaTabSubpanel.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+        coxTabSubpanel.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+
+
+        /*tabbedPane.addChangeListener(e -> //todo
         {
             if (timeFollowsTab.isSelected())
             {
                 if (built)
                 {
-                    viewByRaidComboBox.setEditable(true);
                     switch (tabbedPane.getSelectedIndex())
                     {
                         case 0:
-                            example.setSelectedItem("Challenge Time");
+                            customColumnComboBox.setSelectedItem("Challenge Time");
                             break;
                         case 1:
-                            example.setSelectedItem("Maiden Time");
+                            customColumnComboBox.setSelectedItem("Maiden Time");
                             break;
                         case 2:
-                            example.setSelectedItem("Bloat Time");
+                            customColumnComboBox.setSelectedItem("Bloat Time");
                             break;
                         case 3:
-                            example.setSelectedItem("Nylocas Time");
+                            customColumnComboBox.setSelectedItem("Nylocas Time");
                             break;
                         case 4:
-                            example.setSelectedItem("Sotetseg Time");
+                            customColumnComboBox.setSelectedItem("Sotetseg Time");
                             break;
                         case 5:
-                            example.setSelectedItem("Xarpus Time");
+                            customColumnComboBox.setSelectedItem("Xarpus Time");
                             break;
                         case 6:
-                            example.setSelectedItem("Verzik Time");
+                            customColumnComboBox.setSelectedItem("Verzik Time");
                             break;
 
                     }
-                    viewByRaidComboBox.setEditable(false);
                     updateTable();
                 }
             }
-        });
-        JComponent overallPanel = new JPanel();
-        tabbedPane.addTab("Overall", overallPanel);
-        overallPanel.setLayout(new GridLayout(2, 3));
-
-        JPanel overallCustomPanel = new JPanel();
-        overallCustomPanel.setLayout(new BorderLayout());
-        overallCustomPanel.setBorder(BorderFactory.createTitledBorder(""));
-
-        JPanel customSubPanel = new JPanel();
-        customSubPanel.setLayout(new GridLayout(1, 4));
-
-        JPanel chooseStatisticPanel = getTitledPanel("Choose Statistic");
-        chooseStatisticPanel.setLayout(new GridLayout(1, 1));
-
-        JPanel resultsPanel = getTitledPanel("Results");
-        resultsPanel.setLayout(new GridLayout(5, 2));
-
-        JPanel tableOptionsPanel = getTitledPanel("Table Options");
-
-        JPanel viewRaidByPanel = getTitledPanel("View Raid By");
-
-        sortOptionsBox = new JComboBox<>(new String[]
-                {
-                        "Date",
-                        "Value",
-                        "Scale"
-                }
-        );
-
-        sortOrderBox = new JComboBox<>(new String[]
-                {
-                        "Ascending",
-                        "Descending"
-                });
-
-        statisticsBox = new JComboBox<>(DataPoint.getByNames());
-
-
-        statisticsBox.addActionListener(
-                al ->
-                        updateTable());
-
-        sortOptionsBox.addActionListener(
-                al ->
-                        updateTable()
-        );
-
-        sortOrderBox.addActionListener(
-                al ->
-                        updateTable()
-        );
-
-        JLabel textCustomAverageLabel = new JLabel("Average:", SwingConstants.LEFT);
-        JLabel textCustomMedianLabel = new JLabel("Median:", SwingConstants.LEFT);
-        JLabel textCustomModeLabel = new JLabel("Mode:", SwingConstants.LEFT);
-        JLabel textCustomMinLabel = new JLabel("Minimum:", SwingConstants.LEFT);
-        JLabel textCustomMaxLabel = new JLabel("Maximum:", SwingConstants.LEFT);
-
-        resultsPanel.add(textCustomAverageLabel);
-        resultsPanel.add(customAverageLabel);
-
-        resultsPanel.add(textCustomMedianLabel);
-        resultsPanel.add(customMedianLabel);
-
-        resultsPanel.add(textCustomModeLabel);
-        resultsPanel.add(customModeLabel);
-
-        resultsPanel.add(textCustomMinLabel);
-        resultsPanel.add(customMinLabel);
-
-        resultsPanel.add(textCustomMaxLabel);
-        resultsPanel.add(customMaxLabel);
-
-        chooseStatisticPanel.add(statisticsBox);
-
-        JButton undoFilter = new JButton("Clear manual filter");
-        undoFilter.addActionListener(al ->
+        });*/
+        List<JPanel> overallPanels = new ArrayList<>();
+        for(int k = 0; k < 3; k++)
         {
-            filteredIndices.clear();
-            updateTable();
-        });
+            JPanel overallPanel = new JPanel();
+            JPanel overallAveragePanel = getOverallPanel("Average", averageLabels2.get(k));
+            JPanel overallMedianPanel = getOverallPanel("Median", medianLabels2.get(k));
+            JPanel overallMinPanel = getOverallPanel("Minimum", minLabels2.get(k));
+            JPanel overallMaxPanel = getOverallPanel("Maximum", maxLabels2.get(k));
 
-        tableOptionsPanel.add(sortOptionsBox);
-        tableOptionsPanel.add(sortOrderBox);
-        tableOptionsPanel.add(undoFilter);
-        JPanel buttonLine = new JPanel();
-        buttonLine.setLayout(new GridLayout(1, 2));
-        buttonLine.add(new JLabel("Config"));
+            JPanel topStatPanel = new JPanel();
+            topStatPanel.setLayout(new GridLayout(2, 4));
 
-        viewByRaidComboBox.addActionListener(
-                al ->
-                        updateTable());
+            topStatPanel.add(overallAveragePanel);
+            topStatPanel.add(overallMedianPanel);
+            topStatPanel.add(overallMinPanel);
+            topStatPanel.add(overallMaxPanel);
 
-        viewRaidByPanel.add(viewByRaidComboBox);
 
-        viewRaidByPanel.add(timeFollowsTab);
 
-        viewRaidByPanel.add(raidsFoundLabel);
-        viewRaidByPanel.add(completionsFound);
-        raidsFoundLabel.setText("Raids found: " + data.size());
-        completionsFound.setText("Completions found: " + completions);
-
-        customSubPanel.add(chooseStatisticPanel);
-        customSubPanel.add(resultsPanel);
-        customSubPanel.add(tableOptionsPanel);
-        customSubPanel.add(viewRaidByPanel);
-
-        overallCustomPanel.add(customSubPanel);
-
-        JPanel overallAveragePanel = getOverallPanel("Average", averageLabels);
-        JPanel overallMedianPanel = getOverallPanel("Median", medianLabels);
-        JPanel overallMinPanel = getOverallPanel("Minimum", minLabels);
-        JPanel overallMaxPanel = getOverallPanel("Maximum", maxLabels);
-
-        JPanel topStatPanel = new JPanel();
-        topStatPanel.setLayout(new GridLayout(1, 4));
-
-        topStatPanel.add(overallAveragePanel);
-        topStatPanel.add(overallMedianPanel);
-        topStatPanel.add(overallMinPanel);
-        topStatPanel.add(overallMaxPanel);
-
-        overallPanel.add(topStatPanel);
-        overallPanel.add(overallCustomPanel);
-
-        ArrayList<SimpleTOBData> tobData = new ArrayList<>();
-        /*
-        for (SimpleRaidDataBase raidData : data)
-        {
-            if (raidData instanceof SimpleTOBData)
+            for(int i = 0; i < 4; i++)
             {
-                tobData.add((SimpleTOBData) raidData);
+                JPanel panel = new JPanel();
+                panel.setLayout(new BorderLayout());
+                panel.setBorder(BorderFactory.createTitledBorder("Test"));
+                JPanel subPanel = new JPanel();
+                subPanel.setLayout(new GridLayout(7, 2));
+                for (String s : rooms)
+                {
+                    JLabel leftLabel = new JLabel(roomColor + s);
+                    subPanel.add(leftLabel);
+                    subPanel.add(new JLabel("-"));
+                }
+                panel.add(subPanel);
+                topStatPanel.add(panel);
             }
+
+            overallPanel.add(topStatPanel);
+            overallPanels.add(overallPanel);
         }
-         */
-        maidenTab = new StatisticTab(tobData, MAIDEN);
-        tabbedPane.addTab("Maiden", maidenTab);
-        bloatTab = new StatisticTab(tobData, BLOAT);
-        tabbedPane.addTab("Bloat", bloatTab);
-        nyloTab = new StatisticTab(tobData, NYLOCAS);
-        tabbedPane.addTab("Nylo", nyloTab);
-        soteTab = new StatisticTab(tobData, SOTETSEG);
-        tabbedPane.addTab("Sotetseg", soteTab);
-        xarpTab = new StatisticTab(tobData, XARPUS);
-        tabbedPane.addTab("Xarpus", xarpTab);
-        verzikTab = new StatisticTab(tobData, VERZIK);
-        tabbedPane.addTab("Verzik", verzikTab);
+        //tabbedPane.addTab("Overall", overallPanel);
+        //overallPanel.setLayout(new GridLayout(1, 1));
+
+
+        List<Raid> tobData = new ArrayList<>();
+        List<Raid> toaData = new ArrayList<>();
+        List<Raid> coxData = new ArrayList<>();
+
+        for (Raid raidData : data)
+        {
+            if (raidData instanceof Tob)
+            {
+                tobData.add(raidData);
+            }
+            else if(raidData instanceof Toa)
+            {
+                toaData.add(raidData);
+            }
+            else if(raidData instanceof Cox)
+            {
+                coxData.add(raidData);
+            }
+
+        }
+
+        List<Integer> tobIconIDs = new ArrayList<>(Arrays.asList(ItemID.LIL_MAIDEN, ItemID.LIL_BLOAT, ItemID.LIL_NYLO, ItemID.LIL_SOT, ItemID.LIL_XARP, ItemID.LIL_ZIK));
+        List<Integer> toaIconIDs = new ArrayList<>(Arrays.asList(ItemID.NEUTRALISING_POTION, ItemID.BABI, ItemID.SWARM, ItemID.KEPHRITI, ItemID.DRAGON_PICKAXE, ItemID.AKKHITO, ItemID.WATER_CONTAINER, ItemID.ZEBO, ItemID.ELIDINIS_GUARDIAN));
+        List<Integer> coxIconIDs = new ArrayList<>(Arrays.asList(ItemID.TEKTINY, ItemID.DRAGON_WARHAMMER, ItemID.KINDLING, ItemID.DYNAMITE, ItemID.VANGUARD, ItemID.LOCKPICK, ItemID.VESPINA, ItemID.PHOENIX_NECKLACE, ItemID.DRAGON_PICKAXE, ItemID.VASA_MINIRIO, ItemID.SALVE_AMULET_E, ItemID.PUPPADILE, ItemID.OLMLET));
+
+        int index = 0;
+        tobTabSubpanel.addTab("Overall", overallPanels.get(0));
+        toaTabSubpanel.addTab("Overall", overallPanels.get(1));
+        coxTabSubpanel.addTab("Overall", overallPanels.get(2));
+        for(RaidRoom room : Arrays.stream(RaidRoom.values()).filter(RaidRoom::isTOB).toArray(RaidRoom[]::new))
+        {
+            StatisticTab statisticTab = new StatisticTab(tobData, room);
+            tobTabSubpanel.addTab("", statisticTab);
+            tobTabSubpanel.setIconAt(index+1, new ImageIcon(itemManager.getImage(tobIconIDs.get(index))));
+            tobTabs.add(statisticTab);
+            index++;
+        }
+        index = 0;
+        for(RaidRoom room : Arrays.stream(RaidRoom.values()).filter(RaidRoom::isTOA).toArray(RaidRoom[]::new))
+        {
+            StatisticTab statisticTab = new StatisticTab(toaData, room);
+            toaTabSubpanel.addTab("", statisticTab);
+            toaTabSubpanel.setIconAt(index+1, new ImageIcon(itemManager.getImage(toaIconIDs.get(index))));
+            toaTabs.add(statisticTab);
+            index++;
+        }
+
+        index = 0;
+        for(RaidRoom room : Arrays.stream(RaidRoom.values()).filter(RaidRoom::isCOX).toArray(RaidRoom[]::new))
+        {
+            StatisticTab statisticTab = new StatisticTab(coxData, room);
+            coxTabSubpanel.addTab("", statisticTab);
+            coxTabSubpanel.setIconAt(index+1, new ImageIcon(itemManager.getImage(coxIconIDs.get(index))));
+            coxTabs.add(statisticTab);
+            index++;
+        }
 
         tabbedPane.setMinimumSize(new Dimension(100, 300));
 
@@ -1116,6 +1003,15 @@ public class Raids extends BaseFrame
         topContainer.setLayout(new BoxLayout(topContainer, BoxLayout.X_AXIS));
 
         topContainer.setPreferredSize(new Dimension(800, 300));
+
+        tabbedPane.addTab("", tobTabSubpanel);
+        tabbedPane.addTab("", toaTabSubpanel);
+        tabbedPane.addTab("", coxTabSubpanel);
+
+        tabbedPane.setIconAt(0, new ImageIcon(itemManager.getImage(ItemID.SCYTHE_OF_VITUR)));
+        tabbedPane.setIconAt(1, new ImageIcon(itemManager.getImage(ItemID.TWISTED_BOW)));
+        tabbedPane.setIconAt(2, new ImageIcon(itemManager.getImage(ItemID.TUMEKENS_SHADOW)));
+
         topContainer.add(tabbedPane);
         topContainer.add(additionalFiltersPanel);
         setLabels(data);
@@ -1567,6 +1463,15 @@ public class Raids extends BaseFrame
             updateTable();
         });
 
+        JMenuItem undoFilterRaids = new JMenuItem("Clear Filtered Raids");
+        undoFilterRaids.setBackground(Color.BLACK);
+        undoFilterRaids.setOpaque(true);
+        undoFilterRaids.addActionListener(e ->
+        {
+                filteredIndices.clear();
+                updateTable();
+        });
+
         JMenuItem filterExclusiveRaids = new JMenuItem("Filter All Except Selected Raids");
         filterExclusiveRaids.setBackground(Color.BLACK);
         filterExclusiveRaids.setOpaque(true);
@@ -1618,6 +1523,7 @@ public class Raids extends BaseFrame
         raidPopup.add(addToComparison);
         raidPopup.add(filterRaids);
         raidPopup.add(filterExclusiveRaids);
+        raidPopup.add(undoFilterRaids);
         raidPopup.add(analyzeSessions);
         raidPopup.add(viewCharts);
         raidPopup.add(viewGraphs);
@@ -1647,9 +1553,9 @@ public class Raids extends BaseFrame
                     quickFiltersState.add("QF-Partial Rooms:" + filterPartialOnly.isSelected());
                     quickFiltersState.add("QF-Normal Mode Only:" + filterNormalOnly.isSelected());
                     quickFiltersState.add("QF-Scale:" + filterCheckBoxScale.isSelected() + ":" + filterComboBoxScale.getSelectedIndex());
-                    quickFiltersState.add("QF-View Raid By:" + example.getItemAt(example.getSelectedIndex()));
-                    quickFiltersState.add("QF-Table Sort By:" + sortOptionsBox.getItemAt(sortOptionsBox.getSelectedIndex()));
-                    quickFiltersState.add("QF-Table Sort:" + sortOrderBox.getItemAt(sortOrderBox.getSelectedIndex()));
+                    quickFiltersState.add("QF-View Raid By:" + customColumnComboBox.getItemAt(customColumnComboBox.getSelectedIndex()));
+                    //quickFiltersState.add("QF-Table Sort By:" + sortOptionsBox.getItemAt(sortOptionsBox.getSelectedIndex())); .//todo
+                    //quickFiltersState.add("QF-Table Sort:" + sortOrderBox.getItemAt(sortOrderBox.getSelectedIndex())); //todo
                     SaveFilter saveFilter = new SaveFilter(activeFilters, quickFiltersState);
                     saveFilter.open();
                 });
@@ -1756,7 +1662,6 @@ public class Raids extends BaseFrame
         rightContainer.add(rightBottomBottomContainer);
         rightContainer.add(rightBottomMostContainer);
         splitLeftRight.add(rightContainer);
-        sortOrderBox.setSelectedIndex(1);
 
         add(splitLeftRight);
         pack();
@@ -2046,21 +1951,19 @@ public class Raids extends BaseFrame
                             }
                             break;
                         case "View Raid By":
-                            viewByRaidComboBox.setEditable(true);
                             if (!Objects.equals(data[1], "null"))
                             {
-                                example.setSelectedItem(data[1]);
+                                customColumnComboBox.setSelectedItem(data[1]);
                             } else
                             {
-                                example.setSelectedItem("Challenge Time");
+                                customColumnComboBox.setSelectedItem("Challenge Time");
                             }
-                            viewByRaidComboBox.setEditable(false);
                             break;
                         case "Table Sort By":
-                            sortOptionsBox.setSelectedItem(data[1]);
+                            //sortOptionsBox.setSelectedItem(data[1]); //todo
                             break;
                         case "Table Sort":
-                            sortOrderBox.setSelectedItem(data[1]);
+                           // sortOrderBox.setSelectedItem(data[1]); //todo
                             break;
                     }
                 }

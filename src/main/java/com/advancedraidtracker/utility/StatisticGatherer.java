@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class StatisticGatherer
 {
-    public static double getOverallTimeAverage(ArrayList<Raid> data)
+    public static double getOverallTimeAverage(List<Raid> data)
     {
         data = data.stream().filter(Raid::isAccurate).collect(Collectors.toCollection(ArrayList::new));
         if (data.isEmpty())
@@ -32,16 +32,16 @@ public class StatisticGatherer
         return total / count;
     }
 
-    public static double getOverallMedian(ArrayList<SimpleTOBData> data)
+    public static double getOverallMedian(List<Raid> data)
     {
-        data = data.stream().filter(SimpleTOBData::getOverallTimeAccurate).collect(Collectors.toCollection(ArrayList::new));
+        data = data.stream().filter(Raid::getOverallTimeAccurate).collect(Collectors.toCollection(ArrayList::new));
         if (data.isEmpty())
         {
             return -1;
         }
         double median;
         List<Double> values = new ArrayList<>();
-        for (SimpleTOBData d : data)
+        for (Raid d : data)
         {
             values.add((double) d.getTimeSum());
         }
@@ -56,11 +56,11 @@ public class StatisticGatherer
         return median;
     }
 
-    public static double getOverallTimeMin(ArrayList<SimpleTOBData> data)
+    public static double getOverallTimeMin(List<Raid> data)
     {
-        data = data.stream().filter(SimpleTOBData::getOverallTimeAccurate).collect(Collectors.toCollection(ArrayList::new));
+        data = data.stream().filter(Raid::getOverallTimeAccurate).collect(Collectors.toCollection(ArrayList::new));
         int minValue = Integer.MAX_VALUE;
-        for (SimpleTOBData d : data)
+        for (Raid d : data)
         {
             int split = d.getTimeSum();
             if (split < minValue)
@@ -71,11 +71,11 @@ public class StatisticGatherer
         return minValue;
     }
 
-    public static double getOverallMax(ArrayList<SimpleTOBData> data)
+    public static double getOverallMax(List<Raid> data)
     {
-        data = data.stream().filter(SimpleTOBData::getOverallTimeAccurate).collect(Collectors.toCollection(ArrayList::new));
+        data = data.stream().filter(Raid::getOverallTimeAccurate).collect(Collectors.toCollection(ArrayList::new));
         int maxValue = 0;
-        for (SimpleTOBData d : data)
+        for (Raid d : data)
         {
             int split = d.getTimeSum();
             if (split > maxValue)
@@ -86,7 +86,7 @@ public class StatisticGatherer
         return maxValue;
     }
 
-    public static double getGenericAverage(ArrayList<Integer> data)
+    public static double getGenericAverage(List<Integer> data)
     {
         double total = 0;
         double count = 0;
@@ -101,7 +101,7 @@ public class StatisticGatherer
         return total / count;
     }
 
-    public static double getGenericAverage(ArrayList<Raid> data, DataPoint parameter)
+    public static double getGenericAverage(List<Raid> data, DataPoint parameter)
     {
         if (parameter == DataPoint.CHALLENGE_TIME)
         {
@@ -149,6 +149,10 @@ public class StatisticGatherer
 
     private static double getMedian(List<Double> values)
     {
+        if(values.isEmpty())
+        {
+            return -1;
+        }
         double median;
         if (values.size() % 2 == 0)
         {
@@ -160,7 +164,7 @@ public class StatisticGatherer
         return median;
     }
 
-    public static double getGenericMedian(ArrayList<SimpleTOBData> data, DataPoint param)
+    public static double getGenericMedian(List<Raid> data, DataPoint param)
     {
         if (param == DataPoint.OVERALL_TIME)
         {
@@ -171,13 +175,13 @@ public class StatisticGatherer
             return -1;
         }
         List<Double> values = new ArrayList<>();
-        for (SimpleTOBData room : data)
+        for (Raid room : data)
         {
             if (!room.getTimeAccurate(param))
             {
                 continue;
             }
-            int d = room.getValue(param);
+            int d = room.get(param);
             if (d != -1)
                 values.add((double) d);
         }
@@ -189,7 +193,7 @@ public class StatisticGatherer
         return -1;
     }
 
-    public static double getGenericMin(ArrayList<Integer> data, boolean isTime)
+    public static double getGenericMin(List<Integer> data, boolean isTime)
     {
         int minValue = Integer.MAX_VALUE;
         for (int d : data)
@@ -202,28 +206,28 @@ public class StatisticGatherer
         return minValue;
     }
 
-    public static double getGenericMin(ArrayList<Integer> data)
+    public static double getGenericMin(List<Integer> data)
     {
         return getGenericMin(data, false);
     }
 
-    public static double getGenericMin(ArrayList<SimpleTOBData> data, DataPoint parameter)
+    public static double getGenericMin(List<Raid> data, DataPoint parameter)
     {
         if (parameter == DataPoint.OVERALL_TIME)
         {
             return getOverallTimeMin(data);
         }
         int minValue = Integer.MAX_VALUE;
-        for (SimpleTOBData room : data)
+        for (Raid room : data)
         {
             if (!room.getTimeAccurate(parameter))
             {
                 continue;
             }
-            int d = room.getValue(parameter);
+            int d = room.get(parameter);
             if (d < minValue && d != -1)
             {
-                if (parameter.type != DataPoint.types.TIME || room.getValue(parameter) != 0)
+                if (parameter.type != DataPoint.types.TIME || room.get(parameter) != 0)
                 {
                     minValue = d;
                 }
@@ -246,20 +250,20 @@ public class StatisticGatherer
         return maxValue;
     }
 
-    public static double getGenericMax(ArrayList<SimpleTOBData> data, DataPoint parameter)
+    public static double getGenericMax(List<Raid> data, DataPoint parameter)
     {
         if (parameter == DataPoint.OVERALL_TIME)
         {
             return getOverallMax(data);
         }
         int maxValue = 0;
-        for (SimpleTOBData room : data)
+        for (Raid room : data)
         {
             if (!room.getTimeAccurate(parameter))
             {
                 continue;
             }
-            int d = room.getValue(parameter);
+            int d = room.get(parameter);
             if (d > maxValue)
             {
                 maxValue = d;
@@ -268,7 +272,7 @@ public class StatisticGatherer
         return maxValue;
     }
 
-    public static double getGenericMode(ArrayList<SimpleTOBData> data, DataPoint parameter)
+    public static double getGenericMode(ArrayList<Raid> data, DataPoint parameter)
     {
         int maxCount = 0;
         int maxValue = 0;
@@ -278,15 +282,15 @@ public class StatisticGatherer
             {
                 continue;
             }
-            int iv = data.get(i).getValue(parameter);
+            int iv = data.get(i).get(parameter);
             int count = 0;
-            for (SimpleTOBData datum : data)
+            for (Raid datum : data)
             {
                 if (!datum.getTimeAccurate(parameter))
                 {
                     continue;
                 }
-                int jv = datum.getValue(parameter);
+                int jv = datum.get(parameter);
                 if (jv != -1 && iv != -1)
                 {
                     if (Objects.equals(datum, data.get(i)))

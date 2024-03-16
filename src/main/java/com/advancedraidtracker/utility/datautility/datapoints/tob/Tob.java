@@ -111,6 +111,40 @@ public class Tob extends Raid
     }
 
     @Override
+    public int getTimeSum()
+    {
+        int time = 0;
+        for(RaidRoom room : RaidRoom.values())
+        {
+            if(room.isTOB())
+            {
+                if(getRoomAccurate(room))
+                {
+                    int val = get(room.name + " Time");
+                    time += (val == -1) ? 0 : val;
+                }
+            }
+        }
+        return time;
+    }
+
+    @Override
+    public boolean getOverallTimeAccurate()
+    {
+        for(RaidRoom room : RaidRoom.values())
+        {
+            if(room.isTOB())
+            {
+                if(!getRoomAccurate(room))
+                {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    @Override
     public String getRoomStatus()
     {
         return roomStatus;

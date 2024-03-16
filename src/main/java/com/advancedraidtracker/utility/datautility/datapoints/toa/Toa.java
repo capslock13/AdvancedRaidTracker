@@ -2,6 +2,7 @@ package com.advancedraidtracker.utility.datautility.datapoints.toa;
 
 import com.advancedraidtracker.constants.LogID;
 import com.advancedraidtracker.constants.ParseInstruction;
+import com.advancedraidtracker.constants.RaidRoom;
 import com.advancedraidtracker.constants.RaidType;
 import com.advancedraidtracker.utility.datautility.DataPoint;
 import com.advancedraidtracker.utility.datautility.datapoints.LogEntry;
@@ -53,6 +54,41 @@ public class Toa extends Raid
     public RaidType getRaidType()
     {
         return RaidType.TOA;
+    }
+
+
+    @Override
+    public int getTimeSum()
+    {
+        int time = 0;
+        for(RaidRoom room : RaidRoom.values())
+        {
+            if(room.isTOA())
+            {
+                if(getRoomAccurate(room))
+                {
+                    int val = get(room.name + " Time");
+                    time += (val == -1) ? 0 : val;
+                }
+            }
+        }
+        return time;
+    }
+
+    @Override
+    public boolean getOverallTimeAccurate()
+    {
+        for(RaidRoom room : RaidRoom.values())
+        {
+            if(room.isTOA())
+            {
+                if(!getRoomAccurate(room))
+                {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     @Override

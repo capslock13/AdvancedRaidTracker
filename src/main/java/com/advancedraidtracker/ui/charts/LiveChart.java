@@ -61,7 +61,7 @@ public class LiveChart extends BaseFrame
             String activePanel = names[tabbedPane.getSelectedIndex()];
             for(String panelNames : names)
             {
-                if(activePanel.equals(panelNames))
+                if(activePanel.equals(panelNames) && this.isShowing())
                 {
                     getPanel(panelNames).setActive(true);
                     getPanel(panelNames).redraw();
@@ -97,6 +97,7 @@ public class LiveChart extends BaseFrame
                 String activePanel = names[tabbedPane.getSelectedIndex()];
                 getPanel(activePanel).setActive(true);
                 getPanel(activePanel).redraw();
+                pack();
             }
         });
         add(tabbedPane);

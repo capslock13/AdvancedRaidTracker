@@ -3,6 +3,7 @@ package com.advancedraidtracker.utility;
 import com.advancedraidtracker.constants.RaidType;
 import com.advancedraidtracker.constants.Room;
 import com.advancedraidtracker.constants.TobIDs;
+import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.Player;
 import net.runelite.api.coords.WorldPoint;
@@ -10,7 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
 
-
+@Slf4j
 public class RoomUtil
 {
     public final static String[] MAIDEN_CRAB_NAMES = {
@@ -91,6 +92,33 @@ public class RoomUtil
     public static String time(int ticks)
     {
         return time((double) ticks);
+    }
+
+    public static Integer ticks(String time)
+    {
+        if(time.equals("-"))
+        {
+            return -1;
+        }
+        String[] split = time.split(":");
+        int tickCount = 0;
+        try
+        {
+            if (split.length == 2)
+            {
+                tickCount += Integer.parseInt(split[0])*100;
+                tickCount += (int) ((Double.parseDouble(split[1].split("s")[0]))/.6);
+            }
+            if (split.length == 1)
+            {
+                tickCount += (int) ((Double.parseDouble(split[0].split("s")[0]))/.6);
+            }
+        }
+        catch (Exception e)
+        {
+            log.info("Failed to convert time to ticks: " + time);
+        }
+        return tickCount;
     }
 
     public static String time(double ticks)

@@ -9,7 +9,6 @@ import com.advancedraidtracker.filters.*;
 import com.advancedraidtracker.ui.customrenderers.*;
 import com.advancedraidtracker.ui.charts.ChartFrame;
 import com.advancedraidtracker.ui.comparisonview.ComparisonViewFrame;
-import com.advancedraidtracker.ui.comparisonview.ComparisonViewPanel;
 import com.advancedraidtracker.ui.comparisonview.NoDataPopUp;
 import com.advancedraidtracker.ui.crableaks.CrabLeakInfo;
 import com.advancedraidtracker.ui.exportraids.SaveRaids;
@@ -32,9 +31,7 @@ import javax.swing.*;
 import javax.swing.border.MatteBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumnModel;
+import javax.swing.table.*;
 import javax.swing.text.BadLocationException;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -125,6 +122,8 @@ public class Raids extends BaseFrame
     public String[] rooms = {"Maiden", "Bloat", "Nylocas", "Sotetseg", "Xarpus", "Verzik", "Challenge"};
     private final ConfigManager configManager;
 
+    private final Set<String> shouldNotBeSortedByTicks = new HashSet<>(Arrays.asList("", "Scale", "Raid", "Status", "Players", "Spectate", "Date"));
+
     public Raids(AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
     {
         for (String s : rooms)
@@ -191,6 +190,8 @@ public class Raids extends BaseFrame
          */
     }
 
+    public JComboBox<String> example = new JComboBox<>();
+
     private boolean evaluateAllFilters(Raid data)
     {
         for (ImplicitFilter filter : activeFilters)
@@ -202,6 +203,8 @@ public class Raids extends BaseFrame
         }
         return true;
     }
+
+    private boolean tableSortEnabled = true;
 
     public void updateTable()
     {
@@ -280,7 +283,7 @@ public class Raids extends BaseFrame
                 if (data instanceof Tob)
                 {
                     Tob tobData = (Tob) data;
-                    String comboText = viewByRaidComboBox.getSelectedItem().toString();
+                    String comboText = example.getSelectedItem().toString();
                     if(comboText.endsWith("Time"))
                     {
                         if(!data.getRoomAccurate(RaidRoom.valueOf(comboText.split(",")[0])))
@@ -359,9 +362,9 @@ public class Raids extends BaseFrame
             {
                 columnNamesDynamic.add(item.getText());
             }
-            if (item.getText().equals("Status"))
+            if (item.getText().equals("Status")) //adds custom after
             {
-                columnNamesDynamic.add(Objects.requireNonNull(viewByRaidComboBox.getSelectedItem()).toString());
+                columnNamesDynamic.add("Custom");
             }
         }
         ArrayList<Object[]> tableBuilder = new ArrayList<>();
@@ -395,13 +398,12 @@ public class Raids extends BaseFrame
                 table.getColumn(table.getColumnName(i)).setCellEditor(new ButtonEditorRoomData(new JCheckBox(), tableData));
                 table.getColumn(table.getColumnName(i)).setCellRenderer(new ButtonRenderer());
             }
-            else if(table.getColumnName(i).equals("Challenge Time"))
+            else if(table.getColumnName(i).equals("Custom"))
             {
                 table.getColumn(table.getColumnName(i)).setCellEditor(new NonEditableCell(new JTextField()));
                 table.getColumn(table.getColumnName(i)).setCellRenderer(new StripedTableRowCellRenderer());
-                JComboBox<String> test = new JComboBox<>();
-                test.addItem("Challenge Time");
-                table.getColumn(table.getColumnName(i)).setHeaderRenderer(new DynamicTableHeaderRenderer(test));
+                table.getColumn(table.getColumnName(i)).setHeaderRenderer(new DynamicTableHeaderRenderer(example, this));
+
             }
             else
             {
@@ -409,6 +411,30 @@ public class Raids extends BaseFrame
                 table.getColumn(table.getColumnName(i)).setCellRenderer(new StripedTableRowCellRenderer());
             }
         }
+        setTableSorterActive(true);
+        table.getTableHeader().addMouseListener(new MouseAdapter()
+        {
+            @Override
+            public void mouseClicked(MouseEvent e)
+            {
+                if(SwingUtilities.isLeftMouseButton(e))
+                {
+                        Component c = e.getComponent();
+                        if(c instanceof JTableHeader)
+                        {
+                            JTableHeader header = (JTableHeader) c;
+                            if(header.getTable().getColumnName(header.getColumnModel().getColumnIndexAtX(e.getX())).equals("Custom"))
+                            {
+                                Rectangle rect = table.getCellRect(0, header.getColumnModel().getColumnIndexAtX(e.getX()), true);
+                                if(e.getX() > rect.getX()+rect.getWidth()-20)
+                                {
+                                    setTableSorterActive(false);
+                                }
+                            }
+                        }
+                }
+            }
+        });
 
         resizeColumnWidth(table);
         table.setFillsViewportHeight(true);
@@ -455,8 +481,22 @@ public class Raids extends BaseFrame
                     hour -= 12;
                 }
                 return hour + ":" + minuteString + period;
+            case "Custom":
+                String valueToDisplay = "(?)";
+                String dataPointName = "";
+                try
+                {
+                    dataPointName = example.getSelectedItem().toString();
+                    DataPoint point = DataPoint.getValue(dataPointName);
+                    valueToDisplay = String.valueOf(raid.getParser(point.room).data.get(point));
+                } catch (Exception ignored)
+                {
+
+                }
+                return (isTime(dataPointName) ? RoomUtil.time(valueToDisplay) : valueToDisplay);
         }
         String valueToDisplay = "(?)";
+        String dataPointName = "";
         try
         {
             DataPoint point = DataPoint.getValue(column);
@@ -488,9 +528,9 @@ public class Raids extends BaseFrame
 
     boolean isTime()
     {
-        if (!viewByRaidComboBox.getSelectedItem().toString().contains("Player:"))
+        if (!example.getSelectedItem().toString().contains("Player:"))
         {
-            return (Objects.requireNonNull(DataPoint.getValue(Objects.requireNonNull(viewByRaidComboBox.getSelectedItem()).toString())).type == DataPoint.types.TIME);
+            return (Objects.requireNonNull(DataPoint.getValue(Objects.requireNonNull(example.getSelectedItem()).toString())).type == DataPoint.types.TIME);
         } else
         {
             return false;
@@ -735,8 +775,72 @@ public class Raids extends BaseFrame
         close();
     }
 
+    public void setTableSorterActive(boolean state)
+    {
+        tableSortEnabled = state;
+        if(state)
+        {
+            TableRowSorter<TableModel> sorter = new TableRowSorter<>(table.getModel());
+            int dateIndex = -1;
+            List<Integer> indiciesToSortByTimeValue = new ArrayList<>();
+            for(int i = 0; i < table.getColumnCount(); i++)
+            {
+                try
+                {
+                    if (!shouldNotBeSortedByTicks.contains(table.getColumnName(i)))
+                    {
+                        indiciesToSortByTimeValue.add(i);
+                        log.info("Adding column: " + i + ", " + table.getColumnName(i));
+                    }
+                }
+                catch (Exception ignore)
+                {
+
+                }
+            }
+            try
+            {
+                dateIndex = table.getColumnModel().getColumnIndex("Date");
+                log.info("Date index: " + dateIndex);
+            }
+            catch (Exception ignore)
+            {
+                //no date column
+            }
+            if(dateIndex != -1)
+            {
+                sorter.setComparator(dateIndex, (Comparator<String>) (date1, date2) ->
+                {
+
+                    DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(Locale.getDefault());
+                    LocalDate time1 = LocalDate.parse(date1, formatter);
+                    LocalDate time2 = LocalDate.parse(date2, formatter);
+                    return time1.compareTo(time2);
+                });
+            }
+            for(Integer i : indiciesToSortByTimeValue)
+            {
+                sorter.setComparator(i, (Comparator<String>) (time1, time2) ->
+                {
+                    Integer ticks1 = RoomUtil.ticks(time1);
+                    Integer ticks2 = RoomUtil.ticks(time2);
+                    return ticks1.compareTo(ticks2);
+                });
+            }
+            table.setRowSorter(sorter);
+        }
+        else
+        {
+            table.setRowSorter(null);
+        }
+    }
+
     public void createFrame(List<Raid> data)
     {
+        example.addItem("Challenge Time");
+        example.addActionListener(
+                al ->
+                        updateTable());
         comboPopupMenu = new JPopupMenu();
         comboPopupMenu.setBorder(new MatteBorder(1, 1, 1, 1, Color.DARK_GRAY));
 
@@ -753,28 +857,8 @@ public class Raids extends BaseFrame
         viewByRaidComboBox.setPrototypeDisplayValue("Challenge Time");
         viewByRaidComboBox.setSelectedItem("Challenge Time");
         viewByRaidComboBox.setEditable(false);
-        dataPointMenu = new DataPointMenu(allComboValues, comboPopupData, comboStrictData, comboPopupMenu, viewByRaidComboBox);
+        dataPointMenu = new DataPointMenu(allComboValues, comboPopupData, comboStrictData, comboPopupMenu, viewByRaidComboBox, this);
 
-
-        for (Component comp : viewByRaidComboBox.getComponents())
-        {
-            if (comp instanceof AbstractButton)
-            {
-                arrowButton = (AbstractButton) comp;
-                arrowButton.setBackground(Color.BLACK);
-            }
-        }
-
-        arrowButton.addActionListener(e -> dataPointMenu.invertVisible());
-
-        viewByRaidComboBox.addMouseListener(new MouseAdapter()
-        {
-            @Override
-            public void mouseClicked(MouseEvent e)
-            {
-                dataPointMenu.invertVisible();
-            }
-        });
 
         timeFollowsTab = new JCheckBox("Time Follows Tab");
         timeFollowsTab.setSelected(true);
@@ -792,6 +876,7 @@ public class Raids extends BaseFrame
 
 
         table = new JTable();
+        table.setAutoCreateRowSorter(true);
         table.getTableHeader().setComponentPopupMenu(tstMenu);
         JScrollPane pane = new JScrollPane(table);
 
@@ -812,25 +897,25 @@ public class Raids extends BaseFrame
                     switch (tabbedPane.getSelectedIndex())
                     {
                         case 0:
-                            viewByRaidComboBox.setSelectedItem("Challenge Time");
+                            example.setSelectedItem("Challenge Time");
                             break;
                         case 1:
-                            viewByRaidComboBox.setSelectedItem("Maiden Time");
+                            example.setSelectedItem("Maiden Time");
                             break;
                         case 2:
-                            viewByRaidComboBox.setSelectedItem("Bloat Time");
+                            example.setSelectedItem("Bloat Time");
                             break;
                         case 3:
-                            viewByRaidComboBox.setSelectedItem("Nylocas Time");
+                            example.setSelectedItem("Nylocas Time");
                             break;
                         case 4:
-                            viewByRaidComboBox.setSelectedItem("Sotetseg Time");
+                            example.setSelectedItem("Sotetseg Time");
                             break;
                         case 5:
-                            viewByRaidComboBox.setSelectedItem("Xarpus Time");
+                            example.setSelectedItem("Xarpus Time");
                             break;
                         case 6:
-                            viewByRaidComboBox.setSelectedItem("Verzik Time");
+                            example.setSelectedItem("Verzik Time");
                             break;
 
                     }
@@ -1562,7 +1647,7 @@ public class Raids extends BaseFrame
                     quickFiltersState.add("QF-Partial Rooms:" + filterPartialOnly.isSelected());
                     quickFiltersState.add("QF-Normal Mode Only:" + filterNormalOnly.isSelected());
                     quickFiltersState.add("QF-Scale:" + filterCheckBoxScale.isSelected() + ":" + filterComboBoxScale.getSelectedIndex());
-                    quickFiltersState.add("QF-View Raid By:" + viewByRaidComboBox.getItemAt(viewByRaidComboBox.getSelectedIndex()));
+                    quickFiltersState.add("QF-View Raid By:" + example.getItemAt(example.getSelectedIndex()));
                     quickFiltersState.add("QF-Table Sort By:" + sortOptionsBox.getItemAt(sortOptionsBox.getSelectedIndex()));
                     quickFiltersState.add("QF-Table Sort:" + sortOrderBox.getItemAt(sortOrderBox.getSelectedIndex()));
                     SaveFilter saveFilter = new SaveFilter(activeFilters, quickFiltersState);
@@ -1964,10 +2049,10 @@ public class Raids extends BaseFrame
                             viewByRaidComboBox.setEditable(true);
                             if (!Objects.equals(data[1], "null"))
                             {
-                                viewByRaidComboBox.setSelectedItem(data[1]);
+                                example.setSelectedItem(data[1]);
                             } else
                             {
-                                viewByRaidComboBox.setSelectedItem("Challenge Time");
+                                example.setSelectedItem("Challenge Time");
                             }
                             viewByRaidComboBox.setEditable(false);
                             break;

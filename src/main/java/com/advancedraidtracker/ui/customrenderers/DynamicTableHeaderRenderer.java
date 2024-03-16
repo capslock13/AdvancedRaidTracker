@@ -3,8 +3,10 @@ package com.advancedraidtracker.ui.customrenderers;
 
 import com.advancedraidtracker.constants.RaidRoom;
 import com.advancedraidtracker.ui.DataPointMenu;
+import com.advancedraidtracker.ui.Raids;
 import com.advancedraidtracker.utility.datautility.DataPoint;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
 import javax.swing.border.MatteBorder;
@@ -15,7 +17,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.*;
 import java.util.List;
-
+@Slf4j
 public class DynamicTableHeaderRenderer implements TableCellRenderer
 {
     private JTable table = null;
@@ -26,15 +28,15 @@ public class DynamicTableHeaderRenderer implements TableCellRenderer
     java.util.List<String> flatData;
     JPopupMenu popupMenu;
     DataPointMenu dataPointMenu;
+    Raids window;
 
-    public DynamicTableHeaderRenderer(JComboBox<String> editor)
+    public DynamicTableHeaderRenderer(JComboBox<String> editor, Raids window)
     {
-
+        this.window = window;
         this.editor = editor;
         this.editor.setBorder(UIManager.getBorder("TableHeader.cellBorder"));
         popupData = new LinkedHashMap<>();
         flatData = new ArrayList<>();
-
         for(RaidRoom room : RaidRoom.values())
         {
             popupData.put(room.name, DataPoint.getSpecificNames(room));
@@ -48,7 +50,7 @@ public class DynamicTableHeaderRenderer implements TableCellRenderer
         popupMenu = new JPopupMenu();
         popupMenu.setBorder(new MatteBorder(1, 1, 1, 1, Color.DARK_GRAY));
         List<String> allComboValues = new ArrayList<String>(popupData.keySet());
-        dataPointMenu = new DataPointMenu(allComboValues, popupData, flatData, popupMenu, editor);
+        dataPointMenu = new DataPointMenu(allComboValues, popupData, flatData, popupMenu, editor, window);
     }
 
     private boolean menuVisible = false;
@@ -64,7 +66,7 @@ public class DynamicTableHeaderRenderer implements TableCellRenderer
                 this.editor.setForeground(header.getForeground());
                 this.editor.setBackground(header.getBackground());
                 this.editor.setFont(header.getFont());
-                reporter = new MouseEventReposter(header, col, this.editor, popupMenu);
+                reporter = new MouseEventReposter(header, col, this.editor, popupMenu, window);
                 header.addMouseListener(reporter);
             }
         }
@@ -83,9 +85,11 @@ public class DynamicTableHeaderRenderer implements TableCellRenderer
         private int column = -1;
         private Component editor;
         private JPopupMenu menu;
+        private Raids window;
 
-        public MouseEventReposter(JTableHeader header, int column, Component editor, JPopupMenu menu)
+        public MouseEventReposter(JTableHeader header, int column, Component editor, JPopupMenu menu, Raids window)
         {
+            this.window = window;
             this.header = header;
             this.column = column;
             this.editor = editor;
@@ -132,7 +136,24 @@ public class DynamicTableHeaderRenderer implements TableCellRenderer
                 setDispatchComponent(e);
                 repostEvent(e);
             }
-            menu.show(editor, 0, editor.getHeight());
+            if(SwingUtilities.isLeftMouseButton(e))
+            {
+                try
+                {
+                    Rectangle rect = header.getTable().getCellRect(0, header.getColumnModel().getColumnIndexAtX(e.getX()), true);
+                    if(e.getX() > rect.getX()+rect.getWidth()-20)
+                    {
+                        log.info(e.getX() + ", " + rect.getWidth() + ", " + menu.getWidth());
+                        menu.show(editor, (int)rect.getWidth()-menu.getWidth(), editor.getHeight());
+                        e.consume();
+                        window.setTableSorterActive(true);
+                    }
+                }
+                catch (Exception ignore)
+                {
+                    //resizing quirk
+                }
+            }
         }
 
         @Override

@@ -4,6 +4,7 @@ import com.advancedraidtracker.constants.RaidRoom;
 import com.advancedraidtracker.ui.comparisonview.ComparisonViewPanel;
 import com.advancedraidtracker.utility.datautility.DataPoint;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,15 +12,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
-
+@Slf4j
 public class DataPointMenu
 {
     private List<String> flatData;
     @Getter
     private JComboBox<String> comboBox;
     private JPopupMenu menu;
-    public DataPointMenu(List<String> allComboValues, Map<String, String[]> popupData, List<String> flatData, JPopupMenu popmenu, JComboBox<String> box)
+    private Raids window;
+    public DataPointMenu(List<String> allComboValues, Map<String, String[]> popupData, List<String> flatData, JPopupMenu popmenu, JComboBox<String> box, Raids window)
     {
+        this.window = window;
         this.menu = popmenu;
         this.comboBox = box;
         this.flatData = flatData;
@@ -173,9 +176,14 @@ public class DataPointMenu
 
     private void setComboSelection(String name)
     {
-        Vector<String> items = new Vector<>();
+        //Vector<String> items = new Vector<>();
 
-        ComparisonViewPanel.addComboItems(name, items, flatData, comboBox);
+        //ComparisonViewPanel.addComboItems(name, items, flatData, comboBox);
+        //comboBox.addItem(name);
+        //comboBox.setSelectedItem(name);
+        window.example.addItem(name);
+        window.example.setSelectedItem(name);
+        window.updateTable();
     }
 
     public void invertVisible()

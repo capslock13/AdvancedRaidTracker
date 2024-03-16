@@ -1,6 +1,7 @@
 package com.advancedraidtracker.ui.charts;
 
 import com.advancedraidtracker.AdvancedRaidTrackerConfig;
+import com.advancedraidtracker.constants.RaidType;
 import com.advancedraidtracker.ui.BaseFrame;
 import com.advancedraidtracker.utility.wrappers.PlayerDidAttack;
 import lombok.extern.slf4j.Slf4j;
@@ -10,9 +11,14 @@ import net.runelite.client.game.ItemManager;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import static com.advancedraidtracker.constants.RaidType.TOA;
+import static com.advancedraidtracker.constants.RaidType.TOB;
 
 @Slf4j
 public class LiveChart extends BaseFrame
@@ -29,6 +35,7 @@ public class LiveChart extends BaseFrame
     Map<String, ChartPanel> tobPanels;
     Map<String, JScrollPane> toaScrollPanes;
     Map<String, JScrollPane> tobScrollPanes;
+    RaidType activeRaid = RaidType.UNASSIGNED;
 
     public LiveChart(AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
     {
@@ -59,13 +66,38 @@ public class LiveChart extends BaseFrame
         tabbedPane = new JTabbedPane();
         tabbedPane.addChangeListener(cl ->
         {
+            String activePanel = "";
+            if(activeRaid.equals(TOB))
+            {
+                activePanel = tob[tabbedPane.getSelectedIndex()];
+            }
+            else if(activeRaid.equals(TOA))
+            {
+                activePanel = toa[tabbedPane.getSelectedIndex()];
+            }
             for (String name : tobPanels.keySet())
             {
-                tobPanels.get(name).redraw();
+                if(name.equals(activePanel) && isShowing())
+                {
+                    tobPanels.get(name).setActive(true);
+                    tobPanels.get(name).redraw();
+                }
+                else
+                {
+                    tobPanels.get(name).setActive(false);
+                }
             }
             for (String name : toaPanels.keySet())
             {
-                toaPanels.get(name).redraw();
+                if(name.equals(activePanel) && isShowing())
+                {
+                    toaPanels.get(name).setActive(true);
+                    toaPanels.get(name).redraw();
+                }
+                else
+                {
+                    tobPanels.get(name).setActive(false);
+                }
             }
         });
 
@@ -73,13 +105,48 @@ public class LiveChart extends BaseFrame
         {
             tabbedPane.add(name, tobScrollPanes.get(name));
         }
+        addWindowListener(new WindowAdapter()
+        {
+            @Override
+            public void windowOpened(WindowEvent e)
+            {
+                super.windowOpened(e);
+                String activePanel = "";
+                if(activeRaid.equals(TOB))
+                {
+                    activePanel = tob[tabbedPane.getSelectedIndex()];
+                }
+                else if(activeRaid.equals(TOA))
+                {
+                    activePanel = toa[tabbedPane.getSelectedIndex()];
+                }
+                getPanel(activePanel).setActive(true);
+                getPanel(activePanel).redraw();
+                pack();
+            }
 
+            @Override
+            public void windowClosing(WindowEvent e)
+            {
+                super.windowClosing(e);
+                for (String name : tobPanels.keySet())
+                {
+                    tobPanels.get(name).setActive(false);
+                }
+                for (String name : toaPanels.keySet())
+                {
+                    toaPanels.get(name).setActive(false);
+                }
+            }
+        });
         add(tabbedPane);
         pack();
     }
 
+
     public void switchToTOB()
     {
+        activeRaid = TOB;
         tabbedPane.removeAll();
         for (String name : tobScrollPanes.keySet())
         {
@@ -89,6 +156,7 @@ public class LiveChart extends BaseFrame
 
     public void switchToTOA()
     {
+        activeRaid = TOA;
         tabbedPane.removeAll();
         for (String name : toaScrollPanes.keySet())
         {

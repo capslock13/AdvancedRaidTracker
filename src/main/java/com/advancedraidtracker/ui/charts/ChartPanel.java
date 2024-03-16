@@ -32,7 +32,7 @@ import java.util.List;
 public class ChartPanel extends JPanel implements MouseListener, MouseMotionListener
 {
     private boolean shouldWrap;
-    private BufferedImage img;
+    private BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
     int scale;
     int boxCount;
     int boxHeight;
@@ -75,6 +75,16 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     private final Map<PlayerDidAttack, String> actions = new HashMap<>();
 
     private ConfigManager configManager;
+    private boolean isActive = false;
+    public void setActive(Boolean state)
+    {
+        isActive = state;
+    }
+
+    public boolean shouldDraw()
+    {
+        return !live || isActive;
+    }
     private ItemManager itemManager;
 
     public void enableWrap()
@@ -318,6 +328,10 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
     public void recalculateSize()
     {
+        if(!shouldDraw())
+        {
+            return;
+        }
         try
         {
             scale = config.chartScaleSize();
@@ -1037,6 +1051,10 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
     private void drawGraph()
     {
+        if(!shouldDraw())
+        {
+            return;
+        }
         Graphics2D g = (Graphics2D) img.getGraphics();
         g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);

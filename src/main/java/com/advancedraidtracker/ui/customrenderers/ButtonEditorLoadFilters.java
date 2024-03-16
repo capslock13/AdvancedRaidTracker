@@ -1,4 +1,4 @@
-package com.advancedraidtracker.ui.buttons;
+package com.advancedraidtracker.ui.customrenderers;
 
 import com.advancedraidtracker.filters.Filter;
 import com.advancedraidtracker.filters.ImplicitFilter;

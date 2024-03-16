@@ -1,11 +1,11 @@
 package com.advancedraidtracker.ui.filters;
 
-import com.advancedraidtracker.ui.buttons.ButtonEditorLoadFilters;
-import com.advancedraidtracker.ui.buttons.ButtonEditorViewFilters;
-import com.advancedraidtracker.ui.buttons.ButtonRenderer;
+import com.advancedraidtracker.ui.customrenderers.ButtonEditorLoadFilters;
+import com.advancedraidtracker.ui.customrenderers.ButtonEditorViewFilters;
+import com.advancedraidtracker.ui.customrenderers.ButtonRenderer;
 import com.advancedraidtracker.ui.BaseFrame;
 import com.advancedraidtracker.ui.Raids;
-import com.advancedraidtracker.ui.buttons.NonEditableCell;
+import com.advancedraidtracker.ui.customrenderers.NonEditableCell;
 import lombok.extern.slf4j.Slf4j;
 import com.advancedraidtracker.filters.Filter;
 import com.advancedraidtracker.filters.FilterManager;

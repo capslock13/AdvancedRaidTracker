@@ -26,17 +26,17 @@ public class FilterOtherInt extends FilterCondition
     }
 
     @Override
-    public boolean evaluate(Raid data) //todo
-    { /*
+    public boolean evaluate(Raid data)
+    {
         int checkValue = data.get(param);
-        if (data.getTimeAccurate(param) && value != -1)
+        if(data.getRoomAccurate(param.room) && value != -1)
         {
             return FilterUtil.compare(qualifier, value, checkValue);
-
-        } else
+        }
+        else
         {
             return false;
-        }*/ return false;
+        }
     }
 
     public String getFilterCSV()

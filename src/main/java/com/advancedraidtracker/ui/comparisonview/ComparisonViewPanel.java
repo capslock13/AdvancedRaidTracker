@@ -19,6 +19,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.*;
+import java.util.List;
 
 import static com.advancedraidtracker.constants.RaidRoom.*;
 
@@ -374,7 +375,7 @@ public class ComparisonViewPanel extends JPanel
         addComboItems(name, items, comboStrictData, compareByComboBox);
     }
 
-    public static void addComboItems(String name, Vector<String> items, ArrayList<String> comboStrictData, JComboBox<String> compareByComboBox)
+    public static void addComboItems(String name, Vector<String> items, List<String> comboStrictData, JComboBox<String> compareByComboBox)
     {
         for (String item : comboStrictData)
         {

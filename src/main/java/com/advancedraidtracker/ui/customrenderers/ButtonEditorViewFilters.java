@@ -1,22 +1,25 @@
-package com.advancedraidtracker.ui.buttons;
+package com.advancedraidtracker.ui.customrenderers;
 
-import com.advancedraidtracker.ui.Raids;
+import com.advancedraidtracker.filters.Filter;
+import com.advancedraidtracker.ui.filters.ViewFilter;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 
-public class ButtonEditorComparisonData extends DefaultCellEditor
+public class ButtonEditorViewFilters extends DefaultCellEditor
 {
+
     protected JButton button;
     private String label;
     private boolean isPushed;
-    private final Raids frame;
     int row;
+    private final ArrayList<Filter> data;
 
-    public ButtonEditorComparisonData(JCheckBox checkBox, Raids raidsFrame)
+    public ButtonEditorViewFilters(JCheckBox checkBox, ArrayList<Filter> data)
     {
         super(checkBox);
-        frame = raidsFrame;
+        this.data = data;
         button = new JButton();
         button.setOpaque(true);
         button.addActionListener(e -> fireEditingStopped());
@@ -41,12 +44,14 @@ public class ButtonEditorComparisonData extends DefaultCellEditor
         return button;
     }
 
+
     @Override
     public Object getCellEditorValue()
     {
         if (isPushed)
         {
-            frame.removeComparisonRow(row);
+            ViewFilter frame = new ViewFilter(data.get(row));
+            frame.open();
         }
         isPushed = false;
         return label;

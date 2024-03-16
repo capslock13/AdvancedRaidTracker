@@ -1,4 +1,4 @@
-package com.advancedraidtracker.ui.buttons;
+package com.advancedraidtracker.ui.customrenderers;
 
 import javax.swing.*;
 import javax.swing.table.TableCellRenderer;

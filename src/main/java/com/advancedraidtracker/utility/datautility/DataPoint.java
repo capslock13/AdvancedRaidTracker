@@ -128,7 +128,7 @@ public enum DataPoint
 
     THRALL_DAMAGE("thrall damage", types.OTHER_INT, ALL, true),
 
-   // VENG_DAMAGE("veng damage", types.OTHER_INT, ALL, true),
+    VENG_DAMAGE("veng damage", types.OTHER_INT, ALL, true),
 
     VENG_CASTS("veng casts", types.OTHER_INT, ALL, true),
 

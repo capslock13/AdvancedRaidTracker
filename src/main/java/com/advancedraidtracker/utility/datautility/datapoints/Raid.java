@@ -102,6 +102,13 @@ public abstract class Raid
     protected String lastRoom = "";
     protected String roomStatus = orange;
 
+    protected Map<RaidRoom, Boolean> defenseAccurate = new HashMap<>();
+
+    public boolean getDefenseAccurate(RaidRoom room) //todo implement
+    {
+        return defenseAccurate.getOrDefault(room, false);
+    }
+
     public abstract int getTimeSum();
 
     /**
@@ -139,11 +146,19 @@ public abstract class Raid
         if(point.playerSpecific)
         {
             RoomDataManager rdm = getParser(room).data;
-            for(String player : rdm.playerSpecificMap.get(point).keySet())
+            if(rdm.playerSpecificMap.containsKey(point))
             {
-                sum += rdm.playerSpecificMap.get(point).get(player);
+                for (String player : rdm.playerSpecificMap.get(point).keySet())
+                {
+                    sum += rdm.playerSpecificMap.get(point).get(player);
+                }
             }
         }
+        else
+        {
+            return getParser(room).data.get(point);
+        }
+        return sum;
     }
 
     public int get(DataPoint point)
@@ -156,9 +171,12 @@ public abstract class Raid
                 if(point.playerSpecific)
                 {
                     RoomDataManager rdm = getParser(room).data;
-                    for(String player : rdm.playerSpecificMap.get(point).keySet())
+                    if(rdm.playerSpecificMap.containsKey(point))
                     {
-                        sum += rdm.playerSpecificMap.get(point).get(player);
+                        for (String player : rdm.playerSpecificMap.get(point).keySet())
+                        {
+                            sum += rdm.playerSpecificMap.get(point).get(player);
+                        }
                     }
                 }
                 else

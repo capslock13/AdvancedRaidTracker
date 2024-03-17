@@ -3,11 +3,11 @@ package com.advancedraidtracker.utility.weapons;
 import java.util.Arrays;
 import java.util.List;
 
-public class WeaponDecider
+public class AnimationDecider
 {
-    public static WeaponAttack getWeapon(String animationS, String graphics, String projectileS, int weapon)
+    public static PlayerAnimation getWeapon(String animationS, String graphics, String projectileS, int weapon)
     { //todo redo all of this ** magic numbers will be fixed then too
-        WeaponAttack weaponUsed = WeaponAttack.UNDECIDED;
+        PlayerAnimation weaponUsed = PlayerAnimation.UNDECIDED;
         List<String> spotAnims = Arrays.asList(graphics.split(":"));
         int projectile;
         int animation;
@@ -25,221 +25,221 @@ public class WeaponDecider
             case 10656:
                 if (projectile == 1043 || projectile == 2599)
                 {
-                    weaponUsed = WeaponAttack.BLOWPIPE_SPEC;
+                    weaponUsed = PlayerAnimation.BLOWPIPE_SPEC;
                 } else
                 {
-                    weaponUsed = WeaponAttack.BLOWPIPE;
+                    weaponUsed = PlayerAnimation.BLOWPIPE;
                 }
                 break;
             case 1167:
                 if (spotAnims.stream().anyMatch(p -> p.equalsIgnoreCase("1540")))
                 {
-                    weaponUsed = WeaponAttack.SANG;
+                    weaponUsed = PlayerAnimation.SANG;
                 } else
                 {
                     if (weapon == 22516)
                     {
                         if (projectile == 1547)
                         {
-                            weaponUsed = WeaponAttack.DAWN_SPEC;
+                            weaponUsed = PlayerAnimation.DAWN_SPEC;
                         } else
                         {
-                            weaponUsed = WeaponAttack.DAWN_AUTO;
+                            weaponUsed = PlayerAnimation.DAWN_AUTO;
                         }
                     } else
                     {
-                        weaponUsed = WeaponAttack.SANG;
+                        weaponUsed = PlayerAnimation.SANG;
                     }
                 }
                 break;
             case 1979:
-                weaponUsed = WeaponAttack.FREEZE; //todo add lowercase if bad weapon
+                weaponUsed = PlayerAnimation.FREEZE; //todo add lowercase if bad weapon
                 break;
             case 8056:
-                weaponUsed = WeaponAttack.SCYTHE;
+                weaponUsed = PlayerAnimation.SCYTHE;
                 break;
             case 7511:
-                weaponUsed = WeaponAttack.DINHS_SPEC;
+                weaponUsed = PlayerAnimation.DINHS_SPEC;
                 break;
             case 7618:
-                weaponUsed = WeaponAttack.CHIN;
+                weaponUsed = PlayerAnimation.CHIN;
                 break;
             case 1658:
-                weaponUsed = WeaponAttack.WHIP;
+                weaponUsed = PlayerAnimation.WHIP;
                 break;
             case 401:
-                weaponUsed = WeaponAttack.HAMMER_BOP;
+                weaponUsed = PlayerAnimation.HAMMER_BOP;
                 break;
             case 1378:
                 if (weapon == 27690)
                 {
-                    weaponUsed = WeaponAttack.VOID_WAKER_SPEC;
+                    weaponUsed = PlayerAnimation.VOID_WAKER_SPEC;
                     break;
                 } else
                 {
-                    weaponUsed = WeaponAttack.HAMMER;
+                    weaponUsed = PlayerAnimation.HAMMER;
                 }
                 break;
             case 428:
             case 419:
                 if (weapon == 25981)
                 {
-                    weaponUsed = WeaponAttack.KERIS_BREACHING;
+                    weaponUsed = PlayerAnimation.KERIS_BREACHING;
                     break;
                 } else if (weapon == 27291)
                 {
-                    weaponUsed = WeaponAttack.KERIS_SUN;
+                    weaponUsed = PlayerAnimation.KERIS_SUN;
                     break;
                 } else if (weapon == 27287)
                 {
-                    weaponUsed = WeaponAttack.KERIS_CORRUPTION;
+                    weaponUsed = PlayerAnimation.KERIS_CORRUPTION;
                     break;
                 }
             case 440:
                 if (weapon == 12904)
                 {
-                    weaponUsed = WeaponAttack.TSOTD;
+                    weaponUsed = PlayerAnimation.TSOTD;
                     break;
                 }
-                weaponUsed = WeaponAttack.CHALLY_WHACK;
+                weaponUsed = PlayerAnimation.CHALLY_WHACK;
                 break;
             case 1203:
-                weaponUsed = WeaponAttack.CHALLY_SPEC;
+                weaponUsed = PlayerAnimation.CHALLY_SPEC;
                 break;
             case 390:
                 if (weapon == 27690)
                 {
-                    weaponUsed = WeaponAttack.VOID_WAKER;
+                    weaponUsed = PlayerAnimation.VOID_WAKER;
                     break;
                 }
             case 9471:
                 if (weapon == 26219 || weapon == 27246)
                 {
-                    weaponUsed = WeaponAttack.FANG;
+                    weaponUsed = PlayerAnimation.FANG;
                     break;
                 }
             case 8288:
             case 386:
                 if (weapon == 23995 || weapon == 24551)
                 {
-                    weaponUsed = WeaponAttack.BLADE_OF_SAELDOR;
+                    weaponUsed = PlayerAnimation.BLADE_OF_SAELDOR;
                     break;
                 }
                 if (weapon == 27690)
                 {
-                    weaponUsed = WeaponAttack.VOID_WAKER;
+                    weaponUsed = PlayerAnimation.VOID_WAKER;
                     break;
                 }
-                weaponUsed = WeaponAttack.SWIFT_BLADE;
+                weaponUsed = PlayerAnimation.SWIFT_BLADE;
                 break;
             case 7642:
             case 7643:
-                weaponUsed = WeaponAttack.BGS_SPEC;
+                weaponUsed = PlayerAnimation.BGS_SPEC;
                 break;
             case 7045:
-                weaponUsed = WeaponAttack.BGS_WHACK;
+                weaponUsed = PlayerAnimation.BGS_WHACK;
                 break;
             case 426:
                 if (weapon == 20997)
                 {
-                    weaponUsed = WeaponAttack.TBOW;
+                    weaponUsed = PlayerAnimation.TBOW;
                 } else if (weapon == 27655)
                 {
-                    weaponUsed = WeaponAttack.WEB_WEAVER;
+                    weaponUsed = PlayerAnimation.WEB_WEAVER;
                 } else
                 {
-                    weaponUsed = WeaponAttack.TBOW;
+                    weaponUsed = PlayerAnimation.TBOW;
                 }
                 break;
             case 9168:
                 if (projectile == 1468)
                 {
-                    weaponUsed = WeaponAttack.ZCB_AUTO;
+                    weaponUsed = PlayerAnimation.ZCB_AUTO;
                 } else if (projectile == 1995)
                 {
-                    weaponUsed = WeaponAttack.ZCB_SPEC;
+                    weaponUsed = PlayerAnimation.ZCB_SPEC;
                 }
                 break;
             case 393:
-                weaponUsed = WeaponAttack.CLAW_SCRATCH;
+                weaponUsed = PlayerAnimation.CLAW_SCRATCH;
                 break;
             case 7514:
-                weaponUsed = WeaponAttack.CLAW_SPEC;
+                weaponUsed = PlayerAnimation.CLAW_SPEC;
                 break;
             case 9493:
-                weaponUsed = WeaponAttack.SHADOW;
+                weaponUsed = PlayerAnimation.SHADOW;
                 break;
             case 7554:
-                weaponUsed = WeaponAttack.DART;
+                weaponUsed = PlayerAnimation.DART;
                 break;
             case 6299:
-                weaponUsed = WeaponAttack.SBS;
+                weaponUsed = PlayerAnimation.SBS;
                 break;
             case 100000:
-                weaponUsed = WeaponAttack.BOUNCE;
+                weaponUsed = PlayerAnimation.BOUNCE;
                 break;
             case 4411:
-                weaponUsed = WeaponAttack.AID_OTHER;
+                weaponUsed = PlayerAnimation.AID_OTHER;
                 break;
             case 8316:
-                weaponUsed = WeaponAttack.VENG_SELF;
+                weaponUsed = PlayerAnimation.VENG_SELF;
                 break;
             case 6294:
-                weaponUsed = WeaponAttack.HUMIDIFY;
+                weaponUsed = PlayerAnimation.HUMIDIFY;
                 break;
             case 722:
-                weaponUsed = WeaponAttack.MAGIC_IMBUE;
+                weaponUsed = PlayerAnimation.MAGIC_IMBUE;
                 break;
             case 10629:
             case 836:
-                weaponUsed = WeaponAttack.DEATH;
+                weaponUsed = PlayerAnimation.DEATH;
                 break;
             case 8070:
             case 1816:
-                weaponUsed = WeaponAttack.TELEPORT;
+                weaponUsed = PlayerAnimation.TELEPORT;
                 break;
             case 4409:
-                weaponUsed = WeaponAttack.HEAL_GROUP;
+                weaponUsed = PlayerAnimation.HEAL_GROUP;
                 break;
             case 9479:
-                weaponUsed = WeaponAttack.MINING;
+                weaponUsed = PlayerAnimation.MINING;
                 break;
             case 376:
             case 377:
-                weaponUsed = WeaponAttack.DDS_POKE;
+                weaponUsed = PlayerAnimation.DDS_POKE;
                 break;
             case 1062:
-                weaponUsed = WeaponAttack.DDS_SPEC;
+                weaponUsed = PlayerAnimation.DDS_SPEC;
                 break;
             case 381:
                 if (weapon == 25981)
                 {
-                    weaponUsed = WeaponAttack.KERIS_BREACHING;
+                    weaponUsed = PlayerAnimation.KERIS_BREACHING;
                     break;
                 } else if (weapon == 27291)
                 {
-                    weaponUsed = WeaponAttack.KERIS_SUN;
+                    weaponUsed = PlayerAnimation.KERIS_SUN;
                     break;
                 } else if (weapon == 27287)
                 {
-                    weaponUsed = WeaponAttack.KERIS_CORRUPTION;
+                    weaponUsed = PlayerAnimation.KERIS_CORRUPTION;
                     break;
                 }
             case 827:
-                weaponUsed = WeaponAttack.PICKUP;
+                weaponUsed = PlayerAnimation.PICKUP;
                 break;
             case 9546:
-                weaponUsed = WeaponAttack.KERIS_SUN_SPEC;
+                weaponUsed = PlayerAnimation.KERIS_SUN_SPEC;
                 break;
             case 9544:
-                weaponUsed = WeaponAttack.KERIS_CORRUPTION_SPEC;
+                weaponUsed = PlayerAnimation.KERIS_CORRUPTION_SPEC;
                 break;
             case 832:
-                weaponUsed = WeaponAttack.PUSH_JUG;
+                weaponUsed = PlayerAnimation.PUSH_JUG;
                 break;
             case 4503:
             case 400:
-                weaponUsed = WeaponAttack.INQ_MACE;
+                weaponUsed = PlayerAnimation.INQ_MACE;
                 break;
         }
         return weaponUsed;

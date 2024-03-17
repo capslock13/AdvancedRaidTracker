@@ -2,7 +2,8 @@ package com.advancedraidtracker.utility.weapons;
 
 import java.awt.*;
 
-public enum WeaponAttack //todo add weapon animations and IDs as int array and kill WeaponDecider into a cleaner method
+//TODO rename refactor recycle
+public enum PlayerAnimation //todo add weapon animations and IDs as int array and kill WeaponDecider into a cleaner method
 {
     UNDECIDED("Undecided", "?", new Color(0, 0, 0), -1),
     BLOWPIPE("Blowpipe", "BP", new Color(100, 150, 200), 2),
@@ -68,7 +69,7 @@ public enum WeaponAttack //todo add weapon animations and IDs as int array and k
     public final int attackTicks;
 
 
-    WeaponAttack(String name, String shorthand, Color color, int attackTicks)
+    PlayerAnimation(String name, String shorthand, Color color, int attackTicks)
     {
         this.attackTicks = attackTicks;
         this.name = name;

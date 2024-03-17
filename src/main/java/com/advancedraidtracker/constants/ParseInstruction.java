@@ -9,7 +9,7 @@ public class ParseInstruction
     public DataPoint dataPoint2;
     public DataPoint dataPoint3;
     public String marker;
-    public int value;
+    public Integer value = 0;
     public String pointType = "none";
 
     ParseInstruction(ParseType type) //MANUAL PARSE, RAID AGNOSTIC PARSE, RAID START RAID END
@@ -23,6 +23,16 @@ public class ParseInstruction
         this.dataPoint2 = duration;
         this.dataPoint3 = oldValue;
         this.pointType = DataPoint.class.getName();
+    }
+
+    ParseInstruction(ParseType type, DataPoint split, DataPoint duration, DataPoint oldValue, int value)
+    {
+        this.type = type;
+        this.dataPoint1 = split;
+        this.dataPoint2 = duration;
+        this.dataPoint3 = oldValue;
+        this.pointType = DataPoint.class.getName();
+        this.value = value;
     }
 
     ParseInstruction(ParseType type, DataPoint point) //INCREMENT SET ADD_TO_VALUE

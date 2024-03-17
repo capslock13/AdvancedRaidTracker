@@ -74,7 +74,7 @@ public class RoomDataManager
             }
             return sum;
         }
-        return map.getOrDefault(point, -1);
+        return map.getOrDefault(point, point.isTime() ? -1 : 0 );
     }
 
     public int get(DataPoint point, String player)
@@ -110,6 +110,11 @@ public class RoomDataManager
             {
                 log.info(name + ", " + point.name + ": " + playerSpecificMap.get(point).get(name));
             }
+        }
+        log.info("Mapped: ");
+        for(DataPoint point : intList.keySet())
+        {
+            log.info(intList.get(point).toString());
         }
     }
 

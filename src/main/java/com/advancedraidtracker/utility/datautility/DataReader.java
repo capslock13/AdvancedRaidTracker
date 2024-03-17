@@ -52,11 +52,15 @@ public class DataReader //todo move any methods that read files to here. I belie
                 {
                     ret = new Tob(path, currentRaid);
                     ret.parseAllEntries();
-                    for(RaidRoom room : RaidRoom.values())
+                    if(ret.get(DataPoint.CHALLENGE_TIME) == 2096)
                     {
-                        RoomParser parser = ret.getParser(room);
-                        //log.info("Dumping room: " + room.name());
-                       // parser.data.dumpValues(); //todo remove later, this was for testing the parser
+                        log.info(ret.getFilepath().toString());
+                        for (RaidRoom room : RaidRoom.values())
+                        {
+                            RoomParser parser = ret.getParser(room);
+                            log.info("Dumping room: " + room.name());
+                            parser.data.dumpValues(); //todo remove later, this was for testing the parser
+                        }
                     }
                 } else if (entry.logEntry == LogID.LEFT_TOA) //todo look into what needs to be done to handle this post deprecation
                 {

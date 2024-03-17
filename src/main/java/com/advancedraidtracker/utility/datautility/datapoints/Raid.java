@@ -1,6 +1,7 @@
 package com.advancedraidtracker.utility.datautility.datapoints;
 
 import com.advancedraidtracker.constants.*;
+import com.advancedraidtracker.utility.RoomUtil;
 import com.advancedraidtracker.utility.datautility.*;
 import com.google.common.collect.ImmutableMap;
 import lombok.Getter;
@@ -318,6 +319,8 @@ public abstract class Raid
         }
     }
 
+    private boolean verzikSet = false; //idk
+
     public void parseAllEntries()
     {
         raidData.removeIf(this::parseLogEntry);
@@ -340,9 +343,25 @@ public abstract class Raid
                 {
                     parser = defaultParser;
                 }
+                else if(instruction.dataPoint1 != null && instruction.dataPoint1.room.equals(ALL))
+                {
+                    parser = getParser(RaidRoom.values()[RaidRoom.getRoom(lastRoom).ordinal()+1]); //idk
+                }
                 switch (instruction.type)
                 {
                     case ADD_TO_VALUE:
+                        if(instruction.dataPoint1 != null && instruction.dataPoint1.equals(CHALLENGE_TIME) && entry.logEntry.equals(LogID.VERZIK_P3_DESPAWNED))
+                        {
+                            if(!verzikSet)
+                            {
+                                verzikSet = true;
+                            }
+                            else
+                            {
+                                parser.data.set(CHALLENGE_TIME, parser.data.get(CHALLENGE_TIME)+4);
+                                break;
+                            }
+                        }
                         parser.data.incrementBy(instruction.dataPoint1, entry.getFirstInt(), entry.getValue("Player"));
                         break;
                     case INCREMENT:
@@ -367,13 +386,13 @@ public abstract class Raid
                         }
                         break;
                     case SET:
-                        parser.data.set(instruction.dataPoint1, entry.getFirstInt());
+                        parser.data.set(instruction.dataPoint1, entry.getFirstInt() + instruction.value);
                         break;
                     case SUM:
                         parser.data.set(instruction.dataPoint1, parser.data.get(instruction.dataPoint2) + parser.data.get(instruction.dataPoint3));
                         break;
                     case SPLIT:
-                        parser.data.set(instruction.dataPoint1, entry.getFirstInt());
+                        parser.data.set(instruction.dataPoint1, entry.getFirstInt()+instruction.value);
                         parser.data.set(instruction.dataPoint2, parser.data.get(instruction.dataPoint1) - parser.data.get(instruction.dataPoint3));
                         break;
                     case DWH:

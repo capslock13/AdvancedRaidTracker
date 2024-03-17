@@ -50,6 +50,7 @@ public enum DataPoint
 
     BLOAT_DOWNS("Bloat downs", types.INT_MAP, BLOAT),
     BLOAT_FIRST_WALK_SCYTHES("Bloat 1st Walk Scythes", types.OTHER_INT, BLOAT, true),
+    BLOAT_FIRST_WALK_DEATHS("Bloat 1st Walk Deaths", types.OTHER_INT, BLOAT, true),
     BLOAT_HP_FIRST_DOWN("Bloat HP% 1st down", types.OTHER_INT, BLOAT),
     NYLO_STALLS_PRE_20("Nylo stalls pre 20", types.OTHER_INT, NYLOCAS),
     NYLO_STALLS_POST_20("Nylo stalls post 20", types.OTHER_INT, NYLOCAS),

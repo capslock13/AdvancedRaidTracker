@@ -13,8 +13,7 @@ import java.awt.*;
 import java.util.Calendar;
 
 import static com.advancedraidtracker.constants.RaidRoom.*;
-import static com.advancedraidtracker.utility.datautility.DataPoint.MAIDEN_TIME;
-import static com.advancedraidtracker.utility.datautility.DataPoint.NYLO_LAST_DEAD;
+import static com.advancedraidtracker.utility.datautility.DataPoint.*;
 
 @Slf4j
 public class ViewTOBRaid extends BaseFrame //todo @fisu not sure if you wanted to tackle this but this is a big one that needs fixing post migration
@@ -151,13 +150,11 @@ public class ViewTOBRaid extends BaseFrame //todo @fisu not sure if you wanted t
         bloatSubPanel.add(new JLabel(bloatBodyColor + data.get(DataPoint.BLOAT_DOWNS)));
 
         bloatSubPanel.add(new JLabel(bloatBodyColor + "Deaths (1st walk)"));
-
-        bloatSubPanel.add(new JLabel("")); //todo
-        //bloatSubPanel.add(new JLabel(bloatBodyColor + data.get(DataPoint.BLOAT_FIRST_WALK_DEATHS))); //todo
+        bloatSubPanel.add(new JLabel(bloatBodyColor + data.get(DataPoint.BLOAT_FIRST_WALK_DEATHS)));
 
 
         bloatSubPanel.add(new JLabel(bloatBodyColor + "Deaths (Total)"));
-        bloatSubPanel.add(new JLabel(bloatBodyColor + data.get(DataPoint.DEATHS))); //TODO BLOAT ONLY
+        bloatSubPanel.add(new JLabel(bloatBodyColor + data.get(DataPoint.DEATHS, BLOAT)));
 
         bloatSubPanel.add(new JLabel(bloatBodyColor + "Defense (1st walk)"));
         bloatSubPanel.add(new JLabel(bloatBodyColor + ((data.getDefenseAccurate(BLOAT)) ? String.valueOf(data.get(DataPoint.DEFENSE, BLOAT)) : INCOMPLETE_MARKER)));
@@ -251,22 +248,22 @@ public class ViewTOBRaid extends BaseFrame //todo @fisu not sure if you wanted t
         sotetsegSubPanel.add(new JLabel(soteBodyColor + ((data.getDefenseAccurate(SOTETSEG)) ? data.get(DataPoint.SOTE_SPECS_P1) + " " + data.get(DataPoint.SOTE_SPECS_P2) + " " + data.get(DataPoint.SOTE_SPECS_P3) + " (" + (data.get(DataPoint.SOTE_SPECS_TOTAL)) + ")" : INCOMPLETE_MARKER)));
 
         sotetsegSubPanel.add(new JLabel(soteBodyColor + "Deaths"));
-        sotetsegSubPanel.add(new JLabel(soteBodyColor + data.get(DataPoint.DEATHS))); //todo specific deaths
+        sotetsegSubPanel.add(new JLabel(soteBodyColor + data.get(DataPoint.DEATHS, SOTETSEG))); //todo specific deaths
 
         sotetsegSubPanel.add(new JLabel(soteBodyColor + "First Maze Start"));
-        sotetsegSubPanel.add(new JLabel(soteBodyColor + RoomUtil.time(data.get(DataPoint.SOTE_P1_SPLIT))));
+        sotetsegSubPanel.add(new JLabel(soteBodyColor + RoomUtil.time(data.get(SOTE_M1_SPLIT))));
 
         sotetsegSubPanel.add(new JLabel(soteBodyColor + "First Maze End"));
-        sotetsegSubPanel.add(new JLabel(soteBodyColor + RoomUtil.time(data.get(DataPoint.SOTE_M1_SPLIT)) + " (" + RoomUtil.time(data.get(DataPoint.SOTE_M1_SPLIT) - data.get(DataPoint.SOTE_P1_SPLIT)) + ")"));
+        sotetsegSubPanel.add(new JLabel(soteBodyColor + RoomUtil.time(data.get(SOTE_P2_SPLIT)) + " (" + RoomUtil.time(data.get(SOTE_M1_DURATION)) + ")"));
 
         sotetsegSubPanel.add(new JLabel(soteBodyColor + "Second Maze Start"));
-        sotetsegSubPanel.add(new JLabel(soteBodyColor + RoomUtil.time(data.get(DataPoint.SOTE_P2_SPLIT)) + " (" + RoomUtil.time(data.get(DataPoint.SOTE_P2_SPLIT) - data.get(DataPoint.SOTE_M1_SPLIT)) + ")"));
+        sotetsegSubPanel.add(new JLabel(soteBodyColor + RoomUtil.time(data.get(DataPoint.SOTE_M2_SPLIT)) + " (" + RoomUtil.time(data.get(SOTE_P2_DURATION)) + ")"));
 
         sotetsegSubPanel.add(new JLabel(soteBodyColor + "Second Maze End"));
-        sotetsegSubPanel.add(new JLabel(soteBodyColor + RoomUtil.time(data.get(DataPoint.SOTE_M2_SPLIT)) + " (" + RoomUtil.time(data.get(DataPoint.SOTE_M2_SPLIT) - data.get(DataPoint.SOTE_P2_SPLIT)) + ")"));
+        sotetsegSubPanel.add(new JLabel(soteBodyColor + RoomUtil.time(data.get(DataPoint.SOTE_P3_SPLIT)) + " (" + RoomUtil.time(data.get(SOTE_M2_DURATION)) + ")"));
 
         sotetsegSubPanel.add(new JLabel(soteBodyColor + "Time"));
-        sotetsegSubPanel.add(new JLabel(soteBodyColor + RoomUtil.time(soteSplit) + " (" + RoomUtil.time(soteSplit - data.get(DataPoint.SOTE_M2_SPLIT)) + ")"));
+        sotetsegSubPanel.add(new JLabel(soteBodyColor + RoomUtil.time(soteSplit) + " (" + RoomUtil.time(data.get(SOTE_P3_DURATION)) + ")"));
 
         JPanel xarpusSubPanel = new JPanel();
         xarpusSubPanel.setLayout(new GridLayout(8, 2));
@@ -317,8 +314,9 @@ public class ViewTOBRaid extends BaseFrame //todo @fisu not sure if you wanted t
         verzikSubPanel.add(new JLabel(verzikBodyColor + RoomUtil.time(data.get(DataPoint.VERZIK_P3_SPLIT)) + " (" + RoomUtil.time(data.get(DataPoint.VERZIK_P2_DURATION)) + ")"));
 
         verzikSubPanel.add(new JLabel(verzikBodyColor + "Time"));
-        verzikSubPanel.add(new JLabel(verzikBodyColor + RoomUtil.time(data.get(DataPoint.VERZIK_TIME)) + " (" + RoomUtil.time(data.get(DataPoint.VERZIK_TIME) - data.get(DataPoint.VERZIK_P2_SPLIT)) + ")"));
+        verzikSubPanel.add(new JLabel(verzikBodyColor + RoomUtil.time(data.get(DataPoint.VERZIK_TIME)) + " (" + RoomUtil.time(data.get(VERZIK_P3_DURATION)) + ")"));
 
+        maidenPanel.add(maidenSubPanel);
         bloatPanel.add(bloatSubPanel);
         nylocasPanel.add(nylocasSubPanel);
         sotetsegPanel.add(sotetsegSubPanel);
@@ -343,32 +341,14 @@ public class ViewTOBRaid extends BaseFrame //todo @fisu not sure if you wanted t
         String dateString = (cal.get(Calendar.MONTH) + 1) + "-" + cal.get(Calendar.DAY_OF_MONTH) + "-" + cal.get(Calendar.YEAR);
         JPanel summarySubPanel = new JPanel(new GridLayout(10, 1));
         summarySubPanel.add(new JLabel("Date: " + dateString));
-        String scaleString = "";
-        switch (data.getScale())
-        {
-            case 1:
-                scaleString = "Solo";
-                break;
-            case 2:
-                scaleString = "Duo";
-                break;
-            case 3:
-                scaleString = "Trio";
-                break;
-            case 4:
-                scaleString = "4 Man";
-                break;
-            case 5:
-                scaleString = "5 Man";
-                break;
-        }
-        summarySubPanel.add(new JLabel("Scale: " + scaleString));
+
+        summarySubPanel.add(new JLabel("Scale: " + data.getScaleString()));
         setSummaryStatus(data, summarySubPanel);
-        summarySubPanel.add(new JLabel("Time: " + RoomUtil.time(data.getChallengeTime())));
+        summarySubPanel.add(new JLabel("Time: " + RoomUtil.time(data.get(CHALLENGE_TIME))));
         summarySubPanel.add(new JLabel("Players:"));
         for (String player : data.getPlayers())
         {
-            summarySubPanel.add(new JLabel("        " + player + " (" + player + ")"));
+            summarySubPanel.add(new JLabel("        " + player + " (" + data.get(DEATHS, player) + ")"));
         }
 
         summaryPanel.add(summarySubPanel);
@@ -536,6 +516,6 @@ public class ViewTOBRaid extends BaseFrame //todo @fisu not sure if you wanted t
     {
         String raidStatusString = data.getRoomStatus();
 
-        summarySubPanel.add(new JLabel("Raid Status: " + raidStatusString));
+        summarySubPanel.add(new JLabel("<html>Raid Status: " + raidStatusString));
     }
 }

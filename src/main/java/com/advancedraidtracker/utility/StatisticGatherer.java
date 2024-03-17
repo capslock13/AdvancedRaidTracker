@@ -112,12 +112,11 @@ public class StatisticGatherer
         double count = 1;
         for (Raid room : data)
         {
-            /*
             if (!room.getTimeAccurate(parameter))
             {
                 continue;
             }
-            int d = room.getValue(parameter);
+            int d = room.get(parameter);
             if (d != -1)
             {
                 if (parameter.type != DataPoint.types.TIME || d != 0)
@@ -126,7 +125,6 @@ public class StatisticGatherer
                     count++;
                 }
             }
-             */
         }
         return total / count;
     }

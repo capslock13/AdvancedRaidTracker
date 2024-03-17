@@ -1,5 +1,6 @@
 package com.advancedraidtracker.ui.customrenderers;
 
+import com.advancedraidtracker.ui.viewraid.ViewRaidFrame;
 import com.advancedraidtracker.ui.viewraid.ViewTOBRaid;
 import com.advancedraidtracker.utility.datautility.datapoints.Raid;
 import com.advancedraidtracker.utility.datautility.datapoints.tob.Tob;

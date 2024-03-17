@@ -172,4 +172,9 @@ public class Toa extends Raid
     {
         return super.getScaleString() + " (" + (get(DataPoint.TOA_INVOCATION_LEVEL)) + ")";
     }
+    @Override
+    public boolean getRoomAccurate(RaidRoom room) //todo logout/login?
+    {
+        return room.isTOA();
+    }
 }

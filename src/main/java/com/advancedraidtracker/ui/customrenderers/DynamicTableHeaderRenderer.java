@@ -98,7 +98,7 @@ public class DynamicTableHeaderRenderer implements TableCellRenderer
             {
                 if(menu.isVisible())
                 {
-                    window.setTableSorterActive(true);
+                    //window.setTableSorterActive(true);
                 }
             });
         }
@@ -151,7 +151,7 @@ public class DynamicTableHeaderRenderer implements TableCellRenderer
                     if(e.getX() > rect.getX()+rect.getWidth()-20)
                     {
                         menu.show(editor, (int)rect.getWidth()-menu.getPreferredSize().width, editor.getHeight());
-                        window.setTableSorterActive(false);
+                        //window.setTableSorterActive(false);
                     }
                 }
                 catch (Exception ignore)

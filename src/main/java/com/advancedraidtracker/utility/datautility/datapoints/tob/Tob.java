@@ -29,8 +29,6 @@ public class Tob extends Raid
         HARD
     }
 
-    @Getter
-    private boolean spectated;
 
     @Getter
     private RaidMode mode;

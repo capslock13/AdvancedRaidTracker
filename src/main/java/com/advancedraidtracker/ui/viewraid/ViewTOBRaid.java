@@ -3,6 +3,7 @@ package com.advancedraidtracker.ui.viewraid;
 import com.advancedraidtracker.constants.RaidRoom;
 import com.advancedraidtracker.ui.BaseFrame;
 import com.advancedraidtracker.utility.RoomUtil;
+import com.advancedraidtracker.utility.datautility.DataPoint;
 import com.advancedraidtracker.utility.datautility.datapoints.Raid;
 import com.advancedraidtracker.utility.datautility.datapoints.tob.*;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +13,7 @@ import java.awt.*;
 import java.util.Calendar;
 
 import static com.advancedraidtracker.constants.RaidRoom.*;
+import static com.advancedraidtracker.utility.datautility.DataPoint.NYLO_LAST_DEAD;
 
 @Slf4j
 public class ViewTOBRaid extends BaseFrame //todo @fisu not sure if you wanted to tackle this but this is a big one that needs fixing post migration
@@ -49,21 +51,19 @@ public class ViewTOBRaid extends BaseFrame //todo @fisu not sure if you wanted t
         String xarpBodyColor = (data.getRoomAccurate(XARPUS)) ? white : data.getRoomPartiallyAccurate(BLOAT) ? soft : dark;
         String verzikBodyColor = (data.getRoomAccurate(VERZIK)) ? white : data.getRoomPartiallyAccurate(BLOAT) ? soft : dark;
 
+        //todo ... rename split / duration @caps
 
-
-
-/*
-        int bloatEntry = data.getMaidenData().getTime();
-        int bloatSplit = data.getBloatData().getTime();
+        int bloatEntry = data.get(DataPoint.MAIDEN_TIME);
+        int bloatSplit = data.get(DataPoint.BLOAT_TIME);
 
         int nyloEntry = bloatEntry + bloatSplit;
-        int nyloSplit = data.getNylocasData().getTime();
+        int nyloSplit = data.get(DataPoint.NYLOCAS_TIME);
 
         int soteEntry = nyloEntry + nyloSplit;
-        int soteSplit = data.getSotetsegData().getTime();
+        int soteSplit = data.get(DataPoint.SOTETSEG_TIME);
 
         int xarpEntry = soteEntry + soteSplit;
-        int xarpSplit = data.getXarpusData().getTime();
+        int xarpSplit = data.get(DataPoint.XARPUS_TIME);
 
         int verzikEntry = xarpEntry + xarpSplit;
 
@@ -80,8 +80,8 @@ public class ViewTOBRaid extends BaseFrame //todo @fisu not sure if you wanted t
 
         String verzikEntryStr = RoomUtil.time(verzikEntry);
 
-*/
-        /*
+
+
         JPanel bloatPanel = new JPanel();
         bloatPanel.setLayout(new BorderLayout());
         bloatPanel.setBorder(BorderFactory.createTitledBorder(bloatColor + "Bloat - " + bloatBodyColor + nyloEntryStr + " (" + bloatSplitStr + ")"));
@@ -105,143 +105,146 @@ public class ViewTOBRaid extends BaseFrame //todo @fisu not sure if you wanted t
 
         JPanel bloatSubPanel = new JPanel();
         bloatSubPanel.setLayout(new GridLayout(8, 2));
-        /*
+
 
         bloatSubPanel.add(new JLabel(bloatBodyColor + "Downs"));
-        bloatSubPanel.add(new JLabel(bloatBodyColor + data.getValue(DataPoint.BLOAT_DOWNS)));
+        bloatSubPanel.add(new JLabel(bloatBodyColor + data.get(DataPoint.BLOAT_DOWNS)));
 
         bloatSubPanel.add(new JLabel(bloatBodyColor + "Deaths (1st walk)"));
-        bloatSubPanel.add(new JLabel(bloatBodyColor + data.getValue(DataPoint.BLOAT_FIRST_WALK_DEATHS)));
+
+        bloatSubPanel.add(new JLabel("")); //todo
+        //bloatSubPanel.add(new JLabel(bloatBodyColor + data.get(DataPoint.BLOAT_FIRST_WALK_DEATHS))); //todo
+
 
         bloatSubPanel.add(new JLabel(bloatBodyColor + "Deaths (Total)"));
-        bloatSubPanel.add(new JLabel(bloatBodyColor + data.getValue(DataPoint.BLOAT_DEATHS)));
+        bloatSubPanel.add(new JLabel(bloatBodyColor + data.get(DataPoint.DEATHS))); //TODO BLOAT ONLY
 
         bloatSubPanel.add(new JLabel(bloatBodyColor + "Defense (1st walk)"));
-        bloatSubPanel.add(new JLabel(bloatBodyColor + ((data.bloatDefenseAccurate) ? String.valueOf(data.getValue(DataPoint.BLOAT_DEFENSE)) : INCOMPLETE_MARKER)));
+        //bloatSubPanel.add(new JLabel(bloatBodyColor + ((data.bloatDefenseAccurate) ? String.valueOf(data.getValue(DataPoint.BLOAT_DEFENSE)) : INCOMPLETE_MARKER)));
 
         bloatSubPanel.add(new JLabel(bloatBodyColor + "Scythes 1st walk"));
-        bloatSubPanel.add(new JLabel(bloatBodyColor + data.getValue(DataPoint.BLOAT_FIRST_WALK_SCYTHES)));
+        bloatSubPanel.add(new JLabel(bloatBodyColor + data.get(DataPoint.BLOAT_FIRST_WALK_SCYTHES)));
 
         bloatSubPanel.add(new JLabel(bloatBodyColor + "HP % 1st down"));
 
-        bloatSubPanel.add(new JLabel(bloatBodyColor + (((double) data.getValue(DataPoint.BLOAT_HP_FIRST_DOWN))) + "%"));
+        bloatSubPanel.add(new JLabel(bloatBodyColor + (((double) data.get(DataPoint.BLOAT_HP_FIRST_DOWN))) + "%"));
 
         bloatSubPanel.add(new JLabel(bloatBodyColor + "1st down time"));
-        bloatSubPanel.add(new JLabel(bloatBodyColor + data.getValue(DataPoint.BLOAT_FIRST_DOWN_TIME)));
+        bloatSubPanel.add(new JLabel(bloatBodyColor + data.get(DataPoint.BLOAT_FIRST_DOWN_TIME)));
 
         bloatSubPanel.add(new JLabel(bloatBodyColor + "Room time"));
-        bloatSubPanel.add(new JLabel(bloatBodyColor + RoomUtil.time(data.getBloatTime())));
+        bloatSubPanel.add(new JLabel(bloatBodyColor + RoomUtil.time(bloatSplit)));
 
 
         JPanel nylocasSubPanel = new JPanel();
         nylocasSubPanel.setLayout(new GridLayout(9, 2));
 
         nylocasSubPanel.add(new JLabel(nyloBodyColor + "Stalls"));
-        nylocasSubPanel.add(new JLabel(nyloBodyColor + data.getValue(DataPoint.NYLO_STALLS_PRE_20) + " " + data.getValue(DataPoint.NYLO_STALLS_POST_20) + " (" + (data.getValue(DataPoint.NYLO_STALLS_TOTAL)) + ")"));
+        nylocasSubPanel.add(new JLabel(nyloBodyColor + data.get(DataPoint.NYLO_STALLS_PRE_20) + " " + data.get(DataPoint.NYLO_STALLS_POST_20) + " (" + (data.get(DataPoint.NYLO_STALLS_TOTAL)) + ")"));
 
         String nyloSplits = "<html><font color='#999999'>"
-                + data.getValue(DataPoint.NYLO_SPLITS_MELEE)
+                + data.get(DataPoint.NYLO_SPLITS_MELEE)
                 + "<font color='#00AA00'> "
-                + data.getValue(DataPoint.NYLO_SPLITS_RANGE)
+                + data.get(DataPoint.NYLO_SPLITS_RANGE)
                 + "<font color ='#2299FF'> "
-                + data.getValue(DataPoint.NYLO_SPLITS_MAGE);
+                + data.get(DataPoint.NYLO_SPLITS_MAGE);
         if (nyloBodyColor.equals(dark))
         {
             nyloSplits = nyloBodyColor
-                    + data.getValue(DataPoint.NYLO_SPLITS_MELEE) + " "
-                    + data.getValue(DataPoint.NYLO_SPLITS_RANGE) + " "
-                    + data.getValue(DataPoint.NYLO_SPLITS_MAGE);
+                    + data.get(DataPoint.NYLO_SPLITS_MELEE) + " "
+                    + data.get(DataPoint.NYLO_SPLITS_RANGE) + " "
+                    + data.get(DataPoint.NYLO_SPLITS_MAGE);
         } else if (nyloBodyColor.equals(soft))
         {
             nyloSplits = "<html><font color='#444444'>"
-                    + data.getValue(DataPoint.NYLO_SPLITS_MELEE) + "<font color='#008800'> "
-                    + data.getValue(DataPoint.NYLO_SPLITS_RANGE) + "<font color ='#0066CC'> "
-                    + data.getValue(DataPoint.NYLO_SPLITS_MAGE);
+                    + data.get(DataPoint.NYLO_SPLITS_MELEE) + "<font color='#008800'> "
+                    + data.get(DataPoint.NYLO_SPLITS_RANGE) + "<font color ='#0066CC'> "
+                    + data.get(DataPoint.NYLO_SPLITS_MAGE);
         }
         nylocasSubPanel.add(new JLabel(nyloBodyColor + "Splits"));
         nylocasSubPanel.add(new JLabel(nyloSplits));
 
         String nyloRotations = "<html><font color='#999999'>"
-                + data.getValue(DataPoint.NYLO_ROTATIONS_MELEE) + "<font color='#00AA00'> "
-                + data.getValue(DataPoint.NYLO_ROTATIONS_RANGE) + "<font color ='#2299FF'> "
-                + data.getValue(DataPoint.NYLO_ROTATIONS_MAGE);
+                + data.get(DataPoint.NYLO_ROTATIONS_MELEE) + "<font color='#00AA00'> "
+                + data.get(DataPoint.NYLO_ROTATIONS_RANGE) + "<font color ='#2299FF'> "
+                + data.get(DataPoint.NYLO_ROTATIONS_MAGE);
 
         if (nyloBodyColor.equals(dark))
         {
             nyloRotations = nyloBodyColor
-                    + data.getValue(DataPoint.NYLO_ROTATIONS_MELEE) + " "
-                    + data.getValue(DataPoint.NYLO_ROTATIONS_RANGE) + " "
-                    + data.getValue(DataPoint.NYLO_ROTATIONS_MAGE);
+                    + data.get(DataPoint.NYLO_ROTATIONS_MELEE) + " "
+                    + data.get(DataPoint.NYLO_ROTATIONS_RANGE) + " "
+                    + data.get(DataPoint.NYLO_ROTATIONS_MAGE);
         } else if (nyloBodyColor.equals(soft))
         {
             nyloRotations = "<html><font color='#444444'>"
-                    + data.getValue(DataPoint.NYLO_ROTATIONS_MELEE) + "<font color='#008800'> "
-                    + data.getValue(DataPoint.NYLO_ROTATIONS_RANGE) + "<font color ='#0066CC'> "
-                    + data.getValue(DataPoint.NYLO_ROTATIONS_MAGE);
+                    + data.get(DataPoint.NYLO_ROTATIONS_MELEE) + "<font color='#008800'> "
+                    + data.get(DataPoint.NYLO_ROTATIONS_RANGE) + "<font color ='#0066CC'> "
+                    + data.get(DataPoint.NYLO_ROTATIONS_MAGE);
         }
 
         nylocasSubPanel.add(new JLabel(nyloBodyColor + "Rotations"));
         nylocasSubPanel.add(new JLabel(nyloRotations));
 
-        nylocasSubPanel.add(new JLabel(nyloBodyColor + "Defense"));
-        nylocasSubPanel.add(new JLabel(nyloBodyColor + ((data.nyloDefenseAccurate) ? String.valueOf(data.getValue(DataPoint.NYLO_DEFENSE)) : INCOMPLETE_MARKER)));
+        nylocasSubPanel.add(new JLabel(nyloBodyColor + "Defense")); //todo
+        //nylocasSubPanel.add(new JLabel(nyloBodyColor + ((data.nyloDefenseAccurate) ? String.valueOf(data.get(DataPoint.NYLO_DEFENSE)) : INCOMPLETE_MARKER)));
 
         nylocasSubPanel.add(new JLabel(nyloBodyColor + "Deaths"));
-        nylocasSubPanel.add(new JLabel(nyloBodyColor + data.getValue(DataPoint.NYLO_DEATHS)));
+        nylocasSubPanel.add(new JLabel(nyloBodyColor + data.get(DataPoint.NYLO_DEATHS))); //todo investigate deaths
 
         nylocasSubPanel.add(new JLabel(nyloBodyColor + "Last wave"));
-        nylocasSubPanel.add(new JLabel(nyloBodyColor + RoomUtil.time(data.getValue(DataPoint.NYLO_LAST_WAVE))));
+        nylocasSubPanel.add(new JLabel(nyloBodyColor + RoomUtil.time(data.get(DataPoint.NYLO_LAST_WAVE))));
 
         nylocasSubPanel.add(new JLabel(nyloBodyColor + "Clean up"));
-        nylocasSubPanel.add(new JLabel(nyloBodyColor + RoomUtil.time(data.getValue(NYLO_LAST_DEAD)) + " (" + RoomUtil.time(data.getValue(NYLO_LAST_DEAD) - data.getValue(DataPoint.NYLO_LAST_WAVE)) + ")"));
+        nylocasSubPanel.add(new JLabel(nyloBodyColor + RoomUtil.time(data.get(NYLO_LAST_DEAD)) + " (" + RoomUtil.time(data.get(NYLO_LAST_DEAD) - data.get(DataPoint.NYLO_LAST_WAVE)) + ")"));
 
         nylocasSubPanel.add(new JLabel(nyloBodyColor + "Boss Spawn"));
-        nylocasSubPanel.add(new JLabel(nyloBodyColor + RoomUtil.time(data.getValue(DataPoint.NYLO_BOSS_SPAWN)) + " (" + RoomUtil.time(data.getValue(DataPoint.NYLO_BOSS_SPAWN) - data.getValue(NYLO_LAST_DEAD)) + ")"));
+        nylocasSubPanel.add(new JLabel(nyloBodyColor + RoomUtil.time(data.get(DataPoint.NYLO_BOSS_SPAWN)) + " (" + RoomUtil.time(data.get(DataPoint.NYLO_BOSS_SPAWN) - data.get(NYLO_LAST_DEAD)) + ")"));
 
         nylocasSubPanel.add(new JLabel(nyloBodyColor + "Time"));
-        nylocasSubPanel.add(new JLabel(nyloBodyColor + RoomUtil.time(data.getNyloTime()) + " (" + RoomUtil.time(data.getNyloTime() - data.getValue(DataPoint.NYLO_BOSS_SPAWN)) + ")"));
+        nylocasSubPanel.add(new JLabel(nyloBodyColor + RoomUtil.time(nyloSplit) + " (" + RoomUtil.time(nyloSplit- data.get(DataPoint.NYLO_BOSS_SPAWN)) + ")"));
 
         JPanel sotetsegSubPanel = new JPanel();
         sotetsegSubPanel.setLayout(new GridLayout(8, 2));
 
-        sotetsegSubPanel.add(new JLabel(soteBodyColor + "Hammers hit"));
-        sotetsegSubPanel.add(new JLabel(soteBodyColor + ((data.soteDefenseAccurate) ? data.getValue(DataPoint.SOTE_SPECS_P1) + " " + data.getValue(DataPoint.SOTE_SPECS_P2) + " " + data.getValue(DataPoint.SOTE_SPECS_P3) + " (" + (data.getValue(DataPoint.SOTE_SPECS_TOTAL)) + ")" : INCOMPLETE_MARKER)));
+        sotetsegSubPanel.add(new JLabel(soteBodyColor + "Hammers hit")); //todo defense
+        // sotetsegSubPanel.add(new JLabel(soteBodyColor + ((data.soteDefenseAccurate) ? data.getValue(DataPoint.SOTE_SPECS_P1) + " " + data.getValue(DataPoint.SOTE_SPECS_P2) + " " + data.getValue(DataPoint.SOTE_SPECS_P3) + " (" + (data.getValue(DataPoint.SOTE_SPECS_TOTAL)) + ")" : INCOMPLETE_MARKER)));
 
         sotetsegSubPanel.add(new JLabel(soteBodyColor + "Deaths"));
-        sotetsegSubPanel.add(new JLabel(soteBodyColor + data.getValue(DataPoint.SOTE_DEATHS)));
+        sotetsegSubPanel.add(new JLabel(soteBodyColor + data.get(DataPoint.DEATHS))); //todo specific deaths
 
         sotetsegSubPanel.add(new JLabel(soteBodyColor + "First Maze Start"));
-        sotetsegSubPanel.add(new JLabel(soteBodyColor + RoomUtil.time(data.getValue(DataPoint.SOTE_P1_SPLIT))));
+        sotetsegSubPanel.add(new JLabel(soteBodyColor + RoomUtil.time(data.get(DataPoint.SOTE_P1_SPLIT))));
 
         sotetsegSubPanel.add(new JLabel(soteBodyColor + "First Maze End"));
-        sotetsegSubPanel.add(new JLabel(soteBodyColor + RoomUtil.time(data.getValue(DataPoint.SOTE_M1_SPLIT)) + " (" + RoomUtil.time(data.getValue(DataPoint.SOTE_M1_SPLIT) - data.getValue(DataPoint.SOTE_P1_SPLIT)) + ")"));
+        sotetsegSubPanel.add(new JLabel(soteBodyColor + RoomUtil.time(data.get(DataPoint.SOTE_M1_SPLIT)) + " (" + RoomUtil.time(data.get(DataPoint.SOTE_M1_SPLIT) - data.get(DataPoint.SOTE_P1_SPLIT)) + ")"));
 
         sotetsegSubPanel.add(new JLabel(soteBodyColor + "Second Maze Start"));
-        sotetsegSubPanel.add(new JLabel(soteBodyColor + RoomUtil.time(data.getValue(DataPoint.SOTE_P2_SPLIT)) + " (" + RoomUtil.time(data.getValue(DataPoint.SOTE_P2_SPLIT) - data.getValue(DataPoint.SOTE_M1_SPLIT)) + ")"));
+        sotetsegSubPanel.add(new JLabel(soteBodyColor + RoomUtil.time(data.get(DataPoint.SOTE_P2_SPLIT)) + " (" + RoomUtil.time(data.get(DataPoint.SOTE_P2_SPLIT) - data.get(DataPoint.SOTE_M1_SPLIT)) + ")"));
 
         sotetsegSubPanel.add(new JLabel(soteBodyColor + "Second Maze End"));
-        sotetsegSubPanel.add(new JLabel(soteBodyColor + RoomUtil.time(data.getValue(DataPoint.SOTE_M2_SPLIT)) + " (" + RoomUtil.time(data.getValue(DataPoint.SOTE_M2_SPLIT) - data.getValue(DataPoint.SOTE_P2_SPLIT)) + ")"));
+        sotetsegSubPanel.add(new JLabel(soteBodyColor + RoomUtil.time(data.get(DataPoint.SOTE_M2_SPLIT)) + " (" + RoomUtil.time(data.get(DataPoint.SOTE_M2_SPLIT) - data.get(DataPoint.SOTE_P2_SPLIT)) + ")"));
 
         sotetsegSubPanel.add(new JLabel(soteBodyColor + "Time"));
-        sotetsegSubPanel.add(new JLabel(soteBodyColor + RoomUtil.time(data.getSoteTime()) + " (" + RoomUtil.time(data.getSoteTime() - data.getValue(DataPoint.SOTE_M2_SPLIT)) + ")"));
+        sotetsegSubPanel.add(new JLabel(soteBodyColor + RoomUtil.time(soteSplit) + " (" + RoomUtil.time(soteSplit - data.get(DataPoint.SOTE_M2_SPLIT)) + ")"));
 
         JPanel xarpusSubPanel = new JPanel();
         xarpusSubPanel.setLayout(new GridLayout(8, 2));
 
-        xarpusSubPanel.add(new JLabel(xarpBodyColor + "Defense"));
-        xarpusSubPanel.add(new JLabel(xarpBodyColor + ((data.xarpDefenseAccurate) ? data.getValue(DataPoint.XARP_DEFENSE) : INCOMPLETE_MARKER)));
+        xarpusSubPanel.add(new JLabel(xarpBodyColor + "Defense")); //todo defense
+        // xarpusSubPanel.add(new JLabel(xarpBodyColor + ((data.xarpDefenseAccurate) ? data.getValue(DataPoint.XARP_DEFENSE) : INCOMPLETE_MARKER)));
 
         xarpusSubPanel.add(new JLabel(xarpBodyColor + "Deaths"));
-        xarpusSubPanel.add(new JLabel(xarpBodyColor + data.getValue(DataPoint.XARP_DEATHS)));
+        xarpusSubPanel.add(new JLabel(xarpBodyColor + data.get(DataPoint.DEATHS))); //todo xarp specific
 
         xarpusSubPanel.add(new JLabel(xarpBodyColor + "Healing"));
-        xarpusSubPanel.add(new JLabel(xarpBodyColor + data.getValue(DataPoint.XARP_HEALING)));
+        xarpusSubPanel.add(new JLabel(xarpBodyColor + data.get(DataPoint.XARP_HEALING)));
 
         xarpusSubPanel.add(new JLabel(xarpBodyColor + "Screech"));
-        xarpusSubPanel.add(new JLabel(xarpBodyColor + RoomUtil.time(data.getValue(DataPoint.XARP_SCREECH))));
+        xarpusSubPanel.add(new JLabel(xarpBodyColor + RoomUtil.time(data.get(DataPoint.XARP_SCREECH))));
 
         xarpusSubPanel.add(new JLabel(xarpBodyColor + "Time"));
-        xarpusSubPanel.add(new JLabel(xarpBodyColor + RoomUtil.time(data.getXarpTime()) + " (" + RoomUtil.time(data.getXarpTime() - data.getValue(DataPoint.XARP_SCREECH)) + ")"));
+        xarpusSubPanel.add(new JLabel(xarpBodyColor + RoomUtil.time(xarpSplit) + " (" + RoomUtil.time(xarpSplit- data.get(DataPoint.XARP_SCREECH)) + ")"));
 
         xarpusSubPanel.add(new JLabel(""));
         xarpusSubPanel.add(new JLabel(""));
@@ -256,25 +259,25 @@ public class ViewTOBRaid extends BaseFrame //todo @fisu not sure if you wanted t
         verzikSubPanel.setLayout(new GridLayout(8, 2));
 
         verzikSubPanel.add(new JLabel(verzikBodyColor + "Bounces"));
-        verzikSubPanel.add(new JLabel(verzikBodyColor + data.getValue(DataPoint.VERZIK_BOUNCES)));
+        verzikSubPanel.add(new JLabel(verzikBodyColor + data.get(DataPoint.VERZIK_BOUNCES)));
 
         verzikSubPanel.add(new JLabel(verzikBodyColor + "Deaths"));
-        verzikSubPanel.add(new JLabel(verzikBodyColor + data.getValue(DataPoint.VERZIK_DEATHS)));
+        verzikSubPanel.add(new JLabel(verzikBodyColor + data.get(DataPoint.DEATHS))); //todo verzik specific
 
         verzikSubPanel.add(new JLabel(verzikBodyColor + "Crabs Spawned"));
-        verzikSubPanel.add(new JLabel(verzikBodyColor + data.getValue(DataPoint.VERZIK_CRABS_SPAWNED)));
+        verzikSubPanel.add(new JLabel(verzikBodyColor + data.get(DataPoint.VERZIK_CRABS_SPAWNED)));
 
         verzikSubPanel.add(new JLabel(verzikBodyColor + "Phase 1"));
-        verzikSubPanel.add(new JLabel(verzikBodyColor + RoomUtil.time(data.getValue(DataPoint.VERZIK_P1_SPLIT))));
+        verzikSubPanel.add(new JLabel(verzikBodyColor + RoomUtil.time(data.get(DataPoint.VERZIK_P2_SPLIT))));
 
         verzikSubPanel.add(new JLabel(verzikBodyColor + "Reds Proc"));
-        verzikSubPanel.add(new JLabel(verzikBodyColor + RoomUtil.time(data.getValue(DataPoint.VERZIK_REDS_SPLIT)) + " (" + RoomUtil.time(data.getValue(DataPoint.VERZIK_REDS_SPLIT) - data.getValue(DataPoint.VERZIK_P1_SPLIT)) + ")"));
+        verzikSubPanel.add(new JLabel(verzikBodyColor + RoomUtil.time(data.get(DataPoint.VERZIK_REDS_SPLIT)) + " (" + RoomUtil.time(data.get(DataPoint.VERZIK_REDS_SPLIT) - data.get(DataPoint.VERZIK_P2_SPLIT)) + ")"));
 
         verzikSubPanel.add(new JLabel(verzikBodyColor + "Phase 2"));
-        verzikSubPanel.add(new JLabel(verzikBodyColor + RoomUtil.time(data.getValue(DataPoint.VERZIK_P2_SPLIT)) + " (" + RoomUtil.time(data.getValue(DataPoint.VERZIK_P2_SPLIT) - data.getValue(DataPoint.VERZIK_P1_SPLIT)) + ")"));
+        verzikSubPanel.add(new JLabel(verzikBodyColor + RoomUtil.time(data.get(DataPoint.VERZIK_P3_SPLIT)) + " (" + RoomUtil.time(data.get(DataPoint.VERZIK_P2_DURATION)) + ")"));
 
         verzikSubPanel.add(new JLabel(verzikBodyColor + "Time"));
-        verzikSubPanel.add(new JLabel(verzikBodyColor + RoomUtil.time(data.getVerzikTime()) + " (" + RoomUtil.time(data.getVerzikTime() - data.getValue(DataPoint.VERZIK_P2_SPLIT)) + ")"));
+        verzikSubPanel.add(new JLabel(verzikBodyColor + RoomUtil.time(data.get(DataPoint.VERZIK_TIME)) + " (" + RoomUtil.time(data.get(DataPoint.VERZIK_TIME) - data.get(DataPoint.VERZIK_P2_SPLIT)) + ")"));
 
         bloatPanel.add(bloatSubPanel);
         nylocasPanel.add(nylocasSubPanel);
@@ -282,17 +285,15 @@ public class ViewTOBRaid extends BaseFrame //todo @fisu not sure if you wanted t
         xarpusPanel.add(xarpusSubPanel);
         verzikPanel.add(verzikSubPanel);
 
-         */
-
         thisSubPanel.add(createMaidenPanel(data));
 
-        /*
+
         thisSubPanel.add(bloatPanel);
         thisSubPanel.add(nylocasPanel);
         thisSubPanel.add(sotetsegPanel);
         thisSubPanel.add(xarpusPanel);
         thisSubPanel.add(verzikPanel);
-         */
+
 
         JPanel summaryPanel = new JPanel();
         summaryPanel.setLayout(new BorderLayout());
@@ -342,9 +343,9 @@ public class ViewTOBRaid extends BaseFrame //todo @fisu not sure if you wanted t
         thrallsPanel.setLayout(new GridLayout(7, 2));
 
 
-        /*
+
         thrallsPanel.add(new JLabel("Maiden Thrall Hits: "));
-        thrallsPanel.add(new JLabel(String.valueOf(data.getValue(DataPoint.THRALL_ATTACKS_MAIDEN)), SwingConstants.RIGHT));
+        thrallsPanel.add(new JLabel(String.valueOf(data.get(DataPoint.THRALL_ATTACKS, MAIDEN)), SwingConstants.RIGHT));
 
         thrallsPanel.add(new JLabel("Bloat Thrall Hits: "));
         thrallsPanel.add(new JLabel(String.valueOf(data.getValue(DataPoint.THRALL_ATTACKS_BLOAT)), SwingConstants.RIGHT));
@@ -391,7 +392,7 @@ public class ViewTOBRaid extends BaseFrame //todo @fisu not sure if you wanted t
         vengPanel.add(new JLabel("(" + data.getValue(DataPoint.VENG_PROCS_VERZIK) + "/" + data.getValue(DataPoint.VENG_CASTS_VERZIK) + "): " + data.getValue(DataPoint.VENG_DAMAGE_VERZIK), SwingConstants.RIGHT));
 
         topPanel.add(vengPanel);
-         */
+
 
         topPanel.add(thrallsPanel);
 
@@ -402,7 +403,7 @@ public class ViewTOBRaid extends BaseFrame //todo @fisu not sure if you wanted t
         pack();
     }
 
-    /*private Color getColor(Raid data, RaidRoom room)
+    private Color getColor(Raid data, RaidRoom room)
     {
         Color color = green;
         if (!data.isAccurate())
@@ -420,7 +421,7 @@ public class ViewTOBRaid extends BaseFrame //todo @fisu not sure if you wanted t
             color = data.getRoomPartiallyAccurate(room) ? soft : dark;
         }
         return color;
-    }*/
+    }
 
     private JLabel createLabel(String text, Color color) {
         JLabel label = new JLabel(text);
@@ -429,7 +430,7 @@ public class ViewTOBRaid extends BaseFrame //todo @fisu not sure if you wanted t
     }
 
     private JPanel createMaidenPanel(Tob data)
-    { /*
+    {
         JPanel maidenPanel = new JPanel();
         maidenPanel.setLayout(new BorderLayout());
         Color color = getColor(data, TOBRoom.MAIDEN);
@@ -486,8 +487,7 @@ public class ViewTOBRaid extends BaseFrame //todo @fisu not sure if you wanted t
         maidenSubPanel.add(createLabel(RoomUtil.time(data.getTime()) + " (" + RoomUtil.time(data.getTime() - splits[2]) + ")", bodyColor));
         maidenPanel.setBorder(BorderFactory.createTitledBorder("Maiden" + ((data.isScuffed()) ? " (Scuffed after " + data.getScuffedAfter() + ")" : "")));
         maidenPanel.add(maidenSubPanel);
-        return maidenPanel;*/
-        return null;
+        return maidenPanel;
     }
 
     private static void setSummaryStatus(Tob data, JPanel summarySubPanel)

@@ -170,6 +170,7 @@ public class Raids extends BaseFrame
 
     public void updateTable()
     {
+        log.info("Updating table...");
         int completions = 0;
         List<Raid> tableData = new ArrayList<>();
         for (Raid data : currentData)
@@ -282,7 +283,7 @@ public class Raids extends BaseFrame
         }
         setTitle("Raids: " + table.getRowCount() + ", Completions: " + completions);
         updateTabNames(tableData);
-
+        tableData = handleTableSort(tableData);
         ArrayList<String> columnNamesDynamic = new ArrayList<>();
         columnNamesDynamic.add("");
         for (JCheckBoxMenuItem item : columnHeaders)
@@ -340,7 +341,6 @@ public class Raids extends BaseFrame
                 table.getColumn(table.getColumnName(i)).setCellRenderer(new StripedTableRowCellRenderer());
             }
         }
-        setupTableHeaderListener();
 
         resizeColumnWidth(table);
         table.setFillsViewportHeight(true);
@@ -359,7 +359,7 @@ public class Raids extends BaseFrame
      */
     private void setupTableHeaderListener()
     {
-        setTableSorterActive(true);
+        //setTableSorterActive(true);
         table.getTableHeader().addMouseListener(new MouseAdapter()
         {
             @Override
@@ -367,19 +367,37 @@ public class Raids extends BaseFrame
             {
                 if(SwingUtilities.isLeftMouseButton(e))
                 {
+                        String clickedColumn = "none";
                         Component c = e.getComponent();
                         if(c instanceof JTableHeader)
                         {
                             JTableHeader header = (JTableHeader) c;
-                            if(header.getTable().getColumnName(header.getColumnModel().getColumnIndexAtX(e.getX())).equals("Custom"))
+                            clickedColumn = header.getTable().getColumnName(header.getColumnModel().getColumnIndexAtX(e.getX()));
+                            log.info("Header clicked, column: " + clickedColumn);
+                            if(clickedColumn.equals("Custom"))
                             {
                                 Rectangle rect = table.getCellRect(0, header.getColumnModel().getColumnIndexAtX(e.getX()), true);
                                 if(e.getX() > rect.getX()+rect.getWidth()-20)
                                 {
-                                    setTableSorterActive(false);
+                                    return;
                                 }
                             }
                         }
+                        if(!clickedColumn.equals("none"))
+                        {
+                            if(clickedColumn.equals(lastColumnClicked))
+                            {
+                                isSortReversed = !isSortReversed;
+                            }
+                            else
+                            {
+                                isSortReversed = shouldNotBeSortedByTicks.contains(clickedColumn);
+                            }
+                            lastColumnClicked = clickedColumn;
+                            updateTable();
+                            e.consume();
+                        }
+
                 }
             }
         });
@@ -583,19 +601,26 @@ public class Raids extends BaseFrame
     public void setLabels(List<Raid> data)
     {
         List<Raid> tobData = new ArrayList<>();
+        List<Raid> toaData = new ArrayList<>();
         for (Raid raidData : data)
         {
-
-            if (raidData instanceof Tob)
+            if (raidData instanceof Tob) //check if this can just be passed as the raid and not sort into lists per raid //todo
             {
                 tobData.add(raidData);
             }
-
+            else if(raidData instanceof Toa)
+            {
+                toaData.add(raidData);
+            }
         }
         setOverallLabels(data);
         for(StatisticTab tab : tobTabs)
         {
             tab.updateTab(tobData);
+        }
+        for(StatisticTab tab : toaTabs)
+        {
+            tab.updateTab(toaData);
         }
     }
 
@@ -705,15 +730,28 @@ public class Raids extends BaseFrame
         panel.setBorder(BorderFactory.createTitledBorder(title));
 
         JPanel subPanel = new JPanel();
-        subPanel.setLayout(new GridLayout(7, 2));
+        subPanel.setLayout(new GridLayout(0, 2));
 
+        int index = 0;
         for (String s : labelMap.keySet())
         {
             JLabel leftLabel = new JLabel(roomColor + s);
             subPanel.add(leftLabel);
             subPanel.add(labelMap.get(s));
+            index++;
         }
-        panel.add(subPanel);
+        for(int i = index; i < 13; i++) //enforce formatting because swing is bad
+        {
+            JLabel leftLabel = new JLabel("");
+            JLabel rightLabel = new JLabel("");
+            subPanel.add(leftLabel);
+            subPanel.add(rightLabel);
+        }
+        subPanel.setPreferredSize(new Dimension(100, 200));
+        JScrollPane scrollPane = new JScrollPane(subPanel);
+        scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        panel.add(scrollPane);
+        panel.setPreferredSize(new Dimension(150, 200));
         return panel;
     }
 
@@ -758,7 +796,7 @@ public class Raids extends BaseFrame
             }
             catch (Exception ignore)
             {
-                //no date column
+                //User has date column hidden
             }
             if(dateIndex != -1)
             {
@@ -791,9 +829,93 @@ public class Raids extends BaseFrame
     public List<StatisticTab> toaTabs = new ArrayList<>();
     public List<StatisticTab> coxTabs = new ArrayList<>();
 
+    private String lastColumnClicked = "Date";
+    private boolean isSortReversed = true;
+    private List<Raid> handleTableSort(List<Raid> tableData)
+    {
+        log.info("Sorting. Last clicked: " + lastColumnClicked + " is reversed? " + isSortReversed);
+        Comparator<Raid> comparator = null;
+        switch(lastColumnClicked)
+        {
+            case "Date":
+                comparator = Comparator.comparing(Raid::getDate);
+                break;
+            case "":
+                comparator = Comparator.comparing(Raid::getIndex);
+                break;
+            case "Scale":
+                comparator = Comparator.comparing(Raid::getScale);
+                break;
+            case "Raid":
+                comparator = Comparator.comparing(Raid::getRaidType);
+                break;
+            case "Status":
+                comparator = Comparator.comparing(Raid::getRoomStatus); //todo more intelligent sorting not based on alphabetical
+                break;
+            case "Players":
+                comparator = Comparator.comparing(Raid::getPlayerString);
+                break;
+            case "Spectate":
+                comparator = Comparator.comparing(Raid::isSpectated);
+                break;
+            case "Custom":
+                comparator = ((o1, o2) -> o1.get(customColumnComboBox.getSelectedItem().toString()).compareTo(o2.get(customColumnComboBox.getSelectedItem().toString())));
+                break;
+            default:
+                comparator = ((o1, o2) -> o1.get(lastColumnClicked).compareTo(o2.get(lastColumnClicked)));
+                break;
+        }
+        if(comparator == null)
+        {
+            return tableData;
+        }
+        if(isSortReversed)
+        {
+            comparator = comparator.reversed();
+        }
+        tableData.sort(comparator);
+        //If user sorts by a time, e.g., "Xarpus Time", we don't want to include data in the table if xarpus wasn't seen that raid
+        if(shouldNotBeSortedByTicks.contains(lastColumnClicked))
+        {
+            return tableData;
+        }
+        List<Raid> filteredSortData = new ArrayList<>();
+        for(Raid raid : tableData)
+        {
+            if(lastColumnClicked.equals("Custom"))
+            {
+                if(raid.getTimeAccurate(DataPoint.getValue(customColumnComboBox.getSelectedItem().toString())))
+                {
+                    filteredSortData.add(raid);
+                }
+            }
+            else
+            {
+                if(raid.getTimeAccurate(DataPoint.getValue(lastColumnClicked)))
+                {
+                    filteredSortData.add(raid);
+                }
+            }
+        }
+        log.info("returning filtered");
+        return filteredSortData;
+    }
+
+    //    private final Set<String> shouldNotBeSortedByTicks = new HashSet<>(Arrays.asList("", "Scale", "Raid", "Status", "Players", "Spectate", "Date"));
+
+
     public void createFrame(List<Raid> data)
     {
         customColumnComboBox.setEnabled(true);
+        for(Component c : customColumnComboBox.getComponents())
+        {
+            //we are using the combobox for its appearance only, we do not want the real combobox dropdown to pop up when clicked because we are using
+            //a jpopupmenu to display the content of the dropdown. Even if we set it not visible it will flash for a frame before going away.
+            if(c instanceof AbstractButton)
+            {
+                c.setEnabled(false);
+            }
+        }
         customColumnComboBox.addItem("Challenge Time");
 
 
@@ -811,7 +933,7 @@ public class Raids extends BaseFrame
 
 
         table = new JTable();
-        table.setAutoCreateRowSorter(true);
+        //table.setAutoCreateRowSorter(true);
         table.getTableHeader().setComponentPopupMenu(tstMenu);
         JScrollPane pane = new JScrollPane(table);
 
@@ -841,7 +963,7 @@ public class Raids extends BaseFrame
             JPanel overallMaxPanel = getOverallPanel("Maximum", maxLabels2.get(k));
 
             JPanel topStatPanel = new JPanel();
-            topStatPanel.setLayout(new GridLayout(2, 4));
+            topStatPanel.setLayout(new GridLayout(1, 4));
 
             topStatPanel.add(overallAveragePanel);
             topStatPanel.add(overallMedianPanel);
@@ -849,26 +971,7 @@ public class Raids extends BaseFrame
             topStatPanel.add(overallMaxPanel);
 
 
-
-            for(int i = 0; i < 4; i++)
-            {
-                JPanel panel = new JPanel();
-                panel.setLayout(new BorderLayout());
-                panel.setBorder(BorderFactory.createTitledBorder("Test"));
-                JPanel subPanel = new JPanel();
-                subPanel.setLayout(new GridLayout(0, 2));
-                for (String s : rooms)
-                {
-                    JLabel leftLabel = new JLabel(roomColor + s);
-                    subPanel.add(leftLabel);
-                    subPanel.add(new JLabel("-"));
-                }
-                panel.add(subPanel);
-                topStatPanel.add(panel);
-            }
-            JScrollPane scrollPane = new JScrollPane(topStatPanel);
-            scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-            overallPanel.add(scrollPane);
+            overallPanel.add(topStatPanel);
             overallPanels.add(overallPanel);
         }
 
@@ -952,6 +1055,7 @@ public class Raids extends BaseFrame
 
         JPanel scaleContainer = new JPanel();
         scaleContainer.setLayout(new BoxLayout(scaleContainer, BoxLayout.X_AXIS));
+        scaleContainer.setPreferredSize(new Dimension(150, 25));
 
         JPanel filterHolder = new JPanel();
         filterHolder.setLayout(new GridLayout(10, 1));
@@ -1633,6 +1737,8 @@ public class Raids extends BaseFrame
         rightContainer.add(rightBottomBottomContainer);
         rightContainer.add(rightBottomMostContainer);
         splitLeftRight.add(rightContainer);
+
+        setupTableHeaderListener();
 
         add(splitLeftRight);
         pack();

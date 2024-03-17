@@ -11,8 +11,8 @@ public enum RaidRoom
     MAIDEN(0, "Maiden"), BLOAT(1, "Bloat"), NYLOCAS(2, "Nylocas"), SOTETSEG(3, "Sotetseg"), XARPUS(4, "Xarpus"), VERZIK(5, "Verzik"), UNKNOWN(-1, "Unknown"), ANY_TOB(6, "Any TOB"),
     CRONDIS(7, "Crondis"), ZEBAK(8, "Zebak"), SCABARAS(9, "Scabaras"), KEPHRI(10, "Kephri"), APMEKEN(11, "Apmeken"), BABA(12, "Baba"), HET(13, "Het"), AKKHA(14, "Akkha"), WARDENS(15, "Wardens"), ANY_TOA(16, "Any TOA"),
 
-    TEKTON(19, "Tekton"), CRABS(20, "Crabs"), ICE_DEMON(21, "Ice Demon"), SHAMANS(22, "Shamans"), VANGUARDS(23, "Vanguards"), THIEVING(24, "Thieving"), VESPULA(25, "Vespula"),
-    TIGHT_ROPE(26, "Tight Rope"), GUARDIANS(27, "Guardians"), VASA_NISTIRIO(28, "Vasa Nistirio"), SKELETAL_MYSTICS(29, "Skeletal Mystics"), MUTTADILES(30, "Muttadiles"), OLM(31, "Olm"),
+    TEKTON(19, "Tekton"), CRABS(20, "Crabs"), ICE_DEMON(21, "Ice"), SHAMANS(22, "Shamans"), VANGUARDS(23, "Vanguards"), THIEVING(24, "Thieving"), VESPULA(25, "Vespula"),
+    TIGHT_ROPE(26, "Rope"), GUARDIANS(27, "Guardians"), VASA_NISTIRIO(28, "Vasa"), SKELETAL_MYSTICS(29, "Mystics"), MUTTADILES(30, "Muttadiles"), OLM(31, "Olm"),
     ANY(17, "Any"), ALL(18, "All"),
 
     ;

@@ -1,11 +1,7 @@
 package com.advancedraidtracker.ui.statistics;
 
-import com.advancedraidtracker.SimpleTOBData;
 import com.advancedraidtracker.constants.RaidRoom;
-import com.advancedraidtracker.utility.datautility.DataPoint;
 import com.advancedraidtracker.utility.datautility.datapoints.Raid;
-import com.advancedraidtracker.utility.datautility.datapoints.tob.Tob;
-
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;

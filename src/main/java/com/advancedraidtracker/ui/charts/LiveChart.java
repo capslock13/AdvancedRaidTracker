@@ -66,7 +66,7 @@ public class LiveChart extends BaseFrame
         tabbedPane = new JTabbedPane();
         tabbedPane.addChangeListener(cl ->
         {
-            String activePanel = "";
+            String activePanel = null;
             if(activeRaid.equals(TOB))
             {
                 activePanel = tob[tabbedPane.getSelectedIndex()];
@@ -74,6 +74,10 @@ public class LiveChart extends BaseFrame
             else if(activeRaid.equals(TOA))
             {
                 activePanel = toa[tabbedPane.getSelectedIndex()];
+            }
+            if(activePanel == null)
+            {
+                return;
             }
             for (String name : tobPanels.keySet())
             {
@@ -111,7 +115,7 @@ public class LiveChart extends BaseFrame
             public void windowOpened(WindowEvent e)
             {
                 super.windowOpened(e);
-                String activePanel = "";
+                String activePanel = null;
                 if(activeRaid.equals(TOB))
                 {
                     activePanel = tob[tabbedPane.getSelectedIndex()];
@@ -119,6 +123,10 @@ public class LiveChart extends BaseFrame
                 else if(activeRaid.equals(TOA))
                 {
                     activePanel = toa[tabbedPane.getSelectedIndex()];
+                }
+                if(activePanel == null)
+                {
+                    return;
                 }
                 getPanel(activePanel).setActive(true);
                 getPanel(activePanel).redraw();

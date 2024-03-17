@@ -104,6 +104,18 @@ public abstract class Raid
 
     public abstract int getTimeSum();
 
+    /**
+     * Used for sorting to have String.toCompare method compared to the set
+     * @return player string e.g. Player1,Player2,Player3,Player4
+     */
+    public String getPlayerString()
+    {
+        return Text.toJagexName(String.join(",", getPlayers()));
+    }
+
+    @Getter
+    private boolean spectated;
+
     protected Raid(Path filepath, List<LogEntry> raidData)
     {
         defaultParser = new DefaultParser();
@@ -119,6 +131,19 @@ public abstract class Raid
     public boolean getOverallTimeAccurate()
     {
         return false;
+    }
+
+    public int get(DataPoint point, RaidRoom room)
+    {
+        int sum = 0;
+        if(point.playerSpecific)
+        {
+            RoomDataManager rdm = getParser(room).data;
+            for(String player : rdm.playerSpecificMap.get(point).keySet())
+            {
+                sum += rdm.playerSpecificMap.get(point).get(player);
+            }
+        }
     }
 
     public int get(DataPoint point)
@@ -149,9 +174,12 @@ public abstract class Raid
             {
                 int sum = 0;
                 RoomDataManager rdm = getParser(point.room).data;
-                for(String player : rdm.playerSpecificMap.get(point).keySet())
+                if(rdm.playerSpecificMap.containsKey(point))
                 {
-                    sum += rdm.playerSpecificMap.get(point).get(player);
+                    for (String player : rdm.playerSpecificMap.get(point).keySet())
+                    {
+                        sum += rdm.playerSpecificMap.get(point).get(player);
+                    }
                 }
                 return sum;
             }
@@ -162,7 +190,7 @@ public abstract class Raid
         }
     }
 
-    public int get(String datapoint)
+    public Integer get(String datapoint)
     {
         DataPoint point = DataPoint.getValue(datapoint);
         return get(point);
@@ -232,7 +260,8 @@ public abstract class Raid
 
     public boolean getTimeAccurate(DataPoint point)
     {
-        return getRoomAccurate(point.room);
+        return get(point) > -1;
+        //return getRoomAccurate(point.room);
     }
 
     /**

@@ -1,12 +1,10 @@
 package com.advancedraidtracker.ui.statistics;
 
-import com.advancedraidtracker.SimpleTOBData;
 import com.advancedraidtracker.constants.RaidRoom;
 import com.advancedraidtracker.utility.RoomUtil;
 import com.advancedraidtracker.utility.datautility.DataPoint;
 import com.advancedraidtracker.utility.StatisticGatherer;
 import com.advancedraidtracker.utility.datautility.datapoints.Raid;
-import com.advancedraidtracker.utility.datautility.datapoints.tob.Tob;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;

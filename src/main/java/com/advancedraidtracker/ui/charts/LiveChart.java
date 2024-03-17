@@ -36,6 +36,7 @@ public class LiveChart extends BaseFrame
     Map<String, JScrollPane> toaScrollPanes;
     Map<String, JScrollPane> tobScrollPanes;
     RaidType activeRaid = RaidType.UNASSIGNED;
+    Map<String, ChartPanel> currentPanels;
 
     public LiveChart(AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
     {
@@ -48,6 +49,7 @@ public class LiveChart extends BaseFrame
         tobPanels = new LinkedHashMap<>();
         toaScrollPanes = new LinkedHashMap<>();
         tobScrollPanes = new LinkedHashMap<>();
+        currentPanels = tobPanels;
 
         for (String name : tob)
         {
@@ -64,44 +66,31 @@ public class LiveChart extends BaseFrame
         }
 
         tabbedPane = new JTabbedPane();
-        tabbedPane.addChangeListener(cl ->
+        tabbedPane.addChangeListener(cl -> //todo test this revised logic
         {
             String activePanel = null;
-            if(activeRaid.equals(TOB))
+            switch (activeRaid)
             {
-                activePanel = tob[tabbedPane.getSelectedIndex()];
+                case TOB:
+                    activePanel = tob[tabbedPane.getSelectedIndex()];
+                    currentPanels = tobPanels;
+                    break;
+                case TOA:
+                    activePanel = toa[tabbedPane.getSelectedIndex()];
+                    currentPanels = toaPanels;
+                    break;
             }
-            else if(activeRaid.equals(TOA))
-            {
-                activePanel = toa[tabbedPane.getSelectedIndex()];
-            }
+            currentPanels.values().forEach(panel->panel.setActive(false));
             if(activePanel == null)
             {
                 return;
             }
-            for (String name : tobPanels.keySet())
+            //Because we programatically switch tabs when region changes, which fires a tab changed event, we don't want to set the tab active
+            //if the user has the window closed
+            if(isShowing())
             {
-                if(name.equals(activePanel) && isShowing())
-                {
-                    tobPanels.get(name).setActive(true);
-                    tobPanels.get(name).redraw();
-                }
-                else
-                {
-                    tobPanels.get(name).setActive(false);
-                }
-            }
-            for (String name : toaPanels.keySet())
-            {
-                if(name.equals(activePanel) && isShowing())
-                {
-                    toaPanels.get(name).setActive(true);
-                    toaPanels.get(name).redraw();
-                }
-                else
-                {
-                    tobPanels.get(name).setActive(false);
-                }
+                currentPanels.get(activePanel).setActive(true);
+                currentPanels.get(activePanel).redraw();
             }
         });
 

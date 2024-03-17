@@ -38,19 +38,19 @@ public class ViewTOBRaid extends BaseFrame //todo @fisu not sure if you wanted t
         thisSubPanel.setLayout(new GridLayout(2, 3));
 
 
-        String maidenColor = (data.getRoomAccurate(MAIDEN)) ? green : data.getRoomPartiallyAccurate(MAIDEN) ? blue : red;
-        String bloatColor = (data.getRoomAccurate(BLOAT)) ? green : data.getRoomPartiallyAccurate(BLOAT) ? blue : red;
-        String nyloColor = (data.getRoomAccurate(NYLOCAS)) ? green : data.getRoomPartiallyAccurate(NYLOCAS) ? blue : red;
-        String soteColor = (data.getRoomAccurate(SOTETSEG)) ? green : data.getRoomPartiallyAccurate(SOTETSEG) ? blue : red;
-        String xarpColor = (data.getRoomAccurate(XARPUS)) ? green : data.getRoomPartiallyAccurate(XARPUS) ? blue : red;
-        String verzikColor = (data.getRoomAccurate(VERZIK)) ? green : data.getRoomPartiallyAccurate(VERZIK) ? blue : red;
+        String maidenColor = getColor(data, MAIDEN);
+        String bloatColor = getColor(data, BLOAT);
+        String nyloColor = getColor(data, NYLOCAS);
+        String soteColor = getColor(data, SOTETSEG);
+        String xarpColor = getColor(data, XARPUS);
+        String verzikColor = getColor(data, VERZIK);
 
-        String maidenBodyColor = (data.getRoomAccurate(MAIDEN)) ? white : data.getRoomPartiallyAccurate(MAIDEN) ? soft : dark;
-        String bloatBodyColor = (data.getRoomAccurate(BLOAT)) ? white : data.getRoomPartiallyAccurate(BLOAT) ? soft : dark;
-        String nyloBodyColor = (data.getRoomAccurate(NYLOCAS)) ? white : data.getRoomPartiallyAccurate(NYLOCAS) ? soft : dark;
-        String soteBodyColor = (data.getRoomAccurate(SOTETSEG)) ? white : data.getRoomPartiallyAccurate(SOTETSEG) ? soft : dark;
-        String xarpBodyColor = (data.getRoomAccurate(XARPUS)) ? white : data.getRoomPartiallyAccurate(XARPUS) ? soft : dark;
-        String verzikBodyColor = (data.getRoomAccurate(VERZIK)) ? white : data.getRoomPartiallyAccurate(VERZIK) ? soft : dark;
+        String maidenBodyColor = getBodyColor(data, MAIDEN);
+        String bloatBodyColor = getBodyColor(data, BLOAT);
+        String nyloBodyColor = getBodyColor(data, NYLOCAS);
+        String soteBodyColor = getBodyColor(data, SOTETSEG);
+        String xarpBodyColor = getBodyColor(data, XARPUS);
+        String verzikBodyColor = getBodyColor(data, VERZIK);
 
         //todo ... rename split / duration @caps
 
@@ -421,7 +421,7 @@ public class ViewTOBRaid extends BaseFrame //todo @fisu not sure if you wanted t
 
         pack();
     }
- /*
+
     private String getColor(Raid data, RaidRoom room)
     {
         String color = red;
@@ -445,7 +445,7 @@ public class ViewTOBRaid extends BaseFrame //todo @fisu not sure if you wanted t
         }
         return color;
     }
-
+/*
     private JLabel createLabel(String text, String color)
     {
         return new JLabel(color+text);

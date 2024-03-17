@@ -13,17 +13,13 @@ import java.util.Map;
 @Slf4j
 public class DataPointMenu
 {
-    private List<String> flatData;
     @Getter
     private JComboBox<String> comboBox;
-    private JPopupMenu menu;
     private Raids window;
     public DataPointMenu(List<String> allComboValues, Map<String, String[]> popupData, List<String> flatData, JPopupMenu popmenu, JComboBox<String> box, Raids window)
-    {
+    { //todo handle edge cases differently
         this.window = window;
-        this.menu = popmenu;
         this.comboBox = box;
-        this.flatData = flatData;
         JMenu topLevelMenuAll = new JMenu("All");
         topLevelMenuAll.setBackground(Color.BLACK);
         topLevelMenuAll.setOpaque(true);
@@ -174,7 +170,7 @@ public class DataPointMenu
 
     private void setComboSelection(String name)
     {
-        //Vector<String> items = new Vector<>();
+        //Vector<String> items = new Vector<>(); //todo see if commenting this out for some reason breaks comparison panel....
 
         //ComparisonViewPanel.addComboItems(name, items, flatData, comboBox);
         //comboBox.addItem(name);
@@ -182,22 +178,5 @@ public class DataPointMenu
         window.customColumnComboBox.addItem(name);
         window.customColumnComboBox.setSelectedItem(name);
         window.updateTable();
-    }
-
-    public void invertVisible()
-    {
-        if(menu.isVisible())
-        {
-            menu.setVisible(false);
-        }
-        else
-        {
-            menu.show(comboBox, 0, comboBox.getSize().height);
-        }
-    }
-
-    public String getActive()
-    {
-        return comboBox.getSelectedItem().toString();
     }
 }

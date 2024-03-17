@@ -75,11 +75,9 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     private final Map<PlayerDidAttack, String> actions = new HashMap<>();
 
     private ConfigManager configManager;
+
+    @Setter
     private boolean isActive = false;
-    public void setActive(Boolean state)
-    {
-        isActive = state;
-    }
 
     public boolean shouldDraw()
     {

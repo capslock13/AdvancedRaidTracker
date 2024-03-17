@@ -117,7 +117,7 @@ public class Tob extends Raid
                         }
                         if(Integer.parseInt(entry.getValue("Damage")) == maxHP)
                         {
-                            maidenParser.data.increment(MAIDEN_CRABS_LEAKED_FULL_HP, "");
+                            maidenParser.data.increment(MAIDEN_CRABS_LEAKED_FULL_HP);
                         }
                     }
                     else if(entry.logEntry.equals(LogID.PLAYER_DIED))

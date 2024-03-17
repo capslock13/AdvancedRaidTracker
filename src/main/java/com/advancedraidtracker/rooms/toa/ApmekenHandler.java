@@ -34,10 +34,8 @@ public class ApmekenHandler extends TOARoomHandler
     @Override
     public void updateGameTick(GameTick event)
     {
-        log.info("regionx: " + client.getLocalPlayer().getWorldLocation().getRegionX());
-        if (!active && RoomUtil.playerPastLine(15186, 20, true, client))
+        if (!active && RoomUtil.playerPastLine(15186, 20, true, client)) //todo fix magic numbers
         {
-            log.info("starting apmeken");
             active = true;
             roomStartTick = client.getTickCount();
             clog.addLine(LogID.TOA_APMEKEN_START, roomStartTick);

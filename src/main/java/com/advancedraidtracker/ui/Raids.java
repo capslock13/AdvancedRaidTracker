@@ -170,7 +170,6 @@ public class Raids extends BaseFrame
 
     public void updateTable()
     {
-        log.info("Updating table...");
         int completions = 0;
         List<Raid> tableData = new ArrayList<>();
         for (Raid data : currentData)
@@ -352,14 +351,12 @@ public class Raids extends BaseFrame
     /**
      * We want the custom column to have a dropdown arrow so the user knows if they click it they can switch which data point is shown in that column
      * That combobox is for the renderer only, the actual drop down happens as a JPopUpMenu so that we can get sub layers (e.g. toa->kephri->time)
-     * The issue is that we set the table to sort rows when the column header is clicked. So we want to only sort the column if the click does not
-     * happen within the last 20 pixels of the custom column (where the dropdown arrow is), and since on table refresh the sort defaults to on
-     * we just disable the table sorter if the click happens on the dropdown arrow. A similar method to determine if the popupmenu should be shown
-     * is in DynamicTableHeaderRenderer.
+     * The JTable setautosorter doesn't have enough flexibility to do what we need so we have to manually implement table sorting by checking header clicked.
+     * However, we don't want to sort the custom column to sort if you click the dropdown arrow, so we check if the click happens in the last 20 pixels of the
+     * custom column. If not, we set the last column clicked and update the table
      */
     private void setupTableHeaderListener()
     {
-        //setTableSorterActive(true);
         table.getTableHeader().addMouseListener(new MouseAdapter()
         {
             @Override
@@ -367,13 +364,12 @@ public class Raids extends BaseFrame
             {
                 if(SwingUtilities.isLeftMouseButton(e))
                 {
-                        String clickedColumn = "none";
+                        String clickedColumn = null;
                         Component c = e.getComponent();
                         if(c instanceof JTableHeader)
                         {
                             JTableHeader header = (JTableHeader) c;
                             clickedColumn = header.getTable().getColumnName(header.getColumnModel().getColumnIndexAtX(e.getX()));
-                            log.info("Header clicked, column: " + clickedColumn);
                             if(clickedColumn.equals("Custom"))
                             {
                                 Rectangle rect = table.getCellRect(0, header.getColumnModel().getColumnIndexAtX(e.getX()), true);
@@ -383,19 +379,19 @@ public class Raids extends BaseFrame
                                 }
                             }
                         }
-                        if(!clickedColumn.equals("none"))
+                        if(clickedColumn != null)
                         {
-                            if(clickedColumn.equals(lastColumnClicked))
+                            if(clickedColumn.equals(lastColumnClicked)) //if the same column is clicked twice the sort order should be inversed
                             {
                                 isSortReversed = !isSortReversed;
                             }
                             else
                             {
+                                //some columns, e.g. Date or Raid index, feel more natural to sort descending first, but time based columns feel better ascending first
                                 isSortReversed = shouldNotBeSortedByTicks.contains(clickedColumn);
                             }
                             lastColumnClicked = clickedColumn;
                             updateTable();
-                            e.consume();
                         }
 
                 }
@@ -740,7 +736,7 @@ public class Raids extends BaseFrame
             subPanel.add(labelMap.get(s));
             index++;
         }
-        for(int i = index; i < 13; i++) //enforce formatting because swing is bad
+        for(int i = index; i < 13; i++) //enforce formatting because swing is bad. 13 is the most labels used by any panel (# of chambers rooms)
         {
             JLabel leftLabel = new JLabel("");
             JLabel rightLabel = new JLabel("");
@@ -833,7 +829,6 @@ public class Raids extends BaseFrame
     private boolean isSortReversed = true;
     private List<Raid> handleTableSort(List<Raid> tableData)
     {
-        log.info("Sorting. Last clicked: " + lastColumnClicked + " is reversed? " + isSortReversed);
         Comparator<Raid> comparator = null;
         switch(lastColumnClicked)
         {
@@ -897,7 +892,6 @@ public class Raids extends BaseFrame
                 }
             }
         }
-        log.info("returning filtered");
         return filteredSortData;
     }
 

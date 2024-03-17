@@ -31,6 +31,11 @@ public class RoomDataManager
         this.room = room;
     }
 
+    public void increment(DataPoint point)
+    {
+        increment(point, "");
+    }
+
     public void increment(DataPoint point, String player)
     {
         incrementBy(point, 1, player);

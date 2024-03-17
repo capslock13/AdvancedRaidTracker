@@ -4,8 +4,8 @@ import com.advancedraidtracker.AdvancedRaidTrackerConfig;
 import com.advancedraidtracker.constants.TobIDs;
 import com.advancedraidtracker.utility.*;
 import com.advancedraidtracker.utility.Point;
-import com.advancedraidtracker.utility.weapons.WeaponAttack;
-import com.advancedraidtracker.utility.weapons.WeaponDecider;
+import com.advancedraidtracker.utility.weapons.PlayerAnimation;
+import com.advancedraidtracker.utility.weapons.AnimationDecider;
 import com.advancedraidtracker.utility.wrappers.*;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -50,7 +50,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     @Setter
     List<String> players = new ArrayList<>();
     String room;
-    WeaponAttack[] weaponAttacks;
+    PlayerAnimation[] playerAnimations;
     int keyColumns;
     int keyRows;
     int keyCount;
@@ -223,11 +223,11 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             });
             clientThread.invoke(attack::setWornNames);
         }
-        WeaponAttack weaponAttack = WeaponDecider.getWeapon(attack.animation, attack.spotAnims, attack.projectile, attack.weapon);
-        if (weaponAttack != WeaponAttack.UNDECIDED)
+        PlayerAnimation playerAnimation = AnimationDecider.getWeapon(attack.animation, attack.spotAnims, attack.projectile, attack.weapon);
+        if (playerAnimation != PlayerAnimation.UNDECIDED)
         {
             boolean isTarget = RoomUtil.isPrimaryBoss(attack.targetedID) && attack.targetedID != -1;
-            String targetString = weaponAttack.name + ": ";
+            String targetString = playerAnimation.name + ": ";
             String targetName = getBossName(attack.targetedID, attack.targetedIndex, attack.tick);
             if (targetName.equals("?"))
             {
@@ -244,16 +244,16 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                 additionalText = "s" + additionalText.substring(0, additionalText.indexOf(")"));
             } else if (targetString.contains("small") || targetString.contains("big"))
             {
-                additionalText = getShortenedString(targetString, weaponAttack.name.length());
+                additionalText = getShortenedString(targetString, playerAnimation.name.length());
             } else if (targetString.contains("70s") || targetString.contains("50s") || targetString.contains("30s"))
             {
-                String shortenedString = targetString.substring(weaponAttack.name.length() + 2);
+                String shortenedString = targetString.substring(playerAnimation.name.length() + 2);
                 shortenedString = shortenedString.substring(0, 2);
                 String proc = targetString.substring(targetString.indexOf("0s") - 1, targetString.indexOf("0s") + 1);
 
                 additionalText = proc + shortenedString;
             }
-            outlineBoxes.add(new OutlineBox(attack, weaponAttack.shorthand, weaponAttack.color, isTarget, additionalText, weaponAttack));
+            outlineBoxes.add(new OutlineBox(attack, playerAnimation.shorthand, playerAnimation.color, isTarget, additionalText, playerAnimation));
         }
     }
 
@@ -357,8 +357,8 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             height = 600;
         }
         boxWidth = (shouldWrap) ? (100 + (scale * 51)) : 100 + (length + 1) * scale;
-        this.weaponAttacks = WeaponAttack.values();
-        keyCount = weaponAttacks.length;
+        this.playerAnimations = PlayerAnimation.values();
+        keyCount = playerAnimations.length;
         keyRows = 20;
         keyMargin = 10;
         keyColumns = keyCount / keyRows;
@@ -432,7 +432,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         int currentRow = 0;
         for (int i = 0; i < keyCount; i++)
         {
-            WeaponAttack attack = weaponAttacks[i];
+            PlayerAnimation attack = playerAnimations[i];
             g.setColor(attack.color);
             g.fillRect(boxWidth + keyMargin + (currentColumn * 150) + 2, keyMargin + (currentRow * (scale + 10)) + 7, scale, scale);
             g.setColor(Color.WHITE);
@@ -659,7 +659,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                 {
                     try
                     {
-                        if (box.weaponAttack.attackTicks != -1)
+                        if (box.playerAnimation.attackTicks != -1)
                         {
                             int opacity = config.iconBackgroundOpacity();
                             opacity = Math.min(255, opacity);

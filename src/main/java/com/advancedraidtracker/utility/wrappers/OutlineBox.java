@@ -1,7 +1,7 @@
 package com.advancedraidtracker.utility.wrappers;
 
 import com.advancedraidtracker.utility.ItemReference;
-import com.advancedraidtracker.utility.weapons.WeaponAttack;
+import com.advancedraidtracker.utility.weapons.PlayerAnimation;
 
 import java.awt.*;
 
@@ -12,14 +12,14 @@ public class OutlineBox
     public String letter;
     public Color color;
     public boolean primaryTarget;
-    public WeaponAttack weaponAttack;
+    public PlayerAnimation playerAnimation;
 
     public String additionalText;
     public PlayerDidAttack attack;
 
-    public OutlineBox(PlayerDidAttack attack, String letter, Color color, boolean primaryTarget, String additionalText, WeaponAttack weaponAttack)
+    public OutlineBox(PlayerDidAttack attack, String letter, Color color, boolean primaryTarget, String additionalText, PlayerAnimation playerAnimation)
     {
-        this.weaponAttack = weaponAttack;
+        this.playerAnimation = playerAnimation;
         this.attack = attack;
         this.player = attack.player;
         this.tick = attack.tick;
@@ -64,7 +64,7 @@ public class OutlineBox
 
     public void createOutline()
     {
-        if(weaponAttack.attackTicks == -1)
+        if(playerAnimation.attackTicks == -1)
         {
             return;
         }

@@ -38,6 +38,7 @@ public class ItemReference
                     "voidwaker",
                     "keris",
                     "barrows",
+                    "tanzanite",
             },
             {
                     "masori",

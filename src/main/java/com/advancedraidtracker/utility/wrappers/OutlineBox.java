@@ -95,6 +95,10 @@ public class OutlineBox
                             correctItems++;
                         }
                     }
+                    else
+                    {
+                        correctItems++;
+                    }
                 }
             }
             if (attack.wornItemNames[2].toLowerCase().contains("blood fury") && style == MELEE)

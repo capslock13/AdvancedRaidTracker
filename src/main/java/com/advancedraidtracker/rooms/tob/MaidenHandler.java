@@ -616,7 +616,7 @@ public class MaidenHandler extends TOBRoomHandler
                 {
                     if (config.showMistakesInChat())
                     {
-                        plugin.sendChatMessage("Maiden drained " + drained.getName() + "'s melee stats.");
+                        plugin.sendChatMessage(drained.getName() + " was targeted by Maiden with melee as their highest bonus.");
                     }
                     clog.addLine(MAIDEN_PLAYER_DRAINED, drained.getName(), String.valueOf((client.getTickCount() - roomStartTick)));
                 }

@@ -1,11 +1,11 @@
 package com.advancedraidtracker.ui.viewraid;
 
-import com.advancedraidtracker.SimpleTOAData;
 import com.advancedraidtracker.ui.BaseFrame;
+import com.advancedraidtracker.utility.datautility.datapoints.toa.Toa;
 
 public class ViewTOARaid extends BaseFrame
 {
-    public ViewTOARaid(SimpleTOAData toaData)
+    public ViewTOARaid(Toa toaData)
     {
         setTitle("View Raid");
         add(new ViewTOAPanel(toaData));

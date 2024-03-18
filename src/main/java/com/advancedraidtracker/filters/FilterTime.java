@@ -3,7 +3,6 @@ package com.advancedraidtracker.filters;
 import com.advancedraidtracker.utility.datautility.DataPoint;
 import com.advancedraidtracker.utility.datautility.datapoints.Raid;
 import lombok.extern.slf4j.Slf4j;
-import com.advancedraidtracker.SimpleTOBData;
 
 @Slf4j
 public class FilterTime extends FilterCondition

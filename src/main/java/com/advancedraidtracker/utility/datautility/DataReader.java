@@ -15,7 +15,12 @@ import net.runelite.client.game.ItemManager;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static com.advancedraidtracker.utility.datautility.DataWriter.PLUGIN_DIRECTORY;
 
 @Slf4j
 public class DataReader //todo move any methods that read files to here. I believe Raid side panel and the filter manager class has some?
@@ -152,6 +157,42 @@ public class DataReader //todo move any methods that read files to here. I belie
             log.info("Failed to parse!");
         }
         return chartData;
+    }
+
+    /**
+     * Folder structure is the following:
+     *
+     * advancedraidtracker/
+     *   <username>/
+     *       primary/ <------ a mix of coxdata.log, tobdata.log, toadata.log
+     *   legacy-files/
+     *       primary/ <---- any tobdata.log that existed in /theatretracker/ gets moved here
+     *   misc-dir/
+     *       alias/alias.log <---- used to track aliases in main window
+     *       filters/ <---<filtername>.filter, saved filters
+     *       raids/ <--- folders created with name saved when you export raid, each folder has all the individual tobdata.logs that were exported
+     *
+     * @return A list of all the current raids
+     */
+    public static List<Raid> getAllRaids()
+    {
+        try
+        {
+            Stream<Path> subLogFiles = Files.walk(Paths.get(PLUGIN_DIRECTORY)); //todo try-with-resources
+
+            return subLogFiles
+                    .filter(file -> !file.toAbsolutePath()
+                            .startsWith(Paths.get(PLUGIN_DIRECTORY, "misc-dir").toString())
+                            && !Files.isDirectory(file))
+                    .map(DataReader::getRaid)
+                    .filter(Objects::nonNull).sorted(Comparator.comparing(Raid::getDate)).collect(Collectors.toList());
+        }
+        catch (Exception e)
+        {
+            log.info("Could not retrieve raids");
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }

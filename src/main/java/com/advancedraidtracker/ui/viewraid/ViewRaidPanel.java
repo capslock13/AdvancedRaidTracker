@@ -1,9 +1,9 @@
 package com.advancedraidtracker.ui.viewraid;
 
-import com.advancedraidtracker.SimpleTOBData;
 import com.advancedraidtracker.constants.RaidRoom;
 import com.advancedraidtracker.utility.datautility.DataPoint;
 import com.advancedraidtracker.utility.RoomUtil;
+import com.advancedraidtracker.utility.datautility.datapoints.Raid;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.ui.FontManager;
 
@@ -40,9 +40,9 @@ public class ViewRaidPanel extends JPanel implements MouseListener, MouseMotionL
 
     private final BufferedImage img;
 
-    private final SimpleTOBData roomData;
+    private final Raid roomData;
 
-    public ViewRaidPanel(SimpleTOBData roomData)
+    public ViewRaidPanel(Raid roomData)
     {
         this.roomData = roomData;
         img = new BufferedImage(900, 733, BufferedImage.TYPE_INT_ARGB);
@@ -126,7 +126,7 @@ public class ViewRaidPanel extends JPanel implements MouseListener, MouseMotionL
             g.setFont(FontManager.getRunescapeFont().deriveFont(20.0f));
             fontHeight = getStringBounds(g, "a").height;
             g.setColor(Color.WHITE);
-            drawShadowedString(g, RoomUtil.time(roomData.getValue(roomNames[i] + " Time")), offsetX + 200, offsetY + (90 * i) + 2 + 45 + (fontHeight / 2));
+            drawShadowedString(g, RoomUtil.time(roomData.get(roomNames[i] + " Time")), offsetX + 200, offsetY + (90 * i) + 2 + 45 + (fontHeight / 2));
 
             if (i == selectedRoom)
             {
@@ -168,7 +168,7 @@ public class ViewRaidPanel extends JPanel implements MouseListener, MouseMotionL
                 g.setColor(primaryText);
                 drawShadowedString(g, name, 360 + 10, incrementingOffset);
                 g.setColor(Color.WHITE);
-                String value = (point.type == DataPoint.types.TIME) ? RoomUtil.time(roomData.getValue(point)) : String.valueOf(roomData.getValue(point));
+                String value = (point.type == DataPoint.types.TIME) ? RoomUtil.time(roomData.get(point)) : String.valueOf(roomData.get(point));
                 drawShadowedString(g, value, 760 + 10, incrementingOffset);
                 incrementingOffset += 30;
             }

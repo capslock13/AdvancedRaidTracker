@@ -1,7 +1,5 @@
 package com.advancedraidtracker.utility.datautility;
 
-import com.advancedraidtracker.SimpleRaidDataBase;
-import com.advancedraidtracker.ui.RaidTrackerSidePanel;
 import com.advancedraidtracker.utility.datautility.datapoints.Raid;
 import com.advancedraidtracker.utility.wrappers.RaidsArrayWrapper;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +11,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -34,12 +33,12 @@ public class RaidsManager //todo merge this with datareader?
             {
                 if (entry.isDirectory())
                 {
-                    ArrayList<SimpleRaidDataBase> raids = new ArrayList<>();
+                    List<Raid> raids = new ArrayList<>();
                     for (File raid : Objects.requireNonNull(entry.listFiles()))
                     {
                         try
                         {
-                            RaidTrackerSidePanel.parseLogFile(raids, raid, raid.getAbsolutePath());
+                            raids.add(DataReader.getRaid(raid.toPath()));
                         } catch (Exception e)
                         {
                             log.info("Failed to parse log file " + raid.getAbsolutePath());

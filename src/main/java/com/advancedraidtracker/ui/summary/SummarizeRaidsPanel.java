@@ -1,6 +1,6 @@
 package com.advancedraidtracker.ui.summary;
 
-import com.advancedraidtracker.SimpleRaidDataBase;
+import com.advancedraidtracker.utility.datautility.datapoints.Raid;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.ui.FontManager;
 
@@ -15,7 +15,7 @@ import java.util.Map;
 @Slf4j
 public class SummarizeRaidsPanel extends JPanel
 {
-    private final ArrayList<SimpleRaidDataBase> data;
+    private final ArrayList<Raid> data;
     private final BufferedImage img;
     int width = 600;
     int height = 400;
@@ -24,7 +24,7 @@ public class SummarizeRaidsPanel extends JPanel
     Color primaryDark = new Color(23, 23, 23);
     Color primaryLight = new Color(30, 30, 30);
 
-    public SummarizeRaidsPanel(ArrayList<SimpleRaidDataBase> data)
+    public SummarizeRaidsPanel(ArrayList<Raid> data)
     {
         this.data = data;
         img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
@@ -74,7 +74,7 @@ public class SummarizeRaidsPanel extends JPanel
         g.fillRoundRect(margin, margin + margin, width - (margin * 2), 40, 15, 15);
 
         Map<String, Integer> statusCounts = new LinkedHashMap<>();
-        for (SimpleRaidDataBase roomData : data)
+        for (Raid roomData : data)
         {
             for (String status : statuses)
             {

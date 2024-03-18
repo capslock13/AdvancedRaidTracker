@@ -1,6 +1,5 @@
 package com.advancedraidtracker.filters;
 
-import com.advancedraidtracker.SimpleTOBData;
 import com.advancedraidtracker.utility.datautility.datapoints.Raid;
 
 import java.util.Calendar;

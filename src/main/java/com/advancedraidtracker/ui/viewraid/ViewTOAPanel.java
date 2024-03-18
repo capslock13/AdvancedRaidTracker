@@ -1,15 +1,14 @@
 package com.advancedraidtracker.ui.viewraid;
 
-import com.advancedraidtracker.SimpleTOAData;
 import com.advancedraidtracker.utility.RoomUtil;
 import com.advancedraidtracker.utility.datautility.DataPoint;
+import com.advancedraidtracker.utility.datautility.datapoints.toa.Toa;
 import net.runelite.client.ui.FontManager;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Calendar;
-import java.util.Random;
 
 import static com.advancedraidtracker.utility.UISwingUtility.getStringHeight;
 
@@ -22,7 +21,7 @@ public class ViewTOAPanel extends JPanel
     int summaryHeight = 150;
     int roomHeight = height - margin - summaryHeight - margin - margin;
     int roomWidth = (width-(6*margin))/5;
-    private final SimpleTOAData data;
+    private final Toa data;
     private final Color[] pieChartColors = {
             Color.decode("#ebdc78"),
             Color.decode("#8be04e"),
@@ -35,7 +34,7 @@ public class ViewTOAPanel extends JPanel
             Color.decode("#b30000"),
     };
 
-    public ViewTOAPanel(SimpleTOAData toaData)
+    public ViewTOAPanel(Toa toaData)
     {
         this.data = toaData;
         img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
@@ -85,7 +84,7 @@ public class ViewTOAPanel extends JPanel
         currentYOffset += rowHeight;
         for (int i = 0; i < 8; i++)
         {
-            g.drawString(data.getCompletePlayerArray()[i], currentXOffset, currentYOffset);
+            //g.drawString(data.getCompletePlayerArray()[i], currentXOffset, currentYOffset); //todo
             currentYOffset += rowHeight;
         }
     }
@@ -105,7 +104,7 @@ public class ViewTOAPanel extends JPanel
     private void drawBabaPath(Graphics2D g, int startX)
     {
         int startY = margin+summaryHeight+7;
-        int time = data.getValue(DataPoint.APMEKEN_TIME);
+        int time = data.get(DataPoint.APMEKEN_TIME);
         String title = "Apmeken" + ((time > 0) ? " - " + RoomUtil.time(time) : "");
         g.drawString(title, startX+10, startY+10);
     }
@@ -113,7 +112,7 @@ public class ViewTOAPanel extends JPanel
     private void drawKephriPath(Graphics2D g, int startX)
     {
         int startY = margin+summaryHeight+margin/2;
-        int time = data.getValue(DataPoint.SCABARAS_TIME);
+        int time = data.get(DataPoint.SCABARAS_TIME);
         String title = "Scabaras" + ((time > 0) ? " - " + RoomUtil.time(time) : "");
         g.drawString(title, startX+10, startY+10);
     }
@@ -121,7 +120,7 @@ public class ViewTOAPanel extends JPanel
     private void drawAkkhaPath(Graphics2D g, int startX)
     {
         int startY = margin+summaryHeight+7;
-        int time = data.getValue(DataPoint.HET_TIME);
+        int time = data.get(DataPoint.HET_TIME);
         String title = "Het" + ((time > 0) ? " - " + RoomUtil.time(time) : "");
         g.drawString(title, startX+10, startY+10);
     }
@@ -129,7 +128,7 @@ public class ViewTOAPanel extends JPanel
     private void drawZebakPath(Graphics2D g, int startX)
     {
         int startY = margin+summaryHeight+7;
-        int time = data.getValue(DataPoint.CRONDIS_TIME);
+        int time = data.get(DataPoint.CRONDIS_TIME);
         String title = "Crondis" + ((time > 0) ? " - " + RoomUtil.time(time) : "");
         g.drawString(title, startX+10, startY+10);
     }
@@ -137,7 +136,7 @@ public class ViewTOAPanel extends JPanel
     private void drawWardenPath(Graphics2D g, int startX)
     {
         int startY = margin+summaryHeight+7;
-        int time = data.getValue(DataPoint.WARDENS_TIME);
+        int time = data.get(DataPoint.WARDENS_TIME);
         String title = "Wardens" + ((time > 0) ? " - " + RoomUtil.time(time) : "");
         g.drawString(title, startX+10, startY+10);
     }

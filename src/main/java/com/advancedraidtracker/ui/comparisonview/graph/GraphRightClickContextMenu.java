@@ -1,6 +1,5 @@
 package com.advancedraidtracker.ui.comparisonview.graph;
 
-import com.advancedraidtracker.SimpleRaidDataBase;
 import com.advancedraidtracker.AdvancedRaidTrackerConfig;
 import com.advancedraidtracker.ui.Raids;
 import com.advancedraidtracker.utility.datautility.datapoints.Raid;

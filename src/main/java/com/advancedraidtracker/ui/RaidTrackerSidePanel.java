@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.advancedraidtracker.utility.datautility.DataReader.getAllRaids;
 import static com.advancedraidtracker.utility.datautility.DataWriter.PLUGIN_DIRECTORY;
 
 @Slf4j
@@ -61,107 +62,6 @@ public class RaidTrackerSidePanel extends PluginPanel
             buildComponents();
             updateUI();
         }).start();
-    }
-
-    /**
-     * Folder structure is the following:
-     *
-     * advancedraidtracker/
-     *   <username>/
-     *       primary/ <------ a mix of coxdata.log, tobdata.log, toadata.log
-     *   legacy-files/
-     *       primary/ <---- any tobdata.log that existed in /theatretracker/ gets moved here
-     *   misc-dir/
-     *       alias/alias.log <---- used to track aliases in main window
-     *       filters/ <---<filtername>.filter, saved filters
-     *       raids/ <--- folders created with name saved when you export raid, each folder has all the individual tobdata.logs that were exported
-     *
-     * @return A list of all the current raids
-     */
-    private List<Raid> getAllRaids()
-    {
-        try
-        {
-            Stream<Path> subLogFiles = Files.walk(Paths.get(PLUGIN_DIRECTORY)); //todo try-with-resources
-
-            // For now, as only tob is supported, filter out cox/toa logs todo investigate this comment, afaik this does not filter COX/TOA
-            return subLogFiles
-                    .filter(file -> !file.toAbsolutePath()
-                            .startsWith(Paths.get(PLUGIN_DIRECTORY, "misc-dir").toString())
-                            && !Files.isDirectory(file))
-                    .map(DataReader::getRaid)
-                    .filter(Objects::nonNull).sorted(Comparator.comparing(Raid::getDate)).collect(Collectors.toList());
-        }
-        catch (Exception e)
-        {
-            log.info("Could not retrieve raids");
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public static void parseLogFile(ArrayList<SimpleRaidDataBase> raids, File currentFile, String filePath) throws Exception
-    {
-        Scanner logReader = new Scanner(Files.newInputStream(currentFile.toPath()));
-        ArrayList<String> raid = new ArrayList<>();
-        boolean raidActive = false;
-        boolean spectate = false;
-        boolean lateStart = false;
-        while (logReader.hasNextLine())
-        {
-            String line = logReader.nextLine();
-            String[] lineSplit = line.split(",");
-            if (!raidActive)
-            {
-                if (lineSplit.length > 3)
-                {
-                    if (Integer.parseInt(lineSplit[3]) == 0 || Integer.parseInt(lineSplit[3]) == 1000) //todo %1000 == 0? or something else idk
-                    {
-                        raid.add(line);
-                        raidActive = true;
-                        spectate = false;
-                        lateStart = false;
-                    }
-                }
-            } else
-            {
-                if (lineSplit.length > 3)
-                {
-                    int value = Integer.parseInt(lineSplit[3]); //todo magic numbers
-                    if (value != 0)
-                    {
-                        if (value != 801 && value != 576 && value != 587)
-                        {
-                            if (Integer.parseInt(lineSplit[3]) == 99 && !spectate)
-                            {
-                                spectate = true;
-                                raid.add(line);
-                            } else if (value == 98 && !lateStart)
-                            {
-                                lateStart = true;
-                                raid.add(line);
-                            } else if (Integer.parseInt(lineSplit[3]) == 4 || Integer.parseInt(lineSplit[3]) == 1004)
-                            {
-                                raid.add(line);
-                                raidActive = false;
-                                if (Integer.parseInt(lineSplit[3]) == 4)
-                                {
-                                    raids.add(new SimpleTOBData(raid.toArray(new String[0]), filePath, currentFile.getName()));
-                                } else
-                                {
-                                    raids.add(new SimpleTOAData(raid.toArray(new String[0]), filePath, currentFile.getName()));
-                                }
-                                raid.clear();
-                            } else if (value != 99 && value != 98)
-                            {
-                                raid.add(line);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        logReader.close();
     }
 
     private void buildComponents()

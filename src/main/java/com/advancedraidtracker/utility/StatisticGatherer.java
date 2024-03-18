@@ -1,7 +1,5 @@
 package com.advancedraidtracker.utility;
 
-import com.advancedraidtracker.SimpleRaidDataBase;
-import com.advancedraidtracker.SimpleTOBData;
 import com.advancedraidtracker.utility.datautility.DataPoint;
 import com.advancedraidtracker.utility.datautility.datapoints.Raid;
 import lombok.extern.slf4j.Slf4j;
@@ -129,7 +127,7 @@ public class StatisticGatherer
         return total / count;
     }
 
-    public static double getGenericMedian(ArrayList<Integer> data)
+    public static double getGenericMedian(List<Integer> data)
     {
         if (data.isEmpty())
         {
@@ -235,7 +233,7 @@ public class StatisticGatherer
     }
 
 
-    public static double getGenericMax(ArrayList<Integer> data)
+    public static double getGenericMax(List<Integer> data)
     {
         int maxValue = 0;
         for (int d : data)
@@ -270,7 +268,7 @@ public class StatisticGatherer
         return maxValue;
     }
 
-    public static double getGenericMode(ArrayList<Raid> data, DataPoint parameter)
+    public static double getGenericMode(List<Raid> data, DataPoint parameter)
     {
         int maxCount = 0;
         int maxValue = 0;
@@ -312,7 +310,7 @@ public class StatisticGatherer
         }
     }
 
-    public static double getGenericMode(ArrayList<Integer> data)
+    public static double getGenericMode(List<Integer> data)
     {
         int maxCount = 0;
         int maxValue = 0;
@@ -345,7 +343,7 @@ public class StatisticGatherer
     }
 
 
-    public static double getGenericPercent(ArrayList<Integer> arrayForStatistics, int threshold)
+    public static double getGenericPercent(List<Integer> arrayForStatistics, int threshold)
     {
         double count = 0;
         double total = arrayForStatistics.size();

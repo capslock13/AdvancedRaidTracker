@@ -1,6 +1,5 @@
 package com.advancedraidtracker.ui.comparisonview;
 
-import com.advancedraidtracker.SimpleRaidDataBase;
 import com.advancedraidtracker.AdvancedRaidTrackerConfig;
 import com.advancedraidtracker.ui.BaseFrame;
 import com.advancedraidtracker.utility.datautility.datapoints.Raid;
@@ -11,13 +10,14 @@ import net.runelite.client.game.ItemManager;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 
 @Slf4j
 public class ComparisonViewFrame extends BaseFrame
 {
-    public ComparisonViewFrame(ArrayList<ArrayList<Raid>> data, ArrayList<String> labels)
+    public ComparisonViewFrame(List<List<Raid>> data, List<String> labels)
     {
         add(new ComparisonViewPanel(data, labels, config, itemManager, clientThread, configManager));
         pack();
@@ -28,7 +28,7 @@ public class ComparisonViewFrame extends BaseFrame
     private ClientThread clientThread;
     private ConfigManager configManager;
 
-    public ComparisonViewFrame(Map<Integer, ArrayList<ArrayList<Raid>>> dataSets, ArrayList<ArrayList<String>> labelSets, AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
+    public ComparisonViewFrame(Map<Integer, List<List<Raid>>> dataSets, List<List<String>> labelSets, AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
     {
         this.configManager = configManager;
         this.clientThread = clientThread;

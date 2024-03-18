@@ -1,6 +1,5 @@
 package com.advancedraidtracker.filters;
 
-import com.advancedraidtracker.SimpleTOBData;
 import com.advancedraidtracker.utility.datautility.datapoints.Raid;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;

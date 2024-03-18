@@ -1,6 +1,5 @@
 package com.advancedraidtracker.ui.comparisonview.graph;
 
-import com.advancedraidtracker.SimpleRaidDataBase;
 import com.advancedraidtracker.utility.datautility.datapoints.Raid;
 import lombok.Getter;
 

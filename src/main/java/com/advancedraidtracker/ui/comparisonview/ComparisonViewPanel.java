@@ -1,7 +1,5 @@
 package com.advancedraidtracker.ui.comparisonview;
 
-import com.advancedraidtracker.SimpleRaidDataBase;
-import com.advancedraidtracker.SimpleTOBData;
 import com.advancedraidtracker.AdvancedRaidTrackerConfig;
 import com.advancedraidtracker.ui.comparisonview.graph.GraphPanel;
 import com.advancedraidtracker.utility.RoomUtil;
@@ -64,15 +62,15 @@ public class ComparisonViewPanel extends JPanel
     private final JComboBox<String> compareByComboBox;
     private final JComboBox<String> graphTypeComboBox;
     private boolean time = false;
-    ArrayList<ArrayList<Raid>> data;
+    List<List<Raid>> data;
 
     JPanel scrollTopPanel;
     JPanel scrollBottomPanel;
     JScrollPane scrollTopGraphData;
     JScrollPane scrollBottomGraphData;
-    ArrayList<GraphPanel> topGraphs;
-    ArrayList<GraphPanel> bottomGraphs;
-    ArrayList<String> labels;
+    List<GraphPanel> topGraphs;
+    List<GraphPanel> bottomGraphs;
+    List<String> labels;
 
     JSpinner groupSizeSpinner;
     SpinnerNumberModel spinnerSizeModel;
@@ -89,7 +87,7 @@ public class ComparisonViewPanel extends JPanel
 
     private final ClientThread clientThread;
 
-    public ComparisonViewPanel(ArrayList<ArrayList<Raid>> raidData, ArrayList<String> names, AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
+    public ComparisonViewPanel(List<List<Raid>> raidData, List<String> names, AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
     {
         this.configManager = configManager;
         this.clientThread = clientThread;
@@ -553,71 +551,65 @@ public class ComparisonViewPanel extends JPanel
         updateCutoffs();
     }
 
-    GraphPanel getGraphPanel(ArrayList<Raid> points)
+    GraphPanel getGraphPanel(List<Raid> points)
     {
         return new GraphPanel(points, config, itemManager, clientThread, configManager);
     }
 
-    private ArrayList<Integer> getArrayForStatistics(ArrayList<Raid> data)
+    private List<Integer> getArrayForStatistics(List<Raid> data)
     {
-        ArrayList<Integer> arrayToPass = new ArrayList<>();
-        /*
+        List<Integer> arrayToPass = new ArrayList<>();
+
         for (Raid raidData : data)
         {
-            int value = raidData.getValue(DataPoint.getValue(String.valueOf(compareByComboBox.getSelectedItem())));
+            int value = raidData.get(DataPoint.getValue(String.valueOf(compareByComboBox.getSelectedItem())));
             if (value > -1)
             {
                 if (!time || value != 0)
                 {
-                    if (raidData instanceof SimpleTOBData)
-                    {
-                        SimpleTOBData tobData = (SimpleTOBData) raidData;
                         switch ((Objects.requireNonNull(DataPoint.getValue(String.valueOf(compareByComboBox.getSelectedItem())))).room)
                         {
                             case MAIDEN:
-                                if (!tobData.maidenStartAccurate || !tobData.maidenEndAccurate)
+                                if (!raidData.getRoomAccurate(MAIDEN))
                                 {
                                     continue;
                                 }
                                 break;
                             case BLOAT:
-                                if (!tobData.bloatStartAccurate || !tobData.bloatEndAccurate)
+                                if (!raidData.getRoomAccurate(BLOAT))
                                 {
                                     continue;
                                 }
                                 break;
                             case NYLOCAS:
-                                if (!tobData.nyloStartAccurate || !tobData.nyloEndAccurate)
+                                if (!raidData.getRoomAccurate(NYLOCAS))
                                 {
                                     continue;
                                 }
                                 break;
                             case SOTETSEG:
-                                if (!tobData.soteStartAccurate || !tobData.soteEndAccurate)
+                                if (!raidData.getRoomAccurate(SOTETSEG))
                                 {
                                     continue;
                                 }
                                 break;
                             case XARPUS:
-                                if (!tobData.xarpStartAccurate || !tobData.xarpEndAccurate)
+                                if (!raidData.getRoomAccurate(XARPUS))
                                 {
                                     continue;
                                 }
                                 break;
                             case VERZIK:
-                                if (!tobData.verzikStartAccurate || !tobData.verzikEndAccurate)
+                                if (!raidData.getRoomAccurate(VERZIK))
                                 {
                                     continue;
                                 }
                                 break;
                         }
-                    }
                     arrayToPass.add(value);
                 }
             }
         }
-
-         */
         return arrayToPass;
     }
 
@@ -638,8 +630,8 @@ public class ComparisonViewPanel extends JPanel
             otherBottomLeft.setBorder(BorderFactory.createTitledBorder(topGraphTabs.getTitleAt(topGraphTabs.getSelectedIndex()) + " values"));
             otherBottomRight.setBorder(BorderFactory.createTitledBorder(bottomGraphTabs.getTitleAt(bottomGraphTabs.getSelectedIndex()) + " values"));
 
-            ArrayList<Raid> topGraphData = (data.get(topGraphTabs.getSelectedIndex()));
-            ArrayList<Raid> bottomGraphData = data.get(bottomGraphTabs.getSelectedIndex());
+            List<Raid> topGraphData = (data.get(topGraphTabs.getSelectedIndex()));
+            List<Raid> bottomGraphData = data.get(bottomGraphTabs.getSelectedIndex());
 
             String worse = "<html><font color='#F63131'>";
             String better = "<html><font color='#99E622'>";
@@ -689,8 +681,8 @@ public class ComparisonViewPanel extends JPanel
             graph2PercentThreshold.setText(g2perc + (g2percent) + "%");
 
 
-            ArrayList<Integer> topSet = GraphPanel.getCounts(getArrayForStatistics(topGraphData), valX);
-            ArrayList<Integer> bottomSet = GraphPanel.getCounts(getArrayForStatistics(bottomGraphData), valX);
+            List<Integer> topSet = GraphPanel.getCounts(getArrayForStatistics(topGraphData), valX);
+            List<Integer> bottomSet = GraphPanel.getCounts(getArrayForStatistics(bottomGraphData), valX);
 
             scrollTopPanel.removeAll();
             scrollBottomPanel.removeAll();
@@ -733,7 +725,7 @@ public class ComparisonViewPanel extends JPanel
         container.repaint();
     }
 
-    private int getCount(ArrayList<Integer> topSet, double total, int count, JPanel scrollTopPanel)
+    private int getCount(List<Integer> topSet, double total, int count, JPanel scrollTopPanel)
     {
         for (int i = 0; i < topSet.size(); i++)
         {

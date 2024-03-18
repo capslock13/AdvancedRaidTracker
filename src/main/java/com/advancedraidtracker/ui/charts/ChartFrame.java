@@ -8,7 +8,6 @@ import com.advancedraidtracker.utility.datautility.DataReader;
 import com.advancedraidtracker.utility.datautility.datapoints.Raid;
 import com.advancedraidtracker.utility.datautility.datapoints.RoomParser;
 import com.advancedraidtracker.utility.datautility.datapoints.toa.Toa;
-import com.advancedraidtracker.utility.datautility.datapoints.tob.MaidenParser;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;

@@ -1,6 +1,5 @@
 package com.advancedraidtracker.ui.comparisonview.graph;
 
-import com.advancedraidtracker.SimpleRaidDataBase;
 import com.advancedraidtracker.AdvancedRaidTrackerConfig;
 import com.advancedraidtracker.utility.RoomUtil;
 import com.advancedraidtracker.utility.datautility.DataPoint;
@@ -12,6 +11,7 @@ import net.runelite.client.game.ItemManager;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
 import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
@@ -49,9 +49,9 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
     private boolean groupingEnabled = true;
 
     private int graphType;
-    private final ArrayList<Bounds> selectedBounds;
+    private final List<Bounds> selectedBounds;
     private Bounds activeBound = new Bounds(-1, -1, -1, -1, null);
-    private final ArrayList<Bounds> bounds;
+    private final List<Bounds> bounds;
     private final Color gradientStart;
     private final Color gradientEnd;
     private final Color gradientStartHighlighted;
@@ -63,7 +63,7 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
     private DataPoint activeKey;
     private boolean time = false;
     private final BufferedImage img = new BufferedImage(IMG_WIDTH, IMG_HEIGHT, BufferedImage.TYPE_INT_ARGB);
-    private final ArrayList<Raid> internalData;
+    private final List<Raid> internalData;
     private final AdvancedRaidTrackerConfig config;
 
     private final ItemManager itemManager;
@@ -71,7 +71,7 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
     private final ClientThread clientThread;
     private final ConfigManager configManager;
 
-    public GraphPanel(ArrayList<Raid> data, AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
+    public GraphPanel(List<Raid> data, AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
     {
         this.configManager = configManager;
         this.clientThread = clientThread;
@@ -122,9 +122,9 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
     }
 
 
-    private ArrayList<Integer> filterForTime(ArrayList<Integer> data)
+    private List<Integer> filterForTime(List<Integer> data)
     {
-        ArrayList<Integer> arrayToPass = new ArrayList<>();
+        List<Integer> arrayToPass = new ArrayList<>();
         for (Integer i : data)
         {
             if (!time || i != 0)
@@ -135,7 +135,7 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
         return arrayToPass;
     }
 
-    public static ArrayList<Integer> getCounts(ArrayList<Integer> data, int highestValue)
+    public static java.util.List<Integer> getCounts(List<Integer> data, int highestValue)
     {
         ArrayList<Integer> countedData = new ArrayList<>();
         for (int i = 0; i < highestValue + 1; i++)
@@ -153,7 +153,7 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
         return countedData;
     }
 
-    public static int getCountedTotal(ArrayList<Integer> data)
+    public static int getCountedTotal(java.util.List<Integer> data)
     {
         int count = 0;
         for (Integer i : data)
@@ -224,7 +224,7 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
         g.setColor(oldColor);
     }
 
-    private int getHighestCount(ArrayList<Integer> data)
+    private int getHighestCount(List<Integer> data)
     {
         int max = 0;
         int index = 0;
@@ -297,7 +297,7 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
 
     public void generateScales()
     {
-        ArrayList<Integer> data = filterInvalid(getInternalDataSet(activeKey).intData);
+        List<Integer> data = filterInvalid(getInternalDataSet(activeKey).intData);
         int lowestValue = Integer.MAX_VALUE;
         int highestValue = 0;
 
@@ -316,7 +316,7 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
                 highestValue = i;
             }
         }
-        ArrayList<Integer> countedDataSet = getCounts(data, highestValue);
+        List<Integer> countedDataSet = getCounts(data, highestValue);
         int highestCount = getHighestCount(countedDataSet);
 
         xScaleLow = lowestValue;
@@ -334,7 +334,7 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
     public static GraphInternalBoundMatchedContainer getCounts(GraphInternalDataContainer data, int highestValue)
     {
         ArrayList<Integer> countedIntData = new ArrayList<>();
-        ArrayList<ArrayList<SimpleRaidDataBase>> countedFullData = new ArrayList<>();
+        ArrayList<ArrayList<Raid>> countedFullData = new ArrayList<>();
         for (int i = 0; i < highestValue + 1; i++)
         {
             countedIntData.add(0);
@@ -533,9 +533,9 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
         }
     }
 
-    public static ArrayList<Integer> filterInvalid(ArrayList<Integer> data)
+    public static List<Integer> filterInvalid(List<Integer> data)
     {
-        ArrayList<Integer> filteredData = new ArrayList<>();
+        List<Integer> filteredData = new ArrayList<>();
         for (Integer i : data)
         {
             if (i > -1)
@@ -633,9 +633,9 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
 
             } else
             {
-                ArrayList<Integer> data = filterForTime(filterInvalid(getInternalDataSet(activeKey).intData));
+                List<Integer> data = filterForTime(filterInvalid(getInternalDataSet(activeKey).intData));
 
-                ArrayList<Integer> intCountedDataSet = getCounts(data, highestValue);
+                List<Integer> intCountedDataSet = getCounts(data, highestValue);
                 totalCount = getCountedTotal(intCountedDataSet);
 
                 drawGraphVerticals(g, highestCount, scale, verticalScaleToUse);
@@ -665,9 +665,9 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
         {
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-            ArrayList<Integer> data = filterForTime(filterInvalid(getInternalDataSet(activeKey).intData));
+            List<Integer> data = filterForTime(filterInvalid(getInternalDataSet(activeKey).intData));
 
-            ArrayList<Integer> intCountedDataSet = getCounts(data, highestValue);
+            List<Integer> intCountedDataSet = getCounts(data, highestValue);
             totalCount = getCountedTotal(intCountedDataSet);
             int nonZeroCount = getNonZeroCount(intCountedDataSet);
             if (nonZeroCount > 9)
@@ -676,7 +676,7 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
                 g.drawString("Cannot draw pie chart for this data due to too many values", 50, 50);
                 return;
             }
-            ArrayList<PieChartData> sortedData = createSortedPieChartData(intCountedDataSet, totalCount);
+            List<PieChartData> sortedData = createSortedPieChartData(intCountedDataSet, totalCount);
 
             int position = 90;
             for (int i = 0; i < sortedData.size(); i++)
@@ -712,9 +712,9 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
             drawBlankBarGraph();
             int yMax = 0;
             int yMin = Integer.MAX_VALUE;
-            ArrayList<Integer> data = filterForTime(filterInvalid(getInternalDataSet(activeKey).intData));
+            List<Integer> data = filterForTime(filterInvalid(getInternalDataSet(activeKey).intData));
 
-            ArrayList<Integer> intCountedDataSet = getCounts(data, highestValue);
+            List<Integer> intCountedDataSet = getCounts(data, highestValue);
             for (int i = 0; i < intCountedDataSet.size(); i++)
             {
                 if (intCountedDataSet.get(i) != 0)
@@ -788,9 +788,9 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
         }
     }
 
-    private ArrayList<PieChartData> createSortedPieChartData(ArrayList<Integer> data, int total)
+    private List<PieChartData> createSortedPieChartData(List<Integer> data, int total)
     {
-        ArrayList<PieChartData> fixedData = new ArrayList<>();
+        List<PieChartData> fixedData = new ArrayList<>();
         for (int i = 0; i < data.size(); i++)
         {
             if (data.get(i) != 0)
@@ -809,7 +809,7 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
         return fixedData;
     }
 
-    private int getNonZeroCount(ArrayList<Integer> data)
+    private int getNonZeroCount(List<Integer> data)
     {
         int count = 0;
         for (Integer i : data)
@@ -824,21 +824,21 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
 
     private GraphInternalDataContainer getInternalDataSet(DataPoint key)
     {
-        ArrayList<Integer> intDataSet = new ArrayList<>();
-        ArrayList<SimpleRaidDataBase> fullDataSet = new ArrayList<>();
-        /*
+        List<Integer> intDataSet = new ArrayList<>();
+        List<Raid> fullDataSet = new ArrayList<>();
+
         for (Raid data : internalData)
         {
-            if (data.getValue(key) != -1)
+            if (data.get(key) != -1)
             {
                 if (data.getTimeAccurate(key))
                 {
-                    intDataSet.add(data.getValue(key));
+                    intDataSet.add(data.get(key));
                     fullDataSet.add(data);
                 }
             }
         }
-         */
+
         return new GraphInternalDataContainer(fullDataSet, intDataSet);
     }
 

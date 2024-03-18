@@ -1,15 +1,15 @@
 package com.advancedraidtracker.utility.wrappers;
 
-import com.advancedraidtracker.SimpleRaidDataBase;
+import com.advancedraidtracker.utility.datautility.datapoints.Raid;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class RaidsArrayWrapper
 {
-    public ArrayList<SimpleRaidDataBase> data;
+    public List<Raid> data;
     public String filename;
 
-    public RaidsArrayWrapper(ArrayList<SimpleRaidDataBase> data, String filename)
+    public RaidsArrayWrapper(List<Raid> data, String filename)
     {
         this.data = data;
         this.filename = filename;

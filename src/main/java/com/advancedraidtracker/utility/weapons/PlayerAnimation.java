@@ -75,7 +75,14 @@ public enum PlayerAnimation //todo add weapon animations and IDs as int array an
 
     PlayerAnimation(String name, String shorthand, Color color, int attackTicks, int[] animations, int[] graphics, int[] weaponIDs, int[] projectiles)
     {
-        this.attackTicks = attackTicks;
+        if(attackTicks == -1)
+        {
+            this.attackTicks = 0;
+        }
+        else
+        {
+            this.attackTicks = attackTicks;
+        }
         this.name = name;
         this.shorthand = shorthand;
         this.color = color;

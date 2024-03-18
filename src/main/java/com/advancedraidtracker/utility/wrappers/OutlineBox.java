@@ -15,9 +15,10 @@ public class OutlineBox
     public PlayerAnimation playerAnimation;
 
     public String additionalText;
+    public int cd;
     public PlayerDidAttack attack;
 
-    public OutlineBox(PlayerDidAttack attack, String letter, Color color, boolean primaryTarget, String additionalText, PlayerAnimation playerAnimation)
+    public OutlineBox(PlayerDidAttack attack, String letter, Color color, boolean primaryTarget, String additionalText, PlayerAnimation playerAnimation, int cd)
     {
         this.playerAnimation = playerAnimation;
         this.attack = attack;
@@ -27,6 +28,7 @@ public class OutlineBox
         this.color = color;
         this.primaryTarget = primaryTarget;
         this.additionalText = additionalText;
+        this.cd = cd;
     }
 
     public final int NONE = 0;

@@ -100,6 +100,14 @@ public interface AdvancedRaidTrackerConfig extends Config
 
     @ConfigItem(
             position = 9,
+            keyName = "idleColor",
+            name = "Idle Tick Color",
+            description = "Color to use for idle ticks on chart"
+    )
+    default Color idleColor() { return new Color(38, 38, 38);}
+
+    @ConfigItem(
+            position = 10,
             keyName = "letterBackgroundOpacity",
             name = "Letter BG Opacity",
             description = "Opacity of letter background color on chart"
@@ -110,7 +118,7 @@ public interface AdvancedRaidTrackerConfig extends Config
     }
 
     @ConfigItem(
-            position = 9,
+            position = 11,
             keyName = "iconBackgroundOpacity",
             name = "Icon BG Opacity",
             description = "Opacity of icon background color on chart"
@@ -121,7 +129,7 @@ public interface AdvancedRaidTrackerConfig extends Config
     }
 
     @ConfigItem(
-            position = 10,
+            position = 12,
             keyName = "useUnkitted",
             name = "Use unkitted icons",
             description = "Replaces kitted items with unkitted variants on chart icons"

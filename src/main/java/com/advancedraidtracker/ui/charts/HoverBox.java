@@ -83,6 +83,15 @@ public class HoverBox
         return longestString + 10;
     }
 
+    public int getHeight(Graphics2D g)
+    {
+        Font oldFont = g.getFont();
+        g.setFont(FontManager.getRunescapeBoldFont());
+        int fontHeight = getStringBounds(g).height;
+        g.setFont(oldFont);
+        return 10 + ((fontHeight+7)*info.size());
+    }
+
     public void draw(Graphics2D g)
     {
         Font oldFont = g.getFont();

@@ -206,7 +206,7 @@ public enum LogID
             new ParseInstruction(ROOM_END_FLAG),
             "P3 Despawned", "Room Tick"),
     VERZIK_BOUNCE(77, true, VERZIK,
-            new ParseInstruction(INCREMENT, VERZIK_BOUNCES),
+            new ParseInstruction(MAP, VERZIK_BOUNCES),
             VERZIK_BOUNCES,
             "Bounce", "Player", "Room Tick"),
     VERZIK_CRAB_SPAWNED(78, true, VERZIK,

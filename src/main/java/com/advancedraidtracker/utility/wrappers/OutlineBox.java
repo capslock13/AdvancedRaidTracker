@@ -71,7 +71,7 @@ public class OutlineBox
 
     public void createOutline()
     {
-        if(playerAnimation.attackTicks < 1)
+        if(playerAnimation.attackTicks < 1 || letter.equals("VS") || letter.equals("AO") || letter.equals("HU") || letter.equals("MI") || letter.equals("DB") || letter.equals("SS"))
         {
             return;
         }

@@ -148,6 +148,9 @@ public class DataReader //todo move any methods that read files to here. I belie
                     case "18": //Maiden Crab Spawn:
                         chartData.addMaidenCrab(line[4]);
                         break;
+                    case "77": //verzik bounce
+                        chartData.addAttack(RaidRoom.VERZIK, new PlayerDidAttack(itemManager, line[4], "100000", Integer.parseInt(line[5]), -1, "-1", "-1", -1, -1, "-1", "-1"));
+                        break;
 
                 }
             }

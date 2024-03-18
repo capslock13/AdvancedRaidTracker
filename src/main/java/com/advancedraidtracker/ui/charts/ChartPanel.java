@@ -270,6 +270,10 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                 additionalText = proc + shortenedString;
             }
             outlineBoxes.add(new OutlineBox(attack, playerAnimation.shorthand, playerAnimation.color, isTarget, additionalText, playerAnimation, playerAnimation.attackTicks, RaidRoom.getRoom(this.room)));
+            for(int i = attack.tick; i < attack.tick+playerAnimation.attackTicks; i++)
+            {
+                playerWasOnCD.put(attack.player, i);
+            }
         }
     }
 
@@ -879,7 +883,12 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             {
                 xPosition = xPosition - hoverBox.getWidth(g) - 3 * scale;
             }
-            hoverBox.setPosition(xPosition, yOffset);
+            int yPosition = yOffset;
+            if(yPosition + hoverBox.getHeight(g) > img.getHeight())
+            {
+                yPosition = yPosition - hoverBox.getHeight(g) - 3*scale;
+            }
+            hoverBox.setPosition(xPosition, yPosition);
             hoverBox.draw(g);
         }
     }
@@ -899,11 +908,16 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                     hoverBox.addString("." + item);
                 }
                 int xPosition = location.getX() + 10;
-                if (xPosition + hoverBox.getWidth(g) > img.getWidth())
+                if (xPosition + hoverBox.getWidth(g) > img.getWidth()) //box would render off screen
                 {
-                    xPosition = xPosition - hoverBox.getWidth(g) - scale * 2;
+                    xPosition = xPosition - hoverBox.getWidth(g) - scale * 2; //render to the left side of the selected action
                 }
-                hoverBox.setPosition(xPosition, location.getY() - 10);
+                int yPosition = location.getY() - 10;
+                if(yPosition + hoverBox.getHeight(g) > (img.getHeight()-2*TITLE_BAR_PLUS_TAB_HEIGHT)) //box would render off screen
+                {
+                    yPosition -= (yPosition + hoverBox.getHeight(g) - (img.getHeight()-TITLE_BAR_PLUS_TAB_HEIGHT-10)); //render bottom aligned to window+10
+                }
+                hoverBox.setPosition(xPosition, yPosition);
                 hoverBox.draw(g);
             }
         }
@@ -1092,16 +1106,6 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     }
 
     private final Multimap<String, Integer> playerWasOnCD = ArrayListMultimap.create();
-    private void generateCoolDownMap()
-    {
-        for(OutlineBox box : outlineBoxes)
-        {
-            for(int i = box.tick; i < box.tick+box.cd; i++)
-            {
-                playerWasOnCD.put(box.player, i);
-            }
-        }
-    }
 
     public boolean shouldTickBeDrawn(int tick)
     {
@@ -1132,7 +1136,6 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
         fontHeight = getStringBounds(g, "a").height;
         g.setColor(Color.WHITE);
-        generateCoolDownMap();
         drawTicks(g);
         drawGraphBoxes(g);
         drawBaseBoxes(g);

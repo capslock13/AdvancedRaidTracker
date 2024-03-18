@@ -1491,6 +1491,11 @@ public class Raids extends BaseFrame
         viewCharts.addActionListener(e ->
         {
             int[] toRemove = table.getSelectedRows();
+            if(toRemove.length == 0)
+            {
+                JOptionPane.showMessageDialog(this, "You must select at least one raid to view charts", "Chart Error", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
             Raid raidData = null;
             for (int i = 0; i < toRemove.length; i++)
             {

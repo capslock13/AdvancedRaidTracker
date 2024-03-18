@@ -11,6 +11,8 @@ import net.runelite.client.game.ItemManager;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
@@ -33,8 +35,6 @@ public class LiveChart extends BaseFrame
     String[] toa = {"Apmeken", "Baba", "Scabaras", "Kephri", "Crondis", "Zebak", "Het", "Akkha", "Wardens"};
     Map<String, ChartPanel> toaPanels;
     Map<String, ChartPanel> tobPanels;
-    Map<String, JScrollPane> toaScrollPanes;
-    Map<String, JScrollPane> tobScrollPanes;
     RaidType activeRaid = RaidType.UNASSIGNED;
     Map<String, ChartPanel> currentPanels;
 
@@ -47,28 +47,28 @@ public class LiveChart extends BaseFrame
 
         toaPanels = new LinkedHashMap<>();
         tobPanels = new LinkedHashMap<>();
-        toaScrollPanes = new LinkedHashMap<>();
-        tobScrollPanes = new LinkedHashMap<>();
         currentPanels = tobPanels;
 
         for (String name : tob)
         {
             ChartPanel chartPanel = new ChartPanel(name, true, config, clientThread, configManager, itemManager);
             tobPanels.put(name, chartPanel);
-            tobScrollPanes.put(name, new JScrollPane(chartPanel));
         }
 
         for (String name : toa)
         {
             ChartPanel chartPanel = new ChartPanel(name, true, config, clientThread, configManager, itemManager);
             toaPanels.put(name, chartPanel);
-            toaScrollPanes.put(name, new JScrollPane(chartPanel));
         }
 
         tabbedPane = new JTabbedPane();
         tabbedPane.addChangeListener(cl -> //todo test this revised logic
         {
             String activePanel = null;
+            if(tabbedPane.getSelectedIndex() == -1)
+            {
+                return;
+            }
             switch (activeRaid)
             {
                 case TOB:
@@ -94,9 +94,9 @@ public class LiveChart extends BaseFrame
             }
         });
 
-        for (String name : tobScrollPanes.keySet())
+        for (String panel : tobPanels.keySet())
         {
-            tabbedPane.add(name, tobScrollPanes.get(name));
+            tabbedPane.add(panel, tobPanels.get(panel));
         }
         addWindowListener(new WindowAdapter()
         {
@@ -105,6 +105,10 @@ public class LiveChart extends BaseFrame
             {
                 super.windowOpened(e);
                 String activePanel = null;
+                if(tabbedPane.getSelectedIndex() == -1)
+                {
+                    return;
+                }
                 if(activeRaid.equals(TOB))
                 {
                     activePanel = tob[tabbedPane.getSelectedIndex()];
@@ -136,6 +140,23 @@ public class LiveChart extends BaseFrame
                 }
             }
         });
+        addComponentListener(new ComponentAdapter()
+        {
+            @Override
+            public void componentResized(ComponentEvent e)
+            {
+                super.componentResized(e);
+                Component c = (Component) e.getSource();
+                for(ChartPanel p : tobPanels.values())
+                {
+                    p.setSize(c.getWidth(), c.getHeight());
+                }
+                for(ChartPanel p : toaPanels.values())
+                {
+                    p.setSize(c.getWidth(), c.getHeight());
+                }
+            }
+        });
         add(tabbedPane);
         pack();
     }
@@ -145,9 +166,9 @@ public class LiveChart extends BaseFrame
     {
         activeRaid = TOB;
         tabbedPane.removeAll();
-        for (String name : tobScrollPanes.keySet())
+        for (String name : tobPanels.keySet())
         {
-            tabbedPane.add(name, tobScrollPanes.get(name));
+            tabbedPane.add(name, tobPanels.get(name));
         }
     }
 
@@ -155,9 +176,9 @@ public class LiveChart extends BaseFrame
     {
         activeRaid = TOA;
         tabbedPane.removeAll();
-        for (String name : toaScrollPanes.keySet())
+        for (String name : toaPanels.keySet())
         {
-            tabbedPane.add(name, toaScrollPanes.get(name));
+            tabbedPane.add(name, toaPanels.get(name));
         }
     }
 
@@ -180,13 +201,13 @@ public class LiveChart extends BaseFrame
         getPanel(room).incrementTick();
         if (getPanel(room).endTick % 50 == 0)
         {
-            for (String name : tobPanels.keySet())
+            for (ChartPanel panel : tobPanels.values())
             {
-                tobScrollPanes.get(name).getViewport().setViewPosition(new Point(tobPanels.get(name).getViewRect().x, tobPanels.get(name).getViewRect().y));
+                panel.sendToBottom();
             }
-            for (String name : toaPanels.keySet())
+            for (ChartPanel panel : toaPanels.values())
             {
-                toaScrollPanes.get(name).getViewport().setViewPosition(new Point(toaPanels.get(name).getViewRect().x, toaPanels.get(name).getViewRect().y));
+                panel.sendToBottom();
             }
         }
     }
@@ -210,12 +231,10 @@ public class LiveChart extends BaseFrame
     {
         for (String name : tobPanels.keySet())
         {
-            tobScrollPanes.get(name).getVerticalScrollBar().setValue(0);
             tobPanels.get(name).resetGraph();
         }
         for (String name : toaPanels.keySet())
         {
-            toaScrollPanes.get(name).getVerticalScrollBar().setValue(0);
             toaPanels.get(name).resetGraph();
         }
     }

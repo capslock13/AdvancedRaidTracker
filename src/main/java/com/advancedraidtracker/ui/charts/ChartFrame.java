@@ -15,12 +15,17 @@ import net.runelite.client.config.ConfigManager;
 import net.runelite.client.game.ItemManager;
 
 import javax.swing.*;
+import javax.swing.Timer;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.util.*;
 
 @Slf4j
 public class ChartFrame extends BaseFrame
 {
+    private int frameX = this.getWidth();
+    private int frameY = this.getHeight();
     private Set<String> TOBRooms = new LinkedHashSet<>(Arrays.asList("Maiden", "Bloat", "Nylocas", "Xarpus", "Sotetseg", "Verzik P1", "Verzik P2", "Verzik P3"));
     private Set<String> TOARooms = new LinkedHashSet<>(Arrays.asList("Apmeken", "Baba", "Scabaras", "Kephri", "Het", "Akkha", "Crondis", "Zebak", "Wardens P1", "Wardens P2", "Wardens P3"));
     public ChartFrame(Raid roomData, AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
@@ -60,6 +65,33 @@ public class ChartFrame extends BaseFrame
             chart.add(chartPanel);
             tab.add(new JScrollPane(chart));
             basepane.add(bossName, tab);
+
+            Timer resizeTimer = new Timer(20, e->
+            {
+                chartPanel.setSize(frameX, frameY);
+            });
+
+            resizeTimer.setRepeats(false);
+
+            addComponentListener(new ComponentAdapter()
+            {
+                @Override
+                public void componentResized(ComponentEvent e)
+                {
+                    super.componentResized(e);
+                    if(resizeTimer.isRunning())
+                    {
+                        resizeTimer.restart();
+                    }
+                    else
+                    {
+                        resizeTimer.start();
+                    }
+                    Component c = (Component) e.getSource();
+                    frameX = c.getWidth();
+                    frameY = c.getHeight();
+                }
+            });
         }
         add(basepane);
         pack();

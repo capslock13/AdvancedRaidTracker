@@ -36,7 +36,8 @@ public class ItemReference
                     "serpentine helm",
                     "barrows",
                     "voidwaker",
-                    "keris"
+                    "keris",
+                    "barrows",
             },
             {
                     "masori",
@@ -48,7 +49,9 @@ public class ItemReference
                     "pegasian",
                     "buckler",
                     "chinchompa",
-                    "vambraces"
+                    "vambraces",
+                    "crystal",
+                    "darts",
             },
             {
                     "ancestral",

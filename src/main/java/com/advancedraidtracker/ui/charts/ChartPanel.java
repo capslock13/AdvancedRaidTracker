@@ -14,9 +14,7 @@ import net.runelite.client.config.ConfigManager;
 import net.runelite.client.ui.FontManager;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
+import java.awt.event.*;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
@@ -28,14 +26,16 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 @Slf4j
-public class ChartPanel extends JPanel implements MouseListener, MouseMotionListener
+public class ChartPanel extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener
 {
+    private final int TITLE_BAR_PLUS_TAB_HEIGHT = 63; //todo figure this out dynamically in the future
     private boolean shouldWrap;
-    private BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+    private BufferedImage img;
     int scale;
     int boxCount;
     int boxHeight;
     int boxWidth;
+    private int windowHeight = 600;
 
     int selectedTick = -1;
     String selectedPlayer = "";
@@ -48,11 +48,6 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     @Setter
     ArrayList<String> players = new ArrayList<>();
     String room;
-    WeaponAttack[] weaponAttacks;
-    int keyColumns;
-    int keyRows;
-    int keyCount;
-    int keyMargin;
     @Setter
     String roomSpecificText = "";
     private int fontHeight;
@@ -89,6 +84,22 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     {
         shouldWrap = true;
         recalculateSize();
+    }
+    private int boxesToShow = 1;
+
+    public void setSize(int x, int y)
+    {
+        windowHeight = y;
+        if(isActive || !live)
+        {
+            boxesToShow = Math.min(1+((y-TITLE_BAR_PLUS_TAB_HEIGHT-scale)/boxHeight), boxCount);
+            if (img != null)
+            {
+                img.flush();
+            }
+            img = new BufferedImage(x, y, BufferedImage.TYPE_INT_ARGB);
+            recalculateSize();
+        }
     }
 
 
@@ -157,6 +168,8 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
     public void resetGraph()
     {
+        currentBox = 0;
+        currentScrollOffset = 0;
         endTick = 0;
         startTick = 0;
         selectedRow = -1;
@@ -288,11 +301,6 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         }
     }
 
-    public Rectangle getViewRect()
-    {
-        return new Rectangle(0, (boxCount > 0) ? (boxCount - 1) * boxHeight : 0, boxWidth, boxHeight);
-    }
-
     public void incrementTick()
     {
         endTick++;
@@ -342,29 +350,23 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             boxCount = 1;
         }
         boxHeight = ((players.size() + 3) * scale);
-        int height = boxCount * boxHeight + scale;
-        if (height < 600)
-        {
-            height = 600;
-        }
-        boxWidth = (shouldWrap) ? (100 + (scale * 51)) : 100 + (length + 1) * scale;
-        this.weaponAttacks = WeaponAttack.values();
-        keyCount = weaponAttacks.length;
-        keyRows = 20;
-        keyMargin = 10;
-        keyColumns = keyCount / keyRows;
-        if (keyCount % keyRows != 0)
-        {
-            keyColumns++;
-        }
-        int width = boxWidth /*+ (keyColumns * 150)*/ + 10;
-        if (img != null)
-        {
-            img.flush();
-        }
-        img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        boxWidth = (100 + (scale * 51));
+
+        boxesToShow = Math.min(1+((windowHeight-TITLE_BAR_PLUS_TAB_HEIGHT-scale)/boxHeight), boxCount);
+
         drawGraph();
 
+    }
+
+    public void sendToBottom()
+    {
+        recalculateSize();
+        if(TITLE_BAR_PLUS_TAB_HEIGHT+scale+boxCount*boxHeight > img.getHeight())
+        {
+            currentBox = boxCount - 1 - boxesToShow + 1;
+            int lastBoxEnd = (boxesToShow * boxHeight) + scale + TITLE_BAR_PLUS_TAB_HEIGHT;
+            currentScrollOffset = (currentBox * boxHeight) + (lastBoxEnd - img.getHeight());
+        }
     }
 
     private final ClientThread clientThread;
@@ -378,10 +380,13 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         this.room = room;
         startTick = 0;
         endTick = 0;
-        shouldWrap = isLive;
+        shouldWrap = true;
+        boxWidth = 100 + scale * 51;
+        img = new BufferedImage(boxWidth + 10, 600, BufferedImage.TYPE_INT_ARGB);
         recalculateSize();
         addMouseListener(this);
         addMouseMotionListener(this);
+        addMouseWheelListener(this);
     }
 
     @Override
@@ -416,7 +421,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
     int getYOffset(int tick)
     {
-        return (shouldWrap) ? (((tick - startTick) / 50) * boxHeight) + 20 : 10;
+        return ((((tick - startTick) / 50) * boxHeight) + 20)-(currentScrollOffset);
     }
 
     int getXOffset(int tick)
@@ -428,17 +433,19 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     {
         for (int i = startTick; i < endTick; i++)
         {
-            int xOffset = getXOffset(i);
-            int yOffset = getYOffset(i);
-            yOffset += scale;
-            g.setColor(Color.DARK_GRAY);
-            //g.drawLine(100 + xOffset + scale, yOffset - (fontHeight / 2), 100 + xOffset + scale, yOffset + boxHeight - (2 * scale) + 10);
-            g.setColor(new Color(220, 220, 220));
-            Font oldFont = g.getFont();
-            g.setFont(oldFont.deriveFont(10.0f));
-            int strWidth = getStringBounds(g, String.valueOf(i)).width;
-            g.drawString(String.valueOf(i), 100 + xOffset + (scale / 2) - (strWidth / 2), yOffset + (fontHeight / 2));
-            g.setFont(oldFont);
+            if(shouldTickBeDrawn(i))
+            {
+                int xOffset = getXOffset(i);
+                int yOffset = getYOffset(i);
+                yOffset += scale;
+                g.setColor(Color.DARK_GRAY);
+                g.setColor(new Color(220, 220, 220));
+                Font oldFont = g.getFont();
+                g.setFont(oldFont.deriveFont(10.0f));
+                int strWidth = getStringBounds(g, String.valueOf(i)).width;
+                g.drawString(String.valueOf(i), 100 + xOffset + (scale / 2) - (strWidth / 2), yOffset + (fontHeight / 2));
+                g.setFont(oldFont);
+            }
         }
     }
 
@@ -446,27 +453,36 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     {
         for (Integer i : autos)
         {
-            g.setColor(new Color(255, 80, 80, 60));
-            int xOffset = getXOffset(i);
-            int yOffset = getYOffset(i);
-            g.fillRoundRect(xOffset + 100, yOffset + 10, scale, boxHeight - scale, 7, 7);
+            if(shouldTickBeDrawn(i))
+            {
+                g.setColor(new Color(255, 80, 80, 60));
+                int xOffset = getXOffset(i);
+                int yOffset = getYOffset(i);
+                g.fillRoundRect(xOffset + 100, yOffset + 10, scale, boxHeight - scale, 7, 7);
+            }
         }
     }
 
     private void drawGraphBoxes(Graphics2D g)
     {
-        for (int i = 0; i < boxCount; i++)
+        for (int i = 0; i < boxesToShow; i++)
         {
             int startX = 100;
-            int startY = boxHeight * i + 30;
+            int startY = boxHeight * i + 30 - (currentScrollOffset-(currentBox*boxHeight));
             int endX = boxWidth - scale;
             int endY = startY + boxHeight;
             g.setColor(new Color(100, 100, 100));
 
-            g.drawLine(startX, startY + scale, endX, startY + scale);
-            g.drawLine(startX, startY + scale, startX, endY - scale);
-            g.drawLine(startX, endY - scale, endX, endY - scale);
-            g.drawLine(endX, endY - scale, endX, startY + scale);
+            if(startY > 5)
+            {
+                g.drawLine(startX, startY + scale, endX, startY + scale);
+            }
+            g.drawLine(startX, (startY > 5) ? startY + scale : scale+5, startX, endY - scale);
+            if(endY-scale > 5 + scale)
+            {
+                g.drawLine(startX, endY - scale, endX, endY - scale);
+            }
+            g.drawLine(endX, endY - scale, endX, (startY > 5) ? startY + scale : scale+5);
         }
     }
 
@@ -491,13 +507,15 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         for (int i = 0; i < players.size(); i++)
         {
             playerOffsets.put(players.get(i), i);
-            for (int j = 0; j < boxCount; j++)
+            for (int j = currentBox; j < boxesToShow+currentBox; j++)
             {
                 g.setColor(Color.DARK_GRAY);
-                //g.drawLine(100, 30 + (j * boxHeight) + ((i + 2) * scale), boxWidth - scale, 30 + (j * boxHeight) + ((i + 2) * scale));
-
                 g.setColor(config.primaryLight());
-                g.fillRoundRect(5, ((j*boxHeight)+((i+2)*scale))+10-3, 90, scale-6, 10, 10);
+                int nameRectsY = (j*boxHeight)+((i+2)*scale)+10-3-currentScrollOffset;
+                if(nameRectsY > scale + 5)
+                {
+                    g.fillRoundRect(5, nameRectsY, 90, scale - 6, 10, 10);
+                }
                 g.setColor(Color.WHITE);
                 Font oldFont = g.getFont();
                 g.setFont(FontManager.getRunescapeBoldFont());
@@ -505,11 +523,19 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                 int margin = 5;
                 int subBoxWidth = 90;
                 int textPosition = margin + (subBoxWidth-width)/2;
-                g.drawString(players.get(i), textPosition, ((j * boxHeight) + ((i + 2) * scale) + (fontHeight) / 2) + (scale/2) + 8);
+                int yPosition = ((j * boxHeight) + ((i + 2) * scale) + (fontHeight) / 2) + (scale/2) + 8-(currentScrollOffset);
+                if(yPosition > scale+5)
+                {
+                    g.drawString(players.get(i), textPosition, yPosition);
+                }
 
                 if (i == 0)
                 {
-                    g.drawString(roomSpecificText, 5, j * boxHeight + ((players.size() + 2) * scale) + (fontHeight / 2) + 20);
+                    int textYPosition = j * boxHeight + ((players.size() + 2) * scale) + (fontHeight / 2) + 20 - currentScrollOffset;
+                    if(textYPosition > scale + 5)
+                    {
+                        g.drawString(roomSpecificText, 5, textYPosition);
+                    }
                 }
                 g.setFont(oldFont);
             }
@@ -524,10 +550,13 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             int xOffset = getXOffset(i);
             int yOffset = getYOffset(i);
             xOffset += 100;
-            yOffset += (playerOffsets.size() + 2) * scale - 10;
+            yOffset += (playerOffsets.size() + 2) * scale - 10 - currentScrollOffset;
             g.setColor(Color.WHITE);
             int strWidth = getStringBounds(g, "X").width;
-            g.drawString("X", xOffset + (scale / 2) - (strWidth / 2), yOffset + (fontHeight / 2) + 10);
+            if(yOffset > scale + 5)
+            {
+                g.drawString("X", xOffset + (scale / 2) - (strWidth / 2), yOffset + (fontHeight / 2) + 10);
+            }
         }
     }
 
@@ -539,12 +568,15 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             if (dawnSpec.getDamage() != -1)
             {
                 int xOffset = (shouldWrap) ? ((dawnSpec.tick - startTick - 2) % 50) * scale : (dawnSpec.tick + 2) * scale;
-                int yOffset = (shouldWrap) ? ((dawnSpec.tick - startTick - 2) / 50) * boxHeight + 20 : 20;
+                int yOffset = getYOffset(dawnSpec.tick);
                 xOffset += 100;
                 yOffset += (playerOffsets.size() + 3) * scale - 10;
                 g.setColor(Color.WHITE);
                 int textOffset = (scale / 2) - (getStringBounds(g, damage).width) / 2;
-                g.drawString(damage, xOffset + textOffset, yOffset + (fontHeight / 2) + 10);
+                if(yOffset > scale + 5)
+                {
+                    g.drawString(damage, xOffset + textOffset, yOffset + (fontHeight / 2) + 10);
+                }
             }
         }
     }
@@ -568,63 +600,64 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     {
         for (OutlineBox box : outlineBoxes)
         {
-            if (box.tick >= startTick && box.tick <= endTick)
+            if (shouldTickBeDrawn(box.tick))
             {
                 int xOffset = 100 + ((shouldWrap) ? ((box.tick - startTick) % 50) * scale : box.tick * scale);
                 if(playerOffsets.get(box.player) == null)
                 {
                     continue;
                 }
-                int yOffset = ((playerOffsets.get(box.player) + 1) * scale + 30) + ((shouldWrap) ? ((box.tick - startTick) / 50) * boxHeight : 30);
-                if(config != null && config.useIconsOnChart())
+                int yOffset = ((playerOffsets.get(box.player) + 1) * scale + 30) + (((shouldWrap) ? ((box.tick - startTick) / 50) * boxHeight : 30)-currentScrollOffset);
+                if(yOffset > scale + 5)
                 {
-                    try
+                    if (config != null && config.useIconsOnChart())
                     {
-                        if(box.weaponAttack.attackTicks != -1)
+                        try
                         {
-                            int opacity = config.iconBackgroundOpacity();
+                            if (box.weaponAttack.attackTicks != -1)
+                            {
+                                int opacity = config.iconBackgroundOpacity();
+                                opacity = Math.min(255, opacity);
+                                opacity = Math.max(0, opacity);
+                                g.setColor(new Color(box.color.getRed(), box.color.getGreen(), box.color.getBlue(), opacity));
+                                g.fillRoundRect(xOffset + 2, yOffset + 2, scale - 3, scale - 3, 5, 5);
+                                BufferedImage scaled = getScaledImage(box.attack.img, scale - 2, scale - 2);
+                                g.drawImage(createDropShadow(scaled), xOffset + 3, yOffset + 3, null);
+                                g.drawImage(scaled, xOffset + 2, yOffset + 1, null);
+                            }
+                        } catch (Exception ignored)
+                        {
+
+                        }
+                    } else
+                    {
+                        int opacity = 100;
+                        if (config != null)
+                        {
+                            opacity = config.letterBackgroundOpacity();
                             opacity = Math.min(255, opacity);
                             opacity = Math.max(0, opacity);
-                            g.setColor(new Color(box.color.getRed(), box.color.getGreen(), box.color.getBlue(), opacity));
-                            g.fillRoundRect(xOffset + 2, yOffset + 2, scale - 3, scale - 3, 5, 5);
-                            BufferedImage scaled = getScaledImage(box.attack.img, scale-2, scale-2);
-                            g.drawImage(createDropShadow(scaled), xOffset + 3, yOffset + 3, null);
-                            g.drawImage(scaled, xOffset+2, yOffset+1, null);
+                        }
+                        g.setColor(new Color(box.color.getRed(), box.color.getGreen(), box.color.getBlue(), opacity));
+                        g.fillRoundRect(xOffset + 2, yOffset + 2, scale - 3, scale - 3, 5, 5);
+                        g.setColor((box.primaryTarget) ? Color.WHITE : new Color(0, 190, 255));
+                        int textOffset = (scale / 2) - (getStringWidth(g, box.letter) / 2);
+                        int primaryOffset = yOffset + (box.additionalText.isEmpty() ? (fontHeight / 2) : 0);
+                        g.drawString(box.letter, xOffset + textOffset - 1, primaryOffset + (scale / 2) + 1);
+                        if (!box.additionalText.isEmpty())
+                        {
+                            Font f = g.getFont();
+                            g.setFont(f.deriveFont(10.0f));
+                            textOffset = (scale / 2) - (getStringWidth(g, box.additionalText) / 2);
+                            g.setColor(Color.WHITE);
+                            g.drawString(box.additionalText, xOffset + textOffset, yOffset + scale - 3);
+                            g.setFont(f);
                         }
                     }
-                    catch(Exception ignored)
-                    {
-
-                    }
+                    box.createOutline();
+                    g.setColor(box.outlineColor);
+                    g.drawRoundRect(xOffset + 1, yOffset + 1, scale - 2, scale - 2, 5, 5);
                 }
-                else
-                {
-                    int opacity = 100;
-                    if(config != null)
-                    {
-                        opacity = config.letterBackgroundOpacity();
-                        opacity = Math.min(255, opacity);
-                        opacity = Math.max(0, opacity);
-                    }
-                    g.setColor(new Color(box.color.getRed(), box.color.getGreen(), box.color.getBlue(), opacity));
-                    g.fillRoundRect(xOffset + 2, yOffset + 2, scale - 3, scale - 3, 5, 5);
-                    g.setColor((box.primaryTarget) ? Color.WHITE : new Color(0, 190, 255));
-                    int textOffset = (scale / 2) - (getStringWidth(g, box.letter) / 2);
-                    int primaryOffset = yOffset + (box.additionalText.isEmpty() ? (fontHeight / 2) : 0);
-                    g.drawString(box.letter, xOffset + textOffset-1, primaryOffset + (scale / 2)+1);
-                    if (!box.additionalText.isEmpty())
-                    {
-                        Font f = g.getFont();
-                        g.setFont(f.deriveFont(10.0f));
-                        textOffset = (scale / 2) - (getStringWidth(g, box.additionalText) / 2);
-                        g.setColor(Color.WHITE);
-                        g.drawString(box.additionalText, xOffset + textOffset, yOffset + scale - 3);
-                        g.setFont(f);
-                    }
-                }
-                box.createOutline();
-                g.setColor(box.outlineColor);
-                g.drawRoundRect(xOffset+1, yOffset+1, scale-2, scale-2, 5, 5);
             }
         }
     }
@@ -635,15 +668,21 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         {
             for (Integer i : lines.keySet())
             {
-                int xOffset = getXOffset(i);
-                int yOffset = getYOffset(i);
-                xOffset += 100;
-                yOffset += (scale / 2);
-                g.setColor(new Color(255, 0, 0));
-                g.drawLine(xOffset, yOffset, xOffset, yOffset + boxHeight - 20);
-                int stringLength = getStringBounds(g, lines.get(i)).width;
-                g.setColor(Color.WHITE);
-                g.drawString(lines.get(i), xOffset - (stringLength / 2), yOffset - 1);
+                if(shouldTickBeDrawn(i))
+                {
+                    int xOffset = getXOffset(i);
+                    int yOffset = getYOffset(i);
+                    xOffset += 100;
+                    yOffset += (scale / 2);
+                    g.setColor(new Color(255, 0, 0));
+                    g.drawLine(xOffset, Math.max(yOffset, scale + 5), xOffset, yOffset + boxHeight - 20);
+                    int stringLength = getStringBounds(g, lines.get(i)).width;
+                    g.setColor(Color.WHITE);
+                    if(yOffset > scale + 5 )
+                    {
+                    g.drawString(lines.get(i), xOffset - (stringLength / 2), yOffset - 1);
+                    }
+                }
             }
         }
     }
@@ -656,27 +695,30 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
             int maxTick = getMaxTick(box);
             int lastEndTick = box.spawnTick;
-            while (lastEndTick < maxTick)
+            while (lastEndTick < maxTick && shouldTickBeDrawn(lastEndTick))
             {
-                int yOffset = getYOffset(lastEndTick);
-                try
-                {
-                    yOffset += (playerOffsets.get(box.owner) + 1) * scale + 10;
-                } catch (Exception e)
-                {
-                    break;
-                }
-                int currentEndTick = (shouldWrap) ? lastEndTick + (50 - (lastEndTick % 50) + (startTick % 50)) : maxTick;
-                if (currentEndTick > maxTick)
-                {
-                    currentEndTick = maxTick;
-                }
-                int xOffsetStart = (shouldWrap) ? ((lastEndTick - startTick) % 50) * scale : (lastEndTick - 1) * scale;
-                xOffsetStart += 100;
-                int xOffsetEnd = (shouldWrap) ? ((currentEndTick - startTick - 1) % 50) * scale : (currentEndTick - 1) * scale;
-                xOffsetEnd += 100;
-                lastEndTick = currentEndTick;
-                g.fillRect(xOffsetStart, yOffset + 1, xOffsetEnd - xOffsetStart + scale, scale - 2);
+                    int yOffset = getYOffset(lastEndTick);
+                    try
+                    {
+                        yOffset += (playerOffsets.get(box.owner) + 1) * scale + 10;
+                    } catch (Exception e)
+                    {
+                        break;
+                    }
+                    int currentEndTick = (shouldWrap) ? lastEndTick + (50 - (lastEndTick % 50) + (startTick % 50)) : maxTick;
+                    if (currentEndTick > maxTick)
+                    {
+                        currentEndTick = maxTick;
+                    }
+                    int xOffsetStart = (shouldWrap) ? ((lastEndTick - startTick) % 50) * scale : (lastEndTick - 1) * scale;
+                    xOffsetStart += 100;
+                    int xOffsetEnd = (shouldWrap) ? ((currentEndTick - startTick - 1) % 50) * scale : (currentEndTick - 1) * scale;
+                    xOffsetEnd += 100;
+                    lastEndTick = currentEndTick;
+                    if(yOffset > scale + 5)
+                    {
+                        g.fillRect(xOffsetStart, yOffset + 1, xOffsetEnd - xOffsetStart + scale, scale - 2);
+                    }
             }
         }
     }
@@ -707,8 +749,11 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         {
             g.setColor(new Color(255, 255, 255));
             int xOffset = 100 + ((shouldWrap) ? ((selectedTick - startTick) % 50) * scale : selectedTick * scale);
-            int yOffset = ((playerOffsets.get(selectedPlayer) + 1) * scale + 30) + ((shouldWrap) ? ((selectedTick - startTick) / 50) * boxHeight : 30);
-            g.drawRect(xOffset, yOffset, scale, scale);
+            int yOffset = ((playerOffsets.get(selectedPlayer) + 1) * scale + 30) + (((shouldWrap) ? ((selectedTick - startTick) / 50) * boxHeight : 30)-currentScrollOffset);
+            if(yOffset > scale + 5)
+            {
+                g.drawRect(xOffset, yOffset, scale, scale);
+            }
         }
     }
 
@@ -716,7 +761,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     {
         return new Point(
                 100 + ((shouldWrap) ? ((tick - startTick) % 50) * scale : tick * scale),
-                ((playerOffsets.get(player) + 1) * scale + 10) + ((shouldWrap) ? ((tick - startTick) / 50) * boxHeight : 0));
+                ((playerOffsets.get(player) + 1) * scale + 10) + (((shouldWrap) ? ((tick - startTick) / 50) * boxHeight : 0)-currentScrollOffset));
     }
 
     private void drawSelectedRow(Graphics2D g)
@@ -778,20 +823,23 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         {
             if (action.tick == selectedTick && action.player.equals(selectedPlayer))
             {
-                Point location = getPoint(action.tick, action.player);
-                HoverBox hoverBox = new HoverBox(actions.get(action), config);
-                hoverBox.addString("");
-                for(String item : action.wornItemNames)
+                if(shouldTickBeDrawn(action.tick))
                 {
-                    hoverBox.addString("."+item);
+                    Point location = getPoint(action.tick, action.player);
+                    HoverBox hoverBox = new HoverBox(actions.get(action), config);
+                    hoverBox.addString("");
+                    for (String item : action.wornItemNames)
+                    {
+                        hoverBox.addString("." + item);
+                    }
+                    int xPosition = location.getX() + 10;
+                    if (xPosition + hoverBox.getWidth(g) > img.getWidth())
+                    {
+                        xPosition = xPosition - hoverBox.getWidth(g) - scale * 2;
+                    }
+                    hoverBox.setPosition(xPosition, location.getY() - 10);
+                    hoverBox.draw(g);
                 }
-                int xPosition = location.getX()+10;
-                if(xPosition+hoverBox.getWidth(g) > img.getWidth())
-                {
-                    xPosition = xPosition-hoverBox.getWidth(g)-scale*2;
-                }
-                hoverBox.setPosition(xPosition, location.getY() - 10);
-                hoverBox.draw(g);
             }
         }
     }
@@ -812,6 +860,10 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                 String proc = lines.get(tick);
                 int xOffset = 100 + getXOffset(tick + 1);
                 int yOffset = 10 + getYOffset(tick + 1);
+                if(yOffset > scale + 5)
+                {
+                    continue;
+                }
                 yOffset -= scale;
                 int crabOffsetX = 0;
                 int crabOffsetY;
@@ -944,16 +996,23 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     {
         for(int i = startTick; i < endTick; i++)
         {
-            for(int j = 0; j < playerOffsets.size(); j++)
+            if(shouldTickBeDrawn(i))
             {
-                int xOffset = 100 + ((shouldWrap) ? ((i - startTick) % 50) * scale : i * scale);
-                if(playerOffsets.get(players.get(j)) == null)
+                for (int j = 0; j < playerOffsets.size(); j++)
                 {
-                    continue;
+                    int xOffset = 100 + ((shouldWrap) ? ((i - startTick) % 50) * scale : i * scale);
+                    if (playerOffsets.get(players.get(j)) == null)
+                    {
+                        continue;
+                    }
+                    shouldWrap = true;
+                    int yOffset = ((playerOffsets.get(players.get(j)) + 1) * scale + 30) + ((((i - startTick) / 50) * boxHeight)-currentScrollOffset);
+                    g.setColor(config.primaryMiddle());
+                    if(yOffset > scale + 5)
+                    {
+                        g.fillRoundRect(xOffset + 2, yOffset + 2, scale - 3, scale - 3, 5, 5);
+                    }
                 }
-                int yOffset = ((playerOffsets.get(players.get(j)) + 1) * scale + 30) + ((shouldWrap) ? ((i - startTick) / 50) * boxHeight : 30);
-                g.setColor(config.primaryMiddle());
-                g.fillRoundRect(xOffset + 2, yOffset + 2, scale - 3, scale - 3, 5, 5);
             }
         }
     }
@@ -983,7 +1042,6 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         fontHeight = getStringBounds(g, "a").height;
         g.setColor(Color.WHITE);
 
-        //drawKey(g);
         drawTicks(g);
         drawGraphBoxes(g);
         drawBaseBoxes(g);
@@ -1006,8 +1064,14 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         repaint();
     }
 
+    public boolean shouldTickBeDrawn(int tick)
+    {
+        return tick >= (startTick + currentBox*50) && tick < (startTick + ((currentBox+boxesToShow)*50));
+    }
+
     public void getTickHovered(int x, int y)
     {
+        y = y + currentScrollOffset;
         if (y > 20)
         {
             int boxNumber = (y - 20) / boxHeight;
@@ -1162,5 +1226,27 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             return "?";
         }
     }
-
+    private int currentBox = 0;
+    private int currentScrollOffset = 0;
+    @Override
+    public void mouseWheelMoved(MouseWheelEvent e) //manually implement scrolling
+    {
+        if(e.getWheelRotation() < 0) //top of the first box aligns to top if you scroll up
+        {
+            currentBox = Math.max(0, currentBox-1);
+            currentScrollOffset = currentBox*boxHeight;
+        }
+        else //bottom of the bottom box aligns to the bottom if you scroll down
+        {
+            if(TITLE_BAR_PLUS_TAB_HEIGHT+scale+boxCount*boxHeight > img.getHeight()) //no need to scroll at all if all boxes fit on screen, boxes would jump to bottom and leave dead space
+            {
+                int lastBox = currentBox + boxesToShow - 1;
+                lastBox = Math.min(lastBox + 1, boxCount - 1);
+                currentBox = lastBox - boxesToShow + 1;
+                int lastBoxEnd = (boxesToShow * boxHeight) + scale + TITLE_BAR_PLUS_TAB_HEIGHT;
+                currentScrollOffset = (currentBox * boxHeight) + (lastBoxEnd - img.getHeight());
+            }
+        }
+        recalculateSize();
+    }
 }

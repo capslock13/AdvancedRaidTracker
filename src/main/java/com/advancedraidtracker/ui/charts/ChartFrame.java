@@ -11,12 +11,17 @@ import net.runelite.client.config.ConfigManager;
 import net.runelite.client.game.ItemManager;
 
 import javax.swing.*;
+import javax.swing.Timer;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.util.*;
 
 @Slf4j
 public class ChartFrame extends BaseFrame
 {
+    private int frameX = this.getWidth();
+    private int frameY = this.getHeight();
     public ChartFrame(ArrayList<SimpleTOBData> roomData, AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
     {
         JTabbedPane basepane = new JTabbedPane();
@@ -301,6 +306,40 @@ public class ChartFrame extends BaseFrame
             verzP2RCP.redraw();
             verzP3RCP.redraw();
 
+            Timer resizeTimer = new Timer(20, e ->
+            {
+                maidenRCP.setSize(frameX, frameY);
+                bloatRCP.setSize(frameX, frameY);
+                nyloRCP.setSize(frameX, frameY);
+                soteRCP.setSize(frameX, frameY);
+                xarpRCP.setSize(frameX, frameY);
+                verzP1RCP.setSize(frameX, frameY);
+                verzP2RCP.setSize(frameX, frameY);
+                verzP3RCP.setSize(frameX, frameY);
+            });
+
+            resizeTimer.setRepeats(false);
+
+            addComponentListener(new ComponentAdapter()
+            {
+                @Override
+                public void componentResized(ComponentEvent e)
+                {
+                    super.componentResized(e);
+                    if(resizeTimer.isRunning())
+                    {
+                        resizeTimer.restart();
+                    }
+                    else
+                    {
+                        resizeTimer.start();
+                    }
+                    Component c = (Component) e.getSource();
+                    frameX = c.getWidth();
+                    frameY = c.getHeight();
+                }
+            });
+
             basepane.addChangeListener(cl->
             {
                 maidenRCP.redraw();
@@ -323,6 +362,8 @@ public class ChartFrame extends BaseFrame
             verzp2Charts.add(verzP2RCP);
             verzp3Charts.add(verzP3RCP);
 
+
+
         }
 
         maidenTab.add(new JScrollPane(maidenCharts));
@@ -333,7 +374,6 @@ public class ChartFrame extends BaseFrame
         verzP1Tab.add(new JScrollPane(verzp1Charts));
         verzP2Tab.add(new JScrollPane(verzp2Charts));
         verzP3Tab.add(new JScrollPane(verzp3Charts));
-
 
         basepane.addTab("Maiden", maidenTab);
         basepane.addTab("Bloat", bloatTab);

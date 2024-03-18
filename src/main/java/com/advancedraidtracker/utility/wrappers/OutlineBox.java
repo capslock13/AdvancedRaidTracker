@@ -1,9 +1,12 @@
 package com.advancedraidtracker.utility.wrappers;
 
+import com.advancedraidtracker.constants.RaidRoom;
 import com.advancedraidtracker.utility.ItemReference;
 import com.advancedraidtracker.utility.weapons.PlayerAnimation;
 
 import java.awt.*;
+
+import static com.advancedraidtracker.constants.RaidRoom.BLOAT;
 
 public class OutlineBox
 {
@@ -17,9 +20,11 @@ public class OutlineBox
     public String additionalText;
     public int cd;
     public PlayerDidAttack attack;
+    private RaidRoom room;
 
-    public OutlineBox(PlayerDidAttack attack, String letter, Color color, boolean primaryTarget, String additionalText, PlayerAnimation playerAnimation, int cd)
+    public OutlineBox(PlayerDidAttack attack, String letter, Color color, boolean primaryTarget, String additionalText, PlayerAnimation playerAnimation, int cd, RaidRoom room)
     {
+        this.room = room;
         this.playerAnimation = playerAnimation;
         this.attack = attack;
         this.player = attack.player;
@@ -66,7 +71,7 @@ public class OutlineBox
 
     public void createOutline()
     {
-        if(playerAnimation.attackTicks == -1)
+        if(playerAnimation.attackTicks < 1)
         {
             return;
         }
@@ -83,7 +88,13 @@ public class OutlineBox
             {
                 if (anyMatch(s, ItemReference.ITEMS[style]) || (voidHelmWorn && s.toLowerCase().contains("void")))
                 {
-                    correctItems++;
+                    if(s.contains("salve"))
+                    {
+                        if(room.equals(BLOAT))
+                        {
+                            correctItems++;
+                        }
+                    }
                 }
             }
             if (attack.wornItemNames[2].toLowerCase().contains("blood fury") && style == MELEE)

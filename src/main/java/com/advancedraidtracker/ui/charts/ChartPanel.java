@@ -1,6 +1,7 @@
 package com.advancedraidtracker.ui.charts;
 
 import com.advancedraidtracker.AdvancedRaidTrackerConfig;
+import com.advancedraidtracker.constants.RaidRoom;
 import com.advancedraidtracker.constants.TobIDs;
 import com.advancedraidtracker.utility.*;
 import com.advancedraidtracker.utility.Point;
@@ -268,7 +269,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
                 additionalText = proc + shortenedString;
             }
-            outlineBoxes.add(new OutlineBox(attack, playerAnimation.shorthand, playerAnimation.color, isTarget, additionalText, playerAnimation, playerAnimation.attackTicks));
+            outlineBoxes.add(new OutlineBox(attack, playerAnimation.shorthand, playerAnimation.color, isTarget, additionalText, playerAnimation, playerAnimation.attackTicks, RaidRoom.getRoom(this.room)));
         }
     }
 

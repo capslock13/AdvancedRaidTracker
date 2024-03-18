@@ -734,7 +734,7 @@ public class MaidenHandler extends TOBRoomHandler
         if (x == 22 && y == 41)
         {
             clog.addLine(MAIDEN_SCUFFED, "N1");
-            return "N1" + proc;
+            return "sN1" + proc;
         }
         if (x == 25 && y == 40)
         {
@@ -743,7 +743,7 @@ public class MaidenHandler extends TOBRoomHandler
         if (x == 26 && y == 41)
         {
             clog.addLine(MAIDEN_SCUFFED, "N2");
-            return "N2" + proc;
+            return "sN2" + proc;
         }
         if (x == 29 && y == 40)
         {
@@ -752,7 +752,7 @@ public class MaidenHandler extends TOBRoomHandler
         if (x == 30 && y == 41)
         {
             clog.addLine(MAIDEN_SCUFFED, "N3");
-            return "N3" + proc;
+            return "sN3" + proc;
         }
         if (x == 33 && y == 40)
         {
@@ -761,7 +761,7 @@ public class MaidenHandler extends TOBRoomHandler
         if (x == 34 && y == 41)
         {
             clog.addLine(MAIDEN_SCUFFED, "N4 (1)");
-            return "N4 (1)" + proc;
+            return "sN4 (1)" + proc;
         }
         if (x == 33 && y == 38)
         {
@@ -770,7 +770,7 @@ public class MaidenHandler extends TOBRoomHandler
         if (x == 34 && y == 39)
         {
             clog.addLine(MAIDEN_SCUFFED, "N4 (2)");
-            return "N4 (2)" + proc;
+            return "sN4 (2)" + proc;
         }
         //
         if (x == 21 && y == 20)
@@ -780,7 +780,7 @@ public class MaidenHandler extends TOBRoomHandler
         if (x == 22 && y == 19)
         {
             clog.addLine(MAIDEN_SCUFFED, "S1");
-            return "S1" + proc;
+            return "sS1" + proc;
         }
         if (x == 25 && y == 20)
         {
@@ -789,7 +789,7 @@ public class MaidenHandler extends TOBRoomHandler
         if (x == 26 && y == 19)
         {
             clog.addLine(MAIDEN_SCUFFED, "S2");
-            return "S2" + proc;
+            return "sS2" + proc;
         }
         if (x == 29 && y == 20)
         {
@@ -798,7 +798,7 @@ public class MaidenHandler extends TOBRoomHandler
         if (x == 30 && y == 19)
         {
             clog.addLine(MAIDEN_SCUFFED, "S3");
-            return "S3" + proc;
+            return "sS3" + proc;
         }
         if (x == 33 && y == 20)
         {
@@ -807,7 +807,7 @@ public class MaidenHandler extends TOBRoomHandler
         if (x == 34 && y == 19)
         {
             clog.addLine(MAIDEN_SCUFFED, "S4 (1)");
-            return "S4 (1)" + proc;
+            return "sS4 (1)" + proc;
         }
         if (x == 33 && y == 22)
         {
@@ -816,7 +816,7 @@ public class MaidenHandler extends TOBRoomHandler
         if (x == 34 && y == 21)
         {
             clog.addLine(MAIDEN_SCUFFED, "S4 (2)");
-            return "S4 (2)" + proc;
+            return "sS4 (2)" + proc;
         } else
         {
             return "Unknown";

@@ -1621,7 +1621,7 @@ public class Raids extends BaseFrame
 
                  */
             }
-            new CrabLeakInfo(crabData);
+            new CrabLeakInfo(crabData); //todo "s" prefix
         });
 
         raidPopup.add(analyzeCrabs);

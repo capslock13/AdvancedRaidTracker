@@ -939,7 +939,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                 String proc = lines.get(tick);
                 int xOffset = 100 + getXOffset(tick + 1);
                 int yOffset = 10 + getYOffset(tick + 1);
-                if(yOffset > scale + 5)
+                if(yOffset <= scale + 5)
                 {
                     continue;
                 }
@@ -1034,8 +1034,16 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                             crabOffsetY = 29;
                         }
                         crabOffsetY -= scale;
-                        g.setColor(new Color(230, 20, 20, 200));
+                        if(crab.startsWith("s"))
+                        {
+                            g.setColor(new Color(220, 200, 0, 200));
+                        }
+                        else
+                        {
+                            g.setColor(new Color(230, 20, 20, 200));
+                        }
                         g.fillOval(xOffset + crabOffsetX, yOffset + crabOffsetY, 7, 7);
+                        g.setColor(new Color(230, 20, 20, 200));
                     }
                 }
             }

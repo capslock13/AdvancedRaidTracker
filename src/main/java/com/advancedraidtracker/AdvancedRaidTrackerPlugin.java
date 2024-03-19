@@ -1130,7 +1130,7 @@ public class AdvancedRaidTrackerPlugin extends Plugin
                     }
                 } else if (p.getAnimation() == TWO_HAND_SWORD_SWING)
                 {
-                    if (id == BANDOS_GODSWORD || id == BANDOS_GODSWORD_OR)
+                    if ((id == BANDOS_GODSWORD || id == BANDOS_GODSWORD_OR) && !(currentRoom instanceof VerzikHandler && p.getInteracting().getName() != null && p.getInteracting().getName().contains("Matamenos")))
                     {
                         if (config.showMistakesInChat())
                         {
@@ -1358,7 +1358,6 @@ public class AdvancedRaidTrackerPlugin extends Plugin
         }
         else if(event.getGroup().equals("Advanced Raid Tracker") && event.getKey().contains("theme"))
         {
-            log.info(event.getNewValue());
             ChartTheme theme = ChartTheme.valueOf(event.getNewValue());
 
             configManager.setConfiguration("Advanced Raid Tracker", "primaryDark", Color.decode(theme.getPrimaryDark()));

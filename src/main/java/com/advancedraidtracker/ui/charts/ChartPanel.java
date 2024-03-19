@@ -491,7 +491,14 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                 {
                     tick = tick.substring(0, tick.length()-1);
                 }
-                drawStringRotated(g, tick, 100 + xOffset + (scale / 2) - (strWidth / 2), yOffset + (fontHeight / 2)-3, config.fontColor());
+                if(config.useTimeOnChart())
+                {
+                    drawStringRotated(g, tick, 100 + xOffset + (scale / 2) - (strWidth / 2), yOffset + (fontHeight / 2) - 3, config.fontColor());
+                }
+                else
+                {
+                    g.drawString(tick, 100 + xOffset + (scale / 2) - (strWidth / 2), yOffset + (fontHeight / 2) - 3);
+                }
                 g.setFont(oldFont);
             }
         }
@@ -547,6 +554,27 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         return bilinearScaleOp.filter(
                 image,
                 new BufferedImage(width, height, image.getType()));
+    }
+
+    private static BufferedImage createFlipped(BufferedImage image)
+    {
+        AffineTransform at = new AffineTransform();
+        at.concatenate(AffineTransform.getScaleInstance(1, -1));
+        at.concatenate(AffineTransform.getTranslateInstance(0, -image.getHeight()));
+        return createTransformed(image, at);
+    }
+
+    private static BufferedImage createTransformed(
+            BufferedImage image, AffineTransform at)
+    {
+        BufferedImage newImage = new BufferedImage(
+                image.getWidth(), image.getHeight(),
+                BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = newImage.createGraphics();
+        g.transform(at);
+        g.drawImage(image, 0, 0, null);
+        g.dispose();
+        return newImage;
     }
 
     private void drawYChartColumn(Graphics2D g)
@@ -606,13 +634,13 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                     int xOffset = getXOffset(i);
                     int yOffset = getYOffset(i);
                     xOffset += 100;
-                    yOffset += (playerOffsets.size() + 2) * scale - 10 - currentScrollOffset;
+                    yOffset += (playerOffsets.size() + 2) * scale - 10;
                     g.setColor(config.fontColor());
                     String time = String.valueOf(((i + instanceTime) % 4) + 1);
                     int strWidth = getStringBounds(g, time).width;
                     if(yOffset > scale + 5)
                     {
-                        g.drawString(time, xOffset + (scale / 2) - (strWidth / 2), yOffset + (fontHeight / 2) + 10-currentScrollOffset);
+                        g.drawString(time, xOffset + (scale / 2) - (strWidth / 2), yOffset + (fontHeight / 2) + 10);
                     }
                 }
             }
@@ -703,9 +731,17 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                                     g.setColor(config.attackBoxColor());
                                 }
                                 g.fillRoundRect(xOffset + 2, yOffset + 2, scale - 3, scale - 3, 5, 5);
-                                BufferedImage scaled = getScaledImage(box.attack.img, scale - 2, scale - 2);
-                                g.drawImage(createDropShadow(scaled), xOffset + 3, yOffset + 3, null);
-                                g.drawImage(scaled, xOffset + 2, yOffset + 1, null);
+                                BufferedImage scaled = getScaledImage(box.attack.img, (scale - 2), (scale - 2));
+                                if(box.playerAnimation.equals(PlayerAnimation.HAMMER_BOP) || box.playerAnimation.equals(PlayerAnimation.BGS_WHACK))
+                                {
+                                    g.drawImage(createFlipped(createDropShadow(scaled)), xOffset + 3, yOffset + 3, null);
+                                    g.drawImage(createFlipped(scaled), xOffset + 2, yOffset + 1, null);
+                                }
+                                else
+                                {
+                                    g.drawImage(createDropShadow(scaled), xOffset + 3, yOffset + 3, null);
+                                    g.drawImage(scaled, xOffset + 2, yOffset + 1, null);
+                                }
                             }
                         } catch (Exception e)
                         {

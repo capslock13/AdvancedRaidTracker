@@ -17,7 +17,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Objects;
-UI
+
 import static com.advancedraidtracker.utility.UISwingUtility.drawStringRotated;
 
 @Slf4j

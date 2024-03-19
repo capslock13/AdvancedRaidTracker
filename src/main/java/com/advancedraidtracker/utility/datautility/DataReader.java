@@ -149,7 +149,7 @@ public class DataReader //todo move any methods that read files to here. I belie
                         chartData.addMaidenCrab(line[4]);
                         break;
                     case "77": //verzik bounce
-                        chartData.addAttack(RaidRoom.VERZIK, new PlayerDidAttack(itemManager, line[4], "100000", Integer.parseInt(line[5]), -1, "-1", "-1", -1, -1, "-1", "-1"));
+                        chartData.addAttack(RaidRoom.VERZIK, new PlayerDidAttack(itemManager, line[4], "100000", Integer.parseInt(line[5]), 1965, "-1", "-1", -1, -1, "-1", "-1"));
                         break;
 
                 }

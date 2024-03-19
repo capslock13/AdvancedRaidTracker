@@ -131,6 +131,7 @@ public class PlayerDidAttack
         return original;
     }
 
+
     public void setIcons()
     {
         setIcons(itemManager);

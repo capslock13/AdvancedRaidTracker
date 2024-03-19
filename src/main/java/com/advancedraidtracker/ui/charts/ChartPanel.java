@@ -188,7 +188,10 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         selectedRow = -1;
         selectedTick = -1;
         selectedPlayer = "";
-        outlineBoxes.clear();
+        synchronized (outlineBoxes)
+        {
+            outlineBoxes.clear();
+        }
         autos.clear();
         lines.clear();
         specific.clear();
@@ -273,7 +276,10 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
                 additionalText = proc + shortenedString;
             }
-            outlineBoxes.add(new OutlineBox(attack, playerAnimation.shorthand, playerAnimation.color, isTarget, additionalText, playerAnimation, playerAnimation.attackTicks, RaidRoom.getRoom(this.room)));
+            synchronized (outlineBoxes)
+            {
+                outlineBoxes.add(new OutlineBox(attack, playerAnimation.shorthand, playerAnimation.color, isTarget, additionalText, playerAnimation, playerAnimation.attackTicks, RaidRoom.getRoom(this.room)));
+            }
             for(int i = attack.tick; i < attack.tick+playerAnimation.attackTicks; i++)
             {
                 playerWasOnCD.put(attack.player, i);
@@ -701,80 +707,81 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
     private void drawPrimaryBoxes(Graphics2D g)
     {
-        for (OutlineBox box : outlineBoxes)
+        synchronized (outlineBoxes)
         {
-            if (shouldTickBeDrawn(box.tick))
+            for (OutlineBox box : outlineBoxes)
             {
-                int xOffset = 100 + ((shouldWrap) ? ((box.tick - startTick) % 50) * scale : box.tick * scale);
-                if (playerOffsets.get(box.player) == null)
+                if (shouldTickBeDrawn(box.tick))
                 {
-                    continue;
-                }
-                int yOffset = ((playerOffsets.get(box.player) + 1) * scale + 30) + (((shouldWrap) ? ((box.tick - startTick) / 50) * boxHeight : 30)-currentScrollOffset);
-                if(yOffset > scale + 5)
-                {
-                    if (config != null && config.useIconsOnChart())
+                    int xOffset = 100 + ((shouldWrap) ? ((box.tick - startTick) % 50) * scale : box.tick * scale);
+                    if (playerOffsets.get(box.player) == null)
                     {
-                        try
+                        continue;
+                    }
+                    int yOffset = ((playerOffsets.get(box.player) + 1) * scale + 30) + (((shouldWrap) ? ((box.tick - startTick) / 50) * boxHeight : 30) - currentScrollOffset);
+                    if (yOffset > scale + 5)
+                    {
+                        if (config != null && config.useIconsOnChart())
                         {
-                            if (box.playerAnimation.attackTicks != -1)
+                            try
                             {
-                                int opacity = config.iconBackgroundOpacity();
+                                if (box.playerAnimation.attackTicks != -1)
+                                {
+                                    int opacity = config.iconBackgroundOpacity();
+                                    opacity = Math.min(255, opacity);
+                                    opacity = Math.max(0, opacity);
+                                    if (config.attackBoxColor().equals(Color.WHITE))
+                                    {
+                                        g.setColor(new Color(box.color.getRed(), box.color.getGreen(), box.color.getBlue(), opacity));
+                                    } else
+                                    {
+                                        g.setColor(config.attackBoxColor());
+                                    }
+                                    g.fillRoundRect(xOffset + 2, yOffset + 2, scale - 3, scale - 3, 5, 5);
+                                    BufferedImage scaled = getScaledImage(box.attack.img, (scale - 2), (scale - 2));
+                                    if (box.playerAnimation.equals(PlayerAnimation.HAMMER_BOP) || box.playerAnimation.equals(PlayerAnimation.BGS_WHACK))
+                                    {
+                                        g.drawImage(createFlipped(createDropShadow(scaled)), xOffset + 3, yOffset + 3, null);
+                                        g.drawImage(createFlipped(scaled), xOffset + 2, yOffset + 1, null);
+                                    } else
+                                    {
+                                        g.drawImage(createDropShadow(scaled), xOffset + 3, yOffset + 3, null);
+                                        g.drawImage(scaled, xOffset + 2, yOffset + 1, null);
+                                    }
+                                }
+                            } catch (Exception e)
+                            {
+
+                            }
+                        } else
+                        {
+                            int opacity = 100;
+                            if (config != null)
+                            {
+                                opacity = config.letterBackgroundOpacity();
                                 opacity = Math.min(255, opacity);
                                 opacity = Math.max(0, opacity);
-                                if(config.attackBoxColor().equals(Color.WHITE))
-                                {
-                                    g.setColor(new Color(box.color.getRed(), box.color.getGreen(), box.color.getBlue(), opacity));
-                                }
-                                else
-                                {
-                                    g.setColor(config.attackBoxColor());
-                                }
-                                g.fillRoundRect(xOffset + 2, yOffset + 2, scale - 3, scale - 3, 5, 5);
-                                BufferedImage scaled = getScaledImage(box.attack.img, (scale - 2), (scale - 2));
-                                if(box.playerAnimation.equals(PlayerAnimation.HAMMER_BOP) || box.playerAnimation.equals(PlayerAnimation.BGS_WHACK))
-                                {
-                                    g.drawImage(createFlipped(createDropShadow(scaled)), xOffset + 3, yOffset + 3, null);
-                                    g.drawImage(createFlipped(scaled), xOffset + 2, yOffset + 1, null);
-                                }
-                                else
-                                {
-                                    g.drawImage(createDropShadow(scaled), xOffset + 3, yOffset + 3, null);
-                                    g.drawImage(scaled, xOffset + 2, yOffset + 1, null);
-                                }
                             }
-                        } catch (Exception e)
-                        {
-
+                            g.setColor(new Color(box.color.getRed(), box.color.getGreen(), box.color.getBlue(), opacity));
+                            g.fillRoundRect(xOffset + 2, yOffset + 2, scale - 3, scale - 3, 5, 5);
+                            g.setColor((box.primaryTarget) ? Color.WHITE : new Color(0, 190, 255));
+                            int textOffset = (scale / 2) - (getStringWidth(g, box.letter) / 2);
+                            int primaryOffset = yOffset + (box.additionalText.isEmpty() ? (fontHeight / 2) : 0);
+                            g.drawString(box.letter, xOffset + textOffset - 1, primaryOffset + (scale / 2) + 1);
+                            if (!box.additionalText.isEmpty())
+                            {
+                                Font f = g.getFont();
+                                g.setFont(f.deriveFont(10.0f));
+                                textOffset = (scale / 2) - (getStringWidth(g, box.additionalText) / 2);
+                                g.setColor(Color.WHITE);
+                                g.drawString(box.additionalText, xOffset + textOffset, yOffset + scale - 3);
+                                g.setFont(f);
+                            }
                         }
-                    } else
-                    {
-                        int opacity = 100;
-                        if (config != null)
-                        {
-                            opacity = config.letterBackgroundOpacity();
-                            opacity = Math.min(255, opacity);
-                            opacity = Math.max(0, opacity);
-                        }
-                        g.setColor(new Color(box.color.getRed(), box.color.getGreen(), box.color.getBlue(), opacity));
-                        g.fillRoundRect(xOffset + 2, yOffset + 2, scale - 3, scale - 3, 5, 5);
-                        g.setColor((box.primaryTarget) ? Color.WHITE : new Color(0, 190, 255));
-                        int textOffset = (scale / 2) - (getStringWidth(g, box.letter) / 2);
-                        int primaryOffset = yOffset + (box.additionalText.isEmpty() ? (fontHeight / 2) : 0);
-                        g.drawString(box.letter, xOffset + textOffset - 1, primaryOffset + (scale / 2) + 1);
-                        if (!box.additionalText.isEmpty())
-                        {
-                            Font f = g.getFont();
-                            g.setFont(f.deriveFont(10.0f));
-                            textOffset = (scale / 2) - (getStringWidth(g, box.additionalText) / 2);
-                            g.setColor(Color.WHITE);
-                            g.drawString(box.additionalText, xOffset + textOffset, yOffset + scale - 3);
-                            g.setFont(f);
-                        }
+                        box.createOutline();
+                        g.setColor(box.outlineColor);
+                        g.drawRoundRect(xOffset + 1, yOffset + 1, scale - 2, scale - 2, 5, 5);
                     }
-                    box.createOutline();
-                    g.setColor(box.outlineColor);
-                    g.drawRoundRect(xOffset + 1, yOffset + 1, scale - 2, scale - 2, 5, 5);
                 }
             }
         }

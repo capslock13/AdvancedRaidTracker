@@ -1569,6 +1569,10 @@ public class Raids extends BaseFrame
             updateTable();
         });
 
+        JMenu filterOptionsSubMenu = new JMenu("Filter Raids");
+        filterOptionsSubMenu.setOpaque(true);
+        filterOptionsSubMenu.setBackground(Color.BLACK);
+
         JMenuItem undoFilterRaids = new JMenuItem("Clear Filtered Raids");
         undoFilterRaids.setBackground(Color.BLACK);
         undoFilterRaids.setOpaque(true);
@@ -1626,10 +1630,11 @@ public class Raids extends BaseFrame
 
         raidPopup.add(analyzeCrabs);
         raidPopup.add(exportRaids);
+        filterOptionsSubMenu.add(filterRaids);
+        filterOptionsSubMenu.add(filterExclusiveRaids);
+        filterOptionsSubMenu.add(undoFilterRaids);
         raidPopup.add(addToComparison);
-        raidPopup.add(filterRaids);
-        raidPopup.add(filterExclusiveRaids);
-        raidPopup.add(undoFilterRaids);
+        raidPopup.add(filterOptionsSubMenu);
         raidPopup.add(analyzeSessions);
         raidPopup.add(viewCharts);
         raidPopup.add(viewGraphs);

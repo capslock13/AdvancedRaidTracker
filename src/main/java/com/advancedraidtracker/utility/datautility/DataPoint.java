@@ -546,6 +546,44 @@ public enum DataPoint
                 "Scabaras Time", "Kephri Time", "Apmeken Time", "Baba Time", "Crondis Time", "Zebak Time", "Het Time", "Akkha Time", "Wardens Time"};
     }
 
+    public enum MenuCategories
+    {
+        TIME("Time"),
+        OTHER("Other");
+        public String name;
+        MenuCategories(String name)
+        {
+                this.name = name;
+        }
+    }
+
+    public static List<String> getMenuNamesByType(RaidRoom room, MenuCategories category)
+    {
+        List<String> namesToGather = new ArrayList<>();
+        for(DataPoint point : DataPoint.values())
+        {
+            if(point.room.equals(room))
+            {
+                switch(category)
+                {
+                    case TIME:
+                        if(point.isTime())
+                        {
+                            namesToGather.add(point.name);
+                        }
+                        break;
+                    case OTHER:
+                        if(point.type.equals(types.OTHER_INT))
+                        {
+                            namesToGather.add(point.name);
+                        }
+                        break;
+                }
+            }
+        }
+        return namesToGather;
+    }
+
     public static ArrayList<String> getTimeNamesByRoom(RaidRoom room)
     {
         ArrayList<String> timesToGather = new ArrayList<>();

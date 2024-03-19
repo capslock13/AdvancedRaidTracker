@@ -9,6 +9,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -26,6 +27,122 @@ public class DataWriter
     {
         this.config = config;
         currentBuffer = new ArrayList<>();
+    }
+
+    public static String[] getPresetColumns(int presetNumber)
+    {
+        File presetFile = new File(PLUGIN_DIRECTORY + "misc-dir/columns.presets");
+        if(presetFile.exists())
+        {
+            try
+            {
+                Scanner reader = new Scanner(Files.newInputStream(presetFile.toPath()));
+                while(reader.hasNextLine())
+                {
+                    String[] split = reader.nextLine().split(":");
+                    if(split.length == 2 && split[1].equals(String.valueOf(presetNumber)))
+                    {
+                        return split[1].split(",");
+                    }
+                }
+                reader.close();
+            }
+            catch (Exception e)
+            {
+                log.info("Could not read presets");
+            }
+        }
+        return new String[]{};
+    }
+
+    public static void writePresetColumn(int presetNumber, String[] columns)
+    {
+        File presetFile = new File(PLUGIN_DIRECTORY + "misc-dir/columns.presets");
+        if(!presetFile.exists())
+        {
+            if(!presetFile.mkdirs())
+            {
+                log.info("Couldn't create preset file");
+                return;
+            }
+        }
+        try
+        {
+            BufferedWriter logger = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(PLUGIN_DIRECTORY + "misc-dir/columns.presets", true), StandardCharsets.UTF_8));
+            logger.write(presetNumber + ":"+ String.join(",", columns));
+            logger.close();
+        }
+        catch (Exception e)
+        {
+            log.info("Couldn't write to preset file");
+        }
+    }
+
+    public static void removePreset(int preset)
+    {
+        File presetFile = new File(PLUGIN_DIRECTORY + "misc-dir/columns.presets");
+        List<String> presets = new ArrayList<>();
+        if(!presetFile.exists())
+        {
+            return;
+        }
+        try
+        {
+            Scanner reader = new Scanner(presetFile.toPath());
+            while(reader.hasNextLine())
+            {
+                String[] line = reader.nextLine().split(":");
+                if(!(line.length == 2 && line[0].equals(String.valueOf(preset))))
+                {
+                    presets.add(String.join(":", line));
+                }
+            }
+            BufferedWriter logger = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(PLUGIN_DIRECTORY + "misc-dir/columns.presets", false), StandardCharsets.UTF_8));
+            for(String presetString : presets)
+            {
+                logger.write(presetString);
+            }
+            logger.close();
+        }
+        catch (Exception e)
+        {
+            log.info("couldn't delete preset");
+        }
+    }
+
+    public static List<Integer> getPresetCount()
+    {
+        List<Integer> count = new ArrayList<>();
+        File presetFile = new File(PLUGIN_DIRECTORY + "misc-dir/columns.presets");
+        if(presetFile.exists())
+        {
+            try
+            {
+                Scanner reader = new Scanner(Files.newInputStream(presetFile.toPath()));
+                while(reader.hasNextLine())
+                {
+                    String line = reader.nextLine();
+                    if(line.split(":").length == 2)
+                    {
+                        int val;
+                        try
+                        {
+                            val = Integer.parseInt(line.split(":")[0]);
+                            count.add(val);
+                        }
+                        catch (Exception e)
+                        {
+
+                        }
+                    }
+                }
+            }
+            catch(Exception e)
+            {
+                log.info("Could not get preset count");
+            }
+        }
+        return count;
     }
 
     public void setRaidType(RaidType raidType)

@@ -42,8 +42,15 @@ public enum RaidRoom
                 return Arrays.stream(RaidRoom.values()).filter(RaidRoom::isTOB).collect(Collectors.toList());
             case TOA:
                 return Arrays.stream(RaidRoom.values()).filter(RaidRoom::isTOA).collect(Collectors.toList());
+            case UNASSIGNED:
+                return Arrays.stream(RaidRoom.values()).filter(RaidRoom::isOther).collect(Collectors.toList());
         }
         return new ArrayList<>();
+    }
+
+    public boolean isOther()
+    {
+        return this.equals(ANY_TOA) || this.equals(ANY_TOB) || this.equals(ANY) || this.equals(ALL);
     }
 
     public boolean isTOA()

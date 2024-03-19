@@ -5,7 +5,7 @@ public enum RaidType
     TOB(1, "ToB", "<html><font color='#FF0000'>"),
     TOA(2, "ToA", "<html><font color='#FFFF33'>"),
     COX(0, "CoX", ""),
-    UNASSIGNED(-1, "unassigned", ""),
+    UNASSIGNED(-1, "All", ""),
     ;
 
     public final int value;

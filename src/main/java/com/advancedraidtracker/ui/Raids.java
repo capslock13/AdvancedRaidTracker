@@ -21,7 +21,6 @@ import com.advancedraidtracker.utility.datautility.datapoints.Raid;
 import com.advancedraidtracker.utility.datautility.datapoints.toa.Toa;
 import com.advancedraidtracker.utility.datautility.datapoints.tob.Tob;
 import com.advancedraidtracker.utility.wrappers.StringInt;
-import com.google.common.collect.Multimap;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.ItemID;
 import net.runelite.client.callback.ClientThread;
@@ -956,7 +955,7 @@ public class Raids extends BaseFrame
 
         currentData = data;
 
-        JPopupMenu tstMenu = getjPopupMenu();
+        JPopupMenu tstMenu = getCustomColumnPopUpMenu();
 
 
         table = new JTable();
@@ -1794,8 +1793,24 @@ public class Raids extends BaseFrame
         item.addActionListener(al ->
                 updateTable());
         columnHeaders.add(item);
-        table.getTableHeader().setComponentPopupMenu(getjPopupMenu());
+        table.getTableHeader().setComponentPopupMenu(getCustomColumnPopUpMenu());
         updateTable();
+    }
+
+    private JMenuItem getMenuItem(String text)
+    {
+        JMenuItem item = new JMenuItem(text);
+        item.setOpaque(true);
+        item.setBackground(Color.BLACK);
+        return item;
+    }
+
+    private JMenu getMenu(String text)
+    {
+        JMenu menu = new JMenu(text);
+        menu.setOpaque(true);
+        menu.setBackground(Color.BLACK);
+        return menu;
     }
 
     private JCheckBoxMenuItem getCheckBoxMenuItem(String name)
@@ -1817,7 +1832,103 @@ public class Raids extends BaseFrame
         return item;
     }
 
-    private JPopupMenu getjPopupMenu()
+    private void switchTo(Integer preset)
+    {
+        if(preset == 0)
+        {
+            log.info("Switching to Default");
+        }
+        else
+        {
+            log.info("Switching to Preset " + preset);
+        }
+        String[] readColumns = DataWriter.getPresetColumns(preset);
+        columnHeaders.clear();
+        for(String column : readColumns)
+        {
+            columnHeaders.add(getCheckBoxMenuItem(column));
+        }
+        updateTable();
+    }
+
+    private List<Integer> activeMenuPresets = new ArrayList<>();
+
+    private JMenuItem getSwitchToMenuItem(String name)
+    {
+        JMenuItem switchTo = getMenuItem(name);
+        switchTo.addActionListener(al->
+        {
+            if(name.equals("Default"))
+            {
+                activeMenuPresets.add(0);
+                switchTo(0);
+            }
+            else
+            {
+                int presetNumber = -1;
+                try
+                {
+                    presetNumber = Integer.parseInt(name.substring(0, name.length()-1));
+                    activeMenuPresets.add(presetNumber);
+                    switchTo(presetNumber);
+                }
+                catch (Exception e)
+                {
+
+                }
+            }
+        });
+        return switchTo;
+    }
+
+    private void addPreset(JMenu deletePresets)
+    {
+        for(Integer i : activeMenuPresets)
+        {
+            if(i != 0)
+            {
+                JMenuItem deleteItem = getMenuItem("Preset " + i);
+                deleteItem.addActionListener(al->
+                {
+                    deletePreset(i);
+                });
+                deletePresets.add(deleteItem);
+            }
+        }
+    }
+
+    private void addSwitchTos(JMenu switchToMenu)
+    {
+        for(Integer i : activeMenuPresets)
+        {
+            if(i != 0)
+            {
+                JMenuItem switchToItem = getSwitchToMenuItem("Preset " + i);
+                switchToMenu.add(switchToItem);
+            }
+        }
+    }
+
+    private void deletePreset(Integer preset)
+    {
+        activeMenuPresets.removeIf(o->o.equals(preset));
+        table.getTableHeader().setComponentPopupMenu(getCustomColumnPopUpMenu());
+    }
+
+    private Integer getNextFreePreset() //20 presets max
+    {
+        for(int i = 0; i < 20; i++)
+        {
+            if(!activeMenuPresets.contains(i))
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+
+    private JPopupMenu getCustomColumnPopUpMenu()
     {
         JPopupMenu baseMenu = new JPopupMenu();
 
@@ -1826,16 +1937,9 @@ public class Raids extends BaseFrame
             baseMenu.add(item);
         }
 
-        List<String> allComboValues = new ArrayList<>(comboPopupData.keySet());
+        JMenu addCustom = getMenu("Add Column");
 
-        comboStrictData = new ArrayList<>();
-
-        JMenu addCustom = new JMenu("Add Custom");
-
-        JMenuItem resetCustom = new JMenuItem("Reset Custom Columns");
-        resetCustom.setOpaque(true);
-        resetCustom.setBackground(Color.BLACK);
-
+        JMenuItem resetCustom = getMenuItem("Reset Custom Columns");
         resetCustom.addActionListener(al ->
         {
             columnHeaders.clear();
@@ -1843,124 +1947,97 @@ public class Raids extends BaseFrame
             {
                 columnHeaders.add(getCheckBoxMenuItem(column));
             }
-            table.getTableHeader().setComponentPopupMenu(getjPopupMenu());
+            table.getTableHeader().setComponentPopupMenu(getCustomColumnPopUpMenu());
             updateTable();
         });
 
-        for (String category : allComboValues)
+        JMenu switchTo = getMenu("Switch To...");
+        JMenuItem defaultMenuItem = getSwitchToMenuItem("Default");
+        if(!activeMenuPresets.contains(0))
         {
-            JMenu menu = new JMenu(category);
-            menu.setBackground(Color.BLACK);
-            menu.setOpaque(true);
-            if (!category.equals("Room Times") && !category.equals("Any"))
-            {
-                JMenu timeMenu = new JMenu("Time");
-                timeMenu.setBackground(Color.BLACK);
-                timeMenu.setOpaque(true);
-                for (String itemName : DataPoint.filterTimes(comboPopupData.get(category)))
-                {
-                    timeMenu.add(createMenuItemTableHeader(itemName));
-                    comboStrictData.add(itemName);
-                }
-                JMenu countMenu = new JMenu("Misc");
-                countMenu.setBackground(Color.BLACK);
-                countMenu.setOpaque(true);
-                for (String itemName : DataPoint.filterInt(comboPopupData.get(category)))
-                {
-                    countMenu.add(createMenuItemTableHeader(itemName));
-                    comboStrictData.add(itemName);
-                }
-                JMenu thrallMenu = new JMenu("Thrall");
-                thrallMenu.setBackground(Color.BLACK);
-                thrallMenu.setOpaque(true);
-                for (String itemName : DataPoint.filterThrall(comboPopupData.get(category)))
-                {
-                    thrallMenu.add(createMenuItemTableHeader(itemName));
-                    comboStrictData.add(itemName);
-                }
-                JMenu vengMenu = new JMenu("Veng");
-                vengMenu.setBackground(Color.BLACK);
-                vengMenu.setOpaque(true);
-                for (String itemName : DataPoint.filterVeng(comboPopupData.get(category)))
-                {
-                    vengMenu.add(createMenuItemTableHeader(itemName));
-                    comboStrictData.add(itemName);
-                }
-
-                JMenu specMenu = new JMenu("Spec");
-                specMenu.setBackground(Color.BLACK);
-                specMenu.setOpaque(true);
-                for (String itemName : DataPoint.filterSpecs(comboPopupData.get(category)))
-                {
-                    specMenu.add(createMenuItemTableHeader(itemName));
-                    comboStrictData.add(itemName);
-                }
-
-                menu.add(timeMenu);
-                menu.add(countMenu);
-                menu.add(thrallMenu);
-                menu.add(vengMenu);
-                menu.add(specMenu);
-            } else
-            {
-                for (String itemName : comboPopupData.get(category))
-                {
-                    menu.add(createMenuItemTableHeader(itemName));
-                    comboStrictData.add(itemName);
-                }
-            }
-            addCustom.add(menu);
+            activeMenuPresets.add(0);
         }
-        JMenu playerSpecificMenu = new JMenu("Player Specific");
-        playerSpecificMenu.setBackground(Color.BLACK);
-        playerSpecificMenu.setOpaque(true);
-        String[] qualifiers = new String[]{"Maiden", "Bloat", "Nylo", "Sote", "Xarp", "Verz", "deaths"};
-
-        for (String s : qualifiers)
+        for(Integer i : DataWriter.getPresetCount())
         {
-            JMenu room = new JMenu(s);
-            room.setBackground(Color.BLACK);
-            room.setOpaque(true);
-            for (String qualified : DataPoint.getPlayerSpecific())
+            if(!activeMenuPresets.contains(i))
             {
-                if (qualified.contains(s))
-                {
-                    room.add(createMenuItemTableHeader("Player: " + qualified));
-                    comboStrictData.add("Player: " + qualified);
-                }
-            }
-            playerSpecificMenu.add(room);
-        }
-        JMenu room = new JMenu("Other");
-        room.setBackground(Color.BLACK);
-        room.setOpaque(true);
-        for (String qualified : DataPoint.getPlayerSpecific())
-        {
-            boolean anyFlagged = false;
-            for (String s : qualifiers)
-            {
-                if (qualified.contains(s))
-                {
-                    anyFlagged = true;
-                    break;
-                }
-            }
-            if (!anyFlagged)
-            {
-                room.add(createMenuItemTableHeader("Player: " + qualified));
-                comboStrictData.add("Player: " + qualified);
+                activeMenuPresets.add(i);
             }
         }
-        playerSpecificMenu.add(room);
+        switchTo.add(defaultMenuItem);
+        addSwitchTos(switchTo);
+        Integer nextFree = getNextFreePreset();
+        JMenuItem saveToPreset;
+        if(nextFree == -1)
+        {
+            saveToPreset = getMenuItem("<Cannot Save Any More Presets>");
+            saveToPreset.setEnabled(false);
+        }
+        else
+        {
+            saveToPreset = getMenuItem("Save Current To Preset " + nextFree);
+            saveToPreset.addActionListener(al ->
+            {
+                activeMenuPresets.add(nextFree);
+                List<String> columnNames = new ArrayList<>();
+                for(JCheckBoxMenuItem columnCheckBox : columnHeaders)
+                {
+                    columnNames.add(columnCheckBox.getName());
+                }
+                DataWriter.writePresetColumn(nextFree, columnNames.toArray(new String[0]));
+                table.getTableHeader().setComponentPopupMenu(getCustomColumnPopUpMenu());
+            });
+        }
 
-        addCustom.setOpaque(true);
-        addCustom.setBackground(Color.BLACK);
-        addCustom.add(playerSpecificMenu);
+        JMenu deletePreset = getMenu("Delete Preset...");
+        addPreset(deletePreset);
+
+        for (RaidType raidType : RaidType.values())
+        {
+                JMenu raidLevelMenu = getMenu(raidType.name);
+                if(raidType.equals(RaidType.UNASSIGNED))
+                {
+                    for(DataPoint.MenuCategories menuCategories : DataPoint.MenuCategories.values())
+                    {
+                        JMenu typeLevelMenu = getMenu(menuCategories.name);
+                        for(RaidRoom room : RaidRoom.getRaidRoomsForRaidType(raidType))
+                        {
+                            for(String itemName : DataPoint.getMenuNamesByType(room, menuCategories))
+                            {
+                                typeLevelMenu.add(createMenuItemTableHeader(itemName));
+                            }
+                        }
+                        raidLevelMenu.add(typeLevelMenu);
+                    }
+                }
+                else
+                {
+                    for (RaidRoom room : RaidRoom.getRaidRoomsForRaidType(raidType))
+                    {
+                        JMenu roomLevelMenu = getMenu(room.name);
+                        for(DataPoint.MenuCategories menuCategories : DataPoint.MenuCategories.values())
+                        {
+                            JMenu typeLevelMenu = getMenu(menuCategories.name);
+                            for(String itemName : DataPoint.getMenuNamesByType(room, menuCategories))
+                            {
+                                typeLevelMenu.add(createMenuItemTableHeader(itemName));
+                            }
+                            roomLevelMenu.add(typeLevelMenu);
+                        }
+                        raidLevelMenu.add(roomLevelMenu);
+                    }
+                }
+                addCustom.add(raidLevelMenu);
+        }
         baseMenu.add(addCustom);
         baseMenu.add(resetCustom);
-
+        baseMenu.add(switchTo);
+        baseMenu.add(saveToPreset);
+        baseMenu.add(deletePreset);
         return baseMenu;
     }
+
+    private int presetCount;
 
     private int getTimeFromString(String text)
     {

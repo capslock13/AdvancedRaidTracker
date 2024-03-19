@@ -100,7 +100,7 @@ public class HoverBox
         g.setColor(config.primaryDark());
         int boxHeight = 10 + (fontHeight + 7) * info.size();
         g.fillRoundRect(location.getX(), location.getY(), getWidth(g), boxHeight, 10, 10);
-        g.setColor(new Color(200, 200, 200));
+        g.setColor(config.fontColor());
         g.drawRoundRect(location.getX(), location.getY(), getWidth(g), boxHeight, 10, 10);
 
         for (int i = 0; i < info.size(); i++)

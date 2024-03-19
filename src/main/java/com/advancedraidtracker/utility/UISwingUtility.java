@@ -5,6 +5,8 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
 
 public class UISwingUtility
 {
@@ -23,6 +25,43 @@ public class UISwingUtility
     public static JLabel getDarkJLabel(String labelText, int swingConstant)
     {
         return new JLabel(labelText, swingConstant);
+    }
+
+    public static BufferedImage createStringImage(Graphics g, String s, Color color)
+    {
+        int w = g.getFontMetrics().stringWidth(s) + 5;
+        int h = g.getFontMetrics().getHeight();
+        BufferedImage image = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D imageGraphics = image.createGraphics();
+        imageGraphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        imageGraphics.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+        imageGraphics.setColor(color);
+        imageGraphics.setFont(new Font("SansSerif", Font.PLAIN, 12)); //HEIGHT 16
+        imageGraphics.drawString(s, 0, h - g.getFontMetrics().getDescent());
+        imageGraphics.dispose();
+        return image;
+    }
+
+    public static BufferedImage createStringImage(Graphics g, String s)
+    {
+        return createStringImage(g, s, Color.WHITE);
+    }
+
+    public static void drawStringRotated(Graphics g, String s, int tx, int ty, Color color)
+    {
+        int angle = (s.length() == 1) ? 0 : -45;
+        AffineTransform aff = AffineTransform.getRotateInstance(Math.toRadians(angle), tx, ty);
+        aff.translate(tx, ty);
+
+        Graphics2D g2D = ((Graphics2D) g);
+        g2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+        g2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+        g2D.drawImage(createStringImage(g, s, color), aff, null);
+    }
+
+    public static void drawStringRotated(Graphics g, String s, int tx, int ty)
+    {
+        drawStringRotated(g, s, tx, ty, Color.WHITE);
     }
 
     public static JPanel getTitledPanel(String title)

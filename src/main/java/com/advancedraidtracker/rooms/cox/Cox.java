@@ -31,4 +31,10 @@ public class Cox extends Raid
     {
         return null;
     }
+
+    @Override
+    public int getChallengeTime()
+    {
+        return 0;
+    }
 }

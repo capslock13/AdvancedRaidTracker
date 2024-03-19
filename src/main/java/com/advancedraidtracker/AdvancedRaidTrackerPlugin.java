@@ -4,6 +4,7 @@ import com.advancedraidtracker.constants.*;
 import com.advancedraidtracker.rooms.cox.*;
 import com.advancedraidtracker.rooms.toa.*;
 import com.advancedraidtracker.rooms.tob.*;
+import com.advancedraidtracker.ui.charts.ChartTheme;
 import com.advancedraidtracker.ui.charts.LiveChart;
 import com.advancedraidtracker.ui.RaidTrackerSidePanel;
 import com.advancedraidtracker.utility.*;
@@ -43,6 +44,7 @@ import net.runelite.client.ui.NavigationButton;
 import net.runelite.client.util.ImageUtil;
 import net.runelite.client.util.Text;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.List;
@@ -202,6 +204,7 @@ public class AdvancedRaidTrackerPlugin extends Plugin
         }
         return false;
     }
+    private RaidTrackerSidePanel timersPanelPrimary;
 
     @Override
     protected void startUp() throws Exception
@@ -214,7 +217,7 @@ public class AdvancedRaidTrackerPlugin extends Plugin
         activeProjectiles = new ArrayList<>();
         activeVenges = new ArrayList<>();
         queuedThrallDamage = new ArrayList<>();
-        RaidTrackerSidePanel timersPanelPrimary = injector.getInstance(RaidTrackerSidePanel.class);
+        timersPanelPrimary = injector.getInstance(RaidTrackerSidePanel.class);
         partyIntact = false;
         activelyPiping = new LinkedHashMap<>();
         liveFrame = new LiveChart(config, itemManager, clientThread, configManager);
@@ -1352,6 +1355,20 @@ public class AdvancedRaidTrackerPlugin extends Plugin
         if (event.getGroup().equals("Advanced Raid Tracker") && event.getKey().contains("primary"))
         {
             liveFrame.redrawAll();
+        }
+        else if(event.getGroup().equals("Advanced Raid Tracker") && event.getKey().contains("theme"))
+        {
+            log.info(event.getNewValue());
+            ChartTheme theme = ChartTheme.valueOf(event.getNewValue());
+
+            configManager.setConfiguration("Advanced Raid Tracker", "primaryDark", Color.decode(theme.getPrimaryDark()));
+            configManager.setConfiguration("Advanced Raid Tracker", "primaryMiddle", Color.decode(theme.getPrimaryMiddle()));
+            configManager.setConfiguration("Advanced Raid Tracker", "primaryLight", Color.decode(theme.getPrimaryLight()));
+            configManager.setConfiguration("Advanced Raid Tracker", "idleColor", Color.decode(theme.getIdleTick()));
+            configManager.setConfiguration("Advanced Raid Tracker", "fontColor", Color.decode(theme.getFontColor()));
+            configManager.setConfiguration("Advanced Raid Tracker", "markerColor", Color.decode(theme.getMarkerColor()));
+            configManager.setConfiguration("Advanced Raid Tracker", "boxColor", Color.decode(theme.getBoxColor()));
+            configManager.setConfiguration("Advanced Raid Tracker", "attackColor", Color.decode(theme.getAttackBoxColor()));
         }
     }
 

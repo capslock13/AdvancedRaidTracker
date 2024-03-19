@@ -1,5 +1,6 @@
 package com.advancedraidtracker;
 
+import com.advancedraidtracker.ui.charts.ChartTheme;
 import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
@@ -58,7 +59,7 @@ public interface AdvancedRaidTrackerConfig extends Config
             position = 5,
             keyName = "useIconsOnChart",
             name = "Use icons on chart",
-            description = "Replaced letter/colors with icons"
+            description = "Replaces letter/colors with icons"
     )
     default boolean useIconsOnChart()
     {
@@ -67,6 +68,25 @@ public interface AdvancedRaidTrackerConfig extends Config
 
     @ConfigItem(
             position = 6,
+            keyName = "useTimeOnChart",
+            name = "Use time on chart",
+            description = "Replaces ticks with time"
+    )
+    default boolean useTimeOnChart()
+    {
+        return false;
+    }
+
+    @ConfigItem(
+            position = 9,
+            keyName = "theme",
+            name = "Theme",
+            description = "Theme to apply to UI"
+    )
+    default ChartTheme chartTheme() { return ChartTheme.DEFAULT; }
+
+    @ConfigItem(
+            position = 10,
             keyName = "primaryDark",
             name = "Theme Dark Color",
             description = "Color to use as darkest on chart"
@@ -77,7 +97,7 @@ public interface AdvancedRaidTrackerConfig extends Config
     }
 
     @ConfigItem(
-            position = 7,
+            position = 20,
             keyName = "primaryMiddle",
             name = "Theme Middle Color",
             description = "Color to use as Middle on chart"
@@ -88,7 +108,7 @@ public interface AdvancedRaidTrackerConfig extends Config
     }
 
     @ConfigItem(
-            position = 8,
+            position = 30,
             keyName = "primaryLight",
             name = "Theme Light Color",
             description = "Color to use as lightest on chart"
@@ -99,7 +119,7 @@ public interface AdvancedRaidTrackerConfig extends Config
     }
 
     @ConfigItem(
-            position = 9,
+            position = 40,
             keyName = "idleColor",
             name = "Idle Tick Color",
             description = "Color to use for idle ticks on chart"
@@ -107,7 +127,39 @@ public interface AdvancedRaidTrackerConfig extends Config
     default Color idleColor() { return new Color(38, 38, 38);}
 
     @ConfigItem(
-            position = 10,
+            position = 44,
+            keyName = "fontColor",
+            name = "Font Color",
+            description = "Color to use for font on chart"
+    )
+    default Color fontColor() { return new Color(220, 220, 220);}
+
+    @ConfigItem(
+            position = 45,
+            keyName = "boxColor",
+            name = "Box Color",
+            description = "Color to use for boxes on chart"
+    )
+    default Color boxColor() { return new Color(120, 120, 120);}
+
+    @ConfigItem(
+            position = 46,
+            keyName = "markerColor",
+            name = "Marker Color",
+            description = "Color to use for markers on chart"
+    )
+    default Color markerColor() { return new Color(255, 0, 0);}
+
+    @ConfigItem(
+            position = 47,
+            keyName = "attackColor",
+            name = "Attack Box Color",
+            description = "Color of attack boxes. #FFFFFF will use defined colors per weapon"
+    )
+    default Color attackBoxColor() {return new Color(255, 255, 255);}
+
+    @ConfigItem(
+            position = 50,
             keyName = "letterBackgroundOpacity",
             name = "Letter BG Opacity",
             description = "Opacity of letter background color on chart"
@@ -118,7 +170,7 @@ public interface AdvancedRaidTrackerConfig extends Config
     }
 
     @ConfigItem(
-            position = 11,
+            position = 60,
             keyName = "iconBackgroundOpacity",
             name = "Icon BG Opacity",
             description = "Opacity of icon background color on chart"
@@ -129,7 +181,7 @@ public interface AdvancedRaidTrackerConfig extends Config
     }
 
     @ConfigItem(
-            position = 12,
+            position = 70,
             keyName = "useUnkitted",
             name = "Use unkitted icons",
             description = "Replaces kitted items with unkitted variants on chart icons"
@@ -137,5 +189,16 @@ public interface AdvancedRaidTrackerConfig extends Config
     default boolean useUnkitted()
     {
         return false;
+    }
+
+    @ConfigItem(
+            position = 75,
+            keyName = "showConfigOnChart",
+            name = "Show config options on chart",
+            description = "Show config options on chart"
+    )
+    default boolean showConfigOnChart()
+    {
+        return true;
     }
 }

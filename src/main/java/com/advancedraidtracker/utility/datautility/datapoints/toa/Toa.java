@@ -15,6 +15,9 @@ import java.util.Objects;
 
 import static com.advancedraidtracker.constants.ParseType.*;
 import static com.advancedraidtracker.constants.RaidRoom.*;
+import static com.advancedraidtracker.utility.datautility.DataPoint.*;
+import static com.advancedraidtracker.utility.datautility.DataPoint.VERZIK_TIME;
+
 @Slf4j
 public class Toa extends Raid
 {
@@ -73,6 +76,14 @@ public class Toa extends Raid
             }
         }
         return time;
+    }
+
+    @Override
+    public int getChallengeTime()
+    {
+        return getIfAccurate(APMEKEN_TIME) + getIfAccurate(BABA_TIME) + getIfAccurate(SCABARAS_TIME) + getIfAccurate(KEPHRI_TIME)
+                + getIfAccurate(HET_TIME) + getIfAccurate(AKKHA_TIME) + getIfAccurate(CRONDIS_TIME) + getIfAccurate(ZEBAK_TIME)
+                + getIfAccurate(WARDENS_TIME);
     }
 
     @Override

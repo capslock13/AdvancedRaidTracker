@@ -39,8 +39,8 @@ public abstract class Raid
     /**
      * Time spent inside rooms.
      */
-    @Getter
-    protected int challengeTime;
+    //@Getter
+    //protected int challengeTime;
 
     /**
      * Time spent outside rooms.
@@ -134,6 +134,10 @@ public abstract class Raid
         date = new Date(0L); //todo figure out why dates dont parse properly on some raids
         this.filepath = filepath;
         this.players = new LinkedHashSet<>();
+        for(RaidRoom room : RaidRoom.getRaidRoomsForRaidType(RaidType.TOA)) //todo assume toa always accurate
+        {
+            setRoomStartAccurate(room);
+        }
     }
 
     public boolean getOverallTimeAccurate()
@@ -164,6 +168,10 @@ public abstract class Raid
 
     public int get(DataPoint point)
     {
+        if(point.equals(CHALLENGE_TIME))
+        {
+            return getChallengeTime();
+        }
         if(point.room.equals(RaidRoom.ALL))
         {
             int sum = 0;
@@ -268,6 +276,11 @@ public abstract class Raid
         return roomStartAccurate.getOrDefault(room, false) && roomEndAccurate.getOrDefault(room, false);
     }
 
+    public boolean getRoomStartAccurate(RaidRoom room)
+    {
+        return roomStartAccurate.getOrDefault(room, false);
+    }
+
     /**
      * @param room room to check accuracy of
      * @return returns true if both the start OR end were recorded as accurate
@@ -281,6 +294,11 @@ public abstract class Raid
     {
         return get(point) > -1;
         //return getRoomAccurate(point.room);
+    }
+
+    public int getIfAccurate(DataPoint point)
+    {
+        return (getRoomAccurate(point.room)) ? get(point) : 0;
     }
 
     /**
@@ -346,6 +364,20 @@ public abstract class Raid
                 else if(instruction.dataPoint1 != null && instruction.dataPoint1.room.equals(ALL))
                 {
                     parser = getParser(RaidRoom.values()[RaidRoom.getRoom(lastRoom).ordinal()+1]); //idk
+                }
+                if(instruction.dataPoint1 != null && instruction.dataPoint1.type.equals(types.TIME))
+                {
+                    if(!getRoomAccurate(entry.logEntry.getRoom()))
+                    {
+                        continue;
+                    }
+                }
+                else if(instruction.dataPoint1 != null && instruction.dataPoint1.isTime())
+                {
+                    if(!getRoomStartAccurate(entry.logEntry.getRoom()))
+                    {
+                        continue;
+                    }
                 }
                 switch (instruction.type)
                 {
@@ -498,4 +530,6 @@ public abstract class Raid
     {
         return defaultParser.data.get(RAID_INDEX);
     }
+
+    public abstract int getChallengeTime();
 }

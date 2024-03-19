@@ -52,6 +52,12 @@ public class Tob extends Raid
     }
 
     @Override
+    public int getChallengeTime()
+    {
+        return getIfAccurate(MAIDEN_TIME) + getIfAccurate(BLOAT_TIME) + getIfAccurate(NYLOCAS_TIME) + getIfAccurate(SOTETSEG_TIME) + getIfAccurate(XARPUS_TIME) + getIfAccurate(VERZIK_TIME);
+    }
+
+    @Override
     public boolean isAccurate()
     {
         return (getRoomAccurate(MAIDEN) && getRoomAccurate(BLOAT) && getRoomAccurate(NYLOCAS) && getRoomAccurate(SOTETSEG) && getRoomAccurate(XARPUS) && getRoomAccurate(VERZIK));

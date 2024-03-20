@@ -19,8 +19,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static com.advancedraidtracker.constants.RaidType.TOA;
-import static com.advancedraidtracker.constants.RaidType.TOB;
+import static com.advancedraidtracker.constants.RaidType.*;
 
 @Slf4j
 public class LiveChart extends BaseFrame
@@ -33,8 +32,10 @@ public class LiveChart extends BaseFrame
     private final ConfigManager configManager;
     String[] tob = {"Maiden", "Bloat", "Nylocas", "Sotetseg", "Xarpus", "Verzik"};
     String[] toa = {"Apmeken", "Baba", "Scabaras", "Kephri", "Crondis", "Zebak", "Het", "Akkha", "Wardens"};
+    String[] col = {"Wave 1", "Wave 2", "Wave 3", "Wave 4", "Wave 5", "Wave 6", "Wave 7", "Wave 8", "Wave 9", "Wave 10", "Wave 11", "Wave 12"};
     Map<String, ChartPanel> toaPanels;
     Map<String, ChartPanel> tobPanels;
+    Map<String, ChartPanel> colPanels;
     RaidType activeRaid = RaidType.UNASSIGNED;
     Map<String, ChartPanel> currentPanels;
 
@@ -47,6 +48,7 @@ public class LiveChart extends BaseFrame
 
         toaPanels = new LinkedHashMap<>();
         tobPanels = new LinkedHashMap<>();
+        colPanels = new LinkedHashMap<>();
         currentPanels = tobPanels;
 
         for (String name : tob)
@@ -59,6 +61,12 @@ public class LiveChart extends BaseFrame
         {
             ChartPanel chartPanel = new ChartPanel(name, true, config, clientThread, configManager, itemManager);
             toaPanels.put(name, chartPanel);
+        }
+
+        for (String name : col)
+        {
+            ChartPanel chartPanel = new ChartPanel(name, true, config, clientThread, configManager, itemManager);
+            colPanels.put(name, chartPanel);
         }
 
         tabbedPane = new JTabbedPane();
@@ -78,6 +86,10 @@ public class LiveChart extends BaseFrame
                 case TOA:
                     activePanel = toa[tabbedPane.getSelectedIndex()];
                     currentPanels = toaPanels;
+                    break;
+                case COLOSSEUM:
+                    activePanel = col[tabbedPane.getSelectedIndex()];
+                    currentPanels = colPanels;
                     break;
             }
             currentPanels.values().forEach(panel->panel.setActive(false));
@@ -117,6 +129,10 @@ public class LiveChart extends BaseFrame
                 {
                     activePanel = toa[tabbedPane.getSelectedIndex()];
                 }
+                else if(activeRaid.equals(COLOSSEUM))
+                {
+                    activePanel = col[tabbedPane.getSelectedIndex()];
+                }
                 if(activePanel == null)
                 {
                     return;
@@ -138,6 +154,10 @@ public class LiveChart extends BaseFrame
                 {
                     toaPanels.get(name).setActive(false);
                 }
+                for (String name : colPanels.keySet())
+                {
+                    colPanels.get(name).setActive(false);
+                }
             }
         });
         addComponentListener(new ComponentAdapter()
@@ -152,6 +172,10 @@ public class LiveChart extends BaseFrame
                     p.setSize(c.getWidth(), c.getHeight());
                 }
                 for(ChartPanel p : toaPanels.values())
+                {
+                    p.setSize(c.getWidth(), c.getHeight());
+                }
+                for(ChartPanel p : colPanels.values())
                 {
                     p.setSize(c.getWidth(), c.getHeight());
                 }
@@ -182,6 +206,16 @@ public class LiveChart extends BaseFrame
         }
     }
 
+    public void switchToCol()
+    {
+        activeRaid = COLOSSEUM;
+        tabbedPane.removeAll();
+        for(String name : colPanels.keySet())
+        {
+            tabbedPane.add(name, colPanels.get(name));
+        }
+    }
+
     public ChartPanel getPanel(String room)
     {
         if (tobPanels.containsKey(room))
@@ -190,7 +224,12 @@ public class LiveChart extends BaseFrame
         } else if (toaPanels.containsKey(room))
         {
             return toaPanels.get(room);
-        } else
+        }
+        else if(colPanels.containsKey(room))
+        {
+            return colPanels.get(room);
+        }
+        else
         {
             return new ChartPanel("", true, config, clientThread, configManager, itemManager);
         }
@@ -206,6 +245,10 @@ public class LiveChart extends BaseFrame
                 panel.sendToBottom();
             }
             for (ChartPanel panel : toaPanels.values())
+            {
+                panel.sendToBottom();
+            }
+            for (ChartPanel panel : colPanels.values())
             {
                 panel.sendToBottom();
             }
@@ -237,6 +280,10 @@ public class LiveChart extends BaseFrame
         {
             toaPanels.get(name).resetGraph();
         }
+        for (String name : colPanels.keySet())
+        {
+            colPanels.get(name).resetGraph();
+        }
     }
 
     public void redrawAll()
@@ -248,6 +295,10 @@ public class LiveChart extends BaseFrame
         for (String name : toaPanels.keySet())
         {
             toaPanels.get(name).redraw();
+        }
+        for (String name : colPanels.keySet())
+        {
+            colPanels.get(name).redraw();
         }
     }
 
@@ -265,6 +316,10 @@ public class LiveChart extends BaseFrame
         for (String name : toaPanels.keySet())
         {
             toaPanels.get(name).setPlayers(cleanedPlayers);
+        }
+        for (String name : colPanels.keySet())
+        {
+            colPanels.get(name).setPlayers(cleanedPlayers);
         }
 
     }

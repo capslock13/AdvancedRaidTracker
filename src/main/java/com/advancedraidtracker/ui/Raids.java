@@ -2069,10 +2069,20 @@ public class Raids extends BaseFrame
         String[] columnNames = {"Sets", "Label", ""};
         ArrayList<Object[]> tableData = new ArrayList<>();
 
+        List<String> oldNames = new ArrayList<>();
+        for(int i = 0; i < comparisonTable.getRowCount(); i++)
+        {
+            oldNames.add(comparisonTable.getValueAt(i, 1).toString());
+        }
         int index = 0;
         for (List<Raid> comparison : comparisons)
         {
-            Object[] row = {comparison.size() + " raids averaging: " + RoomUtil.time(StatisticGatherer.getOverallTimeAverage(comparison)), "Set " + index, "Remove"};
+            String comparisonName = "Set " + index;
+            if(index < oldNames.size())
+            {
+                comparisonName = oldNames.get(index);
+            }
+            Object[] row = {comparison.size() + " raids averaging: " + RoomUtil.time(StatisticGatherer.getOverallTimeAverage(comparison)), comparisonName, "Remove"};
             tableData.add(row);
             index++;
         }

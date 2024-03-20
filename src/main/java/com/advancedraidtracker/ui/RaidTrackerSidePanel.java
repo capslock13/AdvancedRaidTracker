@@ -57,6 +57,10 @@ public class RaidTrackerSidePanel extends PluginPanel
             this.plugin = plugin;
             RaidTrackerSidePanel.itemManager = itemManager;
             raidsData = getAllRaids();
+            for(Raid raid : raidsData)
+            {
+                log.info("Raid date: " + raid.getDate());
+            }
             raids = new Raids(config, itemManager, clientThread, configManager);
             removeAll();
             buildComponents();

@@ -3,6 +3,7 @@ package com.advancedraidtracker.utility.datautility;
 import com.advancedraidtracker.constants.LogID;
 import com.advancedraidtracker.constants.RaidRoom;
 import com.advancedraidtracker.utility.PlayerWornItems;
+import com.advancedraidtracker.utility.datautility.datapoints.Colo;
 import com.advancedraidtracker.utility.datautility.datapoints.LogEntry;
 import com.advancedraidtracker.utility.datautility.datapoints.Raid;
 import com.advancedraidtracker.utility.datautility.datapoints.RoomParser;
@@ -55,13 +56,21 @@ public class DataReader //todo move any methods that read files to here. I belie
                 currentRaid.add(entry);
                 if (entry.logEntry == LogID.LEFT_TOB)
                 {
-                    ret = new Tob(path, currentRaid);
-                    ret.parseAllEntries();
-                    for (RaidRoom room : RaidRoom.values())
+                    if(path.getFileName().toString().toLowerCase().contains("tob"))
                     {
-                        //RoomParser parser = ret.getParser(room);
-                        //log.info("Dumping room: " + room.name());
-                        //parser.data.dumpValues(); //todo remove later, this was for testing the parser
+                        ret = new Tob(path, currentRaid);
+                        ret.parseAllEntries();
+                        for (RaidRoom room : RaidRoom.values())
+                        {
+                            //RoomParser parser = ret.getParser(room);
+                            //log.info("Dumping room: " + room.name());
+                            //parser.data.dumpValues(); //todo remove later, this was for testing the parser
+                        }
+                    }
+                    else if(path.getFileName().toString().toLowerCase().contains("col"))
+                    {
+                        ret = new Colo(path, currentRaid);
+                        ret.parseAllEntries();
                     }
                 } else if (entry.logEntry == LogID.LEFT_TOA) //todo look into what needs to be done to handle this post deprecation
                 {

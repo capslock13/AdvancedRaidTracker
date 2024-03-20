@@ -138,6 +138,10 @@ public abstract class Raid
         {
             setRoomStartAccurate(room);
         }
+        for(RaidRoom room : RaidRoom.getRaidRoomsForRaidType(RaidType.COLOSSEUM)) //todo assume toa always accurate
+        {
+            setRoomStartAccurate(room);
+        }
     }
 
     public boolean getOverallTimeAccurate()
@@ -369,14 +373,20 @@ public abstract class Raid
                 {
                     if(!getRoomAccurate(entry.logEntry.getRoom()))
                     {
-                        continue;
+                        if(!filepath.toString().contains("Col"))
+                        {
+                            continue;
+                        }
                     }
                 }
                 else if(instruction.dataPoint1 != null && instruction.dataPoint1.isTime())
                 {
                     if(!getRoomStartAccurate(entry.logEntry.getRoom()))
                     {
-                        continue;
+                        if(!filepath.toString().contains("Col"))
+                        {
+                            continue;
+                        }
                     }
                 }
                 switch (instruction.type)

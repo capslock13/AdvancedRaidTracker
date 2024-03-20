@@ -1,6 +1,7 @@
 package com.advancedraidtracker;
 
 import com.advancedraidtracker.constants.*;
+import com.advancedraidtracker.rooms.ColosseumHandler;
 import com.advancedraidtracker.rooms.cox.*;
 import com.advancedraidtracker.rooms.toa.*;
 import com.advancedraidtracker.rooms.tob.*;
@@ -102,6 +103,7 @@ public class AdvancedRaidTrackerPlugin extends Plugin
     @Inject
     private Client client;
 
+    private ColosseumHandler colloseumHandler;
     private TOBLobbyHandler lobbyTOB;
     private MaidenHandler maiden;
     private BloatHandler bloat;
@@ -175,6 +177,9 @@ public class AdvancedRaidTrackerPlugin extends Plugin
     private ConfigManager configManager;
 
     Map<Player, Integer> activelyPiping;
+    private List<NPC> wasBarraged = new ArrayList<>();
+    private List<WorldPoint> chinSpawned = new ArrayList<>();
+
     public LiveChart liveFrame;
 
     @Override
@@ -228,6 +233,8 @@ public class AdvancedRaidTrackerPlugin extends Plugin
         navButtonPrimary = NavigationButton.builder().tooltip("Advanced Raid Tracker").icon(icon).priority(10).panel(timersPanelPrimary).build();
 
         clientToolbar.addNavigation(navButtonPrimary);
+
+        colloseumHandler = new ColosseumHandler(client, clog, config, liveFrame);
 
         lobbyTOB = new TOBLobbyHandler(client, clog, config);
         maiden = new MaidenHandler(client, clog, config, this, itemManager);
@@ -299,11 +306,46 @@ public class AdvancedRaidTrackerPlugin extends Plugin
         return Room.UNKNOWN;
     }
 
+    private boolean inColosseum = false;
     private void updateRoom()
     {
         RoomHandler previous = currentRoom;
         boolean activeState = false;
         Room room = getRoom();
+        if(!inColosseum)
+        {
+            if (inRegion(client, 7216))
+            {
+                currentRoom = colloseumHandler;
+                clog.setRaidType(RaidType.COLOSSEUM);
+                clog.migrateToNewRaid();
+                clog.addLine(ENTERED_RAID);
+                clog.addLine(PARTY_MEMBERS, client.getLocalPlayer().getName());
+                liveFrame.switchToCol();
+                ArrayList<String> players = new ArrayList<>();
+                players.add(client.getLocalPlayer().getName());
+                liveFrame.setPlayers(players);
+                inTheatre = true;
+                inColosseum = true;
+                activeState = true;
+                log.info("entered");
+            }
+        }
+        else
+        {
+            if (!inRegion(client, 7216))
+            {
+                log.info("left");
+                currentRoom = lobbyTOB; //todo idk
+                colloseumHandler.reset();
+                inTheatre = false;
+                inColosseum = false;
+            }
+            else
+            {
+                activeState = true;
+            }
+        }
         if (inRegion(client, LOBBY_REGION))
         {
             currentRoom = lobbyTOB;
@@ -800,6 +842,80 @@ public class AdvancedRaidTrackerPlugin extends Plugin
         return client.getTickCount() - currentRoom.roomStartTick;
     }
 
+    private void handleBarraged()
+    {
+        int barrageCount = wasBarraged.size();
+
+
+        wasBarraged.clear();
+    }
+
+    private void handleChinSpawns()
+    {
+        int chinCount = chinSpawned.size();
+        List<String> excludedPlayers = new ArrayList<>();
+        for(WorldPoint wp : chinSpawned)
+        {
+            for(Player p : client.getPlayers())
+            {
+                if(!excludedPlayers.contains(p.getName()))
+                {
+                    if (p.getWorldLocation().distanceTo(wp) == 0)
+                    {
+                        if (p.getAnimation() == CHINCHOMPA_THROWN_ANIMATION)
+                        {
+                            excludedPlayers.add(p.getName());
+                            break;
+                        }
+                        else if (p.getAnimation() == BLOWPIPE_ANIMATION || p.getAnimation() == BLOWPIPE_ANIMATION_OR)
+                        {
+                            Actor interacted = p.getInteracting();
+                            excludedPlayers.add(p.getName());
+                            StringBuilder animations = new StringBuilder();
+                            for (ActorSpotAnim anim : p.getSpotAnims())
+                            {
+                                animations.append(anim.getId());
+                                animations.append(":");
+                            }
+                            int interactedIndex = -1;
+                            int interactedID = -1;
+                            String targetName = "";
+                            if(interacted != null && interacted.getName() != null)
+                            {
+                                targetName = interacted.getName();
+                            }
+                            if (interacted instanceof NPC)
+                            {
+                                NPC npc = (NPC) interacted;
+                                interactedID = npc.getId();
+                                interactedIndex = npc.getIndex();
+                            }
+
+                            clog.addLine(PLAYER_ATTACK,
+                                    p.getName() + ":" + (client.getTickCount() - currentRoom.roomStartTick),
+                                    p.getAnimation() + ":" + PlayerWornItems.getStringFromComposition(p.getPlayerComposition()),
+                                    animations.toString(),
+                                    p.getPlayerComposition().getEquipmentId(KitType.WEAPON) + ":" + interactedIndex + ":" + interactedID,
+                                    "-1:" + targetName, currentRoom.getName());
+                            liveFrame.addAttack(new PlayerDidAttack(itemManager,
+                                    String.valueOf(p.getName()),
+                                    String.valueOf(p.getAnimation()),
+                                    0,
+                                    p.getPlayerComposition().getEquipmentId(KitType.WEAPON),
+                                    "-1",
+                                    animations.toString(),
+                                    interactedIndex,
+                                    interactedID,
+                                    targetName,
+                                    PlayerWornItems.getStringFromComposition(p.getPlayerComposition())
+                            ), currentRoom.getName());
+                        }
+                    }
+                }
+            }
+        }
+        chinSpawned.clear();
+    }
 
     @Subscribe
     public void onGameTick(GameTick event)
@@ -815,6 +931,8 @@ public class AdvancedRaidTrackerPlugin extends Plugin
             }
             loggingIn = false;
         }
+        handleBarraged();
+        handleChinSpawns();
         checkAnimationsThatChanged();
         checkOverheadTextsThatChanged();
         checkActivelyPiping();
@@ -1266,6 +1384,13 @@ public class AdvancedRaidTrackerPlugin extends Plugin
             }
 
         }
+        else if(event.getActor() instanceof NPC)
+        {
+            if(event.getActor().hasSpotAnim(369) || event.getActor().hasSpotAnim(377) || event.getActor().hasSpotAnim(85))
+            {
+                wasBarraged.add((NPC)event.getActor());
+            }
+        }
         if (inTheatre)
         {
             currentRoom.updateGraphicChanged(event);
@@ -1311,6 +1436,13 @@ public class AdvancedRaidTrackerPlugin extends Plugin
     @Subscribe
     public void onProjectileMoved(ProjectileMoved event)
     {
+        if(event.getProjectile().getId() == 1272)
+        {
+            if(event.getProjectile().getEndCycle()-event.getProjectile().getStartCycle() == event.getProjectile().getRemainingCycles())
+            {
+                chinSpawned.add(WorldPoint.fromLocal(client, new LocalPoint(event.getProjectile().getX1(), event.getProjectile().getY1())));
+            }
+        }
         if (inTheatre)
         {
             int id = event.getProjectile().getId();

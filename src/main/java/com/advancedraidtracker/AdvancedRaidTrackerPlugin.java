@@ -329,14 +329,12 @@ public class AdvancedRaidTrackerPlugin extends Plugin
                 inTheatre = true;
                 inColosseum = true;
                 activeState = true;
-                log.info("entered");
             }
         }
         else
         {
             if (!inRegion(client, 7216))
             {
-                log.info("left");
                 currentRoom = lobbyTOB; //todo idk
                 colloseumHandler.reset();
                 inTheatre = false;

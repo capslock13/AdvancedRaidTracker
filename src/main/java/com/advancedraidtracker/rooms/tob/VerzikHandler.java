@@ -234,7 +234,7 @@ public class VerzikHandler extends TOBRoomHandler
 
         if (id == VERZIK_BECOMES_BAT)
         {
-            log.info("Verzik dead from animation changed");
+            //log.info("Verzik dead from animation changed");
             endP3();
         }
     }
@@ -320,7 +320,7 @@ public class VerzikHandler extends TOBRoomHandler
             endP2();
         } else if (id == VERZIK_DEAD || id == VERZIK_DEAD_HM || id == VERZIK_DEAD_SM)
         {
-            log.info("Verzik dead from ID");
+            //log.info("Verzik dead from ID");
             endP3();
         }
     }

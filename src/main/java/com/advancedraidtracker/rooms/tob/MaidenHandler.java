@@ -11,6 +11,8 @@ import com.advancedraidtracker.utility.maidenbloodtracking.BloodDamageToBeApplie
 import com.advancedraidtracker.utility.maidenbloodtracking.BloodPositionWrapper;
 import com.advancedraidtracker.utility.wrappers.NPCTimeInChunkShell;
 import com.advancedraidtracker.utility.wrappers.PlayerHitsWrapper;
+import com.google.common.collect.ImmutableMap;
+import com.google.errorprone.annotations.Immutable;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.coords.WorldPoint;
@@ -314,6 +316,7 @@ public class MaidenHandler extends TOBRoomHandler
             case MAIDEN_MATOMENOS_HM:
             case MAIDEN_MATOMENOS_SM:
                 String crabName = identifySpawn(npc);
+                log.info("crab spawn identified: " + crabName);
                 clog.addLine(ADD_NPC_MAPPING, String.valueOf(npc.getIndex()), crabName, getName());
                 plugin.liveFrame.getPanel(getName()).addNPCMapping(npc.getIndex(), crabName);
                 plugin.liveFrame.getPanel(getName()).addMaidenCrab(crabName);
@@ -717,110 +720,49 @@ public class MaidenHandler extends TOBRoomHandler
         }
     }
 
+    private static final Map<Point, String> maidenCrabSpawns = ImmutableMap.<Point, String>builder()
+            .put(new Point(21, 40), "N1")
+            .put(new Point(22, 41), "sN1")
+            .put(new Point(25, 40), "N2")
+            .put(new Point(26, 41), "sN2")
+            .put(new Point(29, 40), "N3")
+            .put(new Point(30, 41), "sN3")
+            .put(new Point(33, 40), "N4 (1)")
+            .put(new Point(34, 41), "sN4 (1)")
+            .put(new Point(33, 38), "N4 (2)")
+            .put(new Point(34, 39), "sN4 (2)")
+            .put(new Point(21, 20), "S1")
+            .put(new Point(22, 19), "sS1")
+            .put(new Point(25, 20), "S2")
+            .put(new Point(26, 19), "sS2")
+            .put(new Point(29, 20), "S3")
+            .put(new Point(30, 19), "sS3")
+            .put(new Point(33, 20), "S4 (1)")
+            .put(new Point(34, 19), "sS4 (1)")
+            .put(new Point(33, 22), "S4 (2)")
+            .put(new Point(34, 21), "sS4 (2)")
+            .build();
+
     /**
      * Returns a string describing the spawn position of a maiden crab
      *
      */
     private String identifySpawn(NPC npc)
     {
-
         int x = npc.getWorldLocation().getRegionX();
         int y = npc.getWorldLocation().getRegionY();
+        Point p = new Point(x, y);
         String proc = getProc();
-        if (x == 21 && y == 40)
+        if(maidenCrabSpawns.containsKey(p))
         {
-            return "N1" + proc;
+            String crabSpawn = maidenCrabSpawns.get(p);
+            if(crabSpawn.startsWith("s"))
+            {
+                clog.addLine(MAIDEN_SCUFFED, crabSpawn);
+            }
+            return maidenCrabSpawns.get(p) + proc;
         }
-        if (x == 22 && y == 41)
-        {
-            clog.addLine(MAIDEN_SCUFFED, "N1");
-            return "sN1" + proc;
-        }
-        if (x == 25 && y == 40)
-        {
-            return "N2" + proc;
-        }
-        if (x == 26 && y == 41)
-        {
-            clog.addLine(MAIDEN_SCUFFED, "N2");
-            return "sN2" + proc;
-        }
-        if (x == 29 && y == 40)
-        {
-            return "N3" + proc;
-        }
-        if (x == 30 && y == 41)
-        {
-            clog.addLine(MAIDEN_SCUFFED, "N3");
-            return "sN3" + proc;
-        }
-        if (x == 33 && y == 40)
-        {
-            return "N4 (1)" + proc;
-        }
-        if (x == 34 && y == 41)
-        {
-            clog.addLine(MAIDEN_SCUFFED, "N4 (1)");
-            return "sN4 (1)" + proc;
-        }
-        if (x == 33 && y == 38)
-        {
-            return "N4 (2)" + proc;
-        }
-        if (x == 34 && y == 39)
-        {
-            clog.addLine(MAIDEN_SCUFFED, "N4 (2)");
-            return "sN4 (2)" + proc;
-        }
-        //
-        if (x == 21 && y == 20)
-        {
-            return "S1" + proc;
-        }
-        if (x == 22 && y == 19)
-        {
-            clog.addLine(MAIDEN_SCUFFED, "S1");
-            return "sS1" + proc;
-        }
-        if (x == 25 && y == 20)
-        {
-            return "S2" + proc;
-        }
-        if (x == 26 && y == 19)
-        {
-            clog.addLine(MAIDEN_SCUFFED, "S2");
-            return "sS2" + proc;
-        }
-        if (x == 29 && y == 20)
-        {
-            return "S3" + proc;
-        }
-        if (x == 30 && y == 19)
-        {
-            clog.addLine(MAIDEN_SCUFFED, "S3");
-            return "sS3" + proc;
-        }
-        if (x == 33 && y == 20)
-        {
-            return "S4 (1)" + proc;
-        }
-        if (x == 34 && y == 19)
-        {
-            clog.addLine(MAIDEN_SCUFFED, "S4 (1)");
-            return "sS4 (1)" + proc;
-        }
-        if (x == 33 && y == 22)
-        {
-            return "S4 (2)" + proc;
-        }
-        if (x == 34 && y == 21)
-        {
-            clog.addLine(MAIDEN_SCUFFED, "S4 (2)");
-            return "sS4 (2)" + proc;
-        } else
-        {
-            return "Unknown";
-        }
+        return "Unknown";
     }
 
     private String getProc()

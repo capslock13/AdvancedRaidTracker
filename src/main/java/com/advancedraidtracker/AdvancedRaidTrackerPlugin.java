@@ -1507,17 +1507,20 @@ public class AdvancedRaidTrackerPlugin extends Plugin
     {
         if(event.getActor() instanceof NPC)
         {
-            liveFrame.addAttack(new PlayerDidAttack(itemManager,
-                    String.valueOf(((NPC) event.getActor()).getIndex()),
-                    String.valueOf(event.getActor().getAnimation()),
-                    0,
-                    100,
-                    "-1",
-                    "",
-                    0,
-                    0,
-                    client.getLocalPlayer().getName(),
-                    ""), currentRoom.getName());
+            if(currentRoom != null)
+            {
+                liveFrame.addAttack(new PlayerDidAttack(itemManager,
+                        String.valueOf(((NPC) event.getActor()).getIndex()),
+                        String.valueOf(event.getActor().getAnimation()),
+                        0,
+                        100,
+                        "-1",
+                        "",
+                        0,
+                        0,
+                        client.getLocalPlayer().getName(),
+                        ""), currentRoom.getName());
+            }
 
         }
         if (event.getActor() instanceof Player)

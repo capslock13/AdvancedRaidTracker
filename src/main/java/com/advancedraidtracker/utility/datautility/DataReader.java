@@ -21,6 +21,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.advancedraidtracker.constants.TobIDs.VERZIK_BOUNCE_ANIMATION;
 import static com.advancedraidtracker.utility.datautility.DataWriter.PLUGIN_DIRECTORY;
 
 @Slf4j
@@ -158,7 +159,7 @@ public class DataReader //todo move any methods that read files to here. I belie
                         chartData.addMaidenCrab(line[4]);
                         break;
                     case "77": //verzik bounce
-                        chartData.addAttack(RaidRoom.VERZIK, new PlayerDidAttack(itemManager, line[4], "100000", Integer.parseInt(line[5]), 1965, "-1", "-1", -1, -1, "-1", "-1"));
+                        chartData.addAttack(RaidRoom.VERZIK, new PlayerDidAttack(itemManager, line[4], VERZIK_BOUNCE_ANIMATION, Integer.parseInt(line[5]), 1965, "-1", "-1", -1, -1, "-1", "-1"));
                         break;
 
                 }

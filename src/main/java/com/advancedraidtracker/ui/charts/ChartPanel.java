@@ -54,8 +54,10 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
     int startTick;
     public int endTick;
-    @Setter
-    List<String> players = new ArrayList<>();
+
+    List<String> attackers = new ArrayList<>();
+
+    List<String> playersOnly = new ArrayList<>();
     String room;
     @Setter
     String roomSpecificText = "";
@@ -168,6 +170,12 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         drawGraph();
     }
 
+    public void addNPC(int index, String name)
+    {
+        attackers.add(0, String.valueOf(index));
+        redraw();
+    }
+
     public void setRoomFinished(int tick)
     {
         finished = true;
@@ -197,7 +205,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         specific.clear();
         dawnSpecs.clear();
         thrallOutlineBoxes.clear();
-        players.clear();
+        attackers.clear();
         playerOffsets.clear();
         crabDescriptions.clear();
         actions.clear();
@@ -374,7 +382,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         {
             boxCount = 1;
         }
-        boxHeight = ((players.size() + 3) * scale);
+        boxHeight = ((attackers.size() + 3) * scale);
         boxWidth = (100 + (scale*51));
         boxesToShow = Math.min(1+((windowHeight-TITLE_BAR_PLUS_TAB_HEIGHT-scale)/boxHeight), boxCount);
         drawGraph();
@@ -586,9 +594,9 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     private void drawYChartColumn(Graphics2D g)
     {
         g.setColor(config.fontColor());
-        for (int i = 0; i < players.size(); i++)
+        for (int i = 0; i < attackers.size(); i++)
         {
-            playerOffsets.put(players.get(i), i);
+            playerOffsets.put(attackers.get(i), i);
             for (int j = currentBox; j < currentBox+boxesToShow; j++)
             {
                 g.setColor(Color.DARK_GRAY);
@@ -601,14 +609,22 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                 g.setColor(config.fontColor());
                 Font oldFont = g.getFont();
                 g.setFont(FontManager.getRunescapeBoldFont());
-                int width = getStringWidth(g, players.get(i));
+                int width = getStringWidth(g, attackers.get(i));
                 int margin = 5;
                 int subBoxWidth = 90;
                 int textPosition = margin + (subBoxWidth - width) / 2;
                 int yPosition = ((j * boxHeight) + ((i + 2) * scale) + (fontHeight) / 2) + (scale/2) + 8-(currentScrollOffset);
                 if(yPosition > scale+5)
                 {
-                    g.drawString(players.get(i), textPosition, yPosition);
+                    String attackerName = attackers.get(i);
+                    for(int r : NPCMap.keySet())
+                    {
+                        if(String.valueOf(r).equals(attackerName))
+                        {
+                            attackerName = NPCMap.get(r).split(" ")[0];
+                        }
+                    }
+                    g.drawString(attackerName, textPosition, yPosition);
                 }
 
                 if (i == 0)
@@ -617,7 +633,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                     {
                         roomSpecificText = "Instance Time";
                     }
-                    int textYPosition = j * boxHeight + ((players.size() + 2) * scale) + (fontHeight / 2) + 20 - currentScrollOffset;
+                    int textYPosition = j * boxHeight + ((attackers.size() + 2) * scale) + (fontHeight / 2) + 20 - currentScrollOffset;
                     if(textYPosition > scale + 5)
                     {
                         g.drawString(roomSpecificText, 5, textYPosition); //todo why does scroll not render correctly?
@@ -902,7 +918,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             g.setColor(config.fontColor());
             int xOffset = 100 + getXOffset(selectedRow);
             int yOffset = 10 + getYOffset(selectedRow);
-            g.drawRect(xOffset, yOffset, scale, scale * (players.size() + 2));
+            g.drawRect(xOffset, yOffset, scale, scale * (attackers.size() + 2));
 
             int selectedTickHP = -1;
             try
@@ -1202,14 +1218,14 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                 for (int j = 0; j < playerOffsets.size(); j++)
                 {
                     int xOffset = 100 + ((shouldWrap) ? ((i - startTick) % 50) * scale : i * scale);
-                    if (playerOffsets.get(players.get(j)) == null)
+                    if (playerOffsets.get(attackers.get(j)) == null)
                     {
                         continue;
                     }
                     shouldWrap = true;
-                    int yOffset = ((playerOffsets.get(players.get(j)) + 1) * scale + 30) + ((((i - startTick) / 50) * boxHeight)-currentScrollOffset);
+                    int yOffset = ((playerOffsets.get(attackers.get(j)) + 1) * scale + 30) + ((((i - startTick) / 50) * boxHeight)-currentScrollOffset);
                     g.setColor(config.primaryMiddle());
-                    if(!playerWasOnCD.get(players.get(j)).contains(i))
+                    if(!playerWasOnCD.get(attackers.get(j)).contains(i))
                     {
                         g.setColor(config.idleColor());
                     }
@@ -1280,6 +1296,15 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         repaint();
     }
 
+    public void setAttackers(List<String> attackers)
+    {
+        this.attackers.clear();
+        for(String name : attackers)
+        {
+            this.attackers.add(name);
+        }
+    }
+
     public void getTickHovered(int x, int y)
     {
         y = y + currentScrollOffset;
@@ -1290,10 +1315,10 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             {
                 int tick = startTick + (50 * boxNumber + ((x - 100) / scale));
                 int playerOffsetPosition = (((y - 30 - scale) % boxHeight) / scale);
-                if (playerOffsetPosition >= 0 && playerOffsetPosition < players.size() && (y - 30 - scale > 0))
+                if (playerOffsetPosition >= 0 && playerOffsetPosition < attackers.size() && (y - 30 - scale > 0))
                 {
                     selectedTick = tick;
-                    selectedPlayer = players.get(playerOffsetPosition);
+                    selectedPlayer = attackers.get(playerOffsetPosition);
                     selectedRow = -1;
                 } else if (y % boxHeight < 30 + scale)
                 {

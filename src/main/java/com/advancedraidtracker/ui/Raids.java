@@ -337,11 +337,66 @@ public class Raids extends BaseFrame
             }
         }
 
+        setTableListeners();
+
         resizeColumnWidth(table);
         table.setFillsViewportHeight(true);
         setLabels(tableData);
         container.validate();
         container.repaint();
+    }
+
+    /**
+     * Mouselistener events are only dispatched from UI thread which is blocked while dragging so are not sent
+     * MouseMotionListener events are only dispatched if the mouse is moving
+     * In other to have the expected behavior for releasing right click both stationary and moving both listeners must be added
+     */
+    private void setTableListeners()
+    {
+        table.addMouseMotionListener(new MouseAdapter()
+        {
+            @Override
+            public void mouseClicked(MouseEvent e)
+            {
+                setTableRightClickSelection(e);
+            }
+            @Override
+            public void mouseReleased(MouseEvent e)
+            {
+                setTableRightClickSelection(e);
+            }
+        });
+
+        table.addMouseListener(new MouseAdapter()
+        {
+            @Override
+            public void mouseClicked(MouseEvent e)
+            {
+                setTableRightClickSelection(e);
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e)
+            {
+                setTableRightClickSelection(e);
+            }
+        });
+    }
+
+    /**
+     * Sets selection to current row if only one or zero rows are currently selected
+     * @param e mouse event passthrough
+     */
+    private void setTableRightClickSelection(MouseEvent e)
+    {
+        if(table.getSelectedRows().length < 2 && SwingUtilities.isRightMouseButton(e))
+        {
+            int r = table.rowAtPoint(e.getPoint());
+            if (r >= 0 && r < table.getRowCount())
+            {
+                table.setRowSelectionInterval(r, r);
+            }
+        }
     }
 
     /**
@@ -1813,12 +1868,19 @@ public class Raids extends BaseFrame
         return menu;
     }
 
-    private JCheckBoxMenuItem getCheckBoxMenuItem(String name)
+    private JCheckBoxMenuItem getCheckBoxMenuItem(String name, String state)
     {
         JCheckBoxMenuItem item = new JCheckBoxMenuItem(name);
-        if (!name.equals("Time"))
+        if(state.isEmpty())
         {
-            item.setState(true);
+            if (!name.equals("Time"))
+            {
+                item.setState(true);
+            }
+        }
+        else
+        {
+            item.setState(state.equals("true"));
         }
         item.setOpaque(true);
         item.setBackground(Color.BLACK);
@@ -1832,22 +1894,34 @@ public class Raids extends BaseFrame
         return item;
     }
 
+    private JCheckBoxMenuItem getCheckBoxMenuItem(String name)
+    {
+        return getCheckBoxMenuItem(name, "");
+    }
+
     private void switchTo(Integer preset)
     {
-        if(preset == 0)
-        {
-            log.info("Switching to Default");
-        }
-        else
-        {
-            log.info("Switching to Preset " + preset);
-        }
         String[] readColumns = DataWriter.getPresetColumns(preset);
+        if(readColumns.length == 0)
+        {
+            readColumns = columnHeaderNames;
+        }
         columnHeaders.clear();
         for(String column : readColumns)
         {
-            columnHeaders.add(getCheckBoxMenuItem(column));
+            String[] split = column.split("~");
+            if(split.length == 2)
+            {
+                JCheckBoxMenuItem option = getCheckBoxMenuItem(split[0], split[1]);
+                columnHeaders.add(option);
+            }
+            else if(split.length == 1)
+            {
+                JCheckBoxMenuItem option = getCheckBoxMenuItem(split[0]);
+                columnHeaders.add(option);
+            }
         }
+        table.getTableHeader().setComponentPopupMenu(getCustomColumnPopUpMenu());
         updateTable();
     }
 
@@ -1860,7 +1934,6 @@ public class Raids extends BaseFrame
         {
             if(name.equals("Default"))
             {
-                activeMenuPresets.add(0);
                 switchTo(0);
             }
             else
@@ -1868,13 +1941,12 @@ public class Raids extends BaseFrame
                 int presetNumber = -1;
                 try
                 {
-                    presetNumber = Integer.parseInt(name.substring(0, name.length()-1));
-                    activeMenuPresets.add(presetNumber);
+                    presetNumber = Integer.parseInt(name.substring(name.length()-1));
                     switchTo(presetNumber);
                 }
                 catch (Exception e)
                 {
-
+                    e.printStackTrace();
                 }
             }
         });
@@ -1911,6 +1983,7 @@ public class Raids extends BaseFrame
 
     private void deletePreset(Integer preset)
     {
+        DataWriter.removePreset(preset);
         activeMenuPresets.removeIf(o->o.equals(preset));
         table.getTableHeader().setComponentPopupMenu(getCustomColumnPopUpMenu());
     }
@@ -1982,7 +2055,7 @@ public class Raids extends BaseFrame
                 List<String> columnNames = new ArrayList<>();
                 for(JCheckBoxMenuItem columnCheckBox : columnHeaders)
                 {
-                    columnNames.add(columnCheckBox.getName());
+                    columnNames.add(columnCheckBox.getText() + "~" + columnCheckBox.getState());
                 }
                 DataWriter.writePresetColumn(nextFree, columnNames.toArray(new String[0]));
                 table.getTableHeader().setComponentPopupMenu(getCustomColumnPopUpMenu());

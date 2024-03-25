@@ -30,6 +30,17 @@ public class AnimationDecider
         }
         switch (animation)
         {
+            case 10893:
+                event = PlayerAnimation.COLOSSEUM_SPECIAL;
+                break;
+            case 10847:
+            case 10859:
+            case 10850:
+            case 10853:
+            case 10856:
+            case 10892:
+                event = PlayerAnimation.COLOSSEUM_AUTO;
+                break;
             case 5061:
             case 10656:
                 if (projectile == 1043 || projectile == 2599)

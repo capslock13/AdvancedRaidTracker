@@ -45,7 +45,7 @@ public class ChartFrame extends BaseFrame
             chartPanel.setNPCMappings(chartData.getNPCMapping(room));
             chartPanel.addAttacks(chartData.getAttacks(room));
             chartPanel.setRoomHP(chartData.getHPMapping(room));
-            chartPanel.setPlayers(new ArrayList<>(roomData.getPlayers()));
+            chartPanel.setAttackers(new ArrayList<>(roomData.getPlayers()));
             chartPanel.enableWrap();
             chartPanel.setStartTick((bossName.contains("Verzik") || bossName.contains("Wardens")) ? //Just trust
                     (bossName.contains("P1") ? 1 : (bossName.contains("P2") ? roomData.get(bossName.replace('2', '1') + " Time") :

@@ -47,7 +47,7 @@ public class Colo extends Raid
                 wave++;
             }
         }
-        return red + "Wave " + wave;
+        return red + "Wave " + (wave+1);
     }
 
     @Override

@@ -53,6 +53,7 @@ public class ItemReference
                     "vambraces",
                     "crystal",
                     "darts",
+                    "quiver"
             },
             {
                     "ancestral",

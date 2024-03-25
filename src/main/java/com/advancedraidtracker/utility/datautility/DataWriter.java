@@ -39,8 +39,9 @@ public class DataWriter
                 Scanner reader = new Scanner(Files.newInputStream(presetFile.toPath()));
                 while(reader.hasNextLine())
                 {
-                    String[] split = reader.nextLine().split(":");
-                    if(split.length == 2 && split[1].equals(String.valueOf(presetNumber)))
+                    String line = reader.nextLine();
+                    String[] split = line.split(":");
+                    if(split.length == 2 && split[0].equals(String.valueOf(presetNumber)))
                     {
                         return split[1].split(",");
                     }
@@ -52,6 +53,10 @@ public class DataWriter
                 log.info("Could not read presets");
             }
         }
+        else
+        {
+            log.info("presets file does not exist");
+        }
         return new String[]{};
     }
 
@@ -60,16 +65,22 @@ public class DataWriter
         File presetFile = new File(PLUGIN_DIRECTORY + "misc-dir/columns.presets");
         if(!presetFile.exists())
         {
-            if(!presetFile.mkdirs())
+            try
+            {
+                if(!presetFile.createNewFile())
+                {
+                    log.info("Failed to create new preset file");
+                }
+            }
+            catch (Exception e)
             {
                 log.info("Couldn't create preset file");
-                return;
             }
         }
         try
         {
             BufferedWriter logger = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(PLUGIN_DIRECTORY + "misc-dir/columns.presets", true), StandardCharsets.UTF_8));
-            logger.write(presetNumber + ":"+ String.join(",", columns));
+            logger.write(presetNumber + ":"+ String.join(",", columns) + "\n");
             logger.close();
         }
         catch (Exception e)
@@ -91,7 +102,8 @@ public class DataWriter
             Scanner reader = new Scanner(presetFile.toPath());
             while(reader.hasNextLine())
             {
-                String[] line = reader.nextLine().split(":");
+                String nextline = reader.nextLine();
+                String[] line = nextline.split(":");
                 if(!(line.length == 2 && line[0].equals(String.valueOf(preset))))
                 {
                     presets.add(String.join(":", line));
@@ -100,7 +112,7 @@ public class DataWriter
             BufferedWriter logger = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(PLUGIN_DIRECTORY + "misc-dir/columns.presets", false), StandardCharsets.UTF_8));
             for(String presetString : presets)
             {
-                logger.write(presetString);
+                logger.write(presetString + "\n");
             }
             logger.close();
         }

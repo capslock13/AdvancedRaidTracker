@@ -19,6 +19,10 @@ public class StripedTableRowCellRenderer extends DefaultTableCellRenderer
         {
             cell.setBackground(new Color(20, 20, 20));
         }
+        else if(isSelected)
+        {
+            cell.setBackground(new Color(120, 120, 120, 200));
+        }
         return cell;
     }
 }

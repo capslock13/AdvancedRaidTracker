@@ -60,6 +60,9 @@ public enum PlayerAnimation //todo add weapon animations and IDs as int array an
     PICKUP("Pickup Animation", "PCK", new Color(30, 30, 90), -1, new int[]{}, new int[]{}, new int[]{}, new int[]{}),
     PUSH_JUG("Push Animation", "PSH", new Color(10, 10, 10), -1, new int[]{}, new int[]{}, new int[]{}, new int[]{}),
     INQ_MACE("Inquisitor's Mace", "IQM", new Color(180, 50, 30), 4, new int[]{}, new int[]{}, new int[]{}, new int[]{}),
+    COLOSSEUM_AUTO("Colosseum Auto Attack", "Auto", new Color(100, 20, 20), 5, new int[]{}, new int[]{}, new int[]{}, new int[]{}),
+    COLOSSEUM_SPECIAL("Colosseum Special Attack", "Spec", new Color(20, 100, 20), 5, new int[]{}, new int[]{}, new int[]{}, new int[]{}),
+
 
     ;
 

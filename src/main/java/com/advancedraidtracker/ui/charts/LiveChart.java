@@ -255,6 +255,11 @@ public class LiveChart extends BaseFrame
         }
     }
 
+    public void addNPC(String room, int index, String name)
+    {
+        getPanel(room).addNPC(index, name);
+    }
+
     public void addAttack(PlayerDidAttack attack, String room)
     {
         getPanel(room).addLiveAttack(attack);
@@ -311,15 +316,15 @@ public class LiveChart extends BaseFrame
         }
         for (String name : tobPanels.keySet())
         {
-            tobPanels.get(name).setPlayers(cleanedPlayers);
+            tobPanels.get(name).setAttackers(cleanedPlayers);
         }
         for (String name : toaPanels.keySet())
         {
-            toaPanels.get(name).setPlayers(cleanedPlayers);
+            toaPanels.get(name).setAttackers(cleanedPlayers);
         }
         for (String name : colPanels.keySet())
         {
-            colPanels.get(name).setPlayers(cleanedPlayers);
+            colPanels.get(name).setAttackers(cleanedPlayers);
         }
 
     }

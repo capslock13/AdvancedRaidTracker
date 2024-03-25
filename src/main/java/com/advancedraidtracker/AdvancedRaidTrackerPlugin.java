@@ -215,6 +215,7 @@ public class AdvancedRaidTrackerPlugin extends Plugin
     protected void startUp() throws Exception
     {
         super.startUp();
+
         splitLegacyFiles();
         localPlayers = new ArrayList<>();
         thrallTracker = new ThrallTracker(this);
@@ -314,7 +315,7 @@ public class AdvancedRaidTrackerPlugin extends Plugin
         Room room = getRoom();
         if(!inColosseum)
         {
-            if (inRegion(client, 7216))
+            if (client.isInInstancedRegion() && inRegion(client, 7216))
             {
                 currentRoom = colloseumHandler;
                 clog.setRaidType(RaidType.COLOSSEUM);
@@ -1506,6 +1507,21 @@ public class AdvancedRaidTrackerPlugin extends Plugin
     @Subscribe
     public void onAnimationChanged(AnimationChanged event)
     {
+        if(event.getActor() instanceof NPC)
+        {
+            liveFrame.addAttack(new PlayerDidAttack(itemManager,
+                    String.valueOf(((NPC) event.getActor()).getIndex()),
+                    String.valueOf(event.getActor().getAnimation()),
+                    0,
+                    100,
+                    "-1",
+                    "",
+                    0,
+                    0,
+                    client.getLocalPlayer().getName(),
+                    ""), currentRoom.getName());
+
+        }
         if (event.getActor() instanceof Player)
         {
             Player p = (Player) event.getActor();
@@ -1766,6 +1782,7 @@ public class AdvancedRaidTrackerPlugin extends Plugin
                 if (currentRoom != null)
                 {
                     currentRoom.updateNpcSpawned(event);
+                    liveFrame.getPanel(currentRoom.getName()).addNPCMapping(event.getNpc().getIndex(), event.getNpc().getName());
                 }
                 break;
         }

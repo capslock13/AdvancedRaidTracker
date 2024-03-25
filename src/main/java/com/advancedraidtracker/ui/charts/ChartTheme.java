@@ -15,7 +15,7 @@ public enum ChartTheme
     LIGHT_MODE("Light Mode", "#cccccc", "#aaaaaa", "#787878", "#787878", "#000000", "#000000", "#000000", "#ffffff"),
     SOLARIZED_LIGHT("Solarized Light", "#fdf6e3", "#93a1a1", "#eee8d5", "#657b83", "#859900", "#6c71c4", "#b58900", "#ffffff"),
     SOLARIZED_DARK("Solarized Dark", "#002b36", "#073642", "#073642", "#0e414a", "#b58900", "#6c71c4", "#859900", "#ffffff"),
-    CAKE("Cake", "#2E231B", "#5d4033", "#4D3829", "#a27ec2", "#d9956f", "#a27ec2", "#c6cdcb", "#ffffff"),
+    CAKE("Cake", "#2E231B", "#4D3829", "#4D3829", "#5d4033", "#c092ce", "#d9956f", "#ea88b9", "#ffffff"),
     ONE_DARK("One Dark", "#282c34", "#363342" , "#363342", "#423948","#e5c07b", "#61afef", "#c678dd", "#ffffff"),
     NIGHT_OWL("Night Owl", "#011627", "#1d3b53", "#1d3b53", "#2f4c66", "#ecc48d", "#d6deeb", "#addb67", "#ffffff"),
     ;

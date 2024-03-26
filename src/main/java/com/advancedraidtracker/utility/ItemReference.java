@@ -53,7 +53,9 @@ public class ItemReference
                     "vambraces",
                     "crystal",
                     "darts",
-                    "quiver"
+                    "quiver",
+                    "eclipse",
+                    "ralos"
             },
             {
                     "ancestral",

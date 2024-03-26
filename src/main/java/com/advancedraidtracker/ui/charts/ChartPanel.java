@@ -255,7 +255,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             clientThread.invoke(attack::setWornNames);
         }
         PlayerAnimation playerAnimation = AnimationDecider.getWeapon(attack.animation, attack.spotAnims, attack.projectile, attack.weapon);
-        if (playerAnimation != PlayerAnimation.UNDECIDED)
+        if (playerAnimation != PlayerAnimation.EXCLUDED_ANIMATION && playerAnimation != PlayerAnimation.UNDECIDED)
         {
             boolean isTarget = RoomUtil.isPrimaryBoss(attack.targetedID) && attack.targetedID != -1;
             String targetString = playerAnimation.name + ": ";
@@ -480,7 +480,6 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                 int xOffset = getXOffset(i);
                 int yOffset = getYOffset(i);
                 yOffset += scale;
-                //g.drawLine(100 + xOffset + scale, yOffset - (fontHeight / 2), 100 + xOffset + scale, yOffset + boxHeight - (2 * scale) + 10);
                 g.setColor(config.fontColor());
                 Font oldFont = g.getFont();
                 g.setFont(oldFont.deriveFont(10.0f));
@@ -976,7 +975,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             if (action.tick == selectedTick && action.player.equals(selectedPlayer) && shouldTickBeDrawn(action.tick))
             {
                 Point location = getPoint(action.tick, action.player);
-                HoverBox hoverBox = new HoverBox(actions.get(action), config);
+                HoverBox hoverBox = new HoverBox(actions.get(action) + ": " + action.animation, config);
                 hoverBox.addString("");
                 for (String item : action.wornItemNames)
                 {

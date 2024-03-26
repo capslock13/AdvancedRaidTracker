@@ -21,6 +21,8 @@ import com.advancedraidtracker.utility.datautility.datapoints.Raid;
 import com.advancedraidtracker.utility.datautility.datapoints.toa.Toa;
 import com.advancedraidtracker.utility.datautility.datapoints.tob.Tob;
 import com.advancedraidtracker.utility.wrappers.StringInt;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.ItemID;
 import net.runelite.client.callback.ClientThread;
@@ -66,7 +68,7 @@ public class Raids extends BaseFrame
     List<Map<String, JLabel>> minLabels2 = new ArrayList<>();
     List<Map<String, JLabel>> maxLabels2 = new ArrayList<>();
 
-    private final ArrayList<Map<String, ArrayList<String>>> aliases;
+    private final Multimap<String, String> aliases;
 
     private final JTextArea aliasText;
 
@@ -139,7 +141,7 @@ public class Raids extends BaseFrame
         {
             columnHeaders.add(getCheckBoxMenuItem(s));
         }
-        aliases = new ArrayList<>();
+        aliases = ArrayListMultimap.create();
         filteredIndices = new ArrayList<>();
         comparisons = new ArrayList<>();
         activeFilters = new ArrayList<>();
@@ -744,13 +746,7 @@ public class Raids extends BaseFrame
                 continue;
             }
             String name = split[0];
-            ArrayList<String> names = new ArrayList<>(Arrays.asList(split[1].split(",")));
-            if (!names.isEmpty())
-            {
-                Map<String, ArrayList<String>> map = new LinkedHashMap<>();
-                map.put(name, names);
-                aliases.add(map);
-            }
+            aliases.putAll(name, Arrays.asList(split[1].split(",")));
         }
         writing = false;
     }
@@ -947,24 +943,21 @@ public class Raids extends BaseFrame
     }
 
 
-    public String getPlayerList(ArrayList<Map<String, ArrayList<String>>> aliases, Set<String> players)
+    public String getPlayerList(Multimap<String, String> aliases, Set<String> players)
     {
         StringBuilder list = new StringBuilder();
         ArrayList<String> names = new ArrayList<>();
         for (String s : players)
         {
             String name = s;
-            for (Map<String, ArrayList<String>> alternateNames : aliases)
+            for(String nameKey : aliases.keySet())
             {
-                for (String alias : alternateNames.keySet())
+                for(String alias : aliases.get(nameKey))
                 {
-                    for (String potentialName : alternateNames.get(alias))
+                    if(name.equalsIgnoreCase(alias))
                     {
-                        if (name.equalsIgnoreCase(potentialName))
-                        {
-                            name = alias;
-                            break;
-                        }
+                        name = alias;
+                        break;
                     }
                 }
             }

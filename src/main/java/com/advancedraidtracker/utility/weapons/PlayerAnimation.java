@@ -6,6 +6,7 @@ import java.awt.*;
 
 public enum PlayerAnimation
 {
+    NOT_SET("Not Set", "", new Color(0, 0, 0), -1, new int[]{}, new int[]{}, new int[]{}, new int[]{}),
     UNDECIDED("Undecided", "?", new Color(0, 0, 0), -1, new int[]{}, new int[]{}, new int[]{}, new int[]{}),
     BLOWPIPE("Blowpipe", "BP", new Color(100, 150, 200), 2, new int[]{5061, 10656}, new int[]{}, new int[]{ItemID.TOXIC_BLOWPIPE, ItemID.BLAZING_BLOWPIPE}, new int[]{1122}),
     BLOWPIPE_SPEC("Blowpipe spec", "bp", new Color(100, 150, 200), 2, new int[]{5061, 10656}, new int[]{}, new int[]{ItemID.TOXIC_BLOWPIPE, ItemID.BLAZING_BLOWPIPE}, new int[]{1043, 2599}),
@@ -16,11 +17,11 @@ public enum PlayerAnimation
     CHALLY_WHACK("Chally whack", "ch", new Color(150, 50, 50), 7, new int[]{440, 428}, new int[]{}, new int[]{ItemID.CRYSTAL_HALBERD}, new int[]{}),
     SWIFT_BLADE("Swift Blade", "SB", new Color(225, 50, 50), 3, new int[]{2323, 390, 8288, 401}, new int[]{}, new int[]{ItemID.GOBLIN_PAINT_CANNON, ItemID.HAM_JOINT, ItemID.SWIFT_BLADE}, new int[]{}),
     BGS_WHACK("Godsword whack", "gs", new Color(170, 20, 20), 6, new int[]{7045, 7044, 7054}, new int[]{}, new int[]{ItemID.BANDOS_GODSWORD, ItemID.BANDOS_GODSWORD_OR, ItemID.ZAMORAK_GODSWORD, ItemID.ZAMORAK_GODSWORD_OR, ItemID.ARMADYL_GODSWORD, ItemID.ARMADYL_GODSWORD_OR, ItemID.SARADOMIN_GODSWORD, ItemID.SARADOMIN_GODSWORD_OR, ItemID.ANCIENT_GODSWORD}, new int[]{}),
-    SGS_SPEC("SGS spec", "SGS", new Color(170, 20, 20, 0), 6, new int[]{7640, 7641}, new int[]{}, new int[]{ItemID.SARADOMIN_GODSWORD, ItemID.SARADOMIN_GODSWORD_OR}, new int[]{}),
-    ZGS_SPEC("ZGS spec", "ZGS", new Color(170, 20, 20, 0), 6, new int[]{7638, 7639}, new int[]{}, new int[]{ItemID.ZAMORAK_GODSWORD, ItemID.ZAMORAK_GODSWORD_OR}, new int[]{}),
-    AGS_SPEC("AGS spec", "AGS", new Color(170, 20, 20, 0), 6, new int[]{7644, 7645}, new int[]{}, new int[]{ItemID.ARMADYL_GODSWORD, ItemID.ARMADYL_GODSWORD_OR}, new int[]{}),
-    ACGS_SPEC("Ancient Godsword spec", "ACGS", new Color(170, 20, 20, 0), 6, new int[]{9171}, new int[]{}, new int[]{ItemID.ANCIENT_GODSWORD}, new int[]{}),
-    BGS_SPEC("BGS spec", "BGS", new Color(170, 20, 20, 0), 6, new int[]{7642, 7643}, new int[]{}, new int[]{ItemID.BANDOS_GODSWORD, ItemID.BANDOS_GODSWORD_OR}, new int[]{}),
+    SGS_SPEC("SGS spec", "SGS", new Color(170, 20, 20), 6, new int[]{7640, 7641}, new int[]{}, new int[]{ItemID.SARADOMIN_GODSWORD, ItemID.SARADOMIN_GODSWORD_OR}, new int[]{}),
+    ZGS_SPEC("ZGS spec", "ZGS", new Color(170, 20, 20), 6, new int[]{7638, 7639}, new int[]{}, new int[]{ItemID.ZAMORAK_GODSWORD, ItemID.ZAMORAK_GODSWORD_OR}, new int[]{}),
+    AGS_SPEC("AGS spec", "AGS", new Color(170, 20, 20), 6, new int[]{7644, 7645}, new int[]{}, new int[]{ItemID.ARMADYL_GODSWORD, ItemID.ARMADYL_GODSWORD_OR}, new int[]{}),
+    ACGS_SPEC("Ancient Godsword spec", "NGS", new Color(170, 20, 20), 6, new int[]{9171}, new int[]{}, new int[]{ItemID.ANCIENT_GODSWORD}, new int[]{}),
+    BGS_SPEC("BGS spec", "BGS", new Color(170, 20, 20), 6, new int[]{7642, 7643}, new int[]{}, new int[]{ItemID.BANDOS_GODSWORD, ItemID.BANDOS_GODSWORD_OR}, new int[]{}),
     TBOW("Tbow", "TB", new Color(30, 120, 30), 5, new int[]{426}, new int[]{}, new int[]{ItemID.TWISTED_BOW, ItemID.CORRUPTED_TWISTED_BOW}, new int[]{}),
     ZCB_AUTO("ZCB Auto", "zc", new Color(10, 170, 50), 5, new int[]{9168}, new int[]{}, new int[]{ItemID.ZARYTE_CROSSBOW}, new int[]{1468}),
     ZCB_SPEC("ZCB Spec", "ZC", new Color(10, 170, 50), 5, new int[]{9168}, new int[]{}, new int[]{ItemID.ZARYTE_CROSSBOW}, new int[]{1995}),

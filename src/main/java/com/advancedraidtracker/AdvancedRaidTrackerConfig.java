@@ -159,7 +159,47 @@ public interface AdvancedRaidTrackerConfig extends Config
     default Color attackBoxColor() {return new Color(255, 255, 255);}
 
     @ConfigItem(
+            position = 48,
+            keyName = "useRounded",
+            name = "Use Rounded Boxes",
+            description = "Chart will use rounded boxes"
+    )
+    default boolean useRounded() { return true;}
+
+    @ConfigItem(
+            position = 49,
+            keyName = "wrapAllBoxes",
+            name = "Wrap All Boxes",
+            description = "Chart will wrap all boxes"
+    )
+    default boolean wrapAllBoxes() { return false;}
+
+    @ConfigItem(
             position = 50,
+            keyName = "showBoldTick",
+            name = "Show Bold Tick",
+            description = "Chart will show bold 'Tick'"
+    )
+    default boolean showBoldTick() { return false;}
+
+    @ConfigItem(
+            position = 51,
+            keyName = "rightAlignTicks",
+            name = "Right Align Ticks",
+            description = "Chart will right align ticks"
+    )
+    default boolean rightAlignTicks() { return false;}
+
+    @ConfigItem(
+            position = 52,
+            keyName = "useAlternateFont",
+            name = "Use Alternate Font",
+            description = "Chart will use alternate font"
+    )
+    default boolean useAlternateFont() { return false;}
+
+    @ConfigItem(
+            position = 57,
             keyName = "letterBackgroundOpacity",
             name = "Letter BG Opacity",
             description = "Opacity of letter background color on chart"

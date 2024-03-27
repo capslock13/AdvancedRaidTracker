@@ -1,6 +1,7 @@
 package com.advancedraidtracker.ui;
 
 import com.advancedraidtracker.*;
+import com.advancedraidtracker.ui.charts.chartcreator.ChartCreatorFrame;
 import com.advancedraidtracker.utility.datautility.DataReader;
 import com.advancedraidtracker.utility.datautility.datapoints.Raid;
 import com.advancedraidtracker.utility.datautility.datapoints.tob.Tob;
@@ -43,12 +44,14 @@ public class RaidTrackerSidePanel extends PluginPanel
     private static AdvancedRaidTrackerConfig config;
     private static ItemManager itemManager;
     private final ConfigManager configManager;
+    private final ClientThread clientThread;
 
     private final JLabel pleaseWait = new JLabel("Parsing Files...", SwingConstants.CENTER);
 
     @Inject
     RaidTrackerSidePanel(AdvancedRaidTrackerPlugin plugin, AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
     {
+        this.clientThread = clientThread;
         this.configManager = configManager;
         add(pleaseWait);
         new Thread(() ->
@@ -73,7 +76,7 @@ public class RaidTrackerSidePanel extends PluginPanel
         JPanel container = new JPanel();
         JPanel primaryContainer = new JPanel();
 
-        primaryContainer.setLayout(new GridLayout(5, 1));
+        primaryContainer.setLayout(new GridLayout(6, 1));
 
         JButton viewRaidsButton = new JButton("View All Raids");
         JButton refreshRaidsButton = new JButton("Refresh");
@@ -126,6 +129,13 @@ public class RaidTrackerSidePanel extends PluginPanel
         livePanelButton.addActionListener(al ->
                 plugin.openLiveFrame());
 
+        JButton chartCreatorButton = new JButton("Create A Chart...");
+        chartCreatorButton.addActionListener(al ->
+        {
+            ChartCreatorFrame chartCreator = new ChartCreatorFrame(config, itemManager, clientThread, configManager);
+            chartCreator.open();
+        });
+
         raidCountLabel = new JLabel("", SwingConstants.CENTER);
         updateRaidCountLabel();
         primaryContainer.add(raidCountLabel);
@@ -133,6 +143,7 @@ public class RaidTrackerSidePanel extends PluginPanel
         primaryContainer.add(viewRaidsButton);
         primaryContainer.add(tableRaidsButton);
         primaryContainer.add(livePanelButton);
+        primaryContainer.add(chartCreatorButton);
 
         DefaultTableModel model = getTableModel();
         loadRaidsTable = new JTable(model)

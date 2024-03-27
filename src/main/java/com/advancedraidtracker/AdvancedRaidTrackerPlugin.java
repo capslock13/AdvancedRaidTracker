@@ -1499,6 +1499,11 @@ public class AdvancedRaidTrackerPlugin extends Plugin
             configManager.setConfiguration("Advanced Raid Tracker", "markerColor", Color.decode(theme.getMarkerColor()));
             configManager.setConfiguration("Advanced Raid Tracker", "boxColor", Color.decode(theme.getBoxColor()));
             configManager.setConfiguration("Advanced Raid Tracker", "attackColor", Color.decode(theme.getAttackBoxColor()));
+            configManager.setConfiguration("Advanced Raid Tracker", "useRounded", theme.isUseRounded());
+            configManager.setConfiguration("Advanced Raid Tracker", "wrapAllBoxes", theme.isWrapAllBoxes());
+            configManager.setConfiguration("Advanced Raid Tracker", "showBoldTick", theme.isShowBoldTick());
+            configManager.setConfiguration("Advanced Raid Tracker", "rightAlignTicks", theme.isRightAlignTicks());
+            configManager.setConfiguration("Advanced Raid Tracker", "useAlternateFont", theme.isUseAlternateFont());
         }
     }
 

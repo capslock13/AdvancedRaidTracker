@@ -42,6 +42,10 @@ public class RoomUtil
 
     public static boolean isPrimaryBoss(int ID)
     {
+        if(ID == 0)
+        {
+            return true;
+        }
         int[] bosses = {
                 TobIDs.MAIDEN_P0,
                 TobIDs.MAIDEN_P1,

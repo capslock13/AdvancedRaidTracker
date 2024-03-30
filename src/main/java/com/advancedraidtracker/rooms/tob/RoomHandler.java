@@ -209,4 +209,8 @@ public class RoomHandler
     public void updateGroundObjectDespawned(GroundObjectDespawned event)
     {
     }
+
+    public void updateScriptPreFired(ScriptPreFired event)
+    {
+    }
 }

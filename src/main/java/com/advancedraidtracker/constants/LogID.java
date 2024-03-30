@@ -669,6 +669,12 @@ public enum LogID
     COLOSSEUM_WAVE_STARTED(2013, true, COLOSSEUM,
             new ParseInstruction(MANUAL_PARSE),
             "Wave Started", "Wave Number"),
+    COLOSSEUM_INVOCATION_CHOICES(2014, true, COLOSSEUM,
+            new ParseInstruction(MANUAL_PARSE),
+            "Invocations Offered", "Invocation 1", "Invocation 2", "Invocation 3"),
+    COLOSSEUM_INVOCATION_SELECTED(2015, true, COLOSSEUM,
+            new ParseInstruction(MANUAL_PARSE),
+            "Invocation Selected", "Invocation");
 
     ;
     /*

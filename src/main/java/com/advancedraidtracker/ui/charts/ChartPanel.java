@@ -1436,37 +1436,40 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
     public void getTickHovered(int x, int y)
     {
-        y = y + currentScrollOffset;
-        if (y > 20)
+        if(boxHeight > 0 && scale > 0)
         {
-            int boxNumber = (y - 20) / boxHeight;
-            if (x > LEFT_MARGIN)
+            y = y + currentScrollOffset;
+            if (y > 20)
             {
-                int tick = startTick + (ticksToShow * boxNumber + ((x - LEFT_MARGIN) / scale));
-                int playerOffsetPosition = (((y - TOP_MARGIN - scale) % boxHeight) / scale);
-                if (playerOffsetPosition >= 0 && playerOffsetPosition < attackers.size() && (y - TOP_MARGIN - scale > 0))
+                int boxNumber = (y - 20) / boxHeight;
+                if (x > LEFT_MARGIN)
                 {
-                    selectedTick = tick;
-                    selectedPlayer = attackers.get(playerOffsetPosition);
-                    selectedRow = -1;
-                } else if (y % boxHeight < TOP_MARGIN + scale)
-                {
-                    selectedRow = tick;
-                    selectedPlayer = "";
-                    selectedTick = -1;
+                    int tick = startTick + (ticksToShow * boxNumber + ((x - LEFT_MARGIN) / scale));
+                    int playerOffsetPosition = (((y - TOP_MARGIN - scale) % boxHeight) / scale);
+                    if (playerOffsetPosition >= 0 && playerOffsetPosition < attackers.size() && (y - TOP_MARGIN - scale > 0))
+                    {
+                        selectedTick = tick;
+                        selectedPlayer = attackers.get(playerOffsetPosition);
+                        selectedRow = -1;
+                    } else if (y % boxHeight < TOP_MARGIN + scale)
+                    {
+                        selectedRow = tick;
+                        selectedPlayer = "";
+                        selectedTick = -1;
+                    } else
+                    {
+                        selectedPlayer = "";
+                        selectedTick = -1;
+                        selectedRow = -1;
+                    }
                 } else
                 {
                     selectedPlayer = "";
                     selectedTick = -1;
                     selectedRow = -1;
                 }
-            } else
-            {
-                selectedPlayer = "";
-                selectedTick = -1;
-                selectedRow = -1;
+                drawGraph();
             }
-            drawGraph();
         }
     }
 

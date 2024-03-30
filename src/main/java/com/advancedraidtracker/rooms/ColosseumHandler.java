@@ -7,10 +7,17 @@ import com.advancedraidtracker.rooms.tob.RoomHandler;
 import com.advancedraidtracker.ui.charts.LiveChart;
 import com.advancedraidtracker.utility.RoomUtil;
 import com.advancedraidtracker.utility.datautility.DataWriter;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.events.ChatMessage;
+import net.runelite.api.events.NpcDespawned;
+import net.runelite.api.events.ScriptPreFired;
 import net.runelite.client.util.Text;
+
+import java.util.*;
+
 @Slf4j
 public class ColosseumHandler extends RoomHandler
 {
@@ -24,6 +31,26 @@ public class ColosseumHandler extends RoomHandler
     public int lastWaveDuration = 0;
     int lastWaveStartTick = 0;
     private LiveChart liveFrame;
+    List<Integer> currentInvos = new ArrayList<>();
+    private Map<Integer, Integer> selectedInvos = new HashMap<>();
+    private Multimap<Integer, Integer> offeredInvos = ArrayListMultimap.create();
+    private Map<Integer, String> invoMap = new HashMap<Integer, String>()
+    {{
+        put(0, "Scorpion");
+        put(1, "Reentry");
+        put(2, "Bees");
+        put(3, "Volatility");
+        put(4, "Blasphemy");
+        put(5, "Relentless");
+        put(6, "Quartet");
+        put(7, "Totemic");
+        put(8, "Doom");
+        put(9, "Dynamic Duo");
+        put(10, "Solarflare");
+        put(11, "Myopia");
+        put(12, "Frailty");
+        put(13, "Red Flag");
+    }};
     public ColosseumHandler(Client client, DataWriter clog, AdvancedRaidTrackerConfig config, LiveChart liveFrame, AdvancedRaidTrackerPlugin plugin)
     {
         super(client, clog, config, plugin);
@@ -47,6 +74,60 @@ public class ColosseumHandler extends RoomHandler
         lastWaveStartTick = 0;
         lastCompletedWave = 0;
         lastWaveDuration = 0;
+        offeredInvos.clear();
+        selectedInvos.clear();
+    }
+
+    public void updateScriptPreFired(ScriptPreFired event)
+    {
+        if(event.getScriptId() == 4931)
+        {
+            try
+            {
+                Object[] args = event.getScriptEvent().getArguments();
+                currentInvos.add((Integer)args[2]);
+                currentInvos.add((Integer)args[3]);
+                currentInvos.add((Integer)args[4]);
+                offeredInvos.putAll(currentWave+1, currentInvos);
+                clog.addLine(LogID.COLOSSEUM_INVOCATION_CHOICES, String.valueOf(args[2]), String.valueOf(args[3]), String.valueOf(args[4]));
+            }
+            catch (Exception e)
+            {
+
+            }
+        }
+    }
+
+    @Override
+    public void updateNpcDespawned(NpcDespawned event)
+    {
+        if(event.getNpc().getId() == 12808)
+        {
+            int selection = client.getVarbitValue(9788);
+            if(selection > 0)
+            {
+                selectedInvos.put(currentWave+1, currentInvos.get(selection-1));
+                clog.addLine(LogID.COLOSSEUM_INVOCATION_SELECTED, currentInvos.get(selection-1));
+            }
+            currentInvos.clear();
+        }
+    }
+
+    public String getCurrentInvos()
+    {
+        StringBuilder invoString = new StringBuilder();
+        for(Integer i : offeredInvos.get(currentWave))
+        {
+            if(Objects.equals(selectedInvos.get(currentWave), i))
+            {
+                invoString.append(" (").append(invoMap.get(i)).append(") ");
+            }
+            else
+            {
+                invoString.append(" ").append(invoMap.get(i)).append(" ");
+            }
+        }
+        return invoString.toString();
     }
 
     @Override
@@ -74,7 +155,8 @@ public class ColosseumHandler extends RoomHandler
                     timeSum += duration;
                     lastCompletedWave = Integer.parseInt(messageSplit[1]);
                     lastWaveDuration = duration;
-                    plugin.lastSplits += "Wave: " + messageSplit[1] + ", Split: " + RoomUtil.time(timeSum) + " (+" + RoomUtil.time(duration) + ")\n";
+                    plugin.lastSplits += "Wave: " + messageSplit[1] + ", Split: " + RoomUtil.time(timeSum) + " (+" + RoomUtil.time(duration) + ")";
+                    plugin.lastSplits += getCurrentInvos() + "\n";
                     switch(messageSplit[1])
                     {
                         case "1":
@@ -119,6 +201,7 @@ public class ColosseumHandler extends RoomHandler
         }
         else if(message.getMessage().contains("Colosseum duration: "))
         {
+            log.info("Found duration msg: " + message.getMessage());
             String[] split = message.getMessage().split(" ");
             if(split.length >= 3)
             {
@@ -129,6 +212,11 @@ public class ColosseumHandler extends RoomHandler
                 timeSum += timeSplit;
                 lastCompletedWave = 12;
             }
+        }
+        else if(message.getMessage().contains("Sol Heredit jumps down"))
+        {
+            currentWave++;
+            liveFrame.tabbedPane.setSelectedIndex(currentWave-1);
         }
     }
 }

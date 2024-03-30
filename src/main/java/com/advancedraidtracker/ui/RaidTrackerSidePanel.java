@@ -138,7 +138,7 @@ public class RaidTrackerSidePanel extends PluginPanel
             chartCreator.open();
         });
 
-        JButton copyLastSplitsButton = new JButton("Copy last splits");
+        JButton copyLastSplitsButton = new JButton("Copy Last Splits");
         copyLastSplitsButton.addActionListener(al ->
         {
             String lastSplits = plugin.getLastSplits();
@@ -146,7 +146,7 @@ public class RaidTrackerSidePanel extends PluginPanel
             {
                 JFrame messageDialog = new JFrame();
                 messageDialog.setAlwaysOnTop(true);
-                JOptionPane.showMessageDialog(messageDialog, "No splits found to copy", "Dialog", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(messageDialog, "No splits found to copy.\nAfter leaving a tracked PVM encounter, pressing this button will copy the room/wave splits to the clipboard to paste.", "Dialog", JOptionPane.ERROR_MESSAGE);
             }
             else
             {

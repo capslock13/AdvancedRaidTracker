@@ -60,7 +60,7 @@ public class Colo extends Raid
         {
             return green + "Completion";
         }
-        if(wave+1 == highestWaveStarted)
+        if(wave+1 == highestWaveStarted || highestWaveStarted == 0)
         {
             return red + "Wave " + (wave+1);
         }

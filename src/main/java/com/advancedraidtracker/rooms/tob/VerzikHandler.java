@@ -30,7 +30,7 @@ public class VerzikHandler extends TOBRoomHandler
 
     public VerzikHandler(Client client, DataWriter clog, AdvancedRaidTrackerConfig config, AdvancedRaidTrackerPlugin plugin, ItemManager itemManager)
     {
-        super(client, clog, config);
+        super(client, clog, config, plugin);
         this.plugin = plugin;
         this.itemManager = itemManager;
         currentHits = new ArrayList<>();

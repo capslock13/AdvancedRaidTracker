@@ -32,7 +32,7 @@ public class BloatHandler extends TOBRoomHandler
 
     public BloatHandler(Client client, DataWriter clog, AdvancedRaidTrackerConfig config, AdvancedRaidTrackerPlugin plugin)
     {
-        super(client, clog, config);
+        super(client, clog, config, plugin);
         this.plugin = plugin;
         roomState = NOT_STARTED;
     }

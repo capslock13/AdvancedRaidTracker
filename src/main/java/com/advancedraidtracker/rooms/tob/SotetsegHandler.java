@@ -42,7 +42,7 @@ public class SotetsegHandler extends TOBRoomHandler
 
     public SotetsegHandler(Client client, DataWriter clog, AdvancedRaidTrackerConfig config, AdvancedRaidTrackerPlugin plugin)
     {
-        super(client, clog, config);
+        super(client, clog, config, plugin);
         this.plugin = plugin;
         this.config = config;
     }

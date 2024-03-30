@@ -2,6 +2,7 @@ package com.advancedraidtracker.rooms.tob;
 
 
 import com.advancedraidtracker.AdvancedRaidTrackerConfig;
+import com.advancedraidtracker.AdvancedRaidTrackerPlugin;
 import com.advancedraidtracker.utility.datautility.DataWriter;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,6 +15,7 @@ public class RoomHandler
 {
     protected Client client;
     protected DataWriter clog;
+    protected AdvancedRaidTrackerPlugin plugin;
     public int roomStartTick = -1;
     protected boolean active = false;
 
@@ -34,11 +36,12 @@ public class RoomHandler
         return "<col=EF1020>";
     }
 
-    public RoomHandler(Client client, DataWriter clog, AdvancedRaidTrackerConfig config)
+    public RoomHandler(Client client, DataWriter clog, AdvancedRaidTrackerConfig config, AdvancedRaidTrackerPlugin plugin)
     {
         this.client = client;
         this.clog = clog;
         this.config = config;
+        this.plugin = plugin;
     }
 
     private String accuracy()

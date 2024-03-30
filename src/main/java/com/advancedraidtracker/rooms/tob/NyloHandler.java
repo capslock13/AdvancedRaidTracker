@@ -33,7 +33,7 @@ public class NyloHandler extends TOBRoomHandler
 
     public NyloHandler(Client client, DataWriter clog, AdvancedRaidTrackerConfig config, AdvancedRaidTrackerPlugin plugin)
     {
-        super(client, clog, config);
+        super(client, clog, config, plugin);
         this.plugin = plugin;
         buildWave = new ArrayList<>();
         nylosAlive = new ArrayList<>();

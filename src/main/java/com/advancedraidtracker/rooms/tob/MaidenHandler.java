@@ -67,7 +67,7 @@ public class MaidenHandler extends TOBRoomHandler
 
     public MaidenHandler(Client client, DataWriter clog, AdvancedRaidTrackerConfig config, AdvancedRaidTrackerPlugin plugin, ItemManager itemManager)
     {
-        super(client, clog, config);
+        super(client, clog, config, plugin);
         this.plugin = plugin;
         this.itemManager = itemManager;
         roomState = RoomState.MaidenRoomState.NOT_STARTED;

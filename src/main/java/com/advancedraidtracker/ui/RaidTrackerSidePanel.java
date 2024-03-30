@@ -18,6 +18,8 @@ import net.runelite.client.ui.PluginPanel;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -76,7 +78,7 @@ public class RaidTrackerSidePanel extends PluginPanel
         JPanel container = new JPanel();
         JPanel primaryContainer = new JPanel();
 
-        primaryContainer.setLayout(new GridLayout(6, 1));
+        primaryContainer.setLayout(new GridLayout(0, 1));
 
         JButton viewRaidsButton = new JButton("View All Raids");
         JButton refreshRaidsButton = new JButton("Refresh");
@@ -129,11 +131,28 @@ public class RaidTrackerSidePanel extends PluginPanel
         livePanelButton.addActionListener(al ->
                 plugin.openLiveFrame());
 
-        JButton chartCreatorButton = new JButton("Create A Chart...");
+        JButton chartCreatorButton = new JButton("Create A Chart");
         chartCreatorButton.addActionListener(al ->
         {
             ChartCreatorFrame chartCreator = new ChartCreatorFrame(config, itemManager, clientThread, configManager);
             chartCreator.open();
+        });
+
+        JButton copyLastSplitsButton = new JButton("Copy last splits");
+        copyLastSplitsButton.addActionListener(al ->
+        {
+            String lastSplits = plugin.getLastSplits();
+            if(lastSplits.isEmpty())
+            {
+                JFrame messageDialog = new JFrame();
+                messageDialog.setAlwaysOnTop(true);
+                JOptionPane.showMessageDialog(messageDialog, "No splits found to copy", "Dialog", JOptionPane.ERROR_MESSAGE);
+            }
+            else
+            {
+                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                clipboard.setContents(new StringSelection(lastSplits), null);
+            }
         });
 
         raidCountLabel = new JLabel("", SwingConstants.CENTER);
@@ -144,6 +163,7 @@ public class RaidTrackerSidePanel extends PluginPanel
         primaryContainer.add(tableRaidsButton);
         primaryContainer.add(livePanelButton);
         primaryContainer.add(chartCreatorButton);
+        primaryContainer.add(copyLastSplitsButton);
 
         DefaultTableModel model = getTableModel();
         loadRaidsTable = new JTable(model)

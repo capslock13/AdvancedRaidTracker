@@ -1,6 +1,7 @@
 package com.advancedraidtracker.rooms;
 
 import com.advancedraidtracker.AdvancedRaidTrackerConfig;
+import com.advancedraidtracker.AdvancedRaidTrackerPlugin;
 import com.advancedraidtracker.constants.LogID;
 import com.advancedraidtracker.rooms.tob.RoomHandler;
 import com.advancedraidtracker.ui.charts.LiveChart;
@@ -17,11 +18,15 @@ public class ColosseumHandler extends RoomHandler
     {
         return "Wave " + currentWave;
     }
-    int currentWave = 0;
+    public int currentWave = 0;
+    public int lastCompletedWave = 0;
+    public int timeSum = 0;
+    public int lastWaveDuration = 0;
+    int lastWaveStartTick = 0;
     private LiveChart liveFrame;
-    public ColosseumHandler(Client client, DataWriter clog, AdvancedRaidTrackerConfig config, LiveChart liveFrame)
+    public ColosseumHandler(Client client, DataWriter clog, AdvancedRaidTrackerConfig config, LiveChart liveFrame, AdvancedRaidTrackerPlugin plugin)
     {
-        super(client, clog, config);
+        super(client, clog, config, plugin);
         this.liveFrame = liveFrame;
     }
 
@@ -38,6 +43,10 @@ public class ColosseumHandler extends RoomHandler
     {
         super.reset();
         currentWave = 0;
+        timeSum = 0;
+        lastWaveStartTick = 0;
+        lastCompletedWave = 0;
+        lastWaveDuration = 0;
     }
 
     @Override
@@ -61,44 +70,48 @@ public class ColosseumHandler extends RoomHandler
                 String[] timeSplit = time.split(":");
                 if(timeSplit.length == 2)
                 {
-                    int split = (Integer.parseInt(timeSplit[0])*100) + (int)(Double.parseDouble(timeSplit[1])/0.6);
+                    int duration = (Integer.parseInt(timeSplit[0])*100) + (int)(Double.parseDouble(timeSplit[1])/0.6);
+                    timeSum += duration;
+                    lastCompletedWave = Integer.parseInt(messageSplit[1]);
+                    lastWaveDuration = duration;
+                    plugin.lastSplits += "Wave: " + messageSplit[1] + ", Split: " + RoomUtil.time(timeSum) + " (+" + RoomUtil.time(duration) + ")\n";
                     switch(messageSplit[1])
                     {
                         case "1":
-                            clog.addLine(LogID.COLOSSEUM_WAVE_1_END, split);
+                            clog.addLine(LogID.COLOSSEUM_WAVE_1_END, duration);
                             break;
                         case "2":
-                            clog.addLine(LogID.COLOSSEUM_WAVE_2_END, split);
+                            clog.addLine(LogID.COLOSSEUM_WAVE_2_END, duration);
                             break;
                         case "3":
-                            clog.addLine(LogID.COLOSSEUM_WAVE_3_END, split);
+                            clog.addLine(LogID.COLOSSEUM_WAVE_3_END, duration);
                             break;
                         case "4":
-                            clog.addLine(LogID.COLOSSEUM_WAVE_4_END, split);
+                            clog.addLine(LogID.COLOSSEUM_WAVE_4_END, duration);
                             break;
                         case "5":
-                            clog.addLine(LogID.COLOSSEUM_WAVE_5_END, split);
+                            clog.addLine(LogID.COLOSSEUM_WAVE_5_END, duration);
                             break;
                         case "6":
-                            clog.addLine(LogID.COLOSSEUM_WAVE_6_END, split);
+                            clog.addLine(LogID.COLOSSEUM_WAVE_6_END, duration);
                             break;
                         case "7":
-                            clog.addLine(LogID.COLOSSEUM_WAVE_7_END, split);
+                            clog.addLine(LogID.COLOSSEUM_WAVE_7_END, duration);
                             break;
                         case "8":
-                            clog.addLine(LogID.COLOSSEUM_WAVE_8_END, split);
+                            clog.addLine(LogID.COLOSSEUM_WAVE_8_END, duration);
                             break;
                         case "9":
-                            clog.addLine(LogID.COLOSSEUM_WAVE_9_END, split);
+                            clog.addLine(LogID.COLOSSEUM_WAVE_9_END, duration);
                             break;
                         case "10":
-                            clog.addLine(LogID.COLOSSEUM_WAVE_10_END, split);
+                            clog.addLine(LogID.COLOSSEUM_WAVE_10_END, duration);
                             break;
                         case "11":
-                            clog.addLine(LogID.COLOSSEUM_WAVE_11_END, split);
+                            clog.addLine(LogID.COLOSSEUM_WAVE_11_END, duration);
                             break;
                         case "12":
-                            clog.addLine(LogID.COLOSSEUM_WAVE_12_END, split);
+                            clog.addLine(LogID.COLOSSEUM_WAVE_12_END, duration);
                             break;
                     }
                 }
@@ -109,8 +122,12 @@ public class ColosseumHandler extends RoomHandler
             String[] split = message.getMessage().split(" ");
             if(split.length >= 3)
             {
-                int timeSplit = (Integer.parseInt(split[2])*100) + (int)(Double.parseDouble(split[2])/0.6);
+                String[] subSplit = Text.removeTags(split[2]).split(":");
+                int timeSplit = (Integer.parseInt(subSplit[0])*100) + (int)(Double.parseDouble(subSplit[1])/0.6);
+                lastWaveDuration = timeSplit-timeSum;
                 clog.addLine(LogID.COLOSSEUM_WAVE_12_END, timeSplit);
+                timeSum += timeSplit;
+                lastCompletedWave = 12;
             }
         }
     }

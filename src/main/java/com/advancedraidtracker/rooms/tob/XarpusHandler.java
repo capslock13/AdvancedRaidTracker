@@ -28,7 +28,7 @@ public class XarpusHandler extends TOBRoomHandler
 
     public XarpusHandler(Client client, DataWriter clog, AdvancedRaidTrackerConfig config, AdvancedRaidTrackerPlugin plugin)
     {
-        super(client, clog, config);
+        super(client, clog, config, plugin);
         this.plugin = plugin;
     }
 

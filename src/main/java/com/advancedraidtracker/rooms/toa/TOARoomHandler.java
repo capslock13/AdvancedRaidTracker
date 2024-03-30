@@ -14,7 +14,7 @@ public class TOARoomHandler extends RoomHandler
 
     public TOARoomHandler(Client client, DataWriter clog, AdvancedRaidTrackerConfig config, AdvancedRaidTrackerPlugin plugin, TOAHandler handler)
     {
-        super(client, clog, config);
+        super(client, clog, config, plugin);
         this.plugin = plugin;
         this.handler = handler;
     }

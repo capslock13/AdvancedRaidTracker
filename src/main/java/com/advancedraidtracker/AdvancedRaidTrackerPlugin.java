@@ -235,9 +235,9 @@ public class AdvancedRaidTrackerPlugin extends Plugin
 
         clientToolbar.addNavigation(navButtonPrimary);
 
-        colloseumHandler = new ColosseumHandler(client, clog, config, liveFrame);
+        colloseumHandler = new ColosseumHandler(client, clog, config, liveFrame, this);
 
-        lobbyTOB = new TOBLobbyHandler(client, clog, config);
+        lobbyTOB = new TOBLobbyHandler(client, clog, config, this);
         maiden = new MaidenHandler(client, clog, config, this, itemManager);
         bloat = new BloatHandler(client, clog, config, this);
         nylo = new NyloHandler(client, clog, config, this);
@@ -258,7 +258,7 @@ public class AdvancedRaidTrackerPlugin extends Plugin
         akkha = new AkkhaHandler(client, clog, config, this, toaHandler, itemManager);
         wardens = new WardensHandler(client, clog, config, this, toaHandler);
         coxHandler = new COXHandler();
-        tekton = new TektonHandler(client, clog, config);
+        tekton = new TektonHandler(client, clog, config, this);
 
         inTheatre = false;
         wasInTheatre = false;
@@ -329,12 +329,25 @@ public class AdvancedRaidTrackerPlugin extends Plugin
                 inTheatre = true;
                 inColosseum = true;
                 activeState = true;
+                lastSplits = "";
             }
         }
         else
         {
             if (!inRegion(client, 7216))
             {
+                if(colloseumHandler.lastCompletedWave < colloseumHandler.currentWave)
+                {
+                    lastSplits += "Duration (Death): " + RoomUtil.time((client.getTickCount()-colloseumHandler.roomStartTick)+colloseumHandler.timeSum)  + " (+" + RoomUtil.time(client.getTickCount()-colloseumHandler.roomStartTick) +")";
+                }
+                else if(colloseumHandler.lastCompletedWave == 12)
+                {
+                    lastSplits += "Duration (Success): " + RoomUtil.time(colloseumHandler.timeSum) + " (+" + RoomUtil.time(colloseumHandler.lastWaveDuration) + ")";
+                }
+                else
+                {
+                    lastSplits += "Duration (Reset): " + RoomUtil.time(colloseumHandler.timeSum) + " (+" + RoomUtil.time(colloseumHandler.lastWaveDuration) + ")";
+                }
                 currentRoom = lobbyTOB; //todo idk
                 colloseumHandler.reset();
                 inTheatre = false;
@@ -359,6 +372,7 @@ public class AdvancedRaidTrackerPlugin extends Plugin
             clog.addLine(LATE_START, room.name);
             liveFrame.resetAll();
             liveFrame.switchToTOB();
+            lastSplits = "";
         }
         if (inRegion(client, TOA_LOBBY))
         {
@@ -372,6 +386,7 @@ public class AdvancedRaidTrackerPlugin extends Plugin
             clog.addLine(ENTERED_TOA);
             liveFrame.resetAll();
             liveFrame.switchToTOA();
+            lastSplits = "";
         }
         switch (room)
         {
@@ -383,6 +398,7 @@ public class AdvancedRaidTrackerPlugin extends Plugin
                     enteredMaiden();
                     liveFrame.resetAll();
                     liveFrame.switchToTOB();
+                    lastSplits = "";
                 }
                 activeState = true;
                 break;
@@ -1908,5 +1924,12 @@ public class AdvancedRaidTrackerPlugin extends Plugin
                 xarpus.updateOverheadText(event);
             }
         }
+    }
+
+    public String lastSplits = "";
+
+    public String getLastSplits()
+    {
+        return lastSplits;
     }
 }

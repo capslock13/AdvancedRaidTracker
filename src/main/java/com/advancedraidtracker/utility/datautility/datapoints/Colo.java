@@ -47,6 +47,10 @@ public class Colo extends Raid
                 wave++;
             }
         }
+        if(get("Wave 12 Duration") > 0)
+        {
+            return green + "Completion";
+        }
         return red + "Wave " + (wave+1);
     }
 

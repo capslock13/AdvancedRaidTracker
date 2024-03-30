@@ -103,5 +103,14 @@ public class ColosseumHandler extends RoomHandler
                 }
             }
         }
+        else if(message.getMessage().contains("Colosseum duration: "))
+        {
+            String[] split = message.getMessage().split(" ");
+            if(split.length >= 3)
+            {
+                int timeSplit = (Integer.parseInt(split[2])*100) + (int)(Double.parseDouble(split[2])/0.6);
+                clog.addLine(LogID.COLOSSEUM_WAVE_12_END, timeSplit);
+            }
+        }
     }
 }

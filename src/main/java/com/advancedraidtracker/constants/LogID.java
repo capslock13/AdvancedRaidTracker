@@ -666,6 +666,9 @@ public enum LogID
     COLOSSEUM_WAVE_12_END(2012, true, COLOSSEUM,
             new ParseInstruction(SPLIT, CHALLENGE_TIME, COLOSSEUM_WAVE_12_DURATION, COLOSSEUM_WAVE_12_SPLIT),
             "Wave 12 Ended", "Room Tick"),
+    COLOSSEUM_WAVE_STARTED(2013, true, COLOSSEUM,
+            new ParseInstruction(MANUAL_PARSE),
+            "Wave Started", "Wave Number"),
 
     ;
     /*

@@ -1,7 +1,6 @@
 package com.advancedraidtracker.utility.datautility.datapoints;
 
-import com.advancedraidtracker.constants.RaidRoom;
-import com.advancedraidtracker.constants.RaidType;
+import com.advancedraidtracker.constants.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.file.Path;
@@ -12,6 +11,7 @@ import static com.advancedraidtracker.constants.RaidRoom.VERZIK;
 @Slf4j
 public class Colo extends Raid
 {
+    int highestWaveStarted = 0;
     public Colo(Path filepath, List<LogEntry> raidData)
     {
         super(filepath, raidData);
@@ -21,7 +21,16 @@ public class Colo extends Raid
     @Override
     protected boolean parseLogEntry(LogEntry entry)
     {
-        log.info("parsing: " + String.join(",", entry.lines));
+        for(ParseInstruction instruction : entry.logEntry.parseInstructions)
+        {
+            if(instruction.type == ParseType.MANUAL_PARSE)
+            {
+                if(entry.logEntry.equals(LogID.COLOSSEUM_WAVE_STARTED))
+                {
+                    highestWaveStarted = entry.getFirstInt();
+                }
+            }
+        }
         return super.parseLogEntry(entry);
     }
 
@@ -51,7 +60,11 @@ public class Colo extends Raid
         {
             return green + "Completion";
         }
-        return red + "Wave " + (wave+1);
+        if(wave+1 == highestWaveStarted)
+        {
+            return red + "Wave " + (wave+1);
+        }
+        return orange + "Wave " + (wave);
     }
 
     @Override

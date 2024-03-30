@@ -49,6 +49,7 @@ public class ColosseumHandler extends RoomHandler
             active = true;
             roomStartTick = client.getTickCount();
             liveFrame.tabbedPane.setSelectedIndex(currentWave-1);
+            clog.addLine(LogID.COLOSSEUM_WAVE_STARTED, currentWave);
         }
         if(message.getMessage().contains("Wave duration: "))
         {

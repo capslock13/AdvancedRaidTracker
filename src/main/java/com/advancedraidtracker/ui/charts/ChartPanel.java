@@ -43,11 +43,13 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     int boxHeight;
     int boxWidth;
     private int windowHeight = 600;
+    private int windowWidth = 1410;
+    int RIGHT_MARGIN = 10;
     int TOP_MARGIN = 30;
     int NAME_MARGIN = 6;
     int LEFT_MARGIN = 100;
     int instanceTime = 0;
-    int TICKS_TO_SHOW = 50;
+    int ticksToShow = 50;
 
     int selectedTick = -1;
     String selectedPlayer = "";
@@ -108,6 +110,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
     public void setSize(int x, int y)
     {
+        windowWidth = x;
         windowHeight = y;
         if(isActive || !live)
         {
@@ -365,7 +368,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     public void incrementTick()
     {
         endTick++;
-        if (endTick % TICKS_TO_SHOW == 0 || endTick == 1)
+        if (endTick % ticksToShow == 0 || endTick == 1)
         {
             recalculateSize();
         } else
@@ -401,8 +404,9 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
         }
         int length = endTick - startTick;
-        boxCount = (length / TICKS_TO_SHOW);
-        if (boxCount % TICKS_TO_SHOW != 0)
+        ticksToShow = ((windowWidth-LEFT_MARGIN-RIGHT_MARGIN)/(scale))-1;
+        boxCount = (length / ticksToShow);
+        if (boxCount % ticksToShow != 0)
         {
             boxCount++;
         }
@@ -411,7 +415,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             boxCount = 1;
         }
         boxHeight = ((attackers.size() + 3) * scale);
-        boxWidth = (LEFT_MARGIN + (scale*(TICKS_TO_SHOW+1)));
+        boxWidth = (LEFT_MARGIN + (scale*(ticksToShow +1)));
         boxesToShow = Math.min(1+((windowHeight-TITLE_BAR_PLUS_TAB_HEIGHT-scale)/boxHeight), boxCount);
         drawGraph();
     }
@@ -441,7 +445,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         startTick = 0;
         endTick = 0;
         shouldWrap = true;
-        boxWidth = LEFT_MARGIN + scale * (TICKS_TO_SHOW+1);
+        boxWidth = LEFT_MARGIN + scale * (ticksToShow +1);
         img = new BufferedImage(boxWidth+10, 600, BufferedImage.TYPE_INT_ARGB);
         recalculateSize();
         addMouseListener(this);
@@ -481,12 +485,12 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
     int getYOffset(int tick)
     {
-        return ((((tick - startTick) / TICKS_TO_SHOW) * boxHeight) + TOP_MARGIN)-(currentScrollOffset);
+        return ((((tick - startTick) / ticksToShow) * boxHeight) + TOP_MARGIN)-(currentScrollOffset);
     }
 
     int getXOffset(int tick)
     {
-        return LEFT_MARGIN + ((shouldWrap) ? ((tick - startTick) % TICKS_TO_SHOW) * scale : tick * scale);
+        return LEFT_MARGIN + (((tick - startTick) % ticksToShow) * scale);
     }
 
     private void drawBoxStyleAccordingToConfig(Graphics2D g, int x, int y, int width, int height, int roundX, int roundY)
@@ -719,7 +723,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                     {
                         roomSpecificText = "Instance Time";
                     }
-                    int textYPosition = getYOffset((j*TICKS_TO_SHOW)) - (fontHeight/2);
+                    int textYPosition = getYOffset((j* ticksToShow)) - (fontHeight/2);
                     if(textYPosition > scale + 5)
                     {
                         g.drawString(roomSpecificText, 5, textYPosition); //todo why does scroll not render correctly?
@@ -789,7 +793,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             String damage = String.valueOf(dawnSpec.getDamage());
             if (dawnSpec.getDamage() != -1)
             {
-                int xOffset = (shouldWrap) ? ((dawnSpec.tick - startTick - 2) % TICKS_TO_SHOW) * scale : (dawnSpec.tick + 2) * scale;
+                int xOffset = (shouldWrap) ? ((dawnSpec.tick - startTick - 2) % ticksToShow) * scale : (dawnSpec.tick + 2) * scale;
                 int yOffset = getYOffset(dawnSpec.tick);
                 yOffset += (playerOffsets.size() + 3) * scale;
                 g.setColor(config.fontColor());
@@ -944,7 +948,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                 {
                     break;
                 }
-                int currentEndTick = (shouldWrap) ? lastEndTick + (TICKS_TO_SHOW - (lastEndTick % TICKS_TO_SHOW) + (startTick % TICKS_TO_SHOW)) : maxTick;
+                int currentEndTick = (shouldWrap) ? lastEndTick + (ticksToShow - (lastEndTick % ticksToShow) + (startTick % ticksToShow)) : maxTick;
                 if (currentEndTick > maxTick)
                 {
                     currentEndTick = maxTick;
@@ -1350,7 +1354,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
     public boolean shouldTickBeDrawn(int tick)
     {
-        return tick >= (startTick + currentBox*TICKS_TO_SHOW) && tick < (startTick + ((currentBox+boxesToShow)*TICKS_TO_SHOW)) && tick >= startTick && tick <= endTick;
+        return tick >= (startTick + currentBox* ticksToShow) && tick < (startTick + ((currentBox+boxesToShow)* ticksToShow)) && tick >= startTick && tick <= endTick;
     }
 
     private void drawLinePlacement(Graphics2D g)
@@ -1438,7 +1442,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             int boxNumber = (y - 20) / boxHeight;
             if (x > LEFT_MARGIN)
             {
-                int tick = startTick + (TICKS_TO_SHOW * boxNumber + ((x - LEFT_MARGIN) / scale));
+                int tick = startTick + (ticksToShow * boxNumber + ((x - LEFT_MARGIN) / scale));
                 int playerOffsetPosition = (((y - TOP_MARGIN - scale) % boxHeight) / scale);
                 if (playerOffsetPosition >= 0 && playerOffsetPosition < attackers.size() && (y - TOP_MARGIN - scale > 0))
                 {

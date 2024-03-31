@@ -76,6 +76,7 @@ public class ColosseumHandler extends RoomHandler
         lastWaveDuration = 0;
         offeredInvos.clear();
         selectedInvos.clear();
+        active = false;
     }
 
     public void updateScriptPreFired(ScriptPreFired event)
@@ -96,6 +97,36 @@ public class ColosseumHandler extends RoomHandler
 
             }
         }
+    }
+
+    public String getInvos()
+    {
+        String list = "";
+        Map<Integer, Integer> invoLevels = new HashMap<>();
+        for(Integer invo : selectedInvos.values())
+        {
+            invoLevels.merge(invo, 1, Integer::sum);
+        }
+        int index = 0;
+        for(Integer invo : invoLevels.keySet())
+        {
+            if(index%3==0 && index != 0)
+            {
+                list += "\n";
+            }
+            list += invoMap.get(invo);
+            if(invoLevels.get(invo) > 1)
+            {
+                list += invoLevels.get(invo);
+            }
+            list += " ";
+            index++;
+        }
+        if(!list.endsWith("\n"))
+        {
+            list += "\n";
+        }
+        return list;
     }
 
     @Override
@@ -155,8 +186,7 @@ public class ColosseumHandler extends RoomHandler
                     timeSum += duration;
                     lastCompletedWave = Integer.parseInt(messageSplit[1]);
                     lastWaveDuration = duration;
-                    plugin.lastSplits += "Wave: " + messageSplit[1] + ", Split: " + RoomUtil.time(timeSum) + " (+" + RoomUtil.time(duration) + ")";
-                    plugin.lastSplits += getCurrentInvos() + "\n";
+                    plugin.lastSplits += "Wave: " + messageSplit[1] + ", Split: " + RoomUtil.time(timeSum) + " (+" + RoomUtil.time(duration) + ")\n";
                     switch(messageSplit[1])
                     {
                         case "1":
@@ -206,7 +236,12 @@ public class ColosseumHandler extends RoomHandler
             if(split.length >= 3)
             {
                 String[] subSplit = Text.removeTags(split[2]).split(":");
-                int timeSplit = (Integer.parseInt(subSplit[0])*100) + (int)(Double.parseDouble(subSplit[1])/0.6);
+                String timeMessage = subSplit[1];
+                if(subSplit[1].endsWith("."))
+                {
+                    timeMessage = subSplit[1].substring(0, subSplit[1].length()-1);
+                }
+                int timeSplit = (Integer.parseInt(subSplit[0])*100) + (int)(Double.parseDouble(timeMessage)/0.6);
                 lastWaveDuration = timeSplit-timeSum;
                 clog.addLine(LogID.COLOSSEUM_WAVE_12_END, timeSplit);
                 timeSum += timeSplit;
@@ -217,6 +252,8 @@ public class ColosseumHandler extends RoomHandler
         {
             currentWave++;
             liveFrame.tabbedPane.setSelectedIndex(currentWave-1);
+            active = true;
+            roomStartTick = client.getTickCount();
         }
     }
 }

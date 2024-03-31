@@ -90,6 +90,10 @@ public enum RaidRoom
         {
             compareName = compareName.substring(0, compareName.length()-3);
         }
+        if(compareName.contains("Wave"))
+        {
+            return COLOSSEUM;
+        }
         for(RaidRoom room : RaidRoom.values())
         {
             if(room.name.equals(compareName))

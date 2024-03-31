@@ -132,6 +132,10 @@ public class DataReader //todo move any methods that read files to here. I belie
             while(scanner.hasNextLine())
             {
                 String[] line = scanner.nextLine().split(",");
+                if(!RaidRoom.getRoom(line[line.length-1]).equals(RaidRoom.UNKNOWN))
+                {
+                    currentRoom = RaidRoom.getRoom(line[line.length-1]);
+                }
                 switch (line[3])
                 {
                     case "587": //Add NPC Mapping

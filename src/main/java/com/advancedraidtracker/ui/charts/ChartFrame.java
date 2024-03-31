@@ -5,6 +5,7 @@ import com.advancedraidtracker.constants.RaidRoom;
 import com.advancedraidtracker.ui.BaseFrame;
 import com.advancedraidtracker.utility.datautility.ChartData;
 import com.advancedraidtracker.utility.datautility.DataReader;
+import com.advancedraidtracker.utility.datautility.datapoints.Colo;
 import com.advancedraidtracker.utility.datautility.datapoints.Raid;
 import com.advancedraidtracker.utility.datautility.datapoints.RoomParser;
 import com.advancedraidtracker.utility.datautility.datapoints.toa.Toa;
@@ -27,13 +28,29 @@ public class ChartFrame extends BaseFrame
     private int frameY = this.getHeight();
     private Set<String> TOBRooms = new LinkedHashSet<>(Arrays.asList("Maiden", "Bloat", "Nylocas", "Sotetseg", "Xarpus", "Verzik P1", "Verzik P2", "Verzik P3"));
     private Set<String> TOARooms = new LinkedHashSet<>(Arrays.asList("Apmeken", "Baba", "Scabaras", "Kephri", "Het", "Akkha", "Crondis", "Zebak", "Wardens P1", "Wardens P2", "Wardens P3"));
+    private Set<String> COLRooms = new LinkedHashSet<>(Arrays.asList("Wave 1", "Wave 2", "Wave 3", "Wave 4", "Wave 5", "Wave 6", "Wave 7", "Wave 8", "Wave 9", "Wave 10", "Wave 11", "Wave 12"));
     public ChartFrame(Raid roomData, AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
     {
         ChartData chartData = DataReader.getChartData(roomData.getFilepath(), itemManager);
 
         JTabbedPane basepane = new JTabbedPane();
 
-        for(String bossName : ((roomData instanceof Toa) ? TOARooms : TOBRooms))
+        Set<String> activeSet;
+
+        if(roomData instanceof Toa)
+        {
+            activeSet = TOARooms;
+        }
+        else if(roomData instanceof Colo)
+        {
+            activeSet = COLRooms;
+        }
+        else
+        {
+            activeSet = TOBRooms;
+        }
+
+        for(String bossName : activeSet)
         {
             RaidRoom room = RaidRoom.getRoom(bossName);
             RoomParser parser = roomData.getParser(room);
@@ -47,13 +64,26 @@ public class ChartFrame extends BaseFrame
             chartPanel.setRoomHP(chartData.getHPMapping(room));
             chartPanel.setAttackers(new ArrayList<>(roomData.getPlayers()));
             chartPanel.enableWrap();
-            chartPanel.setStartTick((bossName.contains("Verzik") || bossName.contains("Wardens")) ? //Just trust
-                    (bossName.contains("P1") ? 1 : (bossName.contains("P2") ? roomData.get(bossName.replace('2', '1') + " Time") :
-                            roomData.get(bossName.replace('3', '1') + " Time") + roomData.get(bossName.replace('3', '2') + " Time"))) : 1);
-            chartPanel.setTick(((bossName.contains("Verzik") || bossName.contains("Wardens")) && !bossName.contains("P1"))
-                    ? (bossName.contains("P2")) ? roomData.get(bossName + " Time") +
-                    roomData.get(bossName.replace('2', '1') + " Time") :
-                    roomData.get(bossName.substring(0, bossName.length() - 2) + "Time") : roomData.get(bossName + " Time"));
+            if(bossName.contains("Wave"))
+            {
+                int starttick = 1;
+                if(!bossName.equals("Wave 1"))
+                {
+                    starttick = roomData.get(bossName + " Split");
+                }
+                chartPanel.setStartTick(starttick);
+                chartPanel.setTick(starttick + roomData.get(bossName + " Duration"));
+            }
+            else
+            {
+                chartPanel.setStartTick((bossName.contains("Verzik") || bossName.contains("Wardens")) ? //Just trust
+                        (bossName.contains("P1") ? 1 : (bossName.contains("P2") ? roomData.get(bossName.replace('2', '1') + " Time") :
+                                roomData.get(bossName.replace('3', '1') + " Time") + roomData.get(bossName.replace('3', '2') + " Time"))) : 1);
+                chartPanel.setTick(((bossName.contains("Verzik") || bossName.contains("Wardens")) && !bossName.contains("P1"))
+                        ? (bossName.contains("P2")) ? roomData.get(bossName + " Time") +
+                        roomData.get(bossName.replace('2', '1') + " Time") :
+                        roomData.get(bossName.substring(0, bossName.length() - 2) + "Time") : roomData.get(bossName + " Time"));
+            }
             chartPanel.addThrallBoxes(chartData.getThralls(room));
             chartPanel.addLines(parser.getLines());
 

@@ -216,20 +216,6 @@ public class AdvancedRaidTrackerPlugin extends Plugin
     {
         super.startUp();
 
-        String[] split = "Colosseum duration: <col=ff3045>24:48.00</col> (new personal best)".split(" ");
-        if(split.length >= 3)
-        {
-            String[] subSplit = Text.removeTags(split[2]).split(":");
-            String timeMessage = subSplit[1];
-            if(subSplit[1].endsWith("."))
-            {
-                timeMessage = subSplit[1].substring(0, subSplit[1].length()-1);
-            }
-            int timeSplit = (Integer.parseInt(subSplit[0])*100) + (int)(Double.parseDouble(timeMessage)/0.6);
-            log.info("time: " + RoomUtil.time(timeSplit));
-        }
-
-
         splitLegacyFiles();
         localPlayers = new ArrayList<>();
         thrallTracker = new ThrallTracker(this);
@@ -360,13 +346,14 @@ public class AdvancedRaidTrackerPlugin extends Plugin
         {
             if (!inRegion(client, 7216))
             {
+                lastSplits = colloseumHandler.getInvos() + lastSplits;
                 if(colloseumHandler.lastCompletedWave < colloseumHandler.currentWave)
                 {
-                    lastSplits += "Duration (Death): " + RoomUtil.time((client.getTickCount()-colloseumHandler.roomStartTick)+colloseumHandler.timeSum)  + " (+" + RoomUtil.time(client.getTickCount()-colloseumHandler.roomStartTick) +")" + colloseumHandler.getCurrentInvos();
+                    lastSplits += "Duration (Death): " + RoomUtil.time((client.getTickCount()-colloseumHandler.roomStartTick)+colloseumHandler.timeSum)  + " (+" + RoomUtil.time(client.getTickCount()-colloseumHandler.roomStartTick) +")";
                 }
                 else if(colloseumHandler.lastCompletedWave == 12)
                 {
-                    lastSplits += "Duration (Success): " + RoomUtil.time(colloseumHandler.timeSum) + " (+" + RoomUtil.time(colloseumHandler.lastWaveDuration) + ")" + colloseumHandler.getCurrentInvos();
+                    lastSplits += "Duration (Success): " + RoomUtil.time(colloseumHandler.timeSum) + " (+" + RoomUtil.time(colloseumHandler.lastWaveDuration) + ")";
                 }
                 else
                 {

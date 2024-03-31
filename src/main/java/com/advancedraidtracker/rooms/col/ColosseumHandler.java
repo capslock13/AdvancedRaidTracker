@@ -1,4 +1,4 @@
-package com.advancedraidtracker.rooms;
+package com.advancedraidtracker.rooms.col;
 
 import com.advancedraidtracker.AdvancedRaidTrackerConfig;
 import com.advancedraidtracker.AdvancedRaidTrackerPlugin;

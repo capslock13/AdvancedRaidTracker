@@ -1,8 +1,9 @@
 package com.advancedraidtracker;
 
 import com.advancedraidtracker.constants.*;
-import com.advancedraidtracker.rooms.ColosseumHandler;
+import com.advancedraidtracker.rooms.col.ColosseumHandler;
 import com.advancedraidtracker.rooms.cox.*;
+import com.advancedraidtracker.rooms.inf.InfernoHandler;
 import com.advancedraidtracker.rooms.toa.*;
 import com.advancedraidtracker.rooms.tob.*;
 import com.advancedraidtracker.ui.charts.ChartTheme;
@@ -103,6 +104,7 @@ public class AdvancedRaidTrackerPlugin extends Plugin
     @Inject
     private Client client;
 
+    private InfernoHandler infernoHandler;
     private ColosseumHandler colloseumHandler;
     private TOBLobbyHandler lobbyTOB;
     private MaidenHandler maiden;
@@ -260,6 +262,8 @@ public class AdvancedRaidTrackerPlugin extends Plugin
         coxHandler = new COXHandler();
         tekton = new TektonHandler(client, clog, config, this);
 
+        infernoHandler = new InfernoHandler(client, clog, config, this);
+
         inTheatre = false;
         wasInTheatre = false;
         deferredTick = 0;
@@ -317,12 +321,60 @@ public class AdvancedRaidTrackerPlugin extends Plugin
         return Room.UNKNOWN;
     }
 
+    private boolean inInferno = false;
     private boolean inColosseum = false;
     private void updateRoom()
     {
         RoomHandler previous = currentRoom;
         boolean activeState = false;
         Room room = getRoom();
+        if(!inInferno)
+        {
+            if(client.isInInstancedRegion() && inRegion(client, 9043))
+            {
+                log.info("Entered inferno");
+                currentRoom = infernoHandler;
+                infernoHandler.reset();
+                infernoHandler.start();
+                clog.setRaidType(RaidType.INFERNO);
+                clog.migrateToNewRaid();
+                clog.addLine(ENTERED_RAID);
+                clog.addLine(PARTY_MEMBERS, client.getLocalPlayer().getName());
+                liveFrame.switchToInf();
+                ArrayList<String> players = new ArrayList<>();
+                players.add(client.getLocalPlayer().getName());
+                liveFrame.setPlayers(players);
+                inTheatre = true;
+                inInferno = true;
+                activeState = true;
+                lastSplits = "";
+            }
+        }
+        else
+        {
+            if(!inRegion(client, 9043))
+            {
+                if(infernoHandler.lastCompletedWave < 69)
+                {
+                    lastSplits += "Duration (Failed): " + RoomUtil.time((client.getTickCount()-infernoHandler.roomStartTick))  + " (+" + RoomUtil.time(client.getTickCount()-infernoHandler.getLastWaveStartTime()) +")";
+                }
+                else if(colloseumHandler.lastCompletedWave == 12)
+                {
+                    lastSplits += "Duration (Success): " + RoomUtil.time(infernoHandler.getDuration()) + " (+" + RoomUtil.time(client.getTickCount()-infernoHandler.getLastWaveStartTime()) + ")";
+                }
+                log.info("Exited inferno");
+                //clog.addLine(LEFT_TOB, String.valueOf(client.getTickCount() - currentRoom.roomStartTick), currentRoom.getName());
+                currentRoom = lobbyTOB;
+                infernoHandler.reset();
+                inTheatre = false;
+                inInferno = false;
+                liveFrame.resetAll();
+            }
+            else
+            {
+                activeState = true;
+            }
+        }
         if(!inColosseum)
         {
             if (client.isInInstancedRegion() && inRegion(client, 7216))

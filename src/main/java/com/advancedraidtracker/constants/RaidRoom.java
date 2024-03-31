@@ -14,6 +14,7 @@ public enum RaidRoom
     TEKTON(19, "Tekton"), CRABS(20, "Crabs"), ICE_DEMON(21, "Ice"), SHAMANS(22, "Shamans"), VANGUARDS(23, "Vanguards"), THIEVING(24, "Thieving"), VESPULA(25, "Vespula"),
     TIGHT_ROPE(26, "Rope"), GUARDIANS(27, "Guardians"), VASA_NISTIRIO(28, "Vasa"), SKELETAL_MYSTICS(29, "Mystics"), MUTTADILES(30, "Muttadiles"), OLM(31, "Olm"),
     COLOSSEUM(32, "Colosseum"),
+    INFERNO(33, "Inferno"),
     ANY(17, "Any"), ALL(18, "All"),
 
     ;

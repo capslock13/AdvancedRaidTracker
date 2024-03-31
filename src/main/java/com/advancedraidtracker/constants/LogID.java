@@ -674,7 +674,16 @@ public enum LogID
             "Invocations Offered", "Invocation 1", "Invocation 2", "Invocation 3"),
     COLOSSEUM_INVOCATION_SELECTED(2015, true, COLOSSEUM,
             new ParseInstruction(MANUAL_PARSE),
-            "Invocation Selected", "Invocation");
+            "Invocation Selected", "Invocation"),
+    INFERNO_TIMER_STARTED(3003, true, INFERNO,
+            new ParseInstruction(MANUAL_PARSE),
+            "Inferno Timer Started", "Client Tick"),
+    INFERNO_WAVE_STARTED(3001, true, INFERNO,
+            new ParseInstruction(MANUAL_PARSE),
+            "Wave Started", "Wave Number", "Client Tick"),
+    INFERNO_WAVE_ENDED(3002, true, INFERNO,
+            new ParseInstruction(MANUAL_PARSE),
+            "Wave Ended", "Wave Number", "Room Tick"),
 
     ;
     /*

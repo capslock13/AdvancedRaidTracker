@@ -2,11 +2,11 @@ package com.advancedraidtracker.utility.datautility;
 
 import com.advancedraidtracker.constants.LogID;
 import com.advancedraidtracker.constants.RaidRoom;
-import com.advancedraidtracker.utility.PlayerWornItems;
-import com.advancedraidtracker.utility.datautility.datapoints.Colo;
+import com.advancedraidtracker.utility.datautility.datapoints.col.Colo;
 import com.advancedraidtracker.utility.datautility.datapoints.LogEntry;
 import com.advancedraidtracker.utility.datautility.datapoints.Raid;
 import com.advancedraidtracker.utility.datautility.datapoints.RoomParser;
+import com.advancedraidtracker.utility.datautility.datapoints.inf.Inf;
 import com.advancedraidtracker.utility.datautility.datapoints.toa.Toa;
 import com.advancedraidtracker.utility.datautility.datapoints.tob.Tob;
 import com.advancedraidtracker.utility.wrappers.PlayerDidAttack;
@@ -71,6 +71,11 @@ public class DataReader //todo move any methods that read files to here. I belie
                     else if(path.getFileName().toString().toLowerCase().contains("col"))
                     {
                         ret = new Colo(path, currentRaid);
+                        ret.parseAllEntries();
+                    }
+                    else if(path.getFileName().toString().toLowerCase().contains("inf")) //todo idk these if statements arent it
+                    {
+                        ret = new Inf(path, currentRaid);
                         ret.parseAllEntries();
                     }
                 } else if (entry.logEntry == LogID.LEFT_TOA) //todo look into what needs to be done to handle this post deprecation

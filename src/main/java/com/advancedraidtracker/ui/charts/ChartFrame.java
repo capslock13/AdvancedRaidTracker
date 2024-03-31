@@ -5,7 +5,7 @@ import com.advancedraidtracker.constants.RaidRoom;
 import com.advancedraidtracker.ui.BaseFrame;
 import com.advancedraidtracker.utility.datautility.ChartData;
 import com.advancedraidtracker.utility.datautility.DataReader;
-import com.advancedraidtracker.utility.datautility.datapoints.Colo;
+import com.advancedraidtracker.utility.datautility.datapoints.col.Colo;
 import com.advancedraidtracker.utility.datautility.datapoints.Raid;
 import com.advancedraidtracker.utility.datautility.datapoints.RoomParser;
 import com.advancedraidtracker.utility.datautility.datapoints.toa.Toa;

@@ -1,13 +1,13 @@
-package com.advancedraidtracker.utility.datautility.datapoints;
+package com.advancedraidtracker.utility.datautility.datapoints.col;
 
 import com.advancedraidtracker.constants.*;
+import com.advancedraidtracker.utility.datautility.datapoints.LogEntry;
+import com.advancedraidtracker.utility.datautility.datapoints.Raid;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.file.Path;
 import java.util.List;
 
-import static com.advancedraidtracker.constants.RaidRoom.*;
-import static com.advancedraidtracker.constants.RaidRoom.VERZIK;
 @Slf4j
 public class Colo extends Raid
 {

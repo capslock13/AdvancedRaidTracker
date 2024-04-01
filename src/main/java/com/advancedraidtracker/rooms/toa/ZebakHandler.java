@@ -39,6 +39,7 @@ public class ZebakHandler extends TOARoomHandler
     public void reset()
     {
         roomState = RoomState.ZebakRoomState.NOT_STARTED;
+        super.reset();
     }
 
     @Override
@@ -49,6 +50,7 @@ public class ZebakHandler extends TOARoomHandler
             roomState = RoomState.ZebakRoomState.PHASE_1;
             roomStartTick = client.getTickCount();
             clog.addLine(LogID.TOA_ZEBAK_START, roomStartTick);
+            active = true;
         }
         super.updateGameTick(gameTick);
     }
@@ -95,6 +97,7 @@ public class ZebakHandler extends TOARoomHandler
             sendTimeMessage("Zebak Duration: ", duration);
             clog.addLine(LogID.TOA_ZEBAK_FINISHED, duration);
             plugin.liveFrame.setRoomFinished(getName(), duration);
+            active = false;
         }
         if(changed == 11732)
         {

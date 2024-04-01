@@ -3,14 +3,17 @@ package com.advancedraidtracker.rooms.tob;
 
 import com.advancedraidtracker.AdvancedRaidTrackerConfig;
 import com.advancedraidtracker.AdvancedRaidTrackerPlugin;
+import com.advancedraidtracker.constants.LogID;
 import com.advancedraidtracker.utility.datautility.DataWriter;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
+import net.runelite.api.Skill;
 import net.runelite.api.events.*;
 import com.advancedraidtracker.utility.RoomUtil;
-
+@Slf4j
 public class RoomHandler
 {
     protected Client client;
@@ -18,6 +21,7 @@ public class RoomHandler
     protected AdvancedRaidTrackerPlugin plugin;
     public int roomStartTick = -1;
     protected boolean active = false;
+    private boolean wasActive = false;
 
     protected final AdvancedRaidTrackerConfig config;
     protected int currentPrayer = -1;
@@ -148,7 +152,23 @@ public class RoomHandler
 
     public void updateGameTick(GameTick event)
     {
-
+        currentPrayer = client.getBoostedSkillLevel(Skill.PRAYER);
+        if(wasActive)
+        {
+            if(!active)
+            {
+                wasActive = false;
+                clog.addLine(LogID.ROOM_PRAYER_DRAINED, String.valueOf(prayerDrained), getName());
+                prayerDrained = 0;
+            }
+        }
+        else
+        {
+            if(active)
+            {
+                wasActive = true;
+            }
+        }
     }
 
     public void updateItemSpawned(ItemSpawned event)
@@ -174,7 +194,13 @@ public class RoomHandler
 
     public void updateStatChanged(StatChanged statChanged)
     {
-
+        if(statChanged.getSkill().equals(Skill.PRAYER))
+        {
+            if(statChanged.getBoostedLevel() == currentPrayer-1)
+            {
+                prayerDrained++;
+            }
+        }
     }
 
     public void updateProjectileMoved(ProjectileMoved event)
@@ -213,6 +239,7 @@ public class RoomHandler
         roomStartTick = -1;
         active = false;
         prayerDrained = 0;
+        wasActive = false;
     }
 
     public void updateGroundObjectDespawned(GroundObjectDespawned event)

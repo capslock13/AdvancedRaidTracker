@@ -56,6 +56,7 @@ public class BloatHandler extends TOBRoomHandler
         bloatDeathTick = -1;
         walks.clear();
         downs.clear();
+        active = false;
         super.reset();
     }
 
@@ -70,6 +71,7 @@ public class BloatHandler extends TOBRoomHandler
         {
             sendTimeMessage("Wave 'Bloat last down' complete! Duration: ", splitLastDown(), " Room time: ", bloatDeathTick - roomStartTick, true);
         }
+        active = false;
     }
 
     public int splitLastDown()
@@ -97,6 +99,7 @@ public class BloatHandler extends TOBRoomHandler
         roomStartTick = client.getTickCount();
         //clog.addLine(BLOAT_STARTED, client.getTickCount());
         roomState = WALKING;
+        active = true;
     }
 
     private int getLastWalk()

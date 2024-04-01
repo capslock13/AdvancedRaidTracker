@@ -57,6 +57,7 @@ public class InfernoHandler extends RoomHandler
     {
         if(message.getMessage().contains("Wave: "))
         {
+            active = true;
             currentWave++;
             log.info("wave: " + message);
             String[] split = Text.removeTags(message.getMessage()).split(" ");
@@ -70,6 +71,7 @@ public class InfernoHandler extends RoomHandler
         }
         else if(message.getMessage().contains("Wave completed!"))
         {
+            active = false;
             waveDurations.put(currentWave, (client.getTickCount()-waveStartTicks.get(currentWave)));
             lastCompletedWave = currentWave;
             clog.addLine(LogID.INFERNO_WAVE_ENDED, String.valueOf(currentWave), String.valueOf(waveDurations.get(currentWave)));
@@ -162,5 +164,6 @@ public class InfernoHandler extends RoomHandler
         waveStartTicks.clear();
         active = false;
         entireDurationTime = 0;
+        super.reset();
     }
 }

@@ -43,6 +43,7 @@ public class WardensHandler extends TOARoomHandler
         enraged = -1;
         skullsActive = false;
         coreActive = false;
+        super.reset();
     }
 
     @Override

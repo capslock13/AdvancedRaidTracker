@@ -99,6 +99,7 @@ public class MaidenHandler extends TOBRoomHandler
 
     public void reset()
     {
+        active = false;
         roomState = RoomState.MaidenRoomState.NOT_STARTED;
         accurateEntry = true;
         p70 = -1;
@@ -119,7 +120,7 @@ public class MaidenHandler extends TOBRoomHandler
 
     public void startMaiden()
     {
-        roomStartTick = client.getTickCount();
+        active = true;
         roomStartTick = client.getTickCount();
         deferVarbitCheck = roomStartTick + 2;
     }

@@ -172,6 +172,7 @@ public class XarpusHandler extends TOBRoomHandler
         roomStartTick = client.getTickCount();
         clog.addLine(XARPUS_STARTED);
         clog.addLine(ACCURATE_XARP_START);
+        active = true;
     }
 
     private void endExhumeds()
@@ -192,5 +193,6 @@ public class XarpusHandler extends TOBRoomHandler
         plugin.liveFrame.setRoomFinished(getName(), xarpusEndTick - xarpusEntryTick);
         String splitMessage = "Wave 'Xarpus phase 3' complete. Duration: " + timeColor() + RoomUtil.time(xarpusEndTick - xarpusEntryTick) + " (" + RoomUtil.time(xarpusEndTick - xarpusScreechTick) + ")";
         this.client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", splitMessage, null, false);
+        active = false;
     }
 }

@@ -29,6 +29,7 @@ public class ApmekenHandler extends TOARoomHandler
     public void reset()
     {
         active = false;
+        super.reset();
     }
 
     @Override

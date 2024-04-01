@@ -391,7 +391,7 @@ public class NyloHandler extends TOBRoomHandler
         clog.addLine(NYLO_PILLAR_SPAWN);
         roomState = WAVES;
         roomStartTick = client.getTickCount();
-        roomStartTick = client.getTickCount();
+        active = true;
     }
 
     private void wave1Spawn()
@@ -439,5 +439,6 @@ public class NyloHandler extends TOBRoomHandler
         plugin.liveFrame.setRoomFinished(getName(), deathTick - roomStartTick + offset1);
         sendTimeMessage("Wave 'Nylocas boss' complete! Duration: ", deathTick - roomStartTick + offset1, deathTick + offset1 - bossSpawn, false);
         clog.addLine(NYLO_DESPAWNED, String.valueOf(deathTick - roomStartTick + offset1));
+        active = false;
     }
 }

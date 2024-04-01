@@ -122,6 +122,7 @@ public class AkkhaHandler extends TOARoomHandler
             roomState = RoomState.AkkhaRoomState.PHASE_1;
             roomStartTick = client.getTickCount();
             clog.addLine(LogID.TOA_AKKHA_START, roomStartTick);
+            active = true;
         }
         super.updateGameTick(gameTick);
     }
@@ -163,6 +164,7 @@ public class AkkhaHandler extends TOARoomHandler
             roomState = RoomState.AkkhaRoomState.FINISHED;
             clog.addLine(LogID.TOA_AKKHA_FINISHED, duration);
             plugin.liveFrame.setRoomFinished(getName(), duration);
+            active = false;
         }
     }
 

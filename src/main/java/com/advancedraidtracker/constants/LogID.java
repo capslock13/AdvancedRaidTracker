@@ -684,6 +684,16 @@ public enum LogID
     INFERNO_WAVE_ENDED(3002, true, INFERNO,
             new ParseInstruction(MANUAL_PARSE),
             "Wave Ended", "Wave Number", "Room Tick"),
+    ROOM_PRAYER_DRAINED(995, true, ALL,
+            new ParseInstruction(MANUAL_PARSE),
+            "Prayer Drained", "Amount", "Room"),
+    ROOM_DAMAGE_DEALT(996, true, ALL,
+            new ParseInstruction(MANUAL_PARSE),
+            "Damage Dealt", "Damage", "Room"),
+    ROOM_DAMAGE_RECEIVED(997, true, ALL,
+            new ParseInstruction(MANUAL_PARSE),
+            "Damage Received", "Damage", "Room"),
+
 
     ;
     /*

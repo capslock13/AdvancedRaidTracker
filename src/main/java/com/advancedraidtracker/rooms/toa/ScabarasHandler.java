@@ -62,6 +62,7 @@ public class ScabarasHandler extends TOARoomHandler
         startTick = -1;
         expectedEndTick = -1;
         solved = false;
+        super.reset();
     }
 
     private void resetPuzzle()

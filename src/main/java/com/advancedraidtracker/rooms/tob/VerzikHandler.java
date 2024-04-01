@@ -333,6 +333,7 @@ public class VerzikHandler extends TOBRoomHandler
         clog.addLine(VERZIK_P1_START);
         clog.addLine(ACCURATE_VERZIK_START);
         roomStartTick = client.getTickCount();
+        active = true;
     }
 
     private void endP1()
@@ -372,6 +373,7 @@ public class VerzikHandler extends TOBRoomHandler
         clog.addLine(VERZIK_P3_DESPAWNED, String.valueOf(verzikP3EndTick - roomStartTick));
         plugin.addDelayedLine(RaidRoom.VERZIK, client.getTickCount() - roomStartTick, "Dead");
         plugin.liveFrame.setRoomFinished(getName(), verzikP3EndTick - roomStartTick);
+        active = false;
 
     }
 }

@@ -48,6 +48,7 @@ public class KephriHandler extends TOARoomHandler
         meleeAlive = false;
         swarms = 0;
         swarmsHealed = 0;
+        super.reset();
     }
 
     @Override
@@ -58,6 +59,7 @@ public class KephriHandler extends TOARoomHandler
             roomState = RoomState.KephriRoomState.PHASE_1;
             roomStartTick = client.getTickCount();
             clog.addLine(LogID.TOA_KEPHRI_START, roomStartTick);
+            active = true;
         }
         if (meleeAlive)
         {
@@ -193,6 +195,7 @@ public class KephriHandler extends TOARoomHandler
             sendTimeMessage("Kephri Duration: ", duration, duration - s2End);
             clog.addLine(LogID.TOA_KEPHRI_FINISHED, duration);
             plugin.liveFrame.setRoomFinished(getName(), duration);
+            active = false;
         }
     }
 }

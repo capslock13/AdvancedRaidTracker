@@ -35,6 +35,7 @@ public class HetHandler extends TOARoomHandler
             roomStartTick = client.getTickCount();
             clog.addLine(LogID.TOA_HET_START, roomStartTick);
         }
+        super.updateGameTick(event);
     }
 
     public boolean isActive()

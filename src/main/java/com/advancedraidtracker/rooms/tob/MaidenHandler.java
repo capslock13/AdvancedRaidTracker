@@ -655,6 +655,7 @@ public class MaidenHandler extends TOBRoomHandler
                 deferredCrabs.add(crab);
             }
         }
+        super.updateGameTick(event);
     }
 
     /**

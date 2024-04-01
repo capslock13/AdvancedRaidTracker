@@ -120,6 +120,7 @@ public class NyloHandler extends TOBRoomHandler
             plugin.addDelayedLine(RaidRoom.NYLOCAS, client.getTickCount() - roomStartTick, "Stall");
             expectedWaveTick += 4;
         }
+        super.updateGameTick(event);
     }
 
     public void updateNpcSpawned(NpcSpawned event)

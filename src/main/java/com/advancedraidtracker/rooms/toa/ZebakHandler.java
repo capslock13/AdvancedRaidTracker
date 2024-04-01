@@ -50,6 +50,7 @@ public class ZebakHandler extends TOARoomHandler
             roomStartTick = client.getTickCount();
             clog.addLine(LogID.TOA_ZEBAK_START, roomStartTick);
         }
+        super.updateGameTick(gameTick);
     }
 
     public boolean isActive()

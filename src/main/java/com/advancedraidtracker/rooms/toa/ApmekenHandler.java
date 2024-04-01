@@ -40,6 +40,7 @@ public class ApmekenHandler extends TOARoomHandler
             roomStartTick = client.getTickCount();
             clog.addLine(LogID.TOA_APMEKEN_START, roomStartTick);
         }
+        super.updateGameTick(event);
     }
 
     @Override

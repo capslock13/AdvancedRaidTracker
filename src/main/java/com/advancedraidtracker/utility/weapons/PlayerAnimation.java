@@ -83,7 +83,7 @@ public enum PlayerAnimation
     ABYSSAL_BLUDEGON("Abyssal Bludegon", "ab", new Color(10, 70, 80), 4, new int[]{3298}, new int[]{}, new int[]{ItemID.ABYSSAL_BLUDGEON}, new int[]{}),
 
     ABYSSAL_BLUDEGON_SPEC("Abyssal Bludegon Spec", "AB", new Color(10, 70, 80), 4, new int[]{3299}, new int[]{}, new int[]{ItemID.ABYSSAL_BLUDGEON}, new int[]{}),
-    VENATOR_BOW("Venator bow", "VNB", new Color(10, 70, 10), 3, new int[]{9858}, new int[]{}, new int[]{ItemID.VENATOR_BOW}, new int[]{}),
+    VENATOR_BOW("Venator bow", "VNB", new Color(10, 70, 10), 4, new int[]{9858}, new int[]{}, new int[]{ItemID.VENATOR_BOW}, new int[]{}),
     ARMADYL_CROSSBOW("Armadyl crossbow", "ACB", new Color(10, 70, 10), 5, new int[]{7552}, new int[]{}, new int[]{ItemID.ARMADYL_CROSSBOW}, new int[]{}),
     DRAGON_HUNTER_CROSSBOW("Dragon Hunter crossbow", "DHCB", new Color(10, 70, 10), 5, new int[]{7552}, new int[]{}, new int[]{ItemID.DRAGON_HUNTER_CROSSBOW, ItemID.DRAGON_HUNTER_CROSSBOW_B, ItemID.DRAGON_HUNTER_CROSSBOW_T}, new int[]{}),
 

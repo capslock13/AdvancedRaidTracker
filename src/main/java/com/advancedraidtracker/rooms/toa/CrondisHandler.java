@@ -34,6 +34,7 @@ public class CrondisHandler extends TOARoomHandler
             roomStartTick = client.getTickCount();
             clog.addLine(LogID.TOA_CRONDIS_START, roomStartTick);
         }
+        super.updateGameTick(event);
     }
 
     public boolean isActive()

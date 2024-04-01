@@ -1,6 +1,9 @@
 package com.advancedraidtracker.ui.comparisonview;
 
 import com.advancedraidtracker.AdvancedRaidTrackerConfig;
+import com.advancedraidtracker.constants.RaidRoom;
+import com.advancedraidtracker.ui.DataPointMenu;
+import com.advancedraidtracker.ui.UpdateableWindow;
 import com.advancedraidtracker.ui.comparisonview.graph.GraphPanel;
 import com.advancedraidtracker.utility.RoomUtil;
 import com.advancedraidtracker.utility.datautility.DataPoint;
@@ -22,7 +25,7 @@ import java.util.List;
 import static com.advancedraidtracker.constants.RaidRoom.*;
 
 @Slf4j
-public class ComparisonViewPanel extends JPanel
+public class ComparisonViewPanel extends JPanel implements UpdateableWindow
 {
     private final JPanel container;
     private final JSlider leftCutOff;
@@ -86,6 +89,7 @@ public class ComparisonViewPanel extends JPanel
     private final ConfigManager configManager;
 
     private final ClientThread clientThread;
+    private List<String> comboFlatData = new ArrayList<>();
 
     public ComparisonViewPanel(List<List<Raid>> raidData, List<String> names, AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
     {
@@ -221,125 +225,42 @@ public class ComparisonViewPanel extends JPanel
         });
 
         Map<String, String[]> comboPopupData = new LinkedHashMap<>();
-        comboPopupData.put("Room Times", DataPoint.getRoomTimes());
-        comboPopupData.put("Maiden", DataPoint.getSpecificNames(MAIDEN));
-        comboPopupData.put("Bloat", DataPoint.getSpecificNames(BLOAT));
-        comboPopupData.put("Nylocas", DataPoint.getSpecificNames(NYLOCAS));
-        comboPopupData.put("Sotetseg", DataPoint.getSpecificNames(SOTETSEG));
-        comboPopupData.put("Xarpus", DataPoint.getSpecificNames(XARPUS));
-        comboPopupData.put("Verzik", DataPoint.getSpecificNames(VERZIK));
-        comboPopupData.put("Any TOB", DataPoint.getSpecificNames(ANY_TOB));
-        comboPopupData.put("Apmeken", DataPoint.getSpecificNames(APMEKEN));
-        comboPopupData.put("Baba", DataPoint.getSpecificNames(BABA));
-        comboPopupData.put("Scabaras", DataPoint.getSpecificNames(SCABARAS));
-        comboPopupData.put("Kephri", DataPoint.getSpecificNames(KEPHRI));
-        comboPopupData.put("Crondis", DataPoint.getSpecificNames(CRONDIS));
-        comboPopupData.put("Zebak", DataPoint.getSpecificNames(ZEBAK));
-        comboPopupData.put("Het", DataPoint.getSpecificNames(HET));
-        comboPopupData.put("Akkha", DataPoint.getSpecificNames(AKKHA));
-        comboPopupData.put("Wardens", DataPoint.getSpecificNames(WARDENS));
-        comboPopupData.put("Any TOA", DataPoint.getSpecificNames(ANY_TOA));
 
-        comboPopupMenu = new JPopupMenu();
-        comboPopupMenu.setBorder(new MatteBorder(1, 1, 1, 1, Color.DARK_GRAY));
-
-        ArrayList<String> allComboValues = new ArrayList<>(comboPopupData.keySet());
-
-        comboStrictData = new ArrayList<>();
-
-        for (String category : allComboValues)
+        for(RaidRoom room : RaidRoom.values())
         {
-            JMenu menu = new JMenu(category);
-            menu.setBackground(Color.BLACK);
-            menu.setOpaque(true);
-            if (!category.equals("Room Times") && !category.equals("Any"))
-            {
-                JMenu timeMenu = new JMenu("Time");
-                timeMenu.setBackground(Color.BLACK);
-                timeMenu.setOpaque(true);
-                for (String itemName : DataPoint.filterTimes(comboPopupData.get(category)))
-                {
-                    timeMenu.add(createMenuItem(itemName));
-                    comboStrictData.add(itemName);
-                }
-                JMenu countMenu = new JMenu("Misc");
-                countMenu.setBackground(Color.BLACK);
-                countMenu.setOpaque(true);
-                for (String itemName : DataPoint.filterInt(comboPopupData.get(category)))
-                {
-                    countMenu.add(createMenuItem(itemName));
-                    comboStrictData.add(itemName);
-                }
-                JMenu thrallMenu = new JMenu("Thrall");
-                thrallMenu.setBackground(Color.BLACK);
-                thrallMenu.setOpaque(true);
-                for (String itemName : DataPoint.filterThrall(comboPopupData.get(category)))
-                {
-                    thrallMenu.add(createMenuItem(itemName));
-                    comboStrictData.add(itemName);
-                }
-                JMenu vengMenu = new JMenu("Veng");
-                vengMenu.setBackground(Color.BLACK);
-                vengMenu.setOpaque(true);
-                for (String itemName : DataPoint.filterVeng(comboPopupData.get(category)))
-                {
-                    vengMenu.add(createMenuItem(itemName));
-                    comboStrictData.add(itemName);
-                }
-
-                JMenu specMenu = new JMenu("Spec");
-                specMenu.setBackground(Color.BLACK);
-                specMenu.setOpaque(true);
-                for (String itemName : DataPoint.filterSpecs(comboPopupData.get(category)))
-                {
-                    specMenu.add(createMenuItem(itemName));
-                    comboStrictData.add(itemName);
-                }
-
-                menu.add(timeMenu);
-                menu.add(countMenu);
-                menu.add(thrallMenu);
-                menu.add(vengMenu);
-                menu.add(specMenu);
-            } else
-            {
-                for (String itemName : comboPopupData.get(category))
-                {
-                    menu.add(createMenuItem(itemName));
-                    comboStrictData.add(itemName);
-                }
-            }
-            comboPopupMenu.add(menu);
+            comboPopupData.put(room.name, DataPoint.getSpecificNames(room));
         }
         compareByComboBox = new JComboBox<>();
         compareByComboBox.setEditable(true);
         compareByComboBox.setPrototypeDisplayValue("Maiden Time");
         compareByComboBox.setSelectedItem("Maiden Time");
         compareByComboBox.setEditable(false);
-        for (Component comp : compareByComboBox.getComponents())
+
+        compareByComboBox.setEnabled(true);
+        for(Component c : compareByComboBox.getComponents())
         {
-            if (comp instanceof AbstractButton)
+            //we are using the combobox for its appearance only, we do not want the real combobox dropdown to pop up when clicked because we are using
+            //a jpopupmenu to display the content of the dropdown. Even if we set it not visible it will flash for a frame before going away.
+            if(c instanceof AbstractButton)
             {
-                arrowButton = (AbstractButton) comp;
-                arrowButton.setBackground(Color.BLACK);
+                c.setEnabled(false);
             }
         }
 
-        arrowButton.addActionListener(e -> setPopupVisible(!comboPopupMenu.isVisible()));
 
+        ArrayList<String> allComboValues = new ArrayList<>(comboPopupData.keySet());
+        comboPopupMenu = new JPopupMenu();
+        comboPopupMenu.setBorder(new MatteBorder(1, 1, 1, 1, Color.DARK_GRAY));
+        comboStrictData = new ArrayList<>(comboPopupData.keySet());
+
+        DataPointMenu menu = new DataPointMenu(allComboValues, comboPopupData, comboFlatData, comboPopupMenu, compareByComboBox, this);
         compareByComboBox.addMouseListener(new MouseAdapter()
         {
             @Override
             public void mouseClicked(MouseEvent e)
             {
-                setPopupVisible(!comboPopupMenu.isVisible());
+                comboPopupMenu.show(compareByComboBox, e.getX(), e.getY());
             }
-        });
-
-        compareByComboBox.addActionListener(al ->
-        {
-            switchGraphData();
-            updateOtherPanels();
         });
 
         matchYScales.addActionListener(al ->
@@ -362,8 +283,8 @@ public class ComparisonViewPanel extends JPanel
 
     private int valX = 0;
 
-    private final JPopupMenu comboPopupMenu;
-    private final ArrayList<String> comboStrictData;
+    private JPopupMenu comboPopupMenu;
+    private ArrayList<String> comboStrictData;
     private AbstractButton arrowButton;
 
     private void setComboSelection(String name)
@@ -567,7 +488,7 @@ public class ComparisonViewPanel extends JPanel
             {
                 if (!time || value != 0)
                 {
-                        switch ((Objects.requireNonNull(DataPoint.getValue(String.valueOf(compareByComboBox.getSelectedItem())))).room)
+                        switch ((Objects.requireNonNull(DataPoint.getValue(String.valueOf(compareByComboBox.getSelectedItem())))).room) //todo ???
                         {
                             case MAIDEN:
                                 if (!raidData.getRoomAccurate(MAIDEN))
@@ -944,5 +865,19 @@ public class ComparisonViewPanel extends JPanel
         updateOtherPanels();
 
         container.add(sidebar);
+    }
+
+    @Override
+    public void update()
+    {
+        switchGraphData();
+        updateOtherPanels();
+    }
+
+    @Override
+    public void setComboBox(String item)
+    {
+        compareByComboBox.addItem(item);
+        compareByComboBox.setSelectedItem(item);
     }
 }

@@ -152,6 +152,7 @@ public class XarpusHandler extends TOBRoomHandler
         {
             plugin.addDelayedLine(RaidRoom.XARPUS, client.getTickCount() - xarpusEntryTick, "Turn");
         }
+        super.updateGameTick(event);
     }
 
     private void startScreech()

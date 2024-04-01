@@ -101,6 +101,7 @@ public abstract class Raid
 
     protected boolean wasReset = false; //todo idk where these belong tbh
     protected String lastRoom = "";
+    protected String currentRoom = "";
     protected String roomStatus = orange;
 
     protected Map<RaidRoom, Boolean> defenseAccurate = new HashMap<>();
@@ -448,6 +449,7 @@ public abstract class Raid
                         wasReset = true;
                         break;
                     case ROOM_START_FLAG:
+                        currentRoom = entry.logEntry.getRoom().name;
                         wasReset = false;
                         break;
                     case AGNOSTIC:

@@ -51,6 +51,7 @@ public class BabaHandler extends TOARoomHandler
             roomStartTick = client.getTickCount();
             clog.addLine(LogID.TOA_BABA_START, roomStartTick);
         }
+        super.updateGameTick(gameTick);
     }
 
     public boolean isActive()

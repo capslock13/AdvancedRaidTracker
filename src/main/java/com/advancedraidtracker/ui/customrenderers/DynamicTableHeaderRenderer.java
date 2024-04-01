@@ -94,13 +94,6 @@ public class DynamicTableHeaderRenderer implements TableCellRenderer
             this.column = column;
             this.editor = editor;
             this.menu = menu;
-            menu.addPropertyChangeListener(pcl ->
-            {
-                if(menu.isVisible())
-                {
-                    //window.setTableSorterActive(true);
-                }
-            });
         }
 
         private void setDispatchComponent(MouseEvent e)

@@ -62,6 +62,7 @@ public class AkkhaHandler extends TOARoomHandler
         p5End = -1;
         playersWhoAttacked.clear();
         roomState = RoomState.AkkhaRoomState.NOT_STARTED;
+        super.reset();
     }
 
     public boolean isShadowPhase()
@@ -122,6 +123,7 @@ public class AkkhaHandler extends TOARoomHandler
             roomStartTick = client.getTickCount();
             clog.addLine(LogID.TOA_AKKHA_START, roomStartTick);
         }
+        super.updateGameTick(gameTick);
     }
 
     @Override

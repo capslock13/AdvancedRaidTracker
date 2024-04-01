@@ -473,6 +473,7 @@ public class SotetsegHandler extends TOBRoomHandler
             }
             lastChosen = secondMazeChosen;
         }
+        super.updateGameTick(event);
     }
 
     public void handleNPCChanged(int id)

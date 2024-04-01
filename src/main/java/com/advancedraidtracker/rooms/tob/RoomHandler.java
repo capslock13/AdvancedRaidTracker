@@ -20,8 +20,10 @@ public class RoomHandler
     protected boolean active = false;
 
     protected final AdvancedRaidTrackerConfig config;
+    protected int currentPrayer = -1;
     protected boolean accurateTimer = true;
     protected boolean accurateEntry = true;
+    protected int prayerDrained = 0;
     @Getter
     @Setter
     int scale;
@@ -146,6 +148,7 @@ public class RoomHandler
 
     public void updateGameTick(GameTick event)
     {
+
     }
 
     public void updateItemSpawned(ItemSpawned event)
@@ -167,6 +170,11 @@ public class RoomHandler
 
     public void updateGraphicChanged(GraphicChanged event)
     {
+    }
+
+    public void updateStatChanged(StatChanged statChanged)
+    {
+
     }
 
     public void updateProjectileMoved(ProjectileMoved event)
@@ -204,6 +212,7 @@ public class RoomHandler
     {
         roomStartTick = -1;
         active = false;
+        prayerDrained = 0;
     }
 
     public void updateGroundObjectDespawned(GroundObjectDespawned event)

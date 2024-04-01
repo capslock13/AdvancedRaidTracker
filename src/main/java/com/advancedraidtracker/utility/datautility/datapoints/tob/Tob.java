@@ -90,7 +90,7 @@ public class Tob extends Raid
                         }
                     } else
                     {
-                        roomStatus = red + lastRoom + " Wipe";
+                        roomStatus = red + currentRoom + " Wipe";
                     }
                 }
                 else if(Objects.requireNonNull(instruction.type) == MANUAL_PARSE)

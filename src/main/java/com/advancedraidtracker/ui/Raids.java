@@ -18,6 +18,8 @@ import com.advancedraidtracker.ui.statistics.StatisticTab;
 import com.advancedraidtracker.utility.*;
 import com.advancedraidtracker.utility.datautility.*;
 import com.advancedraidtracker.utility.datautility.datapoints.Raid;
+import com.advancedraidtracker.utility.datautility.datapoints.col.Colo;
+import com.advancedraidtracker.utility.datautility.datapoints.inf.Inf;
 import com.advancedraidtracker.utility.datautility.datapoints.toa.Toa;
 import com.advancedraidtracker.utility.datautility.datapoints.tob.Tob;
 import com.advancedraidtracker.utility.wrappers.StringInt;
@@ -45,10 +47,11 @@ import java.util.*;
 import java.util.List;
 
 import static com.advancedraidtracker.constants.RaidRoom.*;
+import static com.advancedraidtracker.rooms.inf.InfernoHandler.roomMap;
 import static com.advancedraidtracker.utility.UISwingUtility.*;
 
 @Slf4j
-public class Raids extends BaseFrame
+public class Raids extends BaseFrame implements UpdateableWindow
 {
     private final ArrayList<Integer> filteredIndices;
     private JTable comparisonTable;
@@ -125,10 +128,19 @@ public class Raids extends BaseFrame
 
             for(RaidRoom room : RaidRoom.getRaidRoomsForRaidType(raidType))
             {
-                averageLabels2.get(index).put(room.name, getDarkJLabel("", SwingConstants.RIGHT));
-                medianLabels2.get(index).put(room.name, getDarkJLabel("", SwingConstants.RIGHT));
-                maxLabels2.get(index).put(room.name, getDarkJLabel("", SwingConstants.RIGHT));
-                minLabels2.get(index).put(room.name, getDarkJLabel("", SwingConstants.RIGHT));
+                String labelName = room.name;
+                if(labelName.contains("-") && labelName.contains("Wave"))
+                {
+                    String[] split = labelName.split(" ");
+                    if(split.length == 2)
+                    {
+                        labelName = split[1];
+                    }
+                }
+                averageLabels2.get(index).put(labelName, getDarkJLabel("", SwingConstants.RIGHT));
+                medianLabels2.get(index).put(labelName, getDarkJLabel("", SwingConstants.RIGHT));
+                maxLabels2.get(index).put(labelName, getDarkJLabel("", SwingConstants.RIGHT));
+                minLabels2.get(index).put(labelName, getDarkJLabel("", SwingConstants.RIGHT));
             }
             index++;
         }
@@ -168,6 +180,10 @@ public class Raids extends BaseFrame
 
     public void updateTable()
     {
+        customColumnComboBox.addActionListener(al ->
+        {
+            updateTable();
+        });
         int completions = 0;
         List<Raid> tableData = new ArrayList<>();
         for (Raid data : currentData)
@@ -651,6 +667,9 @@ public class Raids extends BaseFrame
     {
         List<Raid> tobData = new ArrayList<>();
         List<Raid> toaData = new ArrayList<>();
+        List<Raid> coxData = new ArrayList<>();
+        List<Raid> infData = new ArrayList<>();
+        List<Raid> colData = new ArrayList<>();
         for (Raid raidData : data)
         {
             if (raidData instanceof Tob) //check if this can just be passed as the raid and not sort into lists per raid //todo
@@ -660,6 +679,18 @@ public class Raids extends BaseFrame
             else if(raidData instanceof Toa)
             {
                 toaData.add(raidData);
+            }
+            else if(raidData instanceof Cox)
+            {
+                coxData.add(raidData);
+            }
+            else if(raidData instanceof Inf)
+            {
+                infData.add(raidData);
+            }
+            else if(raidData instanceof Colo)
+            {
+                colData.add(raidData);
             }
         }
         setOverallLabels(data);
@@ -671,6 +702,18 @@ public class Raids extends BaseFrame
         {
             tab.updateTab(toaData);
         }
+        for(StatisticTab tab : coxTabs)
+        {
+            tab.updateTab(coxData);
+        }
+        for(StatisticTab tab : infTabs)
+        {
+            tab.updateTab(infData);
+        }
+        for(StatisticTab tab : colTabs)
+        {
+            tab.updateTab(colData);
+        }
     }
 
     public void setOverallLabels(List<Raid> data)
@@ -680,7 +723,6 @@ public class Raids extends BaseFrame
         setOverallMedianLabels(data);
         setOverallMinLabels(data);
         setOverallMaxLabels(data);
-
     }
 
     public void setOverallAverageLabels(List<Raid> data)
@@ -726,10 +768,6 @@ public class Raids extends BaseFrame
             }
         }
     }
-
-    private JPopupMenu comboPopupMenu;
-    private ArrayList<String> comboStrictData;
-    private AbstractButton arrowButton;
     private boolean writing = false;
 
     private void updateAliases()
@@ -763,9 +801,6 @@ public class Raids extends BaseFrame
     }
 
 
-    private final Map<String, String[]> comboPopupData = new LinkedHashMap<>();
-
-
     public JPanel getOverallPanel(String title, Map<String, JLabel> labelMap)
     {
         JPanel panel = new JPanel();
@@ -783,18 +818,18 @@ public class Raids extends BaseFrame
             subPanel.add(labelMap.get(s));
             index++;
         }
-        for(int i = index; i < 13; i++) //enforce formatting because swing is bad. 13 is the most labels used by any panel (# of chambers rooms)
+        for(int i = index; i < 19; i++) //enforce formatting, 19 is the most labels used by any panel (Akkha splits)
         {
             JLabel leftLabel = new JLabel("");
             JLabel rightLabel = new JLabel("");
             subPanel.add(leftLabel);
             subPanel.add(rightLabel);
         }
-        subPanel.setPreferredSize(new Dimension(100, 200));
+        subPanel.setPreferredSize(new Dimension(100, 250));
         JScrollPane scrollPane = new JScrollPane(subPanel);
         scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         panel.add(scrollPane);
-        panel.setPreferredSize(new Dimension(150, 200));
+        panel.setPreferredSize(new Dimension(145, 200));
         return panel;
     }
 
@@ -811,72 +846,17 @@ public class Raids extends BaseFrame
         close();
     }
 
-    public void setTableSorterActive(boolean state)
-    {
-        tableSortEnabled = state;
-        if(state)
-        {
-            TableRowSorter<TableModel> sorter = new TableRowSorter<>(table.getModel());
-            int dateIndex = -1;
-            List<Integer> indiciesToSortByTimeValue = new ArrayList<>();
-            for(int i = 0; i < table.getColumnCount(); i++)
-            {
-                try
-                {
-                    if (!shouldNotBeSortedByTicks.contains(table.getColumnName(i)))
-                    {
-                        indiciesToSortByTimeValue.add(i);
-                    }
-                }
-                catch (Exception ignore)
-                {
-
-                }
-            }
-            try
-            {
-                dateIndex = table.getColumnModel().getColumnIndex("Date");
-            }
-            catch (Exception ignore)
-            {
-                //User has date column hidden
-            }
-            if(dateIndex != -1)
-            {
-                sorter.setComparator(dateIndex, (Comparator<String>) (date1, date2) ->
-                {
-                    DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(Locale.getDefault());
-                    LocalDate time1 = LocalDate.parse(date1, formatter);
-                    LocalDate time2 = LocalDate.parse(date2, formatter);
-                    return time1.compareTo(time2);
-                });
-            }
-            for(Integer i : indiciesToSortByTimeValue)
-            {
-                sorter.setComparator(i, (Comparator<String>) (time1, time2) ->
-                {
-                    Integer ticks1 = RoomUtil.ticks(time1);
-                    Integer ticks2 = RoomUtil.ticks(time2);
-                    return ticks1.compareTo(ticks2);
-                });
-            }
-            table.setRowSorter(sorter);
-        }
-        else
-        {
-            table.setRowSorter(null);
-        }
-    }
-
     public List<StatisticTab> tobTabs =  new ArrayList<>();
     public List<StatisticTab> toaTabs = new ArrayList<>();
     public List<StatisticTab> coxTabs = new ArrayList<>();
+    public List<StatisticTab> infTabs = new ArrayList<>();
+    public List<StatisticTab> colTabs = new ArrayList<>();
 
     private String lastColumnClicked = "Date";
     private boolean isSortReversed = true;
     private List<Raid> handleTableSort(List<Raid> tableData)
     {
-        Comparator<Raid> comparator = null;
+        Comparator<Raid> comparator;
         switch(lastColumnClicked)
         {
             case "Date":
@@ -1022,13 +1002,17 @@ public class Raids extends BaseFrame
         JTabbedPane tobTabSubpanel = new JTabbedPane();
         JTabbedPane toaTabSubpanel = new JTabbedPane();
         JTabbedPane coxTabSubpanel = new JTabbedPane();
+        JTabbedPane infTabSubpanel = new JTabbedPane();
+        JTabbedPane colTabSubpanel = new JTabbedPane();
 
         tobTabSubpanel.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
         toaTabSubpanel.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
         coxTabSubpanel.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+        infTabSubpanel.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+        colTabSubpanel.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 
         List<JPanel> overallPanels = new ArrayList<>();
-        for(int k = 0; k < 3; k++)
+        for(int k = 0; k < 5; k++)
         {
             JPanel overallPanel = new JPanel();
             JPanel overallAveragePanel = getOverallPanel("Average", averageLabels2.get(k));
@@ -1053,6 +1037,8 @@ public class Raids extends BaseFrame
         List<Raid> tobData = new ArrayList<>();
         List<Raid> toaData = new ArrayList<>();
         List<Raid> coxData = new ArrayList<>();
+        List<Raid> infData = new ArrayList<>();
+        List<Raid> colData = new ArrayList<>();
 
         for (Raid raidData : data)
         {
@@ -1068,7 +1054,14 @@ public class Raids extends BaseFrame
             {
                 coxData.add(raidData);
             }
-
+            else if(raidData instanceof Inf)
+            {
+                infData.add(raidData);
+            }
+            else if(raidData instanceof Colo)
+            {
+                colData.add(raidData);
+            }
         }
 
         List<Integer> tobIconIDs = new ArrayList<>(Arrays.asList(ItemID.LIL_MAIDEN, ItemID.LIL_BLOAT, ItemID.LIL_NYLO, ItemID.LIL_SOT, ItemID.LIL_XARP, ItemID.LIL_ZIK));
@@ -1079,6 +1072,9 @@ public class Raids extends BaseFrame
         tobTabSubpanel.addTab("Overall", overallPanels.get(0));
         toaTabSubpanel.addTab("Overall", overallPanels.get(1));
         coxTabSubpanel.addTab("Overall", overallPanels.get(2));
+        infTabSubpanel.addTab("Overall", overallPanels.get(3));
+        colTabSubpanel.addTab("Overall", overallPanels.get(4));
+
         for(RaidRoom room : Arrays.stream(RaidRoom.values()).filter(RaidRoom::isTOB).toArray(RaidRoom[]::new))
         {
             StatisticTab statisticTab = new StatisticTab(tobData, room);
@@ -1106,6 +1102,21 @@ public class Raids extends BaseFrame
             coxTabs.add(statisticTab);
             index++;
         }
+
+        for(Integer i : roomMap.keySet())
+        {
+            StatisticTab statisticTab = new StatisticTab(infData, RaidRoom.getRoom(roomMap.get(i)));
+            infTabSubpanel.addTab(roomMap.get(i), statisticTab);
+            infTabs.add(statisticTab);
+        }
+
+        for(int i = 1; i < 13; i++)
+        {
+            StatisticTab statisticTab = new StatisticTab(colData, RaidRoom.getRoom("Wave " + i));
+            colTabSubpanel.addTab("Wave " + i, statisticTab);
+            colTabs.add(statisticTab);
+        }
+
 
         tabbedPane.setMinimumSize(new Dimension(100, 300));
 
@@ -1156,10 +1167,14 @@ public class Raids extends BaseFrame
         tabbedPane.addTab("", tobTabSubpanel);
         tabbedPane.addTab("", toaTabSubpanel);
         tabbedPane.addTab("", coxTabSubpanel);
+        tabbedPane.addTab("", infTabSubpanel);
+        tabbedPane.addTab("", colTabSubpanel);
 
         tabbedPane.setIconAt(0, new ImageIcon(itemManager.getImage(ItemID.SCYTHE_OF_VITUR)));
         tabbedPane.setIconAt(1, new ImageIcon(itemManager.getImage(ItemID.TUMEKENS_SHADOW)));
         tabbedPane.setIconAt(2, new ImageIcon(itemManager.getImage(ItemID.TWISTED_BOW)));
+        tabbedPane.setIconAt(3, new ImageIcon(itemManager.getImage(ItemID.INFERNAL_CAPE)));
+        tabbedPane.setIconAt(4, new ImageIcon(itemManager.getImage(ItemID.DIZANAS_QUIVER)));
 
         topContainer.add(tabbedPane);
         topContainer.add(additionalFiltersPanel);
@@ -2269,5 +2284,18 @@ public class Raids extends BaseFrame
         filterTableContainer.validate();
         filterTableContainer.repaint();
         updateTable();
+    }
+
+    @Override
+    public void update()
+    {
+        updateTable();
+    }
+
+    @Override
+    public void setComboBox(String item)
+    {
+        customColumnComboBox.addItem(item);
+        customColumnComboBox.setSelectedItem(item);
     }
 }

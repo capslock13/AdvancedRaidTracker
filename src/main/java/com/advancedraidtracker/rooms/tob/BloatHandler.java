@@ -172,6 +172,7 @@ public class BloatHandler extends TOBRoomHandler
                 NyloHandler.instanceStart = client.getTickCount();
             }
         }
+        super.updateGameTick(event);
     }
 
     public void updateAnimationChanged(AnimationChanged event)

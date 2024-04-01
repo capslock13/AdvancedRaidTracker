@@ -17,8 +17,8 @@ public class DataPointMenu
 {
     @Getter
     private JComboBox<String> comboBox;
-    private Raids window;
-    public DataPointMenu(List<String> allComboValues, Map<String, String[]> popupData, List<String> flatData, JPopupMenu popmenu, JComboBox<String> box, Raids window)
+    private UpdateableWindow window;
+    public DataPointMenu(List<String> allComboValues, Map<String, String[]> popupData, List<String> flatData, JPopupMenu popmenu, JComboBox<String> box, UpdateableWindow window)
     { //todo handle edge cases differently
         this.window = window;
         this.comboBox = box;
@@ -34,6 +34,9 @@ public class DataPointMenu
         JMenu topLevelMenuCoX = new JMenu("CoX");
         topLevelMenuCoX.setBackground(Color.BLACK);
         topLevelMenuCoX.setOpaque(true);
+        JMenu topLevelMenuCol = new JMenu("Colosseum");
+        topLevelMenuCol.setBackground(Color.BLACK);
+        topLevelMenuCol.setOpaque(true);
         JMenu topLevelMenuInferno = new JMenu("Inferno");
         topLevelMenuInferno.setBackground(Color.BLACK);
         topLevelMenuInferno.setOpaque(true);
@@ -146,6 +149,10 @@ public class DataPointMenu
             {
                 topLevelMenuCoX.add(menu);
             }
+            else if(RaidRoom.getRoom(category).isColo())
+            {
+                topLevelMenuCol.add(menu);
+            }
             else
             {
                 topLevelMenuAll.add(menu);
@@ -155,6 +162,7 @@ public class DataPointMenu
         popmenu.add(topLevelMenuToA);
         popmenu.add(topLevelMenuToB);
         popmenu.add(topLevelMenuCoX);
+        popmenu.add(topLevelMenuCol);
         popmenu.add(topLevelMenuInferno);
         JMenu playerSpecificMenu = new JMenu("Player Specific");
         playerSpecificMenu.setBackground(Color.BLACK);
@@ -211,13 +219,7 @@ public class DataPointMenu
 
     private void setComboSelection(String name)
     {
-        //Vector<String> items = new Vector<>(); //todo see if commenting this out for some reason breaks comparison panel....
-
-        //ComparisonViewPanel.addComboItems(name, items, flatData, comboBox);
-        //comboBox.addItem(name);
-        //comboBox.setSelectedItem(name);
-        window.customColumnComboBox.addItem(name);
-        window.customColumnComboBox.setSelectedItem(name);
-        window.updateTable();
+        window.setComboBox(name);
+        window.update();
     }
 }

@@ -1495,6 +1495,15 @@ public class AdvancedRaidTrackerPlugin extends Plugin
     }
 
     @Subscribe
+    public void onStatChanged(StatChanged event)
+    {
+        if(inTheatre)
+        {
+            currentRoom.updateStatChanged(event);
+        }
+    }
+
+    @Subscribe
     public void onGameObjectDespawned(GameObjectDespawned event)
     {
         if (inTheatre)

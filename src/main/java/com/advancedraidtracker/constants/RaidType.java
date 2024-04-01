@@ -5,8 +5,8 @@ public enum RaidType
     TOB(1, "ToB", "<html><font color='#FF0000'>"),
     TOA(2, "ToA", "<html><font color='#FFFF33'>"),
     COX(0, "CoX", ""),
-    COLOSSEUM(4, "Col", "<html><font color='#77BBFF'>"),
     INFERNO(5, "Inf", "<html><font color='#ffa500'>"),
+    COLOSSEUM(4, "Col", "<html><font color='#77BBFF'>"),
     UNASSIGNED(-1, "All", ""),
     ;
 

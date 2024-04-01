@@ -131,6 +131,7 @@ public class VerzikHandler extends TOBRoomHandler
             }
         }
         lastHits = currentHits;
+        super.updateGameTick(event);
     }
 
     private final Map<Player, Integer> queuedAutoHits = new HashMap<>();

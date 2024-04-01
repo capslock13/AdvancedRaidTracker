@@ -63,6 +63,7 @@ public class KephriHandler extends TOARoomHandler
         {
             meleeTicksAlive++;
         }
+        super.updateGameTick(gameTick);
     }
 
     @Override

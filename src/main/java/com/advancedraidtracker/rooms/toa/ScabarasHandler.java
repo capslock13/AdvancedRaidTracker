@@ -149,6 +149,7 @@ public class ScabarasHandler extends TOARoomHandler
                 clog.addLine(LogID.TOA_SCABARAS_START, roomStartTick);
             }
         }
+        super.updateGameTick(event);
     }
 
     public boolean isActive()

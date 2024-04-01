@@ -244,7 +244,7 @@ public class ColosseumHandler extends RoomHandler
                 int timeSplit = (Integer.parseInt(subSplit[0])*100) + (int)(Double.parseDouble(timeMessage)/0.6);
                 lastWaveDuration = timeSplit-timeSum;
                 clog.addLine(LogID.COLOSSEUM_WAVE_12_END, timeSplit);
-                timeSum += timeSplit;
+                timeSum += lastWaveDuration;
                 lastCompletedWave = 12;
             }
         }

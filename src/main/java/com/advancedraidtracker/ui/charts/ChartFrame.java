@@ -67,10 +67,6 @@ public class ChartFrame extends BaseFrame
             if(bossName.contains("Wave"))
             {
                 int starttick = 1;
-                if(!bossName.equals("Wave 1"))
-                {
-                    starttick = roomData.get(bossName + " Split");
-                }
                 chartPanel.setStartTick(starttick);
                 chartPanel.setTick(starttick + roomData.get(bossName + " Duration"));
             }

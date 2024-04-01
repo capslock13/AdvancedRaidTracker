@@ -14,6 +14,18 @@ public enum RaidRoom
     TEKTON(19, "Tekton"), CRABS(20, "Crabs"), ICE_DEMON(21, "Ice"), SHAMANS(22, "Shamans"), VANGUARDS(23, "Vanguards"), THIEVING(24, "Thieving"), VESPULA(25, "Vespula"),
     TIGHT_ROPE(26, "Rope"), GUARDIANS(27, "Guardians"), VASA_NISTIRIO(28, "Vasa"), SKELETAL_MYSTICS(29, "Mystics"), MUTTADILES(30, "Muttadiles"), OLM(31, "Olm"),
     COLOSSEUM(32, "Colosseum"),
+    WAVE_1_COL(101, "Wave 1"),
+    WAVE_2_COL(102, "Wave 2"),
+    WAVE_3_COL(103, "Wave 3"),
+    WAVE_4_COL(104, "Wave 4"),
+    WAVE_5_COL(105, "Wave 5"),
+    WAVE_6_COL(106, "Wave 6"),
+    WAVE_7_COL(107, "Wave 7"),
+    WAVE_8_COL(108, "Wave 8"),
+    WAVE_9_COL(109, "Wave 9"),
+    WAVE_10_COL(110, "Wave 10"),
+    WAVE_11_COL(111, "Wave 11"),
+    WAVE_12_COL(112, "Wave 12"),
     INFERNO(33, "Inferno"),
     ANY(17, "Any"), ALL(18, "All"),
 
@@ -86,18 +98,9 @@ public enum RaidRoom
 
     public static RaidRoom getRoom(String name)
     {
-        String compareName = name;
-        if(compareName.contains(" "))
-        {
-            compareName = compareName.substring(0, compareName.length()-3);
-        }
-        if(compareName.contains("Wave"))
-        {
-            return COLOSSEUM;
-        }
         for(RaidRoom room : RaidRoom.values())
         {
-            if(room.name.equals(compareName))
+            if(room.name.equals(name))
             {
                 return room;
             }

@@ -1,12 +1,16 @@
 package com.advancedraidtracker.utility.datautility.datapoints.col;
 
 import com.advancedraidtracker.constants.*;
+import com.advancedraidtracker.utility.datautility.DataPoint;
 import com.advancedraidtracker.utility.datautility.datapoints.LogEntry;
 import com.advancedraidtracker.utility.datautility.datapoints.Raid;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.file.Path;
 import java.util.List;
+
+import static com.advancedraidtracker.utility.datautility.DataPoint.CHALLENGE_TIME;
+import static com.advancedraidtracker.utility.datautility.DataPoint.COLOSSEUM_WAVE_12_SPLIT;
 
 @Slf4j
 public class Colo extends Raid
@@ -28,6 +32,12 @@ public class Colo extends Raid
                 if(entry.logEntry.equals(LogID.COLOSSEUM_WAVE_STARTED))
                 {
                     highestWaveStarted = entry.getFirstInt();
+                }
+                else if(entry.logEntry.equals(LogID.COLOSSEUM_WAVE_12_END))
+                {
+                    getParser(CHALLENGE_TIME.room).data.set(CHALLENGE_TIME, entry.getFirstInt());
+                    int val = getParser(CHALLENGE_TIME.room).data.get(CHALLENGE_TIME)-get(COLOSSEUM_WAVE_12_SPLIT);
+                    getParser(RaidRoom.COLOSSEUM).data.set(DataPoint.COLOSSEUM_WAVE_12_DURATION, val);
                 }
             }
         }

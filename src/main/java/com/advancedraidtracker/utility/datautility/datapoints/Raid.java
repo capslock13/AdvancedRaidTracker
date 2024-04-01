@@ -471,7 +471,7 @@ public abstract class Raid
             return true;
         } catch (Exception e)
         {
-            log.info("Could not parse: " + String.join(",", entry.lines));
+            //log.info("Could not parse: " + String.join(",", entry.lines));
             return false;
         }
     }

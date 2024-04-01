@@ -19,14 +19,14 @@ public class InfernoHandler extends RoomHandler
 {
     Map<Integer, Integer> waveStartTicks = new LinkedHashMap<>();
     Map<Integer, Integer> waveDurations = new LinkedHashMap<>();
-    static Map<Integer, String> roomMap = new LinkedHashMap<Integer, String>() {{
+    public static Map<Integer, String> roomMap = new LinkedHashMap<Integer, String>() {{
         put(1, "Wave 1-8");
         put(9, "Wave 9-17");
         put(18, "Wave 18-24");
         put(25, "Wave 25-34");
         put(35, "Wave 35-41");
         put(42, "Wave 42-49");
-        put(50, "Wave 50-Wave 56");
+        put(50, "Wave 50-56");
         put(57, "Wave 57-59");
         put(60, "Wave 60-62");
         put(63, "Wave 63-65");

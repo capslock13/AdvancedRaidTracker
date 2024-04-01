@@ -36,11 +36,11 @@ public class LogEntry
                 {
                     if(logEntry.getStringArgs().size() != line.length-4)
                     {
-                        log.info("Mismatch, args.size(): " + logEntry.getStringArgs().size() + ", line length-4: " + (line.length-4) + ", value: " + String.join(",",line));
+                        //log.info("Mismatch, args.size(): " + logEntry.getStringArgs().size() + ", line length-4: " + (line.length-4) + ", value: " + String.join(",",line));
                     }
                     else
                     {
-                        log.info("Not mismatch: " + String.join(",",line));
+                        //log.info("Not mismatch: " + String.join(",",line));
                     }
                 }
             }

@@ -10,6 +10,8 @@ import java.awt.*;
 import java.util.List;
 import java.util.Map;
 
+import static com.advancedraidtracker.rooms.inf.InfernoHandler.roomMap;
+
 @Slf4j
 public class DataPointMenu
 {
@@ -32,6 +34,44 @@ public class DataPointMenu
         JMenu topLevelMenuCoX = new JMenu("CoX");
         topLevelMenuCoX.setBackground(Color.BLACK);
         topLevelMenuCoX.setOpaque(true);
+        JMenu topLevelMenuInferno = new JMenu("Inferno");
+        topLevelMenuInferno.setBackground(Color.BLACK);
+        topLevelMenuInferno.setOpaque(true);
+
+        JMenu men = new JMenu("Time");
+        men.setBackground(Color.BLACK);
+        men.setOpaque(true);
+        JMenu men2 = new JMenu("Misc");
+        men2.setBackground(Color.BLACK);
+        men2.setOpaque(true);
+        for(Integer val : roomMap.keySet())
+        {
+            JMenu subMenu = new JMenu(roomMap.get(val));
+            subMenu.setOpaque(true);
+            subMenu.setBackground(Color.BLACK);
+            String valS = roomMap.get(val);
+            if(valS.contains("-"))
+            {
+                String[] ss = valS.split(" ");
+                if(ss.length == 2)
+                {
+                    String[] ss2 = ss[1].split("-");
+                    if(ss2.length == 2)
+                    {
+                        int upper = Integer.parseInt(ss2[1])+1;
+                        int lower = Integer.parseInt(ss2[0])+1;
+                        for(int i = lower-1; i < upper; i++)
+                        {
+                            subMenu.add(createMenuItem("Wave " + i + " Split"));
+                            subMenu.add(createMenuItem("Wave " + i + " Duration"));
+                        }
+                    }
+                }
+            }
+            men.add(subMenu);
+        }
+        topLevelMenuInferno.add(men);
+        topLevelMenuInferno.add(men2);
         for (String category : allComboValues)
         {
             JMenu menu = new JMenu(category);
@@ -115,6 +155,7 @@ public class DataPointMenu
         popmenu.add(topLevelMenuToA);
         popmenu.add(topLevelMenuToB);
         popmenu.add(topLevelMenuCoX);
+        popmenu.add(topLevelMenuInferno);
         JMenu playerSpecificMenu = new JMenu("Player Specific");
         playerSpecificMenu.setBackground(Color.BLACK);
         playerSpecificMenu.setOpaque(true);

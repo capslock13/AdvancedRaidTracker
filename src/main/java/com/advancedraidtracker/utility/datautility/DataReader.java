@@ -52,7 +52,7 @@ public class DataReader //todo move any methods that read files to here. I belie
             }
             LogEntry entry = new LogEntry(split); //todo going off of the above comments, this constructor needs to gracefully handle bad args so that
             //todo the check can be passed to the isSimple() line below for chart data
-            if (entry.logEntry.isSimple()) //Do not load chart data; that is pulled on demand
+            if (!entry.logEntry.equals(LogID.PLAYER_ATTACK)) //Do not load chart data; that is pulled on demand
             {
                 currentRaid.add(entry);
                 if (entry.logEntry == LogID.LEFT_TOB)
@@ -61,23 +61,11 @@ public class DataReader //todo move any methods that read files to here. I belie
                     {
                         ret = new Tob(path, currentRaid);
                         ret.parseAllEntries();
-                        for (RaidRoom room : RaidRoom.values())
-                        {
-                            //RoomParser parser = ret.getParser(room);
-                            //log.info("Dumping room: " + room.name());
-                            //parser.data.dumpValues(); //todo remove later, this was for testing the parser
-                        }
                     }
                     else if(path.getFileName().toString().toLowerCase().contains("col"))
                     {
                         ret = new Colo(path, currentRaid);
                         ret.parseAllEntries();
-                        for (RaidRoom room : RaidRoom.values())
-                        {
-                            RoomParser parser = ret.getParser(room);
-                            //log.info("Dumping room: " + room.name());
-                            //parser.data.dumpValues(); //todo remove later, this was for testing the parser
-                        }
                     }
                     else if(path.getFileName().toString().toLowerCase().contains("inf")) //todo idk these if statements arent it
                     {
@@ -88,12 +76,6 @@ public class DataReader //todo move any methods that read files to here. I belie
                 {
                     ret = new Toa(path, currentRaid);
                     ret.parseAllEntries();
-                    for(RaidRoom room : RaidRoom.values())
-                    {
-                        RoomParser parser = ret.getParser(room);
-                      //  log.info("Dumping room: " + room.name());
-                       // parser.data.dumpValues(); //todo remove later, this was for testing the parser
-                    }
                 }
             }
         }

@@ -33,22 +33,10 @@ public class Tob extends Raid
     @Getter
     private RaidMode mode;
 
-    private MaidenParser maidenParser = new MaidenParser();
-    private BloatParser bloatParser = new BloatParser();
-    private NylocasParser nylocasParser = new NylocasParser();
-    private SotetsegParser sotetsegParser = new SotetsegParser();
-    private XarpusParser xarpusParser = new XarpusParser();
-    private VerzikParser verzikParser = new VerzikParser();
 
     public Tob(Path logfile, List<LogEntry> raidData)
     {
         super(logfile, raidData);
-        roomParsers.put(MAIDEN, maidenParser);
-        roomParsers.put(BLOAT, bloatParser);
-        roomParsers.put(NYLOCAS, nylocasParser);
-        roomParsers.put(SOTETSEG, sotetsegParser);
-        roomParsers.put(XARPUS, xarpusParser);
-        roomParsers.put(VERZIK, verzikParser);
     }
 
     @Override
@@ -97,11 +85,10 @@ public class Tob extends Raid
                 {
                     if(entry.logEntry.equals(LogID.VERZIK_P2_REDS_PROC))
                     {
-                        RoomParser parser = getParser(VERZIK);
-                        if(parser.data.get(VERZIK_REDS_SPLIT) < 1)
+                        if(data.get(VERZIK_REDS_SPLIT) < 1)
                         {
-                            parser.data.set(VERZIK_REDS_SPLIT, entry.getFirstInt());
-                            parser.data.set(VERZIK_P2_TILL_REDS, entry.getFirstInt() - parser.data.get(VERZIK_P2_SPLIT));
+                            data.set(VERZIK_REDS_SPLIT, entry.getFirstInt());
+                            data.set(VERZIK_P2_TILL_REDS, entry.getFirstInt() - data.get(VERZIK_P2_SPLIT));
                         }
                     }
                     else if(entry.logEntry.equals(LogID.CRAB_HEALED_MAIDEN))
@@ -123,26 +110,26 @@ public class Tob extends Raid
                         }
                         if(Integer.parseInt(entry.getValue("Damage")) == maxHP)
                         {
-                            maidenParser.data.increment(MAIDEN_CRABS_LEAKED_FULL_HP);
+                            data.increment(MAIDEN_CRABS_LEAKED_FULL_HP);
                         }
                     }
                     else if(entry.logEntry.equals(LogID.PLAYER_DIED))
                     {
-                        if(maidenParser.data.get(MAIDEN_TIME) > 0 && bloatParser.data.getList(BLOAT_DOWNS).isEmpty())
+                        if(data.get(MAIDEN_TIME) > 0 && data.getList(BLOAT_DOWNS).isEmpty())
                         {
-                            bloatParser.data.increment(BLOAT_FIRST_WALK_DEATHS, entry.getValue("Player"));
+                            data.increment(BLOAT_FIRST_WALK_DEATHS, entry.getValue("Player"));
                         }
                     }
                     else if(entry.logEntry.equals(LogID.BLOAT_DESPAWN))
                     {
-                        if(bloatParser.data.get(BLOAT_DOWNS) > 0)
+                        if(data.get(BLOAT_DOWNS) > 0)
                         {
-                            bloatParser.data.set(BLOAT_FIRST_DOWN_TIME, bloatParser.data.getList(BLOAT_DOWNS).get(0));
+                            data.set(BLOAT_FIRST_DOWN_TIME, data.getList(BLOAT_DOWNS).get(0));
                         }
                     }
                     else if(entry.logEntry.equals(LogID.BLOAT_HP_1ST_DOWN))
                     {
-                        bloatParser.data.set(DataPoint.BLOAT_HP_FIRST_DOWN, Integer.parseInt(entry.getValue("Bloat HP")) / 10);
+                        data.set(DataPoint.BLOAT_HP_FIRST_DOWN, Integer.parseInt(entry.getValue("Bloat HP")) / 10);
                     }
                     else if(entry.logEntry.equals(LogID.XARPUS_HEAL))
                     {
@@ -165,13 +152,13 @@ public class Tob extends Raid
                                 healAmount = 8;
                                 break;
                         }
-                        xarpusParser.data.incrementBy(XARP_HEALING, healAmount);
+                        data.incrementBy(XARP_HEALING, healAmount);
                     }
                     else if(entry.logEntry.equals(LogID.BLOAT_SCYTHE_1ST_WALK))
                     {
-                        if(bloatParser.data.get(BLOAT_DOWNS) == 0)
+                        if(data.get(BLOAT_DOWNS) == 0)
                         {
-                            bloatParser.data.increment(BLOAT_FIRST_WALK_SCYTHES, entry.getValue("Player"));
+                            data.increment(BLOAT_FIRST_WALK_SCYTHES, entry.getValue("Player"));
                         }
                     }
                 }

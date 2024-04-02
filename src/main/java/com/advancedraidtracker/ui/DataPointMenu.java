@@ -29,10 +29,44 @@ public class DataPointMenu
         Map<RaidType, JMenu> menus = new LinkedHashMap<>();
         for(RaidType raidType : RaidType.values())
         {
+            if(raidType.equals(RaidType.ALL))
+            {
+                JMenu menu = createMenu(raidType.name);
+                Map<DataPoint.MenuType, JMenu> categoryMenus = new LinkedHashMap<>();
+                for(DataPoint.MenuType menuType : DataPoint.MenuType.values())
+                {
+                    if(!menuType.excluded)
+                    {
+                        categoryMenus.put(menuType, createMenu(menuType.name));
+                    }
+                }
+                for(DataPoint point : DataPoint.getRoomPoints(ALL))
+                {
+                    if(!point.menuType.equals(DataPoint.MenuType.EXCLUDED))
+                    {
+                        if(point.room.equals(ALL))
+                        {
+                            categoryMenus.get(point.menuType).add(createMenuItem("Total " + point.name));
+                        }
+                        else
+                        {
+                            categoryMenus.get(point.menuType).add(createMenuItem(point.name));
+                        }
+                    }
+                }
+                for(JMenu categoryMenu : categoryMenus.values())
+                {
+                    if(categoryMenu.getMenuComponents().length != 0)
+                    {
+                        menu.add(categoryMenu);
+                    }
+                }
+                menus.put(RaidType.ALL, menu);
+                continue;
+            }
             JMenu menu = createMenu(raidType.name);
 
             Map<RaidRoom, JMenu> roomSubMenus = new LinkedHashMap<>();
-            JMenu overallMenu = createMenu("Overall");
             for(RaidRoom room : RaidRoom.getRaidRoomsForRaidType(raidType))
             {
                 JMenu roomMenu = createMenu(room.name);

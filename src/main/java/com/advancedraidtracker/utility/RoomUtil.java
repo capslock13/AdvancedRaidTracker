@@ -98,31 +98,9 @@ public class RoomUtil
         return time((double) ticks);
     }
 
-    public static Integer ticks(String time)
+    public static String value(int value)
     {
-        if(time.equals("-"))
-        {
-            return -1;
-        }
-        String[] split = time.split(":");
-        int tickCount = 0;
-        try
-        {
-            if (split.length == 2)
-            {
-                tickCount += Integer.parseInt(split[0])*100;
-                tickCount += (int) ((Double.parseDouble(split[1].split("s")[0]))/.6);
-            }
-            if (split.length == 1)
-            {
-                tickCount += (int) ((Double.parseDouble(split[0].split("s")[0]))/.6);
-            }
-        }
-        catch (Exception e)
-        {
-            log.info("Failed to convert time to ticks: " + time);
-        }
-        return tickCount;
+        return (value < 0) ? "-" : String.valueOf(value);
     }
 
     public static String time(double ticks)
@@ -156,6 +134,33 @@ public class RoomUtil
             timeStr += "s";
         }
         return timeStr;
+    }
+
+    public static Integer ticks(String time)
+    {
+        if(time.equals("-"))
+        {
+            return -1;
+        }
+        String[] split = time.split(":");
+        int tickCount = 0;
+        try
+        {
+            if (split.length == 2)
+            {
+                tickCount += Integer.parseInt(split[0])*100;
+                tickCount += (int) ((Double.parseDouble(split[1].split("s")[0]))/.6);
+            }
+            if (split.length == 1)
+            {
+                tickCount += (int) ((Double.parseDouble(split[0].split("s")[0]))/.6);
+            }
+        }
+        catch (Exception e)
+        {
+            log.info("Failed to convert time to ticks: " + time);
+        }
+        return tickCount;
     }
 
     public static boolean crossedLine(int region, Point start, Point end, boolean vertical, Client client)

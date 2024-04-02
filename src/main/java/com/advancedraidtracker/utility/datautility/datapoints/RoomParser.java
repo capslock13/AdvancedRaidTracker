@@ -14,14 +14,11 @@ public abstract class RoomParser
     public abstract Map<Integer, String> getLines();
 
     protected Map<Integer, String> lines = new LinkedHashMap<>();
-    public RoomDataManager data;
     protected RaidRoom room;
 
     public RoomParser()
     {
         room = RaidRoom.ANY;
-        data = new RoomDataManager();
-        data.init(room);
     }
 
     protected void addLinesFromCollection(List<Integer> list, String description)
@@ -30,11 +27,6 @@ public abstract class RoomParser
         {
             lines.put(i, description);
         }
-    }
-
-    public void init()
-    {
-        data.init(room);
     }
 
     public int getRoomTime()

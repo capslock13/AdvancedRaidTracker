@@ -198,14 +198,14 @@ public class Raids extends BaseFrame implements UpdateableWindow
             boolean shouldDataBeIncluded = true;
             if (filterSpectateOnly.isSelected())
             {
-                if (!data.isSpectate)
+                if (!data.isSpectated())
                 {
                     shouldDataBeIncluded = false;
                 }
             }
             if (filterInRaidOnly.isSelected())
             {
-                if (data instanceof Tob && ((Tob) data).isSpectated())
+                if (data.isSpectated())
                 {
                     shouldDataBeIncluded = false;
                 }
@@ -533,7 +533,7 @@ public class Raids extends BaseFrame implements UpdateableWindow
             case "Players":
                 return (String.join(",",raid.getPlayers()).replaceAll(String.valueOf((char) 160), String.valueOf(' '))); //todo replace with Text method
             case "Spectate":
-                return (raid.isSpectate) ? "Yes" : "No";
+                return (raid.isSpectated()) ? "Yes" : "No";
             case "View":
                 return "View";
             case "Time":
@@ -557,7 +557,7 @@ public class Raids extends BaseFrame implements UpdateableWindow
                 try
                 {
                     dataPointName = customColumnComboBox.getSelectedItem().toString();
-                    valueToDisplay = String.valueOf(raid.get(dataPointName));
+                    valueToDisplay = RoomUtil.value(raid.get(dataPointName));
                 } catch (Exception ignored)
                 {
 
@@ -568,7 +568,7 @@ public class Raids extends BaseFrame implements UpdateableWindow
         String dataPointName = "";
         try
         {
-            valueToDisplay = String.valueOf(raid.get(dataPointName));
+            valueToDisplay = RoomUtil.value(raid.get(dataPointName));
         } catch (Exception ignored)
         {
 

@@ -13,8 +13,4 @@ public class ColosseumParser extends RoomParser
     {
         return new HashMap<>();
     }
-    public void init()
-    {
-        data.init(RaidRoom.COLOSSEUM);
-    }
 }

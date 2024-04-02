@@ -21,30 +21,9 @@ import static com.advancedraidtracker.utility.datautility.DataPoint.VERZIK_TIME;
 @Slf4j
 public class Toa extends Raid
 {
-    private ApmekenParser apmekenParser = new ApmekenParser();
-    private BabaParser babaParser = new BabaParser();
-    private ScabarasParser scabarasParser = new ScabarasParser();
-    private KephriParser kephriParser = new KephriParser();
-    private HetParser hetParser = new HetParser();
-
     public Toa(Path filepath, List<LogEntry> raidData)
     {
         super(filepath, raidData);
-        roomParsers.put(APMEKEN, apmekenParser);
-        roomParsers.put(BABA, babaParser);
-        roomParsers.put(SCABARAS, scabarasParser);
-        roomParsers.put(KEPHRI, kephriParser);
-        roomParsers.put(HET, hetParser);
-        AkkhaParser akkhaParser = new AkkhaParser();
-        roomParsers.put(AKKHA, akkhaParser);
-        CrondisParser crondisParser = new CrondisParser();
-        roomParsers.put(CRONDIS, crondisParser);
-        ZebakParser zebakParser = new ZebakParser();
-        roomParsers.put(ZEBAK, zebakParser);
-        WardensParser wardensParser = new WardensParser();
-        roomParsers.put(WARDENS, wardensParser);
-        ToaParser toaParser = new ToaParser();
-        roomParsers.put(ANY_TOA, toaParser);
     }
 
     @Override
@@ -152,9 +131,9 @@ public class Toa extends Raid
                     {
                         for (int i = 1; i < 5; i++)
                         {
-                            if (getParser(WARDENS).data.get(DataPoint.getValue("Wardens Skull " + i + " Split")) < 1)
+                            if (data.get(DataPoint.getValue("Wardens Skull " + i + " Split")) < 1)
                             {
-                                getParser(WARDENS).data.set(DataPoint.getValue("Wardens Skull " + i + " Split"), entry.getFirstInt());
+                                data.set(DataPoint.getValue("Wardens Skull " + i + " Split"), entry.getFirstInt());
                                 break;
                             }
                         }
@@ -163,9 +142,9 @@ public class Toa extends Raid
                     {
                         for (int i = 1; i < 5; i++)
                         {
-                            if (getParser(WARDENS).data.get(DataPoint.getValue("Wardens Skull " + i + " Duration")) < 1)
+                            if (data.get(DataPoint.getValue("Wardens Skull " + i + " Duration")) < 1)
                             {
-                                getParser(WARDENS).data.set(DataPoint.getValue("Wardens Skull " + i + " Duration"), entry.getFirstInt() - getParser(WARDENS).data.get(DataPoint.getValue("Wardens Skull " + i + " Split")));
+                                data.set(DataPoint.getValue("Wardens Skull " + i + " Duration"), entry.getFirstInt() - data.get(DataPoint.getValue("Wardens Skull " + i + " Split")));
                                 break;
                             }
                         }

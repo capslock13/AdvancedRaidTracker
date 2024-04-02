@@ -152,11 +152,6 @@ public enum RaidRoom
         {
             return roomCache.get(name);
         }
-        if(roomMap.containsValue(name))
-        {
-            roomCache.put(name, INFERNO);
-            return INFERNO;
-        }
         for(RaidRoom room : RaidRoom.values())
         {
             if(room.name.equals(name))

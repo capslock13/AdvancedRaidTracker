@@ -12,8 +12,4 @@ public class ToaParser extends RoomParser
     {
         return lines;
     }
-    public void init()
-    {
-        data.init(RaidRoom.ANY_TOA);
-    }
 }

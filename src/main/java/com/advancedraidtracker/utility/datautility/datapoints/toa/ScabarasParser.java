@@ -12,8 +12,4 @@ public class ScabarasParser extends RoomParser
     {
         return lines;
     }
-    public void init()
-    {
-        data.init(RaidRoom.SCABARAS);
-    }
 }

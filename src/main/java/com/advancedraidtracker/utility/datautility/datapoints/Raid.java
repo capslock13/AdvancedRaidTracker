@@ -85,14 +85,12 @@ public abstract class Raid
     /**
      * Parsers for specific rooms
      */
-    protected Map<RaidRoom, RoomParser> roomParsers;
     private final List<LogEntry> raidData;
-    DefaultParser defaultParser;
-    UnknownParser unknownParser;
+
+    protected RoomDataManager data = new RoomDataManager();
 
     public boolean isHardMode = false;//todo move these to raid specific
     public boolean isStoryMode = false;
-    public boolean isSpectate = false;
 
     protected String red = "<html><font color='#FF0000'>"; //todo convert along with usages to colors (looking @ you fisu)
     protected String green = "<html><font color='#44AF33'>";
@@ -123,14 +121,10 @@ public abstract class Raid
     }
 
     @Getter
-    private boolean spectated;
+    private boolean spectated = false;
 
     protected Raid(Path filepath, List<LogEntry> raidData)
     {
-        defaultParser = new DefaultParser();
-        unknownParser = new UnknownParser();
-        roomParsers = new HashMap<>();
-        roomParsers.put(ANY, defaultParser);
         this.raidData = raidData;
         date = new Date(0L); //todo figure out why dates dont parse properly on some raids
         this.filepath = filepath;
@@ -152,23 +146,7 @@ public abstract class Raid
 
     public int get(DataPoint point, RaidRoom room)
     {
-        int sum = 0;
-        if(point.playerSpecific)
-        {
-            RoomDataManager rdm = getParser(room).data;
-            if(rdm.playerSpecificMap.containsKey(point))
-            {
-                for (String player : rdm.playerSpecificMap.get(point).keySet())
-                {
-                    sum += rdm.playerSpecificMap.get(point).get(player);
-                }
-            }
-        }
-        else
-        {
-            return getParser(room).data.get(point);
-        }
-        return sum;
+        return data.get(point, room);
     }
 
     public int get(DataPoint point)
@@ -184,18 +162,18 @@ public abstract class Raid
             {
                 if(point.playerSpecific)
                 {
-                    RoomDataManager rdm = getParser(room).data;
-                    if(rdm.playerSpecificMap.containsKey(point))
+                    RoomDataManager rdm = data;
+                    if(rdm.playerSpecificMap.containsKey(point.name))
                     {
-                        for (String player : rdm.playerSpecificMap.get(point).keySet())
+                        for (String player : rdm.playerSpecificMap.get(point.name).keySet())
                         {
-                            sum += rdm.playerSpecificMap.get(point).get(player);
+                            sum += rdm.playerSpecificMap.get(point.name).get(player);
                         }
                     }
                 }
                 else
                 {
-                    sum += getParser(room).data.get(point);
+                    sum += data.get(point);
                 }
             }
             return sum;
@@ -205,66 +183,36 @@ public abstract class Raid
             if(point.playerSpecific)
             {
                 int sum = 0;
-                RoomDataManager rdm = getParser(point.room).data;
-                if(rdm.playerSpecificMap.containsKey(point))
+                RoomDataManager rdm = data;
+                if(rdm.playerSpecificMap.containsKey(point.name))
                 {
-                    for (String player : rdm.playerSpecificMap.get(point).keySet())
+                    for (String player : rdm.playerSpecificMap.get(point.name).keySet())
                     {
-                        sum += rdm.playerSpecificMap.get(point).get(player);
+                        sum += rdm.playerSpecificMap.get(point.name).get(player);
                     }
                 }
                 return sum;
             }
             else
             {
-                return getParser(point.room).data.get(point);
+                return data.get(point);
             }
         }
     }
 
     public Integer get(String datapoint)
     {
-        DataPoint point = DataPoint.getValue(datapoint);
-        if(point.equals(DataPoint.UNKNOWN))
-        {
-            if(datapoint.contains(" "))
-            {
-                point = DataPoint.getValue(datapoint.substring(datapoint.indexOf(" ")+1));
-                if(!point.equals(DataPoint.UNKNOWN))
-                {
-                    return get(point, RaidRoom.getRoom(datapoint.substring(0, datapoint.indexOf(" "))));
-                }
-            }
-        }
-        return get(point);
+        return data.get(datapoint);
     }
 
     public int get(DataPoint point, String player)
     {
-        if(point.room.equals(RaidRoom.ALL))
-        {
-            int sum = 0;
-            for(RaidRoom room : RaidRoom.values())
-            {
-                sum+= getParser(room).data.get(point, player);
-            }
-            return sum;
-        }
-        else
-        {
-            return getParser(point.room).data.get(point, player);
-        }
+        return data.get(point, player);
     }
 
     public int get(String datapoint, String player)
     {
         return get(DataPoint.getValue(datapoint), player);
-    }
-
-
-    public RoomParser getParser(RaidRoom room)
-    {
-        return roomParsers.getOrDefault(room, unknownParser);
     }
 
     /**
@@ -348,7 +296,7 @@ public abstract class Raid
                 isStoryMode = true;
                 break;
             case SPECTATE:
-                isSpectate = true;
+                spectated = true;
                 break;
         }
     }
@@ -369,18 +317,8 @@ public abstract class Raid
     {
         try
         {
-            RaidRoom room = entry.logEntry.getRoom();
-            RoomParser parser = getParser(room);
             for(ParseInstruction instruction : entry.logEntry.parseInstructions)
             {
-                if(instruction.dataPoint1 != null && instruction.dataPoint1.room.equals(ANY))
-                {
-                    parser = defaultParser;
-                }
-                else if(instruction.dataPoint1 != null && instruction.dataPoint1.room.equals(ALL))
-                {
-                    parser = getParser(RaidRoom.values()[RaidRoom.getRoom(currentRoom).ordinal()]); //idk, maybe switch back
-                }
                 if(instruction.dataPoint1 != null && instruction.dataPoint1.type.equals(types.TIME))
                 {
                     if(!getRoomAccurate(entry.logEntry.getRoom()))
@@ -412,48 +350,55 @@ public abstract class Raid
                             }
                             else
                             {
-                                parser.data.set(CHALLENGE_TIME, parser.data.get(CHALLENGE_TIME)+4);
+                                data.set(CHALLENGE_TIME, data.get(CHALLENGE_TIME)+4);
                                 break;
                             }
                         }
-                        parser.data.incrementBy(instruction.dataPoint1, entry.getFirstInt(), entry.getValue("Player"));
+                        data.incrementBy(instruction.dataPoint1, entry.getFirstInt(), entry.getValue("Player"), RaidRoom.getRoom(currentRoom));
                         break;
                     case INCREMENT:
-                        parser.data.increment(instruction.dataPoint1, entry.getValue("Player"));
+                        data.increment(instruction.dataPoint1, entry.getValue("Player"), RaidRoom.getRoom(currentRoom));
                         break;
                     case INCREMENT_IF_GREATER_THAN:
-                        if (((instruction.marker != null) ? Integer.parseInt(entry.values.get(instruction.marker)) : parser.data.get(instruction.dataPoint1)) > instruction.value)
+                        if (((instruction.marker != null) ? Integer.parseInt(entry.values.get(instruction.marker)) : data.get(instruction.dataPoint1)) > instruction.value)
                         {
-                            parser.data.increment(instruction.dataPoint1, entry.getValue("Player"));
+                            data.increment(instruction.dataPoint1, entry.getValue("Player"), RaidRoom.getRoom(currentRoom));
                         }
                         break;
                     case INCREMENT_IF_LESS_THAN:
-                        if (((instruction.marker != null) ? Integer.parseInt(entry.values.get(instruction.marker)) : parser.data.get(instruction.dataPoint1)) < instruction.value)
+                        if (((instruction.marker != null) ? Integer.parseInt(entry.values.get(instruction.marker)) : data.get(instruction.dataPoint1)) < instruction.value)
                         {
-                            parser.data.increment(instruction.dataPoint1, entry.getValue("Player"));
+                            data.increment(instruction.dataPoint1, entry.getValue("Player"), RaidRoom.getRoom(currentRoom));
                         }
                         break;
                     case INCREMENT_IF_EQUALS:
                         if(instruction.value == Integer.parseInt(entry.values.get(instruction.marker)))
                         {
-                            parser.data.incrementBy(instruction.dataPoint1, entry.getFirstInt());
+                            data.incrementBy(instruction.dataPoint1, entry.getFirstInt(), RaidRoom.getRoom(currentRoom));
                         }
                         break;
                     case SET:
-                        parser.data.set(instruction.dataPoint1, entry.getFirstInt() + instruction.value);
+                        if(instruction.dataPoint1.room.equals(ALL))
+                        {
+                            data.set(instruction.dataPoint1, entry.getFirstInt() + instruction.value, RaidRoom.getRoom(currentRoom));
+                        }
+                        else
+                        {
+                            data.set(instruction.dataPoint1, entry.getFirstInt()+instruction.value);
+                        }
                         break;
                     case SUM:
-                        parser.data.set(instruction.dataPoint1, parser.data.get(instruction.dataPoint2) + parser.data.get(instruction.dataPoint3));
+                        data.set(instruction.dataPoint1, data.get(instruction.dataPoint2) + data.get(instruction.dataPoint3));
                         break;
                     case SPLIT:
-                        parser.data.set(instruction.dataPoint1, entry.getFirstInt()+instruction.value);
-                        parser.data.set(instruction.dataPoint2, parser.data.get(instruction.dataPoint1) - parser.data.get(instruction.dataPoint3));
+                        data.set(instruction.dataPoint1, entry.getFirstInt()+instruction.value);
+                        data.set(instruction.dataPoint2, data.get(instruction.dataPoint1) - data.get(instruction.dataPoint3));
                         break;
                     case DWH:
-                        parser.data.dwh(instruction.dataPoint1);
+                        data.dwh(instruction.dataPoint1);
                         break;
                     case BGS:
-                        parser.data.bgs(instruction.dataPoint1, entry.getFirstInt());
+                        data.bgs(instruction.dataPoint1, entry.getFirstInt());
                         break;
                     case ROOM_END_FLAG:
                         lastRoom = entry.logEntry.getRoom().name;
@@ -475,11 +420,10 @@ public abstract class Raid
                     case MANUAL_PARSE:
                         break;
                     case MAP:
-                        parser.data.increment(instruction.dataPoint1, entry.getValue("Player"));
-                        parser.data.addToList(instruction.dataPoint1, Integer.parseInt(entry.getValue("Room Tick")));
+                        data.increment(instruction.dataPoint1, entry.getValue("Player"));
+                        data.addToList(instruction.dataPoint1, Integer.parseInt(entry.getValue("Room Tick")));
                         break;
                 }
-                parser = getParser(room);
             }
             return true;
         } catch (Exception e)
@@ -544,14 +488,19 @@ public abstract class Raid
         }
     }
 
+    public void dumpValues()
+    {
+        data.dumpValues();
+    }
+
     public void setIndex(int index)
     {
-        defaultParser.data.set(RAID_INDEX, index);
+        data.set(RAID_INDEX, index);
     }
 
     public int getIndex()
     {
-        return defaultParser.data.get(RAID_INDEX);
+        return data.get(RAID_INDEX);
     }
 
     public abstract int getChallengeTime();

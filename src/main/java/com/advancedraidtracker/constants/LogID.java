@@ -307,6 +307,7 @@ public enum LogID
             "Veng Cast", "Target", "Player"), //target, source
     VENG_WAS_PROCCED(406, false, ALL,
             new ParseInstruction(INCREMENT, VENG_PROCS),
+                        new ParseInstruction(ADD_TO_VALUE, VENG_DAMAGE),
             "Veng Procced", "Player", "Damage"), //player, source of veng, damage
     PLAYER_STOOD_IN_THROWN_BLOOD(411, true, MAIDEN,
             new ParseInstruction(INCREMENT, MAIDEN_PLAYER_STOOD_IN_THROWN_BLOOD),
@@ -685,13 +686,13 @@ public enum LogID
             new ParseInstruction(MANUAL_PARSE),
             "Wave Ended", "Wave Number", "Room Tick"),
     ROOM_PRAYER_DRAINED(995, true, ALL,
-            new ParseInstruction(SET, PRAYER_USED),
+            new ParseInstruction(ADD_TO_VALUE, PRAYER_USED),
             "Prayer Drained", "Amount", "Room"),
     ROOM_DAMAGE_DEALT(996, true, ALL,
-            new ParseInstruction(SET, DAMAGE_DEALT),
+            new ParseInstruction(ADD_TO_VALUE, DAMAGE_DEALT),
             "Damage Dealt", "Damage", "Room"),
     ROOM_DAMAGE_RECEIVED(997, true, ALL,
-            new ParseInstruction(SET, DAMAGE_RECEIVED),
+            new ParseInstruction(ADD_TO_VALUE, DAMAGE_RECEIVED),
             "Damage Received", "Damage", "Room"),
 
 

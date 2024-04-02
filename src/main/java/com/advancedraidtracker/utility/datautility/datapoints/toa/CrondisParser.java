@@ -11,6 +11,7 @@ public class CrondisParser extends RoomParser
     @Override
     public Map<Integer, String> getLines()
     {
+        /*
         lines.put(8, "Pickup water");
         if(data.get(DataPoint.PARTY_SIZE) == 1)
         {
@@ -25,11 +26,7 @@ public class CrondisParser extends RoomParser
             lines.put(31, "First Watering");
             lines.put(45, "Second Fill");
             lines.put(56, "Second Watering");
-        }
+        }*/
         return lines;
-    }
-    public void init()
-    {
-        data.init(RaidRoom.CRONDIS);
     }
 }

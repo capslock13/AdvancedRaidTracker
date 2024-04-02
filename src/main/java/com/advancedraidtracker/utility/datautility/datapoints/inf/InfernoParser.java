@@ -14,8 +14,4 @@ public class InfernoParser extends RoomParser
         return new HashMap<>();
     }
 
-    public void init()
-    {
-        data.init(RaidRoom.INFERNO);
-    }
 }

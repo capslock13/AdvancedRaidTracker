@@ -11,6 +11,7 @@ public class NylocasParser extends RoomParser
     @Override
     public Map<Integer, String> getLines()
     {
+        /*
         addLinesFromCollection(data.getList(DataPoint.NYLO_STALLS_TOTAL), "Stall");
         lines.put(data.get(DataPoint.NYLO_LAST_WAVE), "Last Wave");
         lines.put(data.get(DataPoint.NYLO_BOSS_SPAWN), "Boss Spawn");
@@ -23,11 +24,7 @@ public class NylocasParser extends RoomParser
         {
             lines.put(i, "W" + wave);
             wave++;
-        }
+        }*/
         return lines;
-    }
-    public void init()
-    {
-        data.init(RaidRoom.NYLOCAS);
     }
 }

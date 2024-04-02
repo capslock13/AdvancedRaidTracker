@@ -11,6 +11,7 @@ public class VerzikParser extends RoomParser
     @Override
     public Map<Integer, String> getLines()
     {
+        /*
         addLinesFromCollection(data.getList(DataPoint.DAWN_DROPS), "Dawn Appears");
         //todo dawn dmg?
         for(int i = 19; i < data.get(DataPoint.VERZIK_P2_SPLIT); i++)
@@ -39,11 +40,7 @@ public class VerzikParser extends RoomParser
             {
                 lines.put(i, "Webs");
             }
-        }
+        }*/
         return lines;
-    }
-    public void init()
-    {
-        data.init(RaidRoom.VERZIK);
     }
 }

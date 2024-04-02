@@ -12,8 +12,4 @@ public class ApmekenParser extends RoomParser
     {
         return lines;
     }
-    public void init()
-    {
-        data.init(RaidRoom.APMEKEN);
-    }
 }

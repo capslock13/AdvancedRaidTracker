@@ -19,7 +19,6 @@ public class Colo extends Raid
     public Colo(Path filepath, List<LogEntry> raidData)
     {
         super(filepath, raidData);
-        roomParsers.put(RaidRoom.COLOSSEUM, new ColosseumParser());
     }
 
     @Override
@@ -35,9 +34,9 @@ public class Colo extends Raid
                 }
                 else if(entry.logEntry.equals(LogID.COLOSSEUM_WAVE_12_END))
                 {
-                    getParser(CHALLENGE_TIME.room).data.set(CHALLENGE_TIME, entry.getFirstInt());
-                    int val = getParser(CHALLENGE_TIME.room).data.get(CHALLENGE_TIME)-get(COLOSSEUM_WAVE_12_SPLIT);
-                    getParser(RaidRoom.COLOSSEUM).data.set(DataPoint.COLOSSEUM_WAVE_12_DURATION, val);
+                    data.set(CHALLENGE_TIME, entry.getFirstInt());
+                    int val = data.get(CHALLENGE_TIME)-get(COLOSSEUM_WAVE_12_SPLIT);
+                    data.set(DataPoint.COLOSSEUM_WAVE_12_DURATION, val);
                     completed = true;
                 }
             }

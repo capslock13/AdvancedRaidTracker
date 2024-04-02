@@ -19,7 +19,6 @@ public class Inf extends Raid
     public Inf(Path filepath, List<LogEntry> raidData)
     {
         super(filepath, raidData);
-        roomParsers.put(RaidRoom.INFERNO, new InfernoParser());
     }
 
     @Override
@@ -33,6 +32,8 @@ public class Inf extends Raid
                 {
                     highestWaveStarted = entry.getFirstInt();
                     lastCheckPoint = InfernoHandler.getLastRelevantSplit(highestWaveStarted);
+                    currentRoom = InfernoHandler.roomMap.get(lastCheckPoint);
+                    log.info("setting inferno to: " + currentRoom);
                 }
                 else if(entry.logEntry.equals(LogID.INFERNO_TIMER_STARTED))
                 {
@@ -46,18 +47,6 @@ public class Inf extends Raid
                         completed = true;
                     }
                 }
-                else if(entry.logEntry.equals(LogID.ROOM_PRAYER_DRAINED))
-                {
-                    getParser(RaidRoom.getRoom(InfernoHandler.roomMap.get(lastCheckPoint))).data.set(DataPoint.PRAYER_USED, entry.getValueAsInt("Amount"));
-                }
-                else if(entry.logEntry.equals(LogID.ROOM_DAMAGE_DEALT))
-                {
-                    getParser(RaidRoom.getRoom(InfernoHandler.roomMap.get(lastCheckPoint))).data.set(DataPoint.DAMAGE_DEALT, entry.getValueAsInt("Damage"));
-                }
-                else if(entry.logEntry.equals(LogID.ROOM_DAMAGE_RECEIVED))
-                {
-                    getParser(RaidRoom.getRoom(InfernoHandler.roomMap.get(lastCheckPoint))).data.set(DataPoint.DAMAGE_RECEIVED, entry.getValueAsInt("Damage"));
-                }
             }
             else if(instruction.type == ParseType.LEFT_RAID)
             {
@@ -69,11 +58,11 @@ public class Inf extends Raid
                     }
                     if(!completed)
                     {
-                        getParser(RaidRoom.ANY).data.set(DataPoint.CHALLENGE_TIME, endTime - startTime-1);
+                        data.set(DataPoint.CHALLENGE_TIME, endTime - startTime-1);
                     }
                     else
                     {
-                        getParser(RaidRoom.ANY).data.set(DataPoint.CHALLENGE_TIME, endTime);
+                        data.set(DataPoint.CHALLENGE_TIME, endTime);
                     }
 
                     log.info("end time: " + endTime);

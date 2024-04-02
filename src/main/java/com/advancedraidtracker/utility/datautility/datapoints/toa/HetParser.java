@@ -12,11 +12,7 @@ public class HetParser extends RoomParser
     @Override
     public Map<Integer, String> getLines()
     {
-        addLinesFromCollection(data.getList(DataPoint.HET_DOWNS), "Obelisk Weakened");
+        //addLinesFromCollection(data.getList(DataPoint.HET_DOWNS), "Obelisk Weakened");
         return lines;
-    }
-    public void init()
-    {
-        data.init(RaidRoom.HET);
     }
 }

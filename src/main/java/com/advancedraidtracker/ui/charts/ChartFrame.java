@@ -53,7 +53,6 @@ public class ChartFrame extends BaseFrame
         for(String bossName : activeSet)
         {
             RaidRoom room = RaidRoom.getRoom(bossName);
-            RoomParser parser = roomData.getParser(room);
             JPanel tab = new JPanel();
             tab.setLayout(new GridLayout(1, 2));
             JPanel chart = new JPanel();
@@ -81,7 +80,7 @@ public class ChartFrame extends BaseFrame
                         roomData.get(bossName.substring(0, bossName.length() - 2) + "Time") : roomData.get(bossName + " Time"));
             }
             chartPanel.addThrallBoxes(chartData.getThralls(room));
-            chartPanel.addLines(parser.getLines());
+            //chartPanel.addLines(parser.getLines()); //todo lines
 
             chartPanel.addMaidenCrabs(chartData.maidenCrabs);
 

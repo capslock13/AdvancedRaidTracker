@@ -11,22 +11,24 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
+import static com.advancedraidtracker.utility.UISwingUtility.*;
+
 public class ConfirmationDialog extends BaseFrame
 {
     public ConfirmationDialog(String filterName, ArrayList<ImplicitFilter> filters, JFrame root)
     {
         setTitle("Confirm");
-        JPanel panelButtons = new JPanel(new GridLayout(1, 2));
+        JPanel panelButtons = getThemedPanel(new GridLayout(1, 2));
         setLayout(new GridLayout(2, 1));
-        add(new JLabel("Are you sure you want to overwrite filter " + filterName + "?"));
-        JButton yesButton = new JButton("Yes");
+        add(getThemedLabel("Are you sure you want to overwrite filter " + filterName + "?"));
+        JButton yesButton = getThemedButton("Yes");
         yesButton.addActionListener(e ->
         {
             FilterManager.saveOverwriteFilter(filterName, filters);
             close();
             root.setVisible(false);
         });
-        JButton noButton = new JButton("No");
+        JButton noButton = getThemedButton("No");
         noButton.addActionListener(e -> close());
         panelButtons.add(yesButton);
         panelButtons.add(noButton);
@@ -38,17 +40,17 @@ public class ConfirmationDialog extends BaseFrame
     public ConfirmationDialog(String raidsName, ArrayList<Raid> raids, JFrame root, int mark)
     {
         setTitle("Confirm");
-        JPanel panelButtons = new JPanel(new GridLayout(1, 2));
+        JPanel panelButtons = getThemedPanel(new GridLayout(1, 2));
         setLayout(new GridLayout(2, 1));
-        add(new JLabel("Are you sure you want to overwrite raids " + raidsName + "?"));
-        JButton yesButton = new JButton("Yes");
+        add(getThemedLabel("Are you sure you want to overwrite raids " + raidsName + "?"));
+        JButton yesButton = getThemedButton("Yes");
         yesButton.addActionListener(e ->
         {
             RaidsManager.saveOverwriteRaids(raidsName, raids);
             close();
             root.setVisible(false);
         });
-        JButton noButton = new JButton("No");
+        JButton noButton = getThemedButton("No");
         noButton.addActionListener(e -> close());
         panelButtons.add(yesButton);
         panelButtons.add(noButton);

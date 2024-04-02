@@ -41,6 +41,8 @@ public class ChartToolPanel extends JPanel implements MouseListener, MouseMotion
         this.config = config;
         addMouseListener(this);
         addMouseMotionListener(this);
+        setBackground(config.primaryDark());
+        setOpaque(true);
     }
 
     public void build()
@@ -95,7 +97,7 @@ public class ChartToolPanel extends JPanel implements MouseListener, MouseMotion
             }
             else
             {
-                g.setColor(new Color(45, 140, 235));
+                g.setColor(new Color(45, 140, 235)); //todo selection color
             }
             g.drawRect(xMargin + 1, yMargin + 1, (toolMargin) + (toolHeight * 2) + (toolHeight * 2), toolHeight * 2);
         }

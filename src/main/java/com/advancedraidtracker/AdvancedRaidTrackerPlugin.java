@@ -1594,6 +1594,7 @@ public class AdvancedRaidTrackerPlugin extends Plugin
             configManager.setConfiguration("Advanced Raid Tracker", "showBoldTick", theme.isShowBoldTick());
             configManager.setConfiguration("Advanced Raid Tracker", "rightAlignTicks", theme.isRightAlignTicks());
             configManager.setConfiguration("Advanced Raid Tracker", "useAlternateFont", theme.isUseAlternateFont());
+            timersPanelPrimary.redraw();
         }
     }
 

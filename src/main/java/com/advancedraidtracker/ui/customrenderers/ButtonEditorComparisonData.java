@@ -5,6 +5,8 @@ import com.advancedraidtracker.ui.Raids;
 import javax.swing.*;
 import java.awt.*;
 
+import static com.advancedraidtracker.utility.UISwingUtility.getThemedButton;
+
 public class ButtonEditorComparisonData extends DefaultCellEditor
 {
     protected JButton button;
@@ -17,7 +19,7 @@ public class ButtonEditorComparisonData extends DefaultCellEditor
     {
         super(checkBox);
         frame = raidsFrame;
-        button = new JButton();
+        button = getThemedButton();
         button.setOpaque(true);
         button.addActionListener(e -> fireEditingStopped());
     }

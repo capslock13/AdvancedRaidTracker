@@ -10,13 +10,14 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import static com.advancedraidtracker.utility.UISwingUtility.*;
+
 public class CrabLeakInfo extends BaseFrame
 {
     public CrabLeakInfo(ArrayList<ArrayList<StringInt>> crabs)
     {
-        JPanel primary = new JPanel();
+        JPanel primary = getTitledPanel("Crab Leak Info (Based on " + crabs.size() + " Raids)");
         Map<String, Integer> crabLeakSums = new LinkedHashMap<>();
-        primary.setBorder(BorderFactory.createTitledBorder("Crab Leak Info (Based on " + crabs.size() + " Raids)"));
         for (ArrayList<StringInt> crabData : crabs)
         {
             for (StringInt crab : crabData)
@@ -33,24 +34,21 @@ public class CrabLeakInfo extends BaseFrame
 
         primary.setLayout(new GridLayout(1, 0, 2, 2));
 
-        JPanel panel70s = new JPanel();
-        JPanel panel50s = new JPanel();
-        JPanel panel30s = new JPanel();
+        JPanel panel70s = getTitledPanel("70s");
+        JPanel panel50s = getTitledPanel("50s");
+        JPanel panel30s = getTitledPanel("30s");
         panel70s.setLayout(new GridLayout(0, 2, 2, 2));
         panel50s.setLayout(new GridLayout(0, 2, 2, 2));
         panel30s.setLayout(new GridLayout(0, 2, 2, 2));
-        panel70s.setBorder(BorderFactory.createTitledBorder("70s"));
-        panel50s.setBorder(BorderFactory.createTitledBorder("50s"));
-        panel30s.setBorder(BorderFactory.createTitledBorder("30s"));
 
         Color color = new Color(30, 30, 30);
         for (int i = 0; i < 3; i++)
         {
-            JLabel test = new JLabel("Crab");
+            JLabel test = getThemedLabel("Crab");
             test.setOpaque(true);
             test.setBackground(Color.BLACK);
 
-            JLabel test2 = new JLabel("Average HP", SwingConstants.RIGHT);
+            JLabel test2 = getThemedLabel("Average HP", SwingConstants.RIGHT);
             test2.setOpaque(true);
             test2.setBackground(Color.BLACK);
 
@@ -71,8 +69,8 @@ public class CrabLeakInfo extends BaseFrame
                 }
                 double average = averageTemp / 100.0;
 
-                JLabel desc = new JLabel(crabDescription, SwingConstants.LEFT);
-                JLabel avg = new JLabel(String.valueOf(average), SwingConstants.RIGHT);
+                JLabel desc = getThemedLabel(crabDescription, SwingConstants.LEFT);
+                JLabel avg = getThemedLabel(String.valueOf(average), SwingConstants.RIGHT);
 
                 if (j % 2 == 0)
                 {

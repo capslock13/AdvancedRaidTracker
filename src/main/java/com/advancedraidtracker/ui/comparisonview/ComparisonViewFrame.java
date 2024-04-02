@@ -1,9 +1,11 @@
 package com.advancedraidtracker.ui.comparisonview;
 
 import com.advancedraidtracker.AdvancedRaidTrackerConfig;
+import com.advancedraidtracker.AdvancedRaidTrackerPlugin;
 import com.advancedraidtracker.ui.BaseFrame;
 import com.advancedraidtracker.utility.datautility.datapoints.Raid;
 import lombok.extern.slf4j.Slf4j;
+import net.runelite.api.Item;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.game.ItemManager;
@@ -14,11 +16,17 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 
+import static com.advancedraidtracker.utility.UISwingUtility.getThemedTabbedPane;
+
 @Slf4j
 public class ComparisonViewFrame extends BaseFrame
 {
-    public ComparisonViewFrame(List<List<Raid>> data, List<String> labels)
+    public ComparisonViewFrame(List<List<Raid>> data, List<String> labels, AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
     {
+        this.configManager = configManager;
+        this.clientThread = clientThread;
+        this.itemManager = itemManager;
+        this.config = config;
         add(new ComparisonViewPanel(data, labels, config, itemManager, clientThread, configManager));
         pack();
     }
@@ -34,7 +42,7 @@ public class ComparisonViewFrame extends BaseFrame
         this.clientThread = clientThread;
         this.itemManager = itemManager;
         this.config = config;
-        JTabbedPane pane = new JTabbedPane();
+        JTabbedPane pane = getThemedTabbedPane();
         pane.setBackground(Color.BLACK);
         pane.setOpaque(true);
         int index = 0;

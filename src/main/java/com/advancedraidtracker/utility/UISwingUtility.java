@@ -1,31 +1,55 @@
 package com.advancedraidtracker.utility;
 
+import com.advancedraidtracker.AdvancedRaidTrackerConfig;
+import lombok.Setter;
+
+import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.border.LineBorder;
+import javax.swing.border.MatteBorder;
+import javax.swing.border.TitledBorder;
+import javax.swing.plaf.basic.BasicScrollBarUI;
+import javax.swing.plaf.basic.BasicSliderUI;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
+import java.io.File;
+
+import static com.advancedraidtracker.utility.datautility.DataWriter.PLUGIN_DIRECTORY;
+import static net.runelite.client.RuneLite.RUNELITE_DIR;
 
 public class UISwingUtility
 {
+    @Setter
+    private static AdvancedRaidTrackerConfig config;
+
     public static String colorStr(Color c) //todo @fisu it looks like I already had a method for this..........
     {
-        return "<html><font color='#" + Integer.toHexString(c.getRGB()).substring(2) + "'>";
+        return "<html><font color='" + toHex(c) + "'>";
+    }
+
+    public static String toHex(Color color)
+    {
+        String alpha = pad(Integer.toHexString(color.getAlpha()));
+        String red = pad(Integer.toHexString(color.getRed()));
+        String green = pad(Integer.toHexString(color.getGreen()));
+        String blue = pad(Integer.toHexString(color.getBlue()));
+        return "#" + red + green + blue;
+    }
+
+    private static String pad(String s)
+    {
+        return (s.length() == 1) ? "0" + s : s;
     }
 
     public final static String roomColor = colorStr(new Color(200, 200, 200));
-
-    public static JLabel getDarkJLabel(String labelText)
-    {
-        return new JLabel(labelText);
-    }
-
-    public static JLabel getDarkJLabel(String labelText, int swingConstant)
-    {
-        return new JLabel(labelText, swingConstant);
-    }
 
     public static BufferedImage createStringImage(Graphics g, String s, Color color)
     {
@@ -67,7 +91,11 @@ public class UISwingUtility
     public static JPanel getTitledPanel(String title)
     {
         JPanel panel = new JPanel();
-        panel.setBorder(BorderFactory.createTitledBorder(title));
+        TitledBorder border = BorderFactory.createTitledBorder(title);
+        border.setTitleColor(config.fontColor());
+        panel.setBorder(border);
+        panel.setBackground(config.primaryDark());
+        panel.setOpaque(true);
         return panel;
     }
 
@@ -80,13 +108,56 @@ public class UISwingUtility
     {
         JCheckBox darkCheckBox = new JCheckBox(name, state);
         darkCheckBox.addActionListener(actionListener);
+        darkCheckBox.setBackground(config.primaryDark());
+        try
+        {
+            darkCheckBox.setSelectedIcon(new ImageIcon(ImageIO.read(new File(RUNELITE_DIR.getAbsolutePath() + "test.png"))));
+        } catch (Exception e)
+        {
+
+        }
+        darkCheckBox.setOpaque(false);
+        darkCheckBox.setForeground(config.fontColor());
+        //darkCheckBox.setOpaque(true);
         return darkCheckBox;
+    }
+
+    public static JComboBox<String> getThemedComboBox(String[] options)
+    {
+        JComboBox<String> comboBox = new JComboBox<>(options);
+        comboBox.setBorder(BorderFactory.createLineBorder(config.primaryLight()));
+        comboBox.setBackground(config.primaryMiddle());
+        comboBox.setOpaque(true);
+        return comboBox;
+    }
+
+    public static JComboBox<String> getThemedComboBox()
+    {
+        JComboBox<String> comboBox = new JComboBox<>();
+        comboBox.setBorder(BorderFactory.createLineBorder(config.primaryLight()));
+        comboBox.setBackground(config.primaryMiddle());
+        comboBox.setOpaque(true);
+        return comboBox;
+    }
+
+    public static JComboBox<Integer> getThemedComboBox(Integer[] options)
+    {
+        JComboBox<Integer> comboBox = new JComboBox<>(options);
+        comboBox.setBorder(BorderFactory.createLineBorder(config.primaryLight()));
+        comboBox.setBackground(config.primaryMiddle());
+        comboBox.setOpaque(true);
+        return comboBox;
     }
 
     public static JComboBox<String> getActionListenCheckBox(String[] options, ActionListener actionListener)
     {
         JComboBox<String> dark = new JComboBox<>(options);
         dark.addActionListener(actionListener);
+        dark.setBackground(config.primaryDark());
+        dark.setOpaque(false);
+        dark.setForeground(config.fontColor());
+
+        //dark.setOpaque(true);
         return dark;
     }
 
@@ -102,5 +173,404 @@ public class UISwingUtility
         FontRenderContext frc = g.getFontRenderContext();
         GlyphVector gv = g.getFont().createGlyphVector(frc, "A");
         return gv.getPixelBounds(null, 0, 0).height;
+    }
+
+    public static JPanel getThemedPanel()
+    {
+        JPanel panel = new JPanel();
+        panel.setBackground(config.primaryDark());
+        panel.setOpaque(true);
+        return panel;
+    }
+
+    public static JPanel getThemedPanel(LayoutManager layoutManager)
+    {
+        JPanel panel = new JPanel(layoutManager);
+        panel.setBackground(config.primaryDark());
+        panel.setOpaque(true);
+        return panel;
+    }
+
+    public static JLabel getThemedLabel(String text, int swingConstant)
+    {
+        JLabel label = new JLabel(text, swingConstant);
+        label.setForeground(config.fontColor());
+        return label;
+    }
+
+    public static JSlider getThemedSlider()
+    {
+        JSlider slider = new JSlider();
+        slider.setUI(new BasicSliderUI()
+        {
+            private static final int TRACK_HEIGHT = 8;
+            private static final int TRACK_WIDTH = 8;
+            private static final int TRACK_ARC = 5;
+            private final Dimension THUMB_SIZE = new Dimension(8, 8);
+            private final RoundRectangle2D.Float trackShape = new RoundRectangle2D.Float();
+
+            @Override
+            protected void calculateTrackRect()
+            {
+                super.calculateTrackRect();
+                if (isHorizontal())
+                {
+                    trackRect.y = trackRect.y + (trackRect.height - TRACK_HEIGHT) / 2;
+                    trackRect.height = TRACK_HEIGHT;
+                } else
+                {
+                    trackRect.x = trackRect.x + (trackRect.width - TRACK_WIDTH) / 2;
+                    trackRect.width = TRACK_WIDTH;
+                }
+                trackShape.setRoundRect(trackRect.x, trackRect.y, trackRect.width, trackRect.height, TRACK_ARC, TRACK_ARC);
+            }
+
+            @Override
+            protected void calculateThumbLocation()
+            {
+                super.calculateThumbLocation();
+                if (isHorizontal())
+                {
+                    thumbRect.y = trackRect.y + (trackRect.height - thumbRect.height) / 2;
+                } else
+                {
+                    thumbRect.x = trackRect.x + (trackRect.width - thumbRect.width) / 2;
+                }
+            }
+
+            @Override
+            protected Dimension getThumbSize()
+            {
+                return THUMB_SIZE;
+            }
+
+            private boolean isHorizontal()
+            {
+                return slider.getOrientation() == JSlider.HORIZONTAL;
+            }
+
+            @Override
+            public void paint(final Graphics g, final JComponent c)
+            {
+                ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                super.paint(g, c);
+            }
+
+            @Override
+            public void paintTrack(final Graphics g)
+            {
+                Graphics2D g2 = (Graphics2D) g;
+                Shape clip = g2.getClip();
+
+                boolean horizontal = isHorizontal();
+                boolean inverted = slider.getInverted();
+
+                // Paint shadow.
+                g2.setColor(config.primaryDark());
+                g2.fill(trackShape);
+
+                // Paint track background.
+                g2.setColor(config.primaryLight());
+                g2.setClip(trackShape);
+                trackShape.y += 1;
+                g2.fill(trackShape);
+                trackShape.y = trackRect.y;
+
+                g2.setClip(clip);
+
+                if (horizontal)
+                {
+                    boolean ltr = slider.getComponentOrientation().isLeftToRight();
+                    if (ltr) inverted = !inverted;
+                    int thumbPos = thumbRect.x + thumbRect.width / 2;
+                    if (inverted)
+                    {
+                        g2.clipRect(0, 0, thumbPos, slider.getHeight());
+                    } else
+                    {
+                        g2.clipRect(thumbPos, 0, slider.getWidth() - thumbPos, slider.getHeight());
+                    }
+
+                } else
+                {
+                    int thumbPos = thumbRect.y + thumbRect.height / 2;
+                    if (inverted)
+                    {
+                        g2.clipRect(0, 0, slider.getHeight(), thumbPos);
+                    } else
+                    {
+                        g2.clipRect(0, thumbPos, slider.getWidth(), slider.getHeight() - thumbPos);
+                    }
+                }
+                g2.setColor(config.boxColor());
+                g2.fill(trackShape);
+                g2.setClip(clip);
+            }
+
+            @Override
+            public void paintThumb(final Graphics g)
+            {
+                g.setColor(config.fontColor());
+                g.fillOval(thumbRect.x, thumbRect.y, thumbRect.width, thumbRect.height);
+            }
+
+            @Override
+            public void paintFocus(final Graphics g)
+            {
+            }
+        });
+        slider.setBackground(config.primaryDark());
+        slider.setForeground(config.fontColor());
+        slider.setOpaque(true);
+        return slider;
+    }
+
+    public static JSpinner getThemedSpinner(SpinnerNumberModel snm)
+    {
+        JSpinner spinner = new JSpinner(snm);
+        spinner.addChangeListener(cl ->
+        {
+            spinner.setBackground(config.primaryDark());
+            spinner.setForeground(config.fontColor());
+            spinner.setOpaque(true);
+        });
+        spinner.setBackground(config.primaryDark());
+        spinner.setForeground(config.fontColor());
+        spinner.setOpaque(true);
+        return spinner;
+    }
+
+    public static JLabel getThemedLabel(String text)
+    {
+        JLabel label = new JLabel(text);
+        label.setForeground(config.fontColor());
+        return label;
+    }
+
+    public static JLabel getThemedLabel()
+    {
+        JLabel label = new JLabel();
+        label.setForeground(config.fontColor());
+        return label;
+    }
+
+    public static JButton getThemedButton(String text)
+    {
+        JButton button = new JButton(text);
+        button.addFocusListener(new FocusListener()
+        {
+            @Override
+            public void focusGained(FocusEvent e)
+            {
+                button.setBorder(BorderFactory.createLineBorder(config.boxColor()));
+            }
+
+            @Override
+            public void focusLost(FocusEvent e)
+            {
+                button.setBorder(BorderFactory.createLineBorder(config.primaryLight()));
+            }
+        });
+        button.setForeground(config.fontColor());
+        button.setBackground(config.primaryMiddle());
+        button.setOpaque(true);
+        button.setBorder(BorderFactory.createLineBorder(config.primaryLight()));
+        return button;
+    }
+
+    public static JButton getThemedButton()
+    {
+        return getThemedButton("");
+    }
+
+    public static JTable getThemedTable()
+    {
+        JTable table = new JTable();
+        table.getTableHeader().setBackground(config.primaryMiddle());
+        table.getTableHeader().setOpaque(true);
+        table.setForeground(config.fontColor());
+        table.getTableHeader().setForeground(config.fontColor());
+        table.setBackground(config.primaryDark());
+        table.setOpaque(true);
+        return table;
+    }
+
+    public static JTable getThemedTable(Object[][] obj, String[] strs)
+    {
+        JTable table = new JTable(obj, strs);
+        table.getTableHeader().setBackground(config.primaryMiddle());
+        table.getTableHeader().setOpaque(true);
+        table.setForeground(config.fontColor());
+        table.getTableHeader().setForeground(config.fontColor());
+        table.setBackground(config.primaryDark());
+        table.setOpaque(true);
+        return table;
+    }
+
+
+    public static JScrollPane getThemedScrollPane(JComponent component)
+    {
+        JScrollPane scrollPane = new JScrollPane(component);
+        scrollPane.setBorder(BorderFactory.createLineBorder(config.primaryLight()));
+        scrollPane.setBackground(config.primaryDark());
+        scrollPane.setOpaque(true);
+        scrollPane.getVerticalScrollBar().setBackground(config.primaryMiddle());
+        scrollPane.getHorizontalScrollBar().setBackground(config.primaryMiddle());
+        scrollPane.getHorizontalScrollBar().setBackground(config.primaryDark());
+        scrollPane.getVerticalScrollBar().setBackground(config.primaryDark());
+        scrollPane.getHorizontalScrollBar().setOpaque(true);
+        scrollPane.getVerticalScrollBar().setUI(new BasicScrollBarUI()
+        {
+            @Override
+            protected void configureScrollBarColors()
+            {
+                this.thumbColor = config.primaryLight();
+            }
+
+            @Override
+            protected JButton createDecreaseButton(int orientation)
+            {
+                return new JButton()
+                {
+                    @Override
+                    public Dimension getPreferredSize()
+                    {
+                        return new Dimension();
+                    }
+                };
+            }
+
+            @Override
+            protected JButton createIncreaseButton(int orientation)
+            {
+                return new JButton()
+                {
+                    @Override
+                    public Dimension getPreferredSize()
+                    {
+                        return new Dimension();
+                    }
+                };
+            }
+        });
+        scrollPane.getHorizontalScrollBar().setUI(new BasicScrollBarUI()
+        {
+            @Override
+            protected void configureScrollBarColors()
+            {
+                this.thumbColor = config.primaryLight();
+            }
+        });
+        scrollPane.getVerticalScrollBar().setOpaque(true);
+        //scrollPane.getVerticalScrollBar().setForeground(config.fontColor());
+        //scrollPane.getHorizontalScrollBar().setForeground(config.fontColor());
+        return scrollPane;
+    }
+
+    public static JCheckBox getThemedCheckBox(String name, boolean state)
+    {
+        JCheckBox checkBox = new JCheckBox(name, state);
+        checkBox.setBackground(config.primaryMiddle());
+        try
+        {
+            checkBox.setSelectedIcon(new ImageIcon(ImageIO.read(new File(RUNELITE_DIR.getAbsolutePath() + "test.png"))));
+        } catch (Exception e)
+        {
+
+        }
+        checkBox.setForeground(config.fontColor());
+        checkBox.setOpaque(false);
+        return checkBox;
+    }
+
+    public static JCheckBox getThemedCheckBox(String name)
+    {
+        JCheckBox checkBox = new JCheckBox(name);
+        checkBox.setBackground(config.primaryMiddle());
+        try
+        {
+            checkBox.setSelectedIcon(new ImageIcon(ImageIO.read(new File(RUNELITE_DIR.getAbsolutePath() + "test.png"))));
+        } catch (Exception e)
+        {
+
+        }
+        checkBox.setForeground(config.fontColor());
+        checkBox.setOpaque(false);
+        return checkBox;
+    }
+
+    public static JCheckBox getThemedCheckBox()
+    {
+        JCheckBox checkBox = new JCheckBox();
+        checkBox.setOpaque(false);
+        checkBox.setBackground(config.primaryMiddle());
+        try
+        {
+            checkBox.setSelectedIcon(new ImageIcon(ImageIO.read(new File(RUNELITE_DIR.getAbsolutePath() + "test.png"))));
+        } catch (Exception e)
+        {
+
+        }
+        checkBox.setForeground(config.fontColor());
+        return checkBox;
+    }
+
+    public static JTabbedPane getThemedTabbedPane()
+    {
+        JTabbedPane tabbedPane = new JTabbedPane();
+        tabbedPane.setBackground(config.primaryMiddle());
+        tabbedPane.setForeground(config.fontColor());
+        tabbedPane.setOpaque(true);
+        return tabbedPane;
+    }
+
+    public static JTextArea getThemedTextArea()
+    {
+        return getThemedTextArea("");
+    }
+
+    public static JTextArea getThemedTextArea(String text)
+    {
+        JTextArea textArea = new JTextArea(text);
+        textArea.setBackground(config.primaryMiddle());
+        textArea.setOpaque(true);
+        textArea.setForeground(config.fontColor());
+        return textArea;
+    }
+
+    public static JTextField getThemedTextField()
+    {
+        return getThemedTextField("");
+    }
+
+    public static JTextField getThemedTextField(String text)
+    {
+        JTextField textArea = new JTextField(text);
+        textArea.addFocusListener(new FocusListener()
+        {
+            @Override
+            public void focusGained(FocusEvent e)
+            {
+                textArea.setBorder(BorderFactory.createLineBorder(config.boxColor()));
+            }
+
+            @Override
+            public void focusLost(FocusEvent e)
+            {
+                textArea.setBorder(BorderFactory.createLineBorder(config.primaryLight()));
+            }
+        });
+        textArea.setBorder(BorderFactory.createLineBorder(config.primaryLight()));
+        textArea.setBackground(config.primaryMiddle());
+        textArea.setForeground(config.fontColor());
+        textArea.setOpaque(true);
+        return textArea;
+    }
+
+    public static TitledBorder getColoredTitledBorder(String title, Color color)
+    {
+        TitledBorder border = BorderFactory.createTitledBorder(title);
+        border.setTitleColor(color);
+        return border;
     }
 }

@@ -11,6 +11,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
+import static com.advancedraidtracker.utility.UISwingUtility.getThemedButton;
+
 @Slf4j
 public class ButtonEditorLoadFilters extends DefaultCellEditor
 {
@@ -31,7 +33,7 @@ public class ButtonEditorLoadFilters extends DefaultCellEditor
         this.replace = true;
         this.filteredRaidsFrame = filteredRaidsFrame;
         this.closeBaseFrame = loadFrame;
-        button = new JButton();
+        button = getThemedButton();
         button.setOpaque(true);
         button.addActionListener(e -> fireEditingStopped());
     }
@@ -42,7 +44,7 @@ public class ButtonEditorLoadFilters extends DefaultCellEditor
         this.data = data;
         this.filteredRaidsFrame = filteredRaidsFrame;
         this.closeBaseFrame = loadFrame;
-        button = new JButton();
+        button = getThemedButton();
         button.setOpaque(true);
         this.replace = replace;
         button.addActionListener(e -> fireEditingStopped());

@@ -8,6 +8,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
+import static com.advancedraidtracker.utility.UISwingUtility.*;
+
 public class SaveFilter extends BaseFrame
 {
     private final JTextField field;
@@ -16,12 +18,11 @@ public class SaveFilter extends BaseFrame
     {
         getContentPane().removeAll();
         setTitle("Save Filter");
-        JPanel borderPanel = new JPanel(new BorderLayout());
-        borderPanel.setBorder(BorderFactory.createTitledBorder("Save Filter"));
-        JPanel subPanel = new JPanel();
+        JPanel borderPanel = getTitledPanel("Save Filter");
+        JPanel subPanel = getThemedPanel();
         subPanel.setLayout(new GridLayout(1, 0));
-        field = new JTextField();
-        subPanel.add(new JLabel("Filter Name: "));
+        field = getThemedTextField();
+        subPanel.add(getThemedLabel("Filter Name: "));
         subPanel.add(field);
         JButton saveButton = getSaveButton(filters, quickFiltersState);
         subPanel.add(saveButton);
@@ -36,7 +37,7 @@ public class SaveFilter extends BaseFrame
 
     private JButton getSaveButton(ArrayList<ImplicitFilter> filters)
     {
-        JButton saveButton = new JButton("Save just filter");
+        JButton saveButton = getThemedButton("Save just filter");
         saveButton.addActionListener(e ->
         {
             if (FilterManager.doesFilterExist(field.getText()))
@@ -54,7 +55,7 @@ public class SaveFilter extends BaseFrame
 
     private JButton getSaveButton(ArrayList<ImplicitFilter> filters, ArrayList<String> quickFiltersState)
     {
-        JButton saveButton = new JButton("Save with quick filters");
+        JButton saveButton = getThemedButton("Save with quick filters");
         saveButton.addActionListener(e ->
         {
             if (FilterManager.doesFilterExist(field.getText()))

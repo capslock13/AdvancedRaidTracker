@@ -13,6 +13,8 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.advancedraidtracker.utility.UISwingUtility.getThemedPanel;
+
 public class ChartCreatorFrame extends BaseFrame
 {
     private final ChartPanel chart;
@@ -29,7 +31,7 @@ public class ChartCreatorFrame extends BaseFrame
         setPrimaryTool(PlayerAnimation.SCYTHE);
         setSecondaryTool(PlayerAnimation.NOT_SET);
 
-        ChartTopMenuPanel menu = new ChartTopMenuPanel(this);
+        ChartTopMenuPanel menu = new ChartTopMenuPanel(this, config);
         menu.setBorder(BorderFactory.createTitledBorder("Menu"));
         menu.setPreferredSize(new Dimension(0, 50));
 
@@ -37,10 +39,10 @@ public class ChartCreatorFrame extends BaseFrame
         tools.setBorder(BorderFactory.createTitledBorder("Tools"));
         tools.setPreferredSize(new Dimension(350, 0));
 
-        JPanel container = new JPanel();
+        JPanel container = getThemedPanel();
         container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
 
-        JPanel bottomContainer = new JPanel();
+        JPanel bottomContainer = getThemedPanel();
         bottomContainer.setLayout(new BoxLayout(bottomContainer, BoxLayout.X_AXIS));
 
         bottomContainer.add(chart);

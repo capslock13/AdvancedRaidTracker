@@ -21,6 +21,8 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.util.*;
 
+import static com.advancedraidtracker.utility.UISwingUtility.*;
+
 @Slf4j
 public class ChartFrame extends BaseFrame
 {
@@ -33,7 +35,7 @@ public class ChartFrame extends BaseFrame
     {
         ChartData chartData = DataReader.getChartData(roomData.getFilepath(), itemManager);
 
-        JTabbedPane basepane = new JTabbedPane();
+        JTabbedPane basepane = getThemedTabbedPane();
 
         Set<String> activeSet;
 
@@ -53,9 +55,9 @@ public class ChartFrame extends BaseFrame
         for(String bossName : activeSet)
         {
             RaidRoom room = RaidRoom.getRoom(bossName);
-            JPanel tab = new JPanel();
+            JPanel tab = getThemedPanel();
             tab.setLayout(new GridLayout(1, 2));
-            JPanel chart = new JPanel();
+            JPanel chart = getThemedPanel();
             chart.setLayout(new BoxLayout(chart, BoxLayout.Y_AXIS));
             ChartPanel chartPanel = new ChartPanel(bossName, false, config, clientThread, configManager, itemManager);
             chartPanel.setNPCMappings(chartData.getNPCMapping(room));
@@ -87,7 +89,7 @@ public class ChartFrame extends BaseFrame
             chartPanel.redraw();
             basepane.addChangeListener(cl -> chartPanel.redraw());
             chart.add(chartPanel);
-            tab.add(new JScrollPane(chart));
+            tab.add(getThemedScrollPane(chart));
             basepane.add(bossName, tab);
 
             Timer resizeTimer = new Timer(20, e->

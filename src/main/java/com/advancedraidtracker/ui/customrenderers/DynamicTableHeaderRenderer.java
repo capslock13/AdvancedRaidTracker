@@ -17,6 +17,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.*;
 import java.util.List;
+
+import static com.advancedraidtracker.utility.UISwingUtility.getThemedComboBox;
+
 @Slf4j
 public class DynamicTableHeaderRenderer implements TableCellRenderer
 {
@@ -41,7 +44,7 @@ public class DynamicTableHeaderRenderer implements TableCellRenderer
         {
             popupData.put(room.name, DataPoint.getSpecificNames(room));
         }
-        editor = new JComboBox<>();
+        editor = getThemedComboBox();
         editor.setEditable(true);
         editor.setPrototypeDisplayValue("Challenge Time");
         editor.setSelectedItem("Challenge Time");

@@ -1,27 +1,32 @@
 package com.advancedraidtracker.ui.charts.chartcreator;
 
+import com.advancedraidtracker.AdvancedRaidTrackerConfig;
+
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
 
+import static com.advancedraidtracker.utility.UISwingUtility.*;
+
 public class ChartTopMenuPanel extends JPanel
 {
-    JCheckBox weaponCD = new JCheckBox("Enforce Weapon CD?");
-    JTextField lineText = new JTextField();
-    public ChartTopMenuPanel(ChartCreatorFrame parent)
+    JCheckBox weaponCD = getThemedCheckBox("Enforce Weapon CD?");
+    JTextField lineText = getThemedTextField();
+    public ChartTopMenuPanel(ChartCreatorFrame parent, AdvancedRaidTrackerConfig config)
     {
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-
-        JComboBox<Integer> options = new JComboBox<>(new Integer[]{1, 2, 3, 4, 5, 6, 7, 8});
+        setBackground(config.primaryDark());
+        setOpaque(true);
+        JComboBox<Integer> options = getThemedComboBox(new Integer[]{1, 2, 3, 4, 5, 6, 7, 8});
         options.addActionListener(al ->
         {
             parent.setPlayerCount(options.getSelectedIndex()+1);
         });
 
-        JSpinner startTick = new JSpinner(new SpinnerNumberModel(1, 0, 500, 1));
+        JSpinner startTick = getThemedSpinner(new SpinnerNumberModel(1, 0, 500, 1));
 
-        JSpinner endTick = new JSpinner(new SpinnerNumberModel(50, 1, 500, 1));
+        JSpinner endTick = getThemedSpinner(new SpinnerNumberModel(50, 1, 500, 1));
 
         startTick.addChangeListener(cl ->
         {
@@ -35,15 +40,15 @@ public class ChartTopMenuPanel extends JPanel
             parent.setEndTick((int)endTick.getValue());
         });
 
-        add(new JLabel("Players: "));
+        add(getThemedLabel("Players: "));
         add(options);
         add(Box.createRigidArea(new Dimension(20, 0)));
 
-        add(new JLabel("Start Tick: "));
+        add(getThemedLabel("Start Tick: "));
         add(startTick);
         add(Box.createRigidArea(new Dimension(20, 0)));
 
-        add(new JLabel("End Tick: "));
+        add(getThemedLabel("End Tick: "));
         add(endTick);
         add(Box.createRigidArea(new Dimension(30, 0)));
 
@@ -72,7 +77,7 @@ public class ChartTopMenuPanel extends JPanel
                 parent.changeLineText(lineText.getText());
             }
         });
-        add(new JLabel("Line Text: "));
+        add(getThemedLabel("Line Text: "));
         add(lineText);
         add(Box.createRigidArea(new Dimension(20, 0)));
 

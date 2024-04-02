@@ -1,5 +1,6 @@
 package com.advancedraidtracker.ui.statistics;
 
+import com.advancedraidtracker.AdvancedRaidTrackerConfig;
 import com.advancedraidtracker.constants.RaidRoom;
 import com.advancedraidtracker.utility.RoomUtil;
 import com.advancedraidtracker.utility.datautility.DataPoint;
@@ -8,12 +9,14 @@ import com.advancedraidtracker.utility.datautility.datapoints.Raid;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static com.advancedraidtracker.utility.UISwingUtility.getDarkJLabel;
+import static com.advancedraidtracker.utility.UISwingUtility.*;
+
 
 @Slf4j
 public class StatisticRoomPanel extends JPanel
@@ -31,18 +34,20 @@ public class StatisticRoomPanel extends JPanel
     private final List<String> labelNames;
     private final stat type;
 
-    public StatisticRoomPanel(List<Raid> data, stat type, RaidRoom room)
+    public StatisticRoomPanel(List<Raid> data, stat type, RaidRoom room, AdvancedRaidTrackerConfig config)
     {
         super();
-        JPanel subPanel = new JPanel();
+        JPanel subPanel = getThemedPanel();
+        setBackground(config.primaryDark());
+        setOpaque(true);
         this.type = type;
         timeLabels = new ArrayList<>();
         ArrayList<JLabel> nameLabels = new ArrayList<>();
         labelNames = DataPoint.getTimeNamesByRoom(room);
         for (String s : labelNames)
         {
-            nameLabels.add(getDarkJLabel(s.substring(s.indexOf(' ') + 1), SwingConstants.LEFT));
-            timeLabels.add(getDarkJLabel("-", SwingConstants.RIGHT));
+            nameLabels.add(getThemedLabel(s.substring(s.indexOf(' ') + 1), SwingConstants.LEFT));
+            timeLabels.add(getThemedLabel("-", SwingConstants.RIGHT));
         }
         String borderString = "";
         switch (type)
@@ -64,7 +69,9 @@ public class StatisticRoomPanel extends JPanel
                 break;
         }
         setLayout(new BorderLayout());
-        setBorder(BorderFactory.createTitledBorder(borderString));
+        TitledBorder border = BorderFactory.createTitledBorder(borderString);
+        border.setTitleColor(config.fontColor());
+        setBorder(border);
         subPanel.setLayout(new GridLayout(0, 2));
         for (int i = 0; i < labelNames.size(); i++)
         {
@@ -73,11 +80,11 @@ public class StatisticRoomPanel extends JPanel
         }
         for (int i = labelNames.size(); i < 14; i++)
         {
-            subPanel.add(new JLabel(""));
-            subPanel.add(new JLabel(""));
+            subPanel.add(getThemedLabel(""));
+            subPanel.add(getThemedLabel(""));
         }
         subPanel.setPreferredSize(new Dimension(100, 200));
-        JScrollPane scrollPane = new JScrollPane(subPanel);
+        JScrollPane scrollPane = getThemedScrollPane(subPanel);
         scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
         add(scrollPane);

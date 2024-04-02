@@ -1,5 +1,6 @@
 package com.advancedraidtracker.ui.filters;
 
+import com.advancedraidtracker.AdvancedRaidTrackerConfig;
 import com.advancedraidtracker.ui.customrenderers.ButtonEditorLoadFilters;
 import com.advancedraidtracker.ui.customrenderers.ButtonEditorViewFilters;
 import com.advancedraidtracker.ui.customrenderers.ButtonRenderer;
@@ -15,6 +16,8 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.util.ArrayList;
+
+import static com.advancedraidtracker.utility.UISwingUtility.*;
 
 @Slf4j
 public class LoadFilter extends BaseFrame
@@ -39,11 +42,10 @@ public class LoadFilter extends BaseFrame
         }
     }
 
-    public LoadFilter(Raids FilteredRaidsFrame)
+    public LoadFilter(Raids FilteredRaidsFrame, AdvancedRaidTrackerConfig config)
     {
         setTitle("Load Filters");
-        JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.setBorder(BorderFactory.createTitledBorder("Filters"));
+        JPanel mainPanel = getTitledPanel("Filters");
 
         String[] columnNames = {"Filter Name", "View", "Replace", "Add"};
         ArrayList<Object[]> tableBuilder = new ArrayList<>();
@@ -67,22 +69,22 @@ public class LoadFilter extends BaseFrame
             tableObject[count] = row;
             count++;
         }
-        JPanel container = new JPanel();
+        JPanel container = getThemedPanel();
         container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
-        JTable table = new JTable(tableObject, columnNames);
-        table.getColumn("Filter Name").setCellEditor(new NonEditableCell(new JTextField()));
+        JTable table = getThemedTable(tableObject, columnNames);
+        table.getColumn("Filter Name").setCellEditor(new NonEditableCell(getThemedTextField()));
 
-        table.getColumn("View").setCellRenderer(new ButtonRenderer());
-        table.getColumn("View").setCellEditor(new ButtonEditorViewFilters(new JCheckBox(), filters));
+        table.getColumn("View").setCellRenderer(new ButtonRenderer(config));
+        table.getColumn("View").setCellEditor(new ButtonEditorViewFilters(getThemedCheckBox(), filters));
 
-        table.getColumn("Replace").setCellRenderer(new ButtonRenderer());
-        table.getColumn("Replace").setCellEditor(new ButtonEditorLoadFilters(new JCheckBox(), FilteredRaidsFrame, filters, this));
+        table.getColumn("Replace").setCellRenderer(new ButtonRenderer(config));
+        table.getColumn("Replace").setCellEditor(new ButtonEditorLoadFilters(getThemedCheckBox(), FilteredRaidsFrame, filters, this));
 
-        table.getColumn("Add").setCellRenderer(new ButtonRenderer());
-        table.getColumn("Add").setCellEditor(new ButtonEditorLoadFilters(new JCheckBox(), FilteredRaidsFrame, filters, this, false));
+        table.getColumn("Add").setCellRenderer(new ButtonRenderer(config));
+        table.getColumn("Add").setCellEditor(new ButtonEditorLoadFilters(getThemedCheckBox(), FilteredRaidsFrame, filters, this, false));
 
         resizeColumnWidth(table);
-        JScrollPane pane = new JScrollPane(table);
+        JScrollPane pane = getThemedScrollPane(table);
         table.setFillsViewportHeight(true);
         mainPanel.add(pane);
         add(mainPanel);

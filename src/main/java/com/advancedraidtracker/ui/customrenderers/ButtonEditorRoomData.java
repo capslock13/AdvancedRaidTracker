@@ -15,6 +15,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
+import static com.advancedraidtracker.utility.UISwingUtility.getThemedButton;
+
 public class ButtonEditorRoomData extends DefaultCellEditor
 {
 
@@ -30,7 +32,7 @@ public class ButtonEditorRoomData extends DefaultCellEditor
         super(checkBox);
         this.config = config;
         this.data = data;
-        button = new JButton();
+        button = getThemedButton();
         button.setOpaque(true);
         button.addActionListener(e -> fireEditingStopped());
     }
@@ -63,7 +65,7 @@ public class ButtonEditorRoomData extends DefaultCellEditor
             if (data.get(row) instanceof Tob)
             {
                 Tob tobData = (Tob) data.get(row);
-                ViewTOBRaid raid = new ViewTOBRaid(tobData);
+                ViewTOBRaid raid = new ViewTOBRaid(tobData, config);
                 //ViewRaidFrame raid = new ViewRaidFrame(data.get(row));
                 raid.open();
             }

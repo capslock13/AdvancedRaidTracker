@@ -1,5 +1,7 @@
 package com.advancedraidtracker.ui.customrenderers;
 
+import com.advancedraidtracker.AdvancedRaidTrackerConfig;
+
 import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
@@ -7,9 +9,10 @@ import java.awt.*;
 public class ButtonRenderer extends JButton implements TableCellRenderer
 {
 
-    public ButtonRenderer()
+    public ButtonRenderer(AdvancedRaidTrackerConfig config)
     {
         setOpaque(true);
+        setBackground(config.primaryMiddle());
     }
 
     @Override

@@ -20,6 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static com.advancedraidtracker.constants.RaidType.*;
+import static com.advancedraidtracker.utility.UISwingUtility.getThemedTabbedPane;
 
 @Slf4j
 public class LiveChart extends BaseFrame
@@ -79,7 +80,7 @@ public class LiveChart extends BaseFrame
             infPanels.put(name, chartPanel);
         }
 
-        tabbedPane = new JTabbedPane();
+        tabbedPane = getThemedTabbedPane();
         tabbedPane.addChangeListener(cl -> //todo test this revised logic
         {
             String activePanel = null;

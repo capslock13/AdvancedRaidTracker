@@ -57,14 +57,9 @@ public class Raids extends BaseFrame implements UpdateableWindow
     private JTable comparisonTable;
     private final List<List<Raid>> comparisons;
 
-    private final JTabbedPane tabbedPane = new JTabbedPane();
-    private final JTabbedPane raidTypeTabbedPane = new JTabbedPane();
+    private JTabbedPane tabbedPane = null;
     public ArrayList<ImplicitFilter> activeFilters;
 
-    Map<String, JLabel> averageLabels = new LinkedHashMap<>();
-    Map<String, JLabel> medianLabels = new LinkedHashMap<>();
-    Map<String, JLabel> minLabels = new LinkedHashMap<>();
-    Map<String, JLabel> maxLabels = new LinkedHashMap<>();
 
     List<Map<String, JLabel>> averageLabels2 = new ArrayList<>();
     List<Map<String, JLabel>> medianLabels2 = new ArrayList<>();
@@ -73,7 +68,7 @@ public class Raids extends BaseFrame implements UpdateableWindow
 
     private final Multimap<String, String> aliases;
 
-    private final JTextArea aliasText;
+    private JTextArea aliasText;
 
     JTextField dateTextField;
     JCheckBox filterSpectateOnly;
@@ -118,33 +113,6 @@ public class Raids extends BaseFrame implements UpdateableWindow
 
     public Raids(AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
     {
-        int index = 0;
-        for (RaidType raidType : RaidType.values())
-        {
-            averageLabels2.add(new LinkedHashMap<>());
-            medianLabels2.add(new LinkedHashMap<>());
-            maxLabels2.add(new LinkedHashMap<>());
-            minLabels2.add(new LinkedHashMap<>());
-
-            for(RaidRoom room : RaidRoom.getRaidRoomsForRaidType(raidType))
-            {
-                String labelName = room.name;
-                if(labelName.contains("-") && labelName.contains("Wave"))
-                {
-                    String[] split = labelName.split(" ");
-                    if(split.length == 2)
-                    {
-                        labelName = split[1];
-                    }
-                }
-                averageLabels2.get(index).put(labelName, getDarkJLabel("", SwingConstants.RIGHT));
-                medianLabels2.get(index).put(labelName, getDarkJLabel("", SwingConstants.RIGHT));
-                maxLabels2.get(index).put(labelName, getDarkJLabel("", SwingConstants.RIGHT));
-                minLabels2.get(index).put(labelName, getDarkJLabel("", SwingConstants.RIGHT));
-            }
-            index++;
-        }
-
         this.clientThread = clientThread;
         this.itemManager = itemManager;
         this.configManager = configManager;
@@ -157,12 +125,11 @@ public class Raids extends BaseFrame implements UpdateableWindow
         filteredIndices = new ArrayList<>();
         comparisons = new ArrayList<>();
         activeFilters = new ArrayList<>();
-        aliasText = new JTextArea();
         this.config = config;
         this.setPreferredSize(new Dimension(1200, 820));
     }
 
-    public JComboBox<String> customColumnComboBox = new JComboBox<>();
+    public JComboBox<String> customColumnComboBox = getThemedComboBox();
 
     private boolean evaluateAllFilters(Raid data)
     {
@@ -384,20 +351,20 @@ public class Raids extends BaseFrame implements UpdateableWindow
         {
             if (table.getColumnName(i).equals("View"))
             {
-                table.getColumn(table.getColumnName(i)).setCellEditor(new ButtonEditorRoomData(new JCheckBox(), tableData, config));
-                table.getColumn(table.getColumnName(i)).setCellRenderer(new ButtonRenderer());
+                table.getColumn(table.getColumnName(i)).setCellEditor(new ButtonEditorRoomData(getThemedCheckBox(), tableData, config));
+                table.getColumn(table.getColumnName(i)).setCellRenderer(new ButtonRenderer(config));
             }
             else if(table.getColumnName(i).equals("Custom"))
             {
-                table.getColumn(table.getColumnName(i)).setCellEditor(new NonEditableCell(new JTextField()));
-                table.getColumn(table.getColumnName(i)).setCellRenderer(new StripedTableRowCellRenderer());
+                table.getColumn(table.getColumnName(i)).setCellEditor(new NonEditableCell(getThemedTextField()));
+                table.getColumn(table.getColumnName(i)).setCellRenderer(new StripedTableRowCellRenderer(config));
                 table.getColumn(table.getColumnName(i)).setHeaderRenderer(new DynamicTableHeaderRenderer(customColumnComboBox, this));
 
             }
             else
             {
-                table.getColumn(table.getColumnName(i)).setCellEditor(new NonEditableCell(new JTextField()));
-                table.getColumn(table.getColumnName(i)).setCellRenderer(new StripedTableRowCellRenderer());
+                table.getColumn(table.getColumnName(i)).setCellEditor(new NonEditableCell(getThemedTextField()));
+                table.getColumn(table.getColumnName(i)).setCellRenderer(new StripedTableRowCellRenderer(config));
             }
         }
         setTableListeners();
@@ -844,7 +811,6 @@ public class Raids extends BaseFrame implements UpdateableWindow
         writing = false;
     }
 
-    DataPointMenu dataPointMenu;
 
     private JMenuItem createMenuItemTableHeader(final String name)
     {
@@ -858,30 +824,29 @@ public class Raids extends BaseFrame implements UpdateableWindow
 
     public JPanel getOverallPanel(String title, Map<String, JLabel> labelMap)
     {
-        JPanel panel = new JPanel();
+        JPanel panel = getTitledPanel(title);
         panel.setLayout(new BorderLayout());
-        panel.setBorder(BorderFactory.createTitledBorder(title));
 
-        JPanel subPanel = new JPanel();
+        JPanel subPanel = getThemedPanel();
         subPanel.setLayout(new GridLayout(0, 2));
 
         int index = 0;
         for (String s : labelMap.keySet())
         {
-            JLabel leftLabel = new JLabel(roomColor + s);
+            JLabel leftLabel = getThemedLabel(s);
             subPanel.add(leftLabel);
             subPanel.add(labelMap.get(s));
             index++;
         }
         for(int i = index; i < 19; i++) //enforce formatting, 19 is the most labels used by any panel (Akkha splits)
         {
-            JLabel leftLabel = new JLabel("");
-            JLabel rightLabel = new JLabel("");
+            JLabel leftLabel = getThemedLabel("");
+            JLabel rightLabel = getThemedLabel("");
             subPanel.add(leftLabel);
             subPanel.add(rightLabel);
         }
         subPanel.setPreferredSize(new Dimension(100, 250));
-        JScrollPane scrollPane = new JScrollPane(subPanel);
+        JScrollPane scrollPane = getThemedScrollPane(subPanel);
         scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         panel.add(scrollPane);
         panel.setPreferredSize(new Dimension(145, 200));
@@ -1015,6 +980,34 @@ public class Raids extends BaseFrame implements UpdateableWindow
 
     public void createFrame(List<Raid> data)
     {
+        aliasText = getThemedTextArea();
+        tabbedPane = getThemedTabbedPane();
+        int index = 0;
+        for (RaidType raidType : RaidType.values())
+        {
+            averageLabels2.add(new LinkedHashMap<>());
+            medianLabels2.add(new LinkedHashMap<>());
+            maxLabels2.add(new LinkedHashMap<>());
+            minLabels2.add(new LinkedHashMap<>());
+
+            for(RaidRoom room : RaidRoom.getRaidRoomsForRaidType(raidType))
+            {
+                String labelName = room.name;
+                if(labelName.contains("-") && labelName.contains("Wave"))
+                {
+                    String[] split = labelName.split(" ");
+                    if(split.length == 2)
+                    {
+                        labelName = split[1];
+                    }
+                }
+                averageLabels2.get(index).put(labelName, getThemedLabel("", SwingConstants.RIGHT));
+                medianLabels2.get(index).put(labelName, getThemedLabel("", SwingConstants.RIGHT));
+                maxLabels2.get(index).put(labelName, getThemedLabel("", SwingConstants.RIGHT));
+                minLabels2.get(index).put(labelName, getThemedLabel("", SwingConstants.RIGHT));
+            }
+            index++;
+        }
         customColumnComboBox.setEnabled(true);
         for(Component c : customColumnComboBox.getComponents())
         {
@@ -1027,7 +1020,7 @@ public class Raids extends BaseFrame implements UpdateableWindow
         }
         customColumnComboBox.addItem("Challenge Time");
 
-        timeFollowsTab = new JCheckBox("Time Follows Tab");
+        timeFollowsTab = getThemedCheckBox("Time Follows Tab");
         timeFollowsTab.setSelected(true);
 
         for (int i = 0; i < data.size(); i++)
@@ -1039,22 +1032,22 @@ public class Raids extends BaseFrame implements UpdateableWindow
 
         JPopupMenu tstMenu = getCustomColumnPopUpMenu();
 
-        table = new JTable();
+        table = getThemedTable();
         table.getTableHeader().setComponentPopupMenu(tstMenu);
-        JScrollPane pane = new JScrollPane(table);
+        JScrollPane pane = getThemedScrollPane(table);
 
         JPanel tablePanel = getTitledPanel("Raids");
         tablePanel.setLayout(new BorderLayout());
         tablePanel.add(pane);
 
-        container = new JPanel();
+        container = getThemedPanel();
         container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
 
-        JTabbedPane tobTabSubpanel = new JTabbedPane();
-        JTabbedPane toaTabSubpanel = new JTabbedPane();
-        JTabbedPane coxTabSubpanel = new JTabbedPane();
-        JTabbedPane infTabSubpanel = new JTabbedPane();
-        JTabbedPane colTabSubpanel = new JTabbedPane();
+        JTabbedPane tobTabSubpanel = getThemedTabbedPane();
+        JTabbedPane toaTabSubpanel = getThemedTabbedPane();
+        JTabbedPane coxTabSubpanel = getThemedTabbedPane();
+        JTabbedPane infTabSubpanel = getThemedTabbedPane();
+        JTabbedPane colTabSubpanel = getThemedTabbedPane();
 
         tobTabSubpanel.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
         toaTabSubpanel.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
@@ -1064,13 +1057,13 @@ public class Raids extends BaseFrame implements UpdateableWindow
         List<JPanel> overallPanels = new ArrayList<>();
         for(int k = 0; k < 6; k++)
         {
-            JPanel overallPanel = new JPanel();
+            JPanel overallPanel = getThemedPanel();
             JPanel overallAveragePanel = getOverallPanel("Average", averageLabels2.get(k));
             JPanel overallMedianPanel = getOverallPanel("Median", medianLabels2.get(k));
             JPanel overallMinPanel = getOverallPanel("Minimum", minLabels2.get(k));
             JPanel overallMaxPanel = getOverallPanel("Maximum", maxLabels2.get(k));
 
-            JPanel topStatPanel = new JPanel();
+            JPanel topStatPanel = getThemedPanel();
             topStatPanel.setLayout(new GridLayout(1, 4));
 
             topStatPanel.add(overallAveragePanel);
@@ -1116,7 +1109,7 @@ public class Raids extends BaseFrame implements UpdateableWindow
         List<Integer> toaIconIDs = new ArrayList<>(Arrays.asList(ItemID.NEUTRALISING_POTION, ItemID.BABI, ItemID.SWARM, ItemID.KEPHRITI, ItemID.DRAGON_PICKAXE, ItemID.AKKHITO, ItemID.WATER_CONTAINER, ItemID.ZEBO, ItemID.ELIDINIS_GUARDIAN));
         List<Integer> coxIconIDs = new ArrayList<>(Arrays.asList(ItemID.TEKTINY, ItemID.DRAGON_WARHAMMER, ItemID.KINDLING, ItemID.DYNAMITE, ItemID.VANGUARD, ItemID.LOCKPICK, ItemID.VESPINA, ItemID.PHOENIX_NECKLACE, ItemID.DRAGON_PICKAXE, ItemID.VASA_MINIRIO, ItemID.SALVE_AMULET_E, ItemID.PUPPADILE, ItemID.OLMLET));
 
-        int index = 0;
+        index = 0;
         tobTabSubpanel.addTab("Overall", overallPanels.get(1));
         toaTabSubpanel.addTab("Overall", overallPanels.get(2));
         coxTabSubpanel.addTab("Overall", overallPanels.get(3));
@@ -1125,7 +1118,7 @@ public class Raids extends BaseFrame implements UpdateableWindow
 
         for(RaidRoom room : RaidRoom.getRaidRoomsForRaidType(RaidType.TOB))
         {
-            StatisticTab statisticTab = new StatisticTab(tobData, room);
+            StatisticTab statisticTab = new StatisticTab(tobData, room, config);
             tobTabSubpanel.addTab("", statisticTab);
             tobTabSubpanel.setIconAt(index+1, new ImageIcon(itemManager.getImage(tobIconIDs.get(index))));
             tobTabs.add(statisticTab);
@@ -1134,7 +1127,7 @@ public class Raids extends BaseFrame implements UpdateableWindow
         index = 0;
         for(RaidRoom room : RaidRoom.getRaidRoomsForRaidType(RaidType.TOA))
         {
-            StatisticTab statisticTab = new StatisticTab(toaData, room);
+            StatisticTab statisticTab = new StatisticTab(toaData, room, config);
             toaTabSubpanel.addTab("", statisticTab);
             toaTabSubpanel.setIconAt(index+1, new ImageIcon(itemManager.getImage(toaIconIDs.get(index))));
             toaTabs.add(statisticTab);
@@ -1144,7 +1137,7 @@ public class Raids extends BaseFrame implements UpdateableWindow
         index = 0;
         for(RaidRoom room : RaidRoom.getRaidRoomsForRaidType(RaidType.COX))
         {
-            StatisticTab statisticTab = new StatisticTab(coxData, room);
+            StatisticTab statisticTab = new StatisticTab(coxData, room, config);
             coxTabSubpanel.addTab("", statisticTab);
             coxTabSubpanel.setIconAt(index+1, new ImageIcon(itemManager.getImage(coxIconIDs.get(index))));
             coxTabs.add(statisticTab);
@@ -1152,14 +1145,14 @@ public class Raids extends BaseFrame implements UpdateableWindow
         }
         for(Integer i : roomMap.keySet())
         {
-            StatisticTab statisticTab = new StatisticTab(infData, RaidRoom.getRoom(roomMap.get(i)));
+            StatisticTab statisticTab = new StatisticTab(infData, RaidRoom.getRoom(roomMap.get(i)), config);
             infTabSubpanel.addTab(roomMap.get(i), statisticTab);
             infTabs.add(statisticTab);
         }
 
         for(int i = 1; i < 13; i++)
         {
-            StatisticTab statisticTab = new StatisticTab(colData, RaidRoom.getRoom("Wave " + i));
+            StatisticTab statisticTab = new StatisticTab(colData, RaidRoom.getRoom("Wave " + i), config);
             colTabSubpanel.addTab("Wave " + i, statisticTab);
             colTabs.add(statisticTab);
         }
@@ -1184,11 +1177,11 @@ public class Raids extends BaseFrame implements UpdateableWindow
         filterPartialData.setToolTipText("Removes data sets that have any rooms that were partially completed");
         filterNormalOnly = getActionListenCheckBox("Normal Mode Only", true, al-> updateTable());
 
-        JPanel scaleContainer = new JPanel();
+        JPanel scaleContainer = getThemedPanel();
         scaleContainer.setLayout(new BoxLayout(scaleContainer, BoxLayout.X_AXIS));
         scaleContainer.setPreferredSize(new Dimension(150, 25));
 
-        JPanel filterHolder = new JPanel();
+        JPanel filterHolder = getThemedPanel();
         filterHolder.setLayout(new GridLayout(10, 1));
         filterHolder.add(filterSpectateOnly);
         filterHolder.add(filterInRaidOnly);
@@ -1205,7 +1198,7 @@ public class Raids extends BaseFrame implements UpdateableWindow
 
         additionalFiltersPanel.add(filterHolder);
 
-        JPanel topContainer = new JPanel();
+        JPanel topContainer = getThemedPanel();
         topContainer.setLayout(new BoxLayout(topContainer, BoxLayout.X_AXIS));
 
         topContainer.setPreferredSize(new Dimension(800, 300));
@@ -1225,10 +1218,10 @@ public class Raids extends BaseFrame implements UpdateableWindow
         topContainer.add(tabbedPane);
         topContainer.add(additionalFiltersPanel);
         new Thread(()->setLabels(data)).start();
-        filterTableContainer = new JPanel();
-        filterTable = new JTable();
+        filterTableContainer = getThemedPanel();
+        filterTable = getThemedTable();
         filterTable.setPreferredSize(new Dimension(380, 135));
-        JScrollPane tableScrollView = new JScrollPane(filterTable);
+        JScrollPane tableScrollView = getThemedScrollPane(filterTable);
         tableScrollView.setPreferredSize(new Dimension(380, 140));
         updateFilterTable();
 
@@ -1237,11 +1230,11 @@ public class Raids extends BaseFrame implements UpdateableWindow
         container.add(topContainer);
         container.add(tablePanel);
 
-        JPanel splitLeftRight = new JPanel();
+        JPanel splitLeftRight = getThemedPanel();
         splitLeftRight.setLayout(new BoxLayout(splitLeftRight, BoxLayout.X_AXIS));
         splitLeftRight.add(container);
 
-        JPanel rightContainer = new JPanel();
+        JPanel rightContainer = getThemedPanel();
         rightContainer.setPreferredSize(new Dimension(400, 700));
         rightContainer.setLayout(new BoxLayout(rightContainer, BoxLayout.Y_AXIS));
 
@@ -1264,7 +1257,7 @@ public class Raids extends BaseFrame implements UpdateableWindow
         filterOtherBoolPanel.setLayout(new GridLayout(2, 2));
 
 
-        timeFilterChoice = new JComboBox<>(DataPoint.getTimeNames());
+        timeFilterChoice = getThemedComboBox(DataPoint.getTimeNames());
 
         String[] timeOperatorChoices =
                 {
@@ -1275,12 +1268,12 @@ public class Raids extends BaseFrame implements UpdateableWindow
                         ">="
                 };
 
-        timeFilterOperator = new JComboBox<>(timeOperatorChoices);
+        timeFilterOperator = getThemedComboBox(timeOperatorChoices);
 
 
-        timeFilterValue = new JTextField();
+        timeFilterValue = getThemedTextField();
 
-        JButton timeFilterAdd = new JButton("Add");
+        JButton timeFilterAdd = getThemedButton("Add");
         timeFilterAdd.addActionListener(
                 al ->
                 {
@@ -1301,11 +1294,11 @@ public class Raids extends BaseFrame implements UpdateableWindow
         timeFilterValue.setPreferredSize(new Dimension(75, timeFilterAdd.getPreferredSize().height));
 
 
-        JPanel filterTimePanelTop = new JPanel();
+        JPanel filterTimePanelTop = getThemedPanel();
         filterTimePanelTop.setLayout(new BoxLayout(filterTimePanelTop, BoxLayout.X_AXIS));
         filterTimePanelTop.add(timeFilterChoice);
 
-        JPanel filterTimePanelBottom = new JPanel();
+        JPanel filterTimePanelBottom = getThemedPanel();
         filterTimePanelBottom.setLayout(new BoxLayout(filterTimePanelBottom, BoxLayout.X_AXIS));
         filterTimePanelBottom.add(timeFilterOperator);
         filterTimePanelBottom.add(Box.createRigidArea(new Dimension(2, 2)));
@@ -1324,9 +1317,9 @@ public class Raids extends BaseFrame implements UpdateableWindow
                 "excludes all of"
         };
 
-        playerFilterOperator = new JComboBox<>(playersQualifier);
-        playerFilterValue = new JTextField();
-        JButton playerFilterAdd = new JButton("Add");
+        playerFilterOperator = getThemedComboBox(playersQualifier);
+        playerFilterValue = getThemedTextField();;
+        JButton playerFilterAdd = getThemedButton("Add");
         playerFilterValue.setMaximumSize(new Dimension(Integer.MAX_VALUE, playerFilterAdd.getPreferredSize().height));
         playerFilterValue.setPreferredSize(new Dimension(75, playerFilterAdd.getPreferredSize().height));
         playerFilterOperator.setMaximumSize(new Dimension(Integer.MAX_VALUE, playerFilterAdd.getPreferredSize().height));
@@ -1340,9 +1333,9 @@ public class Raids extends BaseFrame implements UpdateableWindow
                     updateFilterTable();
                 });
 
-        JPanel filterPlayerPanelTop = new JPanel();
+        JPanel filterPlayerPanelTop = getThemedPanel();
         filterPlayerPanelTop.setLayout(new BoxLayout(filterPlayerPanelTop, BoxLayout.X_AXIS));
-        JPanel filterPlayerPanelBottom = new JPanel();
+        JPanel filterPlayerPanelBottom = getThemedPanel();
         filterPlayerPanelBottom.setLayout(new BoxLayout(filterPlayerPanelBottom, BoxLayout.X_AXIS));
 
         filterPlayerPanel.setLayout(new BoxLayout(filterPlayerPanel, BoxLayout.Y_AXIS));
@@ -1362,12 +1355,12 @@ public class Raids extends BaseFrame implements UpdateableWindow
                         "after"
                 };
 
-        dateFilterOperator = new JComboBox<>(choicesDate);
-        JTextField dateFilterValue = new JTextField();
+        dateFilterOperator = getThemedComboBox(choicesDate);
+        JTextField dateFilterValue = getThemedTextField();
         dateFilterOperator.setMaximumSize(new Dimension(Integer.MAX_VALUE, dateFilterValue.getPreferredSize().height));
 
 
-        JButton dateFilterAdd = new JButton("Add");
+        JButton dateFilterAdd = getThemedButton("Add");
         dateFilterAdd.addActionListener(
                 al ->
                 {
@@ -1394,19 +1387,19 @@ public class Raids extends BaseFrame implements UpdateableWindow
         dateFilterAdd.setMaximumSize(new Dimension(Integer.MAX_VALUE, dateFilterAdd.getPreferredSize().height));
         dateFilterAdd.setPreferredSize(new Dimension(55, dateFilterAdd.getPreferredSize().height));
 
-        JPanel dateTopRow = new JPanel();
+        JPanel dateTopRow = getThemedPanel();
         dateTopRow.setLayout(new BoxLayout(dateTopRow, BoxLayout.X_AXIS));
 
-        JPanel dateBottomRow = new JPanel();
+        JPanel dateBottomRow = getThemedPanel();
         dateBottomRow.setLayout(new BoxLayout(dateBottomRow, BoxLayout.X_AXIS));
 
         dateTopRow.add(dateFilterOperator);
         dateTopRow.add(Box.createRigidArea(new Dimension(2, 2)));
         dateTopRow.add(dateFilterAdd);
-        dateTextField = new JTextField();
+        dateTextField = getThemedTextField();
         dateBottomRow.add(dateTextField);
         dateBottomRow.add(Box.createRigidArea(new Dimension(5, 5)));
-        dateBottomRow.add(new JLabel("YYYY/MM/DD"));
+        dateBottomRow.add(getThemedLabel("YYYY/MM/DD"));
         filterDatePanel.setLayout(new BoxLayout(filterDatePanel, BoxLayout.Y_AXIS));
         filterDatePanel.add(dateTopRow);
         filterDatePanel.add(Box.createRigidArea(new Dimension(5, 5)));
@@ -1422,11 +1415,11 @@ public class Raids extends BaseFrame implements UpdateableWindow
         };
 
 
-        otherIntFilterChoice = new JComboBox<>(DataPoint.getOtherIntNames());
-        otherIntFilterOperator = new JComboBox<>(otherIntOperatorChoices);
-        otherIntFilterValue = new JTextField();
+        otherIntFilterChoice = getThemedComboBox(DataPoint.getOtherIntNames());
+        otherIntFilterOperator = getThemedComboBox(otherIntOperatorChoices);
+        otherIntFilterValue = getThemedTextField();
 
-        JButton otherIntAdd = new JButton("Add");
+        JButton otherIntAdd = getThemedButton("Add");
         otherIntAdd.addActionListener(
                 al ->
                 {
@@ -1448,9 +1441,9 @@ public class Raids extends BaseFrame implements UpdateableWindow
         otherIntFilterOperator.setPreferredSize(new Dimension(50, otherIntAdd.getPreferredSize().height));
 
 
-        JPanel otherIntTop = new JPanel();
+        JPanel otherIntTop = getThemedPanel();
         otherIntTop.setLayout(new BoxLayout(otherIntTop, BoxLayout.X_AXIS));
-        JPanel otherIntBottom = new JPanel();
+        JPanel otherIntBottom = getThemedPanel();
         otherIntBottom.setLayout(new BoxLayout(otherIntBottom, BoxLayout.X_AXIS));
 
         otherIntTop.add(otherIntFilterChoice);
@@ -1486,10 +1479,10 @@ public class Raids extends BaseFrame implements UpdateableWindow
                 "False"
         };
 
-        otherBoolFilterChoice = new JComboBox<>(choicesOtherBool);
-        otherBoolFilterOperator = new JComboBox<>(qualifierOtherBool);
+        otherBoolFilterChoice = getThemedComboBox(choicesOtherBool);
+        otherBoolFilterOperator = getThemedComboBox(qualifierOtherBool);
 
-        JButton otherBoolAdd = new JButton("Add Filter");
+        JButton otherBoolAdd = getThemedButton("Add Filter");
         otherBoolAdd.addActionListener(
                 al ->
                 {
@@ -1502,9 +1495,9 @@ public class Raids extends BaseFrame implements UpdateableWindow
         otherBoolFilterOperator.setMaximumSize(new Dimension(Integer.MAX_VALUE, otherBoolAdd.getPreferredSize().height));
         otherBoolFilterChoice.setMaximumSize(new Dimension(Integer.MAX_VALUE, otherBoolAdd.getPreferredSize().height));
 
-        JPanel filterBoolTop = new JPanel();
+        JPanel filterBoolTop = getThemedPanel();
         filterBoolTop.setLayout(new BoxLayout(filterBoolTop, BoxLayout.X_AXIS));
-        JPanel filterBoolBottom = new JPanel();
+        JPanel filterBoolBottom = getThemedPanel();
         filterBoolBottom.setLayout(new BoxLayout(filterBoolBottom, BoxLayout.X_AXIS));
 
         filterBoolTop.add(otherBoolFilterChoice);
@@ -1637,7 +1630,7 @@ public class Raids extends BaseFrame implements UpdateableWindow
                 labels.add("");
                 List<List<Raid>> data1 = new ArrayList<>();
                 data1.add(rows);
-                ComparisonViewFrame graphView = new ComparisonViewFrame(data1, labels);
+                ComparisonViewFrame graphView = new ComparisonViewFrame(data1, labels, config, itemManager, clientThread, configManager);
                 graphView.open();
             }
         });
@@ -1757,7 +1750,7 @@ public class Raids extends BaseFrame implements UpdateableWindow
 
         rightBottomContainer.add(filterTableContainer);
 
-        JButton saveFiltersButton = new JButton("Save");
+        JButton saveFiltersButton = getThemedButton("Save");
         saveFiltersButton.addActionListener(
                 al ->
                 {
@@ -1778,11 +1771,11 @@ public class Raids extends BaseFrame implements UpdateableWindow
                     SaveFilter saveFilter = new SaveFilter(activeFilters, quickFiltersState);
                     saveFilter.open();
                 });
-        JButton loadFiltersButton = new JButton("Load");
+        JButton loadFiltersButton = getThemedButton("Load");
         loadFiltersButton.addActionListener(
                 al ->
-                        new LoadFilter(this).open());
-        JButton clearFiltersButton = new JButton("Clear");
+                        new LoadFilter(this, config).open());
+        JButton clearFiltersButton = getThemedButton("Clear");
         clearFiltersButton.addActionListener(
                 al ->
                 {
@@ -1802,8 +1795,8 @@ public class Raids extends BaseFrame implements UpdateableWindow
         JPanel rightBottomBottomContainer = getTitledPanel("Comparison Options");
         rightBottomBottomContainer.setPreferredSize(new Dimension(400, 250));
 
-        comparisonTable = new JTable();
-        JScrollPane comparisonTableScroll = new JScrollPane(comparisonTable);
+        comparisonTable = getThemedTable();
+        JScrollPane comparisonTableScroll = getThemedScrollPane(comparisonTable);
         comparisonTable.setPreferredSize(new Dimension(380, 170));
         comparisonTableScroll.setPreferredSize(new Dimension(380, 155));
         updateComparisonTable();
@@ -1852,12 +1845,12 @@ public class Raids extends BaseFrame implements UpdateableWindow
 
         updateAliases();
 
-        JScrollPane aliasScrollPane = new JScrollPane(aliasText);
+        JScrollPane aliasScrollPane = getThemedScrollPane(aliasText);
         aliasScrollPane.setPreferredSize(new Dimension(380, 70));
         rightBottomMostContainer.add(aliasScrollPane);
 
         rightBottomBottomContainer.add(comparisonTableScroll);
-        JButton viewComparisonsButton = new JButton("View Comparisons");
+        JButton viewComparisonsButton = getThemedButton("View Comparisons");
         viewComparisonsButton.addActionListener(al ->
         {
             if (comparisonTable.getModel().getRowCount() == 0)
@@ -1870,7 +1863,7 @@ public class Raids extends BaseFrame implements UpdateableWindow
                 {
                     labels.add(comparisonTable.getModel().getValueAt(i, 1).toString());
                 }
-                ComparisonViewFrame graphView = new ComparisonViewFrame(comparisons, labels);
+                ComparisonViewFrame graphView = new ComparisonViewFrame(comparisons, labels, config, itemManager, clientThread, configManager);
                 graphView.open();
             }
         });
@@ -2221,9 +2214,9 @@ public class Raids extends BaseFrame implements UpdateableWindow
             count++;
         }
         comparisonTable.setModel(new DefaultTableModel(tableObject, columnNames));
-        comparisonTable.getColumn("Sets").setCellEditor(new NonEditableCell(new JTextField()));
-        comparisonTable.getColumn("").setCellRenderer(new ButtonRenderer());
-        comparisonTable.getColumn("").setCellEditor(new ButtonEditorComparisonData(new JCheckBox(), this));
+        comparisonTable.getColumn("Sets").setCellEditor(new NonEditableCell(getThemedTextField()));
+        comparisonTable.getColumn("").setCellRenderer(new ButtonRenderer(config));
+        comparisonTable.getColumn("").setCellEditor(new ButtonEditorComparisonData(getThemedCheckBox(), this));
         resizeColumnWidthFilters(comparisonTable);
         comparisonTable.getColumn("").setMaxWidth(100);
         comparisonTable.setFillsViewportHeight(true);
@@ -2319,10 +2312,10 @@ public class Raids extends BaseFrame implements UpdateableWindow
             count++;
         }
         filterTable.setModel(new DefaultTableModel(tableObject, columnNames));
-        filterTable.setDefaultRenderer(Object.class, new StripedTableRowCellRenderer());
-        filterTable.getColumn("Filter Descriptions").setCellEditor(new NonEditableCell(new JTextField()));
-        filterTable.getColumn("").setCellRenderer(new ButtonRenderer());
-        filterTable.getColumn("").setCellEditor(new ButtonEditorFilterData(new JCheckBox(), this));
+        filterTable.setDefaultRenderer(Object.class, new StripedTableRowCellRenderer(config));
+        filterTable.getColumn("Filter Descriptions").setCellEditor(new NonEditableCell(getThemedTextField()));
+        filterTable.getColumn("").setCellRenderer(new ButtonRenderer(config));
+        filterTable.getColumn("").setCellEditor(new ButtonEditorFilterData(getThemedCheckBox(), this));
         resizeColumnWidthFilters(filterTable);
         filterTable.getColumn("").setMaxWidth(100);
         filterTable.setFillsViewportHeight(true);

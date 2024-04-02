@@ -16,6 +16,7 @@ import net.runelite.client.game.ItemManager;
 
 import javax.swing.*;
 import javax.swing.border.MatteBorder;
+import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -23,6 +24,8 @@ import java.util.*;
 import java.util.List;
 
 import static com.advancedraidtracker.constants.RaidRoom.*;
+import static com.advancedraidtracker.utility.UISwingUtility.*;
+import static com.advancedraidtracker.utility.UISwingUtility.getThemedLabel;
 
 @Slf4j
 public class ComparisonViewPanel extends JPanel implements UpdateableWindow
@@ -41,7 +44,7 @@ public class ComparisonViewPanel extends JPanel implements UpdateableWindow
     private final JLabel graph1Maximum;
     private final JLabel graph1Minimum;
     private final JLabel graph1Mode;
-    private final JPanel otherPanel = new JPanel();
+    private final JPanel otherPanel = getThemedPanel();
     private final JLabel graph2Average;
     private final JLabel graph2Median;
     private final JLabel graph2Maximum;
@@ -97,35 +100,39 @@ public class ComparisonViewPanel extends JPanel implements UpdateableWindow
         this.clientThread = clientThread;
         this.itemManager = itemManager;
         this.config = config;
-        leftLabel = new JTextField("Min cutoff: ");
-        rightLabel = new JTextField("Max cutoff: ");
-        leftThresholdLabel = new JLabel("% <= ");
-        rightThresholdLabel = new JLabel("% <= ");
-        thresholdLabel = new JTextField("Threshold: ");
+
+        setBackground(config.primaryDark());
+        setOpaque(true);
+
+        leftLabel = getThemedTextField("Min cutoff: ");
+        rightLabel = getThemedTextField("Max cutoff: ");
+        leftThresholdLabel = getThemedLabel("% <= ");
+        rightThresholdLabel = getThemedLabel("% <= ");
+        thresholdLabel = getThemedTextField("Threshold: ");
         thresholdLabel.setEditable(false);
         leftLabel.setEditable(false);
         rightLabel.setEditable(false);
-        leftCutOff = new JSlider();
-        rightCutOff = new JSlider();
-        threshold = new JSlider();
+        leftCutOff = getThemedSlider();
+        rightCutOff = getThemedSlider();
+        threshold = getThemedSlider();
         topGraphs = new ArrayList<>();
         bottomGraphs = new ArrayList<>();
         data = raidData;
-        matchYScales = new JCheckBox("Match Y-Axis", true);
-        matchXScales = new JCheckBox("Match X-Axis", true);
+        matchYScales = getThemedCheckBox("Match Y-Axis", true);
+        matchXScales = getThemedCheckBox("Match X-Axis", true);
 
         spinnerSizeModel = new SpinnerNumberModel(1, 1, 100, 1);
-        groupSizeSpinner = new JSpinner(spinnerSizeModel);
+        groupSizeSpinner = getThemedSpinner(spinnerSizeModel);
 
         spinnerOffsetModel = new SpinnerNumberModel(0, 0, 0, 1);
-        groupOffsetSpinner = new JSpinner(spinnerOffsetModel);
+        groupOffsetSpinner = getThemedSpinner(spinnerOffsetModel);
 
-        groupingEnabled = new JCheckBox("Enable Grouping?");
+        groupingEnabled = getThemedCheckBox("Enable Grouping?");
         groupingEnabled.setSelected(false);
         groupOffsetSpinner.setEnabled(false);
         groupSizeSpinner.setEnabled(false);
 
-        graphTypeComboBox = new JComboBox<>(new String[]{"Bar Graph", "Pie Chart", "Line Plot"});
+        graphTypeComboBox = getThemedComboBox(new String[]{"Bar Graph", "Pie Chart", "Line Plot"});
 
         graphTypeComboBox.addActionListener(e ->
         {
@@ -189,34 +196,34 @@ public class ComparisonViewPanel extends JPanel implements UpdateableWindow
 
         labels = names;
 
-        scrollTopPanel = new JPanel();
-        scrollBottomPanel = new JPanel();
+        scrollTopPanel = getThemedPanel();
+        scrollBottomPanel = getThemedPanel();
 
-        scrollBottomGraphData = new JScrollPane(scrollBottomPanel);
-        scrollTopGraphData = new JScrollPane(scrollTopPanel);
+        scrollBottomGraphData = getThemedScrollPane(scrollBottomPanel);
+        scrollTopGraphData = getThemedScrollPane(scrollTopPanel);
 
-        graph1Average = new JLabel("", SwingConstants.RIGHT);
-        graph1Median = new JLabel("", SwingConstants.RIGHT);
-        graph1Mode = new JLabel("", SwingConstants.RIGHT);
-        graph1Maximum = new JLabel("", SwingConstants.RIGHT);
-        graph1Minimum = new JLabel("", SwingConstants.RIGHT);
-        graph1PercentThreshold = new JLabel("", SwingConstants.RIGHT);
+        graph1Average = getThemedLabel("", SwingConstants.RIGHT);
+        graph1Median = getThemedLabel("", SwingConstants.RIGHT);
+        graph1Mode = getThemedLabel("", SwingConstants.RIGHT);
+        graph1Maximum = getThemedLabel("", SwingConstants.RIGHT);
+        graph1Minimum = getThemedLabel("", SwingConstants.RIGHT);
+        graph1PercentThreshold = getThemedLabel("", SwingConstants.RIGHT);
 
-        graph2Average = new JLabel("", SwingConstants.RIGHT);
-        graph2Median = new JLabel("", SwingConstants.RIGHT);
-        graph2Mode = new JLabel("", SwingConstants.RIGHT);
-        graph2Maximum = new JLabel("", SwingConstants.RIGHT);
-        graph2Minimum = new JLabel("", SwingConstants.RIGHT);
-        graph2PercentThreshold = new JLabel("", SwingConstants.RIGHT);
+        graph2Average = getThemedLabel("", SwingConstants.RIGHT);
+        graph2Median = getThemedLabel("", SwingConstants.RIGHT);
+        graph2Mode = getThemedLabel("", SwingConstants.RIGHT);
+        graph2Maximum = getThemedLabel("", SwingConstants.RIGHT);
+        graph2Minimum = getThemedLabel("", SwingConstants.RIGHT);
+        graph2PercentThreshold = getThemedLabel("", SwingConstants.RIGHT);
 
-        topGraphTabs = new JTabbedPane();
+        topGraphTabs = getThemedTabbedPane();
         topGraphTabs.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
         topGraphTabs.addChangeListener(cl ->
         {
             switchGraphData();
             updateOtherPanels();
         });
-        bottomGraphTabs = new JTabbedPane();
+        bottomGraphTabs = getThemedTabbedPane();
         bottomGraphTabs.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
         bottomGraphTabs.addChangeListener(cl ->
         {
@@ -230,7 +237,8 @@ public class ComparisonViewPanel extends JPanel implements UpdateableWindow
         {
             comboPopupData.put(room.name, DataPoint.getSpecificNames(room));
         }
-        compareByComboBox = new JComboBox<>();
+        compareByComboBox = getThemedComboBox();
+        compareByComboBox.setPreferredSize(new Dimension(300, compareByComboBox.getPreferredSize().height));
         compareByComboBox.setEditable(true);
         compareByComboBox.setPrototypeDisplayValue("Maiden Time");
         compareByComboBox.setSelectedItem("Maiden Time");
@@ -273,7 +281,7 @@ public class ComparisonViewPanel extends JPanel implements UpdateableWindow
             rightCutOff.setEnabled(matchXScales.isSelected());
         });
 
-        container = new JPanel();
+        container = getThemedPanel();
         container.setPreferredSize(new Dimension(1000, 730));
         container.setLayout(new BoxLayout(container, BoxLayout.X_AXIS));
 
@@ -542,14 +550,16 @@ public class ComparisonViewPanel extends JPanel implements UpdateableWindow
     private void updateOtherPanels()
     {
         panelName = "Other - " + compareByComboBox.getSelectedItem();
-        otherPanel.setBorder(BorderFactory.createTitledBorder(panelName));
+        TitledBorder border = BorderFactory.createTitledBorder(panelName);
+        border.setTitleColor(config.fontColor());
+        otherPanel.setBorder(border);
         if (topGraphTabs.getSelectedIndex() != -1 && bottomGraphTabs.getSelectedIndex() != -1 && built)
         {
-            otherTopLeft.setBorder(BorderFactory.createTitledBorder(topGraphTabs.getTitleAt(topGraphTabs.getSelectedIndex())));
-            otherTopRight.setBorder(BorderFactory.createTitledBorder(bottomGraphTabs.getTitleAt(bottomGraphTabs.getSelectedIndex())));
+            otherTopLeft.setBorder(getColoredTitledBorder(topGraphTabs.getTitleAt(topGraphTabs.getSelectedIndex()), config.fontColor()));
+            otherTopRight.setBorder(getColoredTitledBorder(bottomGraphTabs.getTitleAt(bottomGraphTabs.getSelectedIndex()), config.fontColor()));
 
-            otherBottomLeft.setBorder(BorderFactory.createTitledBorder(topGraphTabs.getTitleAt(topGraphTabs.getSelectedIndex()) + " values"));
-            otherBottomRight.setBorder(BorderFactory.createTitledBorder(bottomGraphTabs.getTitleAt(bottomGraphTabs.getSelectedIndex()) + " values"));
+            otherBottomLeft.setBorder(getColoredTitledBorder(topGraphTabs.getTitleAt(topGraphTabs.getSelectedIndex()) + " values", config.fontColor()));
+            otherBottomRight.setBorder(getColoredTitledBorder(bottomGraphTabs.getTitleAt(bottomGraphTabs.getSelectedIndex()) + " values", config.fontColor()));
 
             List<Raid> topGraphData = (data.get(topGraphTabs.getSelectedIndex()));
             List<Raid> bottomGraphData = data.get(bottomGraphTabs.getSelectedIndex());
@@ -608,8 +618,8 @@ public class ComparisonViewPanel extends JPanel implements UpdateableWindow
             scrollTopPanel.removeAll();
             scrollBottomPanel.removeAll();
 
-            scrollTopPanel.add(new JLabel("Value", SwingConstants.LEFT));
-            scrollTopPanel.add(new JLabel("Count", SwingConstants.RIGHT));
+            scrollTopPanel.add(getThemedLabel("Value", SwingConstants.LEFT));
+            scrollTopPanel.add(getThemedLabel("Count", SwingConstants.RIGHT));
 
             int total = GraphPanel.getCountedTotal(topSet);
             int count = 0;
@@ -618,15 +628,15 @@ public class ComparisonViewPanel extends JPanel implements UpdateableWindow
             int altCount = 0;
             for (int i = count; i < 16; i++)
             {
-                scrollTopPanel.add(new JLabel());
-                scrollTopPanel.add(new JLabel());
+                scrollTopPanel.add(getThemedLabel());
+                scrollTopPanel.add(getThemedLabel());
                 altCount++;
             }
             scrollTopPanel.setLayout(new GridLayout(count + 1 + altCount, 2));
             count = 0;
 
-            scrollBottomPanel.add(new JLabel("Value", SwingConstants.LEFT));
-            scrollBottomPanel.add(new JLabel("Count", SwingConstants.RIGHT));
+            scrollBottomPanel.add(getThemedLabel("Value", SwingConstants.LEFT));
+            scrollBottomPanel.add(getThemedLabel("Count", SwingConstants.RIGHT));
 
             total = GraphPanel.getCountedTotal(bottomSet);
 
@@ -634,8 +644,8 @@ public class ComparisonViewPanel extends JPanel implements UpdateableWindow
             altCount = 0;
             for (int i = count; i < 16; i++)
             {
-                scrollBottomPanel.add(new JLabel());
-                scrollBottomPanel.add(new JLabel());
+                scrollBottomPanel.add(getThemedLabel());
+                scrollBottomPanel.add(getThemedLabel());
                 altCount++;
             }
             scrollBottomPanel.setLayout(new GridLayout(count + 1 + altCount, 2));
@@ -653,8 +663,8 @@ public class ComparisonViewPanel extends JPanel implements UpdateableWindow
             if (topSet.get(i) > 0)
             {
                 String percent = Math.round((100.0 * topSet.get(i) / total) * 100.0) / 100.0 + "%";
-                scrollTopPanel.add(new JLabel(getString(i), SwingConstants.LEFT));
-                scrollTopPanel.add(new JLabel(topSet.get(i) + " (" + percent + ")", SwingConstants.RIGHT));
+                scrollTopPanel.add(getThemedLabel(getString(i), SwingConstants.LEFT));
+                scrollTopPanel.add(getThemedLabel(topSet.get(i) + " (" + percent + ")", SwingConstants.RIGHT));
                 count++;
             }
         }
@@ -676,7 +686,7 @@ public class ComparisonViewPanel extends JPanel implements UpdateableWindow
         }
         switchGraphData();
 
-        JPanel leftContainer = new JPanel();
+        JPanel leftContainer = getThemedPanel();
         leftContainer.setLayout(new BoxLayout(leftContainer, BoxLayout.Y_AXIS));
 
         leftContainer.add(topGraphTabs);
@@ -684,10 +694,10 @@ public class ComparisonViewPanel extends JPanel implements UpdateableWindow
 
         container.add(leftContainer);
 
-        JPanel sidebar = new JPanel();
+        JPanel sidebar = getThemedPanel();
         sidebar.setPreferredSize(new Dimension(390, 730));
 
-        JPanel graphOptionsPanel = new JPanel();
+        JPanel graphOptionsPanel = getThemedPanel();
         graphOptionsPanel.setBorder(BorderFactory.createTitledBorder("Graph Options"));
         graphOptionsPanel.setPreferredSize(new Dimension(210, 215));
 
@@ -754,16 +764,16 @@ public class ComparisonViewPanel extends JPanel implements UpdateableWindow
         graphOptionsPanel.add(matchXScales);
         graphOptionsPanel.add(matchYScales);
 
-        graphOptionsPanel.add(new JLabel(""));
+        graphOptionsPanel.add(getThemedLabel(""));
 
         graphOptionsPanel.add(groupingEnabled);
-        graphOptionsPanel.add(new JLabel("Group Size: "));
+        graphOptionsPanel.add(getThemedLabel("Group Size: "));
         graphOptionsPanel.add(groupSizeSpinner);
-        graphOptionsPanel.add(new JLabel("Group Offset: "));
+        graphOptionsPanel.add(getThemedLabel("Group Offset: "));
         graphOptionsPanel.add(groupOffsetSpinner);
 
-        graphOptionsPanel.add(new JCheckBox("Show Chronological"));
-        graphOptionsPanel.add(new JCheckBox("Rotate 90"));
+        graphOptionsPanel.add(getThemedCheckBox("Show Chronological"));
+        graphOptionsPanel.add(getThemedCheckBox("Rotate 90"));
 
         graphOptionsPanel.add(graphTypeComboBox);
 
@@ -771,7 +781,7 @@ public class ComparisonViewPanel extends JPanel implements UpdateableWindow
         thresholdLabel.setPreferredSize(new Dimension(140, thresholdLabel.getPreferredSize().height));
         graphOptionsPanel.add(thresholdLabel);
 
-        JPanel compareByPanel = new JPanel();
+        JPanel compareByPanel = getThemedPanel();
         compareByPanel.setBorder(BorderFactory.createTitledBorder("Compare by"));
         compareByPanel.setPreferredSize(new Dimension(190, 60));
         compareByPanel.add(compareByComboBox);
@@ -782,58 +792,58 @@ public class ComparisonViewPanel extends JPanel implements UpdateableWindow
         otherPanel.setLayout(new BoxLayout(otherPanel, BoxLayout.Y_AXIS));
 
 
-        JPanel otherTop = new JPanel();
+        JPanel otherTop = getThemedPanel();
         otherTop.setLayout(new BoxLayout(otherTop, BoxLayout.X_AXIS));
 
-        JPanel otherBottom = new JPanel();
+        JPanel otherBottom = getThemedPanel();
         otherBottom.setLayout(new BoxLayout(otherBottom, BoxLayout.X_AXIS));
 
-        otherTopLeft = new JPanel();
+        otherTopLeft = getThemedPanel();
         otherTopLeft.setBorder(BorderFactory.createTitledBorder("Set 0"));
         otherTopLeft.setPreferredSize(new Dimension(100, 125));
 
-        otherTopRight = new JPanel();
+        otherTopRight = getThemedPanel();
         otherTopRight.setBorder(BorderFactory.createTitledBorder("Set 1"));
         otherTopRight.setPreferredSize(new Dimension(100, 125));
 
         otherTop.add(otherTopLeft);
         otherTop.add(otherTopRight);
 
-        otherBottomLeft = new JPanel();
-        otherBottomLeft.setBorder(BorderFactory.createTitledBorder("Values"));
+        otherBottomLeft = getThemedPanel();
+        otherBottomLeft.setBorder(getColoredTitledBorder("Values", config.fontColor()));
 
         otherTopLeft.setLayout(new GridLayout(6, 2));
         otherTopRight.setLayout(new GridLayout(6, 2));
 
 
-        otherTopLeft.add(new JLabel("Average ", SwingConstants.LEFT));
+        otherTopLeft.add(getThemedLabel("Average ", SwingConstants.LEFT));
         otherTopLeft.add(graph1Average);
-        otherTopLeft.add(new JLabel("Median ", SwingConstants.LEFT));
+        otherTopLeft.add(getThemedLabel("Median ", SwingConstants.LEFT));
         otherTopLeft.add(graph1Median);
-        otherTopLeft.add(new JLabel("Mode ", SwingConstants.LEFT));
+        otherTopLeft.add(getThemedLabel("Mode ", SwingConstants.LEFT));
         otherTopLeft.add(graph1Mode);
-        otherTopLeft.add(new JLabel("Maximum ", SwingConstants.LEFT));
+        otherTopLeft.add(getThemedLabel("Maximum ", SwingConstants.LEFT));
         otherTopLeft.add(graph1Maximum);
-        otherTopLeft.add(new JLabel("Minimum ", SwingConstants.LEFT));
+        otherTopLeft.add(getThemedLabel("Minimum ", SwingConstants.LEFT));
         otherTopLeft.add(graph1Minimum);
         otherTopLeft.add(leftThresholdLabel);
         otherTopLeft.add(graph1PercentThreshold);
 
-        otherTopRight.add(new JLabel("Average ", SwingConstants.LEFT));
+        otherTopRight.add(getThemedLabel("Average ", SwingConstants.LEFT));
         otherTopRight.add(graph2Average);
-        otherTopRight.add(new JLabel("Median ", SwingConstants.LEFT));
+        otherTopRight.add(getThemedLabel("Median ", SwingConstants.LEFT));
         otherTopRight.add(graph2Median);
-        otherTopRight.add(new JLabel("Mode ", SwingConstants.LEFT));
+        otherTopRight.add(getThemedLabel("Mode ", SwingConstants.LEFT));
         otherTopRight.add(graph2Mode);
-        otherTopRight.add(new JLabel("Maximum ", SwingConstants.LEFT));
+        otherTopRight.add(getThemedLabel("Maximum ", SwingConstants.LEFT));
         otherTopRight.add(graph2Maximum);
-        otherTopRight.add(new JLabel("Minimum ", SwingConstants.LEFT));
+        otherTopRight.add(getThemedLabel("Minimum ", SwingConstants.LEFT));
         otherTopRight.add(graph2Minimum);
         otherTopRight.add(rightThresholdLabel);
         otherTopRight.add(graph2PercentThreshold);
 
-        otherBottomRight = new JPanel();
-        otherBottomRight.setBorder(BorderFactory.createTitledBorder("Values"));
+        otherBottomRight = getThemedPanel();
+        otherBottomRight.setBorder(getColoredTitledBorder("Values", config.fontColor()));
 
         scrollTopGraphData.setPreferredSize(new Dimension(150, 250));
         scrollBottomGraphData.setPreferredSize(new Dimension(150, 250));

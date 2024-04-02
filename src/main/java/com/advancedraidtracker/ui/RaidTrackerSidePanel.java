@@ -2,6 +2,7 @@ package com.advancedraidtracker.ui;
 
 import com.advancedraidtracker.*;
 import com.advancedraidtracker.ui.charts.chartcreator.ChartCreatorFrame;
+import com.advancedraidtracker.utility.UISwingUtility;
 import com.advancedraidtracker.utility.datautility.DataReader;
 import com.advancedraidtracker.utility.datautility.datapoints.Raid;
 import com.advancedraidtracker.utility.datautility.datapoints.tob.Tob;
@@ -29,6 +30,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.advancedraidtracker.utility.UISwingUtility.*;
 import static com.advancedraidtracker.utility.datautility.DataReader.getAllRaids;
 import static com.advancedraidtracker.utility.datautility.DataWriter.PLUGIN_DIRECTORY;
 
@@ -48,13 +50,19 @@ public class RaidTrackerSidePanel extends PluginPanel
     private final ConfigManager configManager;
     private final ClientThread clientThread;
 
-    private final JLabel pleaseWait = new JLabel("Parsing Files...", SwingConstants.CENTER);
+    private final JLabel pleaseWait;
 
     @Inject
     RaidTrackerSidePanel(AdvancedRaidTrackerPlugin plugin, AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
     {
+        UISwingUtility.setConfig(config);
+        this.getParent().setBackground(config.primaryDark());
+        setBackground(config.primaryDark());
+        setForeground(config.primaryDark());
+        setOpaque(true);
         this.clientThread = clientThread;
         this.configManager = configManager;
+        pleaseWait = getThemedLabel("Parsing Files...", SwingConstants.CENTER);
         add(pleaseWait);
         new Thread(() ->
         {
@@ -71,15 +79,15 @@ public class RaidTrackerSidePanel extends PluginPanel
 
     private void buildComponents()
     {
-        JPanel container = new JPanel();
-        JPanel primaryContainer = new JPanel();
+        JPanel container = getThemedPanel();
+        JPanel primaryContainer = getThemedPanel();
 
         primaryContainer.setLayout(new GridLayout(0, 1));
 
-        JButton viewRaidsButton = new JButton("View All Raids");
-        JButton refreshRaidsButton = new JButton("Refresh");
+        JButton viewRaidsButton = getThemedButton("View All Raids");
+        JButton refreshRaidsButton = getThemedButton("Refresh");
 
-        JButton tableRaidsButton = new JButton("View Saved Raids From Table");
+        JButton tableRaidsButton = getThemedButton("View Saved Raids From Table");
 
         viewRaidsButton.addActionListener(
                 al ->
@@ -87,7 +95,6 @@ public class RaidTrackerSidePanel extends PluginPanel
                         {
                             raids = new Raids(config, itemManager, plugin.clientThread, configManager);
                             raids.createFrame(raidsData);
-                            raids.getContentPane().setBackground(Color.BLACK);
                             raids.repaint();
                             raids.open();
                         }).start());
@@ -117,24 +124,23 @@ public class RaidTrackerSidePanel extends PluginPanel
                 {
                     raids = new Raids(config, itemManager, plugin.clientThread, configManager);
                     raids.createFrame(getTableData());
-                    raids.getContentPane().setBackground(Color.BLACK);
                     raids.repaint();
                     raids.open();
                 }
         );
 
-        JButton livePanelButton = new JButton("View Live Room");
+        JButton livePanelButton = getThemedButton("View Live Room");
         livePanelButton.addActionListener(al ->
                 plugin.openLiveFrame());
 
-        JButton chartCreatorButton = new JButton("Create A Chart");
+        JButton chartCreatorButton = getThemedButton("Create A Chart");
         chartCreatorButton.addActionListener(al ->
         {
             ChartCreatorFrame chartCreator = new ChartCreatorFrame(config, itemManager, clientThread, configManager);
             chartCreator.open();
         });
 
-        JButton copyLastSplitsButton = new JButton("Copy Last Splits");
+        JButton copyLastSplitsButton = getThemedButton("Copy Last Splits");
         copyLastSplitsButton.addActionListener(al ->
         {
             String lastSplits = plugin.getLastSplits();
@@ -151,7 +157,7 @@ public class RaidTrackerSidePanel extends PluginPanel
             }
         });
 
-        raidCountLabel = new JLabel("", SwingConstants.CENTER);
+        raidCountLabel = getThemedLabel("", SwingConstants.CENTER);
         updateRaidCountLabel();
         primaryContainer.add(raidCountLabel);
         primaryContainer.add(refreshRaidsButton);
@@ -165,6 +171,24 @@ public class RaidTrackerSidePanel extends PluginPanel
         loadRaidsTable = new JTable(model)
         {
             @Override
+            public Color getBackground()
+            {
+                return config.primaryDark();
+            }
+
+            @Override
+            public Color getForeground()
+            {
+                return config.fontColor();
+            }
+
+            @Override
+            public boolean isOpaque()
+            {
+                return true;
+            }
+
+            @Override
             public Class<?> getColumnClass(int column)
             {
                 if (column == 0)
@@ -175,8 +199,9 @@ public class RaidTrackerSidePanel extends PluginPanel
             }
         };
 
+        loadRaidsTable.getTableHeader().setBackground(config.primaryLight());
         loadRaidsTable.setPreferredScrollableViewportSize(loadRaidsTable.getPreferredScrollableViewportSize());
-        JScrollPane scrollPane = new JScrollPane(loadRaidsTable);
+        JScrollPane scrollPane = getThemedScrollPane(loadRaidsTable);
         scrollPane.setPreferredSize(new Dimension(225, scrollPane.getPreferredSize().height));
         container.add(primaryContainer);
         container.add(scrollPane);
@@ -210,6 +235,10 @@ public class RaidTrackerSidePanel extends PluginPanel
         }
         ArrayList<Raid> collectedRaids = new ArrayList<>();
         return collectedRaids;
+    }
+
+    public void redraw()
+    {
     }
 
     private void updateRaidCountLabel()

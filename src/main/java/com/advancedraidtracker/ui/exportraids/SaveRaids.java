@@ -9,6 +9,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
+import static com.advancedraidtracker.utility.UISwingUtility.*;
+
 public class SaveRaids extends BaseFrame
 {
     private final JTextField field;
@@ -17,12 +19,12 @@ public class SaveRaids extends BaseFrame
     {
         getContentPane().removeAll();
         setTitle("Save Raids");
-        JPanel borderPanel = new JPanel(new BorderLayout());
-        borderPanel.setBorder(BorderFactory.createTitledBorder("Save Raids"));
-        JPanel subPanel = new JPanel();
+        JPanel borderPanel = getTitledPanel("Save Raids");
+
+        JPanel subPanel = getThemedPanel();
         subPanel.setLayout(new GridLayout(1, 4));
-        field = new JTextField();
-        subPanel.add(new JLabel("Raids Name: "));
+        field = getThemedTextField();
+        subPanel.add(getThemedLabel("Raids Name: "));
         subPanel.add(field);
         JButton saveButton = getSaveButton(raids);
         subPanel.add(saveButton);
@@ -35,7 +37,7 @@ public class SaveRaids extends BaseFrame
 
     private JButton getSaveButton(ArrayList<Raid> raids)
     {
-        JButton saveButton = new JButton("Save");
+        JButton saveButton = getThemedButton("Save");
         saveButton.addActionListener(e ->
         {
             if (RaidsManager.doesRaidExist(field.getText()))

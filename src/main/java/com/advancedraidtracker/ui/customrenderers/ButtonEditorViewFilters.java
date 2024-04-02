@@ -7,6 +7,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
+import static com.advancedraidtracker.utility.UISwingUtility.getThemedButton;
+
 public class ButtonEditorViewFilters extends DefaultCellEditor
 {
 
@@ -20,7 +22,7 @@ public class ButtonEditorViewFilters extends DefaultCellEditor
     {
         super(checkBox);
         this.data = data;
-        button = new JButton();
+        button = getThemedButton();
         button.setOpaque(true);
         button.addActionListener(e -> fireEditingStopped());
     }

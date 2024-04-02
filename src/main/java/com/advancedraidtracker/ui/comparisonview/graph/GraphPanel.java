@@ -78,25 +78,32 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
         this.configManager = configManager;
         this.clientThread = clientThread;
         this.itemManager = itemManager;
+        this.config = config;
         selectedBounds = new ArrayList<>();
-        gradientStart = new Color(100, 170, 230, 90);
-        gradientEnd = new Color(200, 240, 255, 90);
 
-        gradientStartHighlighted = new Color(100, 170, 230, 215);
-        gradientEndHighlighted = new Color(200, 240, 255, 215);
+        setBackground(config.primaryDark());
+        setOpaque(true);
 
-        gradientStartSelected = new Color(100, 170, 230, 190);
-        gradientEndSelected = new Color(200, 240, 255, 190);
+        Color baseStart = config.markerColor().darker().darker();
+        Color baseEnd = config.markerColor();
 
-        gradientStartSelectedAndHighlighted = new Color(100, 170, 230, 240);
-        gradientEndSelectedAndHighlighted = new Color(200, 240, 255, 240);
+        gradientStart = new Color(baseStart.getRed(), baseStart.getGreen(), baseStart.getBlue(), 90);
+        gradientEnd = new Color(baseEnd.getRed(), baseEnd.getGreen(), baseEnd.getBlue(), 90);
+
+        gradientStartHighlighted = new Color(baseStart.getRed(), baseStart.getGreen(), baseStart.getBlue(), 215);
+        gradientEndHighlighted = new Color(baseEnd.getRed(), baseEnd.getGreen(), baseEnd.getBlue(), 215);
+
+        gradientStartSelected = new Color(baseStart.getRed(), baseStart.getGreen(), baseStart.getBlue(), 190);
+        gradientEndSelected = new Color(baseEnd.getRed(), baseEnd.getGreen(), baseEnd.getBlue(), 190);
+
+        gradientStartSelectedAndHighlighted = new Color(baseStart.getRed(), baseStart.getGreen(), baseStart.getBlue(), 240);
+        gradientEndSelectedAndHighlighted = new Color(baseEnd.getRed(), baseEnd.getGreen(), baseEnd.getBlue(), 240);
         graphType = 0;
         internalData = data;
         drawBlankBarGraph();
         addMouseMotionListener(this);
         addMouseListener(this);
         addKeyListener(this);
-        this.config = config;
         bounds = new ArrayList<>();
     }
 
@@ -193,15 +200,15 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
         int top = GRAPH_HEIGHT - GRAPH_YS - height;
         int bottom = GRAPH_HEIGHT - GRAPH_YS;
 
-        g.setColor(new Color(100, 170, 230));
-        g.drawLine(left, bottom, right, bottom);
-        g.drawLine(left, bottom, left, top);
-        g.drawLine(left, top, right, top);
-        g.drawLine(right, bottom, right, top);
 
         boolean highlight = (left == activeBound.getLeft() && right == activeBound.getRight() && top == activeBound.getTop() && activeBound.getBottom() == bottom);
         boolean selected = isBarSelected(left, right, top, bottom);
 
+        g.setColor(config.markerColor());
+        g.drawLine(left, bottom, right, bottom);
+        g.drawLine(left, bottom, left, top);
+        g.drawLine(left, top, right, top);
+        g.drawLine(right, bottom, right, top);
 
         Paint oldPaint = g.getPaint();
         GradientPaint gradient = new GradientPaint(left, bottom, (highlight && selected) ? gradientStartSelectedAndHighlighted : (highlight) ? gradientStartHighlighted : (selected) ? gradientStartSelected : gradientStart, left, top, (highlight && selected) ? gradientEndSelectedAndHighlighted : (highlight) ? gradientEndHighlighted : (selected) ? gradientEndSelected : gradientEnd);
@@ -471,9 +478,10 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
             int endY = Math.max(dragStartY, dragCurrentY);
             Graphics2D g = (Graphics2D) img.getGraphics();
             Color oldColor = g.getColor();
-            g.setColor(new Color(200, 200, 100, 180));
+            Color base = config.fontColor();
+            g.setColor(new Color(base.getRed(), base.getGreen(), base.getBlue(), 180));
             g.drawRect(startX, startY, Math.abs(endX - startX), Math.abs(endY - startY));
-            g.setColor(new Color(200, 200, 100, 70));
+            g.setColor(new Color(base.getRed(), base.getGreen(), base.getBlue(), 70));
             g.fillRect(startX, startY, Math.abs(endX - startX), Math.abs(endY - startY));
             g.setColor(oldColor);
         }
@@ -497,11 +505,10 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
             int left = activeToolTip.messageLeft - 5;
             int bottom = activeToolTip.messageBottom - msgHeight;
 
-            g.setColor(new Color(30, 30, 30, 255));
+            g.setColor(config.primaryDark());
             g.fillRect(activeToolTip.messageLeft - 5, activeToolTip.messageBottom - msgHeight, msgWidth + 10, msgHeight + 10);
-            g.setColor(new Color(100, 100, 100));
-            g.drawRect(left, bottom, msgWidth + 10, msgHeight + 10);
-            g.setColor(new Color(240, 240, 240));
+            g.setColor(config.fontColor());
+            g.drawRoundRect(left, bottom, msgWidth + 10, msgHeight + 10, 7, 7);
             g.drawString(activeToolTip.message, activeToolTip.messageLeft, activeToolTip.messageBottom);
             g.setFont(oldFont);
             g.setColor(oldColor);
@@ -527,6 +534,7 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
         Font oldFont = g.getFont();
         Font font = new Font("SansSerif", Font.PLAIN, 14);
         g.setFont(font);
+        g.setColor(config.fontColor());
         String title = activeKey.name + " (Based on " + totalCount + " raids)";
         g.drawString(title, 300 - g.getFontMetrics().stringWidth(title) / 2, 16);
         g.setFont(oldFont);
@@ -647,7 +655,7 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
             int nonZeroCount = getNonZeroCount(intCountedDataSet);
             if (nonZeroCount > 9)
             {
-                g.setColor(Color.WHITE);
+                g.setColor(config.fontColor());
                 g.drawString("Cannot draw pie chart for this data due to too many values", 50, 50);
                 return;
             }
@@ -672,9 +680,9 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
                 Color opacityAdjusted = new Color(c.getRed(), c.getGreen(), c.getBlue(), 150);
                 g.setColor(opacityAdjusted);
                 g.fillRect(375, offset, 50, 18);
-                g.setColor(Color.BLACK);
+                g.setColor(config.primaryDark());
                 g.drawRect(375, offset, 50, 18);
-                g.setColor(new Color(200, 200, 200, 200));
+                g.setColor(config.fontColor());
                 Font oldFont = g.getFont();
                 g.setFont(oldFont.deriveFont(18f));
                 g.drawString(getString(sortedData.get(i).value), 435, offset + 16);
@@ -709,7 +717,8 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
             //draw horizontal lines
-            g.setColor(new Color(100, 100, 100, 150));
+            Color base = config.boxColor();
+            g.setColor(new Color(base.getRed(), base.getGreen(), base.getBlue(), 80));
             for (int i = 0; i < yMax - yMin; i++)
             {
                 if (yMax - yMin > 6)
@@ -719,7 +728,7 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
                         g.drawLine(GRAPH_XS, GRAPH_YE - (i * verticalScale), GRAPH_XE, GRAPH_YE - (i * verticalScale));
 
                         Color oldColor = g.getColor();
-                        g.setColor(new Color(200, 200, 200, 220));
+                        g.setColor(config.fontColor());
                         g.drawString(getString(i + yMin), GRAPH_XS - g.getFontMetrics().stringWidth(getString(i + yMin)) - 10, GRAPH_YE - (i * verticalScale));
                         g.setColor(oldColor);
                     }
@@ -729,7 +738,7 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
                 }
             }
 
-            g.setColor(new Color(120, 120, 240, 200));
+            g.setColor(new Color(base.getRed(), base.getGreen(), base.getBlue(), 80));
             for (int i = 0; i < data.size(); i++)
             {
                 g.fillOval(GRAPH_XS + (i * horizontalScale) - 1, GRAPH_YE - ((data.get(i) - yMin) * verticalScale) - 2, 4, 4);
@@ -754,7 +763,8 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
                 if (i == 0 || i % verticalScaleToUse == 0)
                 {
                     Color oldColor = g.getColor();
-                    g.setColor(new Color(100, 100, 100, 100));
+                    Color base = config.boxColor();
+                    g.setColor(new Color(base.getRed(), base.getGreen(), base.getBlue(), 80));
                     g.drawLine(GRAPH_XS, stringOffset - 8, GRAPH_XE, stringOffset - 8);
                     g.setColor(oldColor);
                     g.drawString(String.valueOf(i), GRAPH_XS - 20, stringOffset);
@@ -820,7 +830,7 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
     private void drawGridLines()
     {
         Graphics g = img.getGraphics();
-        g.setColor(gridColor);
+        g.setColor(config.boxColor());
 
         g.drawLine(GRAPH_XS, GRAPH_YS, GRAPH_XE, GRAPH_YS);
         g.drawLine(GRAPH_XS, GRAPH_YS, GRAPH_XS, GRAPH_YE);
@@ -833,7 +843,7 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
     public void drawBlankPanel()
     {
         Graphics g = img.getGraphics();
-        g.setColor(new Color(40, 40, 40));
+        g.setColor(config.primaryDark());
         g.fillRect(0, 0, img.getWidth(), img.getHeight());
         g.dispose();
 

@@ -59,16 +59,21 @@ public class Toa extends Raid
         return RaidType.TOA;
     }
 
+    @Override
+    public boolean isAccurate()
+    {
+        return true;
+    }
 
     @Override
     public int getTimeSum()
     {
         int time = 0;
-        for(RaidRoom room : RaidRoom.values())
+        for (RaidRoom room : RaidRoom.values())
         {
-            if(room.isTOA())
+            if (room.isTOA())
             {
-                if(getRoomAccurate(room))
+                if (getRoomAccurate(room))
                 {
                     int val = get(room.name + " Time");
                     time += (val == -1) ? 0 : val;
@@ -89,11 +94,11 @@ public class Toa extends Raid
     @Override
     public boolean getOverallTimeAccurate()
     {
-        for(RaidRoom room : RaidRoom.values())
+        for (RaidRoom room : RaidRoom.values())
         {
-            if(room.isTOA())
+            if (room.isTOA())
             {
-                if(!getRoomAccurate(room))
+                if (!getRoomAccurate(room))
                 {
                     return false;
                 }
@@ -126,42 +131,39 @@ public class Toa extends Raid
                     {
                         addColorToStatus(red);
                     }
-                }
-                else if(Objects.requireNonNull(instruction.type) == RAID_SPECIFIC)
+                } else if (Objects.requireNonNull(instruction.type) == RAID_SPECIFIC)
                 {
-                    if(entry.logEntry.equals(LogID.ENTERED_NEW_TOA_REGION))
+                    if (entry.logEntry.equals(LogID.ENTERED_NEW_TOA_REGION))
                     {
-                        if(entry.getValue("Region").equals("TOA Nexus") && !roomStatus.isEmpty())
+                        if (entry.getValue("Region").equals("TOA Nexus") && !roomStatus.isEmpty())
                         {
                             addColorToStatus(green);
                         }
                     }
-                }
-                else if(Objects.requireNonNull(instruction.type) == ROOM_START_FLAG)
+                } else if (Objects.requireNonNull(instruction.type) == ROOM_START_FLAG)
                 {
-                    if(entry.logEntry.getRoom().isTOAPath())
+                    if (entry.logEntry.getRoom().isTOAPath())
                     {
                         roomStatus += roomLetters.get(entry.logEntry.getRoom().name);
                     }
-                }
-                else if(Objects.requireNonNull(instruction.type) == MANUAL_PARSE)
+                } else if (Objects.requireNonNull(instruction.type) == MANUAL_PARSE)
                 {
-                    if(entry.logEntry.equals(LogID.TOA_WARDENS_SKULLS_STARTED)) //todo revisit when not cooked //todo pt2 also it just doesnt work
+                    if (entry.logEntry.equals(LogID.TOA_WARDENS_SKULLS_STARTED)) //todo revisit when not cooked //todo pt2 also it just doesnt work
                     {
-                        for(int i = 1; i < 5; i++)
+                        for (int i = 1; i < 5; i++)
                         {
-                            if(getParser(WARDENS).data.get(DataPoint.getValue("Wardens Skull " + i + " Split")) < 1)
+                            if (getParser(WARDENS).data.get(DataPoint.getValue("Wardens Skull " + i + " Split")) < 1)
                             {
                                 getParser(WARDENS).data.set(DataPoint.getValue("Wardens Skull " + i + " Split"), entry.getFirstInt());
                                 break;
                             }
                         }
                     }
-                    if(entry.logEntry.equals(LogID.TOA_WARDENS_SKULLS_ENDED)) //todo revisit when not cooked //todo pt2 also it just doesnt work
+                    if (entry.logEntry.equals(LogID.TOA_WARDENS_SKULLS_ENDED)) //todo revisit when not cooked //todo pt2 also it just doesnt work
                     {
-                        for(int i = 1; i < 5; i++)
+                        for (int i = 1; i < 5; i++)
                         {
-                            if(getParser(WARDENS).data.get(DataPoint.getValue("Wardens Skull " + i + " Duration")) < 1)
+                            if (getParser(WARDENS).data.get(DataPoint.getValue("Wardens Skull " + i + " Duration")) < 1)
                             {
                                 getParser(WARDENS).data.set(DataPoint.getValue("Wardens Skull " + i + " Duration"), entry.getFirstInt() - getParser(WARDENS).data.get(DataPoint.getValue("Wardens Skull " + i + " Split")));
                                 break;
@@ -170,8 +172,7 @@ public class Toa extends Raid
                     }
                 }
             }
-        }
-        catch (Exception ignored)
+        } catch (Exception ignored)
         {
             ignored.printStackTrace();
         }
@@ -183,6 +184,7 @@ public class Toa extends Raid
     {
         return super.getScaleString() + " (" + (get(DataPoint.TOA_INVOCATION_LEVEL)) + ")";
     }
+
     @Override
     public boolean getRoomAccurate(RaidRoom room) //todo logout/login?
     {

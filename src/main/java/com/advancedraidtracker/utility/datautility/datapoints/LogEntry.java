@@ -9,7 +9,7 @@ import java.util.*;
 @Slf4j
 public class LogEntry
 {
-    private final static HashSet<String> intValues = new HashSet<>(Arrays.asList("Damage", "Room Tick", "Raid Level", "Wave Number"));
+    private final static HashSet<String> intValues = new HashSet<>(Arrays.asList("Damage", "Room Tick", "Raid Level", "Wave Number", "Amount"));
     long ts;
     int raid;
     public LogID logEntry;

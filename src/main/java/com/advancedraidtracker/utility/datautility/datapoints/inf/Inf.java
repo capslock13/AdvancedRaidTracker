@@ -1,6 +1,7 @@
 package com.advancedraidtracker.utility.datautility.datapoints.inf;
 
 import com.advancedraidtracker.constants.*;
+import com.advancedraidtracker.rooms.inf.InfernoHandler;
 import com.advancedraidtracker.utility.datautility.DataPoint;
 import com.advancedraidtracker.utility.datautility.datapoints.LogEntry;
 import com.advancedraidtracker.utility.datautility.datapoints.Raid;
@@ -12,6 +13,7 @@ import java.util.List;
 public class Inf extends Raid
 {
     int highestWaveStarted = 0;
+    int lastCheckPoint = 0;
     int endTime = 0;
     int startTime = 0;
     public Inf(Path filepath, List<LogEntry> raidData)
@@ -30,18 +32,31 @@ public class Inf extends Raid
                 if(entry.logEntry.equals(LogID.INFERNO_WAVE_STARTED))
                 {
                     highestWaveStarted = entry.getFirstInt();
+                    lastCheckPoint = InfernoHandler.getLastRelevantSplit(highestWaveStarted);
                 }
                 else if(entry.logEntry.equals(LogID.INFERNO_TIMER_STARTED))
                 {
                     startTime = entry.getValueAsInt("Client Tick");
-                    log.info("start time: " + startTime);
                 }
                 else if(entry.logEntry.equals(LogID.INFERNO_WAVE_ENDED))
                 {
                     if(entry.getValueAsInt("Wave Number") == 69)
                     {
                         endTime = entry.getValueAsInt("Room Tick");
+                        completed = true;
                     }
+                }
+                else if(entry.logEntry.equals(LogID.ROOM_PRAYER_DRAINED))
+                {
+                    getParser(RaidRoom.getRoom(InfernoHandler.roomMap.get(lastCheckPoint))).data.set(DataPoint.PRAYER_USED, entry.getValueAsInt("Amount"));
+                }
+                else if(entry.logEntry.equals(LogID.ROOM_DAMAGE_DEALT))
+                {
+                    getParser(RaidRoom.getRoom(InfernoHandler.roomMap.get(lastCheckPoint))).data.set(DataPoint.DAMAGE_DEALT, entry.getValueAsInt("Damage"));
+                }
+                else if(entry.logEntry.equals(LogID.ROOM_DAMAGE_RECEIVED))
+                {
+                    getParser(RaidRoom.getRoom(InfernoHandler.roomMap.get(lastCheckPoint))).data.set(DataPoint.DAMAGE_RECEIVED, entry.getValueAsInt("Damage"));
                 }
             }
             else if(instruction.type == ParseType.LEFT_RAID)
@@ -52,7 +67,14 @@ public class Inf extends Raid
                     {
                         endTime = entry.getValueAsInt("Last Room Tick");
                     }
-                    getParser(RaidRoom.ANY).data.set(DataPoint.CHALLENGE_TIME, endTime-startTime);
+                    if(!completed)
+                    {
+                        getParser(RaidRoom.ANY).data.set(DataPoint.CHALLENGE_TIME, endTime - startTime-1);
+                    }
+                    else
+                    {
+                        getParser(RaidRoom.ANY).data.set(DataPoint.CHALLENGE_TIME, endTime);
+                    }
 
                     log.info("end time: " + endTime);
                 }
@@ -70,13 +92,27 @@ public class Inf extends Raid
     @Override
     public int getTimeSum()
     {
-        return endTime-startTime;
+        if(!completed)
+        {
+            return endTime - startTime;
+        }
+        else
+        {
+            return endTime;
+        }
     }
 
     @Override
     public String getRoomStatus()
     {
-        return red + "Wave " + highestWaveStarted;
+        if(!completed)
+        {
+            return red + "Wave " + highestWaveStarted;
+        }
+        else
+        {
+            return green + "Completion";
+        }
     }
 
     @Override
@@ -88,7 +124,6 @@ public class Inf extends Raid
     @Override
     public int getChallengeTime()
     {
-        log.info("challenge time: " + getTimeSum());
         return getTimeSum();
     }
 }

@@ -1,9 +1,6 @@
 package com.advancedraidtracker.constants;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.advancedraidtracker.rooms.inf.InfernoHandler.roomMap;
@@ -76,7 +73,7 @@ public enum RaidRoom
                 return Arrays.stream(RaidRoom.values()).filter(RaidRoom::isColo).collect(Collectors.toList());
             case INFERNO:
                 return Arrays.stream(RaidRoom.values()).filter(RaidRoom::isInferno).collect(Collectors.toList());
-            case UNASSIGNED:
+            case ALL:
                 return Arrays.stream(RaidRoom.values()).filter(RaidRoom::isOther).collect(Collectors.toList());
         }
         return new ArrayList<>();
@@ -85,6 +82,31 @@ public enum RaidRoom
     public boolean isOther()
     {
         return this.equals(ANY_TOA) || this.equals(ANY_TOB) || this.equals(ANY) || this.equals(ALL);
+    }
+
+    public RaidType getRaidType()
+    {
+        if(isTOB())
+        {
+            return RaidType.TOB;
+        }
+        else if(isTOA())
+        {
+            return RaidType.TOA;
+        }
+        else if(isCOX())
+        {
+            return RaidType.COX;
+        }
+        else if(isInferno())
+        {
+            return RaidType.INFERNO;
+        }
+        else if(isColo())
+        {
+            return RaidType.COLOSSEUM;
+        }
+        return RaidType.ALL;
     }
 
     public boolean isColo()
@@ -123,19 +145,27 @@ public enum RaidRoom
           //      this.equals(VESPULA) || this.equals(TIGHT_ROPE) || this.equals(GUARDIANS) || this.equals(VASA_NISTIRIO) || this.equals(SKELETAL_MYSTICS) || this.equals(MUTTADILES) || this.equals(OLM);
     }
 
+    public static Map<String, RaidRoom> roomCache = new HashMap<>();
     public static RaidRoom getRoom(String name)
     {
+        if(roomCache.containsKey(name))
+        {
+            return roomCache.get(name);
+        }
         if(roomMap.containsValue(name))
         {
+            roomCache.put(name, INFERNO);
             return INFERNO;
         }
         for(RaidRoom room : RaidRoom.values())
         {
             if(room.name.equals(name))
             {
+                roomCache.put(name, room);
                 return room;
             }
         }
+        roomCache.put(name, UNKNOWN);
         return UNKNOWN;
     }
 }

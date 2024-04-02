@@ -76,6 +76,7 @@ public class KephriHandler extends TOARoomHandler
             clog.addLine(LogID.TOA_KEPHRI_HEAL, String.valueOf(client.getTickCount() - roomStartTick), String.valueOf(applied.getHitsplat().getAmount()));
             swarmsHealed++;
         }
+        super.updateHitsplatApplied(applied);
     }
 
     @Override

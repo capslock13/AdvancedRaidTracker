@@ -39,7 +39,7 @@ public class LiveChart extends BaseFrame
     Map<String, ChartPanel> tobPanels;
     Map<String, ChartPanel> colPanels;
     Map<String, ChartPanel> infPanels;
-    RaidType activeRaid = RaidType.UNASSIGNED;
+    RaidType activeRaid = RaidType.ALL;
     Map<String, ChartPanel> currentPanels;
 
     public LiveChart(AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)

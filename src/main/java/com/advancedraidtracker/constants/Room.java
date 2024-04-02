@@ -6,7 +6,7 @@ import static com.advancedraidtracker.constants.RaidType.*;
 
 public enum Room
 {
-    UNKNOWN("Unknown", UNASSIGNED, new int[]{}),
+    UNKNOWN("Unknown", ALL, new int[]{}),
     TOB_LOBBY("TOB Lobby", TOB, new int[]{14642}),
     MAIDEN("Maiden", TOB, new int[]{12613}),
     BLOAT("Bloat", TOB, new int[]{13125}),

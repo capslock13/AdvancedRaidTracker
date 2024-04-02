@@ -68,5 +68,6 @@ public class CrondisHandler extends TOARoomHandler
                 clog.addLine(LogID.TOA_CRONDIS_CROC_DAMAGE, String.valueOf(hitsplatApplied.getHitsplat().getAmount()), String.valueOf(client.getTickCount() - roomStartTick));
             }
         }
+        super.updateHitsplatApplied(hitsplatApplied);
     }
 }

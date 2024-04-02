@@ -158,12 +158,12 @@ public class MaidenHandler extends TOBRoomHandler
 
     public void endMaiden()
     {
+        active = false;
         roomState = RoomState.MaidenRoomState.FINISHED;
         maidenDeathTick = client.getTickCount() + MAIDEN_DEATH_ANIMATION_LENGTH;
         if (roomStartTick != -1)
             sendTimeMessage("Wave 'Maiden Skip' complete! Duration: ", maidenDeathTick - roomStartTick, maidenDeathTick - p30, false);
         clog.addLine(ACCURATE_MAIDEN_END);
-        //clog.addLine(MAIDEN_0HP, String.valueOf(client.getTickCount() - roomStartTick));
         plugin.addDelayedLine(RaidRoom.MAIDEN, client.getTickCount() - roomStartTick, "Dead");
         plugin.liveFrame.setRoomFinished(getName(), maidenDeathTick - roomStartTick);
     }
@@ -694,6 +694,7 @@ public class MaidenHandler extends TOBRoomHandler
                 maidenHeals.add(event.getHitsplat().getAmount());
             }
         }
+        super.updateHitsplatApplied(event);
     }
 
     public void updateGameObjectSpawned(GameObjectSpawned event)

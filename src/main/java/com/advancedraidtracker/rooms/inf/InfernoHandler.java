@@ -19,6 +19,9 @@ public class InfernoHandler extends RoomHandler
 {
     Map<Integer, Integer> waveStartTicks = new LinkedHashMap<>();
     Map<Integer, Integer> waveDurations = new LinkedHashMap<>();
+    int totalPrayer = 0;
+    int totalDamageDealt = 0;
+    int totalDamageReceived = 0;
     public static Map<Integer, String> roomMap = new LinkedHashMap<Integer, String>() {{
         put(1, "Wave 1-8");
         put(9, "Wave 9-17");
@@ -46,10 +49,7 @@ public class InfernoHandler extends RoomHandler
 
     public void start()
     {
-        roomStartTick = client.getTickCount();
-        waveStartTicks.put(0, client.getTickCount());
-        clog.addLine(LogID.INFERNO_TIMER_STARTED, client.getTickCount());
-        active = true;
+
     }
 
     @Override
@@ -57,6 +57,12 @@ public class InfernoHandler extends RoomHandler
     {
         if(message.getMessage().contains("Wave: "))
         {
+            if(roomStartTick < 1 && message.getMessage().contains("Wave: 1"))
+            {
+                roomStartTick = client.getTickCount()-10; //timer starts 10t before wave 1
+                waveStartTicks.put(0, client.getTickCount()-10);
+                clog.addLine(LogID.INFERNO_TIMER_STARTED, client.getTickCount()-10);
+            }
             active = true;
             currentWave++;
             log.info("wave: " + message);
@@ -67,24 +73,31 @@ public class InfernoHandler extends RoomHandler
                 log.info("Wave " + wave + ", " + RoomUtil.time(client.getTickCount()-roomStartTick));
                 waveStartTicks.put(currentWave, (client.getTickCount()));
                 clog.addLine(LogID.INFERNO_WAVE_STARTED, String.valueOf(currentWave), String.valueOf(client.getTickCount()));
+                if(getLastRelevantSplit() > lastWaveCheckPoint)
+                {
+                    plugin.lastSplits += "Wave: " + (currentWave) + ", Split: " + RoomUtil.time(client.getTickCount()-waveStartTicks.get(0)) + " (+" + RoomUtil.time(client.getTickCount()-waveStartTicks.get(lastWaveCheckPoint-1)) + ")\n";
+                    lastWaveCheckPoint = getLastRelevantSplit();
+                }
             }
         }
         else if(message.getMessage().contains("Wave completed!"))
         {
+            totalPrayer += prayerDrained;
+            totalDamageReceived += damageReceived;
+            totalDamageDealt += damageDealt;
             active = false;
             waveDurations.put(currentWave, (client.getTickCount()-waveStartTicks.get(currentWave)));
             lastCompletedWave = currentWave;
             clog.addLine(LogID.INFERNO_WAVE_ENDED, String.valueOf(currentWave), String.valueOf(waveDurations.get(currentWave)));
+            entireDurationTime += waveDurations.get(currentWave);
             log.info("Wave " + currentWave + ": " + RoomUtil.time(waveDurations.get(currentWave)));
             log.info("Through: " + RoomUtil.time(client.getTickCount()-waveStartTicks.get(0)));
-            if(getLastRelevantSplit() > lastWaveCheckPoint)
-            {
-                plugin.lastSplits += "Wave: " + (currentWave) + ", Split: " + RoomUtil.time(client.getTickCount()-waveStartTicks.get(0)) + " (+" + RoomUtil.time(client.getTickCount()-waveStartTicks.get(lastWaveCheckPoint-1)) + ")\n";
-                lastWaveCheckPoint = getLastRelevantSplit();
-            }
         }
         else if(message.getMessage().contains("Duration: "))
         {
+            waveDurations.put(currentWave, (client.getTickCount()-waveStartTicks.get(currentWave)));
+            entireDurationTime += waveDurations.get(currentWave);
+            lastCompletedWave = currentWave;
             log.info("Found inferno duration: " + message.getMessage());
             String text = Text.removeTags(message.getMessage());
             String[] splitText = text.split(" ");
@@ -112,6 +125,10 @@ public class InfernoHandler extends RoomHandler
             }
         }
     }
+    public String getStatString()
+    {
+        return "Prayer: " + totalPrayer + ", Dealt: " + totalDamageDealt + ", Received: " + totalDamageReceived + "\n";
+    }
 
     public int getLastWaveStartTime()
     {
@@ -120,10 +137,15 @@ public class InfernoHandler extends RoomHandler
 
     public int getLastRelevantSplit()
     {
+        return getLastRelevantSplit(currentWave);
+    }
+
+    public static int getLastRelevantSplit(int wave)
+    {
         int lastSplit = 1;
         for (Map.Entry<Integer, String> entry : roomMap.entrySet())
         {
-            if (entry.getKey() <= currentWave)
+            if (entry.getKey() <= wave)
             {
                 lastSplit = entry.getKey();
             }
@@ -162,8 +184,18 @@ public class InfernoHandler extends RoomHandler
         currentWave = 0;
         lastCompletedWave = 0;
         waveStartTicks.clear();
+        totalDamageDealt = 0;
+        totalDamageReceived = 0;
+        totalPrayer = 0;
         active = false;
         entireDurationTime = 0;
         super.reset();
+    }
+
+    public void forceStatUpdate()
+    {
+        totalDamageReceived += damageReceived;
+        totalDamageDealt += damageDealt;
+        totalPrayer += prayerDrained;
     }
 }

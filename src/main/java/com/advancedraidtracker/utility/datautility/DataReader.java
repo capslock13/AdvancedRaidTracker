@@ -75,8 +75,8 @@ public class DataReader //todo move any methods that read files to here. I belie
                         for (RaidRoom room : RaidRoom.values())
                         {
                             RoomParser parser = ret.getParser(room);
-                            log.info("Dumping room: " + room.name());
-                            parser.data.dumpValues(); //todo remove later, this was for testing the parser
+                            //log.info("Dumping room: " + room.name());
+                            //parser.data.dumpValues(); //todo remove later, this was for testing the parser
                         }
                     }
                     else if(path.getFileName().toString().toLowerCase().contains("inf")) //todo idk these if statements arent it

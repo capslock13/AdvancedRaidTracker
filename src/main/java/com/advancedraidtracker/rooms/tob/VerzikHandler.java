@@ -189,6 +189,7 @@ public class VerzikHandler extends TOBRoomHandler
                 }
             }
         }
+        super.updateHitsplatApplied(event);
     }
 
     public void updateGraphicChanged(GraphicChanged event)

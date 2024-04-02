@@ -225,6 +225,17 @@ public abstract class Raid
     public Integer get(String datapoint)
     {
         DataPoint point = DataPoint.getValue(datapoint);
+        if(point.equals(DataPoint.UNKNOWN))
+        {
+            if(datapoint.contains(" "))
+            {
+                point = DataPoint.getValue(datapoint.substring(datapoint.indexOf(" ")+1));
+                if(!point.equals(DataPoint.UNKNOWN))
+                {
+                    return get(point, RaidRoom.getRoom(datapoint.substring(0, datapoint.indexOf(" "))));
+                }
+            }
+        }
         return get(point);
     }
 
@@ -368,7 +379,7 @@ public abstract class Raid
                 }
                 else if(instruction.dataPoint1 != null && instruction.dataPoint1.room.equals(ALL))
                 {
-                    parser = getParser(RaidRoom.values()[RaidRoom.getRoom(lastRoom).ordinal()+1]); //idk
+                    parser = getParser(RaidRoom.values()[RaidRoom.getRoom(currentRoom).ordinal()]); //idk, maybe switch back
                 }
                 if(instruction.dataPoint1 != null && instruction.dataPoint1.type.equals(types.TIME))
                 {

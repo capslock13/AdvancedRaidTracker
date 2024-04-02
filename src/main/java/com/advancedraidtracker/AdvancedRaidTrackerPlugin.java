@@ -354,13 +354,14 @@ public class AdvancedRaidTrackerPlugin extends Plugin
         {
             if(!inRegion(client, 9043))
             {
+                infernoHandler.forceStatUpdate();
                 if(infernoHandler.lastCompletedWave < 69)
                 {
-                    lastSplits += "Duration (Failed): " + RoomUtil.time((client.getTickCount()-infernoHandler.roomStartTick))  + " (+" + RoomUtil.time(client.getTickCount()-infernoHandler.getLastWaveStartTime()) +")";
+                    lastSplits = infernoHandler.getStatString() + lastSplits + "Duration (Failed): " + RoomUtil.time((client.getTickCount()-infernoHandler.roomStartTick))  + " (+" + RoomUtil.time(client.getTickCount()-infernoHandler.getLastWaveStartTime()) +")";
                 }
-                else if(colloseumHandler.lastCompletedWave == 12)
+                else
                 {
-                    lastSplits += "Duration (Success): " + RoomUtil.time(infernoHandler.getDuration()) + " (+" + RoomUtil.time(client.getTickCount()-infernoHandler.getLastWaveStartTime()) + ")";
+                    lastSplits = infernoHandler.getStatString() + lastSplits + "Duration (Success): " + RoomUtil.time(infernoHandler.getDuration()) + " (+" + RoomUtil.time(client.getTickCount()-infernoHandler.getLastWaveStartTime()) + ")";
                 }
                 log.info("Exited inferno");
                 //clog.addLine(LEFT_TOB, String.valueOf(client.getTickCount() - currentRoom.roomStartTick), currentRoom.getName());

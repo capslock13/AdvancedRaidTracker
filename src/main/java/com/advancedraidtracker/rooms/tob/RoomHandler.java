@@ -28,6 +28,8 @@ public class RoomHandler
     protected boolean accurateTimer = true;
     protected boolean accurateEntry = true;
     protected int prayerDrained = 0;
+    protected int damageDealt = 0;
+    protected  int damageReceived = 0;
     @Getter
     @Setter
     int scale;
@@ -159,7 +161,14 @@ public class RoomHandler
             {
                 wasActive = false;
                 clog.addLine(LogID.ROOM_PRAYER_DRAINED, String.valueOf(prayerDrained), getName());
+                clog.addLine(LogID.ROOM_DAMAGE_RECEIVED, String.valueOf(damageReceived), getName());
+                clog.addLine(LogID.ROOM_DAMAGE_DEALT, String.valueOf(damageDealt), getName());
+                log.info(getName() + " prayer: " + prayerDrained);
+                log.info(getName() + " dealt: " + damageDealt);
+                log.info(getName() + " received: " + damageReceived);
                 prayerDrained = 0;
+                damageDealt = 0;
+                damageReceived = 0;
             }
         }
         else
@@ -186,6 +195,17 @@ public class RoomHandler
 
     public void updateHitsplatApplied(HitsplatApplied event)
     {
+        if(event.getActor().equals(client.getLocalPlayer()))
+        {
+            damageReceived += event.getHitsplat().getAmount();
+        }
+        else
+        {
+            if(event.getHitsplat().isMine())
+            {
+                damageDealt += event.getHitsplat().getAmount();
+            }
+        }
     }
 
     public void updateGraphicChanged(GraphicChanged event)
@@ -239,6 +259,8 @@ public class RoomHandler
         roomStartTick = -1;
         active = false;
         prayerDrained = 0;
+        damageDealt = 0;
+        damageReceived = 0;
         wasActive = false;
     }
 

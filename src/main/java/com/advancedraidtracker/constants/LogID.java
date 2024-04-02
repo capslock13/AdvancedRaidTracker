@@ -685,13 +685,13 @@ public enum LogID
             new ParseInstruction(MANUAL_PARSE),
             "Wave Ended", "Wave Number", "Room Tick"),
     ROOM_PRAYER_DRAINED(995, true, ALL,
-            new ParseInstruction(MANUAL_PARSE),
+            new ParseInstruction(SET, PRAYER_USED),
             "Prayer Drained", "Amount", "Room"),
     ROOM_DAMAGE_DEALT(996, true, ALL,
-            new ParseInstruction(MANUAL_PARSE),
+            new ParseInstruction(SET, DAMAGE_DEALT),
             "Damage Dealt", "Damage", "Room"),
     ROOM_DAMAGE_RECEIVED(997, true, ALL,
-            new ParseInstruction(MANUAL_PARSE),
+            new ParseInstruction(SET, DAMAGE_RECEIVED),
             "Damage Received", "Damage", "Room"),
 
 

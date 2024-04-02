@@ -1,15 +1,18 @@
 package com.advancedraidtracker.ui;
 
 import com.advancedraidtracker.constants.RaidRoom;
+import com.advancedraidtracker.constants.RaidType;
 import com.advancedraidtracker.utility.datautility.DataPoint;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.advancedraidtracker.constants.RaidRoom.ALL;
 import static com.advancedraidtracker.rooms.inf.InfernoHandler.roomMap;
 
 @Slf4j
@@ -22,25 +25,65 @@ public class DataPointMenu
     { //todo handle edge cases differently
         this.window = window;
         this.comboBox = box;
-        JMenu topLevelMenuAll = new JMenu("All");
-        topLevelMenuAll.setBackground(Color.BLACK);
-        topLevelMenuAll.setOpaque(true);
-        JMenu topLevelMenuToA = new JMenu("ToA");
-        topLevelMenuToA.setBackground(Color.BLACK);
-        topLevelMenuToA.setOpaque(true);
-        JMenu topLevelMenuToB = new JMenu("ToB");
-        topLevelMenuToB.setBackground(Color.BLACK);
-        topLevelMenuToB.setOpaque(true);
-        JMenu topLevelMenuCoX = new JMenu("CoX");
-        topLevelMenuCoX.setBackground(Color.BLACK);
-        topLevelMenuCoX.setOpaque(true);
-        JMenu topLevelMenuCol = new JMenu("Colosseum");
-        topLevelMenuCol.setBackground(Color.BLACK);
-        topLevelMenuCol.setOpaque(true);
-        JMenu topLevelMenuInferno = new JMenu("Inferno");
-        topLevelMenuInferno.setBackground(Color.BLACK);
-        topLevelMenuInferno.setOpaque(true);
 
+        Map<RaidType, JMenu> menus = new LinkedHashMap<>();
+        for(RaidType raidType : RaidType.values())
+        {
+            JMenu menu = createMenu(raidType.name);
+
+            Map<RaidRoom, JMenu> roomSubMenus = new LinkedHashMap<>();
+            JMenu overallMenu = createMenu("Overall");
+            for(RaidRoom room : RaidRoom.getRaidRoomsForRaidType(raidType))
+            {
+                JMenu roomMenu = createMenu(room.name);
+                Map<DataPoint.MenuType, JMenu> categoryMenus = new LinkedHashMap<>();
+                for(DataPoint.MenuType menuType : DataPoint.MenuType.values())
+                {
+                    if(!menuType.excluded)
+                    {
+                        categoryMenus.put(menuType, createMenu(menuType.name));
+                    }
+                }
+                for(DataPoint point : DataPoint.getRoomPoints(room))
+                {
+                    if(!point.menuType.equals(DataPoint.MenuType.EXCLUDED))
+                    {
+                        if(point.room.equals(ALL))
+                        {
+                            categoryMenus.get(point.menuType).add(createMenuItem(room.name + " " + point.name));
+                        }
+                        else
+                        {
+                            categoryMenus.get(point.menuType).add(createMenuItem(point.name));
+                        }
+                    }
+                }
+                for(JMenu categoryMenu : categoryMenus.values())
+                {
+                    if(categoryMenu.getMenuComponents().length != 0)
+                    {
+                        roomMenu.add(categoryMenu);
+                    }
+                }
+                roomSubMenus.put(room, roomMenu);
+            }
+            for(JMenu roomMenu : roomSubMenus.values())
+            {
+                if(roomMenu.getMenuComponents().length != 0)
+                {
+                    menu.add(roomMenu);
+                }
+            }
+            menus.put(raidType, menu);
+        }
+        for(JMenu menu : menus.values())
+        {
+            if(menu.getMenuComponents().length != 0)
+            {
+                popmenu.add(menu);
+            }
+        }
+        /*
         JMenu men = new JMenu("Time");
         men.setBackground(Color.BLACK);
         men.setOpaque(true);
@@ -73,8 +116,8 @@ public class DataPointMenu
             }
             men.add(subMenu);
         }
-        topLevelMenuInferno.add(men);
-        topLevelMenuInferno.add(men2);
+        //topLevelMenuInferno.add(men);
+        //topLevelMenuInferno.add(men2);
         for (String category : allComboValues)
         {
             JMenu menu = new JMenu(category);
@@ -137,33 +180,14 @@ public class DataPointMenu
                     flatData.add(itemName);
                 }
             }
-            if(RaidRoom.getRoom(category).isTOA())
-            {
-                topLevelMenuToA.add(menu);
-            }
-            else if(RaidRoom.getRoom(category).isTOB())
-            {
-                topLevelMenuToB.add(menu);
-            }
-            else if(RaidRoom.getRoom(category).isCOX())
-            {
-                topLevelMenuCoX.add(menu);
-            }
-            else if(RaidRoom.getRoom(category).isColo())
-            {
-                topLevelMenuCol.add(menu);
-            }
-            else
-            {
-                topLevelMenuAll.add(menu);
-            }
+            menus.get(RaidRoom.getRoom(category).getRaidType()).add(menu);
         }
-        popmenu.add(topLevelMenuAll);
-        popmenu.add(topLevelMenuToA);
-        popmenu.add(topLevelMenuToB);
-        popmenu.add(topLevelMenuCoX);
-        popmenu.add(topLevelMenuCol);
-        popmenu.add(topLevelMenuInferno);
+
+        for(JMenu menu : menus.values())
+        {
+            popmenu.add(menu);
+        }
+
         JMenu playerSpecificMenu = new JMenu("Player Specific");
         playerSpecificMenu.setBackground(Color.BLACK);
         playerSpecificMenu.setOpaque(true);
@@ -206,6 +230,8 @@ public class DataPointMenu
         playerSpecificMenu.add(room);
 
         popmenu.add(playerSpecificMenu);
+
+         */
     }
 
     private JMenuItem createMenuItem(final String name)
@@ -215,6 +241,14 @@ public class DataPointMenu
         item.setOpaque(true);
         item.addActionListener(event -> setComboSelection(name));
         return item;
+    }
+
+    private JMenu createMenu(final String name)
+    {
+        JMenu menu = new JMenu(name);
+        menu.setBackground(Color.BLACK);
+        menu.setOpaque(true);;
+        return menu;
     }
 
     private void setComboSelection(String name)

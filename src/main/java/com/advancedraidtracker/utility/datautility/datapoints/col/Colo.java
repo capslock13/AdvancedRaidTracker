@@ -38,6 +38,7 @@ public class Colo extends Raid
                     getParser(CHALLENGE_TIME.room).data.set(CHALLENGE_TIME, entry.getFirstInt());
                     int val = getParser(CHALLENGE_TIME.room).data.get(CHALLENGE_TIME)-get(COLOSSEUM_WAVE_12_SPLIT);
                     getParser(RaidRoom.COLOSSEUM).data.set(DataPoint.COLOSSEUM_WAVE_12_DURATION, val);
+                    completed = true;
                 }
             }
         }

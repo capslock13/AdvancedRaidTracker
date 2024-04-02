@@ -19,7 +19,7 @@ public class DataWriter
     private final AdvancedRaidTrackerConfig config;
     private String activeUsername = "";
     private final ArrayList<String> currentBuffer;
-    private RaidType currentRaidType = RaidType.UNASSIGNED;
+    private RaidType currentRaidType = RaidType.ALL;
 
     public final static String PLUGIN_DIRECTORY = System.getProperty("user.home").replace("\\", "/") + "/.runelite/advancedraidtracker/";
 
@@ -193,7 +193,7 @@ public class DataWriter
 
         for (RaidType raidType : RaidType.values())
         {
-            if (!raidType.equals(RaidType.UNASSIGNED))
+            if (!raidType.equals(RaidType.ALL))
             {
                 File logFile = new File(PLUGIN_DIRECTORY + name + "/primary/" + raidType.name + "data.log");
                 if (!logFile.exists())

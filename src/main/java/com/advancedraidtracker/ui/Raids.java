@@ -176,15 +176,22 @@ public class Raids extends BaseFrame implements UpdateableWindow
         return true;
     }
 
-    private boolean tableSortEnabled = true;
 
     public void updateTable()
     {
-        customColumnComboBox.addActionListener(al ->
-        {
-            updateTable();
-        });
         int completions = 0;
+        int attempts = 0;
+        int tobAttempts = 0;
+        int toaAttempts = 0;
+        int coxAttempts = 0;
+        int infAttempts = 0;
+        int colAttempts = 0;
+        int tobCompletions = 0;
+        int toaCompletions = 0;
+        int coxCompletions = 0;
+        int infCompletions = 0;
+        int colCompletions = 0;
+
         List<Raid> tableData = new ArrayList<>();
         for (Raid data : currentData)
         {
@@ -287,14 +294,53 @@ public class Raids extends BaseFrame implements UpdateableWindow
             }
             if (shouldDataBeIncluded)
             {
-                tableData.add(data);
-                if (data.isCompleted() && data.isAccurate())
+                if(data instanceof Tob)
                 {
-                    completions++;
+                    tobAttempts++;
+                    if(data.isCompleted() && data.isAccurate())
+                    {
+                        tobCompletions++;
+                    }
                 }
+                else if(data instanceof Toa)
+                {
+                    toaAttempts++;
+                    if(data.isCompleted() && data.isAccurate())
+                    {
+                        toaCompletions++;
+                    }
+                }
+                else if(data instanceof Cox)
+                {
+                    coxAttempts++;
+                    if(data.isCompleted() && data.isAccurate())
+                    {
+                        coxCompletions++;
+                    }
+                }
+                else if(data instanceof Inf)
+                {
+                    infAttempts++;
+                    if(data.isCompleted() && data.isAccurate())
+                    {
+                        infCompletions++;
+                    }
+                }
+                else if(data instanceof Colo)
+                {
+                    colAttempts++;
+                    if(data.isCompleted() && data.isAccurate())
+                    {
+                        colCompletions++;
+                    }
+                }
+                tableData.add(data);
             }
         }
-        setTitle("Raids: " + table.getRowCount() + ", Completions: " + completions);
+        attempts = tobAttempts+toaAttempts+coxAttempts+infAttempts+colAttempts;
+        completions = tobCompletions+toaCompletions+coxCompletions+infCompletions+colCompletions;
+
+        setTitle("Raids: " + attempts + ", Completions: " + completions + ". Tob: " + tobCompletions + "/" + tobAttempts + ", Toa: " + toaCompletions + "/" + toaAttempts + ", Cox: " + coxCompletions + "/" + coxAttempts + ", Inf: " + infCompletions + "/" + infAttempts + ", Col: " + colCompletions +"/" + colAttempts);
         updateTabNames(tableData);
         tableData = handleTableSort(tableData);
         ArrayList<String> columnNamesDynamic = new ArrayList<>();
@@ -354,12 +400,11 @@ public class Raids extends BaseFrame implements UpdateableWindow
                 table.getColumn(table.getColumnName(i)).setCellRenderer(new StripedTableRowCellRenderer());
             }
         }
-
         setTableListeners();
-
         resizeColumnWidth(table);
         table.setFillsViewportHeight(true);
-        setLabels(tableData);
+        List<Raid> finalTableData = tableData;
+        new Thread(() -> setLabels(finalTableData)).start();
         container.validate();
         container.repaint();
     }
@@ -512,8 +557,7 @@ public class Raids extends BaseFrame implements UpdateableWindow
                 try
                 {
                     dataPointName = customColumnComboBox.getSelectedItem().toString();
-                    DataPoint point = DataPoint.getValue(dataPointName);
-                    valueToDisplay = String.valueOf(raid.getParser(point.room).data.get(point));
+                    valueToDisplay = String.valueOf(raid.get(dataPointName));
                 } catch (Exception ignored)
                 {
 
@@ -524,8 +568,7 @@ public class Raids extends BaseFrame implements UpdateableWindow
         String dataPointName = "";
         try
         {
-            DataPoint point = DataPoint.getValue(column);
-            valueToDisplay = String.valueOf(raid.getParser(point.room).data.get(point));
+            valueToDisplay = String.valueOf(raid.get(dataPointName));
         } catch (Exception ignored)
         {
 
@@ -640,26 +683,38 @@ public class Raids extends BaseFrame implements UpdateableWindow
 
     public void resizeColumnWidth(JTable table)
     {
-        final TableColumnModel columnModel = table.getColumnModel();
-        for (int column = 0; column < table.getColumnCount(); column++)
+        for(int i = 0; i < table.getColumnCount(); i++)
         {
-            int width = 50; // Min width
-            for (int row = 0; row < table.getRowCount(); row++)
+            switch(table.getColumnModel().getColumn(i).getHeaderValue().toString())
             {
-                TableCellRenderer renderer = table.getCellRenderer(row, column);
-                Component comp = table.prepareRenderer(renderer, row, column);
-                width = Math.max(comp.getPreferredSize().width + 1, width);
+                case "":
+                    table.getColumnModel().getColumn(i).setPreferredWidth(25);
+                    break;
+                case "Date":
+                    table.getColumnModel().getColumn(i).setPreferredWidth(40);
+                    break;
+                case "Raid":
+                    table.getColumnModel().getColumn(i).setPreferredWidth(30);
+                    break;
+                case "Scale":
+                    table.getColumnModel().getColumn(i).setPreferredWidth(50);
+                    break;
+                case "Status":
+                    table.getColumnModel().getColumn(i).setPreferredWidth(75);
+                    break;
+                case "Custom":
+                    table.getColumnModel().getColumn(i).setPreferredWidth(100);
+                    break;
+                case "Players":
+                    table.getColumnModel().getColumn(i).setPreferredWidth(250);
+                    break;
+                case "Spectate":
+                    table.getColumnModel().getColumn(i).setPreferredWidth(25);
+                    break;
+                case "View":
+                    table.getColumnModel().getColumn(i).setPreferredWidth(30);
+                    break;
             }
-            if(table.getColumnName(column).equals("Custom"))
-            {
-                width = Math.max(width, ((String) customColumnComboBox.getSelectedItem()).length()*14);
-            }
-            width = Math.max(table.getColumnModel().getColumn(column).getPreferredWidth(), width);
-            if (width > 400)
-            {
-                width = 400;
-            }
-            columnModel.getColumn(column).setPreferredWidth(width);
         }
     }
 
@@ -972,7 +1027,6 @@ public class Raids extends BaseFrame implements UpdateableWindow
         }
         customColumnComboBox.addItem("Challenge Time");
 
-
         timeFollowsTab = new JCheckBox("Time Follows Tab");
         timeFollowsTab.setSelected(true);
 
@@ -985,16 +1039,13 @@ public class Raids extends BaseFrame implements UpdateableWindow
 
         JPopupMenu tstMenu = getCustomColumnPopUpMenu();
 
-
         table = new JTable();
-        //table.setAutoCreateRowSorter(true);
         table.getTableHeader().setComponentPopupMenu(tstMenu);
         JScrollPane pane = new JScrollPane(table);
 
         JPanel tablePanel = getTitledPanel("Raids");
         tablePanel.setLayout(new BorderLayout());
         tablePanel.add(pane);
-
 
         container = new JPanel();
         container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
@@ -1010,9 +1061,8 @@ public class Raids extends BaseFrame implements UpdateableWindow
         coxTabSubpanel.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
         infTabSubpanel.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
         colTabSubpanel.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
-
         List<JPanel> overallPanels = new ArrayList<>();
-        for(int k = 0; k < 5; k++)
+        for(int k = 0; k < 6; k++)
         {
             JPanel overallPanel = new JPanel();
             JPanel overallAveragePanel = getOverallPanel("Average", averageLabels2.get(k));
@@ -1039,7 +1089,6 @@ public class Raids extends BaseFrame implements UpdateableWindow
         List<Raid> coxData = new ArrayList<>();
         List<Raid> infData = new ArrayList<>();
         List<Raid> colData = new ArrayList<>();
-
         for (Raid raidData : data)
         {
             if (raidData instanceof Tob)
@@ -1063,19 +1112,18 @@ public class Raids extends BaseFrame implements UpdateableWindow
                 colData.add(raidData);
             }
         }
-
         List<Integer> tobIconIDs = new ArrayList<>(Arrays.asList(ItemID.LIL_MAIDEN, ItemID.LIL_BLOAT, ItemID.LIL_NYLO, ItemID.LIL_SOT, ItemID.LIL_XARP, ItemID.LIL_ZIK));
         List<Integer> toaIconIDs = new ArrayList<>(Arrays.asList(ItemID.NEUTRALISING_POTION, ItemID.BABI, ItemID.SWARM, ItemID.KEPHRITI, ItemID.DRAGON_PICKAXE, ItemID.AKKHITO, ItemID.WATER_CONTAINER, ItemID.ZEBO, ItemID.ELIDINIS_GUARDIAN));
         List<Integer> coxIconIDs = new ArrayList<>(Arrays.asList(ItemID.TEKTINY, ItemID.DRAGON_WARHAMMER, ItemID.KINDLING, ItemID.DYNAMITE, ItemID.VANGUARD, ItemID.LOCKPICK, ItemID.VESPINA, ItemID.PHOENIX_NECKLACE, ItemID.DRAGON_PICKAXE, ItemID.VASA_MINIRIO, ItemID.SALVE_AMULET_E, ItemID.PUPPADILE, ItemID.OLMLET));
 
         int index = 0;
-        tobTabSubpanel.addTab("Overall", overallPanels.get(0));
-        toaTabSubpanel.addTab("Overall", overallPanels.get(1));
-        coxTabSubpanel.addTab("Overall", overallPanels.get(2));
-        infTabSubpanel.addTab("Overall", overallPanels.get(3));
-        colTabSubpanel.addTab("Overall", overallPanels.get(4));
+        tobTabSubpanel.addTab("Overall", overallPanels.get(1));
+        toaTabSubpanel.addTab("Overall", overallPanels.get(2));
+        coxTabSubpanel.addTab("Overall", overallPanels.get(3));
+        infTabSubpanel.addTab("Overall", overallPanels.get(4));
+        colTabSubpanel.addTab("Overall", overallPanels.get(5));
 
-        for(RaidRoom room : Arrays.stream(RaidRoom.values()).filter(RaidRoom::isTOB).toArray(RaidRoom[]::new))
+        for(RaidRoom room : RaidRoom.getRaidRoomsForRaidType(RaidType.TOB))
         {
             StatisticTab statisticTab = new StatisticTab(tobData, room);
             tobTabSubpanel.addTab("", statisticTab);
@@ -1084,7 +1132,7 @@ public class Raids extends BaseFrame implements UpdateableWindow
             index++;
         }
         index = 0;
-        for(RaidRoom room : Arrays.stream(RaidRoom.values()).filter(RaidRoom::isTOA).toArray(RaidRoom[]::new))
+        for(RaidRoom room : RaidRoom.getRaidRoomsForRaidType(RaidType.TOA))
         {
             StatisticTab statisticTab = new StatisticTab(toaData, room);
             toaTabSubpanel.addTab("", statisticTab);
@@ -1094,7 +1142,7 @@ public class Raids extends BaseFrame implements UpdateableWindow
         }
 
         index = 0;
-        for(RaidRoom room : Arrays.stream(RaidRoom.values()).filter(RaidRoom::isCOX).toArray(RaidRoom[]::new))
+        for(RaidRoom room : RaidRoom.getRaidRoomsForRaidType(RaidType.COX))
         {
             StatisticTab statisticTab = new StatisticTab(coxData, room);
             coxTabSubpanel.addTab("", statisticTab);
@@ -1102,7 +1150,6 @@ public class Raids extends BaseFrame implements UpdateableWindow
             coxTabs.add(statisticTab);
             index++;
         }
-
         for(Integer i : roomMap.keySet())
         {
             StatisticTab statisticTab = new StatisticTab(infData, RaidRoom.getRoom(roomMap.get(i)));
@@ -1116,7 +1163,6 @@ public class Raids extends BaseFrame implements UpdateableWindow
             colTabSubpanel.addTab("Wave " + i, statisticTab);
             colTabs.add(statisticTab);
         }
-
 
         tabbedPane.setMinimumSize(new Dimension(100, 300));
 
@@ -1178,8 +1224,14 @@ public class Raids extends BaseFrame implements UpdateableWindow
 
         topContainer.add(tabbedPane);
         topContainer.add(additionalFiltersPanel);
-        setLabels(data);
-        updateTable();
+        new Thread(()->setLabels(data)).start();
+        filterTableContainer = new JPanel();
+        filterTable = new JTable();
+        filterTable.setPreferredSize(new Dimension(380, 135));
+        JScrollPane tableScrollView = new JScrollPane(filterTable);
+        tableScrollView.setPreferredSize(new Dimension(380, 140));
+        updateFilterTable();
+
         container.setPreferredSize(new Dimension(800, 700));
 
         container.add(topContainer);
@@ -1478,7 +1530,6 @@ public class Raids extends BaseFrame implements UpdateableWindow
         JPanel rightBottomContainer = getTitledPanel("Active Filters");
         rightBottomContainer.setPreferredSize(new Dimension(400, 200));
 
-        filterTableContainer = new JPanel();
 
         JPopupMenu raidPopup = new JPopupMenu();
 
@@ -1536,7 +1587,6 @@ public class Raids extends BaseFrame implements UpdateableWindow
             ComparisonViewFrame graphView = new ComparisonViewFrame(dataSets, labelSets, config, itemManager, clientThread, configManager);
             graphView.open();
         });
-
 
         JMenuItem addToComparison = new JMenuItem("Add set to comparison");
         addToComparison.setBackground(Color.BLACK);
@@ -1669,6 +1719,7 @@ public class Raids extends BaseFrame implements UpdateableWindow
 
             updateTable();
         });
+
         JMenuItem analyzeCrabs = new JMenuItem("Analyze selection crab leaks");
         analyzeCrabs.setOpaque(true);
         analyzeCrabs.setBackground(Color.BLACK);
@@ -1689,7 +1740,6 @@ public class Raids extends BaseFrame implements UpdateableWindow
             }
             new CrabLeakInfo(crabData); //todo "s" prefix
         });
-
         raidPopup.add(analyzeCrabs);
         raidPopup.add(exportRaids);
         filterOptionsSubMenu.add(filterRaids);
@@ -1702,12 +1752,8 @@ public class Raids extends BaseFrame implements UpdateableWindow
         raidPopup.add(viewGraphs);
         table.setComponentPopupMenu(raidPopup);
 
-        filterTable = new JTable();
-        filterTable.setPreferredSize(new Dimension(380, 135));
-        JScrollPane tableScrollView = new JScrollPane(filterTable);
-        tableScrollView.setPreferredSize(new Dimension(380, 140));
-        updateFilterTable();
         filterTableContainer.add(tableScrollView);
+
 
         rightBottomContainer.add(filterTableContainer);
 
@@ -1837,7 +1883,6 @@ public class Raids extends BaseFrame implements UpdateableWindow
         splitLeftRight.add(rightContainer);
 
         setupTableHeaderListener();
-
         add(splitLeftRight);
         pack();
         built = true;
@@ -2076,7 +2121,7 @@ public class Raids extends BaseFrame implements UpdateableWindow
         for (RaidType raidType : RaidType.values())
         {
                 JMenu raidLevelMenu = getMenu(raidType.name);
-                if(raidType.equals(RaidType.UNASSIGNED))
+                if(raidType.equals(RaidType.ALL))
                 {
                     for(DataPoint.MenuCategories menuCategories : DataPoint.MenuCategories.values())
                     {

@@ -63,8 +63,11 @@ public enum LogID
             new ParseInstruction(INCREMENT, MAIDEN_BLOOD_SPAWNED),
             "Blood Spawned"),
     CRAB_LEAK(11, true, MAIDEN,
+            new ParseInstruction(INCREMENT, MAIDEN_CRABS_LEAKED),
+            new ParseInstruction(ADD_TO_VALUE, MAIDEN_HP_HEALED),
+            new ParseInstruction(ADD_TO_VALUE, MAIDEN_HP_HEALED), //crabs heal 2x hp
             new ParseInstruction(MANUAL_PARSE),
-            "Crab Leaked", "Position", "Health"),
+            "Crab Leaked", "Description", "Health"),
     MAIDEN_SPAWNED(12, true, MAIDEN,
             new ParseInstruction(ROOM_START_FLAG),
             "Spawned"),
@@ -319,11 +322,8 @@ public enum LogID
                         new ParseInstruction(ADD_TO_VALUE, MAIDEN_HEALS_FROM_ANY_BLOOD),
                         new ParseInstruction(ADD_TO_VALUE, MAIDEN_HP_HEALED),
             "Player Stood In Spawned Blood", "Player", "Damage"),  //player, damage
-    CRAB_HEALED_MAIDEN(413, true, MAIDEN,
-            new ParseInstruction(INCREMENT, MAIDEN_CRABS_LEAKED),
-            new ParseInstruction(ADD_TO_VALUE, MAIDEN_HP_HEALED),
-            new ParseInstruction(ADD_TO_VALUE, MAIDEN_HP_HEALED), //repeated because heal is 2*hp
-            new ParseInstruction(INCREMENT_IF_GREATER_THAN, MAIDEN_CRABS_LEAKED_FULL_HP, "Damage", 87), //todo fix for scales
+    CRAB_HEALED_MAIDEN(413, true, MAIDEN, //DO NOT USE
+            new ParseInstruction(MANUAL_PARSE),
             "Crab Healed Maiden", "Damage"), //damage
     /*VERZIK_PURPLE_HEAL(701, true, VERZIK, "Purple Heal"), //unimplemented
     VERZIK_RED_AUTO(702, true, VERZIK, "Red Auto"), //unimplemented

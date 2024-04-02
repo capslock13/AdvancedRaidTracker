@@ -1,8 +1,14 @@
 package com.advancedraidtracker.ui.customrenderers;
 
-import com.advancedraidtracker.ui.viewraid.ViewRaidFrame;
-import com.advancedraidtracker.ui.viewraid.ViewTOBRaid;
+import com.advancedraidtracker.AdvancedRaidTrackerConfig;
+import com.advancedraidtracker.ui.viewraid.colosseum.ViewColosseumFrame;
+import com.advancedraidtracker.ui.viewraid.inferno.ViewInfernoFrame;
+import com.advancedraidtracker.ui.viewraid.toa.ViewTOARaid;
+import com.advancedraidtracker.ui.viewraid.tob.ViewTOBRaid;
 import com.advancedraidtracker.utility.datautility.datapoints.Raid;
+import com.advancedraidtracker.utility.datautility.datapoints.col.Colo;
+import com.advancedraidtracker.utility.datautility.datapoints.inf.Inf;
+import com.advancedraidtracker.utility.datautility.datapoints.toa.Toa;
 import com.advancedraidtracker.utility.datautility.datapoints.tob.Tob;
 
 import javax.swing.*;
@@ -16,11 +22,13 @@ public class ButtonEditorRoomData extends DefaultCellEditor
     private String label;
     private boolean isPushed;
     private final List<Raid> data;
+    private final AdvancedRaidTrackerConfig config;
     int row;
 
-    public ButtonEditorRoomData(JCheckBox checkBox, List<Raid> data)
+    public ButtonEditorRoomData(JCheckBox checkBox, List<Raid> data, AdvancedRaidTrackerConfig config)
     {
         super(checkBox);
+        this.config = config;
         this.data = data;
         button = new JButton();
         button.setOpaque(true);
@@ -51,7 +59,7 @@ public class ButtonEditorRoomData extends DefaultCellEditor
     {
         if (isPushed)
         {
-            data.get(row).dumpValues();
+            //data.get(row).dumpValues();
             if (data.get(row) instanceof Tob)
             {
                 Tob tobData = (Tob) data.get(row);
@@ -59,14 +67,25 @@ public class ButtonEditorRoomData extends DefaultCellEditor
                 //ViewRaidFrame raid = new ViewRaidFrame(data.get(row));
                 raid.open();
             }
-            /* todo
-            else if (data.get(row) instanceof Raid)
+            else if (data.get(row) instanceof Toa)
             {
-                SimpleTOAData toaData = (SimpleTOAData) data.get(row);
-                ViewTOARaid raid = new ViewTOARaid(toaData);
+                Toa toaData = (Toa) data.get(row);
+                ViewTOARaid raid = new ViewTOARaid(toaData, config);
                 raid.open();
             }
-             */
+            else if(data.get(row) instanceof Inf)
+            {
+                Inf infData = (Inf) data.get(row);
+                ViewInfernoFrame raid = new ViewInfernoFrame(infData, config);
+                raid.open();
+            }
+            else if(data.get(row) instanceof Colo)
+            {
+                Colo colData = (Colo) data.get(row);
+                ViewColosseumFrame raid = new ViewColosseumFrame(colData, config);
+                raid.open();
+            }
+
         }
         isPushed = false;
         return label;

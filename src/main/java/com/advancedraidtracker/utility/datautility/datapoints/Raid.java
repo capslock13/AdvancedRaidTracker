@@ -202,6 +202,10 @@ public abstract class Raid
 
     public Integer get(String datapoint)
     {
+        if(datapoint.equals("Challenge Time"))
+        {
+            return getChallengeTime();
+        }
         return data.get(datapoint);
     }
 
@@ -420,7 +424,7 @@ public abstract class Raid
                     case MANUAL_PARSE:
                         break;
                     case MAP:
-                        data.increment(instruction.dataPoint1, entry.getValue("Player"));
+                        data.increment(instruction.dataPoint1, entry.getValue("Player"), RaidRoom.getRoom(currentRoom));
                         data.addToList(instruction.dataPoint1, Integer.parseInt(entry.getValue("Room Tick")));
                         break;
                 }

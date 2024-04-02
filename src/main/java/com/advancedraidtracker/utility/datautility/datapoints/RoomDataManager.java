@@ -123,8 +123,15 @@ public class RoomDataManager
 
     public int get(String point)
     {
+        if(get(DataPoint.RAID_INDEX) > 2200)
+        {
+            if (point.equals("Maiden Thrall Damage"))
+            {
+                log.info("index: " + get(DataPoint.RAID_INDEX));
+            }
+        }
         int val = map.getOrDefault(point, 0);
-        if(val == -1)
+        if(val == 0)
         {
             if(playerSpecificMap.containsKey(point))
             {
@@ -135,9 +142,17 @@ public class RoomDataManager
                 }
                 if(sum != 0)
                 {
+                    if(point.equals("Maiden Thrall Damage") && get(DataPoint.RAID_INDEX) > 2200)
+                    {
+                        log.info("sum: " + sum);
+                    }
                     return sum;
                 }
             }
+        }
+        if(point.equals("Maiden Thrall Damage") && get(DataPoint.RAID_INDEX) > 2200)
+        {
+            log.info("going to default map");
         }
         return map.getOrDefault(point, 0);
     }
@@ -158,6 +173,18 @@ public class RoomDataManager
 
     public int get(DataPoint point, String player)
     {
+        if(point.room.equals(RaidRoom.ALL))
+        {
+            int sum = 0;
+            for(RaidRoom room : RaidRoom.values())
+            {
+                sum += playerSpecificMap.getOrDefault(room.name + " " + point.name, new HashMap<>()).getOrDefault(player, 0);
+            }
+            if(sum > 0)
+            {
+                return sum;
+            }
+        }
         return playerSpecificMap.getOrDefault(point.name, new HashMap<>()).getOrDefault(player, 0);
     }
 

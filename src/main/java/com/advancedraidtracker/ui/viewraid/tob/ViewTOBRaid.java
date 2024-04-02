@@ -1,4 +1,4 @@
-package com.advancedraidtracker.ui.viewraid;
+package com.advancedraidtracker.ui.viewraid.tob;
 
 import com.advancedraidtracker.constants.RaidRoom;
 import com.advancedraidtracker.ui.BaseFrame;

@@ -1,5 +1,6 @@
-package com.advancedraidtracker.ui.viewraid;
+package com.advancedraidtracker.ui.viewraid.toa;
 
+import com.advancedraidtracker.AdvancedRaidTrackerConfig;
 import com.advancedraidtracker.utility.RoomUtil;
 import com.advancedraidtracker.utility.datautility.DataPoint;
 import com.advancedraidtracker.utility.datautility.datapoints.toa.Toa;
@@ -22,6 +23,7 @@ public class ViewTOAPanel extends JPanel
     int roomHeight = height - margin - summaryHeight - margin - margin;
     int roomWidth = (width-(6*margin))/5;
     private final Toa data;
+    private final AdvancedRaidTrackerConfig config;
     private final Color[] pieChartColors = {
             Color.decode("#ebdc78"),
             Color.decode("#8be04e"),
@@ -34,8 +36,9 @@ public class ViewTOAPanel extends JPanel
             Color.decode("#b30000"),
     };
 
-    public ViewTOAPanel(Toa toaData)
+    public ViewTOAPanel(Toa toaData, AdvancedRaidTrackerConfig config)
     {
+        this.config = config;
         this.data = toaData;
         img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         draw();
@@ -59,16 +62,16 @@ public class ViewTOAPanel extends JPanel
 
     private void drawSummaryBox(Graphics2D g)
     {
-        g.setColor(new Color(80, 70, 60));
+        g.setColor(config.boxColor());
         g.drawRoundRect(margin, margin, width - (2 * margin), summaryHeight, 10, 10);
-        g.setColor(new Color(35, 35, 35));
+        g.setColor(config.primaryMiddle());
         g.fillRoundRect(margin + 1, margin + 1, width - (2 * margin) - 2, summaryHeight - 2, 10, 10);
 
         g.setFont(FontManager.getRunescapeBoldFont());
         int rowHeight = getStringHeight(g) + 6;
         int currentXOffset = margin * 2;
         int currentYOffset = margin * 2 + rowHeight / 2;
-        g.setColor(Color.WHITE);
+        g.setColor(config.fontColor());
         g.drawString("Date: " + getDateString(), currentXOffset, currentYOffset);
         currentYOffset += rowHeight;
         g.drawString("Scale: " + data.getScaleString(), currentXOffset, currentYOffset);
@@ -94,9 +97,9 @@ public class ViewTOAPanel extends JPanel
         int yStart = margin+summaryHeight+margin;
         for(int i = 0; i < 5; i++)
         {
-            g.setColor(new Color(80, 70, 60));
+            g.setColor(config.boxColor());
             g.drawRoundRect((i * (roomWidth+margin)) + margin, yStart, roomWidth, roomHeight, 10, 10);
-            g.setColor(new Color(35, 35, 35));
+            g.setColor(config.primaryMiddle());
             g.fillRoundRect((i*(roomWidth+margin))+margin + 1, yStart + 1, roomWidth - 2, roomHeight - 2, 10, 10);
         }
     }
@@ -151,12 +154,12 @@ public class ViewTOAPanel extends JPanel
         g.setRenderingHints(qualityHints);
 
         //draw background
-        g.setColor(new Color(20, 20, 20));
+        g.setColor(config.primaryDark());
         g.fillRect(0, 0, width, height);
 
         drawSummaryBox(g);
         drawRoomBoxes(g);
-        g.setColor(Color.WHITE);
+        g.setColor(config.fontColor());
         drawBabaPath(g, margin);
         drawKephriPath(g, margin+(roomWidth+margin));
         drawAkkhaPath(g, margin+(2*(roomWidth+margin)));

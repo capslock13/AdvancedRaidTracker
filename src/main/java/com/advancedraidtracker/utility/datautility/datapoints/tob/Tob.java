@@ -99,13 +99,13 @@ public class Tob extends Raid
                             case 1:
                             case 2:
                             case 3:
-                                maxHP = 75;
+                                maxHP = 150;
                                 break;
                             case 4:
-                                maxHP = 87;
+                                maxHP = 174;
                                 break;
                             case 5:
-                                maxHP = 100;
+                                maxHP = 200;
                                 break;
                         }
                         if(Integer.parseInt(entry.getValue("Damage")) == maxHP)

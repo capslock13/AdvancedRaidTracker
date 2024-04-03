@@ -696,9 +696,13 @@ public enum LogID
     ROOM_DAMAGE_RECEIVED(997, true, ALL,
             new ParseInstruction(ADD_TO_VALUE, DAMAGE_RECEIVED),
             "Damage Received", "Damage", "Room"),
+    COLOSSEUM_SPAWN_STRING(994, true, ALL,
+            new ParseInstruction(MANUAL_PARSE),
+            "Spawn String", "Spawn String"),
 
 
     ;
+
     /*
     2:DWH //Player, 0, 0, 0, 0
     3:BGS //Player, Damage, 0, 0, 0
@@ -828,4 +832,5 @@ public enum LogID
     {
         return mapper.getOrDefault(value, UNKNOWN);
     }
+
 }

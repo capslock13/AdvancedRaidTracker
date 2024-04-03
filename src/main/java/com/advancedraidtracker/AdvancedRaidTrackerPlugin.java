@@ -381,6 +381,7 @@ public class AdvancedRaidTrackerPlugin extends Plugin
             if (client.isInInstancedRegion() && inRegion(client, 7216))
             {
                 currentRoom = colloseumHandler;
+                colloseumHandler.inRegion = true;
                 clog.setRaidType(RaidType.COLOSSEUM);
                 clog.migrateToNewRaid();
                 clog.addLine(ENTERED_RAID);
@@ -399,6 +400,7 @@ public class AdvancedRaidTrackerPlugin extends Plugin
         {
             if (!inRegion(client, 7216))
             {
+                colloseumHandler.inRegion = false;
                 lastSplits = colloseumHandler.getInvos() + lastSplits;
                 if(colloseumHandler.lastCompletedWave < colloseumHandler.currentWave)
                 {

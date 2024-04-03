@@ -37,7 +37,6 @@ public class UISwingUtility
 
     public static String toHex(Color color)
     {
-        String alpha = pad(Integer.toHexString(color.getAlpha()));
         String red = pad(Integer.toHexString(color.getRed()));
         String green = pad(Integer.toHexString(color.getGreen()));
         String blue = pad(Integer.toHexString(color.getBlue()));
@@ -48,8 +47,6 @@ public class UISwingUtility
     {
         return (s.length() == 1) ? "0" + s : s;
     }
-
-    public final static String roomColor = colorStr(new Color(200, 200, 200));
 
     public static BufferedImage createStringImage(Graphics g, String s, Color color)
     {
@@ -127,7 +124,6 @@ public class UISwingUtility
         }
         darkCheckBox.setOpaque(false);
         darkCheckBox.setForeground(config.fontColor());
-        //darkCheckBox.setOpaque(true);
         return darkCheckBox;
     }
 
@@ -165,8 +161,6 @@ public class UISwingUtility
         dark.setBackground(config.primaryDark());
         dark.setOpaque(false);
         dark.setForeground(config.fontColor());
-
-        //dark.setOpaque(true);
         return dark;
     }
 
@@ -210,7 +204,7 @@ public class UISwingUtility
     public static JSlider getThemedSlider()
     {
         JSlider slider = new JSlider();
-        slider.setUI(new BasicSliderUI()
+        slider.setUI(new BasicSliderUI(slider)
         {
             private static final int TRACK_HEIGHT = 8;
             private static final int TRACK_WIDTH = 8;
@@ -274,13 +268,11 @@ public class UISwingUtility
                 boolean horizontal = isHorizontal();
                 boolean inverted = slider.getInverted();
 
-                // Paint shadow.
                 g2.setColor(config.primaryDark());
                 g2.fill(trackShape);
-
-                // Paint track background.
                 g2.setColor(config.primaryLight());
                 g2.setClip(trackShape);
+
                 trackShape.y += 1;
                 g2.fill(trackShape);
                 trackShape.y = trackRect.y;
@@ -471,8 +463,6 @@ public class UISwingUtility
             }
         });
         scrollPane.getVerticalScrollBar().setOpaque(true);
-        //scrollPane.getVerticalScrollBar().setForeground(config.fontColor());
-        //scrollPane.getHorizontalScrollBar().setForeground(config.fontColor());
         return scrollPane;
     }
 
@@ -580,7 +570,6 @@ public class UISwingUtility
     {
         JMenuItem menuItem = new JMenuItem(item);
         menuItem.setBackground(config.primaryDark());
-        //menuItem.setBorder(BorderFactory.createLineBorder(config.fontColor()));
         menuItem.setForeground(config.fontColor());
         menuItem.setOpaque(true);
         return menuItem;
@@ -590,7 +579,6 @@ public class UISwingUtility
     {
         JMenu menu = new JMenu(item);
         menu.setBackground(config.primaryDark());
-        //menu.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, config.fontColor()));
         menu.setForeground(config.fontColor());
         menu.setOpaque(true);
         return menu;
@@ -605,9 +593,6 @@ public class UISwingUtility
 
     public static JPopupMenu getThemedPopupMenu()
     {
-        JPopupMenu menu = new JPopupMenu();
-        //menu.setBorder(new MatteBorder(1, 1, 1, 1, config.fontColor()));
-        //menu.get
-        return menu;
+        return new JPopupMenu();
     }
 }

@@ -50,6 +50,10 @@ public class Colo extends Raid
     @Override
     protected boolean parseLogEntry(LogEntry entry)
     {
+        if(entry.logEntry.equals(LogID.ROOM_PRAYER_DRAINED))
+        {
+            log.info("hmm");
+        }
         for(ParseInstruction instruction : entry.logEntry.parseInstructions)
         {
             if(instruction.type == ParseType.MANUAL_PARSE)
@@ -57,6 +61,7 @@ public class Colo extends Raid
                 if(entry.logEntry.equals(LogID.COLOSSEUM_WAVE_STARTED))
                 {
                     highestWaveStarted = entry.getFirstInt();
+                    currentRoom = "Wave " + highestWaveStarted;
                 }
                 else if(entry.logEntry.equals(LogID.COLOSSEUM_WAVE_12_END))
                 {
@@ -64,6 +69,10 @@ public class Colo extends Raid
                     int val = data.get(CHALLENGE_TIME)-get(COLOSSEUM_WAVE_12_SPLIT);
                     data.set(DataPoint.COLOSSEUM_WAVE_12_DURATION, val);
                     completed = true;
+                }
+                else if(entry.logEntry.equals(LogID.COLOSSEUM_SPAWN_STRING))
+                {
+                  //  data.set();
                 }
             }
         }

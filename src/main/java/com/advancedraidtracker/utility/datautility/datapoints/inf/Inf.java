@@ -36,7 +36,6 @@ public class Inf extends Raid
                     highestWaveStarted = entry.getFirstInt();
                     lastCheckPoint = InfernoHandler.getLastRelevantSplit(highestWaveStarted);
                     currentRoom = roomMap.get(lastCheckPoint);
-                    log.info("setting inferno to: " + currentRoom);
                 }
                 else if(entry.logEntry.equals(LogID.INFERNO_TIMER_STARTED))
                 {
@@ -67,8 +66,6 @@ public class Inf extends Raid
                     {
                         data.set(DataPoint.CHALLENGE_TIME, endTime);
                     }
-
-                    log.info("end time: " + endTime);
                 }
             }
         }

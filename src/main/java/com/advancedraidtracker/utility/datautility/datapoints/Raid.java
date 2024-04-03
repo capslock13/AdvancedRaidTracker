@@ -3,6 +3,7 @@ package com.advancedraidtracker.utility.datautility.datapoints;
 import com.advancedraidtracker.constants.*;
 import com.advancedraidtracker.utility.RoomUtil;
 import com.advancedraidtracker.utility.datautility.*;
+import com.advancedraidtracker.utility.datautility.datapoints.col.Colo;
 import com.google.common.collect.ImmutableMap;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -357,6 +358,10 @@ public abstract class Raid
                                 data.set(CHALLENGE_TIME, data.get(CHALLENGE_TIME)+4);
                                 break;
                             }
+                        }
+                        if(this instanceof Colo && entry.logEntry.equals(LogID.ROOM_PRAYER_DRAINED))
+                        {
+                            log.info("Prayer: " + String.join(",", entry.lines));
                         }
                         data.incrementBy(instruction.dataPoint1, entry.getFirstInt(), entry.getValue("Player"), RaidRoom.getRoom(currentRoom));
                         break;

@@ -5,15 +5,14 @@ import com.advancedraidtracker.AdvancedRaidTrackerPlugin;
 import com.advancedraidtracker.constants.LogID;
 import com.advancedraidtracker.rooms.tob.RoomHandler;
 import com.advancedraidtracker.ui.charts.LiveChart;
+import com.advancedraidtracker.utility.Point;
 import com.advancedraidtracker.utility.RoomUtil;
 import com.advancedraidtracker.utility.datautility.DataWriter;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
-import net.runelite.api.events.ChatMessage;
-import net.runelite.api.events.NpcDespawned;
-import net.runelite.api.events.ScriptPreFired;
+import net.runelite.api.events.*;
 import net.runelite.client.util.Text;
 
 import java.util.*;
@@ -21,6 +20,100 @@ import java.util.*;
 @Slf4j
 public class ColosseumHandler extends RoomHandler
 {
+    public static final Map<Point, Integer> spawnPoints = Collections.unmodifiableMap(new HashMap<Point, Integer>()
+    {{
+        put(new Point(19, 37), 0);
+        put(new Point(19, 32), 1);
+        put(new Point(25, 34), 2);
+        put(new Point(29, 37), 3);
+        put(new Point(29, 31), 4);
+        put(new Point(32, 38), 5);
+        put(new Point(32, 27), 6);
+        put(new Point(33, 42), 7);
+        put(new Point(35, 37), 8);
+        put(new Point(35, 31), 9);
+        put(new Point(40, 35), 10);
+        put(new Point(44, 37), 11);
+        put(new Point(44, 32), 12);
+    }});
+
+    public static final Map<Integer, Integer> spawnType = Collections.unmodifiableMap(new HashMap<Integer, Integer>()
+    {{
+        put(12811, 0);
+        put(12817, 1);
+        put(12818, 2);
+        put(12819, 3);
+    }});
+
+    public String getCharacter(Point point, int id)
+    {
+        int spawnPoint = spawnPoints.getOrDefault(point, -1);
+        int type = spawnType.getOrDefault(id, -1);
+
+        if (spawnPoint == -1 || type == -1)
+        {
+            log.info("Failed to find spawn or type. " + point.getX() + ", " + point.getY() + ", " + id);
+            return "";
+        }
+
+        int asciiValue = 48 + (type * 13) + spawnPoint;
+        char character = (char) asciiValue;
+
+        return String.valueOf(character);
+    }
+
+    public Point getCoordinates(String character)
+    {
+        if (character == null || character.length() != 1)
+        {
+            return null;
+        }
+
+        int asciiValue = character.charAt(0);
+
+        if (asciiValue < 48 || asciiValue > 122)
+        {
+            return null;
+        }
+
+        int spawnPoint = (asciiValue - 48) % 13;
+
+        for (Map.Entry<Point, Integer> entry : spawnPoints.entrySet())
+        {
+            if (entry.getValue() == spawnPoint)
+            {
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
+
+    public int getId(String character)
+    {
+        if (character == null || character.length() != 1)
+        {
+            return -1;
+        }
+
+        int ch = character.charAt(0);
+
+        if (ch < 48 || ch > 122)
+        {
+            return -1;
+        }
+
+        int type = (ch - 48) / 13;
+
+        for (Map.Entry<Integer, Integer> entry : spawnType.entrySet())
+        {
+            if (entry.getValue() == type)
+            {
+                return entry.getKey();
+            }
+        }
+        return -1;
+    }
+
     public String getName()
     {
         return "Wave " + currentWave;
@@ -31,6 +124,7 @@ public class ColosseumHandler extends RoomHandler
     public int lastWaveDuration = 0;
     int lastWaveStartTick = 0;
     private LiveChart liveFrame;
+    public boolean inRegion = false;
     List<Integer> currentInvos = new ArrayList<>();
     private Map<Integer, Integer> selectedInvos = new HashMap<>();
     private Multimap<Integer, Integer> offeredInvos = ArrayListMultimap.create();
@@ -57,11 +151,10 @@ public class ColosseumHandler extends RoomHandler
         this.liveFrame = liveFrame;
     }
 
-    private boolean active = false;
     @Override
     public boolean isActive()
     {
-        return active;
+        return inRegion;
     }
 
 
@@ -129,6 +222,37 @@ public class ColosseumHandler extends RoomHandler
         return list;
     }
 
+    @Override
+    public void updateGameTick(GameTick event)
+    {
+        if(!spawnString.isEmpty())
+        {
+            log.info("Spawn: " + spawnString);
+            spawnString = "";
+        }
+    }
+
+    private String spawnString = "";
+
+    @Override
+    public void updateNpcSpawned(NpcSpawned event)
+    {
+        if(spawnType.containsKey(event.getNpc().getId()))
+        {
+            int id = spawnType.get(event.getNpc().getId());
+            log.info("Spawn type: " + event.getNpc().getId() + " mapped to: " + id);
+            Point spawnLocation = new Point(event.getNpc().getWorldLocation().getRegionX(), event.getNpc().getWorldLocation().getRegionY());
+            log.info("Spawn point: " + spawnLocation);
+            if(spawnPoints.containsKey(spawnLocation))
+            {
+                log.info("Spawn location: " + spawnLocation + " mapped to: " + spawnPoints.get(spawnLocation));
+                String letter = getCharacter(spawnLocation, event.getNpc().getId());
+                log.info("Character: " + letter);
+                spawnString += letter;
+                log.info("And back: " + getCoordinates(letter) + ", " + getId(letter));
+            }
+        }
+    }
     @Override
     public void updateNpcDespawned(NpcDespawned event)
     {
@@ -231,6 +355,7 @@ public class ColosseumHandler extends RoomHandler
         }
         else if(message.getMessage().contains("Colosseum duration: "))
         {
+            active = false;
             log.info("Found duration msg: " + message.getMessage());
             String[] split = message.getMessage().split(" ");
             if(split.length >= 3)

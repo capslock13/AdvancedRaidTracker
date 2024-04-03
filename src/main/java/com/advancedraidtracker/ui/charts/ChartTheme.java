@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 public enum ChartTheme
 {
-    DEFAULT("Default", "#141414", "#1e1e1e", "#282828", "#262626", "#dddddd", "#787878", "#4089CB", "#ffffff", true, false, false, false, false),
+    DEFAULT("Default", "#181818", "#1e1e1e", "#282828", "#262626", "#bbbbbb", "#787878", "#4089CB", "#ffffff", true, false, false, false, false),
     BLERT_IO("Blert.io", "#1b1c25", "#1e1f28", "#23242f", "#23242f", "#dddddd", "#4C4E54", "#6F7277", "#23242f", true, false, false, false, false),
     HIGH_CONTRAST("High Contrast", 	"#000000", "#080808", "#141414", "#141414", "#ffffff", "#787878", "#ff0000", "#ffffff", true, false, false, false, false),
     JAGEX("Jagex", "#3e3529", "#4b3e32", "#554B41", "#554B41", "#ff981f", "#000000", "#ffffff", "#554b41", true, false, false, false, false),

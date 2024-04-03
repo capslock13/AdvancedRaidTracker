@@ -9,6 +9,9 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.nio.file.Path;
 import java.util.List;
+
+import static com.advancedraidtracker.rooms.inf.InfernoHandler.roomMap;
+
 @Slf4j
 public class Inf extends Raid
 {
@@ -32,7 +35,7 @@ public class Inf extends Raid
                 {
                     highestWaveStarted = entry.getFirstInt();
                     lastCheckPoint = InfernoHandler.getLastRelevantSplit(highestWaveStarted);
-                    currentRoom = InfernoHandler.roomMap.get(lastCheckPoint);
+                    currentRoom = roomMap.get(lastCheckPoint);
                     log.info("setting inferno to: " + currentRoom);
                 }
                 else if(entry.logEntry.equals(LogID.INFERNO_TIMER_STARTED))
@@ -70,6 +73,21 @@ public class Inf extends Raid
             }
         }
         return super.parseLogEntry(entry);
+    }
+
+    @Override
+    public String getSplits()
+    {
+        String split = "";
+        for(Integer val : roomMap.keySet())
+        {
+            if(val > 1)
+            {
+                int i = data.getList(DataPoint.INFERNO_WAVE_STARTS).get(val)-startTime;
+                split += "Wave " + val + ", Split: " + i + "\n";
+            }
+        }
+        return split;
     }
 
     @Override

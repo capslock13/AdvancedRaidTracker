@@ -61,7 +61,7 @@ public class ButtonEditorRoomData extends DefaultCellEditor
     {
         if (isPushed)
         {
-            //data.get(row).dumpValues();
+            data.get(row).dumpValues();
             if (data.get(row) instanceof Tob)
             {
                 Tob tobData = (Tob) data.get(row);

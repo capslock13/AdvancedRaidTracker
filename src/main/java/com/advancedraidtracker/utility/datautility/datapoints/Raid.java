@@ -492,6 +492,11 @@ public abstract class Raid
         }
     }
 
+    public String getSplits()
+    {
+        return "";
+    }
+
     public void dumpValues()
     {
         data.dumpValues();

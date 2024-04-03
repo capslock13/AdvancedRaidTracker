@@ -717,7 +717,7 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
             //draw horizontal lines
-            Color base = config.boxColor();
+            Color base = config.markerColor();
             g.setColor(new Color(base.getRed(), base.getGreen(), base.getBlue(), 80));
             for (int i = 0; i < yMax - yMin; i++)
             {
@@ -738,7 +738,7 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
                 }
             }
 
-            g.setColor(new Color(base.getRed(), base.getGreen(), base.getBlue(), 80));
+            g.setColor(new Color(base.getRed(), base.getGreen(), base.getBlue()));
             for (int i = 0; i < data.size(); i++)
             {
                 g.fillOval(GRAPH_XS + (i * horizontalScale) - 1, GRAPH_YE - ((data.get(i) - yMin) * verticalScale) - 2, 4, 4);

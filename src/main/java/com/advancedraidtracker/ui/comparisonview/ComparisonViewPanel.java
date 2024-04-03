@@ -257,8 +257,7 @@ public class ComparisonViewPanel extends JPanel implements UpdateableWindow
 
 
         ArrayList<String> allComboValues = new ArrayList<>(comboPopupData.keySet());
-        comboPopupMenu = new JPopupMenu();
-        comboPopupMenu.setBorder(new MatteBorder(1, 1, 1, 1, Color.DARK_GRAY));
+        comboPopupMenu = getThemedPopupMenu();
         comboStrictData = new ArrayList<>(comboPopupData.keySet());
 
         DataPointMenu menu = new DataPointMenu(allComboValues, comboPopupData, comboFlatData, comboPopupMenu, compareByComboBox, this);
@@ -318,27 +317,6 @@ public class ComparisonViewPanel extends JPanel implements UpdateableWindow
         if (items.size() == 1)
         {
             compareByComboBox.setSelectedIndex(0);
-        }
-    }
-
-    private JMenuItem createMenuItem(final String name)
-    {
-        JMenuItem item = new JMenuItem(name);
-        item.setBackground(Color.BLACK);
-        item.setOpaque(true);
-
-        item.addActionListener(event -> setComboSelection(name));
-        return item;
-    }
-
-    private void setPopupVisible(boolean visible)
-    {
-        if (visible)
-        {
-            comboPopupMenu.show(compareByComboBox, 0, compareByComboBox.getSize().height);
-        } else
-        {
-            comboPopupMenu.setVisible(false);
         }
     }
 

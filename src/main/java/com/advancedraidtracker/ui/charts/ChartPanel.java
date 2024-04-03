@@ -439,6 +439,8 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         this.configManager = configManager;
         this.config = config;
         this.clientThread = clientThread;
+        setBackground(config.primaryDark());
+        setOpaque(true);
         scale = 26;
         live = isLive;
         this.room = room;

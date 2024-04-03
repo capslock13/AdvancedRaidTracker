@@ -37,6 +37,8 @@ import javax.swing.event.DocumentListener;
 import javax.swing.table.*;
 import javax.swing.text.BadLocationException;
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.time.LocalDate;
@@ -81,7 +83,15 @@ public class Raids extends BaseFrame implements UpdateableWindow
     JCheckBox filterPartyOnly;
     JCheckBox filterPartialData;
     JCheckBox filterPartialOnly;
-    JCheckBox filterNormalOnly;
+    JCheckBox filterIncludeNormal;
+    JCheckBox filterIncludeHard;
+    JCheckBox filterIncludeEntry;
+    JCheckBox filterIncludeTOB;
+    JCheckBox filterIncludeCOX;
+    JCheckBox filterIncludeTOA;
+    JCheckBox filterIncludeInferno;
+    JCheckBox filterIncludeColosseum;
+
     JTable table;
     JPanel container;
     private JPanel filterTableContainer;
@@ -217,15 +227,90 @@ public class Raids extends BaseFrame implements UpdateableWindow
                     shouldDataBeIncluded = false;
                 }
             }
-            if (filterNormalOnly.isSelected())
+            if (!filterIncludeTOB.isSelected())
             {
-                if (data instanceof Tob && (data.isStoryMode || data.isHardMode))
+                if (data instanceof Tob)
                 {
                     shouldDataBeIncluded = false;
                 }
-                else if(data instanceof Toa && data.get(DataPoint.TOA_INVOCATION_LEVEL) >= 150 && data.get(DataPoint.TOA_INVOCATION_LEVEL) < 300)
+            }
+            if (!filterIncludeTOA.isSelected())
+            {
+                if (data instanceof Toa)
                 {
                     shouldDataBeIncluded = false;
+                }
+            }
+            if (!filterIncludeCOX.isSelected())
+            {
+                if (data instanceof Cox)
+                {
+                    shouldDataBeIncluded = false;
+                }
+            }
+            if (!filterIncludeColosseum.isSelected())
+            {
+                if (data instanceof Colo)
+                {
+                    shouldDataBeIncluded = false;
+                }
+            }
+            if (!filterIncludeInferno.isSelected())
+            {
+                if (data instanceof Inf)
+                {
+                    shouldDataBeIncluded = false;
+                }
+            }
+            if (!filterIncludeNormal.isSelected())
+            {
+                if(data instanceof Tob)
+                {
+                    if(!data.isStoryMode && !data.isHardMode)
+                    {
+                        shouldDataBeIncluded = false;
+                    }
+                }
+                else if(data instanceof Toa)
+                {
+                    if(data.get(DataPoint.TOA_INVOCATION_LEVEL) >= 150 && data.get(DataPoint.TOA_INVOCATION_LEVEL) < 300)
+                    {
+                        shouldDataBeIncluded = false;
+                    }
+                }
+            }
+            if (!filterIncludeHard.isSelected())
+            {
+                if(data instanceof Tob)
+                {
+                    if(data.isHardMode)
+                    {
+                        shouldDataBeIncluded = false;
+                    }
+                }
+                else if(data instanceof Toa)
+                {
+                    if(data.get(DataPoint.TOA_INVOCATION_LEVEL) >= 300)
+                    {
+                        shouldDataBeIncluded = false;
+                    }
+                }
+            }
+            if (!filterIncludeEntry.isSelected())
+            {
+                if(data instanceof Tob)
+                {
+                    if(data.isStoryMode)
+                    {
+                        shouldDataBeIncluded = false;
+                    }
+                }
+                else if(data instanceof Toa)
+                {
+                    if(data.get(DataPoint.TOA_INVOCATION_LEVEL) < 150)
+                    {
+                        shouldDataBeIncluded = false;
+                    }
                 }
             }
             if (filterPartialOnly.isSelected()) //todo
@@ -814,9 +899,7 @@ public class Raids extends BaseFrame implements UpdateableWindow
 
     private JMenuItem createMenuItemTableHeader(final String name)
     {
-        JMenuItem item = new JMenuItem(name);
-        item.setBackground(Color.BLACK);
-        item.setOpaque(true);
+        JMenuItem item = getThemedMenuItem(name);
         item.addActionListener(event -> getUpdatedPopupMenu(name));
         return item;
     }
@@ -1161,28 +1244,38 @@ public class Raids extends BaseFrame implements UpdateableWindow
 
         JPanel additionalFiltersPanel = getTitledPanel("Quick Filters");
         additionalFiltersPanel.setLayout(new BorderLayout());
-        additionalFiltersPanel.setMinimumSize(new Dimension(200, 300));
-        additionalFiltersPanel.setPreferredSize(new Dimension(200, 300));
+        additionalFiltersPanel.setMinimumSize(new Dimension(220, 300));
+        additionalFiltersPanel.setPreferredSize(new Dimension(220, 300));
 
-        filterSpectateOnly = getActionListenCheckBox("Spectate Only", al-> updateTable());
-        filterInRaidOnly = getActionListenCheckBox("In Raid Only", al-> updateTable());
-        filterCompletionOnly = getActionListenCheckBox("Completion Only", al-> updateTable());
-        filterWipeResetOnly = getActionListenCheckBox("Wipe/Reset Only", al-> updateTable());
-        filterComboBoxScale = UISwingUtility.getActionListenCheckBox(new String[]{"Solo", "Duo", "Trio", "4-Man", "5-Man"}, al -> updateTable());
+        filterSpectateOnly = getActionListenCheckBox("Spectated", al-> updateTable());
+        filterInRaidOnly = getActionListenCheckBox("In Raid", al-> updateTable());
+        filterCompletionOnly = getActionListenCheckBox("Completed", al-> updateTable());
+        filterWipeResetOnly = getActionListenCheckBox("Wipe/Reset", al-> updateTable());
+        filterComboBoxScale = UISwingUtility.getActionListenCheckBox(new String[]{"Solo", "Duo", "Trio", "4-Man", "5-Man", "6-Man", "7-Man", "8-Man"}, al -> updateTable());
         filterCheckBoxScale = getActionListenCheckBox("Scale", al -> updateTable());
-        filterTodayOnly = getActionListenCheckBox("Today Only", al -> updateTable());
-        filterPartyOnly = getActionListenCheckBox("Party Only", al -> updateTable());
-        filterPartialData = getActionListenCheckBox("Filter Partial Raids", al -> updateTable());
+        filterTodayOnly = getActionListenCheckBox("Today", al -> updateTable());
+        filterPartyOnly = getActionListenCheckBox("In Party", al -> updateTable());
+        filterPartialData = getActionListenCheckBox("Filter Partial", al -> updateTable());
         filterPartialOnly = getActionListenCheckBox("Filter Partial Rooms", al -> updateTable());
         filterPartialData.setToolTipText("Removes data sets that have any rooms that were partially completed");
-        filterNormalOnly = getActionListenCheckBox("Normal Mode Only", true, al-> updateTable());
+        filterIncludeNormal = getActionListenCheckBox("Normal", true, al-> updateTable());
+        filterIncludeEntry = getActionListenCheckBox("Entry", true, al -> updateTable());
+        filterIncludeHard = getActionListenCheckBox("Hard", true, al -> updateTable());
+
+        filterIncludeTOB = getActionListenCheckBox("ToB", true, al -> updateTable());
+        filterIncludeTOA = getActionListenCheckBox("ToA", true, al -> updateTable());
+        filterIncludeCOX = getActionListenCheckBox("CoX", true, al -> updateTable());
+        filterIncludeInferno = getActionListenCheckBox("Inferno", true, al -> updateTable());
+        filterIncludeColosseum = getActionListenCheckBox("Colosseum", true, al -> updateTable());
+
+
 
         JPanel scaleContainer = getThemedPanel();
         scaleContainer.setLayout(new BoxLayout(scaleContainer, BoxLayout.X_AXIS));
         scaleContainer.setPreferredSize(new Dimension(150, 25));
 
         JPanel filterHolder = getThemedPanel();
-        filterHolder.setLayout(new GridLayout(10, 1));
+        filterHolder.setLayout(new GridLayout(8, 2));
         filterHolder.add(filterSpectateOnly);
         filterHolder.add(filterInRaidOnly);
         filterHolder.add(filterCompletionOnly);
@@ -1190,10 +1283,19 @@ public class Raids extends BaseFrame implements UpdateableWindow
         filterHolder.add(filterTodayOnly);
         filterHolder.add(filterPartyOnly);
         filterHolder.add(filterPartialData);
-        filterHolder.add(filterPartialOnly);
-        filterHolder.add(filterNormalOnly);
+
+        filterHolder.add(filterIncludeTOB);
+        filterHolder.add(filterIncludeTOA);
+        filterHolder.add(filterIncludeCOX);
+        filterHolder.add(filterIncludeInferno);
+        filterHolder.add(filterIncludeColosseum);
+
+        filterHolder.add(filterIncludeNormal);
+        filterHolder.add(filterIncludeHard);
+        filterHolder.add(filterIncludeEntry);
         scaleContainer.add(filterCheckBoxScale);
         scaleContainer.add(filterComboBoxScale);
+
         filterHolder.add(scaleContainer);
 
         additionalFiltersPanel.add(filterHolder);
@@ -1524,11 +1626,9 @@ public class Raids extends BaseFrame implements UpdateableWindow
         rightBottomContainer.setPreferredSize(new Dimension(400, 200));
 
 
-        JPopupMenu raidPopup = new JPopupMenu();
+        JPopupMenu raidPopup = getThemedPopupMenu();
 
-        JMenuItem analyzeSessions = new JMenuItem("Analyze Sessions");
-        analyzeSessions.setBackground(Color.BLACK);
-        analyzeSessions.setOpaque(true);
+        JMenuItem analyzeSessions = getThemedMenuItem("Analyze Sessions");
         analyzeSessions.addActionListener(e ->
         {
             updateAliases();
@@ -1581,17 +1681,29 @@ public class Raids extends BaseFrame implements UpdateableWindow
             graphView.open();
         });
 
-        JMenuItem addToComparison = new JMenuItem("Add set to comparison");
-        addToComparison.setBackground(Color.BLACK);
-        addToComparison.setOpaque(true);
+        JMenuItem addToComparison = getThemedMenuItem("Add set to comparison");
 
-        JMenuItem viewGraphs = new JMenuItem("View Graphs");
-        viewGraphs.setBackground(Color.BLACK);
-        viewGraphs.setOpaque(true);
+        JMenuItem viewGraphs = getThemedMenuItem("View Graphs");
 
-        JMenuItem viewCharts = new JMenuItem("View Charts");
-        viewCharts.setBackground(Color.BLACK);
-        viewCharts.setOpaque(true);
+        JMenuItem viewCharts = getThemedMenuItem("View Charts");
+
+        JMenuItem copySplits = getThemedMenuItem("Copy Splits");
+
+        copySplits.addActionListener(e ->
+        {
+            int[] toRemove = table.getSelectedRows();
+            if(toRemove.length != 1)
+            {
+                JOptionPane.showMessageDialog(this, "You must select only one raid to copy splits", "Splits Error", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            Raid raid = currentData.get(Integer.parseInt(table.getModel().getValueAt(toRemove[0], 0).toString()));
+            if(raid != null)
+            {
+                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                clipboard.setContents(new StringSelection(raid.getSplits()), null);
+            }
+        });
 
         viewCharts.addActionListener(e ->
         {
@@ -1646,9 +1758,7 @@ public class Raids extends BaseFrame implements UpdateableWindow
             comparisons.add(rows);
             updateComparisonTable();
         });
-        JMenuItem exportRaids = new JMenuItem("Export Selected Raids to CSV");
-        exportRaids.setBackground(Color.BLACK);
-        exportRaids.setOpaque(true);
+        JMenuItem exportRaids = getThemedMenuItem("Export Selected Raids to CSV");
         exportRaids.addActionListener(e ->
         {
             ArrayList<Raid> rows = new ArrayList<>();
@@ -1660,9 +1770,7 @@ public class Raids extends BaseFrame implements UpdateableWindow
             new SaveRaids(rows).open();
         });
 
-        JMenuItem filterRaids = new JMenuItem("Filter Selected Raids");
-        filterRaids.setBackground(Color.BLACK);
-        filterRaids.setOpaque(true);
+        JMenuItem filterRaids = getThemedMenuItem("Filter Selected Raids");
         filterRaids.addActionListener(e ->
         {
             int[] toRemove = table.getSelectedRows();
@@ -1674,22 +1782,17 @@ public class Raids extends BaseFrame implements UpdateableWindow
             updateTable();
         });
 
-        JMenu filterOptionsSubMenu = new JMenu("Filter Raids");
-        filterOptionsSubMenu.setOpaque(true);
-        filterOptionsSubMenu.setBackground(Color.BLACK);
+        JMenu filterOptionsSubMenu = getThemedMenu("Filter Raids");
 
-        JMenuItem undoFilterRaids = new JMenuItem("Clear Filtered Raids");
-        undoFilterRaids.setBackground(Color.BLACK);
-        undoFilterRaids.setOpaque(true);
+
+        JMenuItem undoFilterRaids = getThemedMenuItem("Clear Filtered Raids");
         undoFilterRaids.addActionListener(e ->
         {
                 filteredIndices.clear();
                 updateTable();
         });
 
-        JMenuItem filterExclusiveRaids = new JMenuItem("Filter All Except Selected Raids");
-        filterExclusiveRaids.setBackground(Color.BLACK);
-        filterExclusiveRaids.setOpaque(true);
+        JMenuItem filterExclusiveRaids = getThemedMenuItem("Filter All Except Selected Raids");
         filterExclusiveRaids.addActionListener(e ->
         {
             int[] toKeep = table.getSelectedRows();
@@ -1713,9 +1816,7 @@ public class Raids extends BaseFrame implements UpdateableWindow
             updateTable();
         });
 
-        JMenuItem analyzeCrabs = new JMenuItem("Analyze selection crab leaks");
-        analyzeCrabs.setOpaque(true);
-        analyzeCrabs.setBackground(Color.BLACK);
+        JMenuItem analyzeCrabs = getThemedMenuItem("Analyze selection crab leaks");
         analyzeCrabs.addActionListener(e ->
         {
             ArrayList<ArrayList<StringInt>> crabData = new ArrayList<>();
@@ -1743,6 +1844,7 @@ public class Raids extends BaseFrame implements UpdateableWindow
         raidPopup.add(analyzeSessions);
         raidPopup.add(viewCharts);
         raidPopup.add(viewGraphs);
+        raidPopup.add(copySplits);
         table.setComponentPopupMenu(raidPopup);
 
         filterTableContainer.add(tableScrollView);
@@ -1762,8 +1864,14 @@ public class Raids extends BaseFrame implements UpdateableWindow
                     quickFiltersState.add("QF-Today Only:" + filterTodayOnly.isSelected());
                     quickFiltersState.add("QF-Party Only:" + filterPartyOnly.isSelected());
                     quickFiltersState.add("QF-Partial Raids:" + filterPartialData.isSelected());
-                    quickFiltersState.add("QF-Partial Rooms:" + filterPartialOnly.isSelected());
-                    quickFiltersState.add("QF-Normal Mode Only:" + filterNormalOnly.isSelected());
+                    quickFiltersState.add("QF-ToB:" + filterIncludeTOB.isSelected());
+                    quickFiltersState.add("QF-ToA:" + filterIncludeTOA.isSelected());
+                    quickFiltersState.add("QF-CoX:" + filterIncludeCOX.isSelected());
+                    quickFiltersState.add("QF-Inferno:" + filterIncludeInferno.isSelected());
+                    quickFiltersState.add("QF-Colosseum:" + filterIncludeColosseum.isSelected());
+                    quickFiltersState.add("QF-Normal Mode Only:" + filterIncludeNormal.isSelected());
+                    quickFiltersState.add("QF-Include Hard Mode" + filterIncludeHard.isSelected());
+                    quickFiltersState.add("QF-Include Entry Mode" + filterIncludeEntry.isSelected());
                     quickFiltersState.add("QF-Scale:" + filterCheckBoxScale.isSelected() + ":" + filterComboBoxScale.getSelectedIndex());
                     quickFiltersState.add("QF-View Raid By:" + customColumnComboBox.getItemAt(customColumnComboBox.getSelectedIndex()));
                     //quickFiltersState.add("QF-Table Sort By:" + sortOptionsBox.getItemAt(sortOptionsBox.getSelectedIndex())); .//todo
@@ -1900,18 +2008,12 @@ public class Raids extends BaseFrame implements UpdateableWindow
 
     private JMenuItem getMenuItem(String text)
     {
-        JMenuItem item = new JMenuItem(text);
-        item.setOpaque(true);
-        item.setBackground(Color.BLACK);
-        return item;
+        return getThemedMenuItem(text);
     }
 
     private JMenu getMenu(String text)
     {
-        JMenu menu = new JMenu(text);
-        menu.setOpaque(true);
-        menu.setBackground(Color.BLACK);
-        return menu;
+        return getThemedMenu(text);
     }
 
     private JCheckBoxMenuItem getCheckBoxMenuItem(String name, String state)
@@ -2049,7 +2151,7 @@ public class Raids extends BaseFrame implements UpdateableWindow
 
     private JPopupMenu getCustomColumnPopUpMenu()
     {
-        JPopupMenu baseMenu = new JPopupMenu();
+        JPopupMenu baseMenu = getThemedPopupMenu();
 
         for (JCheckBoxMenuItem item : columnHeaders)
         {
@@ -2259,8 +2361,29 @@ public class Raids extends BaseFrame implements UpdateableWindow
                         case "Partial Rooms":
                             filterPartialData.setSelected(Boolean.parseBoolean(data[1]));
                             break;
+                        case "ToB":
+                            filterIncludeTOB.setSelected(Boolean.parseBoolean(data[1]));
+                            break;
+                        case "ToA":
+                            filterIncludeTOA.setSelected(Boolean.parseBoolean(data[1]));
+                            break;
+                        case "CoX":
+                            filterIncludeCOX.setSelected(Boolean.parseBoolean(data[1]));
+                            break;
+                        case "Inferno":
+                            filterIncludeInferno.setSelected(Boolean.parseBoolean(data[1]));
+                            break;
+                        case "Colosseum":
+                            filterIncludeColosseum.setSelected(Boolean.parseBoolean(data[1]));
+                            break;
                         case "Normal Mode Only":
-                            filterNormalOnly.setSelected(Boolean.parseBoolean(data[1]));
+                            filterIncludeNormal.setSelected(Boolean.parseBoolean(data[1]));
+                            break;
+                        case "Include Hard Mode":
+                            filterIncludeHard.setSelected(Boolean.parseBoolean(data[1]));
+                            break;
+                        case "Include Entry Mode":
+                            filterIncludeEntry.setSelected(Boolean.parseBoolean(data[1]));
                             break;
                         case "Scale":
                             if (data.length > 2)

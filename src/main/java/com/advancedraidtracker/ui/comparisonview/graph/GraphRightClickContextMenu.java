@@ -11,6 +11,8 @@ import net.runelite.client.game.ItemManager;
 import javax.swing.*;
 import java.util.ArrayList;
 
+import static com.advancedraidtracker.utility.UISwingUtility.getThemedMenuItem;
+
 @Slf4j
 public class GraphRightClickContextMenu extends JPopupMenu
 {
@@ -18,7 +20,7 @@ public class GraphRightClickContextMenu extends JPopupMenu
 
     public GraphRightClickContextMenu(ArrayList<Raid> raids, AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
     {
-        item = new JMenuItem("Show Represented Raids In New Window");
+        item = getThemedMenuItem("Show Represented Raids In New Window");
         item.addActionListener(al ->
         {
             Raids raidFrame = new Raids(config, itemManager, clientThread, configManager);

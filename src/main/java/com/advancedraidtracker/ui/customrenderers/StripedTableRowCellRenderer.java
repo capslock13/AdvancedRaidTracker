@@ -27,7 +27,7 @@ public class StripedTableRowCellRenderer extends DefaultTableCellRenderer
             }
             else
             {
-                cell.setBackground(config.primaryLight());
+                cell.setBackground(config.primaryMiddle());
             }
         }
         else

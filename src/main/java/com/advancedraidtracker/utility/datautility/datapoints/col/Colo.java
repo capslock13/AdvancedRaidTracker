@@ -1,6 +1,7 @@
 package com.advancedraidtracker.utility.datautility.datapoints.col;
 
 import com.advancedraidtracker.constants.*;
+import com.advancedraidtracker.utility.RoomUtil;
 import com.advancedraidtracker.utility.datautility.DataPoint;
 import com.advancedraidtracker.utility.datautility.datapoints.LogEntry;
 import com.advancedraidtracker.utility.datautility.datapoints.Raid;
@@ -19,6 +20,31 @@ public class Colo extends Raid
     public Colo(Path filepath, List<LogEntry> raidData)
     {
         super(filepath, raidData);
+    }
+
+    @Override
+    public String getSplits()
+    {
+        StringBuilder split = new StringBuilder();
+        for(int i = 1; i < 13; i++)
+        {
+            if(i == 1)
+            {
+                if(get("Wave " + i + " Duration") > 0)
+                {
+                    split.append("Wave: ").append(i).append(", Split: ").append(RoomUtil.time(get("Wave " + i + " Duration"))).append(" (+").append(RoomUtil.time(get("Wave " + i + " Duration"))).append(")").append("\n");
+                }
+            }
+            else if(get("Wave " + i + " Split") > 0 && i > 2)
+            {
+                split.append("Wave: ").append(i - 1).append(", Split: ").append(RoomUtil.time(get("Wave " + i + " Split"))).append(" (+").append(RoomUtil.time(get("Wave " + i + " Duration"))).append(")").append("\n");
+            }
+        }
+        if(completed)
+        {
+            split.append("Duration (Success): ").append(RoomUtil.time(getChallengeTime())).append(" (+").append(RoomUtil.time(getChallengeTime() - get("Wave 12 Split"))).append(")");
+        }
+        return split.toString();
     }
 
     @Override

@@ -4,13 +4,19 @@ import com.advancedraidtracker.constants.LogID;
 import com.advancedraidtracker.constants.ParseInstruction;
 import com.advancedraidtracker.constants.RaidRoom;
 import com.advancedraidtracker.constants.RaidType;
+import com.advancedraidtracker.utility.RoomUtil;
 import com.advancedraidtracker.utility.datautility.DataPoint;
 import com.advancedraidtracker.utility.datautility.datapoints.LogEntry;
 import com.advancedraidtracker.utility.datautility.datapoints.Raid;
 import com.advancedraidtracker.utility.datautility.datapoints.RoomParser;
 import lombok.Getter;
+import net.runelite.client.util.Text;
 
 import java.nio.file.Path;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.*;
 
 import static com.advancedraidtracker.constants.ParseType.*;
@@ -43,6 +49,55 @@ public class Tob extends Raid
     public int getChallengeTime()
     {
         return getIfAccurate(MAIDEN_TIME) + getIfAccurate(BLOAT_TIME) + getIfAccurate(NYLOCAS_TIME) + getIfAccurate(SOTETSEG_TIME) + getIfAccurate(XARPUS_TIME) + getIfAccurate(VERZIK_TIME);
+    }
+
+    @Override
+    public String getSplits()
+    {
+        LocalDate date = getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        DateTimeFormatter formatter =
+                DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(Locale.getDefault());
+        String split = getScaleString() + ", " + formatter.format(date) + "\n";
+        int sum = 0;
+        if(get(MAIDEN_TIME) > 0 && getRoomAccurate(MAIDEN))
+        {
+            split += "Maiden: " + RoomUtil.time(get(MAIDEN_TIME)) + "\n";
+            sum += get(MAIDEN_TIME);
+        }
+        if(get(BLOAT_TIME) > 0 && getRoomAccurate(BLOAT))
+        {
+            split += "Bloat, Split: " + RoomUtil.time(sum) + " (+" + RoomUtil.time(get(BLOAT_TIME)) + ")\n";
+            sum += get(BLOAT_TIME);
+        }
+        if(get(NYLOCAS_TIME) > 0 && getRoomAccurate(NYLOCAS))
+        {
+            split += "Nylo, Split: " + RoomUtil.time(sum) + " (+" + RoomUtil.time(get(NYLOCAS_TIME)) + ")\n";
+            sum += get(NYLOCAS_TIME);
+        }
+        if(get(SOTETSEG_TIME) > 0 && getRoomAccurate(SOTETSEG))
+        {
+            split += "Sotetseg, Split: " + RoomUtil.time(sum) + " (+" + RoomUtil.time(get(SOTETSEG_TIME)) + ")\n";
+            sum += get(SOTETSEG_TIME);
+        }
+        if(get(XARPUS_TIME) > 0 && getRoomAccurate(XARPUS))
+        {
+            split += "Xarpus, Split: " + RoomUtil.time(sum) + " (+" + RoomUtil.time(get(XARPUS_TIME)) + ")\n";
+            sum += get(XARPUS_TIME);
+        }
+        if(get(VERZIK_TIME) > 0 && getRoomAccurate(VERZIK))
+        {
+            split += "Verzik, Split: " + RoomUtil.time(sum) + " (+" + RoomUtil.time(get(VERZIK_TIME)) + ")\n";
+            sum += get(VERZIK_TIME);
+        }
+        if(completed)
+        {
+            split += "Duration (Completion): " + RoomUtil.time(getChallengeTime()) + " (+" + RoomUtil.time(get(VERZIK_TIME)) + ")";
+        }
+        else
+        {
+            split += "Duration (" + Text.removeTags(roomStatus) + "): " + RoomUtil.time(getChallengeTime());
+        }
+        return split;
     }
 
     @Override

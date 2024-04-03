@@ -19,6 +19,7 @@ import java.util.*;
 import java.util.List;
 
 import static com.advancedraidtracker.utility.UISwingUtility.getThemedComboBox;
+import static com.advancedraidtracker.utility.UISwingUtility.getThemedPopupMenu;
 
 @Slf4j
 public class DynamicTableHeaderRenderer implements TableCellRenderer
@@ -50,8 +51,7 @@ public class DynamicTableHeaderRenderer implements TableCellRenderer
         editor.setSelectedItem("Challenge Time");
         editor.setEditable(false);
         allComboValues = new ArrayList<>(popupData.keySet());
-        popupMenu = new JPopupMenu();
-        popupMenu.setBorder(new MatteBorder(1, 1, 1, 1, Color.DARK_GRAY));
+        popupMenu = getThemedPopupMenu();
         List<String> allComboValues = new ArrayList<String>(popupData.keySet());
         dataPointMenu = new DataPointMenu(allComboValues, popupData, flatData, popupMenu, editor, window);
     }

@@ -304,7 +304,9 @@ public class DataWriter
                 {
                     try
                     {
-                        int logNumber = Integer.parseInt(file.getName().substring(7, index));
+                        log.info("Found number: " + file.getName().replaceAll("\\D", ""));
+                        int logNumber = Integer.parseInt(file.getName().replaceAll("\\D", ""));
+
                         if (logNumber > highestLogNumber)
                         {
                             highestLogNumber = logNumber;
@@ -312,6 +314,7 @@ public class DataWriter
                     } catch
                     (Exception ignored)
                     {
+                        ignored.printStackTrace();
                     }
                 }
             }

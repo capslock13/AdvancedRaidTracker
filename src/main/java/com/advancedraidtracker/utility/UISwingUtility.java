@@ -106,7 +106,16 @@ public class UISwingUtility
 
     public static JCheckBox getActionListenCheckBox(String name, boolean state, ActionListener actionListener)
     {
-        JCheckBox darkCheckBox = new JCheckBox(name, state);
+        JCheckBox darkCheckBox = new JCheckBox(name, state)
+        {
+            @Override
+            public JToolTip createToolTip()
+            {
+                JToolTip toolTip = super.createToolTip();
+                toolTip.setBackground(config.primaryDark());
+                return toolTip;
+            }
+        };
         darkCheckBox.addActionListener(actionListener);
         darkCheckBox.setBackground(config.primaryDark());
         try
@@ -125,7 +134,7 @@ public class UISwingUtility
     public static JComboBox<String> getThemedComboBox(String[] options)
     {
         JComboBox<String> comboBox = new JComboBox<>(options);
-        comboBox.setBorder(BorderFactory.createLineBorder(config.primaryLight()));
+        comboBox.setBorder(BorderFactory.createLineBorder(config.primaryMiddle()));
         comboBox.setBackground(config.primaryMiddle());
         comboBox.setOpaque(true);
         return comboBox;
@@ -319,7 +328,7 @@ public class UISwingUtility
             {
             }
         });
-        slider.setBackground(config.primaryDark());
+        slider.setBackground(config.primaryMiddle());
         slider.setForeground(config.fontColor());
         slider.setOpaque(true);
         return slider;
@@ -328,7 +337,7 @@ public class UISwingUtility
     public static JSpinner getThemedSpinner(SpinnerNumberModel snm)
     {
         JSpinner spinner = new JSpinner(snm);
-        spinner.addChangeListener(cl ->
+        spinner.addPropertyChangeListener(cl ->
         {
             spinner.setBackground(config.primaryDark());
             spinner.setForeground(config.fontColor());
@@ -368,13 +377,13 @@ public class UISwingUtility
             @Override
             public void focusLost(FocusEvent e)
             {
-                button.setBorder(BorderFactory.createLineBorder(config.primaryLight()));
+                button.setBorder(BorderFactory.createLineBorder(config.idleColor()));
             }
         });
         button.setForeground(config.fontColor());
         button.setBackground(config.primaryMiddle());
         button.setOpaque(true);
-        button.setBorder(BorderFactory.createLineBorder(config.primaryLight()));
+        button.setBorder(BorderFactory.createLineBorder(config.idleColor()));
         return button;
     }
 
@@ -518,7 +527,7 @@ public class UISwingUtility
     public static JTabbedPane getThemedTabbedPane()
     {
         JTabbedPane tabbedPane = new JTabbedPane();
-        tabbedPane.setBackground(config.primaryMiddle());
+        tabbedPane.setBackground(config.primaryDark());
         tabbedPane.setForeground(config.fontColor());
         tabbedPane.setOpaque(true);
         return tabbedPane;
@@ -567,10 +576,38 @@ public class UISwingUtility
         return textArea;
     }
 
+    public static JMenuItem getThemedMenuItem(String item)
+    {
+        JMenuItem menuItem = new JMenuItem(item);
+        menuItem.setBackground(config.primaryDark());
+        //menuItem.setBorder(BorderFactory.createLineBorder(config.fontColor()));
+        menuItem.setForeground(config.fontColor());
+        menuItem.setOpaque(true);
+        return menuItem;
+    }
+
+    public static JMenu getThemedMenu(String item)
+    {
+        JMenu menu = new JMenu(item);
+        menu.setBackground(config.primaryDark());
+        //menu.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, config.fontColor()));
+        menu.setForeground(config.fontColor());
+        menu.setOpaque(true);
+        return menu;
+    }
+
     public static TitledBorder getColoredTitledBorder(String title, Color color)
     {
         TitledBorder border = BorderFactory.createTitledBorder(title);
         border.setTitleColor(color);
         return border;
+    }
+
+    public static JPopupMenu getThemedPopupMenu()
+    {
+        JPopupMenu menu = new JPopupMenu();
+        //menu.setBorder(new MatteBorder(1, 1, 1, 1, config.fontColor()));
+        //menu.get
+        return menu;
     }
 }

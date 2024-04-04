@@ -8,7 +8,9 @@ import com.advancedraidtracker.utility.datautility.datapoints.Raid;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.advancedraidtracker.utility.datautility.DataPoint.CHALLENGE_TIME;
 import static com.advancedraidtracker.utility.datautility.DataPoint.COLOSSEUM_WAVE_12_SPLIT;
@@ -16,11 +18,12 @@ import static com.advancedraidtracker.utility.datautility.DataPoint.COLOSSEUM_WA
 @Slf4j
 public class Colo extends Raid
 {
-    int highestWaveStarted = 0;
+    public int highestWaveStarted = 0;
     public Colo(Path filepath, List<LogEntry> raidData)
     {
         super(filepath, raidData);
     }
+    private Map<Integer, String> waveSpawnMap = new HashMap<>();
 
     @Override
     public String getSplits()
@@ -72,11 +75,16 @@ public class Colo extends Raid
                 }
                 else if(entry.logEntry.equals(LogID.COLOSSEUM_SPAWN_STRING))
                 {
-                  //  data.set();
+                    waveSpawnMap.put(Integer.parseInt(entry.getValue("Wave Number")), entry.getValue("Spawn String"));
                 }
             }
         }
         return super.parseLogEntry(entry);
+    }
+
+    public String getSpawnString(int wave)
+    {
+        return waveSpawnMap.getOrDefault(wave, "");
     }
 
     @Override

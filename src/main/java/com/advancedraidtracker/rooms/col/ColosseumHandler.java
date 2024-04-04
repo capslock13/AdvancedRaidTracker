@@ -15,7 +15,9 @@ import net.runelite.api.Client;
 import net.runelite.api.events.*;
 import net.runelite.client.util.Text;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 @Slf4j
 public class ColosseumHandler extends RoomHandler
@@ -37,14 +39,23 @@ public class ColosseumHandler extends RoomHandler
         put(new Point(44, 32), 12);
     }});
 
-    public static final Map<Integer, Integer> spawnType = Collections.unmodifiableMap(new HashMap<Integer, Integer>()
-    {{
-        put(12811, 0);
-        put(12817, 1);
-        put(12818, 2);
-        put(12819, 3);
-    }});
+    public static final Map<Integer, Integer> spawnType = Map.of(12811, 0, 12817, 1, 12818, 2, 12819, 3);
 
+    public static final Map<Integer, Integer> mapToWebsiteIDs = Map.of(12811, 1, 12817, 2, 12818, 4, 12819, 6);
+
+    public static final Map<Integer, Integer> spawnSize = Map.of(1, 1, 2, 3, 4, 3, 6, 3);
+
+    public static final Map<Integer, Color> websiteColorMap = Map.of(1, new Color(0, 180, 255), 2, new Color(0, 255, 0), 4, new Color(128, 0, 128), 6, new Color(0, 0, 255));
+
+    /**
+     * Website coordinates are adjust to 0,0 and inversed Y direction
+     * @param original point
+     * @return translated point
+     */
+    public static Point mapToWebsitePoint(Point original)
+    {
+        return new Point(original.getX()-16, 32-(original.getY()-19));
+    }
     public String getCharacter(Point point, int id)
     {
         int spawnPoint = spawnPoints.getOrDefault(point, -1);
@@ -62,7 +73,7 @@ public class ColosseumHandler extends RoomHandler
         return String.valueOf(character);
     }
 
-    public Point getCoordinates(String character)
+    public static Point getCoordinates(String character)
     {
         if (character == null || character.length() != 1)
         {
@@ -88,7 +99,7 @@ public class ColosseumHandler extends RoomHandler
         return null;
     }
 
-    public int getId(String character)
+    public static int getId(String character)
     {
         if (character == null || character.length() != 1)
         {
@@ -228,8 +239,10 @@ public class ColosseumHandler extends RoomHandler
         if(!spawnString.isEmpty())
         {
             log.info("Spawn: " + spawnString);
+            clog.addLine(LogID.COLOSSEUM_SPAWN_STRING, String.valueOf(currentWave), spawnString);
             spawnString = "";
         }
+        super.updateGameTick(event);
     }
 
     private String spawnString = "";

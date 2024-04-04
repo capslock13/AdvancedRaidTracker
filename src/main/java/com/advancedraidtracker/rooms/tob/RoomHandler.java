@@ -160,15 +160,7 @@ public class RoomHandler
             if(!active)
             {
                 wasActive = false;
-                clog.addLine(LogID.ROOM_PRAYER_DRAINED, String.valueOf(prayerDrained), getName());
-                clog.addLine(LogID.ROOM_DAMAGE_RECEIVED, String.valueOf(damageReceived), getName());
-                clog.addLine(LogID.ROOM_DAMAGE_DEALT, String.valueOf(damageDealt), getName());
-                log.info(getName() + " prayer: " + prayerDrained);
-                log.info(getName() + " dealt: " + damageDealt);
-                log.info(getName() + " received: " + damageReceived);
-                prayerDrained = 0;
-                damageDealt = 0;
-                damageReceived = 0;
+                writePrayerDamageData();
             }
         }
         else
@@ -178,6 +170,16 @@ public class RoomHandler
                 wasActive = true;
             }
         }
+    }
+
+    private void writePrayerDamageData()
+    {
+        clog.addLine(LogID.ROOM_PRAYER_DRAINED, String.valueOf(prayerDrained), getName());
+        clog.addLine(LogID.ROOM_DAMAGE_RECEIVED, String.valueOf(damageReceived), getName());
+        clog.addLine(LogID.ROOM_DAMAGE_DEALT, String.valueOf(damageDealt), getName());
+        prayerDrained = 0;
+        damageDealt = 0;
+        damageReceived = 0;
     }
 
     public void updateItemSpawned(ItemSpawned event)
@@ -256,11 +258,9 @@ public class RoomHandler
 
     public void reset()
     {
+        writePrayerDamageData();
         roomStartTick = -1;
         active = false;
-        prayerDrained = 0;
-        damageDealt = 0;
-        damageReceived = 0;
         wasActive = false;
     }
 

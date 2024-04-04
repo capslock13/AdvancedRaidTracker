@@ -698,7 +698,7 @@ public enum LogID
             "Damage Received", "Damage", "Room"),
     COLOSSEUM_SPAWN_STRING(994, true, ALL,
             new ParseInstruction(MANUAL_PARSE),
-            "Spawn String", "Spawn String"),
+            "Spawn String", "Wave Number", "Spawn String"),
 
 
     ;

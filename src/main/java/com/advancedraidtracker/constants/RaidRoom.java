@@ -145,6 +145,20 @@ public enum RaidRoom
           //      this.equals(VESPULA) || this.equals(TIGHT_ROPE) || this.equals(GUARDIANS) || this.equals(VASA_NISTIRIO) || this.equals(SKELETAL_MYSTICS) || this.equals(MUTTADILES) || this.equals(OLM);
     }
 
+    public static Map<RaidRoom, Integer> firstTickMap = Map.of(
+            MAIDEN, 5,
+            BLOAT, 2,
+            NYLOCAS, 5,
+            SOTETSEG, 5, //todo mazes...
+            XARPUS, 0, //todo ye ye
+            VERZIK, 0 //p1
+
+    );
+    public int getFirstAttackTick(int scale)
+    {
+        return 1;
+    }
+
     public static Map<String, RaidRoom> roomCache = new HashMap<>();
     public static RaidRoom getRoom(String name)
     {

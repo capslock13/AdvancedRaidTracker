@@ -23,37 +23,72 @@ public class ChartData
     public final List<String> maidenCrabs = new ArrayList<>();
 
 
-    public int getIdleTicks(String player)
+    public int getIdleTicks(String player, int scale)
     {
-        return getIdleTicks(player, ALL);
+        return getIdleTicks(player, ALL, scale);
     }
 
-    public int getIdleTicks(String player, RaidRoom room)
+    public int getIdleTicks(String player, RaidRoom room, int scale)
     {
+        int idleTicks = 0;
         int lastAttack = 0;
         int firstAttack = Integer.MAX_VALUE;
         int ticksOnCD = 0;
-        for(PlayerDidAttack attack : getAttacks(room))
+        if(!room.equals(ALL))
         {
-            int cd = AnimationDecider.getWeapon(attack.animation, attack.spotAnims, attack.projectile, attack.weapon).attackTicks;
-            if(attack.tick+cd-1 > lastAttack && cd > 0)
+            for (PlayerDidAttack attack : getAttacks(room))
             {
-                lastAttack = attack.tick+cd-1;
-            }
-            if(attack.tick < firstAttack && cd > 0)
-            {
-                firstAttack = attack.tick;
-            }
-            if(attack.player.equals(player))
-            {
-                if(cd > 0)
+                int cd = AnimationDecider.getWeapon(attack.animation, attack.spotAnims, attack.projectile, attack.weapon).attackTicks;
+                if (attack.tick + cd - 1 > lastAttack && cd > 0)
                 {
-                    ticksOnCD += cd;
+                    lastAttack = attack.tick + cd - 1;
+                }
+                if (attack.tick < firstAttack && cd > 0)
+                {
+                    firstAttack = attack.tick;
+                }
+                if (attack.player.equals(player))
+                {
+                    if (cd > 0)
+                    {
+                        ticksOnCD += cd;
+                    }
                 }
             }
+            idleTicks = (lastAttack-firstAttack)-ticksOnCD;
+            log.info(room.name + " first tick: " + firstAttack + ", last tick: " + lastAttack + ", on cooldown: " + ticksOnCD + ", idle: " + ((lastAttack - firstAttack) - ticksOnCD));
+            return (lastAttack - firstAttack) - ticksOnCD;
         }
-        log.info(room.name + " first tick: " + firstAttack + ", last tick: " + lastAttack + ", on cooldown: " + ticksOnCD + ", idle: " + ((lastAttack-firstAttack)-ticksOnCD));
-        return (lastAttack-firstAttack)-ticksOnCD;
+        else
+        {
+            for(RaidRoom r : attacks.keySet())
+            {
+                lastAttack = 0;
+                firstAttack = Integer.MAX_VALUE;
+                ticksOnCD = 0;
+                for (PlayerDidAttack attack : getAttacks(r))
+                {
+                    int cd = AnimationDecider.getWeapon(attack.animation, attack.spotAnims, attack.projectile, attack.weapon).attackTicks;
+                    if (attack.tick + cd - 1 > lastAttack && cd > 0)
+                    {
+                        lastAttack = attack.tick + cd - 1;
+                    }
+                    if (attack.tick < firstAttack && cd > 0)
+                    {
+                        firstAttack = attack.tick;
+                    }
+                    if (attack.player.equals(player))
+                    {
+                        if (cd > 0)
+                        {
+                            ticksOnCD += cd;
+                        }
+                    }
+                }
+                idleTicks += (lastAttack-firstAttack)-ticksOnCD;
+            }
+            return idleTicks;
+        }
     }
     /*
 

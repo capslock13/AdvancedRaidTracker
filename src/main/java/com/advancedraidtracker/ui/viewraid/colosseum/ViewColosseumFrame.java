@@ -42,9 +42,11 @@ public class ViewColosseumFrame extends BaseFrame
     String dark;
     private final Colo colData;
     private final ItemManager itemManager;
+    private final ChartData chartData;
     public ViewColosseumFrame(Colo colData, AdvancedRaidTrackerConfig config, ItemManager itemManager)
     {
         this.itemManager = itemManager;
+        chartData = DataReader.getChartData(colData.getFilepath(), itemManager);
         Color c = config.fontColor();
         full = colorStr(c);
         soft = colorStr(c.darker());
@@ -56,7 +58,7 @@ public class ViewColosseumFrame extends BaseFrame
             log.info("Wave " + i + " spawn data: " + colData.getSpawnString(i));
         }
         setTitle("View Raid");
-        setPreferredSize(new Dimension(800, 750));
+        setPreferredSize(new Dimension(800, 800));
         //add(new ViewColosseumPanel(colData, config));
 
         JPanel topContainer = getThemedPanel();
@@ -81,13 +83,16 @@ public class ViewColosseumFrame extends BaseFrame
     public JPanel getWaveBox(int wave)
     {
         String title = getColor(wave) + "Wave " + wave;
-        if(colData.get("Wave " + wave + " Duration") > 0)
+        int waveTime = colData.get("Wave " + wave + " Duration");
+        if(waveTime > 0)
         {
-            title += " - " + RoomUtil.time(colData.get("Wave " + wave + " Duration"));
+            title += " - " + RoomUtil.time(waveTime);
         }
         JPanel container = getTitledPanel(title);
+        container.setMaximumSize(new Dimension(266, 140));
         container.setLayout(new GridLayout(1, 2));
         JPanel base = getThemedPanel();
+        base.setMaximumSize(new Dimension(140, 140));
         base.setLayout(new GridLayout(0, 1));
         String[] split = colData.getSpawnString(wave).split("");
         String spawnString = "https://supalosa.github.io/osrs-colosseum/?";
@@ -110,47 +115,48 @@ public class ViewColosseumFrame extends BaseFrame
 
             }
         }
-
-        base.add(getThemedLabel("<html>"+blue+"Invocations: "));
-        for(String invo : colData.invocationsOffered.get(wave))
+        if(colData.highestWaveStarted >= wave)
         {
-            if(invo.equals(colData.invocationSelected.get(wave)))
+            base.add(getThemedLabel("<html>" + blue + "Invocations: "));
+            for (String invo : colData.invocationsOffered.get(wave))
             {
-                base.add(getThemedLabel("<html>&emsp" + green+ColosseumHandler.invoMap.get(Integer.parseInt(invo))));
+                if (invo.equals(colData.invocationSelected.get(wave)))
+                {
+                    base.add(getThemedLabel("<html>&emsp" + green + ColosseumHandler.invoMap.get(Integer.parseInt(invo))));
+                } else
+                {
+                    base.add(getThemedLabel("<html>&emsp" + UISwingUtility.fontColorString() + ColosseumHandler.invoMap.get(Integer.parseInt(invo))));
+                }
             }
-            else
+            base.add(getThemedLabel("<html>Prayer Used: " + blue + colData.get(DataPoint.PRAYER_USED, RaidRoom.getRoom("Wave " + wave))));
+            base.add(getThemedLabel("<html>Damage Dealt: " + green + colData.get(DataPoint.DAMAGE_DEALT, RaidRoom.getRoom("Wave " + wave))));
+            base.add(getThemedLabel("<html>Damage Received: " + red + colData.get(DataPoint.DAMAGE_RECEIVED, RaidRoom.getRoom("Wave " + wave))));
+            int idleTicks = chartData.getIdleTicks(colData.getPlayerString(), RaidRoom.getRoom("Wave " + wave), colData.getScale());
+            base.add(getThemedLabel("Idle Ticks: " + idleTicks));
+            base.add(getThemedLabel("Skip Reinforce? No"));
+            container.add(base);
+
+            JLabel picLabel = new JLabel(new ImageIcon(colImage.getScaledInstance(128, 128, Image.SCALE_SMOOTH)));
+            picLabel.setMaximumSize(new Dimension(140, 140));
+            picLabel.setToolTipText("View spawn in website");
+            picLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            String finalSpawnString = spawnString;
+            picLabel.addMouseListener(new MouseAdapter()
             {
-                base.add(getThemedLabel("<html>&emsp" + UISwingUtility.fontColorString() + ColosseumHandler.invoMap.get(Integer.parseInt(invo))));
-            }
+                @Override
+                public void mouseClicked(MouseEvent e)
+                {
+                    try
+                    {
+                        Desktop.getDesktop().browse(new URI(finalSpawnString));
+                    } catch (Exception ignored)
+                    {
+
+                    }
+                }
+            });
+            container.add(picLabel);
         }
-        base.add(getThemedLabel("<html>Prayer Used: " + blue+colData.get(DataPoint.PRAYER_USED, RaidRoom.getRoom("Wave " + wave))));
-        base.add(getThemedLabel("<html>Damage Dealt: " + green+ colData.get(DataPoint.DAMAGE_DEALT, RaidRoom.getRoom("Wave " + wave))));
-        base.add(getThemedLabel("<html>Damage Received: " + red +colData.get(DataPoint.DAMAGE_RECEIVED, RaidRoom.getRoom("Wave " + wave))));
-        ChartData chartData = DataReader.getChartData(colData.getFilepath(), itemManager);
-        base.add(getThemedLabel("Idle Ticks: " + chartData.getIdleTicks("Caps lock13", RaidRoom.getRoom("Wave " + wave))));
-        base.add(getThemedLabel("Skip Reinforce? No"));
-        container.add(base);
-
-        JLabel picLabel = new JLabel(new ImageIcon(colImage.getScaledInstance(128, 128, Image.SCALE_SMOOTH)));
-        picLabel.setToolTipText("View spawn in website");
-        picLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        String finalSpawnString = spawnString;
-        picLabel.addMouseListener(new MouseAdapter()
-        {
-            @Override
-            public void mouseClicked(MouseEvent e)
-            {
-                try
-                {
-                    Desktop.getDesktop().browse(new URI(finalSpawnString));
-                }
-                catch (URISyntaxException | IOException ex)
-                {
-                    //It looks like there's a problem
-                }
-            }
-        });
-        container.add(picLabel);
         return container;
     }
 
@@ -158,7 +164,7 @@ public class ViewColosseumFrame extends BaseFrame
     {
         String title = ((colData.isCompleted()) ? green : red) + "Summary - " + RoomUtil.time(colData.getChallengeTime());
         JPanel base = getTitledPanel(title);
-
+        base.add(getThemedLabel("Total Idle Ticks: " + chartData.getIdleTicks(colData.getPlayerString(), colData.getScale())));
         return base;
     }
 

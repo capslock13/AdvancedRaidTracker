@@ -139,7 +139,7 @@ public class ColosseumHandler extends RoomHandler
     List<Integer> currentInvos = new ArrayList<>();
     private Map<Integer, Integer> selectedInvos = new HashMap<>();
     private Multimap<Integer, Integer> offeredInvos = ArrayListMultimap.create();
-    private Map<Integer, String> invoMap = new HashMap<Integer, String>()
+    public final static Map<Integer, String> invoMap = new HashMap<>()
     {{
         put(0, "Scorpion");
         put(1, "Reentry");
@@ -205,7 +205,7 @@ public class ColosseumHandler extends RoomHandler
 
     public String getInvos()
     {
-        String list = "";
+        StringBuilder list = new StringBuilder();
         Map<Integer, Integer> invoLevels = new HashMap<>();
         for(Integer invo : selectedInvos.values())
         {
@@ -216,21 +216,21 @@ public class ColosseumHandler extends RoomHandler
         {
             if(index%3==0 && index != 0)
             {
-                list += "\n";
+                list.append("\n");
             }
-            list += invoMap.get(invo);
+            list.append(invoMap.get(invo));
             if(invoLevels.get(invo) > 1)
             {
-                list += invoLevels.get(invo);
+                list.append(invoLevels.get(invo));
             }
-            list += " ";
+            list.append(" ");
             index++;
         }
-        if(!list.endsWith("\n"))
+        if(!list.toString().endsWith("\n"))
         {
-            list += "\n";
+            list.append("\n");
         }
-        return list;
+        return list.toString();
     }
 
     @Override
@@ -392,6 +392,14 @@ public class ColosseumHandler extends RoomHandler
             liveFrame.tabbedPane.setSelectedIndex(currentWave-1);
             active = true;
             roomStartTick = client.getTickCount();
+        }
+        else if(message.getMessage().contains("I'LL") && message.getMessage().contains("YOUR"))
+        {
+            clog.addLine(LogID.COLOSSEUM_GRAPPLE_INITIATED, client.getTickCount()-roomStartTick);
+        }
+        else if(message.getMessage().contains("You perfectly parry"))
+        {
+            clog.addLine(LogID.COLOSSEUM_GRAPPLE_PERFECT_PARRY, client.getTickCount()-roomStartTick);
         }
     }
 }

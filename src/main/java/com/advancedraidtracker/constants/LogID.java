@@ -699,6 +699,16 @@ public enum LogID
     COLOSSEUM_SPAWN_STRING(994, true, ALL,
             new ParseInstruction(MANUAL_PARSE),
             "Spawn String", "Wave Number", "Spawn String"),
+    COLOSSEUM_GRAPPLE_INITIATED(2016, true, COLOSSEUM,
+    new ParseInstruction(INCREMENT, COLOSSEUM_GRAPPLES),
+            new ParseInstruction(MAP, COLOSSEUM_GRAPPLES),
+            "Grapple Attack", "Room Tick"),
+    COLOSSEUM_GRAPPLE_PERFECT_PARRY(2017, true, COLOSSEUM,
+            new ParseInstruction(INCREMENT, COLOSSEUM_PERFECT_PARRY),
+            "Perfect Parry", "Room Tick"),
+    COLOSSEUM_REINFORCEMENT_SPAWNED(2018, true, COLOSSEUM,
+            new ParseInstruction(MANUAL_PARSE),
+            "Reinforcements Spawned", "Room Tick"),
 
 
     ;

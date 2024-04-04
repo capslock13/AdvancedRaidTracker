@@ -7,6 +7,7 @@ import com.advancedraidtracker.rooms.col.ColosseumHandler;
 import com.advancedraidtracker.ui.BaseFrame;
 import com.advancedraidtracker.utility.Point;
 import com.advancedraidtracker.utility.RoomUtil;
+import com.advancedraidtracker.utility.UISwingUtility;
 import com.advancedraidtracker.utility.datautility.DataPoint;
 import com.advancedraidtracker.utility.datautility.datapoints.Raid;
 import com.advancedraidtracker.utility.datautility.datapoints.col.Colo;
@@ -104,11 +105,31 @@ public class ViewColosseumFrame extends BaseFrame
 
             }
         }
-        JLabel websiteLabel = getThemedLabel();
-        websiteLabel.setText("<html><a href=\"\">View Spawn</a></html>");
-        websiteLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        base.add(getThemedLabel("<html>"+blue+"Invocations: "));
+        for(String invo : colData.invocationsOffered.get(wave))
+        {
+            if(invo.equals(colData.invocationSelected.get(wave)))
+            {
+                base.add(getThemedLabel("<html>&emsp" + green+ColosseumHandler.invoMap.get(Integer.parseInt(invo))));
+            }
+            else
+            {
+                base.add(getThemedLabel("<html>&emsp" + UISwingUtility.fontColorString() + ColosseumHandler.invoMap.get(Integer.parseInt(invo))));
+            }
+        }
+        base.add(getThemedLabel("<html>Prayer Used: " + blue+colData.get(DataPoint.PRAYER_USED, RaidRoom.getRoom("Wave " + wave))));
+        base.add(getThemedLabel("<html>Damage Dealt: " + green+ colData.get(DataPoint.DAMAGE_DEALT, RaidRoom.getRoom("Wave " + wave))));
+        base.add(getThemedLabel("<html>Damage Received: " + red +colData.get(DataPoint.DAMAGE_RECEIVED, RaidRoom.getRoom("Wave " + wave))));
+        base.add(getThemedLabel("Idle Ticks: "));
+        base.add(getThemedLabel("Reinforcement? No"));
+        container.add(base);
+
+        JLabel picLabel = new JLabel(new ImageIcon(colImage.getScaledInstance(128, 128, Image.SCALE_SMOOTH)));
+        picLabel.setToolTipText("View spawn in website");
+        picLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
         String finalSpawnString = spawnString;
-        websiteLabel.addMouseListener(new MouseAdapter()
+        picLabel.addMouseListener(new MouseAdapter()
         {
             @Override
             public void mouseClicked(MouseEvent e)
@@ -123,16 +144,6 @@ public class ViewColosseumFrame extends BaseFrame
                 }
             }
         });
-
-        base.add(websiteLabel);
-        base.add(getThemedLabel("Prayer Used: " + colData.get(DataPoint.PRAYER_USED, RaidRoom.getRoom("Wave " + wave))));
-        base.add(getThemedLabel("Damage Dealt: " + colData.get(DataPoint.DAMAGE_DEALT, RaidRoom.getRoom("Wave " + wave))));
-        base.add(getThemedLabel("Damage Received: " + colData.get(DataPoint.DAMAGE_RECEIVED, RaidRoom.getRoom("Wave " + wave))));
-        base.add(getThemedLabel("Idle Ticks: "));
-        base.add(getThemedLabel("Reinforcement? No"));
-        container.add(base);
-
-        JLabel picLabel = new JLabel(new ImageIcon(colImage.getScaledInstance(128, 128, Image.SCALE_SMOOTH)));
         container.add(picLabel);
         return container;
     }

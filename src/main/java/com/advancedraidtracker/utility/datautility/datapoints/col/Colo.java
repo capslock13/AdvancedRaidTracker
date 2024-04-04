@@ -5,6 +5,8 @@ import com.advancedraidtracker.utility.RoomUtil;
 import com.advancedraidtracker.utility.datautility.DataPoint;
 import com.advancedraidtracker.utility.datautility.datapoints.LogEntry;
 import com.advancedraidtracker.utility.datautility.datapoints.Raid;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.file.Path;
@@ -24,6 +26,8 @@ public class Colo extends Raid
         super(filepath, raidData);
     }
     private Map<Integer, String> waveSpawnMap = new HashMap<>();
+    public Map<Integer, String> invocationSelected = new HashMap<>();
+    public Multimap<Integer, String> invocationsOffered = ArrayListMultimap.create();
 
     @Override
     public String getSplits()
@@ -76,6 +80,25 @@ public class Colo extends Raid
                 else if(entry.logEntry.equals(LogID.COLOSSEUM_SPAWN_STRING))
                 {
                     waveSpawnMap.put(Integer.parseInt(entry.getValue("Wave Number")), entry.getValue("Spawn String"));
+                }
+                else if(entry.logEntry.equals(LogID.COLOSSEUM_INVOCATION_SELECTED))
+                {
+                    invocationSelected.put(highestWaveStarted+1, entry.getValue("Invocation"));
+                }
+                else if(entry.logEntry.equals(LogID.COLOSSEUM_INVOCATION_CHOICES)) //todo refactor
+                {
+                    if(!invocationsOffered.get(highestWaveStarted+1).contains(entry.getValue("Invocation 1")))
+                    {
+                        invocationsOffered.put(highestWaveStarted + 1, entry.getValue("Invocation 1"));
+                    }
+                    if(!invocationsOffered.get(highestWaveStarted+1).contains(entry.getValue("Invocation 2")))
+                    {
+                        invocationsOffered.put(highestWaveStarted + 1, entry.getValue("Invocation 2"));
+                    }
+                    if(!invocationsOffered.get(highestWaveStarted+1).contains(entry.getValue("Invocation 3")))
+                    {
+                        invocationsOffered.put(highestWaveStarted + 1, entry.getValue("Invocation 3"));
+                    }
                 }
             }
         }

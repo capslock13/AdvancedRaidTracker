@@ -35,6 +35,11 @@ public class UISwingUtility
         return "<html><font color='" + toHex(c) + "'>";
     }
 
+    public static String fontColorString()
+    {
+        return colorStr(config.fontColor());
+    }
+
     public static String toHex(Color color)
     {
         String red = pad(Integer.toHexString(color.getRed()));

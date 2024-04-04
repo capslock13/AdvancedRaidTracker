@@ -39,9 +39,9 @@ public class ChartData
             for (PlayerDidAttack attack : getAttacks(room))
             {
                 int cd = AnimationDecider.getWeapon(attack.animation, attack.spotAnims, attack.projectile, attack.weapon).attackTicks;
-                if (attack.tick + cd - 1 > lastAttack && cd > 0)
+                if (attack.tick + cd  > lastAttack && cd > 0)
                 {
-                    lastAttack = attack.tick + cd - 1;
+                    lastAttack = attack.tick + cd ;
                 }
                 if (attack.tick < firstAttack && cd > 0)
                 {

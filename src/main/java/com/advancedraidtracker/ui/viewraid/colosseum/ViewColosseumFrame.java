@@ -58,16 +58,16 @@ public class ViewColosseumFrame extends BaseFrame
             log.info("Wave " + i + " spawn data: " + colData.getSpawnString(i));
         }
         setTitle("View Raid");
-        setPreferredSize(new Dimension(800, 800));
+        setPreferredSize(new Dimension(850, 800));
         //add(new ViewColosseumPanel(colData, config));
 
         JPanel topContainer = getThemedPanel();
-        topContainer.setPreferredSize(new Dimension(800, 150));
+        topContainer.setPreferredSize(new Dimension(850, 100));
         topContainer.setLayout(new GridLayout(1, 2));
         topContainer.add(getSummaryBox());
         topContainer.add(getSolHereditBox());
         JPanel bottomContainer = getThemedPanel();
-        bottomContainer.setPreferredSize(new Dimension(800, 600));
+        bottomContainer.setPreferredSize(new Dimension(850, 650));
         bottomContainer.setLayout(new GridLayout(4,3));
         setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
         for(int i = 0; i < 12; i++)
@@ -89,10 +89,8 @@ public class ViewColosseumFrame extends BaseFrame
             title += " - " + RoomUtil.time(waveTime);
         }
         JPanel container = getTitledPanel(title);
-        container.setMaximumSize(new Dimension(266, 140));
         container.setLayout(new GridLayout(1, 2));
         JPanel base = getThemedPanel();
-        base.setMaximumSize(new Dimension(140, 140));
         base.setLayout(new GridLayout(0, 1));
         String[] split = colData.getSpawnString(wave).split("");
         String spawnString = "https://supalosa.github.io/osrs-colosseum/?";
@@ -115,7 +113,7 @@ public class ViewColosseumFrame extends BaseFrame
 
             }
         }
-        if(colData.highestWaveStarted >= wave)
+        if(colData.highestWaveStarted >= wave || colData.isCompleted())
         {
             base.add(getThemedLabel("<html>" + blue + "Invocations: "));
             for (String invo : colData.invocationsOffered.get(wave))

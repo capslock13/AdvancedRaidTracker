@@ -10,6 +10,7 @@ import com.advancedraidtracker.utility.datautility.datapoints.col.Colo;
 import com.advancedraidtracker.utility.datautility.datapoints.inf.Inf;
 import com.advancedraidtracker.utility.datautility.datapoints.toa.Toa;
 import com.advancedraidtracker.utility.datautility.datapoints.tob.Tob;
+import net.runelite.client.game.ItemManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -25,12 +26,14 @@ public class ButtonEditorRoomData extends DefaultCellEditor
     private boolean isPushed;
     private final List<Raid> data;
     private final AdvancedRaidTrackerConfig config;
+    private final ItemManager itemManager;
     int row;
 
-    public ButtonEditorRoomData(JCheckBox checkBox, List<Raid> data, AdvancedRaidTrackerConfig config)
+    public ButtonEditorRoomData(JCheckBox checkBox, List<Raid> data, AdvancedRaidTrackerConfig config, ItemManager itemManager)
     {
         super(checkBox);
         this.config = config;
+        this.itemManager = itemManager;
         this.data = data;
         button = getThemedButton();
         button.setOpaque(true);
@@ -84,7 +87,7 @@ public class ButtonEditorRoomData extends DefaultCellEditor
             else if(data.get(row) instanceof Colo)
             {
                 Colo colData = (Colo) data.get(row);
-                ViewColosseumFrame raid = new ViewColosseumFrame(colData, config);
+                ViewColosseumFrame raid = new ViewColosseumFrame(colData, config, itemManager);
                 raid.open();
             }
 

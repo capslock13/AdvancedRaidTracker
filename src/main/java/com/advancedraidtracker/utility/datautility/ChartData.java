@@ -1,27 +1,75 @@
 package com.advancedraidtracker.utility.datautility;
 
 import com.advancedraidtracker.constants.RaidRoom;
+import com.advancedraidtracker.utility.weapons.AnimationDecider;
 import com.advancedraidtracker.utility.wrappers.PlayerDidAttack;
 import com.advancedraidtracker.utility.wrappers.ThrallOutlineBox;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
+import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.game.ItemManager;
 
 import java.util.*;
 
+import static com.advancedraidtracker.constants.RaidRoom.ALL;
+@Slf4j
 public class ChartData
 {
     private final Map<RaidRoom, Map<Integer, Integer>> hpMapping;
     private final Map<RaidRoom, Map<Integer, String>> npcMapping;
-    private final Map<RaidRoom, List<PlayerDidAttack>> attacks;
+    private final Multimap<RaidRoom, PlayerDidAttack> attacks;
 
     private final Map<RaidRoom, List<ThrallOutlineBox>> thrallBoxes;
     public final List<String> maidenCrabs = new ArrayList<>();
 
 
+    public int getIdleTicks(String player)
+    {
+        return getIdleTicks(player, ALL);
+    }
+
+    public int getIdleTicks(String player, RaidRoom room)
+    {
+        int lastAttack = 0;
+        int firstAttack = Integer.MAX_VALUE;
+        int ticksOnCD = 0;
+        for(PlayerDidAttack attack : getAttacks(room))
+        {
+            int cd = AnimationDecider.getWeapon(attack.animation, attack.spotAnims, attack.projectile, attack.weapon).attackTicks;
+            if(attack.tick+cd-1 > lastAttack && cd > 0)
+            {
+                lastAttack = attack.tick+cd-1;
+            }
+            if(attack.tick < firstAttack && cd > 0)
+            {
+                firstAttack = attack.tick;
+            }
+            if(attack.player.equals(player))
+            {
+                if(cd > 0)
+                {
+                    ticksOnCD += cd;
+                }
+            }
+        }
+        log.info(room.name + " first tick: " + firstAttack + ", last tick: " + lastAttack + ", on cooldown: " + ticksOnCD + ", idle: " + ((lastAttack-firstAttack)-ticksOnCD));
+        return (lastAttack-firstAttack)-ticksOnCD;
+    }
+    /*
+
+                for(int i = attack.tick; i < attack.tick+playerAnimation.attackTicks; i++)
+            {
+                playerWasOnCD.put(attack.player, i);
+            }
+
+
+     */
+
     public ChartData()
     {
         this.hpMapping = new HashMap<>();
         this.npcMapping = new HashMap<>();
-        this.attacks = new HashMap<>();
+        this.attacks = ArrayListMultimap.create();
         this.thrallBoxes = new HashMap<>();
     }
 
@@ -37,7 +85,7 @@ public class ChartData
 
     public void addAttack(RaidRoom room, PlayerDidAttack attack)
     {
-        attacks.computeIfAbsent(room, k -> new ArrayList<>()).add(attack);
+        attacks.put(room, attack);
     }
 
     public void addThrallOutlineBox(RaidRoom room, String owner, int spawnTick, int id)
@@ -55,9 +103,9 @@ public class ChartData
         return npcMapping.getOrDefault(room, new HashMap<>());
     }
 
-    public List<PlayerDidAttack> getAttacks(RaidRoom room)
+    public Collection<PlayerDidAttack> getAttacks(RaidRoom room)
     {
-        return attacks.getOrDefault(room, new ArrayList<>());
+        return attacks.get(room);
     }
 
     public List<ThrallOutlineBox> getThralls(RaidRoom room)

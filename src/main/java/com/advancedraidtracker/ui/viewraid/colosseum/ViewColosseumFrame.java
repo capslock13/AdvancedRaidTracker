@@ -8,10 +8,13 @@ import com.advancedraidtracker.ui.BaseFrame;
 import com.advancedraidtracker.utility.Point;
 import com.advancedraidtracker.utility.RoomUtil;
 import com.advancedraidtracker.utility.UISwingUtility;
+import com.advancedraidtracker.utility.datautility.ChartData;
 import com.advancedraidtracker.utility.datautility.DataPoint;
+import com.advancedraidtracker.utility.datautility.DataReader;
 import com.advancedraidtracker.utility.datautility.datapoints.Raid;
 import com.advancedraidtracker.utility.datautility.datapoints.col.Colo;
 import lombok.extern.slf4j.Slf4j;
+import net.runelite.client.game.ItemManager;
 import net.runelite.client.util.ImageUtil;
 
 import javax.swing.*;
@@ -38,8 +41,10 @@ public class ViewColosseumFrame extends BaseFrame
     String soft;
     String dark;
     private final Colo colData;
-    public ViewColosseumFrame(Colo colData, AdvancedRaidTrackerConfig config)
+    private final ItemManager itemManager;
+    public ViewColosseumFrame(Colo colData, AdvancedRaidTrackerConfig config, ItemManager itemManager)
     {
+        this.itemManager = itemManager;
         Color c = config.fontColor();
         full = colorStr(c);
         soft = colorStr(c.darker());
@@ -121,8 +126,9 @@ public class ViewColosseumFrame extends BaseFrame
         base.add(getThemedLabel("<html>Prayer Used: " + blue+colData.get(DataPoint.PRAYER_USED, RaidRoom.getRoom("Wave " + wave))));
         base.add(getThemedLabel("<html>Damage Dealt: " + green+ colData.get(DataPoint.DAMAGE_DEALT, RaidRoom.getRoom("Wave " + wave))));
         base.add(getThemedLabel("<html>Damage Received: " + red +colData.get(DataPoint.DAMAGE_RECEIVED, RaidRoom.getRoom("Wave " + wave))));
-        base.add(getThemedLabel("Idle Ticks: "));
-        base.add(getThemedLabel("Reinforcement? No"));
+        ChartData chartData = DataReader.getChartData(colData.getFilepath(), itemManager);
+        base.add(getThemedLabel("Idle Ticks: " + chartData.getIdleTicks("Caps lock13", RaidRoom.getRoom("Wave " + wave))));
+        base.add(getThemedLabel("Skip Reinforce? No"));
         container.add(base);
 
         JLabel picLabel = new JLabel(new ImageIcon(colImage.getScaledInstance(128, 128, Image.SCALE_SMOOTH)));

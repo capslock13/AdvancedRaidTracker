@@ -436,7 +436,7 @@ public class Raids extends BaseFrame implements UpdateableWindow
         {
             if (table.getColumnName(i).equals("View"))
             {
-                table.getColumn(table.getColumnName(i)).setCellEditor(new ButtonEditorRoomData(getThemedCheckBox(), tableData, config));
+                table.getColumn(table.getColumnName(i)).setCellEditor(new ButtonEditorRoomData(getThemedCheckBox(), tableData, config, itemManager));
                 table.getColumn(table.getColumnName(i)).setCellRenderer(new ButtonRenderer(config));
             }
             else if(table.getColumnName(i).equals("Custom"))

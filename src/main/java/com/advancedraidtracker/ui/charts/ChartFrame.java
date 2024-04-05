@@ -2,6 +2,7 @@ package com.advancedraidtracker.ui.charts;
 
 import com.advancedraidtracker.*;
 import com.advancedraidtracker.constants.RaidRoom;
+import com.advancedraidtracker.constants.RaidType;
 import com.advancedraidtracker.ui.BaseFrame;
 import com.advancedraidtracker.utility.datautility.ChartData;
 import com.advancedraidtracker.utility.datautility.DataReader;
@@ -34,6 +35,11 @@ public class ChartFrame extends BaseFrame
     public ChartFrame(Raid roomData, AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
     {
         ChartData chartData = DataReader.getChartData(roomData.getFilepath(), itemManager);
+
+        for(RaidRoom room : RaidRoom.getRaidRoomsForRaidType(RaidType.TOB))
+        {
+            log.info(room.name() + " has " + chartData.getAttacks(room).size() + " attacks");
+        }
 
         JTabbedPane basepane = getThemedTabbedPane();
 
@@ -85,6 +91,10 @@ public class ChartFrame extends BaseFrame
             //chartPanel.addLines(parser.getLines()); //todo lines
 
             chartPanel.addMaidenCrabs(chartData.maidenCrabs);
+            if(room.equals(RaidRoom.VERZIK))
+            {
+                chartPanel.addDawnSpecs(chartData.dawnSpecs);
+            }
 
             chartPanel.redraw();
             basepane.addChangeListener(cl -> chartPanel.redraw());

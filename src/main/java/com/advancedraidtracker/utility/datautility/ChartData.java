@@ -2,6 +2,7 @@ package com.advancedraidtracker.utility.datautility;
 
 import com.advancedraidtracker.constants.RaidRoom;
 import com.advancedraidtracker.utility.weapons.AnimationDecider;
+import com.advancedraidtracker.utility.wrappers.DawnSpec;
 import com.advancedraidtracker.utility.wrappers.PlayerDidAttack;
 import com.advancedraidtracker.utility.wrappers.ThrallOutlineBox;
 import com.google.common.collect.ArrayListMultimap;
@@ -21,6 +22,7 @@ public class ChartData
 
     private final Map<RaidRoom, List<ThrallOutlineBox>> thrallBoxes;
     public final List<String> maidenCrabs = new ArrayList<>();
+    public List<DawnSpec> dawnSpecs = new ArrayList<>();
 
 
     public int getIdleTicks(String player, int scale)
@@ -152,6 +154,17 @@ public class ChartData
     {
         maidenCrabs.add(crab);
     }
+
+    public void addDawnSpec(DawnSpec dawnSpec)
+    {
+        dawnSpecs.add(dawnSpec);
+    }
+
+    public void addDawnSpecs(List<DawnSpec> dawnSpecs)
+    {
+        this.dawnSpecs = dawnSpecs;
+    }
+
 
     public static PlayerDidAttack getPlayerDidAttack(String[] subData, ItemManager itemManager)
     {

@@ -9,6 +9,7 @@ import com.advancedraidtracker.utility.datautility.datapoints.RoomParser;
 import com.advancedraidtracker.utility.datautility.datapoints.inf.Inf;
 import com.advancedraidtracker.utility.datautility.datapoints.toa.Toa;
 import com.advancedraidtracker.utility.datautility.datapoints.tob.Tob;
+import com.advancedraidtracker.utility.wrappers.DawnSpec;
 import com.advancedraidtracker.utility.wrappers.PlayerDidAttack;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.game.ItemManager;
@@ -122,6 +123,7 @@ public class DataReader //todo move any methods that read files to here. I belie
         {
             Scanner scanner = new Scanner(Files.newInputStream(path));
             RaidRoom currentRoom = RaidRoom.UNKNOWN;
+            List<DawnSpec> dawnSpecs = new ArrayList<>();
             while(scanner.hasNextLine())
             {
                 String[] line = scanner.nextLine().split(",");
@@ -158,9 +160,21 @@ public class DataReader //todo move any methods that read files to here. I belie
                     case "77": //verzik bounce
                         chartData.addAttack(RaidRoom.VERZIK, new PlayerDidAttack(itemManager, line[4], VERZIK_BOUNCE_ANIMATION, Integer.parseInt(line[5]), 1965, "-1", "-1", -1, -1, "-1", "-1"));
                         break;
-
+                    case "487":
+                        dawnSpecs.add(new DawnSpec(line[4], Integer.parseInt(line[5])));
+                        break;
+                    case "488":
+                        for(DawnSpec dawnSpec : dawnSpecs)
+                        {
+                            if(dawnSpec.tick == Integer.parseInt(line[5]))
+                            {
+                                dawnSpec.setDamage(Integer.parseInt(line[4]));
+                            }
+                        }
+                        break;
                 }
             }
+            chartData.addDawnSpecs(dawnSpecs);
         }
         catch (Exception ignore)
         {

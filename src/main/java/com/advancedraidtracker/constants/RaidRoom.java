@@ -162,6 +162,14 @@ public enum RaidRoom
     public static Map<String, RaidRoom> roomCache = new HashMap<>();
     public static RaidRoom getRoom(String name)
     {
+        if(name.contains("Verzik"))
+        {
+            return VERZIK;
+        }
+        if(name.contains("Wardens"))
+        {
+            return WARDENS;
+        }
         if(roomCache.containsKey(name))
         {
             return roomCache.get(name);

@@ -194,7 +194,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         this.dawnSpecs.add(dawnSpec);
     }
 
-    public void addDawnSpecs(ArrayList<DawnSpec> dawnSpecs)
+    public void addDawnSpecs(List<DawnSpec> dawnSpecs)
     {
         this.dawnSpecs.addAll(dawnSpecs);
         drawGraph();
@@ -807,7 +807,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             String damage = String.valueOf(dawnSpec.getDamage());
             if (dawnSpec.getDamage() != -1)
             {
-                int xOffset = getXOffset(dawnSpec.tick);
+                int xOffset = getXOffset(dawnSpec.tick-2);
                 int yOffset = getYOffset(dawnSpec.tick);
                 yOffset += (playerOffsets.size() + 3) * scale;
                 g.setColor(config.fontColor());

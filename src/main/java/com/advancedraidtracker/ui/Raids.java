@@ -1944,7 +1944,8 @@ public class Raids extends BaseFrame implements UpdateableWindow
                 {
                     if (!writing)
                         DataWriter.writeAliasFile(e.getDocument().getText(0, e.getDocument().getLength()).replaceAll("\n", System.lineSeparator()));
-                } catch (BadLocationException ignored)
+                }
+                catch (BadLocationException ignored)
                 {
                 }
             }

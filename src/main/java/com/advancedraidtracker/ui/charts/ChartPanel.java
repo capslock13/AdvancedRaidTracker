@@ -371,6 +371,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         if (endTick % ticksToShow == 0 || endTick == 1)
         {
             recalculateSize();
+            sendToBottom();
         } else
         {
             drawGraph();

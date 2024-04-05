@@ -931,9 +931,12 @@ public class AdvancedRaidTrackerPlugin extends Plugin
             List<Player> potentialPlayers = new ArrayList<>();
             for(Player player : client.getPlayers())
             {
-                if(player.getInteracting().equals(npc) && player.getAnimation() == 1979 || player.getAnimation() == 1978 || player.getAnimation() == BLOWPIPE_ANIMATION || player.getAnimation() == BLOWPIPE_ANIMATION_OR)
+                if(player.getInteracting() != null)
                 {
-                    potentialPlayers.add(player);
+                    if (player.getInteracting().equals(npc) && player.getAnimation() == 1979 || player.getAnimation() == 1978 || player.getAnimation() == BLOWPIPE_ANIMATION || player.getAnimation() == BLOWPIPE_ANIMATION_OR)
+                    {
+                        potentialPlayers.add(player);
+                    }
                 }
             }
             if(potentialPlayers.size() == 1)
@@ -1024,7 +1027,7 @@ public class AdvancedRaidTrackerPlugin extends Plugin
         {
             wasInTheatre = true;
             currentRoom.updateGameTick(event);
-
+            log.info("Current room: " + currentRoom.getName() + " is active? " + currentRoom.isActive());
             if (currentRoom.isActive())
             {
                 liveFrame.incrementTick(currentRoom.getName());

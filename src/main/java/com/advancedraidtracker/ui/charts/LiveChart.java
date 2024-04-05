@@ -278,25 +278,6 @@ public class LiveChart extends BaseFrame
     public void incrementTick(String room)
     {
         getPanel(room).incrementTick();
-        if (getPanel(room).endTick % 50 == 0) //todo change from 50
-        {
-            for (ChartPanel panel : tobPanels.values())
-            {
-                panel.sendToBottom();
-            }
-            for (ChartPanel panel : toaPanels.values())
-            {
-                panel.sendToBottom();
-            }
-            for (ChartPanel panel : colPanels.values())
-            {
-                panel.sendToBottom();
-            }
-            for(ChartPanel panel : infPanels.values())
-            {
-                panel.sendToBottom();
-            }
-        }
     }
 
     public void addNPC(String room, int index, String name)

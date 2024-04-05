@@ -181,6 +181,10 @@ public class MaidenHandler extends TOBRoomHandler
             {
                 Player player = (Player) event.getActor();
                 Actor target = player.getInteracting();
+                if(target == null)
+                {
+                    return;
+                }
                 int distance = target.getWorldArea().distanceTo(player.getWorldLocation());
                 clog.addLine(MAIDEN_CHIN_THROWN, player.getName(), String.valueOf(distance));
                 if (distance < 4 || distance > 6)

@@ -57,7 +57,7 @@ public class ChartData
             }
             idleTicks = (lastAttack-firstAttack)-ticksOnCD;
             log.info(room.name + " first tick: " + firstAttack + ", last tick: " + lastAttack + ", on cooldown: " + ticksOnCD + ", idle: " + ((lastAttack - firstAttack) - ticksOnCD));
-            return (lastAttack - firstAttack) - ticksOnCD;
+            return idleTicks;
         }
         else
         {

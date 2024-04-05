@@ -179,6 +179,7 @@ public class AdvancedRaidTrackerPlugin extends Plugin
     private ConfigManager configManager;
 
     Map<Player, Integer> activelyPiping;
+    List<Player> wasPiping;
     private List<NPC> wasBarraged = new ArrayList<>();
     private List<WorldPoint> chinSpawned = new ArrayList<>();
 
@@ -228,6 +229,7 @@ public class AdvancedRaidTrackerPlugin extends Plugin
         timersPanelPrimary = injector.getInstance(RaidTrackerSidePanel.class);
         partyIntact = false;
         activelyPiping = new LinkedHashMap<>();
+        wasPiping = new ArrayList<>();
         liveFrame = new LiveChart(config, itemManager, clientThread, configManager);
         playersTextChanged = new ArrayList<>();
         clog = new DataWriter(config);
@@ -332,7 +334,6 @@ public class AdvancedRaidTrackerPlugin extends Plugin
         {
             if(client.isInInstancedRegion() && inRegion(client, 9043))
             {
-                log.info("Entered inferno");
                 currentRoom = infernoHandler;
                 infernoHandler.reset();
                 infernoHandler.start();
@@ -363,7 +364,6 @@ public class AdvancedRaidTrackerPlugin extends Plugin
                 {
                     lastSplits = infernoHandler.getStatString() + lastSplits + "Duration (Success): " + RoomUtil.time(infernoHandler.getDuration()) + " (+" + RoomUtil.time(client.getTickCount()-infernoHandler.getLastWaveStartTime()) + ")";
                 }
-                log.info("Exited inferno");
                 //clog.addLine(LEFT_TOB, String.valueOf(client.getTickCount() - currentRoom.roomStartTick), currentRoom.getName());
                 currentRoom = lobbyTOB;
                 infernoHandler.reset();
@@ -926,70 +926,65 @@ public class AdvancedRaidTrackerPlugin extends Plugin
 
     private void handleBarraged()
     {
-        int barrageCount = wasBarraged.size();
-
-
+        for(NPC npc : wasBarraged)
+        {
+            List<Player> potentialPlayers = new ArrayList<>();
+            for(Player player : client.getPlayers())
+            {
+                if(player.getInteracting().equals(npc) && player.getAnimation() == 1979 || player.getAnimation() == 1978 || player.getAnimation() == BLOWPIPE_ANIMATION || player.getAnimation() == BLOWPIPE_ANIMATION_OR)
+                {
+                    potentialPlayers.add(player);
+                }
+            }
+            if(potentialPlayers.size() == 1)
+            {
+                if(potentialPlayers.get(0).getAnimation() == BLOWPIPE_ANIMATION || potentialPlayers.get(0).getAnimation() == BLOWPIPE_ANIMATION_OR)
+                {
+                    generatePlayerAttackInfo(potentialPlayers.get(0), 1979);
+                }
+            }
+        }
         wasBarraged.clear();
     }
 
     private void handleChinSpawns()
     {
-        int chinCount = chinSpawned.size();
-        List<String> excludedPlayers = new ArrayList<>();
         for(WorldPoint wp : chinSpawned)
         {
-            for(Player p : client.getPlayers())
+            List<PlayerCopy> potentialPlayers = new ArrayList<>();
+            for(PlayerCopy player : lastTickPlayer.values())
             {
-                if(!excludedPlayers.contains(p.getName()))
+                if(player.worldPoint.distanceTo(wp) == 0)
                 {
-                    if (p.getWorldLocation().distanceTo(wp) == 0)
+                    potentialPlayers.add(player);
+                }
+            }
+            if(potentialPlayers.size() == 1)
+            {
+                for(Player p : client.getPlayers())
+                {
+                    if(Objects.equals(p.getName(), potentialPlayers.get(0).name))
                     {
-                        if (p.getAnimation() == CHINCHOMPA_THROWN_ANIMATION)
+                        if(p.getAnimation() != BLOWPIPE_ANIMATION_OR && p.getAnimation() != BLOWPIPE_ANIMATION)
                         {
-                            excludedPlayers.add(p.getName());
-                            break;
-                        }
-                        else if (p.getAnimation() == BLOWPIPE_ANIMATION || p.getAnimation() == BLOWPIPE_ANIMATION_OR)
-                        {
-                            Actor interacted = p.getInteracting();
-                            excludedPlayers.add(p.getName());
-                            StringBuilder animations = new StringBuilder();
-                            for (ActorSpotAnim anim : p.getSpotAnims())
-                            {
-                                animations.append(anim.getId());
-                                animations.append(":");
-                            }
-                            int interactedIndex = -1;
-                            int interactedID = -1;
-                            String targetName = "";
-                            if(interacted != null && interacted.getName() != null)
-                            {
-                                targetName = interacted.getName();
-                            }
-                            if (interacted instanceof NPC)
-                            {
-                                NPC npc = (NPC) interacted;
-                                interactedID = npc.getId();
-                                interactedIndex = npc.getIndex();
-                            }
-
+                            PlayerCopy previous = potentialPlayers.get(0);
                             clog.addLine(PLAYER_ATTACK,
-                                    p.getName() + ":" + (client.getTickCount() - currentRoom.roomStartTick),
-                                    p.getAnimation() + ":" + PlayerWornItems.getStringFromComposition(p.getPlayerComposition()),
-                                    animations.toString(),
-                                    p.getPlayerComposition().getEquipmentId(KitType.WEAPON) + ":" + interactedIndex + ":" + interactedID,
-                                    "-1:" + targetName, currentRoom.getName());
+                                    previous.name + ":" + (client.getTickCount() - currentRoom.roomStartTick - 1),
+                                    7618 + ":" + previous.wornItems,
+                                    "",
+                                    previous.weapon + ":" + previous.interactingIndex + ":" + previous.interactingID,
+                                    "-1:" + previous.interactingName, currentRoom.getName());
                             liveFrame.addAttack(new PlayerDidAttack(itemManager,
-                                    String.valueOf(p.getName()),
-                                    String.valueOf(p.getAnimation()),
-                                    0,
-                                    p.getPlayerComposition().getEquipmentId(KitType.WEAPON),
+                                    previous.name,
+                                    String.valueOf(7618),
+                                    -1,
+                                    previous.weapon,
                                     "-1",
-                                    animations.toString(),
-                                    interactedIndex,
-                                    interactedID,
-                                    targetName,
-                                    PlayerWornItems.getStringFromComposition(p.getPlayerComposition())
+                                    "",
+                                    previous.interactingIndex,
+                                    previous.interactingID,
+                                    previous.interactingName,
+                                    previous.wornItems
                             ), currentRoom.getName());
                         }
                     }
@@ -1015,6 +1010,7 @@ public class AdvancedRaidTrackerPlugin extends Plugin
         }
         handleBarraged();
         handleChinSpawns();
+        wasPiping.clear();
         checkAnimationsThatChanged();
         checkOverheadTextsThatChanged();
         checkActivelyPiping();
@@ -1254,7 +1250,7 @@ public class AdvancedRaidTrackerPlugin extends Plugin
             }
             lastTickPlayer.put(p.getName(), new PlayerCopy(
                     p.getName(), interactedIndex, interactedID, targetName, p.getAnimation(), PlayerWornItems.getStringFromComposition(p.getPlayerComposition()
-            ), p.getPlayerComposition().getEquipmentId(KitType.WEAPON)));
+            ), p.getPlayerComposition().getEquipmentId(KitType.WEAPON), p.getWorldLocation()));
         }
     }
 
@@ -1357,14 +1353,14 @@ public class AdvancedRaidTrackerPlugin extends Plugin
                         int interactedIndex = -1;
                         int interactedID = -1;
                         Actor interacted = p.getInteracting();
-                        generatePlayerAttackInfo(p, animations.toString(), interacted);
+                        generatePlayerAttackInfo(p, animations.toString(), interacted, -1);
                     }
                 } else if (p.getAnimation() != -1)
                 {
                     int interactedIndex = -1;
                     int interactedID = -1;
                     Actor interacted = p.getInteracting();
-                    generatePlayerAttackInfo(p, animations.toString(), interacted);
+                    generatePlayerAttackInfo(p, animations.toString(), interacted, -1);
                     if (p.getAnimation() == BLOWPIPE_ANIMATION || p.getAnimation() == BLOWPIPE_ANIMATION_OR)
                     {
                         activelyPiping.put(p, client.getTickCount());
@@ -1378,7 +1374,7 @@ public class AdvancedRaidTrackerPlugin extends Plugin
                         lastTickPlayer.put(p.getName(), new PlayerCopy(
                                 p.getName(), interactedIndex, interactedID, targetName,
                                 p.getAnimation(), PlayerWornItems.getStringFromComposition(p.getPlayerComposition()
-                        ), p.getPlayerComposition().getEquipmentId(KitType.WEAPON)));
+                        ), p.getPlayerComposition().getEquipmentId(KitType.WEAPON), p.getWorldLocation()));
                     } else
                     {
                         activelyPiping.remove(p);
@@ -1387,7 +1383,6 @@ public class AdvancedRaidTrackerPlugin extends Plugin
                 } else
                 {
                     activelyPiping.remove(p);
-                    lastTickPlayer.remove(p.getName());
                 }
 
             }
@@ -1468,7 +1463,7 @@ public class AdvancedRaidTrackerPlugin extends Plugin
         }
         else if(event.getActor() instanceof NPC)
         {
-            if(event.getActor().hasSpotAnim(369) || event.getActor().hasSpotAnim(377) || event.getActor().hasSpotAnim(85))
+            if(event.getActor().hasSpotAnim(369) || event.getActor().hasSpotAnim(377) || event.getActor().hasSpotAnim(85) || event.getActor().hasSpotAnim(367) || event.getActor().hasSpotAnim(375))
             {
                 wasBarraged.add((NPC)event.getActor());
             }
@@ -1529,7 +1524,7 @@ public class AdvancedRaidTrackerPlugin extends Plugin
     {
         if(event.getProjectile().getId() == 1272)
         {
-            if(event.getProjectile().getEndCycle()-event.getProjectile().getStartCycle() == event.getProjectile().getRemainingCycles())
+            if(event.getProjectile().getStartCycle() == client.getGameCycle())
             {
                 chinSpawned.add(WorldPoint.fromLocal(client, new LocalPoint(event.getProjectile().getX1(), event.getProjectile().getY1())));
             }
@@ -1626,6 +1621,10 @@ public class AdvancedRaidTrackerPlugin extends Plugin
             Player p = (Player) event.getActor();
             if (event.getActor().getAnimation() == 6294 || event.getActor().getAnimation() == 722 || event.getActor().getAnimation() == 6299 || event.getActor().getAnimation() == -1)
             {
+                if(activelyPiping.containsKey(p))
+                {
+                    wasPiping.add(p);
+                }
                 checkAnimation(p);
             } else
             {
@@ -1661,6 +1660,17 @@ public class AdvancedRaidTrackerPlugin extends Plugin
         }
     }
 
+    private void generatePlayerAttackInfo(Player p, int overriddenAnimation)
+    {
+        StringBuilder animations = new StringBuilder();
+        for (ActorSpotAnim anim : p.getSpotAnims())
+        {
+            animations.append(anim.getId());
+            animations.append(":");
+        }
+        generatePlayerAttackInfo(p, animations.toString(), p.getInteracting(), overriddenAnimation);
+    }
+
     /**
      * Generates a PlayerDidAttack entry into the log.
      *
@@ -1668,7 +1678,7 @@ public class AdvancedRaidTrackerPlugin extends Plugin
      * @param animations animations happening
      * @param interacted Actor (Player or NPC) that was interacted with.
      */
-    private void generatePlayerAttackInfo(Player p, String animations, Actor interacted)
+    private void generatePlayerAttackInfo(Player p, String animations, Actor interacted, int overriddenAnimation)
     {
         int interactedIndex = -1;
         int interactedID = -1;
@@ -1684,15 +1694,16 @@ public class AdvancedRaidTrackerPlugin extends Plugin
             interactedIndex = npc.getIndex();
         }
 
+        int animationToUse = (overriddenAnimation == -1) ? p.getAnimation() : overriddenAnimation;
         clog.addLine(PLAYER_ATTACK,
                 p.getName() + ":" + (client.getTickCount() - currentRoom.roomStartTick),
-                p.getAnimation() + ":" + PlayerWornItems.getStringFromComposition(p.getPlayerComposition()),
+                animationToUse + ":" + PlayerWornItems.getStringFromComposition(p.getPlayerComposition()),
                 animations,
                 p.getPlayerComposition().getEquipmentId(KitType.WEAPON) + ":" + interactedIndex + ":" + interactedID,
                 "-1:" + targetName, currentRoom.getName());
         liveFrame.addAttack(new PlayerDidAttack(itemManager,
                 String.valueOf(p.getName()),
-                String.valueOf(p.getAnimation()),
+                String.valueOf(animationToUse),
                 0,
                 p.getPlayerComposition().getEquipmentId(KitType.WEAPON),
                 "-1",

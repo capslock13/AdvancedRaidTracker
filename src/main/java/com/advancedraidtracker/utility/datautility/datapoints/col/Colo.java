@@ -57,10 +57,6 @@ public class Colo extends Raid
     @Override
     protected boolean parseLogEntry(LogEntry entry)
     {
-        if(entry.logEntry.equals(LogID.ROOM_PRAYER_DRAINED))
-        {
-            log.info("hmm");
-        }
         for(ParseInstruction instruction : entry.logEntry.parseInstructions)
         {
             if(instruction.type == ParseType.MANUAL_PARSE)

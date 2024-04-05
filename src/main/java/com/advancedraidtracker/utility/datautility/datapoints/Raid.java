@@ -359,10 +359,6 @@ public abstract class Raid
                                 break;
                             }
                         }
-                        if(this instanceof Colo && entry.logEntry.equals(LogID.ROOM_PRAYER_DRAINED))
-                        {
-                            log.info("Prayer: " + String.join(",", entry.lines));
-                        }
                         data.incrementBy(instruction.dataPoint1, entry.getFirstInt(), entry.getValue("Player"), RaidRoom.getRoom(currentRoom));
                         break;
                     case INCREMENT:

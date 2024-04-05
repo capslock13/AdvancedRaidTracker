@@ -156,7 +156,7 @@ public class LiveChart extends BaseFrame
                     return;
                 }
                 getPanel(activePanel).setActive(true);
-                getPanel(activePanel).redraw();
+                getPanel(activePanel).redraw(); //todo why doesnt this redraw?
                 pack();
             }
 

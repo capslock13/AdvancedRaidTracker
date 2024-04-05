@@ -30,6 +30,7 @@ import net.runelite.api.ItemID;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.game.ItemManager;
+import net.runelite.client.game.SpriteManager;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -115,17 +116,19 @@ public class Raids extends BaseFrame implements UpdateableWindow
     private final AdvancedRaidTrackerConfig config;
     private final ItemManager itemManager;
     private final ClientThread clientThread;
+    private final SpriteManager spriteManager;
 
     public String[] rooms = {"Maiden", "Bloat", "Nylocas", "Sotetseg", "Xarpus", "Verzik", "Challenge"};
     private final ConfigManager configManager;
 
     private final Set<String> shouldNotBeSortedByTicks = new HashSet<>(Arrays.asList("", "Scale", "Raid", "Status", "Players", "Spectate", "Date"));
 
-    public Raids(AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
+    public Raids(AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager, SpriteManager spriteManager)
     {
         this.clientThread = clientThread;
         this.itemManager = itemManager;
         this.configManager = configManager;
+        this.spriteManager = spriteManager;
         columnHeaders = new ArrayList<>();
         for (String s : columnHeaderNames)
         {
@@ -1719,7 +1722,7 @@ public class Raids extends BaseFrame implements UpdateableWindow
             }
             if (raidData != null)
             {
-                ChartFrame roomCharts = new ChartFrame(raidData, config, itemManager, clientThread, configManager);
+                ChartFrame roomCharts = new ChartFrame(raidData, config, itemManager, clientThread, configManager, spriteManager);
                 roomCharts.open();
             }
         });

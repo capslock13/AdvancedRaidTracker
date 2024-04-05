@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.game.ItemManager;
+import net.runelite.client.game.SpriteManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -29,6 +30,7 @@ public class LiveChart extends BaseFrame
 
     private final AdvancedRaidTrackerConfig config;
     private final ItemManager itemManager;
+    private final SpriteManager spriteManager;
     private final ClientThread clientThread;
     private final ConfigManager configManager;
     String[] tob = {"Maiden", "Bloat", "Nylocas", "Sotetseg", "Xarpus", "Verzik"};
@@ -43,11 +45,12 @@ public class LiveChart extends BaseFrame
     RaidType activeRaid = RaidType.ALL;
     Map<String, ChartPanel> currentPanels;
 
-    public LiveChart(AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
+    public LiveChart(AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager, SpriteManager spriteManager)
     {
         this.configManager = configManager;
         this.clientThread = clientThread;
         this.config = config;
+        this.spriteManager = spriteManager;
         this.itemManager = itemManager;
 
         toaPanels = new LinkedHashMap<>();
@@ -58,25 +61,25 @@ public class LiveChart extends BaseFrame
 
         for (String name : tob)
         {
-            ChartPanel chartPanel = new ChartPanel(name, true, config, clientThread, configManager, itemManager);
+            ChartPanel chartPanel = new ChartPanel(name, true, config, clientThread, configManager, itemManager, spriteManager);
             tobPanels.put(name, chartPanel);
         }
 
         for (String name : toa)
         {
-            ChartPanel chartPanel = new ChartPanel(name, true, config, clientThread, configManager, itemManager);
+            ChartPanel chartPanel = new ChartPanel(name, true, config, clientThread, configManager, itemManager, spriteManager);
             toaPanels.put(name, chartPanel);
         }
 
         for (String name : col)
         {
-            ChartPanel chartPanel = new ChartPanel(name, true, config, clientThread, configManager, itemManager);
+            ChartPanel chartPanel = new ChartPanel(name, true, config, clientThread, configManager, itemManager, spriteManager);
             colPanels.put(name, chartPanel);
         }
 
         for(String name : inf)
         {
-            ChartPanel chartPanel = new ChartPanel(name, true, config, clientThread, configManager, itemManager);
+            ChartPanel chartPanel = new ChartPanel(name, true, config, clientThread, configManager, itemManager, spriteManager);
             infPanels.put(name, chartPanel);
         }
 
@@ -271,7 +274,7 @@ public class LiveChart extends BaseFrame
         }
         else
         {
-            return new ChartPanel("", true, config, clientThread, configManager, itemManager);
+            return new ChartPanel("", true, config, clientThread, configManager, itemManager, spriteManager);
         }
     }
 

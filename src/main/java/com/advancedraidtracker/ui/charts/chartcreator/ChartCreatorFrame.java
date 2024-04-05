@@ -7,6 +7,7 @@ import com.advancedraidtracker.utility.weapons.PlayerAnimation;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.game.ItemManager;
+import net.runelite.client.game.SpriteManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,12 +19,12 @@ import static com.advancedraidtracker.utility.UISwingUtility.getThemedPanel;
 public class ChartCreatorFrame extends BaseFrame
 {
     private final ChartPanel chart;
-    public ChartCreatorFrame(AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
+    public ChartCreatorFrame(AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager, SpriteManager spriteManager)
     {
         setTitle("Chart Creator");
 
 
-        chart = new ChartPanel("Creator", false, config, clientThread, configManager, itemManager);
+        chart = new ChartPanel("Creator", false, config, clientThread, configManager, itemManager, spriteManager);
         chart.setPreferredSize(new Dimension(0, 0));
         setPlayerCount(5);
         setEndTick(50);

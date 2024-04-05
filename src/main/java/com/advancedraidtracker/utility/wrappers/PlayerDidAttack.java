@@ -2,11 +2,15 @@ package com.advancedraidtracker.utility.wrappers;
 
 import com.advancedraidtracker.utility.PlayerWornItems;
 import com.advancedraidtracker.utility.datautility.datapoints.LogEntry;
+import com.advancedraidtracker.utility.weapons.AnimationDecider;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.ItemID;
+import net.runelite.api.SpriteID;
 import net.runelite.client.game.ItemManager;
+import net.runelite.client.game.SpriteManager;
 import net.runelite.client.util.AsyncBufferedImage;
 
+import java.awt.image.BufferedImage;
 import java.util.*;
 
 @Slf4j
@@ -25,7 +29,7 @@ public class PlayerDidAttack
     public String[] wornItemNames = {};
 
     public ItemManager itemManager;
-    public AsyncBufferedImage img = null;
+    public BufferedImage img = null;
     private boolean setUnkitted = false;
 
     private static final Set<Integer> scythe = new HashSet<>(Arrays.asList(ItemID.HOLY_SCYTHE_OF_VITUR, ItemID.SANGUINE_SCYTHE_OF_VITUR));
@@ -132,18 +136,48 @@ public class PlayerDidAttack
     }
 
 
-    public void setIcons()
+    /*public void setIcons()
     {
         setIcons(itemManager);
+    }*/
+
+    private static final Map<Integer, Integer> spellIconMap = Map.ofEntries(
+            Map.entry(-1, SpriteID.UNKNOWN_INFORMATION_I),
+            Map.entry(6299, SpriteID.SPELL_SPELLBOOK_SWAP),
+            Map.entry(1000000, SpriteID.EMOTE_WAVE),
+            Map.entry(4411, SpriteID.SPELL_VENGEANCE_OTHER),
+            Map.entry(8316, SpriteID.SPELL_VENGEANCE),
+            Map.entry(6294, SpriteID.SPELL_HUMIDIFY),
+            Map.entry(722, SpriteID.SPELL_MAGIC_IMBUE),
+            Map.entry(836, SpriteID.PLAYER_KILLER_SKULL),
+            Map.entry(10629, SpriteID.PLAYER_KILLER_SKULL),
+            Map.entry(8070, SpriteID.SPELL_LUMBRIDGE_HOME_TELEPORT),
+            Map.entry(1816, SpriteID.SPELL_LUMBRIDGE_HOME_TELEPORT),
+            Map.entry(8970, SpriteID.SPELL_DEATH_CHARGE),
+            Map.entry(4409, SpriteID.SPELL_HEAL_GROUP),
+            Map.entry(8973, 2979), //resurrect greater ghost; not in the API
+            Map.entry(827, SpriteID.TAB_INVENTORY),
+            Map.entry(832, SpriteID.MAP_ICON_WATER_SOURCE));
+
+    private int getSpellIcon(int animation)
+    {
+        return spellIconMap.getOrDefault(animation, 0);
     }
 
-    public void setIcons(ItemManager itemManager)
+    public void setIcons(ItemManager itemManager, SpriteManager spriteManager)
     {
-        int weaponID = this.weapon;
-        if (setUnkitted)
+        if(AnimationDecider.getWeapon(animation, spotAnims, projectile, weapon).attackTicks > 0)
         {
-            weaponID = getReplacement(weaponID);
+            int weaponID = this.weapon;
+            if (setUnkitted)
+            {
+                weaponID = getReplacement(weaponID);
+            }
+            img = itemManager.getImage(weaponID, 1, false);
         }
-        img = itemManager.getImage(weaponID, 1, false);
+        else
+        {
+            img = spriteManager.getSprite(getSpellIcon(Integer.parseInt(animation)), 0);
+        }
     }
 }

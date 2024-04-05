@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.game.ItemManager;
+import net.runelite.client.game.SpriteManager;
 
 import javax.swing.*;
 import javax.swing.Timer;
@@ -32,7 +33,7 @@ public class ChartFrame extends BaseFrame
     private Set<String> TOBRooms = new LinkedHashSet<>(Arrays.asList("Maiden", "Bloat", "Nylocas", "Sotetseg", "Xarpus", "Verzik P1", "Verzik P2", "Verzik P3"));
     private Set<String> TOARooms = new LinkedHashSet<>(Arrays.asList("Apmeken", "Baba", "Scabaras", "Kephri", "Het", "Akkha", "Crondis", "Zebak", "Wardens P1", "Wardens P2", "Wardens P3"));
     private Set<String> COLRooms = new LinkedHashSet<>(Arrays.asList("Wave 1", "Wave 2", "Wave 3", "Wave 4", "Wave 5", "Wave 6", "Wave 7", "Wave 8", "Wave 9", "Wave 10", "Wave 11", "Wave 12"));
-    public ChartFrame(Raid roomData, AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
+    public ChartFrame(Raid roomData, AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager, SpriteManager spriteManager)
     {
         ChartData chartData = DataReader.getChartData(roomData.getFilepath(), itemManager);
 
@@ -60,7 +61,7 @@ public class ChartFrame extends BaseFrame
             tab.setLayout(new GridLayout(1, 2));
             JPanel chart = getThemedPanel();
             chart.setLayout(new BoxLayout(chart, BoxLayout.Y_AXIS));
-            ChartPanel chartPanel = new ChartPanel(bossName, false, config, clientThread, configManager, itemManager);
+            ChartPanel chartPanel = new ChartPanel(bossName, false, config, clientThread, configManager, itemManager, spriteManager);
             chartPanel.setNPCMappings(chartData.getNPCMapping(room));
             chartPanel.addAttacks(chartData.getAttacks(room));
             chartPanel.setRoomHP(chartData.getHPMapping(room));

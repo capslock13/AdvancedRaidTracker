@@ -23,10 +23,10 @@ public class GraphRightClickContextMenu extends JPopupMenu
         item = getThemedMenuItem("Show Represented Raids In New Window");
         item.addActionListener(al ->
         {
-            Raids raidFrame = new Raids(config, itemManager, clientThread, configManager);
+            /*Raids raidFrame = new Raids(config, itemManager, clientThread, configManager);
             raidFrame.createFrame(raids);
             raidFrame.repaint();
-            raidFrame.open();
+            raidFrame.open();*/ //todo reimplement
         });
         add(item);
     }

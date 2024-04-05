@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.game.ItemManager;
+import net.runelite.client.game.SpriteManager;
 import net.runelite.client.ui.FontManager;
 
 import javax.swing.*;
@@ -100,6 +101,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     }
 
     private ItemManager itemManager;
+    private SpriteManager spriteManager;
 
     public void enableWrap()
     {
@@ -297,7 +299,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             }
             clientThread.invoke(() ->
             {
-                attack.setIcons(itemManager);
+                attack.setIcons(itemManager, spriteManager);
             });
             clientThread.invoke(attack::setWornNames);
         }
@@ -467,9 +469,10 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
     private final ClientThread clientThread;
 
-    public ChartPanel(String room, boolean isLive, AdvancedRaidTrackerConfig config, ClientThread clientThread, ConfigManager configManager, ItemManager itemManager)
+    public ChartPanel(String room, boolean isLive, AdvancedRaidTrackerConfig config, ClientThread clientThread, ConfigManager configManager, ItemManager itemManager, SpriteManager spriteManager)
     {
         this.itemManager = itemManager;
+        this.spriteManager = spriteManager;
         this.configManager = configManager;
         this.config = config;
         this.clientThread = clientThread;

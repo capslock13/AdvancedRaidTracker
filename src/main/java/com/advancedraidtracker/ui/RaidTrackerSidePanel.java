@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.game.ItemManager;
+import net.runelite.client.game.SpriteManager;
 import net.runelite.client.ui.PluginPanel;
 
 import javax.swing.*;
@@ -49,11 +50,12 @@ public class RaidTrackerSidePanel extends PluginPanel
     private static ItemManager itemManager;
     private final ConfigManager configManager;
     private final ClientThread clientThread;
+    private final SpriteManager spriteManager;
 
     private final JLabel pleaseWait;
 
     @Inject
-    RaidTrackerSidePanel(AdvancedRaidTrackerPlugin plugin, AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
+    RaidTrackerSidePanel(AdvancedRaidTrackerPlugin plugin, AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager, SpriteManager spriteManager)
     {
         UISwingUtility.setConfig(config);
         this.getParent().setBackground(config.primaryDark());
@@ -62,6 +64,7 @@ public class RaidTrackerSidePanel extends PluginPanel
         setOpaque(true);
         this.clientThread = clientThread;
         this.configManager = configManager;
+        this.spriteManager = spriteManager;
         pleaseWait = getThemedLabel("Parsing Files...", SwingConstants.CENTER);
         add(pleaseWait);
         new Thread(() ->
@@ -70,7 +73,7 @@ public class RaidTrackerSidePanel extends PluginPanel
             this.plugin = plugin;
             RaidTrackerSidePanel.itemManager = itemManager;
             raidsData = getAllRaids();
-            raids = new Raids(config, itemManager, clientThread, configManager);
+            raids = new Raids(config, itemManager, clientThread, configManager, spriteManager);
             removeAll();
             buildComponents();
             updateUI();
@@ -93,7 +96,7 @@ public class RaidTrackerSidePanel extends PluginPanel
                 al ->
                         new Thread(() ->
                         {
-                            raids = new Raids(config, itemManager, plugin.clientThread, configManager);
+                            raids = new Raids(config, itemManager, plugin.clientThread, configManager, spriteManager);
                             raids.createFrame(raidsData);
                             raids.repaint();
                             raids.open();
@@ -122,7 +125,7 @@ public class RaidTrackerSidePanel extends PluginPanel
         tableRaidsButton.addActionListener(
                 al ->
                 {
-                    raids = new Raids(config, itemManager, plugin.clientThread, configManager);
+                    raids = new Raids(config, itemManager, plugin.clientThread, configManager, spriteManager);
                     raids.createFrame(getTableData());
                     raids.repaint();
                     raids.open();
@@ -136,7 +139,7 @@ public class RaidTrackerSidePanel extends PluginPanel
         JButton chartCreatorButton = getThemedButton("Create A Chart");
         chartCreatorButton.addActionListener(al ->
         {
-            ChartCreatorFrame chartCreator = new ChartCreatorFrame(config, itemManager, clientThread, configManager);
+            ChartCreatorFrame chartCreator = new ChartCreatorFrame(config, itemManager, clientThread, configManager, spriteManager);
             chartCreator.open();
         });
 

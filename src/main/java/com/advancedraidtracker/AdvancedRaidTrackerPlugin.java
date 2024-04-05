@@ -31,6 +31,7 @@ import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.events.PartyChanged;
 import net.runelite.client.game.ItemManager;
+import net.runelite.client.game.SpriteManager;
 import net.runelite.client.party.PartyMember;
 import net.runelite.client.party.PartyService;
 import net.runelite.client.party.WSClient;
@@ -178,6 +179,9 @@ public class AdvancedRaidTrackerPlugin extends Plugin
     @Inject
     private ConfigManager configManager;
 
+    @Inject
+    private SpriteManager spriteManager;
+
     Map<Player, Integer> activelyPiping;
     List<Player> wasPiping;
     private List<NPC> wasBarraged = new ArrayList<>();
@@ -230,7 +234,7 @@ public class AdvancedRaidTrackerPlugin extends Plugin
         partyIntact = false;
         activelyPiping = new LinkedHashMap<>();
         wasPiping = new ArrayList<>();
-        liveFrame = new LiveChart(config, itemManager, clientThread, configManager);
+        liveFrame = new LiveChart(config, itemManager, clientThread, configManager, spriteManager);
         playersTextChanged = new ArrayList<>();
         clog = new DataWriter(config);
 

@@ -46,7 +46,7 @@ public class VerzikParser extends RoomParser
                 boolean wasNextTick = false;
                 for (Integer j : data.getList(DataPoint.VERZIK_REDS_SETS))
                 {
-                    if (i == j)
+                    if (i == j) //current tick is red proc, so we set the next check to be after shield ends
                     {
                         lastreset = i + 11;
                     } else if (i == (j - 5) || i == (j - 1)) //was auto or 2 autos before reds
@@ -57,10 +57,9 @@ public class VerzikParser extends RoomParser
                         }
                     }
                 }
-                if ((i - lastreset) % 4 == 0 && i >= lastreset && !wasNextTick)
+                if ((i - lastreset) % 4 == 0 && i >= lastreset && !wasNextTick) //add auto every 4t if not during shield and not before shield if not first auto
                 {
                     autos.add(i);
-                    log.info("adding p2 auto on tick: " + i);
                 }
             }
         }

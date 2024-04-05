@@ -1434,6 +1434,8 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         {
             this.attackers.add(name);
         }
+        playerOffsets.clear();
+        recalculateSize();
     }
 
     public void getTickHovered(int x, int y)

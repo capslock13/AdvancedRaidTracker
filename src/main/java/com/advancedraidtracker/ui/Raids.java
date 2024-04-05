@@ -617,10 +617,9 @@ public class Raids extends BaseFrame implements UpdateableWindow
                 return (isTime(dataPointName) ? RoomUtil.time(valueToDisplay) : valueToDisplay);
         }
         String valueToDisplay = "(?)";
-        String dataPointName = "";
         try
         {
-            valueToDisplay = RoomUtil.value(raid.get(dataPointName));
+            valueToDisplay = RoomUtil.value(raid.get(column));
         } catch (Exception ignored)
         {
 
@@ -1995,9 +1994,7 @@ public class Raids extends BaseFrame implements UpdateableWindow
 
     private void getUpdatedPopupMenu(String newItem)
     {
-        JCheckBoxMenuItem item = new JCheckBoxMenuItem(newItem);
-        item.setOpaque(true);
-        item.setBackground(Color.BLACK);
+        JCheckBoxMenuItem item = getThemedCheckBoxMenuItem(newItem);
         item.setState(true);
         item.addActionListener(al ->
                 updateTable());
@@ -2018,7 +2015,7 @@ public class Raids extends BaseFrame implements UpdateableWindow
 
     private JCheckBoxMenuItem getCheckBoxMenuItem(String name, String state)
     {
-        JCheckBoxMenuItem item = new JCheckBoxMenuItem(name);
+        JCheckBoxMenuItem item = getThemedCheckBoxMenuItem(name);
         if(state.isEmpty())
         {
             if (!name.equals("Time"))
@@ -2030,8 +2027,6 @@ public class Raids extends BaseFrame implements UpdateableWindow
         {
             item.setState(state.equals("true"));
         }
-        item.setOpaque(true);
-        item.setBackground(Color.BLACK);
         item.addActionListener(al ->
         {
             if (built)

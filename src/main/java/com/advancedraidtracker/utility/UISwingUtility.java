@@ -9,12 +9,13 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.border.MatteBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.plaf.ButtonUI;
 import javax.swing.plaf.basic.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
+import java.awt.event.*;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
@@ -616,6 +617,34 @@ public class UISwingUtility
         TitledBorder border = BorderFactory.createTitledBorder(title);
         border.setTitleColor(color);
         return border;
+    }
+
+    public static JCheckBoxMenuItem getThemedCheckBoxMenuItem(String name)
+    {
+        JCheckBoxMenuItem item = new JCheckBoxMenuItem(name);
+        item.setUI(new BasicMenuItemUI()
+        {
+            {
+                super.selectionBackground = computeBlendColor(config.fontColor(), config.primaryDark(), 128);
+            }
+        });
+        item.addMouseListener(new MouseAdapter()
+        {
+            @Override
+            public void mouseEntered(MouseEvent e)
+            {
+                item.setBackground(computeBlendColor(config.fontColor(), config.primaryDark(), 128));
+            }
+            @Override
+            public void mouseExited(MouseEvent e)
+            {
+                item.setBackground(config.primaryDark());
+            }
+        });
+        item.setBackground(config.primaryDark());
+        item.setForeground(config.fontColor());
+        item.setOpaque(true);
+        return item;
     }
 
     public static JPopupMenu getThemedPopupMenu()

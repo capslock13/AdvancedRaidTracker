@@ -136,8 +136,29 @@ public class UISwingUtility
     public static JComboBox<String> getThemedComboBox(String[] options)
     {
         JComboBox<String> comboBox = new JComboBox<>(options);
+        comboBox.setRenderer(new DefaultListCellRenderer()
+        {
+            @Override
+            public Component getListCellRendererComponent(JList list, Object value,
+                                                          int index, boolean isSelected, boolean cellHasFocus)
+            {
+                super.getListCellRendererComponent(list, value, index, isSelected,
+                        cellHasFocus);
+                if(isSelected)
+                {
+                    setBackground(computeBlendColor(config.fontColor(), config.primaryDark(), 128));
+                }
+                else
+                {
+                    setBackground(config.primaryMiddle());
+                }
+                setForeground(config.fontColor());
+                return this;
+            }
+        });
         comboBox.setBorder(BorderFactory.createLineBorder(config.primaryMiddle()));
         comboBox.setBackground(config.primaryMiddle());
+        comboBox.setForeground(config.fontColor());
         comboBox.setOpaque(true);
         return comboBox;
     }
@@ -145,8 +166,29 @@ public class UISwingUtility
     public static JComboBox<String> getThemedComboBox()
     {
         JComboBox<String> comboBox = new JComboBox<>();
-        comboBox.setBorder(BorderFactory.createLineBorder(config.primaryLight()));
+        comboBox.setRenderer(new DefaultListCellRenderer()
+        {
+            @Override
+            public Component getListCellRendererComponent(JList list, Object value,
+                                                          int index, boolean isSelected, boolean cellHasFocus)
+            {
+                super.getListCellRendererComponent(list, value, index, isSelected,
+                        cellHasFocus);
+                if(cellHasFocus)
+                {
+                    setBackground(computeBlendColor(config.fontColor(), config.primaryDark(), 128));
+                }
+                else
+                {
+                    setBackground(config.primaryMiddle());
+                }
+                setForeground(config.fontColor());
+                return this;
+            }
+        });
+        comboBox.setBorder(BorderFactory.createLineBorder(config.primaryMiddle()));
         comboBox.setBackground(config.primaryMiddle());
+        comboBox.setForeground(config.fontColor());
         comboBox.setOpaque(true);
         return comboBox;
     }
@@ -154,8 +196,29 @@ public class UISwingUtility
     public static JComboBox<Integer> getThemedComboBox(Integer[] options)
     {
         JComboBox<Integer> comboBox = new JComboBox<>(options);
-        comboBox.setBorder(BorderFactory.createLineBorder(config.primaryLight()));
+        comboBox.setRenderer(new DefaultListCellRenderer()
+        {
+            @Override
+            public Component getListCellRendererComponent(JList list, Object value,
+                                                          int index, boolean isSelected, boolean cellHasFocus)
+            {
+                super.getListCellRendererComponent(list, value, index, isSelected,
+                        cellHasFocus);
+                if(cellHasFocus)
+                {
+                    setBackground(computeBlendColor(config.fontColor(), config.primaryDark(), 128));
+                }
+                else
+                {
+                    setBackground(config.primaryMiddle());
+                }
+                setForeground(config.fontColor());
+                return this;
+            }
+        });
+        comboBox.setBorder(BorderFactory.createLineBorder(config.primaryMiddle()));
         comboBox.setBackground(config.primaryMiddle());
+        comboBox.setForeground(config.fontColor());
         comboBox.setOpaque(true);
         return comboBox;
     }

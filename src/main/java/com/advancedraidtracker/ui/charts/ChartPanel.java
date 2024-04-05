@@ -141,11 +141,16 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     public void addRoomSpecificData(int tick, String data)
     {
         specific.put(tick, data);
+        if(specific.size() == 1)
+        {
+            recalculateSize();
+        }
     }
 
     public void addRoomSpecificDatum(Map<Integer, String> specificData)
     {
         specific.putAll(specificData);
+        recalculateSize();
     }
 
     public void addLine(int tick, String lineInfo)
@@ -168,7 +173,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         autos.add(autoTick);
     }
 
-    public void addAutos(ArrayList<Integer> autos)
+    public void addAutos(List<Integer> autos)
     {
         this.autos.addAll(autos);
     }
@@ -191,12 +196,24 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
     public void addDawnSpec(DawnSpec dawnSpec)
     {
-        this.dawnSpecs.add(dawnSpec);
+        //this.dawnSpecs.add(dawnSpec);
+        for(OutlineBox outlineBox : outlineBoxes)
+        {
+            //based on projectile time dawn spec will always be applied between 2 and 4 ticks after the animation, and since there is only one
+            //dawnbringer its impossible for the next spec to overlap this
+            if((dawnSpec.tick-outlineBox.tick <= 4 && dawnSpec.tick-outlineBox.tick >= 2) && outlineBox.playerAnimation.equals(PlayerAnimation.DAWN_SPEC))
+            {
+                outlineBox.additionalText = String.valueOf(dawnSpec.getDamage());
+            }
+        }
     }
 
     public void addDawnSpecs(List<DawnSpec> dawnSpecs)
     {
-        this.dawnSpecs.addAll(dawnSpecs);
+        for(DawnSpec dawnSpec : dawnSpecs)
+        {
+            addDawnSpec(dawnSpec);
+        }
         drawGraph();
     }
 
@@ -430,7 +447,8 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         {
             boxCount = 1;
         }
-        boxHeight = ((attackers.size() + 3) * scale);
+        int additionalRows = 2 + getAdditionalRow();
+        boxHeight = ((attackers.size() + additionalRows) * scale);
         boxWidth = (LEFT_MARGIN + (scale * (ticksToShow + 1)));
         boxesToShow = Math.min(1 + ((windowHeight - TITLE_BAR_PLUS_TAB_HEIGHT - scale) / boxHeight), boxCount);
         drawGraph();
@@ -574,6 +592,10 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                     }
                 }
                 int ticks = i - (stallsUntilThisPoint * 4);
+                if(autos.contains(ticks))
+                {
+                    g.setColor(Color.RED);
+                }
                 String tick = (config.useTimeOnChart()) ? RoomUtil.time(ticks) : String.valueOf(ticks);
                 if (tick.endsWith("s"))
                 {
@@ -584,7 +606,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                 {
                     if (config.useTimeOnChart())
                     {
-                        drawStringRotated(g, tick, textPosition, yOffset - (fontHeight / 2), config.fontColor());
+                        drawStringRotated(g, tick, textPosition, yOffset - (fontHeight)-5, config.fontColor());
                     } else
                     {
                         g.drawString(tick, textPosition, yOffset - (fontHeight / 2));
@@ -606,10 +628,10 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         {
             if (shouldTickBeDrawn(i))
             {
-                g.setColor(new Color(255, 80, 80, 60));
+                g.setColor(new Color(255, 80, 80, 40));
                 int xOffset = getXOffset(i);
                 int yOffset = getYOffset(i);
-                g.fillRoundRect(xOffset, yOffset, scale, boxHeight - scale, 7, 7);
+                g.fillRect(xOffset, yOffset+scale, scale, boxHeight - (scale*(2+getAdditionalRow())));
             }
         }
     }
@@ -738,8 +760,8 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                     {
                         roomSpecificText = "Instance Time";
                     }
-                    int textYPosition = getYOffset((j * ticksToShow)) - (fontHeight / 2);
-                    if (textYPosition > scale + 5)
+                    int textYPosition = getYOffset((j * ticksToShow)+1) + ((playerOffsets.size()+2)*scale) - (scale/2) + (fontHeight/2);
+                    if (textYPosition > scale + 5 && !specific.isEmpty())
                     {
                         g.drawString(roomSpecificText, 5, textYPosition); //todo why does scroll not render correctly?
                     }
@@ -765,36 +787,39 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
     private void drawRoomSpecificData(Graphics2D g)
     {
-        if (room.equals("Nylocas"))
+        if(!specific.isEmpty() || room.equals("Nylocas"))
         {
-            for (int i = startTick; i < endTick; i++)
+            if (room.equals("Nylocas"))
             {
-                if (shouldTickBeDrawn(i))
+                for (int i = startTick; i < endTick; i++)
+                {
+                    if (shouldTickBeDrawn(i))
+                    {
+                        int xOffset = getXOffset(i);
+                        int yOffset = getYOffset(i);
+                        yOffset += (playerOffsets.size() + 2) * scale;
+                        g.setColor(config.fontColor());
+                        String time = String.valueOf(((i + instanceTime) % 4) + 1);
+                        int strWidth = getStringBounds(g, time).width;
+                        if (yOffset - (scale / 2) > scale + 5)
+                        {
+                            g.drawString(time, xOffset + (scale / 2) - (strWidth / 2), yOffset - (scale / 2));
+                        }
+                    }
+                }
+            } else
+            {
+                for (Integer i : specific.keySet())
                 {
                     int xOffset = getXOffset(i);
                     int yOffset = getYOffset(i);
                     yOffset += (playerOffsets.size() + 2) * scale;
                     g.setColor(config.fontColor());
-                    String time = String.valueOf(((i + instanceTime) % 4) + 1);
-                    int strWidth = getStringBounds(g, time).width;
+                    int strWidth = getStringBounds(g, specific.get(i)).width;
                     if (yOffset > scale + 5)
                     {
-                        g.drawString(time, xOffset + (scale / 2) - (strWidth / 2), yOffset - (scale / 2));
+                        g.drawString(specific.get(i), xOffset + (scale / 2) - (strWidth / 2), yOffset - (scale / 2) + (fontHeight / 2));
                     }
-                }
-            }
-        } else
-        {
-            for (Integer i : specific.keySet())
-            {
-                int xOffset = getXOffset(i);
-                int yOffset = getYOffset(i);
-                yOffset += (playerOffsets.size() + 2) * scale - (scale / 2) - currentScrollOffset;
-                g.setColor(config.fontColor());
-                int strWidth = getStringBounds(g, "X").width;
-                if (yOffset > scale + 5)
-                {
-                    g.drawString("X", xOffset + (scale / 2) - (strWidth / 2), yOffset + (fontHeight / 2) + (scale / 2));
                 }
             }
         }
@@ -809,12 +834,12 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             {
                 int xOffset = getXOffset(dawnSpec.tick-2);
                 int yOffset = getYOffset(dawnSpec.tick);
-                yOffset += (playerOffsets.size() + 3) * scale;
+                yOffset += (playerOffsets.size() + 1) * scale;
                 g.setColor(config.fontColor());
                 int textOffset = (scale / 2) - (getStringBounds(g, damage).width) / 2;
                 if (yOffset > scale + 5)
                 {
-                    g.drawString(damage, xOffset + textOffset, yOffset + (fontHeight / 2));
+                    g.drawString(damage, xOffset + textOffset, yOffset + (scale/2)-(fontHeight / 2));
                 }
             }
         }
@@ -1037,6 +1062,11 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         return new Point(getXOffset(tick), ((playerOffsets.get(player) + 1) * scale) + getYOffset(tick));
     }
 
+    private int getAdditionalRow()
+    {
+        return (!specific.isEmpty() || room.equals("Nylocas")) ? 1 : 0;
+    }
+
     private void drawSelectedRow(Graphics2D g)
     {
         if (selectedRow != -1 && shouldTickBeDrawn(selectedRow))
@@ -1044,7 +1074,8 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             g.setColor(config.fontColor());
             int xOffset = getXOffset(selectedRow);
             int yOffset = getYOffset(selectedRow);
-            g.drawRect(xOffset, yOffset, scale, scale * (attackers.size() + 2));
+            int additionalRows = 1 + getAdditionalRow();
+            g.drawRect(xOffset, yOffset, scale, scale * (attackers.size() + additionalRows));
 
             int selectedTickHP = -1;
             try

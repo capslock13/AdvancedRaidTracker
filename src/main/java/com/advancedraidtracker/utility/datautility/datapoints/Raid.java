@@ -103,6 +103,8 @@ public abstract class Raid
     protected String currentRoom = "";
     protected String roomStatus = orange;
 
+    protected LineManager lineManager;
+
     protected Map<RaidRoom, Boolean> defenseAccurate = new HashMap<>();
 
     public boolean getDefenseAccurate(RaidRoom room) //todo implement
@@ -130,6 +132,7 @@ public abstract class Raid
         date = new Date(0L); //todo figure out why dates dont parse properly on some raids
         this.filepath = filepath;
         this.players = new LinkedHashSet<>();
+        this.lineManager = new LineManager(this);
         for(RaidRoom room : RaidRoom.getRaidRoomsForRaidType(RaidType.TOA)) //todo assume toa always accurate
         {
             setRoomStartAccurate(room);
@@ -514,4 +517,29 @@ public abstract class Raid
     }
 
     public abstract int getChallengeTime();
+
+    public List<Integer> getList(DataPoint point)
+    {
+        return data.getList(point);
+    }
+
+    public Map<Integer, String> getLines(RaidRoom room)
+    {
+        return lineManager.getLines(room);
+    }
+
+    public Map<Integer, String> getRoomSpecificData(RaidRoom room)
+    {
+        return lineManager.getRoomSpecificData(room);
+    }
+
+    public String getRoomSpecificText(RaidRoom room)
+    {
+        return lineManager.getRoomSpecificText(room);
+    }
+
+    public List<Integer> getRoomAutos(RaidRoom room)
+    {
+        return lineManager.getRoomSpecificAutos(room);
+    }
 }

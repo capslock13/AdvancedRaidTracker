@@ -2,16 +2,21 @@ package com.advancedraidtracker.utility.datautility.datapoints.toa;
 
 import com.advancedraidtracker.constants.RaidRoom;
 import com.advancedraidtracker.utility.datautility.DataPoint;
+import com.advancedraidtracker.utility.datautility.datapoints.Raid;
 import com.advancedraidtracker.utility.datautility.datapoints.RoomParser;
 
 import java.util.Map;
 
 public class CrondisParser extends RoomParser
 {
+    public CrondisParser(Raid data)
+    {
+        super(data);
+    }
+
     @Override
     public Map<Integer, String> getLines()
     {
-        /*
         lines.put(8, "Pickup water");
         if(data.get(DataPoint.PARTY_SIZE) == 1)
         {
@@ -26,7 +31,7 @@ public class CrondisParser extends RoomParser
             lines.put(31, "First Watering");
             lines.put(45, "Second Fill");
             lines.put(56, "Second Watering");
-        }*/
+        }
         return lines;
     }
 }

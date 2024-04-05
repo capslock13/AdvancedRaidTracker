@@ -36,11 +36,6 @@ public class ChartFrame extends BaseFrame
     {
         ChartData chartData = DataReader.getChartData(roomData.getFilepath(), itemManager);
 
-        for(RaidRoom room : RaidRoom.getRaidRoomsForRaidType(RaidType.TOB))
-        {
-            log.info(room.name() + " has " + chartData.getAttacks(room).size() + " attacks");
-        }
-
         JTabbedPane basepane = getThemedTabbedPane();
 
         Set<String> activeSet;
@@ -88,8 +83,10 @@ public class ChartFrame extends BaseFrame
                         roomData.get(bossName.substring(0, bossName.length() - 2) + "Time") : roomData.get(bossName + " Time"));
             }
             chartPanel.addThrallBoxes(chartData.getThralls(room));
-            //chartPanel.addLines(parser.getLines()); //todo lines
-
+            chartPanel.addLines(roomData.getLines(room));
+            chartPanel.addRoomSpecificDatum(roomData.getRoomSpecificData(room));
+            chartPanel.setRoomSpecificText(roomData.getRoomSpecificText(room));
+            chartPanel.addAutos(roomData.getRoomAutos(room));
             chartPanel.addMaidenCrabs(chartData.maidenCrabs);
             if(room.equals(RaidRoom.VERZIK))
             {

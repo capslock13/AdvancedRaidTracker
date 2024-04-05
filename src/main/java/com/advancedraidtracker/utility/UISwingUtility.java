@@ -2,14 +2,14 @@ package com.advancedraidtracker.utility;
 
 import com.advancedraidtracker.AdvancedRaidTrackerConfig;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.border.MatteBorder;
 import javax.swing.border.TitledBorder;
-import javax.swing.plaf.basic.BasicScrollBarUI;
-import javax.swing.plaf.basic.BasicSliderUI;
+import javax.swing.plaf.basic.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -24,7 +24,7 @@ import java.io.File;
 
 import static com.advancedraidtracker.utility.datautility.DataWriter.PLUGIN_DIRECTORY;
 import static net.runelite.client.RuneLite.RUNELITE_DIR;
-
+@Slf4j
 public class UISwingUtility
 {
     @Setter
@@ -574,6 +574,12 @@ public class UISwingUtility
     public static JMenuItem getThemedMenuItem(String item)
     {
         JMenuItem menuItem = new JMenuItem(item);
+        menuItem.setUI(new BasicMenuItemUI()
+        {
+            {
+                super.selectionBackground = computeBlendColor(config.fontColor(), config.primaryDark(), 128);
+            }
+        });
         menuItem.setBackground(config.primaryDark());
         menuItem.setForeground(config.fontColor());
         menuItem.setOpaque(true);
@@ -583,10 +589,26 @@ public class UISwingUtility
     public static JMenu getThemedMenu(String item)
     {
         JMenu menu = new JMenu(item);
+        menu.setUI(new BasicMenuUI()
+        {
+            {
+                super.selectionBackground = computeBlendColor(config.fontColor(), config.primaryDark(), 128);
+            }
+        });
         menu.setBackground(config.primaryDark());
         menu.setForeground(config.fontColor());
         menu.setOpaque(true);
         return menu;
+    }
+
+    public static Color computeBlendColor(Color base, Color top, int opacityTop)
+    {
+        return new Color(
+                (top.getRed()*opacityTop + base.getRed() * (255- opacityTop))/255,
+                (top.getBlue()*opacityTop + base.getBlue() * (255- opacityTop))/255,
+                (top.getGreen()*opacityTop + base.getGreen() * (255- opacityTop))/255
+
+        );
     }
 
     public static TitledBorder getColoredTitledBorder(String title, Color color)
@@ -598,6 +620,8 @@ public class UISwingUtility
 
     public static JPopupMenu getThemedPopupMenu()
     {
-        return new JPopupMenu();
+        JPopupMenu jPopupMenu = new JPopupMenu();
+
+        return jPopupMenu;
     }
 }

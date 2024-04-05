@@ -897,7 +897,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                                     }
                                     fillBoxStyleAccordingToConfig(g, xOffset + 2, yOffset + 2, scale - 3, scale - 3, 5, 5);
                                     BufferedImage scaled = getScaledImage(box.attack.img, (scale - 2), (scale - 2));
-                                    if (box.playerAnimation.equals(PlayerAnimation.HAMMER_BOP) || box.playerAnimation.equals(PlayerAnimation.BGS_WHACK))
+                                    if (box.playerAnimation.equals(PlayerAnimation.HAMMER_BOP) || box.playerAnimation.equals(PlayerAnimation.BGS_WHACK) || box.playerAnimation.equals(PlayerAnimation.UNCHARGED_SCYTHE) || box.playerAnimation.equals(PlayerAnimation.KODAI_BOP))
                                     {
                                         g.drawImage(createFlipped(createDropShadow(scaled)), xOffset + 3, yOffset + 3, null);
                                         g.drawImage(createFlipped(scaled), xOffset + 2, yOffset + 1, null);
@@ -905,6 +905,16 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                                     {
                                         g.drawImage(createDropShadow(scaled), xOffset + 3, yOffset + 3, null);
                                         g.drawImage(scaled, xOffset + 2, yOffset + 1, null);
+                                    }
+                                    if (!box.additionalText.isEmpty())
+                                    {
+                                        int textOffset;
+                                        Font f = g.getFont();
+                                        g.setFont(f.deriveFont(9.0f));
+                                        textOffset = (scale / 2) - (getStringWidth(g, box.additionalText) / 2);
+                                        g.setColor(config.fontColor());
+                                        g.drawString(box.additionalText, xOffset + textOffset, yOffset + scale - 3);
+                                        g.setFont(f);
                                     }
                                 }
                             } catch (Exception e)
@@ -1454,10 +1464,10 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         drawYChartColumn(g);
         drawRoomSpecificData(g);
         drawDawnSpecs(g);
+        drawThrallBoxes(g);
         drawPrimaryBoxes(g);
         drawAutos(g);
         drawMarkerLines(g);
-        drawThrallBoxes(g);
         drawMaidenCrabs(g);
         if (!linePlacementModeActive)
         {

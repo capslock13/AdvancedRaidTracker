@@ -26,6 +26,8 @@ public enum PlayerAnimation
     ZCB_AUTO("ZCB Auto", "zc", new Color(10, 170, 50), 5, new int[]{9168}, new int[]{}, new int[]{ItemID.ZARYTE_CROSSBOW}, new int[]{1468}),
     ZCB_SPEC("ZCB Spec", "ZC", new Color(10, 170, 50), 5, new int[]{9168}, new int[]{}, new int[]{ItemID.ZARYTE_CROSSBOW}, new int[]{1995}),
     SCYTHE("Scythe", "S", new Color(230, 100, 100), 5, new int[]{8056}, new int[]{}, new int[]{ItemID.SCYTHE_OF_VITUR, ItemID.CORRUPTED_SCYTHE_OF_VITUR, ItemID.SANGUINE_SCYTHE_OF_VITUR, ItemID.HOLY_SCYTHE_OF_VITUR}, new int[]{}),
+    UNCHARGED_SCYTHE("Uncharged Scythe", "S?", new Color(230, 100, 100), 5, new int[]{8056}, new int[]{}, new int[]{ItemID.SCYTHE_OF_VITUR_UNCHARGED, ItemID.CORRUPTED_SCYTHE_OF_VITUR_UNCHARGED, ItemID.SANGUINE_SCYTHE_OF_VITUR_UNCHARGED, ItemID.HOLY_SCYTHE_OF_VITUR_UNCHARGED}, new int[]{}),
+
     DINHS_SPEC("Dinhs Spec", "BW", new Color(20, 20, 20), 5, new int[]{7511}, new int[]{}, new int[]{ItemID.DINHS_BULWARK, ItemID.DINHS_BLAZING_BULWARK}, new int[]{}),
     BLACK_CHIN("Black Chinchompa", "CC", new Color(0, 130, 0), 3, new int[]{7618}, new int[]{}, new int[]{-1, ItemID.BLACK_CHINCHOMPA}, new int[]{1272}),
     RED_CHIN("Red Chinchompa", "RCC", new Color(0, 130, 0), 3, new int[]{7618}, new int[]{}, new int[]{-1, ItemID.RED_CHINCHOMPA}, new int[]{909}),

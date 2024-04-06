@@ -3,7 +3,7 @@ package com.advancedraidtracker.ui.filters;
 import com.advancedraidtracker.AdvancedRaidTrackerConfig;
 import com.advancedraidtracker.ui.customrenderers.ButtonEditorLoadFilters;
 import com.advancedraidtracker.ui.customrenderers.ButtonEditorViewFilters;
-import com.advancedraidtracker.ui.customrenderers.ButtonRenderer;
+import com.advancedraidtracker.ui.customrenderers.ButtonRendererViewColumn;
 import com.advancedraidtracker.ui.BaseFrame;
 import com.advancedraidtracker.ui.Raids;
 import com.advancedraidtracker.ui.customrenderers.NonEditableCell;
@@ -74,13 +74,13 @@ public class LoadFilter extends BaseFrame
         JTable table = getThemedTable(tableObject, columnNames);
         table.getColumn("Filter Name").setCellEditor(new NonEditableCell(getThemedTextField()));
 
-        table.getColumn("View").setCellRenderer(new ButtonRenderer(config));
+        table.getColumn("View").setCellRenderer(new ButtonRendererViewColumn(config));
         table.getColumn("View").setCellEditor(new ButtonEditorViewFilters(getThemedCheckBox(), filters));
 
-        table.getColumn("Replace").setCellRenderer(new ButtonRenderer(config));
+        table.getColumn("Replace").setCellRenderer(new ButtonRendererViewColumn(config));
         table.getColumn("Replace").setCellEditor(new ButtonEditorLoadFilters(getThemedCheckBox(), FilteredRaidsFrame, filters, this));
 
-        table.getColumn("Add").setCellRenderer(new ButtonRenderer(config));
+        table.getColumn("Add").setCellRenderer(new ButtonRendererViewColumn(config));
         table.getColumn("Add").setCellEditor(new ButtonEditorLoadFilters(getThemedCheckBox(), FilteredRaidsFrame, filters, this, false));
 
         resizeColumnWidth(table);

@@ -147,7 +147,6 @@ public class DynamicTableHeaderRenderer implements TableCellRenderer
                     if(e.getX() > rect.getX()+rect.getWidth()-20)
                     {
                         menu.show(editor, (int)rect.getWidth()-menu.getPreferredSize().width, editor.getHeight());
-                        //window.setTableSorterActive(false);
                     }
                 }
                 catch (Exception ignore)

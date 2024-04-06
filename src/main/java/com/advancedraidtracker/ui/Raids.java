@@ -84,6 +84,7 @@ public class Raids extends BaseFrame implements UpdateableWindow
     JCheckBox filterPartyOnly;
     JCheckBox filterPartialData;
     JCheckBox filterPartialOnly;
+    JCheckBox filterFavoritesOnly;
     JCheckBox filterIncludeNormal;
     JCheckBox filterIncludeHard;
     JCheckBox filterIncludeEntry;
@@ -331,6 +332,13 @@ public class Raids extends BaseFrame implements UpdateableWindow
                     }
                 }
             }
+            if(filterFavoritesOnly.isSelected())
+            {
+                if(!data.isFavorite())
+                {
+                    shouldDataBeIncluded = false;
+                }
+            }
             if (shouldDataBeIncluded && filterCheckBoxScale.isSelected())
             {
                 shouldDataBeIncluded = filterComboBoxScale.getSelectedIndex() + 1 == data.getScale();
@@ -439,8 +447,8 @@ public class Raids extends BaseFrame implements UpdateableWindow
         {
             if (table.getColumnName(i).equals("View"))
             {
-                table.getColumn(table.getColumnName(i)).setCellEditor(new ButtonEditorRoomData(getThemedCheckBox(), tableData, config, itemManager));
-                table.getColumn(table.getColumnName(i)).setCellRenderer(new ButtonRenderer(config));
+                table.getColumn(table.getColumnName(i)).setCellEditor(new ButtonEditorViewColumn(getThemedCheckBox(), tableData, config, itemManager));
+                table.getColumn(table.getColumnName(i)).setCellRenderer(new ButtonRendererViewColumn(config));
             }
             else if(table.getColumnName(i).equals("Custom"))
             {
@@ -448,6 +456,11 @@ public class Raids extends BaseFrame implements UpdateableWindow
                 table.getColumn(table.getColumnName(i)).setCellRenderer(new StripedTableRowCellRenderer(config));
                 table.getColumn(table.getColumnName(i)).setHeaderRenderer(new DynamicTableHeaderRenderer(customColumnComboBox, this));
 
+            }
+            else if(table.getColumnName(i).equals("Favorite"))
+            {
+                table.getColumn(table.getColumnName(i)).setCellEditor(new ButtonEditorFavoriteColumn(getThemedCheckBox(), tableData, config, itemManager));
+                table.getColumn(table.getColumnName(i)).setCellRenderer(new ButtonRendererFavoriteColumn(config, tableData));
             }
             else
             {
@@ -764,6 +777,9 @@ public class Raids extends BaseFrame implements UpdateableWindow
                     break;
                 case "Spectate":
                     table.getColumnModel().getColumn(i).setPreferredWidth(25);
+                    break;
+                case "Favorite":
+                    table.getColumnModel().getColumn(i).setPreferredWidth(50);
                     break;
                 case "View":
                     table.getColumnModel().getColumn(i).setPreferredWidth(30);
@@ -1259,6 +1275,7 @@ public class Raids extends BaseFrame implements UpdateableWindow
         filterPartyOnly = getActionListenCheckBox("In Party", al -> updateTable());
         filterPartialData = getActionListenCheckBox("Filter Partial", al -> updateTable());
         filterPartialOnly = getActionListenCheckBox("Filter Partial Rooms", al -> updateTable());
+        filterFavoritesOnly = getActionListenCheckBox("Favorites", al -> updateTable());
         filterPartialData.setToolTipText("Removes data sets that have any rooms that were partially completed");
         filterIncludeNormal = getActionListenCheckBox("Normal", true, al-> updateTable());
         filterIncludeEntry = getActionListenCheckBox("Entry", true, al -> updateTable());
@@ -1277,7 +1294,8 @@ public class Raids extends BaseFrame implements UpdateableWindow
         scaleContainer.setPreferredSize(new Dimension(150, 25));
 
         JPanel filterHolder = getThemedPanel();
-        filterHolder.setLayout(new GridLayout(8, 2));
+        filterHolder.setLayout(new GridLayout(9, 2));
+        filterHolder.add(filterFavoritesOnly);
         filterHolder.add(filterSpectateOnly);
         filterHolder.add(filterInRaidOnly);
         filterHolder.add(filterCompletionOnly);
@@ -1630,6 +1648,23 @@ public class Raids extends BaseFrame implements UpdateableWindow
 
         JPopupMenu raidPopup = getThemedPopupMenu();
 
+        JCheckBoxMenuItem favoriteRaid = getThemedCheckBoxMenuItem("Favorite");
+        favoriteRaid.addActionListener(e ->
+        {
+            int[] toRemove = table.getSelectedRows();
+            if(toRemove.length != 1)
+            {
+                JOptionPane.showMessageDialog(this, "You must select only one raid to Favorite", "Splits Error", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            Raid raid = currentData.get(Integer.parseInt(table.getModel().getValueAt(toRemove[0], 0).toString()));
+            if(raid != null)
+            {
+                raid.setFavorite(!raid.isFavorite());
+                favoriteRaid.setText(raid.isFavorite() ? "Unfavorite" : "Favorite");
+            }
+        });
+
         JMenuItem analyzeSessions = getThemedMenuItem("Analyze Sessions");
         analyzeSessions.addActionListener(e ->
         {
@@ -1847,6 +1882,7 @@ public class Raids extends BaseFrame implements UpdateableWindow
         raidPopup.add(viewCharts);
         raidPopup.add(viewGraphs);
         raidPopup.add(copySplits);
+        raidPopup.add(favoriteRaid);
         table.setComponentPopupMenu(raidPopup);
 
         filterTableContainer.add(tableScrollView);
@@ -1860,6 +1896,7 @@ public class Raids extends BaseFrame implements UpdateableWindow
                 {
                     ArrayList<String> quickFiltersState = new ArrayList<>();
                     quickFiltersState.add("QF-Spectate Only:" + filterSpectateOnly.isSelected());
+                    quickFiltersState.add("QF-Favorites Only:" + filterFavoritesOnly.isSelected());
                     quickFiltersState.add("QF-In Raid Only:" + filterInRaidOnly.isSelected());
                     quickFiltersState.add("QF-Completion Only:" + filterCompletionOnly.isSelected());
                     quickFiltersState.add("QF-Wipe/Reset Only:" + filterWipeResetOnly.isSelected());
@@ -1993,7 +2030,7 @@ public class Raids extends BaseFrame implements UpdateableWindow
     }
 
 
-    public String[] columnHeaderNames = new String[]{"Date", "Raid", "Time", "Scale", "Status", "Players", "Spectate", "View"};
+    public String[] columnHeaderNames = new String[]{"Date", "Raid", "Time", "Scale", "Status", "Players", "Favorite", "Spectate", "View"};
     public ArrayList<JCheckBoxMenuItem> columnHeaders;
 
     private void getUpdatedPopupMenu(String newItem)
@@ -2022,7 +2059,7 @@ public class Raids extends BaseFrame implements UpdateableWindow
         JCheckBoxMenuItem item = getThemedCheckBoxMenuItem(name);
         if(state.isEmpty())
         {
-            if (!name.equals("Time"))
+            if (!name.equals("Time") && !name.equals("Spectate"))
             {
                 item.setState(true);
             }
@@ -2316,7 +2353,7 @@ public class Raids extends BaseFrame implements UpdateableWindow
         }
         comparisonTable.setModel(new DefaultTableModel(tableObject, columnNames));
         comparisonTable.getColumn("Sets").setCellEditor(new NonEditableCell(getThemedTextField()));
-        comparisonTable.getColumn("").setCellRenderer(new ButtonRenderer(config));
+        comparisonTable.getColumn("").setCellRenderer(new ButtonRendererViewColumn(config));
         comparisonTable.getColumn("").setCellEditor(new ButtonEditorComparisonData(getThemedCheckBox(), this));
         resizeColumnWidthFilters(comparisonTable);
         comparisonTable.getColumn("").setMaxWidth(100);
@@ -2356,6 +2393,9 @@ public class Raids extends BaseFrame implements UpdateableWindow
                             break;
                         case "Partial Raids":
                             filterPartialOnly.setSelected(Boolean.parseBoolean(data[1]));
+                            break;
+                        case "Favorites Only":
+                            filterFavoritesOnly.setSelected(Boolean.parseBoolean(data[1]));
                             break;
                         case "Partial Rooms":
                             filterPartialData.setSelected(Boolean.parseBoolean(data[1]));
@@ -2436,7 +2476,7 @@ public class Raids extends BaseFrame implements UpdateableWindow
         filterTable.setModel(new DefaultTableModel(tableObject, columnNames));
         filterTable.setDefaultRenderer(Object.class, new StripedTableRowCellRenderer(config));
         filterTable.getColumn("Filter Descriptions").setCellEditor(new NonEditableCell(getThemedTextField()));
-        filterTable.getColumn("").setCellRenderer(new ButtonRenderer(config));
+        filterTable.getColumn("").setCellRenderer(new ButtonRendererViewColumn(config));
         filterTable.getColumn("").setCellEditor(new ButtonEditorFilterData(getThemedCheckBox(), this));
         resizeColumnWidthFilters(filterTable);
         filterTable.getColumn("").setMaxWidth(100);

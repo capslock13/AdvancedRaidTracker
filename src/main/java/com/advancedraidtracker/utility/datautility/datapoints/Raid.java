@@ -6,6 +6,7 @@ import com.advancedraidtracker.utility.datautility.*;
 import com.advancedraidtracker.utility.datautility.datapoints.col.Colo;
 import com.google.common.collect.ImmutableMap;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.util.Text;
 
@@ -463,6 +464,10 @@ public abstract class Raid
     {
         return players.size();
     }
+
+    @Setter
+    @Getter
+    public boolean favorite = false;
 
     /**
      * @return Scale String in non int form

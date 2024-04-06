@@ -685,6 +685,9 @@ public class UISwingUtility
     public static JCheckBoxMenuItem getThemedCheckBoxMenuItem(String name)
     {
         JCheckBoxMenuItem item = new JCheckBoxMenuItem(name);
+        item.setBackground(Color.black);
+        item.setOpaque(true);
+        return item;/*
         item.setUI(new BasicMenuItemUI()
         {
             {
@@ -707,7 +710,7 @@ public class UISwingUtility
         item.setBackground(config.primaryDark());
         item.setForeground(config.fontColor());
         item.setOpaque(true);
-        return item;
+        return item;*/
     }
 
     public static JPopupMenu getThemedPopupMenu()

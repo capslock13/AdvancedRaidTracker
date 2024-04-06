@@ -6,10 +6,10 @@ import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 
-public class ButtonRenderer extends JButton implements TableCellRenderer
+public class ButtonRendererViewColumn extends JButton implements TableCellRenderer
 {
 
-    public ButtonRenderer(AdvancedRaidTrackerConfig config)
+    public ButtonRendererViewColumn(AdvancedRaidTrackerConfig config)
     {
         setOpaque(true);
         setBackground(config.primaryMiddle());
@@ -26,6 +26,7 @@ public class ButtonRenderer extends JButton implements TableCellRenderer
         } else
         {
             setForeground(table.getForeground());
+            setBackground(table.getBackground());
         }
         setText((value == null) ? "" : value.toString());
         return this;

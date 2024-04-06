@@ -18,7 +18,7 @@ import java.util.List;
 
 import static com.advancedraidtracker.utility.UISwingUtility.getThemedButton;
 
-public class ButtonEditorRoomData extends DefaultCellEditor
+public class ButtonEditorFavoriteColumn extends DefaultCellEditor
 {
 
     protected JButton button;
@@ -29,7 +29,7 @@ public class ButtonEditorRoomData extends DefaultCellEditor
     private final ItemManager itemManager;
     int row;
 
-    public ButtonEditorRoomData(JCheckBox checkBox, List<Raid> data, AdvancedRaidTrackerConfig config, ItemManager itemManager)
+    public ButtonEditorFavoriteColumn(JCheckBox checkBox, List<Raid> data, AdvancedRaidTrackerConfig config, ItemManager itemManager)
     {
         super(checkBox);
         this.config = config;
@@ -52,8 +52,6 @@ public class ButtonEditorRoomData extends DefaultCellEditor
             button.setForeground(table.getForeground());
             button.setBackground(table.getBackground());
         }
-        label = (value == null) ? "" : value.toString();
-        button.setText(label);
         isPushed = true;
         this.row = row;
         return button;
@@ -64,33 +62,7 @@ public class ButtonEditorRoomData extends DefaultCellEditor
     {
         if (isPushed)
         {
-            data.get(row).dumpValues();
-            if (data.get(row) instanceof Tob)
-            {
-                Tob tobData = (Tob) data.get(row);
-                ViewTOBRaid raid = new ViewTOBRaid(tobData, config);
-                //ViewRaidFrame raid = new ViewRaidFrame(data.get(row));
-                raid.open();
-            }
-            else if (data.get(row) instanceof Toa)
-            {
-                Toa toaData = (Toa) data.get(row);
-                ViewTOARaid raid = new ViewTOARaid(toaData, config);
-                raid.open();
-            }
-            else if(data.get(row) instanceof Inf)
-            {
-                Inf infData = (Inf) data.get(row);
-                ViewInfernoFrame raid = new ViewInfernoFrame(infData, config);
-                raid.open();
-            }
-            else if(data.get(row) instanceof Colo)
-            {
-                Colo colData = (Colo) data.get(row);
-                ViewColosseumFrame raid = new ViewColosseumFrame(colData, config, itemManager);
-                raid.open();
-            }
-
+            data.get(row).setFavorite(!data.get(row).isFavorite());
         }
         isPushed = false;
         return label;

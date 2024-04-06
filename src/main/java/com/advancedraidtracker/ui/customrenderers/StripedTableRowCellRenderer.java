@@ -9,6 +9,7 @@ import java.awt.*;
 public class StripedTableRowCellRenderer extends DefaultTableCellRenderer
 {
     private AdvancedRaidTrackerConfig config;
+
     public StripedTableRowCellRenderer(AdvancedRaidTrackerConfig config)
     {
         super();
@@ -21,16 +22,14 @@ public class StripedTableRowCellRenderer extends DefaultTableCellRenderer
         Component cell = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         if (!isSelected)
         {
-            if(row % 2 == 0)
+            if (row % 2 == 0)
             {
                 cell.setBackground(config.primaryDark());
-            }
-            else
+            } else
             {
                 cell.setBackground(config.primaryMiddle());
             }
-        }
-        else
+        } else
         {
             Color fontColor = config.fontColor();
             cell.setBackground(new Color(fontColor.getRed(), fontColor.getGreen(), fontColor.getBlue(), 100));

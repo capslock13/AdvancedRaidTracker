@@ -60,22 +60,20 @@ public class WardensHandler extends TOARoomHandler
             p1End = client.getTickCount() - roomStartTick;
             sendTimeMessage("Wardens 'Phase 1' Completed: ", p1End);
             clog.addLine(LogID.TOA_WARDENS_P1_END, p1End);
-        }
-        else if(roomState == PHASE_3 || roomState == ENRAGED)
+        } else if (roomState == PHASE_3 || roomState == ENRAGED)
         {
-            if(!skullsActive)
+            if (!skullsActive)
             {
                 if (changed == 11763 || changed == 11764)
                 {
                     clog.addLine(LogID.TOA_WARDENS_SKULLS_STARTED, client.getTickCount() - roomStartTick);
                     skullsActive = true;
                 }
-            }
-            else
+            } else
             {
-                if(changed == 11761 || changed ==11762)
+                if (changed == 11761 || changed == 11762)
                 {
-                    clog.addLine(LogID.TOA_WARDENS_SKULLS_ENDED, client.getTickCount()-roomStartTick);
+                    clog.addLine(LogID.TOA_WARDENS_SKULLS_ENDED, client.getTickCount() - roomStartTick);
                     skullsActive = false;
                 }
             }
@@ -108,10 +106,10 @@ public class WardensHandler extends TOARoomHandler
     @Override
     public void updateNpcSpawned(NpcSpawned event)
     {
-        if(!coreActive && (event.getNpc().getId() == 11770 || event.getNpc().getId() == 11771))
+        if (!coreActive && (event.getNpc().getId() == 11770 || event.getNpc().getId() == 11771))
         {
             coreActive = true;
-            clog.addLine(LogID.TOA_WARDENS_CORE_SPAWNED, client.getTickCount()-roomStartTick);
+            clog.addLine(LogID.TOA_WARDENS_CORE_SPAWNED, client.getTickCount() - roomStartTick);
         }
     }
 
@@ -124,11 +122,10 @@ public class WardensHandler extends TOARoomHandler
             clog.addLine(LogID.TOA_WARDENS_FINISHED, client.getTickCount() - roomStartTick);
             roomState = FINISHED;
             plugin.liveFrame.setRoomFinished(getName(), client.getTickCount() - roomStartTick);
-        }
-        else if(coreActive && (event.getNpc().getId() == 11770 || event.getNpc().getId() == 11771))
+        } else if (coreActive && (event.getNpc().getId() == 11770 || event.getNpc().getId() == 11771))
         {
             coreActive = false;
-            clog.addLine(LogID.TOA_WARDENS_CORE_DESPAWNED, client.getTickCount()-roomStartTick);
+            clog.addLine(LogID.TOA_WARDENS_CORE_DESPAWNED, client.getTickCount() - roomStartTick);
         }
     }
 }

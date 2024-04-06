@@ -25,13 +25,14 @@ import java.io.File;
 
 import static com.advancedraidtracker.utility.datautility.DataWriter.PLUGIN_DIRECTORY;
 import static net.runelite.client.RuneLite.RUNELITE_DIR;
+
 @Slf4j
 public class UISwingUtility
 {
     @Setter
     private static AdvancedRaidTrackerConfig config;
 
-    public static String colorStr(Color c) //todo @fisu it looks like I already had a method for this..........
+    public static String colorStr(Color c)
     {
         return "<html><font color='" + toHex(c) + "'>";
     }
@@ -67,11 +68,6 @@ public class UISwingUtility
         imageGraphics.drawString(s, 0, h - g.getFontMetrics().getDescent());
         imageGraphics.dispose();
         return image;
-    }
-
-    public static BufferedImage createStringImage(Graphics g, String s)
-    {
-        return createStringImage(g, s, Color.WHITE);
     }
 
     public static void drawStringRotated(Graphics g, String s, int tx, int ty, Color color)
@@ -144,11 +140,10 @@ public class UISwingUtility
             {
                 super.getListCellRendererComponent(list, value, index, isSelected,
                         cellHasFocus);
-                if(isSelected)
+                if (isSelected)
                 {
                     setBackground(computeBlendColor(config.fontColor(), config.primaryDark(), 128));
-                }
-                else
+                } else
                 {
                     setBackground(config.primaryMiddle());
                 }
@@ -174,11 +169,10 @@ public class UISwingUtility
             {
                 super.getListCellRendererComponent(list, value, index, isSelected,
                         cellHasFocus);
-                if(cellHasFocus)
+                if (cellHasFocus)
                 {
                     setBackground(computeBlendColor(config.fontColor(), config.primaryDark(), 128));
-                }
-                else
+                } else
                 {
                     setBackground(config.primaryMiddle());
                 }
@@ -204,11 +198,10 @@ public class UISwingUtility
             {
                 super.getListCellRendererComponent(list, value, index, isSelected,
                         cellHasFocus);
-                if(cellHasFocus)
+                if (cellHasFocus)
                 {
                     setBackground(computeBlendColor(config.fontColor(), config.primaryDark(), 128));
-                }
-                else
+                } else
                 {
                     setBackground(config.primaryMiddle());
                 }
@@ -668,9 +661,9 @@ public class UISwingUtility
     public static Color computeBlendColor(Color base, Color top, int opacityTop)
     {
         return new Color(
-                (top.getRed()*opacityTop + base.getRed() * (255- opacityTop))/255,
-                (top.getBlue()*opacityTop + base.getBlue() * (255- opacityTop))/255,
-                (top.getGreen()*opacityTop + base.getGreen() * (255- opacityTop))/255
+                (top.getRed() * opacityTop + base.getRed() * (255 - opacityTop)) / 255,
+                (top.getBlue() * opacityTop + base.getBlue() * (255 - opacityTop)) / 255,
+                (top.getGreen() * opacityTop + base.getGreen() * (255 - opacityTop)) / 255
 
         );
     }
@@ -688,7 +681,7 @@ public class UISwingUtility
         item.setBackground(Color.black);
         item.setOpaque(true);
         return item;/*
-        item.setUI(new BasicMenuItemUI()
+        item.setUI(new BasicMenuItemUI() //todo how to make this code below work while keeping the checkbox?
         {
             {
                 super.selectionBackground = computeBlendColor(config.fontColor(), config.primaryDark(), 128);

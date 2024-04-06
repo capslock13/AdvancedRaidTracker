@@ -83,7 +83,10 @@ public interface AdvancedRaidTrackerConfig extends Config
             name = "Theme",
             description = "Theme to apply to UI"
     )
-    default ChartTheme chartTheme() { return ChartTheme.DEFAULT; }
+    default ChartTheme chartTheme()
+    {
+        return ChartTheme.DEFAULT;
+    }
 
     @ConfigItem(
             position = 10,
@@ -124,7 +127,10 @@ public interface AdvancedRaidTrackerConfig extends Config
             name = "Idle Tick Color",
             description = "Color to use for idle ticks on chart"
     )
-    default Color idleColor() { return new Color(38, 38, 38);}
+    default Color idleColor()
+    {
+        return new Color(38, 38, 38);
+    }
 
     @ConfigItem(
             position = 44,
@@ -132,7 +138,10 @@ public interface AdvancedRaidTrackerConfig extends Config
             name = "Font Color",
             description = "Color to use for font on chart"
     )
-    default Color fontColor() { return new Color(220, 220, 220);}
+    default Color fontColor()
+    {
+        return new Color(220, 220, 220);
+    }
 
     @ConfigItem(
             position = 45,
@@ -140,7 +149,10 @@ public interface AdvancedRaidTrackerConfig extends Config
             name = "Box Color",
             description = "Color to use for boxes on chart"
     )
-    default Color boxColor() { return new Color(120, 120, 120);}
+    default Color boxColor()
+    {
+        return new Color(120, 120, 120);
+    }
 
     @ConfigItem(
             position = 46,
@@ -148,7 +160,10 @@ public interface AdvancedRaidTrackerConfig extends Config
             name = "Marker Color",
             description = "Color to use for markers on chart"
     )
-    default Color markerColor() { return new Color(255, 0, 0);}
+    default Color markerColor()
+    {
+        return new Color(255, 0, 0);
+    }
 
     @ConfigItem(
             position = 47,
@@ -156,7 +171,10 @@ public interface AdvancedRaidTrackerConfig extends Config
             name = "Attack Box Color",
             description = "Color of attack boxes. #FFFFFF will use defined colors per weapon"
     )
-    default Color attackBoxColor() {return new Color(255, 255, 255);}
+    default Color attackBoxColor()
+    {
+        return new Color(255, 255, 255);
+    }
 
     @ConfigItem(
             position = 48,
@@ -164,7 +182,10 @@ public interface AdvancedRaidTrackerConfig extends Config
             name = "Use Rounded Boxes",
             description = "Chart will use rounded boxes"
     )
-    default boolean useRounded() { return true;}
+    default boolean useRounded()
+    {
+        return true;
+    }
 
     @ConfigItem(
             position = 49,
@@ -172,7 +193,10 @@ public interface AdvancedRaidTrackerConfig extends Config
             name = "Wrap All Boxes",
             description = "Chart will wrap all boxes"
     )
-    default boolean wrapAllBoxes() { return false;}
+    default boolean wrapAllBoxes()
+    {
+        return false;
+    }
 
     @ConfigItem(
             position = 50,
@@ -180,7 +204,10 @@ public interface AdvancedRaidTrackerConfig extends Config
             name = "Show Bold Tick",
             description = "Chart will show bold 'Tick'"
     )
-    default boolean showBoldTick() { return false;}
+    default boolean showBoldTick()
+    {
+        return false;
+    }
 
     @ConfigItem(
             position = 51,
@@ -188,7 +215,10 @@ public interface AdvancedRaidTrackerConfig extends Config
             name = "Right Align Ticks",
             description = "Chart will right align ticks"
     )
-    default boolean rightAlignTicks() { return false;}
+    default boolean rightAlignTicks()
+    {
+        return false;
+    }
 
     @ConfigItem(
             position = 52,
@@ -196,7 +226,10 @@ public interface AdvancedRaidTrackerConfig extends Config
             name = "Use Alternate Font",
             description = "Chart will use alternate font"
     )
-    default boolean useAlternateFont() { return false;}
+    default boolean useAlternateFont()
+    {
+        return false;
+    }
 
     @ConfigItem(
             position = 57,

@@ -14,6 +14,7 @@ public class ButtonRendererFavoriteColumn extends JButton implements TableCellRe
     private java.util.List<Raid> data;
     ImageIcon filled;
     ImageIcon outline;
+
     public ButtonRendererFavoriteColumn(AdvancedRaidTrackerConfig config, java.util.List<Raid> data)
     {
         this.data = data;

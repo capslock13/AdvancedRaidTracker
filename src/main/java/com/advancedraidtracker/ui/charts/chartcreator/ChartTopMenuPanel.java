@@ -13,6 +13,7 @@ public class ChartTopMenuPanel extends JPanel
 {
     JCheckBox weaponCD = getThemedCheckBox("Enforce Weapon CD?");
     JTextField lineText = getThemedTextField();
+
     public ChartTopMenuPanel(ChartCreatorFrame parent, AdvancedRaidTrackerConfig config)
     {
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
@@ -21,7 +22,7 @@ public class ChartTopMenuPanel extends JPanel
         JComboBox<Integer> options = getThemedComboBox(new Integer[]{1, 2, 3, 4, 5, 6, 7, 8});
         options.addActionListener(al ->
         {
-            parent.setPlayerCount(options.getSelectedIndex()+1);
+            parent.setPlayerCount(options.getSelectedIndex() + 1);
         });
 
         JSpinner startTick = getThemedSpinner(new SpinnerNumberModel(1, 0, 500, 1));
@@ -30,14 +31,14 @@ public class ChartTopMenuPanel extends JPanel
 
         startTick.addChangeListener(cl ->
         {
-            endTick.setModel(new SpinnerNumberModel((int)endTick.getValue(), (int)startTick.getValue()+1, 500, 1));
-            parent.setStartTick((int)startTick.getValue());
+            endTick.setModel(new SpinnerNumberModel((int) endTick.getValue(), (int) startTick.getValue() + 1, 500, 1));
+            parent.setStartTick((int) startTick.getValue());
         });
 
         endTick.addChangeListener(cl ->
         {
-            startTick.setModel(new SpinnerNumberModel((int)startTick.getValue(), 0, (int)endTick.getValue()-1, 1));
-            parent.setEndTick((int)endTick.getValue());
+            startTick.setModel(new SpinnerNumberModel((int) startTick.getValue(), 0, (int) endTick.getValue() - 1, 1));
+            parent.setEndTick((int) endTick.getValue());
         });
 
         add(getThemedLabel("Players: "));

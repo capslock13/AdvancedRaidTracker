@@ -25,6 +25,7 @@ public class ZebakHandler extends TOARoomHandler
     {
         return "Zebak";
     }
+
     private int lastJugSpecialTick = -1;
     private int lastWaterfallSpecialTick = -1;
 
@@ -75,15 +76,14 @@ public class ZebakHandler extends TOARoomHandler
     @Override
     public void updateNpcSpawned(NpcSpawned spawned)
     {
-        if(lastJugSpecialTick+5 < client.getTickCount() && spawned.getNpc().getId() == 11737)
+        if (lastJugSpecialTick + 5 < client.getTickCount() && spawned.getNpc().getId() == 11737)
         {
             lastJugSpecialTick = client.getTickCount();
-            clog.addLine(LogID.TOA_ZEBAK_BOULDER_ATTACK, client.getTickCount()-roomStartTick);
-        }
-        else if(lastWaterfallSpecialTick != client.getTickCount() && spawned.getNpc().getId() == 11738)
+            clog.addLine(LogID.TOA_ZEBAK_BOULDER_ATTACK, client.getTickCount() - roomStartTick);
+        } else if (lastWaterfallSpecialTick != client.getTickCount() && spawned.getNpc().getId() == 11738)
         {
             lastWaterfallSpecialTick = client.getTickCount();
-            clog.addLine(LogID.TOA_ZEBAK_WATERFALL_ATTACK, client.getTickCount()-roomStartTick);
+            clog.addLine(LogID.TOA_ZEBAK_WATERFALL_ATTACK, client.getTickCount() - roomStartTick);
         }
     }
 
@@ -99,9 +99,9 @@ public class ZebakHandler extends TOARoomHandler
             plugin.liveFrame.setRoomFinished(getName(), duration);
             active = false;
         }
-        if(changed == 11732)
+        if (changed == 11732)
         {
-            clog.addLine(LogID.TOA_ZEBAK_ENRAGED, client.getTickCount()-roomStartTick);
+            clog.addLine(LogID.TOA_ZEBAK_ENRAGED, client.getTickCount() - roomStartTick);
         }
     }
 }

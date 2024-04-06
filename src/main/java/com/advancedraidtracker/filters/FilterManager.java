@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Scanner;
+
 @Slf4j
 public class FilterManager
 {
@@ -78,7 +79,7 @@ public class FilterManager
             File directory = new File(filterFolder);
             if (!directory.exists())
             {
-                if(!directory.mkdirs())
+                if (!directory.mkdirs())
                 {
                     log.info("Could not make directories to save filter");
                 }
@@ -87,12 +88,12 @@ public class FilterManager
 
             if (filterFile.exists())
             {
-                if(!filterFile.delete())
+                if (!filterFile.delete())
                 {
                     log.info("Could not delete old filter");
                 }
             }
-            if(!filterFile.createNewFile())
+            if (!filterFile.createNewFile())
             {
                 log.info("Could not create new filter filter");
             }
@@ -115,7 +116,7 @@ public class FilterManager
             File directory = new File(filterFolder);
             if (!directory.exists())
             {
-                if(!directory.mkdirs())
+                if (!directory.mkdirs())
                 {
                     log.info("Could not make directory to save filter");
                 }
@@ -123,7 +124,7 @@ public class FilterManager
             File filterFile = new File(filterFolder + name + ".filter");
             if (!filterFile.exists())
             {
-                if(!filterFile.createNewFile())
+                if (!filterFile.createNewFile())
                 {
                     log.info("Could not create new filter file");
                 }
@@ -147,7 +148,7 @@ public class FilterManager
             File directory = new File(filterFolder);
             if (!directory.exists())
             {
-                if(!directory.mkdirs())
+                if (!directory.mkdirs())
                 {
                     log.info("Could not make folder to save filters");
                 }
@@ -155,7 +156,7 @@ public class FilterManager
             File filterFile = new File(filterFolder + name + ".filter");
             if (!filterFile.exists())
             {
-                if(!filterFile.createNewFile())
+                if (!filterFile.createNewFile())
                 {
                     log.info("Could not create new filter file");
                 }

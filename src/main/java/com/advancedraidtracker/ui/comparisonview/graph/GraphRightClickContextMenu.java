@@ -26,7 +26,7 @@ public class GraphRightClickContextMenu extends JPopupMenu
             /*Raids raidFrame = new Raids(config, itemManager, clientThread, configManager);
             raidFrame.createFrame(raids);
             raidFrame.repaint();
-            raidFrame.open();*/ //todo reimplement
+            raidFrame.open();*/ //todo reimplement without requiring injected classes to be passed through 80 classes
         });
         add(item);
     }

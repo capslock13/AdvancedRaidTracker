@@ -9,7 +9,6 @@ public class ViewInfernoFrame extends BaseFrame
     public ViewInfernoFrame(Inf infData, AdvancedRaidTrackerConfig config)
     {
         setTitle("View Raid");
-        add(new ViewInfernoPanel(infData, config));
         setResizable(false);
         pack();
     }

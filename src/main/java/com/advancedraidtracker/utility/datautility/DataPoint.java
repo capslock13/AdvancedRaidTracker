@@ -13,7 +13,6 @@ public enum DataPoint
 {
     CHALLENGE_TIME("Challenge Time", types.TIME, ANY, EXCLUDED),
     OVERALL_TIME("Overall Time", types.TIME, ANY, EXCLUDED),
-    //TIME("Time", types.TIME, ALL),
     MAIDEN_TIME("Maiden Time", types.TIME, MAIDEN, MenuType.TIME),
     BLOAT_TIME("Bloat Time", types.TIME, BLOAT, MenuType.TIME),
     NYLOCAS_TIME("Nylocas Time", types.TIME, NYLOCAS, MenuType.TIME),
@@ -24,25 +23,25 @@ public enum DataPoint
     TIME_OUTSIDE_ROOMS("Time Outside Rooms", types.TIME, ANY, TIME),
     MAIDEN_BLOOD_SPAWNED("Maiden blood spawned", types.OTHER_INT, MAIDEN, MISC),
     MAIDEN_BLOOD_THROWN("Maiden blood thrown", types.OTHER_INT, MAIDEN, MISC),
-    MAIDEN_PLAYER_STOOD_IN_THROWN_BLOOD("Maiden player stood in thrown blood", types.OTHER_INT, MAIDEN, MISC,true),
-    MAIDEN_PLAYER_STOOD_IN_SPAWNED_BLOOD("Maiden player stood in spawned blood", types.OTHER_INT, MAIDEN, MISC,true),
-    MAIDEN_HEALS_FROM_THROWN_BLOOD("Maiden heals from thrown blood", types.OTHER_INT, MAIDEN, MISC,true),
-    MAIDEN_HEALS_FROM_SPAWNED_BLOOD("Maiden heals from spawned blood", types.OTHER_INT, MAIDEN, MISC,true),
-    MAIDEN_PLAYER_STOOD_IN_BLOOD("Maiden player stood in any blood", types.OTHER_INT, MAIDEN, MISC,true),
-    MAIDEN_HEALS_FROM_ANY_BLOOD("Maiden heals from any blood", types.OTHER_INT, MAIDEN, MISC,true),
-    MAIDEN_MELEE_DRAINS("Maiden drained melee", types.OTHER_INT, MAIDEN, MISC,true),
+    MAIDEN_PLAYER_STOOD_IN_THROWN_BLOOD("Maiden player stood in thrown blood", types.OTHER_INT, MAIDEN, MISC, true),
+    MAIDEN_PLAYER_STOOD_IN_SPAWNED_BLOOD("Maiden player stood in spawned blood", types.OTHER_INT, MAIDEN, MISC, true),
+    MAIDEN_HEALS_FROM_THROWN_BLOOD("Maiden heals from thrown blood", types.OTHER_INT, MAIDEN, MISC, true),
+    MAIDEN_HEALS_FROM_SPAWNED_BLOOD("Maiden heals from spawned blood", types.OTHER_INT, MAIDEN, MISC, true),
+    MAIDEN_PLAYER_STOOD_IN_BLOOD("Maiden player stood in any blood", types.OTHER_INT, MAIDEN, MISC, true),
+    MAIDEN_HEALS_FROM_ANY_BLOOD("Maiden heals from any blood", types.OTHER_INT, MAIDEN, MISC, true),
+    MAIDEN_MELEE_DRAINS("Maiden drained melee", types.OTHER_INT, MAIDEN, MISC, true),
     MAIDEN_CRABS_LEAKED("Maiden crabs leaked", types.OTHER_INT, MAIDEN, MISC),
     MAIDEN_CRABS_LEAKED_FULL_HP("Maiden crabs leaked full", types.OTHER_INT, MAIDEN, MISC),
     MAIDEN_HP_HEALED("Maiden HP healed", types.OTHER_INT, MAIDEN, MISC),
-    MAIDEN_DINHS_SPECS("Maiden dinhs specs", types.OTHER_INT, MAIDEN, SPEC,true),
+    MAIDEN_DINHS_SPECS("Maiden dinhs specs", types.OTHER_INT, MAIDEN, SPEC, true),
     MAIDEN_DINHS_CRABS_HIT("Maiden dinhs crabs Hit", types.OTHER_INT, MAIDEN, SPEC, true),
     MAIDEN_DINHS_TARGETS_HIT("Maiden dinhs targets hit", types.OTHER_INT, MAIDEN, SPEC, true),
     MAIDEN_DINHS_AVERAGE_HP_HIT("Maiden dinhs average HP crab", types.OTHER_INT, MAIDEN, SPEC, true),
     MAIDEN_DINHS_PERCENT_TARGETS_CRAB("Maiden dinhs % crabs targeted", types.OTHER_INT, MAIDEN, SPEC, true),
-    MAIDEN_DINHS_CRABS_UNDER_27_TARGETED("Maiden dinhs crab < 27hp targeted", types.OTHER_INT, MAIDEN, SPEC,true),
+    MAIDEN_DINHS_CRABS_UNDER_27_TARGETED("Maiden dinhs crab < 27hp targeted", types.OTHER_INT, MAIDEN, SPEC, true),
     MAIDEN_DINHS_CRABS_UNDER_27_TARGETED_PERCENT("Maiden dinhs crabs <27hp targeted %", types.OTHER_INT, MAIDEN, SPEC, true),
     MAIDEN_CHINS_THROWN("Maiden chins thrown", types.OTHER_INT, MAIDEN, MISC, true),
-    MAIDEN_CHINS_THROWN_WRONG_DISTANCE("Maiden chins thrown wrong distance", types.OTHER_INT, MAIDEN, MISC,true),
+    MAIDEN_CHINS_THROWN_WRONG_DISTANCE("Maiden chins thrown wrong distance", types.OTHER_INT, MAIDEN, MISC, true),
     MAIDEN_CHIN_CORRECT_DISTANCE_PERCENT("Maiden chins correct distance %", types.OTHER_INT, MAIDEN, MISC, true),
     RAID_INDEX("Raid Index", types.OTHER_INT, ANY, EXCLUDED),
     PARTY_SIZE("Party Size", types.OTHER_INT, ANY, EXCLUDED),
@@ -51,8 +50,8 @@ public enum DataPoint
     DAMAGE_RECEIVED("Damage Received", types.OTHER_INT, ALL, DAMAGE_PRAYER),
     PRAYER_USED("Prayer Used", types.OTHER_INT, ALL, DAMAGE_PRAYER),
     BLOAT_DOWNS("Bloat downs", types.INT_MAP, BLOAT, MISC),
-    BLOAT_FIRST_WALK_SCYTHES("Bloat 1st Walk Scythes", types.OTHER_INT, BLOAT, MISC,true),
-    BLOAT_FIRST_WALK_DEATHS("Bloat 1st Walk Deaths", types.OTHER_INT, BLOAT, MISC,true),
+    BLOAT_FIRST_WALK_SCYTHES("Bloat 1st Walk Scythes", types.OTHER_INT, BLOAT, MISC, true),
+    BLOAT_FIRST_WALK_DEATHS("Bloat 1st Walk Deaths", types.OTHER_INT, BLOAT, MISC, true),
     BLOAT_HP_FIRST_DOWN("Bloat HP% 1st down", types.OTHER_INT, BLOAT, MISC),
     NYLO_STALLS_PRE_20("Nylo stalls pre 20", types.OTHER_INT, NYLOCAS, MISC),
     NYLO_STALLS_POST_20("Nylo stalls post 20", types.OTHER_INT, NYLOCAS, MISC),
@@ -64,7 +63,7 @@ public enum DataPoint
     NYLO_ROTATIONS_MAGE("Nylo rotations mage", types.OTHER_INT, NYLOCAS, MISC),
     NYLO_ROTATIONS_MELEE("Nylo rotations melee", types.OTHER_INT, NYLOCAS, MISC),
     NYLO_ROTATIONS_TOTAL("Nylo total rotations", types.OTHER_INT, NYLOCAS, MISC),
-    NYLO_DEFENSE("Nylo defense", types.OTHER_INT, NYLOCAS, SPEC,50), //todo hmm why does this exist
+    NYLO_DEFENSE("Nylo defense", types.OTHER_INT, NYLOCAS, SPEC, 50), //todo hmm why does this exist
     NYLO_WAVES("Nylo waves", types.INT_MAP, NYLOCAS, MenuType.EXCLUDED, false),
     SOTE_SPECS_P1("Sote specs p1", types.OTHER_INT, SOTETSEG, SPEC),
     SOTE_SPECS_P2("Sote specs p2", types.OTHER_INT, SOTETSEG, SPEC),
@@ -123,22 +122,22 @@ public enum DataPoint
     PLAYER_BGS_HIT_COUNT("BGS Hits", types.OTHER_INT, ALL, SPEC),
     PLAYER_BGS_DAMAGE("BGS Damage", types.OTHER_INT, ALL, SPEC),
 
-    DEATHS("Deaths", types.OTHER_INT, ALL, MISTAKES,true),
+    DEATHS("Deaths", types.OTHER_INT, ALL, MISTAKES, true),
     THRALL_SUMMONS("Thrall Summons", types.INT_MAP, ALL, THRALL, true),
-    THRALL_DESPAWNS("Thrall Despawns", types.INT_MAP, ALL, THRALL,true),
+    THRALL_DESPAWNS("Thrall Despawns", types.INT_MAP, ALL, THRALL, true),
     THRALL_ATTACKS("Thrall Attacks", types.OTHER_INT, ALL, THRALL, true),
 
     THRALL_DAMAGE("Thrall Damage", types.OTHER_INT, ALL, THRALL, true),
 
-    VENG_DAMAGE("Veng Damage", types.OTHER_INT, ALL, VENG,true),
+    VENG_DAMAGE("Veng Damage", types.OTHER_INT, ALL, VENG, true),
 
-    VENG_CASTS("Veng Casts", types.OTHER_INT, ALL, VENG,true),
+    VENG_CASTS("Veng Casts", types.OTHER_INT, ALL, VENG, true),
 
-    VENG_PROCS("Veng Procs", types.OTHER_INT, ALL, VENG,true),
-    KODAI_BOPS("Kodai bops", types.OTHER_INT, ALL, MISTAKES,true),
-    DWH_BOPS("DWH bops", types.OTHER_INT, ALL, MISTAKES,true),
-    CHALLY_POKE("Chally pokes", types.OTHER_INT, ALL, MISTAKES,true),
-    BGS_WHACKS("BGS whacks", types.OTHER_INT, ALL, MISTAKES,true),
+    VENG_PROCS("Veng Procs", types.OTHER_INT, ALL, VENG, true),
+    KODAI_BOPS("Kodai bops", types.OTHER_INT, ALL, MISTAKES, true),
+    DWH_BOPS("DWH bops", types.OTHER_INT, ALL, MISTAKES, true),
+    CHALLY_POKE("Chally pokes", types.OTHER_INT, ALL, MISTAKES, true),
+    BGS_WHACKS("BGS whacks", types.OTHER_INT, ALL, MISTAKES, true),
     UNKNOWN("Unknown", types.OTHER_BOOL, ALL, EXCLUDED),
     DAWN_DROPS("Dawn Drops", types.INT_MAP, VERZIK, EXCLUDED),
 
@@ -204,7 +203,7 @@ public enum DataPoint
 
     AKKHA_FINAL_PHASE_SPLIT("Akkha Final Phase Split", types.TIME_SPLIT, AKKHA, TIME),
     AKKHA_FINAL_PHASE_DURATION("Akkha Final Phase Duration", types.TIME_SPLIT, AKKHA, TIME),
-    AKKHA_NULL_HIT("Akkha Null Hit", types.OTHER_INT, AKKHA, MISC,true),
+    AKKHA_NULL_HIT("Akkha Null Hit", types.OTHER_INT, AKKHA, MISC, true),
 
     WARDENS_TIME("Wardens Time", types.TIME, WARDENS, TIME),
     WARDENS_P1_DURATION("Wardens P1 Time", types.TIME_SPLIT, WARDENS, TIME),
@@ -274,10 +273,8 @@ public enum DataPoint
     INFERNO_WAVE_DURATIONS("Inferno Wave Starts", types.INT_MAP, INFERNO, MenuType.EXCLUDED, false),
 
 
+    ;;
 
-    ;
-
-    ;
     public static ArrayList<DataPoint> getTOBValues()
     {
         ArrayList<DataPoint> dataPoints = new ArrayList<>();
@@ -369,9 +366,10 @@ public enum DataPoint
     }
 
     public static Map<String, DataPoint> dataPointCache = new HashMap<>();
+
     public static DataPoint getValue(String s)
     {
-        if(dataPointCache.containsKey(s))
+        if (dataPointCache.containsKey(s))
         {
             return dataPointCache.get(s);
         }
@@ -406,6 +404,7 @@ public enum DataPoint
 
         public final String name;
         public final boolean excluded;
+
         MenuType(String name)
         {
             this.name = name;
@@ -487,16 +486,6 @@ public enum DataPoint
         return Arrays.copyOf(valuesToGather.toArray(), valuesToGather.size(), String[].class);
     }
 
-    public static String[] getByNames()
-    {
-        ArrayList<String> valuesToGather = new ArrayList<>();
-        for (DataPoint point : DataPoint.values())
-        {
-            valuesToGather.add(point.name);
-        }
-        return Arrays.copyOf(valuesToGather.toArray(), valuesToGather.size(), String[].class);
-    }
-
     public static String[] getTimeNames()
     {
         ArrayList<String> valuesToGather = new ArrayList<>();
@@ -513,9 +502,9 @@ public enum DataPoint
     public static List<DataPoint> getRoomPoints(RaidRoom room)
     {
         List<DataPoint> points = new ArrayList<>();
-        for(DataPoint point : values())
+        for (DataPoint point : values())
         {
-            if(point.room == room || point.room.equals(ALL))
+            if (point.room == room || point.room.equals(ALL))
             {
                 points.add(point);
             }
@@ -526,74 +515,6 @@ public enum DataPoint
     public boolean isTime()
     {
         return type.equals(types.TIME) || type.equals(types.TIME_DURATION) || type.equals(types.TIME_SPLIT);
-    }
-
-    public static String[] filterTimes(String[] data)
-    {
-        ArrayList<String> filtered = new ArrayList<>();
-        for (String s : data)
-        {
-            if (DataPoint.getValue(s).isTime())
-            {
-                filtered.add(s);
-            }
-        }
-        return Arrays.copyOf(filtered.toArray(), filtered.size(), String[].class);
-    }
-
-    public static String[] filterInt(String[] data)
-    {
-        ArrayList<String> filtered = new ArrayList<>();
-        for (String s : data)
-        {
-            DataPoint dp = DataPoint.getValue(s);
-            if (dp != null && dp.type == types.OTHER_INT && !dp.name.contains("thrall") && !dp.name.contains("veng")
-                    && !dp.name.contains("BGS") && !dp.name.contains("hammers") && !dp.name.contains("dinhs"))
-            {
-                filtered.add(s);
-            }
-        }
-        return Arrays.copyOf(filtered.toArray(), filtered.size(), String[].class);
-    }
-
-    public static String[] filterThrall(String[] data)
-    {
-        ArrayList<String> filtered = new ArrayList<>();
-        for (String s : data)
-        {
-            if (Objects.requireNonNull(DataPoint.getValue(s)).name.contains("thrall"))
-            {
-                filtered.add(s);
-            }
-        }
-        return Arrays.copyOf(filtered.toArray(), filtered.size(), String[].class);
-    }
-
-    public static String[] filterVeng(String[] data)
-    {
-        ArrayList<String> filtered = new ArrayList<>();
-        for (String s : data)
-        {
-            if (Objects.requireNonNull(DataPoint.getValue(s)).name.contains("veng"))
-            {
-                filtered.add(s);
-            }
-        }
-        return Arrays.copyOf(filtered.toArray(), filtered.size(), String[].class);
-    }
-
-    public static String[] filterSpecs(String[] data)
-    {
-        ArrayList<String> filtered = new ArrayList<>();
-        for (String s : data)
-        {
-            String name = Objects.requireNonNull(DataPoint.getValue(s)).name;
-            if (name.contains("BGS") || name.contains("hammers") || name.contains("dinhs"))
-            {
-                filtered.add(s);
-            }
-        }
-        return Arrays.copyOf(filtered.toArray(), filtered.size(), String[].class);
     }
 
     public static String[] getSpecificNames(RaidRoom room)
@@ -609,53 +530,35 @@ public enum DataPoint
         return Arrays.copyOf(valuesToGather.toArray(), valuesToGather.size(), String[].class);
     }
 
-    public static String[] getRoomTimes()
-    {
-        return new String[]{"Challenge Time", "Overall Time", "Time Outside Rooms", "Maiden Time", "Bloat Time", "Nylocas Time", "Sotetseg Time", "Xarpus Time", "Verzik Time",
-                "Scabaras Time", "Kephri Time", "Apmeken Time", "Baba Time", "Crondis Time", "Zebak Time", "Het Time", "Akkha Time", "Wardens Time"};
-    }
-
     public enum MenuCategories
     {
         TIME("Time"),
         OTHER("Other");
         public String name;
+
         MenuCategories(String name)
         {
-                this.name = name;
+            this.name = name;
         }
-    }
-
-    public static List<DataPoint> getPointsByRoomAndType(RaidRoom room, MenuType menuType)
-    {
-        List<DataPoint> selectedPoints = new ArrayList<>();
-        for(DataPoint point : DataPoint.values())
-        {
-            if(point.room.equals(room) && point.menuType.equals(menuType))
-            {
-                selectedPoints.add(point);
-            }
-        }
-        return selectedPoints;
     }
 
     public static List<String> getMenuNamesByType(RaidRoom room, MenuCategories category)
     {
         List<String> namesToGather = new ArrayList<>();
-        for(DataPoint point : DataPoint.values())
+        for (DataPoint point : DataPoint.values())
         {
-            if(point.room.equals(room))
+            if (point.room.equals(room))
             {
-                switch(category)
+                switch (category)
                 {
                     case TIME:
-                        if(point.isTime())
+                        if (point.isTime())
                         {
                             namesToGather.add(point.name);
                         }
                         break;
                     case OTHER:
-                        if(point.type.equals(types.OTHER_INT))
+                        if (point.type.equals(types.OTHER_INT))
                         {
                             namesToGather.add(point.name);
                         }

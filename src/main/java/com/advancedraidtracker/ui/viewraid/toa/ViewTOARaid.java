@@ -15,6 +15,7 @@ import static com.advancedraidtracker.utility.UISwingUtility.*;
 public class ViewTOARaid extends BaseFrame
 {
     Toa toaData;
+
     public ViewTOARaid(Toa toaData, AdvancedRaidTrackerConfig config)
     {
         this.toaData = toaData;
@@ -210,7 +211,6 @@ public class ViewTOARaid extends BaseFrame
 
         panel.add(getThemedLabel(""));
         panel.add(getThemedLabel(""));
-
 
 
         return panel;

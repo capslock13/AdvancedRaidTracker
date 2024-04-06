@@ -13,6 +13,7 @@ import net.runelite.api.Client;
 import net.runelite.api.Skill;
 import net.runelite.api.events.*;
 import com.advancedraidtracker.utility.RoomUtil;
+
 @Slf4j
 public class RoomHandler
 {
@@ -29,7 +30,7 @@ public class RoomHandler
     protected boolean accurateEntry = true;
     protected int prayerDrained = 0;
     protected int damageDealt = 0;
-    protected  int damageReceived = 0;
+    protected int damageReceived = 0;
     @Getter
     @Setter
     int scale;
@@ -155,17 +156,16 @@ public class RoomHandler
     public void updateGameTick(GameTick event)
     {
         currentPrayer = client.getBoostedSkillLevel(Skill.PRAYER);
-        if(wasActive)
+        if (wasActive)
         {
-            if(!active)
+            if (!active)
             {
                 wasActive = false;
                 writePrayerDamageData();
             }
-        }
-        else
+        } else
         {
-            if(active)
+            if (active)
             {
                 wasActive = true;
             }
@@ -197,13 +197,12 @@ public class RoomHandler
 
     public void updateHitsplatApplied(HitsplatApplied event)
     {
-        if(event.getActor().equals(client.getLocalPlayer()))
+        if (event.getActor().equals(client.getLocalPlayer()))
         {
             damageReceived += event.getHitsplat().getAmount();
-        }
-        else
+        } else
         {
-            if(event.getHitsplat().isMine())
+            if (event.getHitsplat().isMine())
             {
                 damageDealt += event.getHitsplat().getAmount();
             }
@@ -216,9 +215,9 @@ public class RoomHandler
 
     public void updateStatChanged(StatChanged statChanged)
     {
-        if(statChanged.getSkill().equals(Skill.PRAYER))
+        if (statChanged.getSkill().equals(Skill.PRAYER))
         {
-            if(statChanged.getBoostedLevel() == currentPrayer-1)
+            if (statChanged.getBoostedLevel() == currentPrayer - 1)
             {
                 prayerDrained++;
             }

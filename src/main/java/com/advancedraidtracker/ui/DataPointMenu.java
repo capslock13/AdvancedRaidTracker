@@ -23,42 +23,42 @@ public class DataPointMenu
     @Getter
     private JComboBox<String> comboBox;
     private UpdateableWindow window;
-    public DataPointMenu(List<String> allComboValues, Map<String, String[]> popupData, List<String> flatData, JPopupMenu popmenu, JComboBox<String> box, UpdateableWindow window)
+
+    public DataPointMenu(JPopupMenu popmenu, JComboBox<String> box, UpdateableWindow window)
     { //todo handle edge cases differently
         this.window = window;
         this.comboBox = box;
 
         Map<RaidType, JMenu> menus = new LinkedHashMap<>();
-        for(RaidType raidType : RaidType.values())
+        for (RaidType raidType : RaidType.values())
         {
-            if(raidType.equals(RaidType.ALL))
+            if (raidType.equals(RaidType.ALL))
             {
                 JMenu menu = createMenu(raidType.name);
                 Map<DataPoint.MenuType, JMenu> categoryMenus = new LinkedHashMap<>();
-                for(DataPoint.MenuType menuType : DataPoint.MenuType.values())
+                for (DataPoint.MenuType menuType : DataPoint.MenuType.values())
                 {
-                    if(!menuType.excluded)
+                    if (!menuType.excluded)
                     {
                         categoryMenus.put(menuType, createMenu(menuType.name));
                     }
                 }
-                for(DataPoint point : DataPoint.getRoomPoints(ALL))
+                for (DataPoint point : DataPoint.getRoomPoints(ALL))
                 {
-                    if(!point.menuType.equals(DataPoint.MenuType.EXCLUDED))
+                    if (!point.menuType.equals(DataPoint.MenuType.EXCLUDED))
                     {
-                        if(point.room.equals(ALL))
+                        if (point.room.equals(ALL))
                         {
                             categoryMenus.get(point.menuType).add(createMenuItem("Total " + point.name));
-                        }
-                        else
+                        } else
                         {
                             categoryMenus.get(point.menuType).add(createMenuItem(point.name));
                         }
                     }
                 }
-                for(JMenu categoryMenu : categoryMenus.values())
+                for (JMenu categoryMenu : categoryMenus.values())
                 {
-                    if(categoryMenu.getMenuComponents().length != 0)
+                    if (categoryMenu.getMenuComponents().length != 0)
                     {
                         menu.add(categoryMenu);
                     }
@@ -69,52 +69,51 @@ public class DataPointMenu
             JMenu menu = createMenu(raidType.name);
 
             Map<RaidRoom, JMenu> roomSubMenus = new LinkedHashMap<>();
-            for(RaidRoom room : RaidRoom.getRaidRoomsForRaidType(raidType))
+            for (RaidRoom room : RaidRoom.getRaidRoomsForRaidType(raidType))
             {
                 JMenu roomMenu = createMenu(room.name);
                 Map<DataPoint.MenuType, JMenu> categoryMenus = new LinkedHashMap<>();
-                for(DataPoint.MenuType menuType : DataPoint.MenuType.values())
+                for (DataPoint.MenuType menuType : DataPoint.MenuType.values())
                 {
-                    if(!menuType.excluded)
+                    if (!menuType.excluded)
                     {
                         categoryMenus.put(menuType, createMenu(menuType.name));
                     }
                 }
-                for(DataPoint point : DataPoint.getRoomPoints(room))
+                for (DataPoint point : DataPoint.getRoomPoints(room))
                 {
-                    if(!point.menuType.equals(DataPoint.MenuType.EXCLUDED))
+                    if (!point.menuType.equals(DataPoint.MenuType.EXCLUDED))
                     {
-                        if(point.room.equals(ALL))
+                        if (point.room.equals(ALL))
                         {
                             categoryMenus.get(point.menuType).add(createMenuItem(room.name + " " + point.name));
-                        }
-                        else
+                        } else
                         {
                             categoryMenus.get(point.menuType).add(createMenuItem(point.name));
                         }
                     }
                 }
-                for(JMenu categoryMenu : categoryMenus.values())
+                for (JMenu categoryMenu : categoryMenus.values())
                 {
-                    if(categoryMenu.getMenuComponents().length != 0)
+                    if (categoryMenu.getMenuComponents().length != 0)
                     {
                         roomMenu.add(categoryMenu);
                     }
                 }
                 roomSubMenus.put(room, roomMenu);
             }
-            for(JMenu roomMenu : roomSubMenus.values())
+            for (JMenu roomMenu : roomSubMenus.values())
             {
-                if(roomMenu.getMenuComponents().length != 0)
+                if (roomMenu.getMenuComponents().length != 0)
                 {
                     menu.add(roomMenu);
                 }
             }
             menus.put(raidType, menu);
         }
-        for(JMenu menu : menus.values())
+        for (JMenu menu : menus.values())
         {
-            if(menu.getMenuComponents().length != 0)
+            if (menu.getMenuComponents().length != 0)
             {
                 popmenu.add(menu);
             }

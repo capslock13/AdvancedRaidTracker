@@ -28,11 +28,10 @@ public class FilterOtherInt extends FilterCondition
     public boolean evaluate(Raid data)
     {
         int checkValue = data.get(param);
-        if(data.getRoomAccurate(param.room) && value != -1)
+        if (data.getRoomAccurate(param.room) && value != -1)
         {
             return FilterUtil.compare(qualifier, value, checkValue);
-        }
-        else
+        } else
         {
             return false;
         }

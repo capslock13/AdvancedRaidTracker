@@ -24,22 +24,7 @@ import java.util.List;
 @Slf4j
 public class ColosseumHandler extends RoomHandler
 {
-    public static final Map<Point, Integer> spawnPoints = Collections.unmodifiableMap(new HashMap<Point, Integer>()
-    {{
-        put(new Point(19, 37), 0);
-        put(new Point(19, 32), 1);
-        put(new Point(25, 34), 2);
-        put(new Point(29, 37), 3);
-        put(new Point(29, 31), 4);
-        put(new Point(32, 38), 5);
-        put(new Point(32, 27), 6);
-        put(new Point(33, 42), 7);
-        put(new Point(35, 37), 8);
-        put(new Point(35, 31), 9);
-        put(new Point(40, 35), 10);
-        put(new Point(44, 37), 11);
-        put(new Point(44, 32), 12);
-    }});
+    public static final Map<Point, Integer> spawnPoints = Map.ofEntries(Map.entry(new Point(19, 37), 0), Map.entry(new Point(19, 32), 1), Map.entry(new Point(25, 34), 2), Map.entry(new Point(29, 37), 3), Map.entry(new Point(29, 31), 4), Map.entry(new Point(32, 38), 5), Map.entry(new Point(32, 27), 6), Map.entry(new Point(33, 42), 7), Map.entry(new Point(35, 37), 8), Map.entry(new Point(35, 31), 9), Map.entry(new Point(40, 35), 10), Map.entry(new Point(44, 37), 11), Map.entry(new Point(44, 32), 12));
 
     public static final Map<Integer, Integer> spawnType = Map.of(12811, 0, 12817, 1, 12818, 2, 12819, 3);
 
@@ -51,13 +36,15 @@ public class ColosseumHandler extends RoomHandler
 
     /**
      * Website coordinates are adjust to 0,0 and inversed Y direction
+     *
      * @param original point
      * @return translated point
      */
     public static Point mapToWebsitePoint(Point original)
     {
-        return new Point(original.getX()-16, 32-(original.getY()-19));
+        return new Point(original.getX() - 16, 32 - (original.getY() - 19));
     }
+
     public String getCharacter(Point point, int id)
     {
         int spawnPoint = spawnPoints.getOrDefault(point, -1);
@@ -131,6 +118,7 @@ public class ColosseumHandler extends RoomHandler
     {
         return "Wave " + currentWave;
     }
+
     public int currentWave = 0;
     public int lastCompletedWave = 0;
     public int timeSum = 0;
@@ -158,6 +146,7 @@ public class ColosseumHandler extends RoomHandler
         put(12, "Frailty");
         put(13, "Red Flag");
     }};
+
     public ColosseumHandler(Client client, DataWriter clog, AdvancedRaidTrackerConfig config, LiveChart liveFrame, AdvancedRaidTrackerPlugin plugin)
     {
         super(client, clog, config, plugin);
@@ -187,18 +176,17 @@ public class ColosseumHandler extends RoomHandler
 
     public void updateScriptPreFired(ScriptPreFired event)
     {
-        if(event.getScriptId() == 4931)
+        if (event.getScriptId() == 4931)
         {
             try
             {
                 Object[] args = event.getScriptEvent().getArguments();
-                currentInvos.add((Integer)args[2]);
-                currentInvos.add((Integer)args[3]);
-                currentInvos.add((Integer)args[4]);
-                offeredInvos.putAll(currentWave+1, currentInvos);
+                currentInvos.add((Integer) args[2]);
+                currentInvos.add((Integer) args[3]);
+                currentInvos.add((Integer) args[4]);
+                offeredInvos.putAll(currentWave + 1, currentInvos);
                 clog.addLine(LogID.COLOSSEUM_INVOCATION_CHOICES, String.valueOf(args[2]), String.valueOf(args[3]), String.valueOf(args[4]));
-            }
-            catch (Exception e)
+            } catch (Exception ignored)
             {
 
             }
@@ -208,11 +196,10 @@ public class ColosseumHandler extends RoomHandler
     @Override
     public void updateHitsplatApplied(HitsplatApplied hitsplatApplied)
     {
-        //            "NPC Heal", "Amount", "ID", "Name", "Room Tick", "Room")
-        if(hitsplatApplied.getActor() instanceof NPC && hitsplatApplied.getHitsplat().getHitsplatType() == HitsplatID.HEAL)
+        if (hitsplatApplied.getActor() instanceof NPC && hitsplatApplied.getHitsplat().getHitsplatType() == HitsplatID.HEAL)
         {
             NPC npc = (NPC) hitsplatApplied.getActor();
-            clog.addLine(LogID.COLOSSEUM_NPC_HEALED, String.valueOf(hitsplatApplied.getHitsplat().getAmount()), String.valueOf(npc.getId()), npc.getName(), String.valueOf((client.getTickCount()-roomStartTick)), getName());
+            clog.addLine(LogID.COLOSSEUM_NPC_HEALED, String.valueOf(hitsplatApplied.getHitsplat().getAmount()), String.valueOf(npc.getId()), npc.getName(), String.valueOf((client.getTickCount() - roomStartTick)), getName());
         }
     }
 
@@ -220,26 +207,26 @@ public class ColosseumHandler extends RoomHandler
     {
         StringBuilder list = new StringBuilder();
         Map<Integer, Integer> invoLevels = new HashMap<>();
-        for(Integer invo : selectedInvos.values())
+        for (Integer invo : selectedInvos.values())
         {
             invoLevels.merge(invo, 1, Integer::sum);
         }
         int index = 0;
-        for(Integer invo : invoLevels.keySet())
+        for (Integer invo : invoLevels.keySet())
         {
-            if(index%3==0 && index != 0)
+            if (index % 3 == 0 && index != 0)
             {
                 list.append("\n");
             }
             list.append(invoMap.get(invo));
-            if(invoLevels.get(invo) > 1)
+            if (invoLevels.get(invo) > 1)
             {
                 list.append(invoLevels.get(invo));
             }
             list.append(" ");
             index++;
         }
-        if(!list.toString().endsWith("\n"))
+        if (!list.toString().endsWith("\n"))
         {
             list.append("\n");
         }
@@ -249,9 +236,8 @@ public class ColosseumHandler extends RoomHandler
     @Override
     public void updateGameTick(GameTick event)
     {
-        if(!spawnString.isEmpty())
+        if (!spawnString.isEmpty())
         {
-            log.info("Spawn: " + spawnString);
             clog.addLine(LogID.COLOSSEUM_SPAWN_STRING, String.valueOf(currentWave), spawnString);
             spawnString = "";
         }
@@ -263,32 +249,27 @@ public class ColosseumHandler extends RoomHandler
     @Override
     public void updateNpcSpawned(NpcSpawned event)
     {
-        if(spawnType.containsKey(event.getNpc().getId()))
+        if (spawnType.containsKey(event.getNpc().getId()))
         {
-            int id = spawnType.get(event.getNpc().getId());
-            log.info("Spawn type: " + event.getNpc().getId() + " mapped to: " + id);
             Point spawnLocation = new Point(event.getNpc().getWorldLocation().getRegionX(), event.getNpc().getWorldLocation().getRegionY());
-            log.info("Spawn point: " + spawnLocation);
-            if(spawnPoints.containsKey(spawnLocation))
+            if (spawnPoints.containsKey(spawnLocation))
             {
-                log.info("Spawn location: " + spawnLocation + " mapped to: " + spawnPoints.get(spawnLocation));
                 String letter = getCharacter(spawnLocation, event.getNpc().getId());
-                log.info("Character: " + letter);
                 spawnString += letter;
-                log.info("And back: " + getCoordinates(letter) + ", " + getId(letter));
             }
         }
     }
+
     @Override
     public void updateNpcDespawned(NpcDespawned event)
     {
-        if(event.getNpc().getId() == 12808)
+        if (event.getNpc().getId() == 12808)
         {
             int selection = client.getVarbitValue(9788);
-            if(selection > 0)
+            if (selection > 0)
             {
-                selectedInvos.put(currentWave+1, currentInvos.get(selection-1));
-                clog.addLine(LogID.COLOSSEUM_INVOCATION_SELECTED, currentInvos.get(selection-1));
+                selectedInvos.put(currentWave + 1, currentInvos.get(selection - 1));
+                clog.addLine(LogID.COLOSSEUM_INVOCATION_SELECTED, currentInvos.get(selection - 1));
             }
             currentInvos.clear();
         }
@@ -297,13 +278,12 @@ public class ColosseumHandler extends RoomHandler
     public String getCurrentInvos()
     {
         StringBuilder invoString = new StringBuilder();
-        for(Integer i : offeredInvos.get(currentWave))
+        for (Integer i : offeredInvos.get(currentWave))
         {
-            if(Objects.equals(selectedInvos.get(currentWave), i))
+            if (Objects.equals(selectedInvos.get(currentWave), i))
             {
                 invoString.append(" (").append(invoMap.get(i)).append(") ");
-            }
-            else
+            } else
             {
                 invoString.append(" ").append(invoMap.get(i)).append(" ");
             }
@@ -314,30 +294,30 @@ public class ColosseumHandler extends RoomHandler
     @Override
     public void updateChatMessage(ChatMessage message)
     {
-        if(Text.removeTags(message.getMessage()).contains("Wave: "))
+        if (Text.removeTags(message.getMessage()).contains("Wave: "))
         {
             currentWave++;
             active = true;
             roomStartTick = client.getTickCount();
-            liveFrame.tabbedPane.setSelectedIndex(currentWave-1);
+            liveFrame.tabbedPane.setSelectedIndex(currentWave - 1);
             clog.addLine(LogID.COLOSSEUM_WAVE_STARTED, currentWave);
         }
-        if(message.getMessage().contains("Wave duration: "))
+        if (message.getMessage().contains("Wave duration: "))
         {
             active = false;
             String[] messageSplit = message.getMessage().split(" ");
-            if(messageSplit.length == 6)
+            if (messageSplit.length == 6)
             {
                 String time = Text.removeTags(messageSplit[5]);
                 String[] timeSplit = time.split(":");
-                if(timeSplit.length == 2)
+                if (timeSplit.length == 2)
                 {
-                    int duration = (Integer.parseInt(timeSplit[0])*100) + (int)(Double.parseDouble(timeSplit[1])/0.6);
+                    int duration = (Integer.parseInt(timeSplit[0]) * 100) + (int) (Double.parseDouble(timeSplit[1]) / 0.6);
                     timeSum += duration;
                     lastCompletedWave = Integer.parseInt(messageSplit[1]);
                     lastWaveDuration = duration;
                     plugin.lastSplits += "Wave: " + messageSplit[1] + ", Split: " + RoomUtil.time(timeSum) + " (+" + RoomUtil.time(duration) + ")\n";
-                    switch(messageSplit[1])
+                    switch (messageSplit[1])
                     {
                         case "1":
                             clog.addLine(LogID.COLOSSEUM_WAVE_1_END, duration);
@@ -378,42 +358,38 @@ public class ColosseumHandler extends RoomHandler
                     }
                 }
             }
-        }
-        else if(message.getMessage().contains("Colosseum duration: "))
+        } else if (message.getMessage().contains("Colosseum duration: "))
         {
             active = false;
             log.info("Found duration msg: " + message.getMessage());
             String[] split = message.getMessage().split(" ");
-            if(split.length >= 3)
+            if (split.length >= 3)
             {
                 String[] subSplit = Text.removeTags(split[2]).split(":");
                 String timeMessage = subSplit[1];
-                if(subSplit[1].endsWith("."))
+                if (subSplit[1].endsWith("."))
                 {
-                    timeMessage = subSplit[1].substring(0, subSplit[1].length()-1);
+                    timeMessage = subSplit[1].substring(0, subSplit[1].length() - 1);
                 }
-                int timeSplit = (Integer.parseInt(subSplit[0])*100) + (int)(Double.parseDouble(timeMessage)/0.6);
-                lastWaveDuration = timeSplit-timeSum;
+                int timeSplit = (Integer.parseInt(subSplit[0]) * 100) + (int) (Double.parseDouble(timeMessage) / 0.6);
+                lastWaveDuration = timeSplit - timeSum;
                 clog.addLine(LogID.COLOSSEUM_WAVE_12_END, timeSplit);
                 timeSum += lastWaveDuration;
                 lastCompletedWave = 12;
             }
-        }
-        else if(message.getMessage().contains("Sol Heredit jumps down"))
+        } else if (message.getMessage().contains("Sol Heredit jumps down"))
         {
             currentWave++;
-            liveFrame.tabbedPane.setSelectedIndex(currentWave-1);
+            liveFrame.tabbedPane.setSelectedIndex(currentWave - 1);
             active = true;
             roomStartTick = client.getTickCount();
             clog.addLine(LogID.COLOSSEUM_WAVE_STARTED, currentWave);
-        }
-        else if(message.getMessage().contains("I'LL") && message.getMessage().contains("YOUR"))
+        } else if (message.getMessage().contains("I'LL") && message.getMessage().contains("YOUR"))
         {
-            clog.addLine(LogID.COLOSSEUM_GRAPPLE_INITIATED, client.getTickCount()-roomStartTick);
-        }
-        else if(message.getMessage().contains("You perfectly parry"))
+            clog.addLine(LogID.COLOSSEUM_GRAPPLE_INITIATED, client.getTickCount() - roomStartTick);
+        } else if (message.getMessage().contains("You perfectly parry"))
         {
-            clog.addLine(LogID.COLOSSEUM_GRAPPLE_PERFECT_PARRY, client.getTickCount()-roomStartTick);
+            clog.addLine(LogID.COLOSSEUM_GRAPPLE_PERFECT_PARRY, client.getTickCount() - roomStartTick);
         }
     }
 }

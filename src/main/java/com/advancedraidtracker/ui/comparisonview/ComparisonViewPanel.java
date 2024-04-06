@@ -15,7 +15,6 @@ import net.runelite.client.config.ConfigManager;
 import net.runelite.client.game.ItemManager;
 
 import javax.swing.*;
-import javax.swing.border.MatteBorder;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -233,7 +232,7 @@ public class ComparisonViewPanel extends JPanel implements UpdateableWindow
 
         Map<String, String[]> comboPopupData = new LinkedHashMap<>();
 
-        for(RaidRoom room : RaidRoom.values())
+        for (RaidRoom room : RaidRoom.values())
         {
             comboPopupData.put(room.name, DataPoint.getSpecificNames(room));
         }
@@ -245,22 +244,19 @@ public class ComparisonViewPanel extends JPanel implements UpdateableWindow
         compareByComboBox.setEditable(false);
 
         compareByComboBox.setEnabled(true);
-        for(Component c : compareByComboBox.getComponents())
+        for (Component c : compareByComboBox.getComponents())
         {
             //we are using the combobox for its appearance only, we do not want the real combobox dropdown to pop up when clicked because we are using
             //a jpopupmenu to display the content of the dropdown. Even if we set it not visible it will flash for a frame before going away.
-            if(c instanceof AbstractButton)
+            if (c instanceof AbstractButton)
             {
                 c.setEnabled(false);
             }
         }
 
-
-        ArrayList<String> allComboValues = new ArrayList<>(comboPopupData.keySet());
         comboPopupMenu = getThemedPopupMenu();
-        comboStrictData = new ArrayList<>(comboPopupData.keySet());
 
-        DataPointMenu menu = new DataPointMenu(allComboValues, comboPopupData, comboFlatData, comboPopupMenu, compareByComboBox, this);
+        new DataPointMenu(comboPopupMenu, compareByComboBox, this);
         compareByComboBox.addMouseListener(new MouseAdapter()
         {
             @Override
@@ -291,34 +287,7 @@ public class ComparisonViewPanel extends JPanel implements UpdateableWindow
     private int valX = 0;
 
     private JPopupMenu comboPopupMenu;
-    private ArrayList<String> comboStrictData;
-    private AbstractButton arrowButton;
 
-    private void setComboSelection(String name)
-    {
-        Vector<String> items = new Vector<>();
-
-        addComboItems(name, items, comboStrictData, compareByComboBox);
-    }
-
-    public static void addComboItems(String name, Vector<String> items, List<String> comboStrictData, JComboBox<String> compareByComboBox)
-    {
-        for (String item : comboStrictData)
-        {
-            if (item.endsWith(name))
-            {
-                items.add(item);
-                break;
-            }
-        }
-
-        compareByComboBox.setModel(new DefaultComboBoxModel<>(items));
-
-        if (items.size() == 1)
-        {
-            compareByComboBox.setSelectedIndex(0);
-        }
-    }
 
     private void switchGraphData()
     {
@@ -474,45 +443,45 @@ public class ComparisonViewPanel extends JPanel implements UpdateableWindow
             {
                 if (!time || value != 0)
                 {
-                        switch ((Objects.requireNonNull(DataPoint.getValue(String.valueOf(compareByComboBox.getSelectedItem())))).room) //todo ???
-                        {
-                            case MAIDEN:
-                                if (!raidData.getRoomAccurate(MAIDEN))
-                                {
-                                    continue;
-                                }
-                                break;
-                            case BLOAT:
-                                if (!raidData.getRoomAccurate(BLOAT))
-                                {
-                                    continue;
-                                }
-                                break;
-                            case NYLOCAS:
-                                if (!raidData.getRoomAccurate(NYLOCAS))
-                                {
-                                    continue;
-                                }
-                                break;
-                            case SOTETSEG:
-                                if (!raidData.getRoomAccurate(SOTETSEG))
-                                {
-                                    continue;
-                                }
-                                break;
-                            case XARPUS:
-                                if (!raidData.getRoomAccurate(XARPUS))
-                                {
-                                    continue;
-                                }
-                                break;
-                            case VERZIK:
-                                if (!raidData.getRoomAccurate(VERZIK))
-                                {
-                                    continue;
-                                }
-                                break;
-                        }
+                    switch ((Objects.requireNonNull(DataPoint.getValue(String.valueOf(compareByComboBox.getSelectedItem())))).room) //todo ???
+                    {
+                        case MAIDEN:
+                            if (!raidData.getRoomAccurate(MAIDEN))
+                            {
+                                continue;
+                            }
+                            break;
+                        case BLOAT:
+                            if (!raidData.getRoomAccurate(BLOAT))
+                            {
+                                continue;
+                            }
+                            break;
+                        case NYLOCAS:
+                            if (!raidData.getRoomAccurate(NYLOCAS))
+                            {
+                                continue;
+                            }
+                            break;
+                        case SOTETSEG:
+                            if (!raidData.getRoomAccurate(SOTETSEG))
+                            {
+                                continue;
+                            }
+                            break;
+                        case XARPUS:
+                            if (!raidData.getRoomAccurate(XARPUS))
+                            {
+                                continue;
+                            }
+                            break;
+                        case VERZIK:
+                            if (!raidData.getRoomAccurate(VERZIK))
+                            {
+                                continue;
+                            }
+                            break;
+                    }
                     arrayToPass.add(value);
                 }
             }

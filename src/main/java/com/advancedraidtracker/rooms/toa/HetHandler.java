@@ -46,9 +46,9 @@ public class HetHandler extends TOARoomHandler
     @Override
     public void handleNPCChanged(int changed)
     {
-        if(changed == 11707)
+        if (changed == 11707)
         {
-            clog.addLine(TOA_HET_DOWN, client.getTickCount()-roomStartTick);
+            clog.addLine(TOA_HET_DOWN, client.getTickCount() - roomStartTick);
         }
     }
 

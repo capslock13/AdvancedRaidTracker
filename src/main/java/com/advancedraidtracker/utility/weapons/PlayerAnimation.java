@@ -41,7 +41,7 @@ public enum PlayerAnimation
     CLAW_SCRATCH("Claw Scratch", "c", new Color(76, 89, 1), 4, new int[]{393, 1067}, new int[]{}, new int[]{ItemID.DRAGON_CLAWS, ItemID.DRAGON_CLAWS_OR, ItemID.DRAGON_CLAWS_CR}, new int[]{}),
     CLAW_SPEC("Claw Spec", "C", new Color(76, 89, 1), 4, new int[]{7514}, new int[]{}, new int[]{ItemID.DRAGON_CLAWS, ItemID.DRAGON_CLAWS_OR, ItemID.DRAGON_CLAWS_CR}, new int[]{}),
     SHADOW("Shadow", "Sh", new Color(20, 20, 60), 5, new int[]{9493}, new int[]{}, new int[]{ItemID.TUMEKENS_SHADOW}, new int[]{2126}),
-    DART("Dart", "Da", new Color(10, 60, 60), 2, new int[]{7554}, new int[]{}, new int[]{-1, ItemID.DRAGON_DART, ItemID.AMETHYST_DART, ItemID.RUNE_DART, ItemID.DRAGON_DARTP, 11233, 11234,  ItemID.AMETHYST_DARTP, 25855, 25857, ItemID.RUNE_DARTP, 5634, 5641}, new int[]{}),
+    DART("Dart", "Da", new Color(10, 60, 60), 2, new int[]{7554}, new int[]{}, new int[]{-1, ItemID.DRAGON_DART, ItemID.AMETHYST_DART, ItemID.RUNE_DART, ItemID.DRAGON_DARTP, 11233, 11234, ItemID.AMETHYST_DARTP, 25855, 25857, ItemID.RUNE_DARTP, 5634, 5641}, new int[]{}),
     KNIFE("Knife", "Kn", new Color(10, 60, 60), 2, new int[]{7617}, new int[]{}, new int[]{-1, ItemID.RUNE_KNIFE, ItemID.RUNE_KNIFEP}, new int[]{}),
     SBS("Spellbook Swap", "SS", new Color(10, 100, 60), -1, new int[]{6299}, new int[]{}, new int[]{}, new int[]{}),
     BOUNCE("Bounce", "VB", new Color(200, 10, 10), -1, new int[]{100000}, new int[]{}, new int[]{}, new int[]{}),
@@ -68,7 +68,7 @@ public enum PlayerAnimation
     VOID_WAKER_SPEC("Voidwaker Spec", "VW", new Color(160, 70, 70), 4, new int[]{1378}, new int[]{}, new int[]{ItemID.VOIDWAKER}, new int[]{}),
     MINING("Mining", "M", new Color(30, 30, 30), 3, new int[]{9479}, new int[]{}, new int[]{}, new int[]{}),
     DDS_SPEC("Dragon Dagger Spec", "DDS", new Color(140, 10, 10), 4, new int[]{1062}, new int[]{}, new int[]{ItemID.DRAGON_DAGGER, ItemID.DRAGON_DAGGERP, 5680, 5698}, new int[]{}),
-    DDS_POKE("Dragon Dagger poke", "dds", new Color(10, 10, 10), 4, new int[]{376, 377}, new int[]{},  new int[]{ItemID.DRAGON_DAGGER, ItemID.DRAGON_DAGGERP, 5680, 5698}, new int[]{}),
+    DDS_POKE("Dragon Dagger poke", "dds", new Color(10, 10, 10), 4, new int[]{376, 377}, new int[]{}, new int[]{ItemID.DRAGON_DAGGER, ItemID.DRAGON_DAGGERP, 5680, 5698}, new int[]{}),
     KERIS_BREACHING("Keris of the Breaching", "KB", new Color(140, 140, 30), 4, new int[]{381, 419}, new int[]{}, new int[]{ItemID.KERIS_PARTISAN_OF_BREACHING}, new int[]{}),
     KERIS_CORRUPTION("Keris of the Corruption", "kc", new Color(10, 140, 30), 4, new int[]{381, 419}, new int[]{}, new int[]{ItemID.KERIS_PARTISAN_OF_CORRUPTION}, new int[]{}),
     KERIS_SUN("Keris of the Sun", "ks", new Color(10, 140, 30), 4, new int[]{}, new int[]{381, 419}, new int[]{}, new int[]{ItemID.KERIS_PARTISAN_OF_THE_SUN}),
@@ -136,11 +136,10 @@ public enum PlayerAnimation
 
     PlayerAnimation(String name, String shorthand, Color color, int attackTicks, int[] animations, int[] graphics, int[] weaponIDs, int[] projectiles)
     {
-        if(attackTicks == -1)
+        if (attackTicks == -1)
         {
             this.attackTicks = 0;
-        }
-        else
+        } else
         {
             this.attackTicks = attackTicks;
         }

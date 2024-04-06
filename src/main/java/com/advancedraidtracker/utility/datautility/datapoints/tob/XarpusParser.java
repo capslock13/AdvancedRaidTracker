@@ -18,7 +18,7 @@ public class XarpusParser extends RoomParser
     public Map<Integer, String> getLines()
     {
         lines.put(data.get(DataPoint.XARP_SCREECH), "Screech");
-        for(int i = data.get(DataPoint.XARP_SCREECH) + 8; i < data.get(DataPoint.XARPUS_TIME); i += 8)
+        for (int i = data.get(DataPoint.XARP_SCREECH) + 8; i < data.get(DataPoint.XARPUS_TIME); i += 8)
         {
             lines.put(i, "Turn");
         }

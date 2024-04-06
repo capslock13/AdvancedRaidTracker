@@ -4,6 +4,7 @@ import com.advancedraidtracker.AdvancedRaidTrackerConfig;
 import com.advancedraidtracker.utility.ItemReference;
 import com.advancedraidtracker.utility.Point;
 import net.runelite.client.ui.FontManager;
+
 import java.awt.*;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
@@ -89,7 +90,7 @@ public class HoverBox
         g.setFont(FontManager.getRunescapeBoldFont());
         int fontHeight = getStringBounds(g).height;
         g.setFont(oldFont);
-        return 10 + ((fontHeight+7)*info.size());
+        return 10 + ((fontHeight + 7) * info.size());
     }
 
     public void draw(Graphics2D g)

@@ -61,7 +61,7 @@ public enum RaidRoom
 
     public static List<RaidRoom> getRaidRoomsForRaidType(RaidType type)
     {
-        switch(type)
+        switch (type)
         {
             case COX:
                 return Arrays.stream(RaidRoom.values()).filter(RaidRoom::isCOX).collect(Collectors.toList());
@@ -86,23 +86,19 @@ public enum RaidRoom
 
     public RaidType getRaidType()
     {
-        if(isTOB())
+        if (isTOB())
         {
             return RaidType.TOB;
-        }
-        else if(isTOA())
+        } else if (isTOA())
         {
             return RaidType.TOA;
-        }
-        else if(isCOX())
+        } else if (isCOX())
         {
             return RaidType.COX;
-        }
-        else if(isInferno())
+        } else if (isInferno())
         {
             return RaidType.INFERNO;
-        }
-        else if(isColo())
+        } else if (isColo())
         {
             return RaidType.COLOSSEUM;
         }
@@ -116,7 +112,8 @@ public enum RaidRoom
                 || this.equals(WAVE_10_COL) || this.equals(WAVE_11_COL) || this.equals(WAVE_12_COL);
     }
 
-    public boolean isInferno() {
+    public boolean isInferno()
+    {
         return this.equals(INFERNO) || this.equals(WAVE_1_8_INF) || this.equals(WAVE_9_17_INF) || this.equals(WAVE_18_24_INF) ||
                 this.equals(WAVE_25_34_INF) || this.equals(WAVE_35_41_INF) || this.equals(WAVE_42_49_INF) || this.equals(WAVE_50_56_INF) ||
                 this.equals(WAVE_57_59_INF) || this.equals(WAVE_60_62_INF) || this.equals(WAVE_63_65_INF) || this.equals(WAVE_66_INF) ||
@@ -142,7 +139,7 @@ public enum RaidRoom
     {
         return this.value >= TEKTON.value && this.value <= OLM.value;
         //return this.equals(TEKTON) || this.equals(CRABS) || this.equals(ICE_DEMON) || this.equals(SHAMANS) || this.equals(VANGUARDS) || this.equals(THIEVING) ||
-          //      this.equals(VESPULA) || this.equals(TIGHT_ROPE) || this.equals(GUARDIANS) || this.equals(VASA_NISTIRIO) || this.equals(SKELETAL_MYSTICS) || this.equals(MUTTADILES) || this.equals(OLM);
+        //      this.equals(VESPULA) || this.equals(TIGHT_ROPE) || this.equals(GUARDIANS) || this.equals(VASA_NISTIRIO) || this.equals(SKELETAL_MYSTICS) || this.equals(MUTTADILES) || this.equals(OLM);
     }
 
     public static Map<RaidRoom, Integer> firstTickMap = Map.of(
@@ -154,29 +151,31 @@ public enum RaidRoom
             VERZIK, 0 //p1
 
     );
+
     public int getFirstAttackTick(int scale)
     {
         return 1;
     }
 
     public static Map<String, RaidRoom> roomCache = new HashMap<>();
+
     public static RaidRoom getRoom(String name)
     {
-        if(name.contains("Verzik"))
+        if (name.contains("Verzik"))
         {
             return VERZIK;
         }
-        if(name.contains("Wardens"))
+        if (name.contains("Wardens"))
         {
             return WARDENS;
         }
-        if(roomCache.containsKey(name))
+        if (roomCache.containsKey(name))
         {
             return roomCache.get(name);
         }
-        for(RaidRoom room : RaidRoom.values())
+        for (RaidRoom room : RaidRoom.values())
         {
-            if(room.name.equals(name))
+            if (room.name.equals(name))
             {
                 roomCache.put(name, room);
                 return room;

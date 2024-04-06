@@ -27,6 +27,7 @@ public class AkkhaHandler extends TOARoomHandler
     {
         return "Akkha";
     }
+
     private final Set<Integer> attackIDs = new HashSet<>(Arrays.asList(5061, 10656, 1167, 1979, 8056, 7511, 7618, 1658, 401, 1378, 428, 419, 440, 1203, 390, 9471, 8288, 386, 7642, 7643, 7045, 426, 9168, 393, 7514, 9493, 7554, 6299, 377, 376, 1062, 381, 9546, 9544));
     RoomState.AkkhaRoomState roomState = RoomState.AkkhaRoomState.NOT_STARTED;
     private int p1End = -1;
@@ -39,7 +40,7 @@ public class AkkhaHandler extends TOARoomHandler
     private int s4End = -1;
     private int p5End = -1;
 
-    private List<String> playersWhoAttacked = new ArrayList<>();
+    private final List<String> playersWhoAttacked = new ArrayList<>();
     private final ItemManager itemManager;
 
     public AkkhaHandler(Client client, DataWriter clog, AdvancedRaidTrackerConfig config, AdvancedRaidTrackerPlugin plugin, TOAHandler handler, ItemManager itemManager)
@@ -67,41 +68,40 @@ public class AkkhaHandler extends TOARoomHandler
 
     public boolean isShadowPhase()
     {
-    return roomState == RoomState.AkkhaRoomState.SHADOW_1 || roomState == RoomState.AkkhaRoomState.SHADOW_2 || roomState == RoomState.AkkhaRoomState.SHADOW_3 || roomState == RoomState.AkkhaRoomState.SHADOW_4;
+        return roomState == RoomState.AkkhaRoomState.SHADOW_1 || roomState == RoomState.AkkhaRoomState.SHADOW_2 || roomState == RoomState.AkkhaRoomState.SHADOW_3 || roomState == RoomState.AkkhaRoomState.SHADOW_4;
     }
 
     private void handleAnimationChanges()
     {
-        for(Player p : client.getPlayers())
+        for (Player p : client.getPlayers())
         {
-            for(String name : playersWhoAttacked)
+            for (String name : playersWhoAttacked)
             {
-                if(name.equals(p.getName()))
+                if (name.equals(p.getName()))
                 {
                     Actor interacting = p.getInteracting();
-                    if(interacting == null || interacting.getName() == null)
+                    if (interacting == null || interacting.getName() == null)
                     {
                         continue;
                     }
-                    if(isShadowPhase())
+                    if (isShadowPhase())
                     {
-                        if(interacting.getName().equals("Akkha"))
+                        if (interacting.getName().equals("Akkha"))
                         {
                             int weapon = p.getPlayerComposition().getEquipmentId(KitType.WEAPON);
-                            clog.addLine(LogID.TOA_AKKHA_NULLED_HIT_ON_AKKHA, name, String.valueOf(client.getTickCount()-roomStartTick), String.valueOf(weapon));
-                            if(config.showMistakesInChat())
+                            clog.addLine(LogID.TOA_AKKHA_NULLED_HIT_ON_AKKHA, name, String.valueOf(client.getTickCount() - roomStartTick), String.valueOf(weapon));
+                            if (config.showMistakesInChat())
                             {
                                 plugin.sendChatMessage(name + " attacked Akkha during shadow phase with weapon: " + itemManager.getItemComposition(weapon).getName());
                             }
                         }
-                    }
-                    else
+                    } else
                     {
-                        if(interacting.getName().contains("Akkha's Shadow"))
+                        if (interacting.getName().contains("Akkha's Shadow"))
                         {
                             int weapon = p.getPlayerComposition().getEquipmentId(KitType.WEAPON);
-                            clog.addLine(LogID.TOA_AKKHA_NULLED_HIT_ON_SHADOW, name, String.valueOf(client.getTickCount()-roomStartTick), String.valueOf(weapon));
-                            if(config.showMistakesInChat())
+                            clog.addLine(LogID.TOA_AKKHA_NULLED_HIT_ON_SHADOW, name, String.valueOf(client.getTickCount() - roomStartTick), String.valueOf(weapon));
+                            if (config.showMistakesInChat())
                             {
                                 plugin.sendChatMessage(name + " attacked Shadow during regular phase with weapon: " + itemManager.getItemComposition(weapon).getName());
                             }
@@ -222,10 +222,9 @@ public class AkkhaHandler extends TOARoomHandler
     public void updateAnimationChanged(AnimationChanged animationChanged)
     {
         Actor actor = animationChanged.getActor();
-        if(actor instanceof Player && attackIDs.contains(actor.getAnimation()))
+        if (actor instanceof Player && attackIDs.contains(actor.getAnimation()))
         {
             playersWhoAttacked.add(actor.getName());
         }
     }
-
 }

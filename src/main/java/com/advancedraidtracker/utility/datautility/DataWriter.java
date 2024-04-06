@@ -32,28 +32,26 @@ public class DataWriter
     public static String[] getPresetColumns(int presetNumber)
     {
         File presetFile = new File(PLUGIN_DIRECTORY + "misc-dir/columns.presets");
-        if(presetFile.exists())
+        if (presetFile.exists())
         {
             try
             {
                 Scanner reader = new Scanner(Files.newInputStream(presetFile.toPath()));
-                while(reader.hasNextLine())
+                while (reader.hasNextLine())
                 {
                     String line = reader.nextLine();
                     String[] split = line.split(":");
-                    if(split.length == 2 && split[0].equals(String.valueOf(presetNumber)))
+                    if (split.length == 2 && split[0].equals(String.valueOf(presetNumber)))
                     {
                         return split[1].split(",");
                     }
                 }
                 reader.close();
-            }
-            catch (Exception e)
+            } catch (Exception e)
             {
                 log.info("Could not read presets");
             }
-        }
-        else
+        } else
         {
             log.info("presets file does not exist");
         }
@@ -63,16 +61,15 @@ public class DataWriter
     public static void writePresetColumn(int presetNumber, String[] columns)
     {
         File presetFile = new File(PLUGIN_DIRECTORY + "misc-dir/columns.presets");
-        if(!presetFile.exists())
+        if (!presetFile.exists())
         {
             try
             {
-                if(!presetFile.createNewFile())
+                if (!presetFile.createNewFile())
                 {
                     log.info("Failed to create new preset file");
                 }
-            }
-            catch (Exception e)
+            } catch (Exception e)
             {
                 log.info("Couldn't create preset file");
             }
@@ -80,10 +77,9 @@ public class DataWriter
         try
         {
             BufferedWriter logger = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(PLUGIN_DIRECTORY + "misc-dir/columns.presets", true), StandardCharsets.UTF_8));
-            logger.write(presetNumber + ":"+ String.join(",", columns) + "\n");
+            logger.write(presetNumber + ":" + String.join(",", columns) + "\n");
             logger.close();
-        }
-        catch (Exception e)
+        } catch (Exception e)
         {
             log.info("Couldn't write to preset file");
         }
@@ -93,30 +89,29 @@ public class DataWriter
     {
         File presetFile = new File(PLUGIN_DIRECTORY + "misc-dir/columns.presets");
         List<String> presets = new ArrayList<>();
-        if(!presetFile.exists())
+        if (!presetFile.exists())
         {
             return;
         }
         try
         {
             Scanner reader = new Scanner(presetFile.toPath());
-            while(reader.hasNextLine())
+            while (reader.hasNextLine())
             {
                 String nextline = reader.nextLine();
                 String[] line = nextline.split(":");
-                if(!(line.length == 2 && line[0].equals(String.valueOf(preset))))
+                if (!(line.length == 2 && line[0].equals(String.valueOf(preset))))
                 {
                     presets.add(String.join(":", line));
                 }
             }
             BufferedWriter logger = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(PLUGIN_DIRECTORY + "misc-dir/columns.presets", false), StandardCharsets.UTF_8));
-            for(String presetString : presets)
+            for (String presetString : presets)
             {
                 logger.write(presetString + "\n");
             }
             logger.close();
-        }
-        catch (Exception e)
+        } catch (Exception e)
         {
             log.info("couldn't delete preset");
         }
@@ -126,30 +121,28 @@ public class DataWriter
     {
         List<Integer> count = new ArrayList<>();
         File presetFile = new File(PLUGIN_DIRECTORY + "misc-dir/columns.presets");
-        if(presetFile.exists())
+        if (presetFile.exists())
         {
             try
             {
                 Scanner reader = new Scanner(Files.newInputStream(presetFile.toPath()));
-                while(reader.hasNextLine())
+                while (reader.hasNextLine())
                 {
                     String line = reader.nextLine();
-                    if(line.split(":").length == 2)
+                    if (line.split(":").length == 2)
                     {
                         int val;
                         try
                         {
                             val = Integer.parseInt(line.split(":")[0]);
                             count.add(val);
-                        }
-                        catch (Exception e)
+                        } catch (Exception e)
                         {
 
                         }
                     }
                 }
-            }
-            catch(Exception e)
+            } catch (Exception e)
             {
                 log.info("Could not get preset count");
             }
@@ -207,7 +200,7 @@ public class DataWriter
         }
     }
 
-    //If you X out client in the middle of a raid it does not record the flag that the raid ended, so this is called when you enter a tob to see
+    //If you X out client in the middle of a raid it does not record the flag that the raid ended, so this is called when you enter a raid to see
     //if an active datafile and if so it adds an exit flag to the end
     public void checkForEndFlag()
     {
@@ -221,21 +214,20 @@ public class DataWriter
                 try
                 {
                     Scanner reader = new Scanner(Files.newInputStream(logFile.toPath()));
-                    while(reader.hasNextLine())
+                    while (reader.hasNextLine())
                     {
                         lastLine = reader.nextLine();
                     }
                     String[] lineSplit = lastLine.split(",");
-                    if(lineSplit.length > 1)
+                    if (lineSplit.length > 1)
                     {
                         lastTime = Long.parseLong(lineSplit[1]);
                     }
-                }
-                catch (Exception e)
+                } catch (Exception e)
                 {
                     log.info("Could not parse file " + logFile.getAbsolutePath() + ", last line: " + lastLine);
                 }
-                currentBuffer.add("," + lastTime + "," + currentRaidType.value +"," + ((1000*(currentRaidType.value-1))+4) + "," + "," + "," + "," + ",");
+                currentBuffer.add("," + lastTime + "," + currentRaidType.value + "," + ((1000 * (currentRaidType.value - 1)) + 4) + "," + "," + "," + "," + ",");
                 writeFile();
             }
         }

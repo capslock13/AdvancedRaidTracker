@@ -49,6 +49,7 @@ public class ViewColosseumFrame extends BaseFrame
     private final Colo colData;
     private final ItemManager itemManager;
     private final ChartData chartData;
+
     public ViewColosseumFrame(Colo colData, AdvancedRaidTrackerConfig config, ItemManager itemManager)
     {
         this.itemManager = itemManager;
@@ -59,7 +60,7 @@ public class ViewColosseumFrame extends BaseFrame
         dark = colorStr(c.darker().darker());
 
         this.colData = colData;
-        for(int i = 1; i < 13; i++)
+        for (int i = 1; i < 13; i++)
         {
             log.info("Wave " + i + " spawn data: " + colData.getSpawnString(i));
         }
@@ -74,11 +75,11 @@ public class ViewColosseumFrame extends BaseFrame
         //topContainer.add(getSolHereditBox());
         JPanel bottomContainer = getThemedPanel();
         bottomContainer.setPreferredSize(new Dimension(900, 650));
-        bottomContainer.setLayout(new GridLayout(4,3));
+        bottomContainer.setLayout(new GridLayout(4, 3));
         setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
-        for(int i = 0; i < 12; i++)
+        for (int i = 0; i < 12; i++)
         {
-            bottomContainer.add(getWaveBox(i+1));
+            bottomContainer.add(getWaveBox(i + 1));
         }
         add(topContainer);
         add(bottomContainer);
@@ -90,7 +91,7 @@ public class ViewColosseumFrame extends BaseFrame
     {
         String title = getColor(wave) + "Wave " + wave;
         int waveTime = colData.get("Wave " + wave + " Duration");
-        if(waveTime > 0)
+        if (waveTime > 0)
         {
             title += " - " + RoomUtil.time(waveTime);
         }
@@ -103,7 +104,7 @@ public class ViewColosseumFrame extends BaseFrame
         final BufferedImage colImage = ImageUtil.loadImageResource(AdvancedRaidTrackerPlugin.class, "/com/advancedraidtracker/colosseum.png");
         Graphics2D g = (Graphics2D) colImage.getGraphics();
         g.setColor(RED);
-        for(String s : split)
+        for (String s : split)
         {
             try
             {
@@ -112,14 +113,13 @@ public class ViewColosseumFrame extends BaseFrame
                 spawnString += String.format("%02d", p.getX()) + String.format("%02d", p.getY()) + ID + ".";
                 int size = ColosseumHandler.spawnSize.getOrDefault(ID, 0);
                 g.setColor(ColosseumHandler.websiteColorMap.get(ID));
-                g.drawRect(8*(p.getX()-1)-2, 8*(p.getY()-size), 8*size, 8*size);
-            }
-            catch (Exception ignore)
+                g.drawRect(8 * (p.getX() - 1) - 2, 8 * (p.getY() - size), 8 * size, 8 * size);
+            } catch (Exception ignore)
             {
 
             }
         }
-        if(colData.highestWaveStarted >= wave || colData.isCompleted())
+        if (colData.highestWaveStarted >= wave || colData.isCompleted())
         {
             base.add(getThemedLabel("<html>" + blue + "Invocations: "));
             for (String invo : colData.invocationsOffered.get(wave))
@@ -198,7 +198,7 @@ public class ViewColosseumFrame extends BaseFrame
         JPanel invocationPanel = getTitledPanel("Invocations");
         invocationPanel.setLayout(new GridLayout(0, 1));
         List<String> invoList = getInvocationList();
-        for(String invo : invoList)
+        for (String invo : invoList)
         {
             invocationPanel.add(getThemedLabel(invo));
         }
@@ -239,7 +239,7 @@ public class ViewColosseumFrame extends BaseFrame
     public int getWaveSequenceTime(int startWave, int endWave)
     {
         int sum = 0;
-        for(int i = startWave; i < endWave+1; i++)
+        for (int i = startWave; i < endWave + 1; i++)
         {
             sum += colData.get("Wave " + i + " Duration");
         }
@@ -249,10 +249,10 @@ public class ViewColosseumFrame extends BaseFrame
     public int getWaveSequenceIdleTicks(int startWave, int endWave)
     {
         int sum = 0;
-        for(int i = startWave; i < endWave+1; i++)
+        for (int i = startWave; i < endWave + 1; i++)
         {
             int ticks = chartData.getIdleTicks(colData.getPlayerString(), RaidRoom.getRoom("Wave " + i), colData.getScale());
-            if(ticks > 0)
+            if (ticks > 0)
             {
                 sum += ticks;
             }
@@ -263,7 +263,7 @@ public class ViewColosseumFrame extends BaseFrame
     public int getWaveSequenceData(DataPoint point, int startWave, int endWave)
     {
         int sum = 0;
-        for(int i = startWave; i < endWave+1; i++)
+        for (int i = startWave; i < endWave + 1; i++)
         {
             sum += colData.get(point, RaidRoom.getRoom("Wave " + i));
         }
@@ -273,15 +273,15 @@ public class ViewColosseumFrame extends BaseFrame
     public String getNextHighestLevelOfInvo(String invo, int wave)
     {
         Map<String, Integer> invoListMap = new LinkedHashMap<>();
-        for(int i = 1; i < wave; i++)
+        for (int i = 1; i < wave; i++)
         {
             invoListMap.merge(invoMap.get(Integer.parseInt(colData.invocationSelected.get(i))), 1, Integer::sum);
         }
-        for(String invocation : invoListMap.keySet())
+        for (String invocation : invoListMap.keySet())
         {
-            if(invocation.equals(invo))
+            if (invocation.equals(invo))
             {
-                return invo + (invoListMap.get(invocation)+1);
+                return invo + (invoListMap.get(invocation) + 1);
             }
         }
         return invo;
@@ -290,21 +290,20 @@ public class ViewColosseumFrame extends BaseFrame
     private java.util.List<String> getInvocationList(int wave)
     {
         Map<String, Integer> invoListMap = new LinkedHashMap<>();
-        for(int i = 1; i < wave+1; i++)
+        for (int i = 1; i < wave + 1; i++)
         {
-            if(colData.invocationSelected.containsKey(i))
+            if (colData.invocationSelected.containsKey(i))
             {
                 invoListMap.merge(invoMap.get(Integer.parseInt(colData.invocationSelected.get(i))), 1, Integer::sum);
             }
         }
         java.util.List<String> invos = new ArrayList<>();
-        for(String invo : invoListMap.keySet())
+        for (String invo : invoListMap.keySet())
         {
-            if(invoListMap.get(invo) > 1)
+            if (invoListMap.get(invo) > 1)
             {
                 invos.add(invo + invoListMap.get(invo));
-            }
-            else
+            } else
             {
                 invos.add(invo);
             }
@@ -320,11 +319,10 @@ public class ViewColosseumFrame extends BaseFrame
     private String getColor(int wave)
     {
         String color = red;
-        if(colData.get("Wave " + wave + " Duration") > 0)
+        if (colData.get("Wave " + wave + " Duration") > 0)
         {
             color = green;
-        }
-        else if(colData.highestWaveStarted == wave)
+        } else if (colData.highestWaveStarted == wave)
         {
             color = orange;
         }
@@ -334,7 +332,7 @@ public class ViewColosseumFrame extends BaseFrame
     private String getBodyColor(int wave)
     {
         String color = dark;
-        if(colData.get("Wave " + wave + " Duration") > 0)
+        if (colData.get("Wave " + wave + " Duration") > 0)
         {
             color = full;
         }

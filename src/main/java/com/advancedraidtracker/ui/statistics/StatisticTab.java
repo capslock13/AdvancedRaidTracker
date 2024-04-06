@@ -3,6 +3,7 @@ package com.advancedraidtracker.ui.statistics;
 import com.advancedraidtracker.AdvancedRaidTrackerConfig;
 import com.advancedraidtracker.constants.RaidRoom;
 import com.advancedraidtracker.utility.datautility.datapoints.Raid;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;

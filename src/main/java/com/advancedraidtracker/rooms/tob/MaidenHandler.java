@@ -181,7 +181,7 @@ public class MaidenHandler extends TOBRoomHandler
             {
                 Player player = (Player) event.getActor();
                 Actor target = player.getInteracting();
-                if(target == null)
+                if (target == null)
                 {
                     return;
                 }
@@ -473,18 +473,17 @@ public class MaidenHandler extends TOBRoomHandler
         npcs.addAll(merge);
     }
 
-    /*
-    Dinhs spec targets are picked in order of chunk relative to the player where they use the spec at, this grid:
-    7 4 1
-    8 5 2
-    9 6 3
-    is always centered around the player being in chunk 5, and the check starts in chunk 1, then moves to chunk 2, all the way to 9
-    if it will cross over 9 NPCs while checking a chunk, the NPCs are chosen on a last in first selected basis based on when
-    that NPC entered that chunk. The NPC must also be in a 11x11 area centered around the player to be targeted.
-
-    If multiple NPCs enter the chunk on the same tick, they are chosen by lowest NPC index first
-     */
-
+    /**
+     * Dinhs spec targets are picked in order of chunk relative to the player where they use the spec at, this grid:
+     * 7 4 1
+     * 8 5 2
+     * 9 6 3
+     * is always centered around the player being in chunk 5, and the check starts in chunk 1, then moves to chunk 2, all the way to 9
+     * if it will cross over 9 NPCs while checking a chunk, the NPCs are chosen on a last in first selected basis based on when
+     * that NPC entered that chunk. The NPC must also be in a 11x11 area centered around the player to be targeted.
+     * <p>
+     * If multiple NPCs enter the chunk on the same tick, they are chosen by lowest NPC index first
+     **/
     private void analyzeDinhs()
     {
         for (Player p : dinhsers)
@@ -508,7 +507,7 @@ public class MaidenHandler extends TOBRoomHandler
                         for (NPCTimeInChunkShell npc : npcs)
                         {
                             if (npc.chunk == i)
-                            { //For some reason Maiden is NEVER targeted by additional dinhs hitsplat. Related to large non-moving NPCs
+                            { //For some reason Maiden is NEVER targeted by the additional dinhs hitsplat. Related to large non-moving NPCs
                                 if (!Objects.requireNonNull(npc.npc.getName()).contains("Maiden") && !npc.npc.getName().contains("null") && npc.npc.getHealthRatio() != 0)
                                 {
                                     if (npc.npc.getWorldLocation().getRegionX() <= centerX + 5 &&
@@ -752,7 +751,6 @@ public class MaidenHandler extends TOBRoomHandler
 
     /**
      * Returns a string describing the spawn position of a maiden crab
-     *
      */
     private String identifySpawn(NPC npc)
     {
@@ -760,10 +758,10 @@ public class MaidenHandler extends TOBRoomHandler
         int y = npc.getWorldLocation().getRegionY();
         Point p = new Point(x, y);
         String proc = getProc();
-        if(maidenCrabSpawns.containsKey(p))
+        if (maidenCrabSpawns.containsKey(p))
         {
             String crabSpawn = maidenCrabSpawns.get(p);
-            if(crabSpawn.startsWith("s"))
+            if (crabSpawn.startsWith("s"))
             {
                 clog.addLine(MAIDEN_SCUFFED, crabSpawn);
             }

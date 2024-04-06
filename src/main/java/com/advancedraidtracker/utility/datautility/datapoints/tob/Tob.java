@@ -59,41 +59,40 @@ public class Tob extends Raid
                 DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(Locale.getDefault());
         String split = getScaleString() + ", " + formatter.format(date) + "\n";
         int sum = 0;
-        if(get(MAIDEN_TIME) > 0 && getRoomAccurate(MAIDEN))
+        if (get(MAIDEN_TIME) > 0 && getRoomAccurate(MAIDEN))
         {
             split += "Maiden: " + RoomUtil.time(get(MAIDEN_TIME)) + "\n";
             sum += get(MAIDEN_TIME);
         }
-        if(get(BLOAT_TIME) > 0 && getRoomAccurate(BLOAT))
+        if (get(BLOAT_TIME) > 0 && getRoomAccurate(BLOAT))
         {
             split += "Bloat, Split: " + RoomUtil.time(sum) + " (+" + RoomUtil.time(get(BLOAT_TIME)) + ")\n";
             sum += get(BLOAT_TIME);
         }
-        if(get(NYLOCAS_TIME) > 0 && getRoomAccurate(NYLOCAS))
+        if (get(NYLOCAS_TIME) > 0 && getRoomAccurate(NYLOCAS))
         {
             split += "Nylo, Split: " + RoomUtil.time(sum) + " (+" + RoomUtil.time(get(NYLOCAS_TIME)) + ")\n";
             sum += get(NYLOCAS_TIME);
         }
-        if(get(SOTETSEG_TIME) > 0 && getRoomAccurate(SOTETSEG))
+        if (get(SOTETSEG_TIME) > 0 && getRoomAccurate(SOTETSEG))
         {
             split += "Sotetseg, Split: " + RoomUtil.time(sum) + " (+" + RoomUtil.time(get(SOTETSEG_TIME)) + ")\n";
             sum += get(SOTETSEG_TIME);
         }
-        if(get(XARPUS_TIME) > 0 && getRoomAccurate(XARPUS))
+        if (get(XARPUS_TIME) > 0 && getRoomAccurate(XARPUS))
         {
             split += "Xarpus, Split: " + RoomUtil.time(sum) + " (+" + RoomUtil.time(get(XARPUS_TIME)) + ")\n";
             sum += get(XARPUS_TIME);
         }
-        if(get(VERZIK_TIME) > 0 && getRoomAccurate(VERZIK))
+        if (get(VERZIK_TIME) > 0 && getRoomAccurate(VERZIK))
         {
             split += "Verzik, Split: " + RoomUtil.time(sum) + " (+" + RoomUtil.time(get(VERZIK_TIME)) + ")\n";
             sum += get(VERZIK_TIME);
         }
-        if(completed)
+        if (completed)
         {
             split += "Duration (Completion): " + RoomUtil.time(getChallengeTime()) + " (+" + RoomUtil.time(get(VERZIK_TIME)) + ")";
-        }
-        else
+        } else
         {
             split += "Duration (" + Text.removeTags(roomStatus) + "): " + RoomUtil.time(getChallengeTime());
         }
@@ -135,21 +134,19 @@ public class Tob extends Raid
                     {
                         roomStatus = red + currentRoom + " Wipe";
                     }
-                }
-                else if(Objects.requireNonNull(instruction.type) == MANUAL_PARSE)
+                } else if (Objects.requireNonNull(instruction.type) == MANUAL_PARSE)
                 {
-                    if(entry.logEntry.equals(LogID.VERZIK_P2_REDS_PROC))
+                    if (entry.logEntry.equals(LogID.VERZIK_P2_REDS_PROC))
                     {
-                        if(data.get(VERZIK_REDS_SPLIT) < 1)
+                        if (data.get(VERZIK_REDS_SPLIT) < 1)
                         {
                             data.set(VERZIK_REDS_SPLIT, entry.getFirstInt());
                             data.set(VERZIK_P2_TILL_REDS, entry.getFirstInt() - data.get(VERZIK_P2_SPLIT));
                         }
-                    }
-                    else if(entry.logEntry.equals(LogID.CRAB_HEALED_MAIDEN))
+                    } else if (entry.logEntry.equals(LogID.CRAB_HEALED_MAIDEN))
                     {
                         int maxHP = 0;
-                        switch(getScale())
+                        switch (getScale())
                         {
                             case 1:
                             case 2:
@@ -163,33 +160,29 @@ public class Tob extends Raid
                                 maxHP = 200;
                                 break;
                         }
-                        if(Integer.parseInt(entry.getValue("Damage")) == maxHP)
+                        if (Integer.parseInt(entry.getValue("Damage")) == maxHP)
                         {
                             data.increment(MAIDEN_CRABS_LEAKED_FULL_HP);
                         }
-                    }
-                    else if(entry.logEntry.equals(LogID.PLAYER_DIED))
+                    } else if (entry.logEntry.equals(LogID.PLAYER_DIED))
                     {
-                        if(data.get(MAIDEN_TIME) > 0 && data.getList(BLOAT_DOWNS).isEmpty())
+                        if (data.get(MAIDEN_TIME) > 0 && data.getList(BLOAT_DOWNS).isEmpty())
                         {
                             data.increment(BLOAT_FIRST_WALK_DEATHS, entry.getValue("Player"));
                         }
-                    }
-                    else if(entry.logEntry.equals(LogID.BLOAT_DESPAWN))
+                    } else if (entry.logEntry.equals(LogID.BLOAT_DESPAWN))
                     {
-                        if(data.get(BLOAT_DOWNS) > 0)
+                        if (data.get(BLOAT_DOWNS) > 0)
                         {
                             data.set(BLOAT_FIRST_DOWN_TIME, data.getList(BLOAT_DOWNS).get(0));
                         }
-                    }
-                    else if(entry.logEntry.equals(LogID.BLOAT_HP_1ST_DOWN))
+                    } else if (entry.logEntry.equals(LogID.BLOAT_HP_1ST_DOWN))
                     {
                         data.set(DataPoint.BLOAT_HP_FIRST_DOWN, Integer.parseInt(entry.getValue("Bloat HP")) / 10);
-                    }
-                    else if(entry.logEntry.equals(LogID.XARPUS_HEAL))
+                    } else if (entry.logEntry.equals(LogID.XARPUS_HEAL))
                     {
                         int healAmount = 0;
-                        switch(getScale())
+                        switch (getScale())
                         {
                             case 1:
                                 healAmount = 20;
@@ -208,18 +201,16 @@ public class Tob extends Raid
                                 break;
                         }
                         data.incrementBy(XARP_HEALING, healAmount);
-                    }
-                    else if(entry.logEntry.equals(LogID.BLOAT_SCYTHE_1ST_WALK))
+                    } else if (entry.logEntry.equals(LogID.BLOAT_SCYTHE_1ST_WALK))
                     {
-                        if(data.get(BLOAT_DOWNS) == 0)
+                        if (data.get(BLOAT_DOWNS) == 0)
                         {
                             data.increment(BLOAT_FIRST_WALK_SCYTHES, entry.getValue("Player"));
                         }
                     }
                 }
             }
-        }
-        catch (Exception ignored)
+        } catch (Exception ignored)
         {
 
         }
@@ -230,11 +221,11 @@ public class Tob extends Raid
     public int getTimeSum()
     {
         int time = 0;
-        for(RaidRoom room : RaidRoom.values())
+        for (RaidRoom room : RaidRoom.values())
         {
-            if(room.isTOB())
+            if (room.isTOB())
             {
-                if(getRoomAccurate(room))
+                if (getRoomAccurate(room))
                 {
                     int val = get(room.name + " Time");
                     time += (val == -1) ? 0 : val;
@@ -247,11 +238,11 @@ public class Tob extends Raid
     @Override
     public boolean getOverallTimeAccurate()
     {
-        for(RaidRoom room : RaidRoom.values())
+        for (RaidRoom room : RaidRoom.values())
         {
-            if(room.isTOB())
+            if (room.isTOB())
             {
-                if(!getRoomAccurate(room))
+                if (!getRoomAccurate(room))
                 {
                     return false;
                 }
@@ -268,6 +259,7 @@ public class Tob extends Raid
 
     /**
      * Checks whether a room has started.
+     *
      * @param entry Log entry to compare
      * @return true if it has begun, false if not.
      */
@@ -278,7 +270,8 @@ public class Tob extends Raid
 
 
     @Override
-    public RaidType getRaidType() {
+    public RaidType getRaidType()
+    {
         return RaidType.TOB;
     }
 }

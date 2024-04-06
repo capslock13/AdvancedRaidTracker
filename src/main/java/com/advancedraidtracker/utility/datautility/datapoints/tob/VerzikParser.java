@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.Map;
+
 @Slf4j
 public class VerzikParser extends RoomParser
 {
@@ -28,10 +29,11 @@ public class VerzikParser extends RoomParser
     {
         return "Dawn Appears";
     }
+
     @Override
     public List<Integer> getRoomAutos()
     {
-        if(autos.isEmpty())
+        if (autos.isEmpty())
         {
             for (int i = 19; i < data.get(DataPoint.VERZIK_P2_SPLIT); i++)
             {
@@ -69,16 +71,15 @@ public class VerzikParser extends RoomParser
     @Override
     public Map<Integer, String> getLines()
     {
-        //todo dawn appears text
-        for(Integer i : data.getList(DataPoint.VERZIK_REDS_SETS))
+        for (Integer i : data.getList(DataPoint.VERZIK_REDS_SETS))
         {
             lines.put(i, "Reds");
-            lines.put(i+10, "Shield End");
+            lines.put(i + 10, "Shield End");
         }
         addLinesFromCollection(data.getList(DataPoint.VERZIK_CRABS_SPAWNED), "Crabs");
-        for(Integer i : data.getList(DataPoint.WEBS_THROWN))
+        for (Integer i : data.getList(DataPoint.WEBS_THROWN))
         {
-            if(i%2==0)
+            if (i % 2 == 0)
             {
                 lines.put(i, "Webs");
             }

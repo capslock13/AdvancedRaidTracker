@@ -13,6 +13,7 @@ import net.runelite.client.game.ItemManager;
 import java.util.*;
 
 import static com.advancedraidtracker.constants.RaidRoom.ALL;
+
 @Slf4j
 public class ChartData
 {
@@ -36,14 +37,14 @@ public class ChartData
         int lastAttack = 0;
         int firstAttack = Integer.MAX_VALUE;
         int ticksOnCD = 0;
-        if(!room.equals(ALL))
+        if (!room.equals(ALL))
         {
             for (PlayerDidAttack attack : getAttacks(room))
             {
                 int cd = AnimationDecider.getWeapon(attack.animation, attack.spotAnims, attack.projectile, attack.weapon).attackTicks;
-                if (attack.tick + cd  > lastAttack && cd > 0)
+                if (attack.tick + cd > lastAttack && cd > 0)
                 {
-                    lastAttack = attack.tick + cd ;
+                    lastAttack = attack.tick + cd;
                 }
                 if (attack.tick < firstAttack && cd > 0)
                 {
@@ -57,12 +58,11 @@ public class ChartData
                     }
                 }
             }
-            idleTicks = (lastAttack-firstAttack)-ticksOnCD;
+            idleTicks = (lastAttack - firstAttack) - ticksOnCD;
             return idleTicks;
-        }
-        else
+        } else
         {
-            for(RaidRoom r : attacks.keySet())
+            for (RaidRoom r : attacks.keySet())
             {
                 lastAttack = 0;
                 firstAttack = Integer.MAX_VALUE;
@@ -86,20 +86,11 @@ public class ChartData
                         }
                     }
                 }
-                idleTicks += (lastAttack-firstAttack)-ticksOnCD;
+                idleTicks += (lastAttack - firstAttack) - ticksOnCD;
             }
             return idleTicks;
         }
     }
-    /*
-
-                for(int i = attack.tick; i < attack.tick+playerAnimation.attackTicks; i++)
-            {
-                playerWasOnCD.put(attack.player, i);
-            }
-
-
-     */
 
     public ChartData()
     {

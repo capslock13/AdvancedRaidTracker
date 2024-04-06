@@ -117,6 +117,7 @@ public abstract class Raid
 
     /**
      * Used for sorting to have String.toCompare method compared to the set
+     *
      * @return player string e.g. Player1,Player2,Player3,Player4
      */
     public String getPlayerString()
@@ -134,11 +135,11 @@ public abstract class Raid
         this.filepath = filepath;
         this.players = new LinkedHashSet<>();
         this.lineManager = new LineManager(this);
-        for(RaidRoom room : RaidRoom.getRaidRoomsForRaidType(RaidType.TOA)) //todo assume toa always accurate
+        for (RaidRoom room : RaidRoom.getRaidRoomsForRaidType(RaidType.TOA)) //todo assume toa always accurate
         {
             setRoomStartAccurate(room);
         }
-        for(RaidRoom room : RaidRoom.getRaidRoomsForRaidType(RaidType.COLOSSEUM)) //todo assume toa always accurate
+        for (RaidRoom room : RaidRoom.getRaidRoomsForRaidType(RaidType.COLOSSEUM)) //todo assume toa always accurate
         {
             setRoomStartAccurate(room);
         }
@@ -156,40 +157,38 @@ public abstract class Raid
 
     public int get(DataPoint point)
     {
-        if(point.equals(CHALLENGE_TIME))
+        if (point.equals(CHALLENGE_TIME))
         {
             return getChallengeTime();
         }
-        if(point.room.equals(RaidRoom.ALL))
+        if (point.room.equals(RaidRoom.ALL))
         {
             int sum = 0;
-            for(RaidRoom room : RaidRoom.values())
+            for (RaidRoom room : RaidRoom.values())
             {
-                if(point.playerSpecific)
+                if (point.playerSpecific)
                 {
                     RoomDataManager rdm = data;
-                    if(rdm.playerSpecificMap.containsKey(point.name))
+                    if (rdm.playerSpecificMap.containsKey(point.name))
                     {
                         for (String player : rdm.playerSpecificMap.get(point.name).keySet())
                         {
                             sum += rdm.playerSpecificMap.get(point.name).get(player);
                         }
                     }
-                }
-                else
+                } else
                 {
                     sum += data.get(point);
                 }
             }
             return sum;
-        }
-        else
+        } else
         {
-            if(point.playerSpecific)
+            if (point.playerSpecific)
             {
                 int sum = 0;
                 RoomDataManager rdm = data;
-                if(rdm.playerSpecificMap.containsKey(point.name))
+                if (rdm.playerSpecificMap.containsKey(point.name))
                 {
                     for (String player : rdm.playerSpecificMap.get(point.name).keySet())
                     {
@@ -197,8 +196,7 @@ public abstract class Raid
                     }
                 }
                 return sum;
-            }
-            else
+            } else
             {
                 return data.get(point);
             }
@@ -207,7 +205,7 @@ public abstract class Raid
 
     public Integer get(String datapoint)
     {
-        if(datapoint.equals("Challenge Time"))
+        if (datapoint.equals("Challenge Time"))
         {
             return getChallengeTime();
         }
@@ -326,23 +324,22 @@ public abstract class Raid
     {
         try
         {
-            for(ParseInstruction instruction : entry.logEntry.parseInstructions)
+            for (ParseInstruction instruction : entry.logEntry.parseInstructions)
             {
-                if(instruction.dataPoint1 != null && instruction.dataPoint1.type.equals(types.TIME))
+                if (instruction.dataPoint1 != null && instruction.dataPoint1.type.equals(types.TIME))
                 {
-                    if(!getRoomAccurate(entry.logEntry.getRoom()))
+                    if (!getRoomAccurate(entry.logEntry.getRoom()))
                     {
-                        if(!filepath.toString().contains("Col"))
+                        if (!filepath.toString().contains("Col"))
                         {
                             continue;
                         }
                     }
-                }
-                else if(instruction.dataPoint1 != null && instruction.dataPoint1.isTime())
+                } else if (instruction.dataPoint1 != null && instruction.dataPoint1.isTime())
                 {
-                    if(!getRoomStartAccurate(entry.logEntry.getRoom()))
+                    if (!getRoomStartAccurate(entry.logEntry.getRoom()))
                     {
-                        if(!filepath.toString().contains("Col"))
+                        if (!filepath.toString().contains("Col"))
                         {
                             continue;
                         }
@@ -351,15 +348,14 @@ public abstract class Raid
                 switch (instruction.type)
                 {
                     case ADD_TO_VALUE:
-                        if(instruction.dataPoint1 != null && instruction.dataPoint1.equals(CHALLENGE_TIME) && entry.logEntry.equals(LogID.VERZIK_P3_DESPAWNED))
+                        if (instruction.dataPoint1 != null && instruction.dataPoint1.equals(CHALLENGE_TIME) && entry.logEntry.equals(LogID.VERZIK_P3_DESPAWNED))
                         {
-                            if(!verzikSet)
+                            if (!verzikSet)
                             {
                                 verzikSet = true;
-                            }
-                            else
+                            } else
                             {
-                                data.set(CHALLENGE_TIME, data.get(CHALLENGE_TIME)+4);
+                                data.set(CHALLENGE_TIME, data.get(CHALLENGE_TIME) + 4);
                                 break;
                             }
                         }
@@ -381,26 +377,25 @@ public abstract class Raid
                         }
                         break;
                     case INCREMENT_IF_EQUALS:
-                        if(instruction.value == Integer.parseInt(entry.values.get(instruction.marker)))
+                        if (instruction.value == Integer.parseInt(entry.values.get(instruction.marker)))
                         {
                             data.incrementBy(instruction.dataPoint1, entry.getFirstInt(), RaidRoom.getRoom(currentRoom));
                         }
                         break;
                     case SET:
-                        if(instruction.dataPoint1.room.equals(ALL))
+                        if (instruction.dataPoint1.room.equals(ALL))
                         {
                             data.set(instruction.dataPoint1, entry.getFirstInt() + instruction.value, RaidRoom.getRoom(currentRoom));
-                        }
-                        else
+                        } else
                         {
-                            data.set(instruction.dataPoint1, entry.getFirstInt()+instruction.value);
+                            data.set(instruction.dataPoint1, entry.getFirstInt() + instruction.value);
                         }
                         break;
                     case SUM:
                         data.set(instruction.dataPoint1, data.get(instruction.dataPoint2) + data.get(instruction.dataPoint3));
                         break;
                     case SPLIT:
-                        data.set(instruction.dataPoint1, entry.getFirstInt()+instruction.value);
+                        data.set(instruction.dataPoint1, entry.getFirstInt() + instruction.value);
                         data.set(instruction.dataPoint2, data.get(instruction.dataPoint1) - data.get(instruction.dataPoint3));
                         break;
                     case DWH:
@@ -494,7 +489,7 @@ public abstract class Raid
 
     protected void addColorToStatus(String color)
     {
-        if(!roomStatus.isEmpty() && !roomStatus.endsWith(">"))
+        if (!roomStatus.isEmpty() && !roomStatus.endsWith(">"))
         {
             String lastLetter = roomStatus.substring(roomStatus.length() - 1);
             roomStatus = roomStatus.substring(0, roomStatus.length() - 1) + color + lastLetter;
@@ -546,5 +541,43 @@ public abstract class Raid
     public List<Integer> getRoomAutos(RaidRoom room)
     {
         return lineManager.getRoomSpecificAutos(room);
+    }
+
+    public String getPlayerList(List<Map<String, List<String>>> aliases)
+    {
+        StringBuilder list = new StringBuilder();
+        List<String> names = new ArrayList<>();
+        for (String s : players)
+        {
+            String name = s;
+            for (Map<String, List<String>> alternateNames : aliases)
+            {
+                for (String alias : alternateNames.keySet())
+                {
+                    for (String potentialName : alternateNames.get(alias))
+                    {
+                        if (name.equalsIgnoreCase(potentialName))
+                        {
+                            name = alias;
+                            break;
+                        }
+                    }
+                }
+            }
+            names.add(name);
+        }
+        names.sort(String::compareToIgnoreCase);
+        for (String s : names)
+        {
+            list.append(s);
+            list.append(",");
+        }
+        if (list.length() > 0)
+        {
+            return list.substring(0, list.length() - 1);
+        } else
+        {
+            return "";
+        }
     }
 }

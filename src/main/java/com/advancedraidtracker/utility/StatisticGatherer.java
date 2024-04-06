@@ -11,7 +11,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Slf4j
-public class StatisticGatherer
+public class StatisticGatherer //todo this whole class is a mess
 {
     public static double getOverallTimeAverage(List<Raid> data)
     {
@@ -24,7 +24,7 @@ public class StatisticGatherer
         double count = 0;
         for (Raid d : data)
         {
-            //total += d.getTimeSum();
+            //total += d.getTimeSum(); //todo uhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
             count++;
         }
         return total / count;
@@ -145,7 +145,7 @@ public class StatisticGatherer
 
     private static double getMedian(List<Double> values)
     {
-        if(values.isEmpty())
+        if (values.isEmpty())
         {
             return -1;
         }

@@ -15,6 +15,7 @@ public abstract class RoomParser
     {
         return markers;
     }
+
     public String getRoomSpecificMarkerName()
     {
         return "";
@@ -40,7 +41,7 @@ public abstract class RoomParser
 
     protected void addLinesFromCollection(List<Integer> list, String description)
     {
-        for(Integer i : list)
+        for (Integer i : list)
         {
             lines.put(i, description);
         }
@@ -48,7 +49,7 @@ public abstract class RoomParser
 
     protected void addMarkersFromCollection(List<Integer> list, String description)
     {
-        for(Integer i : list)
+        for (Integer i : list)
         {
             markers.put(i, description);
         }
@@ -58,10 +59,12 @@ public abstract class RoomParser
     {
         return 1; //hmm
     }
+
     public int getStartTick()
     {
         return 1;
     }
+
     public int getEndTick()
     {
         return getRoomTime();

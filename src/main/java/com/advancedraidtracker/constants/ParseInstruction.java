@@ -16,6 +16,7 @@ public class ParseInstruction
     {
         this.type = type;
     }
+
     ParseInstruction(ParseType type, DataPoint split, DataPoint duration, DataPoint oldValue)
     {
         this.type = type;

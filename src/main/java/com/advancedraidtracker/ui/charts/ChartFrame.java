@@ -33,6 +33,7 @@ public class ChartFrame extends BaseFrame
     private Set<String> TOBRooms = new LinkedHashSet<>(Arrays.asList("Maiden", "Bloat", "Nylocas", "Sotetseg", "Xarpus", "Verzik P1", "Verzik P2", "Verzik P3"));
     private Set<String> TOARooms = new LinkedHashSet<>(Arrays.asList("Apmeken", "Baba", "Scabaras", "Kephri", "Het", "Akkha", "Crondis", "Zebak", "Wardens P1", "Wardens P2", "Wardens P3"));
     private Set<String> COLRooms = new LinkedHashSet<>(Arrays.asList("Wave 1", "Wave 2", "Wave 3", "Wave 4", "Wave 5", "Wave 6", "Wave 7", "Wave 8", "Wave 9", "Wave 10", "Wave 11", "Wave 12"));
+
     public ChartFrame(Raid roomData, AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager, SpriteManager spriteManager)
     {
         ChartData chartData = DataReader.getChartData(roomData.getFilepath(), itemManager);
@@ -41,20 +42,18 @@ public class ChartFrame extends BaseFrame
 
         Set<String> activeSet;
 
-        if(roomData instanceof Toa)
+        if (roomData instanceof Toa)
         {
             activeSet = TOARooms;
-        }
-        else if(roomData instanceof Colo)
+        } else if (roomData instanceof Colo)
         {
             activeSet = COLRooms;
-        }
-        else
+        } else
         {
             activeSet = TOBRooms;
         }
 
-        for(String bossName : activeSet)
+        for (String bossName : activeSet)
         {
             RaidRoom room = RaidRoom.getRoom(bossName);
             JPanel tab = getThemedPanel();
@@ -67,13 +66,12 @@ public class ChartFrame extends BaseFrame
             chartPanel.setRoomHP(chartData.getHPMapping(room));
             chartPanel.setAttackers(new ArrayList<>(roomData.getPlayers()));
             chartPanel.enableWrap();
-            if(bossName.contains("Wave"))
+            if (bossName.contains("Wave"))
             {
                 int starttick = 1;
                 chartPanel.setStartTick(starttick);
                 chartPanel.setTick(starttick + roomData.get(bossName + " Duration"));
-            }
-            else
+            } else
             {
                 chartPanel.setStartTick((bossName.contains("Verzik") || bossName.contains("Wardens")) ? //Just trust
                         (bossName.contains("P1") ? 1 : (bossName.contains("P2") ? roomData.get(bossName.replace('2', '1') + " Time") :
@@ -89,7 +87,7 @@ public class ChartFrame extends BaseFrame
             chartPanel.setRoomSpecificText(roomData.getRoomSpecificText(room));
             chartPanel.addAutos(roomData.getRoomAutos(room));
             chartPanel.addMaidenCrabs(chartData.maidenCrabs);
-            if(room.equals(RaidRoom.VERZIK))
+            if (room.equals(RaidRoom.VERZIK))
             {
                 chartPanel.addDawnSpecs(chartData.dawnSpecs);
             }
@@ -100,7 +98,7 @@ public class ChartFrame extends BaseFrame
             tab.add(getThemedScrollPane(chart));
             basepane.add(bossName, tab);
 
-            Timer resizeTimer = new Timer(20, e->
+            Timer resizeTimer = new Timer(20, e ->
             {
                 chartPanel.setSize(frameX, frameY);
             });
@@ -113,11 +111,10 @@ public class ChartFrame extends BaseFrame
                 public void componentResized(ComponentEvent e)
                 {
                     super.componentResized(e);
-                    if(resizeTimer.isRunning())
+                    if (resizeTimer.isRunning()) //redrawing on every resize event will cause severe stuttering, wait 20ms after stopped resizing
                     {
                         resizeTimer.restart();
-                    }
-                    else
+                    } else
                     {
                         resizeTimer.start();
                     }

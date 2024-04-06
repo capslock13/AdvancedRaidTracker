@@ -9,7 +9,6 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
-import javax.swing.border.MatteBorder;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
@@ -41,7 +40,7 @@ public class DynamicTableHeaderRenderer implements TableCellRenderer
         this.editor.setBorder(UIManager.getBorder("TableHeader.cellBorder"));
         popupData = new LinkedHashMap<>();
         flatData = new ArrayList<>();
-        for(RaidRoom room : RaidRoom.values())
+        for (RaidRoom room : RaidRoom.values())
         {
             popupData.put(room.name, DataPoint.getSpecificNames(room));
         }
@@ -52,11 +51,9 @@ public class DynamicTableHeaderRenderer implements TableCellRenderer
         editor.setEditable(false);
         allComboValues = new ArrayList<>(popupData.keySet());
         popupMenu = getThemedPopupMenu();
-        List<String> allComboValues = new ArrayList<String>(popupData.keySet());
-        dataPointMenu = new DataPointMenu(allComboValues, popupData, flatData, popupMenu, editor, window);
+        dataPointMenu = new DataPointMenu(popupMenu, editor, window);
     }
 
-    private boolean menuVisible = false;
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int col)
     {
@@ -88,11 +85,10 @@ public class DynamicTableHeaderRenderer implements TableCellRenderer
         private int column = -1;
         private Component editor;
         private JPopupMenu menu;
-        private Raids window;
+
 
         public MouseEventReposter(JTableHeader header, int column, Component editor, JPopupMenu menu, Raids window)
         {
-            this.window = window;
             this.header = header;
             this.column = column;
             this.editor = editor;
@@ -139,17 +135,16 @@ public class DynamicTableHeaderRenderer implements TableCellRenderer
                 setDispatchComponent(e);
                 repostEvent(e);
             }
-            if(SwingUtilities.isLeftMouseButton(e))
+            if (SwingUtilities.isLeftMouseButton(e))
             {
                 try
                 {
                     Rectangle rect = header.getTable().getCellRect(0, header.getColumnModel().getColumnIndexAtX(e.getX()), true);
-                    if(e.getX() > rect.getX()+rect.getWidth()-20)
+                    if (e.getX() > rect.getX() + rect.getWidth() - 20)
                     {
-                        menu.show(editor, (int)rect.getWidth()-menu.getPreferredSize().width, editor.getHeight());
+                        menu.show(editor, (int) rect.getWidth() - menu.getPreferredSize().width, editor.getHeight());
                     }
-                }
-                catch (Exception ignore)
+                } catch (Exception ignore)
                 {
                     //resizing quirk
                 }

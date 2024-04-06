@@ -16,7 +16,7 @@ public enum RaidType
 
     public String colorName()
     {
-        return color+name;
+        return color + name;
     }
 
     RaidType(int value, String name, String color)

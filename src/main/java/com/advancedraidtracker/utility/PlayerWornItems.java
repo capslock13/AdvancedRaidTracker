@@ -16,6 +16,7 @@ public class PlayerWornItems
     public int gloves = 0;
     public int boots = 0;
     private final ItemManager itemManager;
+
     public PlayerWornItems(String s, ItemManager itemManager)
     {
         this.itemManager = itemManager;

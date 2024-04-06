@@ -45,7 +45,7 @@ public class DataReader //todo move any methods that read files to here. I belie
             //todo find a better way to handle legacy/mismatched values. 8 16 26 46 arent used anymore 998 999 were for testing only. 975 976 were bloat testing
             //todo and 801 is playerattack, the constructor fails because mismatched args (theres a 6th arg, room name, that didnt exist prior to a week or two ago)
             String[] split = line.split(",", -1);
-            if(split[3].equals("801") || split[3].equals("975") || split[3].equals("8") || split[3].equals("998") || split[3].equals("999")
+            if (split[3].equals("801") || split[3].equals("975") || split[3].equals("8") || split[3].equals("998") || split[3].equals("999")
                     || split[3].equals("976") || split[3].equals("16") || split[3].equals("26") || split[3].equals("46"))
             //legacy or otherwise ignored values to be excluded while testing parser
             {
@@ -58,17 +58,15 @@ public class DataReader //todo move any methods that read files to here. I belie
                 currentRaid.add(entry);
                 if (entry.logEntry == LogID.LEFT_TOB)
                 {
-                    if(path.getFileName().toString().toLowerCase().contains("tob"))
+                    if (path.getFileName().toString().toLowerCase().contains("tob"))
                     {
                         ret = new Tob(path, currentRaid);
                         ret.parseAllEntries();
-                    }
-                    else if(path.getFileName().toString().toLowerCase().contains("col"))
+                    } else if (path.getFileName().toString().toLowerCase().contains("col"))
                     {
                         ret = new Colo(path, currentRaid);
                         ret.parseAllEntries();
-                    }
-                    else if(path.getFileName().toString().toLowerCase().contains("inf")) //todo idk these if statements arent it
+                    } else if (path.getFileName().toString().toLowerCase().contains("inf")) //todo idk these if statements arent it
                     {
                         ret = new Inf(path, currentRaid);
                         ret.parseAllEntries();
@@ -124,12 +122,12 @@ public class DataReader //todo move any methods that read files to here. I belie
             Scanner scanner = new Scanner(Files.newInputStream(path));
             RaidRoom currentRoom = RaidRoom.UNKNOWN;
             List<DawnSpec> dawnSpecs = new ArrayList<>();
-            while(scanner.hasNextLine())
+            while (scanner.hasNextLine())
             {
                 String[] line = scanner.nextLine().split(",");
-                if(!RaidRoom.getRoom(line[line.length-1]).equals(RaidRoom.UNKNOWN))
+                if (!RaidRoom.getRoom(line[line.length - 1]).equals(RaidRoom.UNKNOWN))
                 {
-                    currentRoom = RaidRoom.getRoom(line[line.length-1]);
+                    currentRoom = RaidRoom.getRoom(line[line.length - 1]);
                 }
                 switch (line[3])
                 {
@@ -164,9 +162,9 @@ public class DataReader //todo move any methods that read files to here. I belie
                         dawnSpecs.add(new DawnSpec(line[4], Integer.parseInt(line[5])));
                         break;
                     case "488":
-                        for(DawnSpec dawnSpec : dawnSpecs)
+                        for (DawnSpec dawnSpec : dawnSpecs)
                         {
-                            if(dawnSpec.tick == Integer.parseInt(line[5]))
+                            if (dawnSpec.tick == Integer.parseInt(line[5]))
                             {
                                 dawnSpec.setDamage(Integer.parseInt(line[4]));
                             }
@@ -175,8 +173,7 @@ public class DataReader //todo move any methods that read files to here. I belie
                 }
             }
             chartData.addDawnSpecs(dawnSpecs);
-        }
-        catch (Exception ignore)
+        } catch (Exception ignore)
         {
             log.info("Failed to parse!");
         }
@@ -185,16 +182,16 @@ public class DataReader //todo move any methods that read files to here. I belie
 
     /**
      * Folder structure is the following:
-     *
+     * <p>
      * advancedraidtracker/
-     *   <username>/
-     *       primary/ <------ a mix of coxdata.log, tobdata.log, toadata.log
-     *   legacy-files/
-     *       primary/ <---- any tobdata.log that existed in /theatretracker/ gets moved here
-     *   misc-dir/
-     *       alias/alias.log <---- used to track aliases in main window
-     *       filters/ <---<filtername>.filter, saved filters
-     *       raids/ <--- folders created with name saved when you export raid, each folder has all the individual tobdata.logs that were exported
+     * <username>/
+     * primary/ <------ a mix of coxdata.log, tobdata.log, toadata.log
+     * legacy-files/
+     * primary/ <---- any tobdata.log that existed in /theatretracker/ gets moved here
+     * misc-dir/
+     * alias/alias.log <---- used to track aliases in main window
+     * filters/ <---<filtername>.filter, saved filters
+     * raids/ <--- folders created with name saved when you export raid, each folder has all the individual tobdata.logs that were exported
      *
      * @return A list of all the current raids
      */
@@ -210,8 +207,7 @@ public class DataReader //todo move any methods that read files to here. I belie
                             && !Files.isDirectory(file))
                     .map(DataReader::getRaid)
                     .filter(Objects::nonNull).sorted(Comparator.comparing(Raid::getDate)).collect(Collectors.toList());
-        }
-        catch (Exception e)
+        } catch (Exception e)
         {
             log.info("Could not retrieve raids");
             e.printStackTrace();

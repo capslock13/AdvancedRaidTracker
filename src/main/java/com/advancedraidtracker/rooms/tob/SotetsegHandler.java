@@ -182,7 +182,7 @@ public class SotetsegHandler extends TOBRoomHandler
         crossTiles.add(start);
         while (Math.abs(end.getX() - crossTiles.get(crossTiles.size() - 1).getX()) != end.getY() - crossTiles.get(crossTiles.size() - 1).getY())
         {
-            if (crossTiles.size() > 1000)
+            if (crossTiles.size() > 1000) //something has gone terribly wrong and the data provided was not valid, client lag? bail out
             {
                 return new ArrayList<>();
             }
@@ -334,7 +334,7 @@ public class SotetsegHandler extends TOBRoomHandler
 
     public void endEitherMaze()
     {
-        if(!currentMaze.isEmpty())
+        if (!currentMaze.isEmpty())
         {
             if (currentMaze.get(currentMaze.size() - 1).getY() == 35)
             {
@@ -345,11 +345,11 @@ public class SotetsegHandler extends TOBRoomHandler
         currentMaze = addEveryTileBetween(currentMaze);
         ArrayList<Point> overlap = removeDuplicatePoints(findOverlappingTiles(currentMaze, excludedTiles));
         ArrayList<Point> nonoverlap = removeDuplicatePoints(findNonOverlappingTiles(excludedTiles, currentMaze));
-        if(!overlap.isEmpty() && config.showMistakesInChat())
+        if (!overlap.isEmpty() && config.showMistakesInChat())
         {
             plugin.sendChatMessage(lastChosen + " ragged " + overlap.size() + " while running the maze");
         }
-        if(!nonoverlap.isEmpty() && config.showMistakesInChat())
+        if (!nonoverlap.isEmpty() && config.showMistakesInChat())
         {
             plugin.sendChatMessage("Players following the maze ragged " + nonoverlap.size() + " tiles");
         }
@@ -408,7 +408,7 @@ public class SotetsegHandler extends TOBRoomHandler
 
     public void updateGraphicsObjectCreated(GraphicsObjectCreated event)
     {
-        if(event.getGraphicsObject().getId() == SOTETSEG_RAGGED_TILE)
+        if (event.getGraphicsObject().getId() == SOTETSEG_RAGGED_TILE)
         {
             WorldPoint wp = WorldPoint.fromLocal(client, event.getGraphicsObject().getLocation());
             excludedTiles.add(new Point(wp.getRegionX(), wp.getRegionY()));
@@ -421,7 +421,7 @@ public class SotetsegHandler extends TOBRoomHandler
         if (roomState == RoomState.SotetsegRoomState.MAZE_1 || roomState == RoomState.SotetsegRoomState.MAZE_2)
         {
             int ticksSinceLastProc;
-            if(roomState == RoomState.SotetsegRoomState.MAZE_1)
+            if (roomState == RoomState.SotetsegRoomState.MAZE_1)
             {
                 ticksSinceLastProc = client.getTickCount() - soteFirstMazeStart;
             } else

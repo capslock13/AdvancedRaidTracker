@@ -69,22 +69,18 @@ public class ButtonEditorViewColumn extends DefaultCellEditor
             {
                 Tob tobData = (Tob) data.get(row);
                 ViewTOBRaid raid = new ViewTOBRaid(tobData, config);
-                //ViewRaidFrame raid = new ViewRaidFrame(data.get(row));
                 raid.open();
-            }
-            else if (data.get(row) instanceof Toa)
+            } else if (data.get(row) instanceof Toa)
             {
                 Toa toaData = (Toa) data.get(row);
                 ViewTOARaid raid = new ViewTOARaid(toaData, config);
                 raid.open();
-            }
-            else if(data.get(row) instanceof Inf)
+            } else if (data.get(row) instanceof Inf)
             {
                 Inf infData = (Inf) data.get(row);
                 ViewInfernoFrame raid = new ViewInfernoFrame(infData, config);
                 raid.open();
-            }
-            else if(data.get(row) instanceof Colo)
+            } else if (data.get(row) instanceof Colo)
             {
                 Colo colData = (Colo) data.get(row);
                 ViewColosseumFrame raid = new ViewColosseumFrame(colData, config, itemManager);

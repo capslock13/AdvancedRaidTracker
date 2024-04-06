@@ -18,14 +18,13 @@ public class CrondisParser extends RoomParser
     public Map<Integer, String> getLines()
     {
         lines.put(8, "Pickup water");
-        if(data.get(DataPoint.PARTY_SIZE) == 1)
+        if (data.get(DataPoint.PARTY_SIZE) == 1)
         {
             lines.put(19, "First Fill");
             lines.put(30, "First Watering");
             lines.put(43, "Second Fill");
             lines.put(54, "Second Watering");
-        }
-        else
+        } else
         {
             lines.put(20, "First Fill");
             lines.put(31, "First Watering");

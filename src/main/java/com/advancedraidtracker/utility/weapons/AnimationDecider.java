@@ -14,11 +14,11 @@ public class AnimationDecider
 
         try
         {
-            if(!projectileS.isEmpty())
+            if (!projectileS.isEmpty())
             {
                 projectile = Integer.parseInt(projectileS);
             }
-            if(!animationS.isEmpty())
+            if (!animationS.isEmpty())
             {
                 animation = Integer.parseInt(animationS);
             }
@@ -91,7 +91,7 @@ public class AnimationDecider
                 event = playerAnimation;
             }
         }
-        if(animationMatches == 0)
+        if (animationMatches == 0)
         {
             return PlayerAnimation.UNDECIDED;
         }

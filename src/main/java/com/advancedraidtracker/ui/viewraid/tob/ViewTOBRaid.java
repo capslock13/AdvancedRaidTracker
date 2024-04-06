@@ -29,7 +29,6 @@ public class ViewTOBRaid extends BaseFrame //todo @fisu not sure if you wanted t
     String dark;
 
 
-
     public ViewTOBRaid(Tob data, AdvancedRaidTrackerConfig config)
     {
         Color c = config.fontColor();
@@ -232,7 +231,7 @@ public class ViewTOBRaid extends BaseFrame //todo @fisu not sure if you wanted t
         nylocasSubPanel.add(getThemedLabel(nyloBodyColor + RoomUtil.time(data.get(DataPoint.NYLO_BOSS_SPAWN)) + " (" + RoomUtil.time(data.get(DataPoint.NYLO_BOSS_SPAWN) - data.get(NYLO_LAST_DEAD)) + ")"));
 
         nylocasSubPanel.add(getThemedLabel(nyloBodyColor + "Time"));
-        nylocasSubPanel.add(getThemedLabel(nyloBodyColor + RoomUtil.time(nyloSplit) + " (" + RoomUtil.time(nyloSplit- data.get(DataPoint.NYLO_BOSS_SPAWN)) + ")"));
+        nylocasSubPanel.add(getThemedLabel(nyloBodyColor + RoomUtil.time(nyloSplit) + " (" + RoomUtil.time(nyloSplit - data.get(DataPoint.NYLO_BOSS_SPAWN)) + ")"));
 
         JPanel sotetsegSubPanel = getThemedPanel();
         sotetsegSubPanel.setLayout(new GridLayout(8, 2));
@@ -274,7 +273,7 @@ public class ViewTOBRaid extends BaseFrame //todo @fisu not sure if you wanted t
         xarpusSubPanel.add(getThemedLabel(xarpBodyColor + RoomUtil.time(data.get(DataPoint.XARP_SCREECH))));
 
         xarpusSubPanel.add(getThemedLabel(xarpBodyColor + "Time"));
-        xarpusSubPanel.add(getThemedLabel(xarpBodyColor + RoomUtil.time(xarpSplit) + " (" + RoomUtil.time(xarpSplit- data.get(DataPoint.XARP_SCREECH)) + ")"));
+        xarpusSubPanel.add(getThemedLabel(xarpBodyColor + RoomUtil.time(xarpSplit) + " (" + RoomUtil.time(xarpSplit - data.get(DataPoint.XARP_SCREECH)) + ")"));
 
         xarpusSubPanel.add(getThemedLabel(""));
         xarpusSubPanel.add(getThemedLabel(""));
@@ -353,7 +352,6 @@ public class ViewTOBRaid extends BaseFrame //todo @fisu not sure if you wanted t
         thrallsPanel.setLayout(new GridLayout(7, 2));
 
 
-
         thrallsPanel.add(getThemedLabel("Maiden Thrall Hits: "));
         thrallsPanel.add(getThemedLabel(String.valueOf(data.get(DataPoint.THRALL_ATTACKS, MAIDEN)), SwingConstants.RIGHT));
 
@@ -416,11 +414,11 @@ public class ViewTOBRaid extends BaseFrame //todo @fisu not sure if you wanted t
     private String getColor(Raid data, RaidRoom room)
     {
         String color = red;
-        if(data.getRoomPartiallyAccurate(room))
+        if (data.getRoomPartiallyAccurate(room))
         {
             color = blue;
         }
-        if(data.getRoomAccurate(room))
+        if (data.getRoomAccurate(room))
         {
             color = green;
         }
@@ -430,11 +428,11 @@ public class ViewTOBRaid extends BaseFrame //todo @fisu not sure if you wanted t
     private String getBodyColor(Raid data, RaidRoom room)
     {
         String color = dark;
-        if(data.getRoomPartiallyAccurate(room))
+        if (data.getRoomPartiallyAccurate(room))
         {
             color = soft;
         }
-        if(data.getRoomAccurate(room))
+        if (data.getRoomAccurate(room))
         {
             color = full;
         }

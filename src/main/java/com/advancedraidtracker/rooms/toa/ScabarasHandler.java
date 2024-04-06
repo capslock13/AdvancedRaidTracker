@@ -23,10 +23,12 @@ import static com.advancedraidtracker.constants.ToaIDs.SCABARAS_GATE_OBJECT;
 public class ScabarasHandler extends TOARoomHandler
 {
     private List<Point> points = new ArrayList<>();
+
     public String getName()
     {
         return "Scabaras";
     }
+
     int startTick = -1;
     int expectedEndTick = -1;
     private Point origin = null;
@@ -41,11 +43,12 @@ public class ScabarasHandler extends TOARoomHandler
     //br origin 35, 27
     //bl origin 18, 28
 
-    private static final Map<String, Point> soloEndPointMap = new HashMap<String, Point>() {{
-       put("18 40", new Point(28, 36));
-       put("35 40", new Point(40, 35));
-       put("18 28", new Point(28, 28));
-       put("35 27", new Point(40, 32));
+    private static final Map<String, Point> soloEndPointMap = new HashMap<String, Point>()
+    {{
+        put("18 40", new Point(28, 36));
+        put("35 40", new Point(40, 35));
+        put("18 28", new Point(28, 28));
+        put("35 27", new Point(40, 32));
     }};
 
     public ScabarasHandler(Client client, DataWriter clog, AdvancedRaidTrackerConfig config, AdvancedRaidTrackerPlugin plugin, TOAHandler handler)
@@ -74,7 +77,7 @@ public class ScabarasHandler extends TOARoomHandler
     @Override
     public void updateChatMessage(ChatMessage message)
     {
-        if(active && message.getSender() == null && message.getMessage().startsWith("Challenge complete: Path of Scabaras."))
+        if (active && message.getSender() == null && message.getMessage().startsWith("Challenge complete: Path of Scabaras."))
         {
             endScabaras();
         }
@@ -83,11 +86,11 @@ public class ScabarasHandler extends TOARoomHandler
     List<Point> translatePoints()
     {
         List<Point> translated = new ArrayList<>();
-        if(origin != null)
+        if (origin != null)
         {
             for (Point p : points)
             {
-                translated.add(new Point(p.getX()-origin.getX(), p.getY()-origin.getY()));
+                translated.add(new Point(p.getX() - origin.getX(), p.getY() - origin.getY()));
             }
         }
         return translated;
@@ -95,25 +98,25 @@ public class ScabarasHandler extends TOARoomHandler
 
     private int getTicksToMove(Point start, Point end)
     {
-        return (Math.max(Math.abs(start.getX()-end.getX()), Math.abs(start.getY()-end.getY()))/2)+1;
+        return (Math.max(Math.abs(start.getX() - end.getX()), Math.abs(start.getY() - end.getY())) / 2) + 1;
     }
 
     private void solvePuzzle()
     {
-        if(origin != null)
+        if (origin != null)
         {
             int totalTicks = getTicksToMove(origin, points.get(0));
             //log.info("start -> 1: " + totalTicks);
-            for(int i = 0; i < 4; i++)
+            for (int i = 0; i < 4; i++)
             {
-                int move = getTicksToMove(points.get(i), points.get(i+1));
+                int move = getTicksToMove(points.get(i), points.get(i + 1));
                 //log.info((i+1) + " to " + (i+2) + " added " + move + " ticks");
                 totalTicks += move;
             }
             int move = getTicksToMove(points.get(4), end);
             totalTicks += move;
             //log.info("5 to end added " + move + " ticks");
-            expectedEndTick = startTick+totalTicks;
+            expectedEndTick = startTick + totalTicks;
             //log.info("expected to end on " + expectedEndTick);
         }
     }
@@ -123,17 +126,17 @@ public class ScabarasHandler extends TOARoomHandler
     @Override
     public void updateGameTick(GameTick event)
     {
-        if(points.size() == 5)
+        if (points.size() == 5)
         {
             solvePuzzle();
             //log.info("5 found");
             points.clear();
         }
-        if(!solved && expectedEndTick >= client.getTickCount())
+        if (!solved && expectedEndTick >= client.getTickCount())
         {
-            for(Player player : client.getPlayers())
+            for (Player player : client.getPlayers())
             {
-                if(player.getWorldLocation().getRegionX() == end.getX() && player.getWorldLocation().getRegionY() == end.getY())
+                if (player.getWorldLocation().getRegionX() == end.getX() && player.getWorldLocation().getRegionY() == end.getY())
                 {
                     //log.info(client.getTickCount()-expectedEndTick + " ticks lost");
                 }
@@ -175,11 +178,11 @@ public class ScabarasHandler extends TOARoomHandler
     @Override
     public void updateAnimationChanged(AnimationChanged animationChanged)
     {
-        if(animationChanged.getActor().getAnimation() == 832 && startTick == -1)
+        if (animationChanged.getActor().getAnimation() == 832 && startTick == -1)
         {
-            for(Player player : client.getPlayers())
+            for (Player player : client.getPlayers())
             {
-                if(player.getWorldLocation().getRegionX() == origin.getX() && player.getWorldLocation().getRegionY() == origin.getY())
+                if (player.getWorldLocation().getRegionX() == origin.getX() && player.getWorldLocation().getRegionY() == origin.getY())
                 {
                     startTick = client.getTickCount();
                     //log.info("starting: " + client.getTickCount());
@@ -193,14 +196,14 @@ public class ScabarasHandler extends TOARoomHandler
     public void updateGameObjectSpawned(GameObjectSpawned objectSpawned)
     {
         WorldPoint wp = objectSpawned.getGameObject().getWorldLocation();
-        if(objectSpawned.getGameObject().getId() == 45338)
+        if (objectSpawned.getGameObject().getId() == 45338)
         {
-            origin = new Point(wp.getRegionX(), wp.getRegionY()-1);
+            origin = new Point(wp.getRegionX(), wp.getRegionY() - 1);
             end = soloEndPointMap.get(wp.getRegionX() + " " + wp.getRegionY());
             //log.info("start: " + origin.getX() + ", " + origin.getY());
             //log.info("end: " + end.getX() + " , " + end.getY());
         }
-        if(objectSpawned.getGameObject().getId() == 45341)
+        if (objectSpawned.getGameObject().getId() == 45341)
         {
             points.add(new Point(wp.getRegionX(), wp.getRegionY()));
             //log.info("adding: " + wp.getRegionX() + ", " + wp.getRegionY());

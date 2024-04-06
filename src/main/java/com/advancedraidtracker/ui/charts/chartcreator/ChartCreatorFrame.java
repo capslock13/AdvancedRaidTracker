@@ -19,10 +19,10 @@ import static com.advancedraidtracker.utility.UISwingUtility.getThemedPanel;
 public class ChartCreatorFrame extends BaseFrame
 {
     private final ChartPanel chart;
+
     public ChartCreatorFrame(AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager, SpriteManager spriteManager)
     {
         setTitle("Chart Creator");
-
 
         chart = new ChartPanel("Creator", false, config, clientThread, configManager, itemManager, spriteManager);
         chart.setPreferredSize(new Dimension(0, 0));
@@ -61,7 +61,7 @@ public class ChartCreatorFrame extends BaseFrame
     public void setPlayerCount(int players)
     {
         List<String> playerList = new ArrayList<>();
-        for(int i = 1; i < players+1; i++)
+        for (int i = 1; i < players + 1; i++)
         {
             playerList.add("Player" + i);
         }

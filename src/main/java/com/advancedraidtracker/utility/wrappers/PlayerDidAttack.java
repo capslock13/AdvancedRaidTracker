@@ -39,48 +39,6 @@ public class PlayerDidAttack
     private static final Set<Integer> claws = new HashSet<>(Collections.singletonList(ItemID.CORRUPTED_DRAGON_CLAWS));
     private static final Set<Integer> dwh = new HashSet<>(Arrays.asList(ItemID.DRAGON_WARHAMMER_CR, ItemID.DRAGON_WARHAMMER_OR));
 
-    public PlayerDidAttack(LogEntry entry)
-    {
-        /*
-        // TODO: make all of the "strings" into integers
-        List<String> extra = entry.getExtra();
-
-        String[] playerDetails = extra.get(0).split(":");
-
-        this.player = playerDetails[0];
-        this.tick = Integer.parseInt(playerDetails[1]);
-
-        String[] animationDetails = extra.get(1).split(":");
-        this.animation = animationDetails[0];
-        if (animationDetails.length > 1)
-        {
-            this.wornItems = animationDetails[1];
-        }
-
-        this.spotAnims = extra.get(2);
-        String[] weaponDetails = extra.get(3).split(":");
-
-        switch (weaponDetails.length)
-        {
-            case 3:
-                this.targetedID = Integer.parseInt(weaponDetails[2]); // fallthrough
-            case 2:
-                this.targetedIndex = Integer.parseInt(weaponDetails[1]); // fallthrough
-            case 1:
-                this.weapon = Integer.parseInt(weaponDetails[0]);
-                break;
-        }
-
-        String[] projectileDetails = extra.get(4).split(":");
-        if (projectileDetails.length == 2)
-        {
-            this.targetName = projectileDetails[1];
-        }
-        this.projectile = projectileDetails[0];
-        */
-
-    }
-
     public PlayerDidAttack(ItemManager itemManager, String player, String animation, int tick, int weapon, String projectile, String spotAnims, int targetedIndex, int targetedID, String targetName, String worn)
     {
         this.itemManager = itemManager;
@@ -135,12 +93,6 @@ public class PlayerDidAttack
         return original;
     }
 
-
-    /*public void setIcons()
-    {
-        setIcons(itemManager);
-    }*/
-
     private static final Map<Integer, Integer> spellIconMap = Map.ofEntries(
             Map.entry(-1, SpriteID.UNKNOWN_INFORMATION_I),
             Map.entry(6299, SpriteID.SPELL_SPELLBOOK_SWAP),
@@ -166,7 +118,7 @@ public class PlayerDidAttack
 
     public void setIcons(ItemManager itemManager, SpriteManager spriteManager)
     {
-        if(AnimationDecider.getWeapon(animation, spotAnims, projectile, weapon).attackTicks > 0)
+        if (AnimationDecider.getWeapon(animation, spotAnims, projectile, weapon).attackTicks > 0)
         {
             int weaponID = this.weapon;
             if (setUnkitted)
@@ -174,8 +126,7 @@ public class PlayerDidAttack
                 weaponID = getReplacement(weaponID);
             }
             img = itemManager.getImage(weaponID, 1, false);
-        }
-        else
+        } else
         {
             img = spriteManager.getSprite(getSpellIcon(Integer.parseInt(animation)), 0);
         }

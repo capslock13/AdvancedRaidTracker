@@ -26,7 +26,10 @@ public class RaidsManager //todo merge this with datareader?
     {
         ArrayList<RaidsArrayWrapper> raidSets = new ArrayList<>();
         File folder = new File(raidsFolder);
-        if (!folder.exists()) if(!folder.mkdirs()){log.info("Couldn't make misc dir");}
+        if (!folder.exists()) if (!folder.mkdirs())
+        {
+            log.info("Couldn't make misc dir");
+        }
         try
         {
             for (File entry : Objects.requireNonNull(folder.listFiles()))
@@ -80,18 +83,21 @@ public class RaidsManager //todo merge this with datareader?
             File directory = new File(raidsFolder);
             if (!directory.exists())
             {
-                if(!directory.mkdirs()) {log.info("Could not make overwrite dir");}
+                if (!directory.mkdirs())
+                {
+                    log.info("Could not make overwrite dir");
+                }
             }
             File raidsFile = new File(raidsFolder + name + "/");
 
             if (raidsFile.exists())
             {
-                if(!raidsFile.delete())
+                if (!raidsFile.delete())
                 {
                     log.info("Could not delete file during overwrite");
                 }
             }
-            if(!raidsFile.mkdirs())
+            if (!raidsFile.mkdirs())
             {
                 log.info("Could not make directories during overwrite");
             }
@@ -127,7 +133,7 @@ public class RaidsManager //todo merge this with datareader?
             File directory = new File(raidsFolder);
             if (!directory.exists())
             {
-                if(!directory.mkdirs())
+                if (!directory.mkdirs())
                 {
                     log.info("Could not make directory to save raid");
                 }
@@ -135,7 +141,7 @@ public class RaidsManager //todo merge this with datareader?
             File raidsFile = new File(raidsFolder + name + "/");
             if (!raidsFile.exists())
             {
-                if(!raidsFile.mkdirs())
+                if (!raidsFile.mkdirs())
                 {
                     log.info("Could not make directory for specific folder for raid");
                 }

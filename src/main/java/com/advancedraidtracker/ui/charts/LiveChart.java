@@ -38,7 +38,7 @@ public class LiveChart extends BaseFrame
     String[] col = {"Wave 1", "Wave 2", "Wave 3", "Wave 4", "Wave 5", "Wave 6", "Wave 7", "Wave 8", "Wave 9", "Wave 10", "Wave 11", "Wave 12"};
     String[] inf = {"Wave 1-8", "Wave 9-17", "Wave 18-24", "Wave 25-34", "Wave 35-41", "Wave 42-49", "Wave 50-Wave 56", "Wave 57-59", "Wave 60-62", "Wave 63-65", "Wave 66", "Wave 67", "Wave 68", "Wave 69"};
 
-    Map<String, ChartPanel> toaPanels;
+    Map<String, ChartPanel> toaPanels; //todo.. map map? idk
     Map<String, ChartPanel> tobPanels;
     Map<String, ChartPanel> colPanels;
     Map<String, ChartPanel> infPanels;
@@ -77,7 +77,7 @@ public class LiveChart extends BaseFrame
             colPanels.put(name, chartPanel);
         }
 
-        for(String name : inf)
+        for (String name : inf)
         {
             ChartPanel chartPanel = new ChartPanel(name, true, config, clientThread, configManager, itemManager, spriteManager);
             infPanels.put(name, chartPanel);
@@ -87,7 +87,7 @@ public class LiveChart extends BaseFrame
         tabbedPane.addChangeListener(cl -> //todo test this revised logic
         {
             String activePanel = null;
-            if(tabbedPane.getSelectedIndex() == -1)
+            if (tabbedPane.getSelectedIndex() == -1)
             {
                 return;
             }
@@ -109,14 +109,14 @@ public class LiveChart extends BaseFrame
                     activePanel = inf[tabbedPane.getSelectedIndex()];
                     currentPanels = infPanels;
             }
-            currentPanels.values().forEach(panel->panel.setActive(false));
-            if(activePanel == null)
+            currentPanels.values().forEach(panel -> panel.setActive(false));
+            if (activePanel == null)
             {
                 return;
             }
             //Because we programatically switch tabs when region changes, which fires a tab changed event, we don't want to set the tab active
-            //if the user has the window closed
-            if(isShowing())
+            //if the user has the window closed, or it will start drawing in the background every tick
+            if (isShowing())
             {
                 currentPanels.get(activePanel).setActive(true);
                 currentPanels.get(activePanel).redraw();
@@ -134,32 +134,29 @@ public class LiveChart extends BaseFrame
             {
                 super.windowOpened(e);
                 String activePanel = null;
-                if(tabbedPane.getSelectedIndex() == -1)
+                if (tabbedPane.getSelectedIndex() == -1)
                 {
                     return;
                 }
-                if(activeRaid.equals(TOB))
+                if (activeRaid.equals(TOB))
                 {
                     activePanel = tob[tabbedPane.getSelectedIndex()];
-                }
-                else if(activeRaid.equals(TOA))
+                } else if (activeRaid.equals(TOA))
                 {
                     activePanel = toa[tabbedPane.getSelectedIndex()];
-                }
-                else if(activeRaid.equals(COLOSSEUM))
+                } else if (activeRaid.equals(COLOSSEUM))
                 {
                     activePanel = col[tabbedPane.getSelectedIndex()];
-                }
-                else if(activeRaid.equals(INFERNO))
+                } else if (activeRaid.equals(INFERNO))
                 {
                     activePanel = inf[tabbedPane.getSelectedIndex()];
                 }
-                if(activePanel == null)
+                if (activePanel == null)
                 {
                     return;
                 }
                 getPanel(activePanel).setActive(true);
-                getPanel(activePanel).redraw(); //todo why doesnt this redraw?
+                getPanel(activePanel).redraw(); //todo why doesn't this redraw?
                 pack();
             }
 
@@ -179,7 +176,7 @@ public class LiveChart extends BaseFrame
                 {
                     colPanels.get(name).setActive(false);
                 }
-                for(String name : infPanels.keySet())
+                for (String name : infPanels.keySet())
                 {
                     infPanels.get(name).setActive(false);
                 }
@@ -188,23 +185,23 @@ public class LiveChart extends BaseFrame
         addComponentListener(new ComponentAdapter()
         {
             @Override
-            public void componentResized(ComponentEvent e)
+            public void componentResized(ComponentEvent e) //todo why is redrawing while resizing not an issue here but it is in ChartFrame?
             {
                 super.componentResized(e);
                 Component c = (Component) e.getSource();
-                for(ChartPanel p : tobPanels.values())
+                for (ChartPanel p : tobPanels.values())
                 {
                     p.setSize(c.getWidth(), c.getHeight());
                 }
-                for(ChartPanel p : toaPanels.values())
+                for (ChartPanel p : toaPanels.values())
                 {
                     p.setSize(c.getWidth(), c.getHeight());
                 }
-                for(ChartPanel p : colPanels.values())
+                for (ChartPanel p : colPanels.values())
                 {
                     p.setSize(c.getWidth(), c.getHeight());
                 }
-                for(ChartPanel p : infPanels.values())
+                for (ChartPanel p : infPanels.values())
                 {
                     p.setSize(c.getWidth(), c.getHeight());
                 }
@@ -239,7 +236,7 @@ public class LiveChart extends BaseFrame
     {
         activeRaid = INFERNO;
         tabbedPane.removeAll();
-        for(String name : infPanels.keySet())
+        for (String name : infPanels.keySet())
         {
             tabbedPane.add(name, infPanels.get(name));
         }
@@ -249,7 +246,7 @@ public class LiveChart extends BaseFrame
     {
         activeRaid = COLOSSEUM;
         tabbedPane.removeAll();
-        for(String name : colPanels.keySet())
+        for (String name : colPanels.keySet())
         {
             tabbedPane.add(name, colPanels.get(name));
         }
@@ -263,16 +260,13 @@ public class LiveChart extends BaseFrame
         } else if (toaPanels.containsKey(room))
         {
             return toaPanels.get(room);
-        }
-        else if(colPanels.containsKey(room))
+        } else if (colPanels.containsKey(room))
         {
             return colPanels.get(room);
-        }
-        else if(infPanels.containsKey(room))
+        } else if (infPanels.containsKey(room))
         {
             return infPanels.get(room);
-        }
-        else
+        } else
         {
             return new ChartPanel("", true, config, clientThread, configManager, itemManager, spriteManager);
         }
@@ -317,7 +311,7 @@ public class LiveChart extends BaseFrame
         {
             colPanels.get(name).resetGraph();
         }
-        for(String name : infPanels.keySet())
+        for (String name : infPanels.keySet())
         {
             infPanels.get(name).resetGraph();
         }
@@ -337,7 +331,7 @@ public class LiveChart extends BaseFrame
         {
             colPanels.get(name).redraw();
         }
-        for(String name : infPanels.keySet())
+        for (String name : infPanels.keySet())
         {
             infPanels.get(name).redraw();
         }
@@ -362,7 +356,7 @@ public class LiveChart extends BaseFrame
         {
             colPanels.get(name).setAttackers(cleanedPlayers);
         }
-        for(String name : infPanels.keySet())
+        for (String name : infPanels.keySet())
         {
             infPanels.get(name).setAttackers(cleanedPlayers);
         }

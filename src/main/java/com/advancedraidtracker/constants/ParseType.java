@@ -29,6 +29,7 @@ public enum ParseType
     LEFT_RAID(0),
     ;
     public final int offset;
+
     ParseType(int offset)
     {
         this.offset = offset;

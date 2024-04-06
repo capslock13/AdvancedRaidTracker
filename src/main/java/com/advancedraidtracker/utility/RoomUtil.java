@@ -42,7 +42,7 @@ public class RoomUtil
 
     public static boolean isPrimaryBoss(int ID)
     {
-        if(ID == 0)
+        if (ID == 0)
         {
             return true;
         }
@@ -138,7 +138,7 @@ public class RoomUtil
 
     public static Integer ticks(String time)
     {
-        if(time.equals("-"))
+        if (time.equals("-"))
         {
             return -1;
         }
@@ -148,15 +148,14 @@ public class RoomUtil
         {
             if (split.length == 2)
             {
-                tickCount += Integer.parseInt(split[0])*100;
-                tickCount += (int) ((Double.parseDouble(split[1].split("s")[0]))/.6);
+                tickCount += Integer.parseInt(split[0]) * 100;
+                tickCount += (int) ((Double.parseDouble(split[1].split("s")[0])) / .6);
             }
             if (split.length == 1)
             {
-                tickCount += (int) ((Double.parseDouble(split[0].split("s")[0]))/.6);
+                tickCount += (int) ((Double.parseDouble(split[0].split("s")[0])) / .6);
             }
-        }
-        catch (Exception e)
+        } catch (Exception e)
         {
             log.info("Failed to convert time to ticks: " + time);
         }
@@ -203,16 +202,15 @@ public class RoomUtil
                 WorldPoint wp = p.getWorldLocation();
                 int x = wp.getRegionX();
                 int y = wp.getRegionY();
-                if(vertical)
+                if (vertical)
                 {
-                    if(x == start.getX() && y >= start.getY() && y <= end.getY())
+                    if (x == start.getX() && y >= start.getY() && y <= end.getY())
                     {
                         return true;
                     }
-                }
-                else
+                } else
                 {
-                    if(y == start.getY() && x >= start.getX() && x <= end.getX())
+                    if (y == start.getY() && x >= start.getX() && x <= end.getX())
                     {
                         return true;
                     }
@@ -224,23 +222,22 @@ public class RoomUtil
 
     public static boolean playerPastLine(int region, int regionXY, boolean vertical, Client client)
     {
-        if(inRegion(client, region))
+        if (inRegion(client, region))
         {
-            for(Player p : client.getPlayers())
+            for (Player p : client.getPlayers())
             {
                 WorldPoint wp = p.getWorldLocation();
                 int x = wp.getRegionX();
                 int y = wp.getRegionY();
-                if(vertical)
+                if (vertical)
                 {
-                    if(x > regionXY)
+                    if (x > regionXY)
                     {
                         return true;
                     }
-                }
-                else
+                } else
                 {
-                    if(y > regionXY)
+                    if (y > regionXY)
                     {
                         return true;
                     }
@@ -264,7 +261,7 @@ public class RoomUtil
 
     public static boolean inRegion(Client client, Room room)
     {
-        if (room.raidType.equals(RaidType.COX))
+        if (room.raidType.equals(RaidType.COX)) //todo flag
         {
             return false;
         }

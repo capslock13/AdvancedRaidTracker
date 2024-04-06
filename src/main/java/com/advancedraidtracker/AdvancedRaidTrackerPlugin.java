@@ -18,6 +18,7 @@ import com.advancedraidtracker.utility.wrappers.QueuedPlayerAttackLessProjectile
 import com.advancedraidtracker.utility.wrappers.ThrallOutlineBox;
 import com.google.inject.Inject;
 import com.google.inject.Provides;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.coords.LocalPoint;
@@ -216,6 +217,7 @@ public class AdvancedRaidTrackerPlugin extends Plugin
         }
         return false;
     }
+
     private RaidTrackerSidePanel timersPanelPrimary;
 
     @Override
@@ -280,7 +282,7 @@ public class AdvancedRaidTrackerPlugin extends Plugin
     @Subscribe
     public void onScriptPreFired(ScriptPreFired e)
     {
-        if(inTheatre)
+        if (inTheatre)
         {
             currentRoom.updateScriptPreFired(e);
 
@@ -291,7 +293,7 @@ public class AdvancedRaidTrackerPlugin extends Plugin
     @Subscribe
     public void onChatMessage(ChatMessage message)
     {
-        if(inTheatre)
+        if (inTheatre)
         {
             currentRoom.updateChatMessage(message);
         }
@@ -329,14 +331,15 @@ public class AdvancedRaidTrackerPlugin extends Plugin
 
     private boolean inInferno = false;
     private boolean inColosseum = false;
+
     private void updateRoom()
     {
         RoomHandler previous = currentRoom;
         boolean activeState = false;
         Room room = getRoom();
-        if(!inInferno)
+        if (!inInferno)
         {
-            if(client.isInInstancedRegion() && inRegion(client, 9043))
+            if (client.isInInstancedRegion() && inRegion(client, 9043))
             {
                 currentRoom = infernoHandler;
                 infernoHandler.reset();
@@ -354,19 +357,17 @@ public class AdvancedRaidTrackerPlugin extends Plugin
                 activeState = true;
                 lastSplits = "";
             }
-        }
-        else
+        } else
         {
-            if(!inRegion(client, 9043))
+            if (!inRegion(client, 9043))
             {
                 infernoHandler.forceStatUpdate();
-                if(infernoHandler.lastCompletedWave < 69)
+                if (infernoHandler.lastCompletedWave < 69)
                 {
-                    lastSplits = infernoHandler.getStatString() + lastSplits + "Duration (Failed): " + RoomUtil.time((client.getTickCount()-infernoHandler.roomStartTick))  + " (+" + RoomUtil.time(client.getTickCount()-infernoHandler.getLastWaveStartTime()) +")";
-                }
-                else
+                    lastSplits = infernoHandler.getStatString() + lastSplits + "Duration (Failed): " + RoomUtil.time((client.getTickCount() - infernoHandler.roomStartTick)) + " (+" + RoomUtil.time(client.getTickCount() - infernoHandler.getLastWaveStartTime()) + ")";
+                } else
                 {
-                    lastSplits = infernoHandler.getStatString() + lastSplits + "Duration (Success): " + RoomUtil.time(infernoHandler.getDuration()) + " (+" + RoomUtil.time(client.getTickCount()-infernoHandler.getLastWaveStartTime()) + ")";
+                    lastSplits = infernoHandler.getStatString() + lastSplits + "Duration (Success): " + RoomUtil.time(infernoHandler.getDuration()) + " (+" + RoomUtil.time(client.getTickCount() - infernoHandler.getLastWaveStartTime()) + ")";
                 }
                 //clog.addLine(LEFT_TOB, String.valueOf(client.getTickCount() - currentRoom.roomStartTick), currentRoom.getName());
                 currentRoom = lobbyTOB;
@@ -374,13 +375,12 @@ public class AdvancedRaidTrackerPlugin extends Plugin
                 inTheatre = false;
                 inInferno = false;
                 liveFrame.resetAll();
-            }
-            else
+            } else
             {
                 activeState = true;
             }
         }
-        if(!inColosseum)
+        if (!inColosseum)
         {
             if (client.isInInstancedRegion() && inRegion(client, 7216))
             {
@@ -399,22 +399,19 @@ public class AdvancedRaidTrackerPlugin extends Plugin
                 activeState = true;
                 lastSplits = "";
             }
-        }
-        else
+        } else
         {
             if (!inRegion(client, 7216))
             {
                 colloseumHandler.inRegion = false;
                 lastSplits = colloseumHandler.getInvos() + lastSplits;
-                if(colloseumHandler.lastCompletedWave < colloseumHandler.currentWave)
+                if (colloseumHandler.lastCompletedWave < colloseumHandler.currentWave)
                 {
-                    lastSplits += "Duration (Death): " + RoomUtil.time((client.getTickCount()-colloseumHandler.roomStartTick)+colloseumHandler.timeSum)  + " (+" + RoomUtil.time(client.getTickCount()-colloseumHandler.roomStartTick) +")";
-                }
-                else if(colloseumHandler.lastCompletedWave == 12)
+                    lastSplits += "Duration (Death): " + RoomUtil.time((client.getTickCount() - colloseumHandler.roomStartTick) + colloseumHandler.timeSum) + " (+" + RoomUtil.time(client.getTickCount() - colloseumHandler.roomStartTick) + ")";
+                } else if (colloseumHandler.lastCompletedWave == 12)
                 {
                     lastSplits += "Duration (Success): " + RoomUtil.time(colloseumHandler.timeSum) + " (+" + RoomUtil.time(colloseumHandler.lastWaveDuration) + ")";
-                }
-                else
+                } else
                 {
                     lastSplits += "Duration (Reset): " + RoomUtil.time(colloseumHandler.timeSum) + " (+" + RoomUtil.time(colloseumHandler.lastWaveDuration) + ")";
                 }
@@ -423,8 +420,7 @@ public class AdvancedRaidTrackerPlugin extends Plugin
                 inTheatre = false;
                 inColosseum = false;
                 liveFrame.resetAll();
-            }
-            else
+            } else
             {
                 activeState = true;
             }
@@ -930,12 +926,12 @@ public class AdvancedRaidTrackerPlugin extends Plugin
 
     private void handleBarraged()
     {
-        for(NPC npc : wasBarraged)
+        for (NPC npc : wasBarraged)
         {
             List<Player> potentialPlayers = new ArrayList<>();
-            for(Player player : client.getPlayers())
+            for (Player player : client.getPlayers())
             {
-                if(player.getInteracting() != null)
+                if (player.getInteracting() != null)
                 {
                     if (player.getInteracting().equals(npc) && (player.getAnimation() == 1979 || player.getAnimation() == 1978 || player.getAnimation() == BLOWPIPE_ANIMATION || player.getAnimation() == BLOWPIPE_ANIMATION_OR))
                     {
@@ -943,9 +939,9 @@ public class AdvancedRaidTrackerPlugin extends Plugin
                     }
                 }
             }
-            if(potentialPlayers.size() == 1)
+            if (potentialPlayers.size() == 1)
             {
-                if(potentialPlayers.get(0).getAnimation() == BLOWPIPE_ANIMATION || potentialPlayers.get(0).getAnimation() == BLOWPIPE_ANIMATION_OR)
+                if (potentialPlayers.get(0).getAnimation() == BLOWPIPE_ANIMATION || potentialPlayers.get(0).getAnimation() == BLOWPIPE_ANIMATION_OR)
                 {
                     generatePlayerAttackInfo(potentialPlayers.get(0), 1979);
                 }
@@ -956,23 +952,23 @@ public class AdvancedRaidTrackerPlugin extends Plugin
 
     private void handleChinSpawns()
     {
-        for(WorldPoint wp : chinSpawned)
+        for (WorldPoint wp : chinSpawned)
         {
             List<PlayerCopy> potentialPlayers = new ArrayList<>();
-            for(PlayerCopy player : lastTickPlayer.values())
+            for (PlayerCopy player : lastTickPlayer.values())
             {
-                if(player.worldPoint.distanceTo(wp) == 0)
+                if (player.worldPoint.distanceTo(wp) == 0)
                 {
                     potentialPlayers.add(player);
                 }
             }
-            if(potentialPlayers.size() == 1)
+            if (potentialPlayers.size() == 1)
             {
-                for(Player p : client.getPlayers())
+                for (Player p : client.getPlayers())
                 {
-                    if(Objects.equals(p.getName(), potentialPlayers.get(0).name))
+                    if (Objects.equals(p.getName(), potentialPlayers.get(0).name))
                     {
-                        if(p.getAnimation() != BLOWPIPE_ANIMATION_OR && p.getAnimation() != BLOWPIPE_ANIMATION)
+                        if (p.getAnimation() != BLOWPIPE_ANIMATION_OR && p.getAnimation() != BLOWPIPE_ANIMATION)
                         {
                             PlayerCopy previous = potentialPlayers.get(0);
                             clog.addLine(PLAYER_ATTACK,
@@ -1466,12 +1462,11 @@ public class AdvancedRaidTrackerPlugin extends Plugin
                 thrallTracker.playerHasThrallCastSpotAnim((Player) event.getActor(), id);
             }
 
-        }
-        else if(event.getActor() instanceof NPC)
+        } else if (event.getActor() instanceof NPC)
         {
-            if(event.getActor().hasSpotAnim(369) || event.getActor().hasSpotAnim(377) || event.getActor().hasSpotAnim(85) || event.getActor().hasSpotAnim(367) || event.getActor().hasSpotAnim(375))
+            if (event.getActor().hasSpotAnim(369) || event.getActor().hasSpotAnim(377) || event.getActor().hasSpotAnim(85) || event.getActor().hasSpotAnim(367) || event.getActor().hasSpotAnim(375))
             {
-                wasBarraged.add((NPC)event.getActor());
+                wasBarraged.add((NPC) event.getActor());
             }
         }
         if (inTheatre)
@@ -1501,7 +1496,7 @@ public class AdvancedRaidTrackerPlugin extends Plugin
     @Subscribe
     public void onStatChanged(StatChanged event)
     {
-        if(inTheatre)
+        if (inTheatre)
         {
             currentRoom.updateStatChanged(event);
         }
@@ -1528,9 +1523,9 @@ public class AdvancedRaidTrackerPlugin extends Plugin
     @Subscribe
     public void onProjectileMoved(ProjectileMoved event)
     {
-        if(event.getProjectile().getId() == 1272)
+        if (event.getProjectile().getId() == 1272)
         {
-            if(event.getProjectile().getStartCycle() == client.getGameCycle())
+            if (event.getProjectile().getStartCycle() == client.getGameCycle())
             {
                 chinSpawned.add(WorldPoint.fromLocal(client, new LocalPoint(event.getProjectile().getX1(), event.getProjectile().getY1())));
             }
@@ -1579,8 +1574,7 @@ public class AdvancedRaidTrackerPlugin extends Plugin
         if (event.getGroup().equals("Advanced Raid Tracker") && event.getKey().contains("primary"))
         {
             liveFrame.redrawAll();
-        }
-        else if(event.getGroup().equals("Advanced Raid Tracker") && event.getKey().contains("theme"))
+        } else if (event.getGroup().equals("Advanced Raid Tracker") && event.getKey().contains("theme"))
         {
             ChartTheme theme = ChartTheme.valueOf(event.getNewValue());
 
@@ -1604,15 +1598,15 @@ public class AdvancedRaidTrackerPlugin extends Plugin
     @Subscribe
     public void onAnimationChanged(AnimationChanged event)
     {
-        if(event.getActor() instanceof NPC)
+        if (event.getActor() instanceof NPC)
         {
-            if(currentRoom != null)
+            if (currentRoom != null)
             {
                 liveFrame.addAttack(new PlayerDidAttack(itemManager,
                         String.valueOf(((NPC) event.getActor()).getIndex()),
                         String.valueOf(event.getActor().getAnimation()),
                         0,
-                        100,
+                        100, //todo why is this 100?
                         "-1",
                         "",
                         0,
@@ -1627,7 +1621,7 @@ public class AdvancedRaidTrackerPlugin extends Plugin
             Player p = (Player) event.getActor();
             if (event.getActor().getAnimation() == 6294 || event.getActor().getAnimation() == 722 || event.getActor().getAnimation() == 6299 || event.getActor().getAnimation() == -1)
             {
-                if(activelyPiping.containsKey(p))
+                if (activelyPiping.containsKey(p))
                 {
                     wasPiping.add(p);
                 }
@@ -1689,7 +1683,7 @@ public class AdvancedRaidTrackerPlugin extends Plugin
         int interactedIndex = -1;
         int interactedID = -1;
         String targetName = "";
-        if(interacted != null && interacted.getName() != null)
+        if (interacted != null && interacted.getName() != null)
         {
             targetName = interacted.getName();
         }
@@ -2020,10 +2014,7 @@ public class AdvancedRaidTrackerPlugin extends Plugin
         }
     }
 
+    @Getter
     public String lastSplits = "";
 
-    public String getLastSplits()
-    {
-        return lastSplits;
-    }
 }

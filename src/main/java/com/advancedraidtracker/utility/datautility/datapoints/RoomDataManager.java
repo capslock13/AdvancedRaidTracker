@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 @Slf4j
 public class RoomDataManager
 {
@@ -53,13 +54,13 @@ public class RoomDataManager
 
     public void incrementBy(DataPoint point, int value, String player)
     {
-        if(player.isEmpty())
+        if (player.isEmpty())
         {
             incrementBy(point, value);
             return;
         }
         Map<String, Integer> playerMap = playerSpecificMap.getOrDefault(point.name, new HashMap<>());
-        playerMap.merge(player,value, Integer::sum);
+        playerMap.merge(player, value, Integer::sum);
         playerSpecificMap.put(point.name, playerMap);
     }
 
@@ -71,24 +72,23 @@ public class RoomDataManager
 
     public void incrementBy(DataPoint point, int value, String player, RaidRoom room)
     {
-        if(player.isEmpty())
+        if (player.isEmpty())
         {
-            if(point.room.equals(RaidRoom.ALL))
+            if (point.room.equals(RaidRoom.ALL))
             {
                 incrementBy(point, value, room);
-            }
-            else
+            } else
             {
                 incrementBy(point, value);
             }
             return;
         }
         Map<String, Integer> playerMapTotal = playerSpecificMap.getOrDefault("Total " + point.name, new HashMap<>());
-        playerMapTotal.merge(player,value, Integer::sum);
+        playerMapTotal.merge(player, value, Integer::sum);
         playerSpecificMap.put("Total " + point.name, playerMapTotal);
 
         Map<String, Integer> playerMapRoom = playerSpecificMap.getOrDefault(room.name + " " + point.name, new HashMap<>());
-        playerMapRoom.merge(player,value, Integer::sum);
+        playerMapRoom.merge(player, value, Integer::sum);
         playerSpecificMap.put(room.name + " " + point.name, playerMapRoom);
     }
 
@@ -123,46 +123,31 @@ public class RoomDataManager
 
     public int get(String point)
     {
-        if(get(DataPoint.RAID_INDEX) > 2200)
-        {
-            if (point.equals("Maiden Thrall Damage"))
-            {
-                log.info("index: " + get(DataPoint.RAID_INDEX));
-            }
-        }
         int val = map.getOrDefault(point, 0);
-        if(val == 0)
+        if (val == 0)
         {
-            if(playerSpecificMap.containsKey(point))
+            if (playerSpecificMap.containsKey(point))
             {
                 int sum = 0;
-                for(String player : playerSpecificMap.get(point).keySet())
+                for (String player : playerSpecificMap.get(point).keySet())
                 {
                     sum += playerSpecificMap.get(point).getOrDefault(player, 0);
                 }
-                if(sum != 0)
+                if (sum != 0)
                 {
-                    if(point.equals("Maiden Thrall Damage") && get(DataPoint.RAID_INDEX) > 2200)
-                    {
-                        log.info("sum: " + sum);
-                    }
                     return sum;
                 }
             }
-        }
-        if(point.equals("Maiden Thrall Damage") && get(DataPoint.RAID_INDEX) > 2200)
-        {
-            log.info("going to default map");
         }
         return map.getOrDefault(point, 0);
     }
 
     public int get(DataPoint point)
     {
-        if(point.playerSpecific)
+        if (point.playerSpecific)
         {
             int sum = 0;
-            for(String name : playerSpecificMap.get(point.name).keySet())
+            for (String name : playerSpecificMap.get(point.name).keySet())
             {
                 sum += playerSpecificMap.get(point.name).get(name);
             }
@@ -173,14 +158,14 @@ public class RoomDataManager
 
     public int get(DataPoint point, String player)
     {
-        if(point.room.equals(RaidRoom.ALL))
+        if (point.room.equals(RaidRoom.ALL))
         {
             int sum = 0;
-            for(RaidRoom room : RaidRoom.values())
+            for (RaidRoom room : RaidRoom.values())
             {
                 sum += playerSpecificMap.getOrDefault(room.name + " " + point.name, new HashMap<>()).getOrDefault(player, 0);
             }
-            if(sum > 0)
+            if (sum > 0)
             {
                 return sum;
             }
@@ -190,10 +175,10 @@ public class RoomDataManager
 
     public int get(DataPoint point, RaidRoom room)
     {
-        if(point.playerSpecific)
+        if (point.playerSpecific)
         {
             int sum = 0;
-            for(String name : playerSpecificMap.getOrDefault(room.name + " " + point.name, new HashMap<>()).keySet())
+            for (String name : playerSpecificMap.getOrDefault(room.name + " " + point.name, new HashMap<>()).keySet())
             {
                 sum += playerSpecificMap.get(room.name + " " + point.name).get(name);
             }
@@ -206,33 +191,33 @@ public class RoomDataManager
     {
         double defense = map.getOrDefault(point.name, 0); //fix defense todo
         defense *= .7;
-        map.put(point.name, (int)defense);
+        map.put(point.name, (int) defense);
     }
 
     public void bgs(DataPoint point, int damage)
     {
         int defense = map.getOrDefault(point.name, 0); //todo fix defense
-        defense = Math.max(defense-damage, 0);
+        defense = Math.max(defense - damage, 0);
         map.put(point.name, defense);
     }
 
     public void dumpValues() //used for testing only
     {
         log.info("DataPoint: ");
-        for(String point : map.keySet())
+        for (String point : map.keySet())
         {
             log.info(point + ": " + map.get(point));
         }
         log.info("Player Specific DataPoint: ");
-        for(String point : playerSpecificMap.keySet())
+        for (String point : playerSpecificMap.keySet())
         {
-            for(String name : playerSpecificMap.get(point).keySet())
+            for (String name : playerSpecificMap.get(point).keySet())
             {
                 log.info(name + ", " + point + ": " + playerSpecificMap.get(point).get(name));
             }
         }
         log.info("Mapped: ");
-        for(DataPoint point : intList.keySet())
+        for (DataPoint point : intList.keySet())
         {
             log.info(point.name + ": " + intList.get(point).toString());
         }

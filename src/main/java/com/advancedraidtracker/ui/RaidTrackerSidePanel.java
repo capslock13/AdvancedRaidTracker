@@ -112,7 +112,7 @@ public class RaidTrackerSidePanel extends PluginPanel
                             raidsData = getAllRaids();
                             DefaultTableModel model = getTableModel();
                             loadRaidsTable.setModel(model);
-                            if(raids != null)
+                            if (raids != null)
                             {
                                 raids.clearData();
                                 raids = null;
@@ -147,13 +147,12 @@ public class RaidTrackerSidePanel extends PluginPanel
         copyLastSplitsButton.addActionListener(al ->
         {
             String lastSplits = plugin.getLastSplits();
-            if(lastSplits.isEmpty())
+            if (lastSplits.isEmpty())
             {
                 JFrame messageDialog = new JFrame();
                 messageDialog.setAlwaysOnTop(true);
                 JOptionPane.showMessageDialog(messageDialog, "No splits found to copy.\nAfter leaving a tracked PVM encounter, pressing this button will copy the room/wave splits to the clipboard to paste.", "Dialog", JOptionPane.ERROR_MESSAGE);
-            }
-            else
+            } else
             {
                 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                 clipboard.setContents(new StringSelection(lastSplits), null);

@@ -310,17 +310,17 @@ public enum LogID
             "Veng Cast", "Target", "Player"), //target, source
     VENG_WAS_PROCCED(406, false, ALL,
             new ParseInstruction(INCREMENT, VENG_PROCS),
-                        new ParseInstruction(ADD_TO_VALUE, VENG_DAMAGE),
+            new ParseInstruction(ADD_TO_VALUE, VENG_DAMAGE),
             "Veng Procced", "Player", "Damage"), //player, source of veng, damage
     PLAYER_STOOD_IN_THROWN_BLOOD(411, true, MAIDEN,
             new ParseInstruction(INCREMENT, MAIDEN_PLAYER_STOOD_IN_THROWN_BLOOD),
-                        new ParseInstruction(ADD_TO_VALUE, MAIDEN_HEALS_FROM_THROWN_BLOOD),
-                        new ParseInstruction(ADD_TO_VALUE, MAIDEN_HP_HEALED),
+            new ParseInstruction(ADD_TO_VALUE, MAIDEN_HEALS_FROM_THROWN_BLOOD),
+            new ParseInstruction(ADD_TO_VALUE, MAIDEN_HP_HEALED),
             "Player Stood In Thrown Blood", "Player", "Damage", "Ticks blood was alive for"), //player, damage, blood tick
     PLAYER_STOOD_IN_SPAWNED_BLOOD(412, true, MAIDEN,
             new ParseInstruction(INCREMENT, MAIDEN_PLAYER_STOOD_IN_SPAWNED_BLOOD),
-                        new ParseInstruction(ADD_TO_VALUE, MAIDEN_HEALS_FROM_ANY_BLOOD),
-                        new ParseInstruction(ADD_TO_VALUE, MAIDEN_HP_HEALED),
+            new ParseInstruction(ADD_TO_VALUE, MAIDEN_HEALS_FROM_ANY_BLOOD),
+            new ParseInstruction(ADD_TO_VALUE, MAIDEN_HP_HEALED),
             "Player Stood In Spawned Blood", "Player", "Damage"),  //player, damage
     CRAB_HEALED_MAIDEN(413, true, MAIDEN, //DO NOT USE
             new ParseInstruction(MANUAL_PARSE),
@@ -383,7 +383,7 @@ public enum LogID
             "Left TOA", "Room Tick", "Last Room"),
     ENTERED_NEW_TOA_REGION(1006, true, ANY_TOA,
             new ParseInstruction(RAID_SPECIFIC),
-             "Entered New TOA Region", "Region"),
+            "Entered New TOA Region", "Region"),
     INVOCATION_LEVEL(1100, true, ANY_TOA,
             new ParseInstruction(SET, TOA_INVOCATION_LEVEL),
             "Invocation Level", "Raid Level"),
@@ -471,7 +471,7 @@ public enum LogID
             "Kephri Melee Alive Ticks", "Ticks Alive"),
     TOA_KEPHRI_MELEE_HEAL(1351, true, KEPHRI,
             new ParseInstruction(INCREMENT, KEPHRI_MELEE_SCARAB_HEALS),
-            new ParseInstruction(DECREMENT,KEPHRI_SWARMS_HEALED),
+            new ParseInstruction(DECREMENT, KEPHRI_SWARMS_HEALED),
             "Kephri Melee Heal", "Room Tick"),
     TOA_APMEKEN_START(1050, true, APMEKEN,
             new ParseInstruction(ROOM_START_FLAG),
@@ -520,7 +520,7 @@ public enum LogID
             new ParseInstruction(ROOM_START_FLAG),
             "Het Start", "Client Tick"),
     TOA_HET_FINISHED(1071, true, HET,
-            new ParseInstruction(SET,HET_TIME),
+            new ParseInstruction(SET, HET_TIME),
             new ParseInstruction(ADD_TO_VALUE, CHALLENGE_TIME),
             new ParseInstruction(ROOM_END_FLAG),
             "Het Finished", "Room Tick"),
@@ -528,7 +528,7 @@ public enum LogID
             new ParseInstruction(MANUAL_PARSE),
             "Het Player Mined Obelisk", "Player", "Room Tick"),
     TOA_HET_DOWN(1073, true, HET,
-            new ParseInstruction(MAP,HET_DOWNS),
+            new ParseInstruction(MAP, HET_DOWNS),
             "Het Down", "Room Tick"),
     TOA_AKKHA_START(1080, true, AKKHA,
             new ParseInstruction(ROOM_START_FLAG),
@@ -700,7 +700,7 @@ public enum LogID
             new ParseInstruction(MANUAL_PARSE),
             "Spawn String", "Wave Number", "Spawn String"),
     COLOSSEUM_GRAPPLE_INITIATED(2016, true, COLOSSEUM,
-    new ParseInstruction(INCREMENT, COLOSSEUM_GRAPPLES),
+            new ParseInstruction(INCREMENT, COLOSSEUM_GRAPPLES),
             new ParseInstruction(MAP, COLOSSEUM_GRAPPLES),
             "Grapple Attack", "Room Tick"),
     COLOSSEUM_GRAPPLE_PERFECT_PARRY(2017, true, COLOSSEUM,
@@ -711,87 +711,7 @@ public enum LogID
             "Reinforcements Spawned", "Room Tick"),
     COLOSSEUM_NPC_HEALED(2019, true, COLOSSEUM,
             new ParseInstruction(ADD_TO_VALUE, DataPoint.COLOSSEUM_NPC_HEALED),
-            "NPC Heal", "Amount", "ID", "Name", "Room Tick", "Room"),
-
-
-    ;
-
-    /*
-    2:DWH //Player, 0, 0, 0, 0
-    3:BGS //Player, Damage, 0, 0, 0
-    4:Left tob region //Last region, 0, 0, 0, 0
-    5:Player died //Player, 0, 0, 0, 0
-    6:Entered new tob region //Region, 0, 0, 0, 0 // Regions: (Bloat 1, Nylo 2, Sote 3, Xarpus 4, Verzik 5)
-    8: DB Specs // Player, DMG
-
-    10: Blood Spawned //room time, 0, 0, 0, 0
-    11: Crab leaked //room time, Description (E.G. N1 30s), Last known health, Current maiden dealth, 0
-    12: Maiden spawned //0, 0, 0, 0, 0
-    13: Maiden 70s //room time, 0, 0, 0, 0
-    14: Maiden 50s //room time, 0, 0, 0, 0
-    15: Maiden 30s //room time, 0, 0, 0, 0
-    16: Maiden 0 hp //room time, 0, 0, 0, 0
-    17: Maiden despawned //room time, 0, 0, 0, 0
-    18: Matomenos spawned //position, 0, 0, 0, 0
-    19: Maiden Scuffed
-
-    20: Bloat spawned //0, 0, 0, 0, 0
-    21: Bloat down //Room time, 0, 0, 0, 0
-    22: Bloat 0 HP //room time, 0, 0, 0, 0
-    23: Bloat despawn //room time, 0, 0, 0, 0
-    24: Bloat HP on 1st down //HP, 0, 0, 0,0
-
-    30: Nylo pillars spawned //0, 0, 0, 0 ,0
-    31: Nylo stall //Wave, room time, 0, 0, 0
-    32: Range split //Wave, room time, 0, 0, 0
-    33: Mage split //Wave, room time, 0, 0, 0
-    34: Melee split //Wave, room time, 0, 0, 0
-    35: Last wave //Room time, 0, 0, 0, 0
-    40: Boss spawn //Room time, 0, 0, 0, 0
-    41: Melee rotation //room time, 0, 0, 0, 0
-    42: Mage rotation //room time, 0, 0, 0, 0
-    43: Range rotation //room time, 0, 0, 0, 0
-    44: Nylo 0 HP // room time, 0, 0, 0, 0
-    45: Nylo despawned // room time, 0, 0, 0, 0
-
-    5x: sote
-
-    60: xarpus spawned //0, 0, 0, 0, 0
-    61: xarpus room started //0, 0, 0, 0, 0
-    62: xarpus heal //amount, room time, 0, 0, 0
-    63: xarpus screech //room time, 0, 0, 0, 0
-    64: xarpus 0 hp //room time, 0, 0, 0, 0
-    65: xarpus despawned //room time, 0, 0, 0, 0
-
-    70: verzik spawned //room time, 0, 0, 0, 0
-    71: verzik p1 started //0, 0, 0, 0, 0
-    72: verzik p1 0 hp //room time, 0, 0, 0, 0
-    73: verzik p1 despawned //room time, 0, 0, 0, 0
-    80: verzik p2 reds proc // room time, 0, 0, 0, 0
-    74: verzik p2 end
-    75: verzik p3 0 hp
-    76: verzik p3 despawned
-    77: verzik bounce //player, room time, 0, 0, 0
-
-    100: party complete
-    101: party incomplete
-    102: party accurate pre maiden
-
-    201 accurate maiden start
-    202 accurate bloat start
-    203 accurate nylo start
-    204 accurate sote start
-    205 accurate xarp start
-    206 accurate verzik start
-
-    301 accurate maiden end
-    302 accurate bloat end
-    303 accurate nylo end
-    304 accurate sote end
-    305 accurate xarp end
-    306 accurate verzik end
-    */
-    //public final Object[] arguments;
+            "NPC Heal", "Amount", "ID", "Name", "Room Tick", "Room");
 
     private static final Map<Integer, LogID> mapper;
 
@@ -803,6 +723,7 @@ public enum LogID
             mapper.put(id.id, id);
         }
     }
+
     final int id;
     String commonName;
     final RaidRoom room;
@@ -816,21 +737,19 @@ public enum LogID
         this.simple = simple;
         this.room = room;
         commonName = "unknown";
-        for(Object obj : arguments)
+        for (Object obj : arguments)
         {
-            if(obj instanceof ParseInstruction)
+            if (obj instanceof ParseInstruction)
             {
                 parseInstructions.add((ParseInstruction) obj);
-            }
-            else if(obj instanceof String)
+            } else if (obj instanceof String)
             {
-                if(commonName.equals("unknown"))
+                if (commonName.equals("unknown"))
                 {
                     commonName = (String) obj;
-                }
-                else
+                } else
                 {
-                    stringArgs.add((String)obj);
+                    stringArgs.add((String) obj);
                 }
             }
         }

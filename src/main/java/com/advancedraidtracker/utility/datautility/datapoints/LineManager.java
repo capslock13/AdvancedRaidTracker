@@ -12,6 +12,7 @@ public class LineManager
 {
     Map<RaidRoom, RoomParser> parsers;
     final Raid raid;
+
     public LineManager(Raid raid)
     {
         this.raid = raid;

@@ -31,12 +31,12 @@ public class TobIDs
     public static final int FULL_HP = 1000;
     public final static int LOBBY_REGION = 14642;
     public final static int MAIDEN_REGION = 12613;
-    public final static int  BLOAT_REGION = 13125;
-    public final static int  NYLO_REGION = 13122;
-    public final static int  SOTETSEG_REGION = 13123;
-    public final static int  SOTETSEG_UNDER_REGION = 13379;
-    public final static int  XARPUS_REGION = 12612;
-    public final static int  VERZIK_REGION = 12611;
+    public final static int BLOAT_REGION = 13125;
+    public final static int NYLO_REGION = 13122;
+    public final static int SOTETSEG_REGION = 13123;
+    public final static int SOTETSEG_UNDER_REGION = 13379;
+    public final static int XARPUS_REGION = 12612;
+    public final static int VERZIK_REGION = 12611;
     public final static int MAIDEN_THROWN_BLOOD_GRAPHIC_OBJECT = 1579;
     public final static int MAIDEN_BLOOD_THROW_ANIM = 8091;
     public final static int TBOW_PROJECTILE = 1120;
@@ -55,7 +55,6 @@ public class TobIDs
     public final static int MAGE_THRALL = 10880;
     public static final String EXIT_FLAG = "4";
     public static final int SPECTATE_FLAG = 98;
-
 
 
     public final static int MELEE_THRALL_ATTACK_ANIMATION = 5568;

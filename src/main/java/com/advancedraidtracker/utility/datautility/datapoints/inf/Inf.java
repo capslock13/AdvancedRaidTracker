@@ -19,6 +19,7 @@ public class Inf extends Raid
     int lastCheckPoint = 0;
     int endTime = 0;
     int startTime = 0;
+
     public Inf(Path filepath, List<LogEntry> raidData)
     {
         super(filepath, raidData);
@@ -27,42 +28,38 @@ public class Inf extends Raid
     @Override
     protected boolean parseLogEntry(LogEntry entry)
     {
-        for(ParseInstruction instruction : entry.logEntry.getParseInstructions())
+        for (ParseInstruction instruction : entry.logEntry.getParseInstructions())
         {
-            if(instruction.type == ParseType.MANUAL_PARSE)
+            if (instruction.type == ParseType.MANUAL_PARSE)
             {
-                if(entry.logEntry.equals(LogID.INFERNO_WAVE_STARTED))
+                if (entry.logEntry.equals(LogID.INFERNO_WAVE_STARTED))
                 {
                     highestWaveStarted = entry.getFirstInt();
                     lastCheckPoint = InfernoHandler.getLastRelevantSplit(highestWaveStarted);
                     currentRoom = roomMap.get(lastCheckPoint);
-                }
-                else if(entry.logEntry.equals(LogID.INFERNO_TIMER_STARTED))
+                } else if (entry.logEntry.equals(LogID.INFERNO_TIMER_STARTED))
                 {
                     startTime = entry.getValueAsInt("Client Tick");
-                }
-                else if(entry.logEntry.equals(LogID.INFERNO_WAVE_ENDED))
+                } else if (entry.logEntry.equals(LogID.INFERNO_WAVE_ENDED))
                 {
-                    if(entry.getValueAsInt("Wave Number") == 69)
+                    if (entry.getValueAsInt("Wave Number") == 69)
                     {
                         endTime = entry.getValueAsInt("Room Tick");
                         completed = true;
                     }
                 }
-            }
-            else if(instruction.type == ParseType.LEFT_RAID)
+            } else if (instruction.type == ParseType.LEFT_RAID)
             {
-                if(entry.logEntry.equals(LogID.LEFT_TOB))
+                if (entry.logEntry.equals(LogID.LEFT_TOB))
                 {
-                    if(endTime == 0)
+                    if (endTime == 0)
                     {
                         endTime = entry.getValueAsInt("Last Room Tick");
                     }
-                    if(!completed)
+                    if (!completed)
                     {
-                        data.set(DataPoint.CHALLENGE_TIME, endTime - startTime-1);
-                    }
-                    else
+                        data.set(DataPoint.CHALLENGE_TIME, endTime - startTime - 1);
+                    } else
                     {
                         data.set(DataPoint.CHALLENGE_TIME, endTime);
                     }
@@ -76,11 +73,11 @@ public class Inf extends Raid
     public String getSplits()
     {
         String split = "";
-        for(Integer val : roomMap.keySet())
+        for (Integer val : roomMap.keySet())
         {
-            if(val > 1)
+            if (val > 1)
             {
-                int i = data.getList(DataPoint.INFERNO_WAVE_STARTS).get(val)-startTime;
+                int i = data.getList(DataPoint.INFERNO_WAVE_STARTS).get(val) - startTime;
                 split += "Wave " + val + ", Split: " + i + "\n";
             }
         }
@@ -96,11 +93,10 @@ public class Inf extends Raid
     @Override
     public int getTimeSum()
     {
-        if(!completed)
+        if (!completed)
         {
             return endTime - startTime;
-        }
-        else
+        } else
         {
             return endTime;
         }
@@ -109,11 +105,10 @@ public class Inf extends Raid
     @Override
     public String getRoomStatus()
     {
-        if(!completed)
+        if (!completed)
         {
             return red + "Wave " + highestWaveStarted;
-        }
-        else
+        } else
         {
             return green + "Completion";
         }

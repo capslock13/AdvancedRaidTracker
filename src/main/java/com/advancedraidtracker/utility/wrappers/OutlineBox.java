@@ -71,7 +71,7 @@ public class OutlineBox
 
     public void createOutline()
     {
-        if(playerAnimation.attackTicks < 1 || letter.equals("VS") || letter.equals("AO") || letter.equals("HU") || letter.equals("MI") || letter.equals("DB") || letter.equals("SS"))
+        if (playerAnimation.attackTicks < 1 || letter.equals("VS") || letter.equals("AO") || letter.equals("HU") || letter.equals("MI") || letter.equals("DB") || letter.equals("SS"))
         {
             return;
         }
@@ -88,14 +88,13 @@ public class OutlineBox
             {
                 if (anyMatch(s, ItemReference.ITEMS[style]) || (voidHelmWorn && s.toLowerCase().contains("void")))
                 {
-                    if(s.contains("salve"))
+                    if (s.contains("salve"))
                     {
-                        if(room.equals(BLOAT))
+                        if (room.equals(BLOAT))
                         {
                             correctItems++;
                         }
-                    }
-                    else
+                    } else
                     {
                         correctItems++;
                     }

@@ -44,7 +44,6 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
             Color.decode("#b30000"),
     };
 
-    private final Color gridColor = new Color(110, 110, 110);
     private ToolTipData activeToolTip;
     private boolean shouldDrawToolTip = false;
 
@@ -459,7 +458,7 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
         {
             if (i < data.fullData.size() && i > -1)
             {
-                //summedData.addAll(data.fullData.get(i));
+                //summedData.addAll(data.fullData.get(i)); //todo why is this commented out? Does this not break functionality?
             }
         }
         return summedData;

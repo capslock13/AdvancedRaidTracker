@@ -709,6 +709,9 @@ public enum LogID
     COLOSSEUM_REINFORCEMENT_SPAWNED(2018, true, COLOSSEUM,
             new ParseInstruction(MANUAL_PARSE),
             "Reinforcements Spawned", "Room Tick"),
+    COLOSSEUM_NPC_HEALED(2019, true, COLOSSEUM,
+            new ParseInstruction(ADD_TO_VALUE, DataPoint.COLOSSEUM_NPC_HEALED),
+            "NPC Heal", "Amount", "ID", "Name", "Room Tick", "Room"),
 
 
     ;

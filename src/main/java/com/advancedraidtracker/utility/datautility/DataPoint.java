@@ -269,6 +269,7 @@ public enum DataPoint
     COLOSSEUM_WAVE_12_DURATION("Wave 12 Duration", types.TIME_SPLIT, COLOSSEUM, TIME),
     COLOSSEUM_PERFECT_PARRY("Perfect Parries", types.OTHER_INT, COLOSSEUM, MISC),
     COLOSSEUM_GRAPPLES("Grapples", types.INT_MAP, COLOSSEUM, MISC),
+    COLOSSEUM_NPC_HEALED("NPC Healed", types.OTHER_INT, ALL, MISC),
     INFERNO_WAVE_STARTS("Inferno Wave Starts", types.INT_MAP, INFERNO, MenuType.EXCLUDED, false),
     INFERNO_WAVE_DURATIONS("Inferno Wave Starts", types.INT_MAP, INFERNO, MenuType.EXCLUDED, false),
 

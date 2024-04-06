@@ -12,6 +12,8 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
+import net.runelite.api.HitsplatID;
+import net.runelite.api.NPC;
 import net.runelite.api.events.*;
 import net.runelite.client.util.Text;
 
@@ -200,6 +202,17 @@ public class ColosseumHandler extends RoomHandler
             {
 
             }
+        }
+    }
+
+    @Override
+    public void updateHitsplatApplied(HitsplatApplied hitsplatApplied)
+    {
+        //            "NPC Heal", "Amount", "ID", "Name", "Room Tick", "Room")
+        if(hitsplatApplied.getActor() instanceof NPC && hitsplatApplied.getHitsplat().getHitsplatType() == HitsplatID.HEAL)
+        {
+            NPC npc = (NPC) hitsplatApplied.getActor();
+            clog.addLine(LogID.COLOSSEUM_NPC_HEALED, String.valueOf(hitsplatApplied.getHitsplat().getAmount()), String.valueOf(npc.getId()), npc.getName(), String.valueOf((client.getTickCount()-roomStartTick)), getName());
         }
     }
 

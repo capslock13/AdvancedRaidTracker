@@ -7,6 +7,7 @@ import com.advancedraidtracker.utility.datautility.datapoints.Raid;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import static com.advancedraidtracker.utility.UISwingUtility.*;

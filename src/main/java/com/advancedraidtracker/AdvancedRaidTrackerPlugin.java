@@ -61,6 +61,7 @@ import static com.advancedraidtracker.constants.RaidRoom.VERZIK;
 import static com.advancedraidtracker.constants.RaidRoom.XARPUS;
 import static com.advancedraidtracker.constants.TobIDs.*;
 import static com.advancedraidtracker.utility.RoomUtil.inRegion;
+import static com.advancedraidtracker.utility.datautility.LegacyFileUtility.migrateSavedFilesToZip;
 import static com.advancedraidtracker.utility.datautility.LegacyFileUtility.splitLegacyFiles;
 import static net.runelite.api.Varbits.TOA_RAID_LEVEL;
 
@@ -226,6 +227,7 @@ public class AdvancedRaidTrackerPlugin extends Plugin
         super.startUp();
 
         splitLegacyFiles();
+        migrateSavedFilesToZip();
         localPlayers = new ArrayList<>();
         thrallTracker = new ThrallTracker(this);
         vengTracker = new VengTracker(this);
@@ -1591,7 +1593,6 @@ public class AdvancedRaidTrackerPlugin extends Plugin
             configManager.setConfiguration("Advanced Raid Tracker", "showBoldTick", theme.isShowBoldTick());
             configManager.setConfiguration("Advanced Raid Tracker", "rightAlignTicks", theme.isRightAlignTicks());
             configManager.setConfiguration("Advanced Raid Tracker", "useAlternateFont", theme.isUseAlternateFont());
-            timersPanelPrimary.redraw();
         }
     }
 

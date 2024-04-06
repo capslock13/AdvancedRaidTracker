@@ -1710,9 +1710,9 @@ public class Raids extends BaseFrame implements UpdateableWindow
         {
             List<Raid> rows = new ArrayList<>();
             int[] toRemove = table.getSelectedRows();
-            for (int i = 0; i < toRemove.length; i++)
+            for (int j : toRemove)
             {
-                rows.add(currentData.get(Integer.parseInt(table.getModel().getValueAt(toRemove[i], 0).toString())));
+                rows.add(currentData.get(Integer.parseInt(table.getModel().getValueAt(j, 0).toString())));
             }
             comparisons.add(rows);
             updateComparisonTable();
@@ -1722,9 +1722,9 @@ public class Raids extends BaseFrame implements UpdateableWindow
         {
             ArrayList<Raid> rows = new ArrayList<>();
             int[] toRemove = table.getSelectedRows();
-            for (int i = 0; i < toRemove.length; i++)
+            for (int j : toRemove)
             {
-                rows.add(currentData.get(Integer.parseInt(table.getModel().getValueAt(toRemove[i], 0).toString())));
+                rows.add(currentData.get(Integer.parseInt(table.getModel().getValueAt(j, 0).toString())));
             }
             new SaveRaids(rows).open();
         });

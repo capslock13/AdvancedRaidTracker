@@ -46,7 +46,7 @@ public class ConfirmationDialog extends BaseFrame
         JButton yesButton = getThemedButton("Yes");
         yesButton.addActionListener(e ->
         {
-            RaidsManager.saveOverwriteRaids(raidsName, raids);
+            RaidsManager.saveRaids(raidsName, raids);
             close();
             root.setVisible(false);
         });

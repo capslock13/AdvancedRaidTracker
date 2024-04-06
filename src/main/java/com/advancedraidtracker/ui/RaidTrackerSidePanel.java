@@ -225,7 +225,7 @@ public class RaidTrackerSidePanel extends PluginPanel
     /**
      * @return data in the table
      */
-    private ArrayList<Raid> getTableData()
+    private List<Raid> getTableData()
     {
         ArrayList<String> includedSets = new ArrayList<>();
         for (int i = 0; i < loadRaidsTable.getRowCount(); i++)
@@ -235,12 +235,18 @@ public class RaidTrackerSidePanel extends PluginPanel
                 includedSets.add((String) loadRaidsTable.getValueAt(i, 0));
             }
         }
-        ArrayList<Raid> collectedRaids = new ArrayList<>();
+        List<Raid> collectedRaids = new ArrayList<>();
+        for(String set : includedSets)
+        {
+            for(RaidsArrayWrapper raidWrapper : raidSets)
+            {
+                if(set.equals(raidWrapper.filename))
+                {
+                    collectedRaids.addAll(raidWrapper.data);
+                }
+            }
+        }
         return collectedRaids;
-    }
-
-    public void redraw()
-    {
     }
 
     private void updateRaidCountLabel()

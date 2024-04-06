@@ -8,7 +8,6 @@ import net.runelite.client.util.ImageUtil;
 import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 
 public class ButtonRendererFavoriteColumn extends JButton implements TableCellRenderer
 {

@@ -25,7 +25,13 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
+import static com.advancedraidtracker.rooms.col.ColosseumHandler.invoMap;
 import static com.advancedraidtracker.utility.UISwingUtility.*;
 import static com.advancedraidtracker.utility.UISwingUtility.colorStr;
 import static java.awt.Color.RED;
@@ -58,16 +64,16 @@ public class ViewColosseumFrame extends BaseFrame
             log.info("Wave " + i + " spawn data: " + colData.getSpawnString(i));
         }
         setTitle("View Raid");
-        setPreferredSize(new Dimension(850, 800));
+        setPreferredSize(new Dimension(900, 800));
         //add(new ViewColosseumPanel(colData, config));
 
         JPanel topContainer = getThemedPanel();
-        topContainer.setPreferredSize(new Dimension(850, 100));
+        topContainer.setPreferredSize(new Dimension(900, 100));
         topContainer.setLayout(new GridLayout(1, 2));
         topContainer.add(getSummaryBox());
-        topContainer.add(getSolHereditBox());
+        //topContainer.add(getSolHereditBox());
         JPanel bottomContainer = getThemedPanel();
-        bottomContainer.setPreferredSize(new Dimension(850, 650));
+        bottomContainer.setPreferredSize(new Dimension(900, 650));
         bottomContainer.setLayout(new GridLayout(4,3));
         setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
         for(int i = 0; i < 12; i++)
@@ -120,10 +126,10 @@ public class ViewColosseumFrame extends BaseFrame
             {
                 if (invo.equals(colData.invocationSelected.get(wave)))
                 {
-                    base.add(getThemedLabel("<html>&emsp" + green + ColosseumHandler.invoMap.get(Integer.parseInt(invo))));
+                    base.add(getThemedLabel("<html>&emsp" + green + invoMap.get(Integer.parseInt(invo))));
                 } else
                 {
-                    base.add(getThemedLabel("<html>&emsp" + UISwingUtility.fontColorString() + ColosseumHandler.invoMap.get(Integer.parseInt(invo))));
+                    base.add(getThemedLabel("<html>&emsp" + UISwingUtility.fontColorString() + invoMap.get(Integer.parseInt(invo))));
                 }
             }
             base.add(getThemedLabel("<html>Prayer Used: " + blue + colData.get(DataPoint.PRAYER_USED, RaidRoom.getRoom("Wave " + wave))));
@@ -160,20 +166,173 @@ public class ViewColosseumFrame extends BaseFrame
 
     public JPanel getSummaryBox()
     {
-        String title = ((colData.isCompleted()) ? green : red) + "Summary - " + RoomUtil.time(colData.getChallengeTime());
-        JPanel base = getTitledPanel(title);
-        base.add(getThemedLabel("Total Idle Ticks: " + chartData.getIdleTicks(colData.getPlayerString(), colData.getScale())));
+        //String title = ((colData.isCompleted()) ? green : red) + "Summary - " + RoomUtil.time(colData.getChallengeTime());
+        JPanel base = getThemedPanel();
+        //base.add(getThemedLabel("Total Idle Ticks: " + chartData.getIdleTicks(colData.getPlayerString(), colData.getScale())));
+        base.setLayout(new GridLayout(1, 3));
+
+        JPanel wave1to6 = getTitledPanel("Wave 1-6");
+        wave1to6.setLayout(new GridLayout(0, 1));
+        wave1to6.add(getThemedLabel("<html>Duration: " + green + RoomUtil.time(getWaveSequenceTime(1, 6))));
+        wave1to6.add(getThemedLabel("<html>Prayer Used: " + blue + getWaveSequenceData(DataPoint.PRAYER_USED, 1, 6)));
+        wave1to6.add(getThemedLabel("<html>Damage Dealt: " + green + getWaveSequenceData(DataPoint.DAMAGE_DEALT, 1, 6)));
+        wave1to6.add(getThemedLabel("<html>Damage Received: " + red + getWaveSequenceData(DataPoint.DAMAGE_RECEIVED, 1, 6)));
+        wave1to6.add(getThemedLabel("Idle Ticks: " + getWaveSequenceIdleTicks(1, 6)));
+
+        JPanel wave7to11 = getTitledPanel("Wave 7-11");
+        wave7to11.setLayout(new GridLayout(0, 1));
+        wave7to11.add(getThemedLabel("<html>Duration: " + green + RoomUtil.time(getWaveSequenceTime(7, 11))));
+        wave7to11.add(getThemedLabel("<html>Prayer Used: " + blue + getWaveSequenceData(DataPoint.PRAYER_USED, 7, 11)));
+        wave7to11.add(getThemedLabel("<html>Damage Dealt: " + green + getWaveSequenceData(DataPoint.DAMAGE_DEALT, 7, 11)));
+        wave7to11.add(getThemedLabel("<html>Damage Received: " + red + getWaveSequenceData(DataPoint.DAMAGE_RECEIVED, 7, 11)));
+        wave7to11.add(getThemedLabel("Idle Ticks: " + getWaveSequenceIdleTicks(7, 11)));
+
+        JPanel wave1to11 = getTitledPanel("Total");
+        wave1to11.setLayout(new GridLayout(0, 1));
+        wave1to11.add(getThemedLabel("<html>Duration: " + green + RoomUtil.time(getWaveSequenceTime(1, 12))));
+        wave1to11.add(getThemedLabel("<html>Prayer Used: " + blue + getWaveSequenceData(DataPoint.PRAYER_USED, 1, 12)));
+        wave1to11.add(getThemedLabel("<html>Damage Dealt: " + green + getWaveSequenceData(DataPoint.DAMAGE_DEALT, 1, 12)));
+        wave1to11.add(getThemedLabel("<html>Damage Received: " + red + getWaveSequenceData(DataPoint.DAMAGE_RECEIVED, 1, 12)));
+        wave1to11.add(getThemedLabel("Idle Ticks: " + getWaveSequenceIdleTicks(1, 12)));
+
+        JPanel invocationPanel = getTitledPanel("Invocations");
+        invocationPanel.setLayout(new GridLayout(0, 1));
+        List<String> invoList = getInvocationList();
+        for(String invo : invoList)
+        {
+            invocationPanel.add(getThemedLabel(invo));
+        }
+        /*if(invoList.size() < 10)
+        {
+            for (int i = 0; i < 10 - invoList.size(); i++)
+            {
+                invocationPanel.add(getThemedLabel());
+            }
+        }*/
+
+        JPanel wavesPanel = getTitledPanel("Wave 1-11");
+        wavesPanel.setLayout(new GridLayout(0, 1));
+        wavesPanel.add(getThemedLabel("<html>Duration: " + green + RoomUtil.time(getWaveSequenceTime(1, 11))));
+        wavesPanel.add(getThemedLabel("<html>Prayer: " + blue + getWaveSequenceData(DataPoint.PRAYER_USED, 1, 11)));
+        wavesPanel.add(getThemedLabel("<html>Dealt : " + green + getWaveSequenceData(DataPoint.DAMAGE_DEALT, 1, 11)));
+        wavesPanel.add(getThemedLabel("<html>Received: " + red + getWaveSequenceData(DataPoint.DAMAGE_RECEIVED, 1, 11)));
+        wavesPanel.add(getThemedLabel("Idle Ticks: " + getWaveSequenceIdleTicks(1, 11)));
+
+        JPanel solHereditPanel = getTitledPanel("Sol Heredit");
+        solHereditPanel.setLayout(new GridLayout(0, 1));
+        solHereditPanel.add(getThemedLabel("<html>Duration: " + green + RoomUtil.time(getWaveSequenceTime(12, 12))));
+        solHereditPanel.add(getThemedLabel("<html>Grapples: " + blue + colData.get(DataPoint.COLOSSEUM_GRAPPLES)));
+        solHereditPanel.add(getThemedLabel("<html>Perfect: " + green + colData.get(DataPoint.COLOSSEUM_PERFECT_PARRY)));
+        solHereditPanel.add(getThemedLabel());
+        solHereditPanel.add(getThemedLabel());
+
+
+        base.add(wave1to11);
+        base.add(wave1to6);
+        base.add(wave7to11);
+        base.add(wavesPanel);
+        base.add(solHereditPanel);
+        base.add(invocationPanel);
         return base;
+    }
+
+    public int getWaveSequenceTime(int startWave, int endWave)
+    {
+        int sum = 0;
+        for(int i = startWave; i < endWave+1; i++)
+        {
+            sum += colData.get("Wave " + i + " Duration");
+        }
+        return sum;
+    }
+
+    public int getWaveSequenceIdleTicks(int startWave, int endWave)
+    {
+        int sum = 0;
+        for(int i = startWave; i < endWave+1; i++)
+        {
+            sum += chartData.getIdleTicks(colData.getPlayerString(), RaidRoom.getRoom("Wave " + i), colData.getScale());
+        }
+        return sum;
+    }
+
+    public int getWaveSequenceData(DataPoint point, int startWave, int endWave)
+    {
+        int sum = 0;
+        for(int i = startWave; i < endWave+1; i++)
+        {
+            sum += colData.get(point, RaidRoom.getRoom("Wave " + i));
+        }
+        return sum;
     }
 
     public JPanel getSolHereditBox()
     {
-        String title = (colData.isCompleted()) ? green : red;
-        title += "Sol Heredit";
-        title += (colData.get("Wave 12 Split") > 0) ? " - " + RoomUtil.time(colData.get("Wave 12 Duration")) : "";
-        JPanel base = getTitledPanel(title);
+        JPanel base = getThemedPanel();
+        base.setLayout(new GridLayout(1, 2));
 
+        JPanel invocationPanel = getTitledPanel("Invocations");
+        invocationPanel.setLayout(new GridLayout(0, 2));
+        List<String> invoList = getInvocationList();
+        for(String invo : invoList)
+        {
+            invocationPanel.add(getThemedLabel(invo));
+        }
+        if(invoList.size() < 10)
+        {
+            for (int i = 0; i < 10 - invoList.size(); i++)
+            {
+                invocationPanel.add(getThemedLabel());
+            }
+        }
+
+        JPanel wavesPanel = getTitledPanel("Wave 1-11");
+        wavesPanel.setLayout(new GridLayout(0, 1));
+        wavesPanel.add(getThemedLabel("<html>Duration: " + green + RoomUtil.time(getWaveSequenceTime(1, 11))));
+        wavesPanel.add(getThemedLabel("<html>Prayer: " + blue + getWaveSequenceData(DataPoint.PRAYER_USED, 1, 11)));
+        wavesPanel.add(getThemedLabel("<html>Dealt : " + green + getWaveSequenceData(DataPoint.DAMAGE_DEALT, 1, 11)));
+        wavesPanel.add(getThemedLabel("<html>Received: " + red + getWaveSequenceData(DataPoint.DAMAGE_RECEIVED, 1, 11)));
+        wavesPanel.add(getThemedLabel("Idle Ticks: " + getWaveSequenceIdleTicks(1, 11)));
+
+        JPanel solHereditPanel = getTitledPanel("Sol Heredit");
+        solHereditPanel.setLayout(new GridLayout(0, 1));
+        solHereditPanel.add(getThemedLabel("<html>Duration: " + green + RoomUtil.time(getWaveSequenceTime(12, 12))));
+        solHereditPanel.add(getThemedLabel("<html>Grapples: " + blue + colData.get(DataPoint.COLOSSEUM_GRAPPLES)));
+        solHereditPanel.add(getThemedLabel("<html>Perfect: " + green + colData.get(DataPoint.COLOSSEUM_PERFECT_PARRY)));
+        solHereditPanel.add(getThemedLabel());
+        solHereditPanel.add(getThemedLabel());
+
+        JPanel splitPanel = getThemedPanel();
+        splitPanel.setLayout(new GridLayout(0, 2));
+        splitPanel.add(wavesPanel);
+        splitPanel.add(solHereditPanel);
+
+
+        base.add(splitPanel);
+        base.add(invocationPanel);
         return base;
+    }
+
+    private java.util.List<String> getInvocationList()
+    {
+        Map<String, Integer> invoListMap = new LinkedHashMap<>();
+        for(int i = 1; i < 13; i++)
+        {
+            invoListMap.merge(invoMap.get(Integer.parseInt(colData.invocationSelected.get(i))), 1, Integer::sum);
+        }
+        java.util.List<String> invos = new ArrayList<>();
+        for(String invo : invoListMap.keySet())
+        {
+            if(invoListMap.get(invo) > 1)
+            {
+                invos.add(invo + invoListMap.get(invo));
+            }
+            else
+            {
+                invos.add(invo);
+            }
+        }
+        return invos;
     }
 
     private String getColor(int wave)

@@ -14,6 +14,11 @@ import net.runelite.api.Skill;
 import net.runelite.api.events.*;
 import com.advancedraidtracker.utility.RoomUtil;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import static net.runelite.api.Skill.*;
+
 @Slf4j
 public class RoomHandler
 {
@@ -31,6 +36,21 @@ public class RoomHandler
     protected int prayerDrained = 0;
     protected int damageDealt = 0;
     protected int damageReceived = 0;
+
+    protected Map<Skill, Integer> xpGained = new HashMap<>();
+    protected Map<Skill, Integer> lastXP = new HashMap<>();
+    private static final Map<Skill, LogID> skillToIDMap = Map.of(
+            ATTACK, LogID.ROOM_ATTACK_XP_GAINED,
+            STRENGTH, LogID.ROOM_STRENGTH_XP_GAINED,
+            DEFENCE, LogID.ROOM_DEFENSE_XP_GAINED,
+            HITPOINTS, LogID.ROOM_HP_XP_GAINED,
+            MAGIC, LogID.ROOM_MAGIC_XP_GAINED,
+            RANGED, LogID.ROOM_RANGE_XP_GAINED,
+            AGILITY, LogID.ROOM_AGILITY_XP_GAINED,
+            FLETCHING, LogID.ROOM_FLETCHING_XP_GAINED,
+            SLAYER, LogID.ROOM_SLAYER_XP_GAINED
+    );
+
     @Getter
     @Setter
     int scale;
@@ -155,13 +175,18 @@ public class RoomHandler
 
     public void updateGameTick(GameTick event)
     {
+        for(Skill skill : skillToIDMap.keySet())
+        {
+            xpGained.merge(skill, Math.max(client.getSkillExperience(skill)-lastXP.getOrDefault(skill, Integer.MAX_VALUE), 0), Integer::sum);
+            lastXP.put(skill, client.getSkillExperience(skill));
+        }
         currentPrayer = client.getBoostedSkillLevel(Skill.PRAYER);
         if (wasActive)
         {
             if (!active)
             {
                 wasActive = false;
-                writePrayerDamageData();
+                writePrayerDamageXPData();
             }
         } else
         {
@@ -172,11 +197,21 @@ public class RoomHandler
         }
     }
 
-    private void writePrayerDamageData()
+    private void writePrayerDamageXPData()
     {
         clog.addLine(LogID.ROOM_PRAYER_DRAINED, String.valueOf(prayerDrained), getName());
         clog.addLine(LogID.ROOM_DAMAGE_RECEIVED, String.valueOf(damageReceived), getName());
         clog.addLine(LogID.ROOM_DAMAGE_DEALT, String.valueOf(damageDealt), getName());
+        for(Skill skill : xpGained.keySet())
+        {
+            int gained = xpGained.get(skill);
+            if(gained > 0)
+            {
+                clog.addLine(skillToIDMap.get(skill), String.valueOf(gained), getName());
+            }
+        }
+        xpGained.clear();
+        lastXP.clear();
         prayerDrained = 0;
         damageDealt = 0;
         damageReceived = 0;
@@ -257,10 +292,12 @@ public class RoomHandler
 
     public void reset()
     {
-        writePrayerDamageData();
+        writePrayerDamageXPData();
         roomStartTick = -1;
         active = false;
         wasActive = false;
+        xpGained.clear();
+        lastXP.clear();
     }
 
     public void updateGroundObjectDespawned(GroundObjectDespawned event)

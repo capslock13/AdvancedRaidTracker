@@ -49,6 +49,16 @@ public enum DataPoint
     DAMAGE_DEALT("Damage Dealt", types.OTHER_INT, ALL, DAMAGE_PRAYER),
     DAMAGE_RECEIVED("Damage Received", types.OTHER_INT, ALL, DAMAGE_PRAYER),
     PRAYER_USED("Prayer Used", types.OTHER_INT, ALL, DAMAGE_PRAYER),
+
+    ATTACK_XP("Attack XP Gained", types.OTHER_INT, ALL, EXPERIENCE),
+    STRENGTH_XP("Strength XP Gained", types.OTHER_INT, ALL, EXPERIENCE),
+    DEFENSE_XP("Defense XP Gained", types.OTHER_INT, ALL, EXPERIENCE),
+    HP_XP("HP XP Gained", types.OTHER_INT, ALL, EXPERIENCE),
+    MAGIC_XP("Magic XP Gained", types.OTHER_INT, ALL, EXPERIENCE),
+    RANGE_XP("Range XP Gained", types.OTHER_INT, ALL, EXPERIENCE),
+    AGILITY_XP("Agility XP Gained", types.OTHER_INT, ALL, EXPERIENCE),
+    FLETCHING_XP("Fletching XP Gained", types.OTHER_INT, ALL, EXPERIENCE),
+    SLAYER_XP("Slayer XP Gained", types.OTHER_INT, ALL, EXPERIENCE),
     BLOAT_DOWNS("Bloat downs", types.INT_MAP, BLOAT, MISC),
     BLOAT_FIRST_WALK_SCYTHES("Bloat 1st Walk Scythes", types.OTHER_INT, BLOAT, MISC, true),
     BLOAT_FIRST_WALK_DEATHS("Bloat 1st Walk Deaths", types.OTHER_INT, BLOAT, MISC, true),
@@ -399,6 +409,7 @@ public enum DataPoint
         THRALL("Thrall"),
         VENG("Veng"),
         DAMAGE_PRAYER("Damage/Prayer"),
+        EXPERIENCE("Experience"),
         MISTAKES("Mistakes"),
         EXCLUDED("Excluded", true);
 

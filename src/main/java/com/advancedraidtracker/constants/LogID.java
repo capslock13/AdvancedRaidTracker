@@ -711,7 +711,36 @@ public enum LogID
             "Reinforcements Spawned", "Room Tick"),
     COLOSSEUM_NPC_HEALED(2019, true, COLOSSEUM,
             new ParseInstruction(ADD_TO_VALUE, DataPoint.COLOSSEUM_NPC_HEALED),
-            "NPC Heal", "Amount", "ID", "Name", "Room Tick", "Room");
+            "NPC Heal", "Amount", "ID", "Name", "Room Tick", "Room"),
+    ROOM_ATTACK_XP_GAINED(10010, true, ALL,
+            new ParseInstruction(ADD_TO_VALUE, ATTACK_XP),
+            "Attack XP Gained", "Amount", "Room"),
+    ROOM_STRENGTH_XP_GAINED(10011, true, ALL,
+            new ParseInstruction(ADD_TO_VALUE, STRENGTH_XP),
+            "Strength XP Gained", "Amount", "Room"),
+    ROOM_DEFENSE_XP_GAINED(10012, true, ALL,
+            new ParseInstruction(ADD_TO_VALUE, DEFENSE_XP),
+            "Defense XP Gained", "Amount", "Room"),
+    ROOM_HP_XP_GAINED(10013, true, ALL,
+            new ParseInstruction(ADD_TO_VALUE, HP_XP),
+            "HP XP Gained", "Amount", "Room"),
+    ROOM_MAGIC_XP_GAINED(10014, true, ALL,
+            new ParseInstruction(ADD_TO_VALUE, MAGIC_XP),
+            "Magic XP Gained", "Amount", "Room"),
+    ROOM_RANGE_XP_GAINED(10015, true, ALL,
+            new ParseInstruction(ADD_TO_VALUE, RANGE_XP),
+            "Range XP Gained", "Amount", "Room"),
+    ROOM_AGILITY_XP_GAINED(10016, true, ALL,
+            new ParseInstruction(ADD_TO_VALUE, AGILITY_XP),
+            "Agility XP Gained", "Amount", "Room"),
+    ROOM_FLETCHING_XP_GAINED(10017, true, ALL,
+            new ParseInstruction(ADD_TO_VALUE, FLETCHING_XP),
+            "Fletching XP Gained", "Amount", "Room"),
+    ROOM_SLAYER_XP_GAINED(10018, true, ALL,
+            new ParseInstruction(ADD_TO_VALUE, SLAYER_XP),
+            "Slayer XP Gained", "Amount", "Room"),
+
+    ;
 
     private static final Map<Integer, LogID> mapper;
 

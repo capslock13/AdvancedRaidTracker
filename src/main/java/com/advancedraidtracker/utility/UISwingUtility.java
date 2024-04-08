@@ -20,6 +20,7 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.RoundRectangle2D;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
 
@@ -68,6 +69,44 @@ public class UISwingUtility
         imageGraphics.drawString(s, 0, h - g.getFontMetrics().getDescent());
         imageGraphics.dispose();
         return image;
+    }
+
+    public static BufferedImage createFlipped(BufferedImage image)
+    {
+        AffineTransform at = new AffineTransform();
+        at.concatenate(AffineTransform.getScaleInstance(1, -1));
+        at.concatenate(AffineTransform.getTranslateInstance(0, -image.getHeight()));
+        at.concatenate(AffineTransform.getScaleInstance(-1, 1));
+        at.concatenate(AffineTransform.getTranslateInstance(-image.getWidth(), 0));
+        return createTransformed(image, at);
+    }
+
+    public static BufferedImage getScaledImage(BufferedImage image, int width, int height)
+    {
+        int imageWidth = image.getWidth();
+        int imageHeight = image.getHeight();
+
+        double scaleX = (double) width / imageWidth;
+        double scaleY = (double) height / imageHeight;
+        AffineTransform scaleTransform = AffineTransform.getScaleInstance(scaleX, scaleY);
+        AffineTransformOp bilinearScaleOp = new AffineTransformOp(scaleTransform, AffineTransformOp.TYPE_BILINEAR);
+
+        return bilinearScaleOp.filter(
+                image,
+                new BufferedImage(width, height, image.getType()));
+    }
+
+    public static BufferedImage createTransformed(
+            BufferedImage image, AffineTransform at)
+    {
+        BufferedImage newImage = new BufferedImage(
+                image.getWidth(), image.getHeight(),
+                BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = newImage.createGraphics();
+        g.transform(at);
+        g.drawImage(image, 0, 0, null);
+        g.dispose();
+        return newImage;
     }
 
     public static void drawStringRotated(Graphics g, String s, int tx, int ty, Color color)

@@ -3,6 +3,7 @@ package com.advancedraidtracker.utility.wrappers;
 import com.advancedraidtracker.utility.PlayerWornItems;
 import com.advancedraidtracker.utility.datautility.datapoints.LogEntry;
 import com.advancedraidtracker.utility.weapons.AnimationDecider;
+import com.advancedraidtracker.utility.weapons.PlayerAnimation;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.ItemID;
 import net.runelite.api.SpriteID;
@@ -32,6 +33,8 @@ public class PlayerDidAttack
     public BufferedImage img = null;
     private boolean setUnkitted = false;
 
+    private PlayerAnimation playerAnimation = PlayerAnimation.UNDECIDED;
+
     private static final Set<Integer> scythe = new HashSet<>(Arrays.asList(ItemID.HOLY_SCYTHE_OF_VITUR, ItemID.SANGUINE_SCYTHE_OF_VITUR));
     private static final Set<Integer> bp = new HashSet<>(Collections.singletonList(ItemID.BLAZING_BLOWPIPE));
     private static final Set<Integer> sang = new HashSet<>(Collections.singletonList(ItemID.HOLY_SANGUINESTI_STAFF));
@@ -52,6 +55,15 @@ public class PlayerDidAttack
         this.targetedID = targetedID;
         this.targetName = targetName;
         this.wornItems = worn;
+    }
+
+    public PlayerAnimation getPlayerAnimation()
+    {
+        if(playerAnimation.equals(PlayerAnimation.UNDECIDED))
+        {
+            this.playerAnimation = AnimationDecider.getWeapon(animation, spotAnims, projectile, weapon);
+        }
+        return playerAnimation;
     }
 
     public void setWornNames()

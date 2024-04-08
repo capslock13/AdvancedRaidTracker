@@ -199,7 +199,7 @@ public enum RaidRoom
         }
         for (RaidRoom room : RaidRoom.values())
         {
-            if (room.name.equals(name) && !room.isColo())
+            if (room.name.equals(name))
             {
                 roomCache.put(name, room);
                 return room;

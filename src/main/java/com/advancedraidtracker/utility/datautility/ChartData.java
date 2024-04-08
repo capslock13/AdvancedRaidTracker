@@ -2,6 +2,7 @@ package com.advancedraidtracker.utility.datautility;
 
 import com.advancedraidtracker.constants.RaidRoom;
 import com.advancedraidtracker.utility.weapons.AnimationDecider;
+import com.advancedraidtracker.utility.weapons.PlayerAnimation;
 import com.advancedraidtracker.utility.wrappers.DawnSpec;
 import com.advancedraidtracker.utility.wrappers.PlayerDidAttack;
 import com.advancedraidtracker.utility.wrappers.ThrallOutlineBox;
@@ -29,6 +30,19 @@ public class ChartData
     public int getIdleTicks(String player, int scale)
     {
         return getIdleTicks(player, ALL, scale);
+    }
+
+    public int getWeaponHits(RaidRoom room, PlayerAnimation ... playerAnimations)
+    {
+        int count = 0;
+        for(PlayerDidAttack attack : getAttacks(room))
+        {
+            if(Arrays.stream(playerAnimations).anyMatch(playerAnimation -> playerAnimation.equals(attack.getPlayerAnimation())))
+            {
+                count++;
+            }
+        }
+        return count;
     }
 
     public int getIdleTicks(String player, RaidRoom room, int scale)

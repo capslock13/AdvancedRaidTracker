@@ -30,8 +30,7 @@ import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.List;
 
-import static com.advancedraidtracker.utility.UISwingUtility.drawStringRotated;
-import static com.advancedraidtracker.utility.UISwingUtility.getStringHeight;
+import static com.advancedraidtracker.utility.UISwingUtility.*;
 
 @Slf4j
 public class ChartPanel extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener
@@ -726,41 +725,6 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         }
     }
 
-    public static BufferedImage getScaledImage(BufferedImage image, int width, int height)
-    {
-        int imageWidth = image.getWidth();
-        int imageHeight = image.getHeight();
-
-        double scaleX = (double) width / imageWidth;
-        double scaleY = (double) height / imageHeight;
-        AffineTransform scaleTransform = AffineTransform.getScaleInstance(scaleX, scaleY);
-        AffineTransformOp bilinearScaleOp = new AffineTransformOp(scaleTransform, AffineTransformOp.TYPE_BILINEAR);
-
-        return bilinearScaleOp.filter(
-                image,
-                new BufferedImage(width, height, image.getType()));
-    }
-
-    private static BufferedImage createFlipped(BufferedImage image)
-    {
-        AffineTransform at = new AffineTransform();
-        at.concatenate(AffineTransform.getScaleInstance(1, -1));
-        at.concatenate(AffineTransform.getTranslateInstance(0, -image.getHeight()));
-        return createTransformed(image, at);
-    }
-
-    private static BufferedImage createTransformed(
-            BufferedImage image, AffineTransform at)
-    {
-        BufferedImage newImage = new BufferedImage(
-                image.getWidth(), image.getHeight(),
-                BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g = newImage.createGraphics();
-        g.transform(at);
-        g.drawImage(image, 0, 0, null);
-        g.dispose();
-        return newImage;
-    }
 
     private void setConfigFont(Graphics2D g)
     {

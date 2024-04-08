@@ -15,6 +15,12 @@ public class ColosseumParser extends RoomParser
     }
 
     @Override
+    public int getFirstPossibleNonIdleTick()
+    {
+        return 2;
+    }
+
+    @Override
     public Map<Integer, String> getLines()
     {
         return new HashMap<>();

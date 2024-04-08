@@ -116,7 +116,7 @@ public class ColosseumHandler extends RoomHandler
 
     public String getName()
     {
-        return "Wave " + currentWave;
+        return "Col Wave " + currentWave;
     }
 
     public int currentWave = 0;

@@ -14,6 +14,12 @@ public class ApmekenParser extends RoomParser
     }
 
     @Override
+    public int getFirstPossibleNonIdleTick()
+    {
+        return 18;
+    }
+
+    @Override
     public Map<Integer, String> getLines()
     {
         return lines;

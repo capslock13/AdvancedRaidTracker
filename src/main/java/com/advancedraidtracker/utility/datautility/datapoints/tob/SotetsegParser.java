@@ -15,6 +15,12 @@ public class SotetsegParser extends RoomParser
     }
 
     @Override
+    public int getFirstPossibleNonIdleTick()
+    {
+        return 5;
+    }
+
+    @Override
     public Map<Integer, String> getLines()
     {
         lines.put(data.get(DataPoint.SOTE_M1_SPLIT), "Maze1 Start");

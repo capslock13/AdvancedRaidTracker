@@ -35,7 +35,7 @@ public class LiveChart extends BaseFrame
     private final ConfigManager configManager;
     String[] tob = {"Maiden", "Bloat", "Nylocas", "Sotetseg", "Xarpus", "Verzik"};
     String[] toa = {"Apmeken", "Baba", "Scabaras", "Kephri", "Crondis", "Zebak", "Het", "Akkha", "Wardens"};
-    String[] col = {"Wave 1", "Wave 2", "Wave 3", "Wave 4", "Wave 5", "Wave 6", "Wave 7", "Wave 8", "Wave 9", "Wave 10", "Wave 11", "Wave 12"};
+    String[] col = {"Col Wave 1", "Col Wave 2", "Col Wave 3", "Col Wave 4", "Col Wave 5", "Col Wave 6", "Col Wave 7", "Col Wave 8", "Col Wave 9", "Col Wave 10", "Col Wave 11", "Col Wave 12"};
     String[] inf = {"Wave 1-8", "Wave 9-17", "Wave 18-24", "Wave 25-34", "Wave 35-41", "Wave 42-49", "Wave 50-Wave 56", "Wave 57-59", "Wave 60-62", "Wave 63-65", "Wave 66", "Wave 67", "Wave 68", "Wave 69"};
 
     Map<String, ChartPanel> toaPanels; //todo.. map map? idk

@@ -16,6 +16,12 @@ public class WardensParser extends RoomParser
     }
 
     @Override
+    public int getFirstPossibleNonIdleTick()
+    {
+        return 1;
+    }
+
+    @Override
     public Map<Integer, String> getLines()
     {
         addLinesFromCollection(data.getList(DataPoint.WARDENS_P2_CORE_SPAWNS), "Core Spawned");

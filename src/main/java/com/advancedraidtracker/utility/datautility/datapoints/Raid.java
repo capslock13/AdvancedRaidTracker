@@ -523,6 +523,11 @@ public abstract class Raid
         return data.getList(point);
     }
 
+    public int getFirstPossibleNonIdleTick(RaidRoom room)
+    {
+        return lineManager.getFirstPossibleNonIdleTick(room);
+    }
+
     public Map<Integer, String> getLines(RaidRoom room)
     {
         return lineManager.getLines(room);

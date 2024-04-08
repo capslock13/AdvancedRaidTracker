@@ -1176,8 +1176,8 @@ public class Raids extends BaseFrame implements UpdateableWindow
 
         for (int i = 1; i < 13; i++)
         {
-            StatisticTab statisticTab = new StatisticTab(colData, RaidRoom.getRoom("Wave " + i), config);
-            colTabSubpanel.addTab("Wave " + i, statisticTab);
+            StatisticTab statisticTab = new StatisticTab(colData, RaidRoom.getRoom("Col Wave " + i), config);
+            colTabSubpanel.addTab("Col Wave " + i, statisticTab);
             colTabs.add(statisticTab);
         }
 

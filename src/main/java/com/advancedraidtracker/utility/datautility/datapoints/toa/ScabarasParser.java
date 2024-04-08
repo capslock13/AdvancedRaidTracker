@@ -14,6 +14,12 @@ public class ScabarasParser extends RoomParser
     }
 
     @Override
+    public int getFirstPossibleNonIdleTick()
+    {
+        return 1;
+    }
+
+    @Override
     public Map<Integer, String> getLines()
     {
         return lines;

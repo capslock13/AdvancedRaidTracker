@@ -16,6 +16,12 @@ public class AkkhaParser extends RoomParser
     }
 
     @Override
+    public int getFirstPossibleNonIdleTick()
+    {
+        return 3;
+    }
+
+    @Override
     public Map<Integer, String> getLines()
     {
         lines.put(data.get(DataPoint.AKKHA_P1_DURATION), "Shadow1 Start");

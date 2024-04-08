@@ -39,18 +39,18 @@ public class Colo extends Raid
         {
             if (i == 1)
             {
-                if (get("Wave " + i + " Duration") > 0)
+                if (get("Col Wave " + i + " Duration") > 0)
                 {
-                    split.append("Wave: ").append(i).append(", Split: ").append(RoomUtil.time(get("Wave " + i + " Duration"))).append(" (+").append(RoomUtil.time(get("Wave " + i + " Duration"))).append(")").append("\n");
+                    split.append("Wave: ").append(i).append(", Split: ").append(RoomUtil.time(get("Col Wave " + i + " Duration"))).append(" (+").append(RoomUtil.time(get("Col Wave " + i + " Duration"))).append(")").append("\n");
                 }
-            } else if (get("Wave " + i + " Split") > 0 && i > 2)
+            } else if (get("Col Wave " + i + " Split") > 0 && i > 2)
             {
-                split.append("Wave: ").append(i - 1).append(", Split: ").append(RoomUtil.time(get("Wave " + i + " Split"))).append(" (+").append(RoomUtil.time(get("Wave " + i + " Duration"))).append(")").append("\n");
+                split.append("Wave: ").append(i - 1).append(", Split: ").append(RoomUtil.time(get("Col Wave " + i + " Split"))).append(" (+").append(RoomUtil.time(get("Col Wave " + i + " Duration"))).append(")").append("\n");
             }
         }
         if (completed)
         {
-            split.append("Duration (Success): ").append(RoomUtil.time(getChallengeTime())).append(" (+").append(RoomUtil.time(getChallengeTime() - get("Wave 12 Split"))).append(")");
+            split.append("Duration (Success): ").append(RoomUtil.time(getChallengeTime())).append(" (+").append(RoomUtil.time(getChallengeTime() - get("Col Wave 12 Split"))).append(")");
         }
         return split.toString();
     }
@@ -65,7 +65,7 @@ public class Colo extends Raid
                 if (entry.logEntry.equals(LogID.COLOSSEUM_WAVE_STARTED))
                 {
                     highestWaveStarted = entry.getFirstInt();
-                    currentRoom = "Wave " + highestWaveStarted;
+                    currentRoom = "Col Wave " + highestWaveStarted;
                 } else if (entry.logEntry.equals(LogID.COLOSSEUM_WAVE_12_END))
                 {
                     data.set(CHALLENGE_TIME, entry.getFirstInt());
@@ -109,7 +109,7 @@ public class Colo extends Raid
         int sum = 0;
         for (int i = 1; i < 13; i++)
         {
-            sum += get("Wave " + i + " Duration");
+            sum += get("Col Wave " + i + " Duration");
         }
         return sum;
     }
@@ -120,12 +120,12 @@ public class Colo extends Raid
         int wave = 1;
         for (int i = 2; i < 13; i++)
         {
-            if (get("Wave " + i + " Duration") > 0)
+            if (get("Col Wave " + i + " Duration") > 0)
             {
                 wave++;
             }
         }
-        if (get("Wave 12 Duration") > 0)
+        if (get("Col Wave 12 Duration") > 0)
         {
             return green + "Completion";
         }

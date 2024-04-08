@@ -254,7 +254,7 @@ public class RoomHandler
         {
             if (statChanged.getBoostedLevel() == currentPrayer - 1)
             {
-                prayerDrained++;
+                prayerDrained++; //todo reduction
             }
         }
     }

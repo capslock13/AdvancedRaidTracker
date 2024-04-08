@@ -16,6 +16,12 @@ public class HetParser extends RoomParser
     }
 
     @Override
+    public int getFirstPossibleNonIdleTick()
+    {
+        return 1;
+    }
+
+    @Override
     public Map<Integer, String> getLines()
     {
         addLinesFromCollection(data.getList(DataPoint.HET_DOWNS), "Obelisk Weakened");

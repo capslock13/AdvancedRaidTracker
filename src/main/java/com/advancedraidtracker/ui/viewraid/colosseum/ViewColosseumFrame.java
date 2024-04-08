@@ -60,10 +60,6 @@ public class ViewColosseumFrame extends BaseFrame
         dark = colorStr(c.darker().darker());
 
         this.colData = colData;
-        for (int i = 1; i < 13; i++)
-        {
-            log.info("Wave " + i + " spawn data: " + colData.getSpawnString(i));
-        }
         setTitle("View Raid");
         setPreferredSize(new Dimension(900, 800));
         //add(new ViewColosseumPanel(colData, config));
@@ -90,7 +86,7 @@ public class ViewColosseumFrame extends BaseFrame
     public JPanel getWaveBox(int wave)
     {
         String title = getColor(wave) + "Wave " + wave;
-        int waveTime = colData.get("Wave " + wave + " Duration");
+        int waveTime = colData.get("Col Wave " + wave + " Duration");
         if (waveTime > 0)
         {
             title += " - " + RoomUtil.time(waveTime);
@@ -132,12 +128,12 @@ public class ViewColosseumFrame extends BaseFrame
                     base.add(getThemedLabel("<html>&emsp" + UISwingUtility.fontColorString() + getNextHighestLevelOfInvo(invoMap.get(Integer.parseInt(invo)), wave)));
                 }
             }
-            base.add(getThemedLabel("<html>Prayer Used: " + blue + colData.get(DataPoint.PRAYER_USED, RaidRoom.getRoom("Wave " + wave))));
-            base.add(getThemedLabel("<html>Damage Dealt: " + green + colData.get(DataPoint.DAMAGE_DEALT, RaidRoom.getRoom("Wave " + wave))));
-            base.add(getThemedLabel("<html>Damage Received: " + red + colData.get(DataPoint.DAMAGE_RECEIVED, RaidRoom.getRoom("Wave " + wave))));
-            int idleTicks = chartData.getIdleTicks(colData.getPlayerString(), RaidRoom.getRoom("Wave " + wave), colData.getScale());
+            base.add(getThemedLabel("<html>Prayer Used: " + blue + colData.get(DataPoint.PRAYER_USED, RaidRoom.getRoom("Col Wave " + wave))));
+            base.add(getThemedLabel("<html>Damage Dealt: " + green + colData.get(DataPoint.DAMAGE_DEALT, RaidRoom.getRoom("Col Wave " + wave))));
+            base.add(getThemedLabel("<html>Damage Received: " + red + colData.get(DataPoint.DAMAGE_RECEIVED, RaidRoom.getRoom("Col Wave " + wave))));
+            int idleTicks = chartData.getIdleTicks(colData.getPlayerString(), RaidRoom.getRoom("Col Wave " + wave), colData.getScale());
             base.add(getThemedLabel("Idle Ticks: " + idleTicks));
-            base.add(getThemedLabel("<html>NPC Heals: " + red + colData.get(DataPoint.COLOSSEUM_NPC_HEALED, RaidRoom.getRoom("Wave " + wave))));
+            base.add(getThemedLabel("<html>NPC Heals: " + red + colData.get(DataPoint.COLOSSEUM_NPC_HEALED, RaidRoom.getRoom("Col Wave " + wave))));
             container.add(base);
 
             JLabel picLabel = new JLabel(new ImageIcon(colImage.getScaledInstance(128, 128, Image.SCALE_SMOOTH)));
@@ -241,7 +237,7 @@ public class ViewColosseumFrame extends BaseFrame
         int sum = 0;
         for (int i = startWave; i < endWave + 1; i++)
         {
-            sum += colData.get("Wave " + i + " Duration");
+            sum += colData.get("Col Wave " + i + " Duration");
         }
         return sum;
     }
@@ -251,7 +247,7 @@ public class ViewColosseumFrame extends BaseFrame
         int sum = 0;
         for (int i = startWave; i < endWave + 1; i++)
         {
-            int ticks = chartData.getIdleTicks(colData.getPlayerString(), RaidRoom.getRoom("Wave " + i), colData.getScale());
+            int ticks = chartData.getIdleTicks(colData.getPlayerString(), RaidRoom.getRoom("Col Wave " + i), colData.getScale());
             if (ticks > 0)
             {
                 sum += ticks;
@@ -265,7 +261,7 @@ public class ViewColosseumFrame extends BaseFrame
         int sum = 0;
         for (int i = startWave; i < endWave + 1; i++)
         {
-            sum += colData.get(point, RaidRoom.getRoom("Wave " + i));
+            sum += colData.get(point, RaidRoom.getRoom("Col Wave " + i));
         }
         return sum;
     }
@@ -319,7 +315,7 @@ public class ViewColosseumFrame extends BaseFrame
     private String getColor(int wave)
     {
         String color = red;
-        if (colData.get("Wave " + wave + " Duration") > 0)
+        if (colData.get("Col Wave " + wave + " Duration") > 0)
         {
             color = green;
         } else if (colData.highestWaveStarted == wave)
@@ -332,7 +328,7 @@ public class ViewColosseumFrame extends BaseFrame
     private String getBodyColor(int wave)
     {
         String color = dark;
-        if (colData.get("Wave " + wave + " Duration") > 0)
+        if (colData.get("Col Wave " + wave + " Duration") > 0)
         {
             color = full;
         }

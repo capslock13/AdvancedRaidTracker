@@ -15,6 +15,12 @@ public class CrondisParser extends RoomParser
     }
 
     @Override
+    public int getFirstPossibleNonIdleTick()
+    {
+        return 8;
+    }
+
+    @Override
     public Map<Integer, String> getLines()
     {
         lines.put(8, "Pickup water");

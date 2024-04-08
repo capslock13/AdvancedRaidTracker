@@ -16,6 +16,12 @@ public class KephriParser extends RoomParser
     }
 
     @Override
+    public int getFirstPossibleNonIdleTick()
+    {
+        return 2;
+    }
+
+    @Override
     public Map<Integer, String> getLines()
     {
         addLinesFromCollection(data.getList(DataPoint.KEPHRI_DUNG_THROWN), "Dung");

@@ -18,6 +18,12 @@ public class VerzikParser extends RoomParser
     }
 
     @Override
+    public int getFirstPossibleNonIdleTick()
+    {
+        return 1;
+    }
+
+    @Override
     public Map<Integer, String> getRoomSpecificMarkers()
     {
         addMarkersFromCollection(data.getList(DataPoint.DAWN_DROPS), "X");

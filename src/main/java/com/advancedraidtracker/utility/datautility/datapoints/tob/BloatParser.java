@@ -15,6 +15,12 @@ public class BloatParser extends RoomParser
     }
 
     @Override
+    public int getFirstPossibleNonIdleTick()
+    {
+        return 2;
+    }
+
+    @Override
     public Map<Integer, String> getLines()
     {
         for (Integer i : data.getList(DataPoint.BLOAT_DOWNS))

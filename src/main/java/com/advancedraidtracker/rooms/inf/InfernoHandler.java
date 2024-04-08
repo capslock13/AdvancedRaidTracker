@@ -8,11 +8,14 @@ import com.advancedraidtracker.utility.RoomUtil;
 import com.advancedraidtracker.utility.datautility.DataWriter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
+import net.runelite.api.NPC;
+import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.ChatMessage;
+import net.runelite.api.events.GameTick;
+import net.runelite.api.events.NpcSpawned;
 import net.runelite.client.util.Text;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 public class InfernoHandler extends RoomHandler
@@ -22,7 +25,7 @@ public class InfernoHandler extends RoomHandler
     int totalPrayer = 0;
     int totalDamageDealt = 0;
     int totalDamageReceived = 0;
-    public static Map<Integer, String> roomMap = new LinkedHashMap<Integer, String>()
+    public static Map<Integer, String> roomMap = new LinkedHashMap<>()
     {{
         put(1, "Wave 1-8");
         put(9, "Wave 9-17");
@@ -72,7 +75,7 @@ public class InfernoHandler extends RoomHandler
             {
                 int wave = Integer.parseInt(split[1]);
                 waveStartTicks.put(currentWave, (client.getTickCount()));
-                clog.addLine(LogID.INFERNO_WAVE_STARTED, String.valueOf(currentWave), String.valueOf(client.getTickCount()));
+                clog.addLine(LogID.INFERNO_WAVE_STARTED, String.valueOf(currentWave), String.valueOf(client.getTickCount()), "Inf Wave " + currentWave);
                 if (getLastRelevantSplit() > lastWaveCheckPoint)
                 {
                     plugin.lastSplits += "Wave: " + (currentWave) + ", Split: " + RoomUtil.time(client.getTickCount() - waveStartTicks.get(0)) + " (+" + RoomUtil.time(client.getTickCount() - waveStartTicks.get(lastWaveCheckPoint - 1)) + ")\n";
@@ -89,14 +92,11 @@ public class InfernoHandler extends RoomHandler
             lastCompletedWave = currentWave;
             clog.addLine(LogID.INFERNO_WAVE_ENDED, String.valueOf(currentWave), String.valueOf(waveDurations.get(currentWave)));
             entireDurationTime += waveDurations.get(currentWave);
-            log.info("Wave " + currentWave + ": " + RoomUtil.time(waveDurations.get(currentWave)));
-            log.info("Through: " + RoomUtil.time(client.getTickCount() - waveStartTicks.get(0)));
         } else if (message.getMessage().contains("Duration: "))
         {
             waveDurations.put(currentWave, (client.getTickCount() - waveStartTicks.get(currentWave)));
             entireDurationTime += waveDurations.get(currentWave);
             lastCompletedWave = currentWave;
-            log.info("Found inferno duration: " + message.getMessage());
             String text = Text.removeTags(message.getMessage());
             String[] splitText = text.split(" ");
             if (splitText.length > 2)
@@ -121,6 +121,21 @@ public class InfernoHandler extends RoomHandler
                 clog.addLine(LogID.INFERNO_WAVE_ENDED, String.valueOf(currentWave), String.valueOf(timeInTicks));
             }
         }
+    }
+
+    @Override
+    public void updateGameTick(GameTick event)
+    {
+        super.updateGameTick(event);
+    }
+
+    @Override
+    public void updateNpcSpawned(NpcSpawned event)
+    {
+        NPC npc = event.getNpc();
+        WorldPoint wp = npc.getWorldLocation();
+        String respawn = (waveStartTicks.getOrDefault(currentWave, -1) != client.getTickCount()) ? "Yes" : "No";
+        clog.addLine(LogID.INFERNO_NPC_SPAWN, String.valueOf(npc.getId()), String.valueOf(wp.getRegionX()), String.valueOf(wp.getRegionY()), respawn);
     }
 
     public String getStatString()
@@ -156,18 +171,7 @@ public class InfernoHandler extends RoomHandler
 
     public String getName()
     {
-        String roomName = "Unknown Inferno Wave";
-        for (Map.Entry<Integer, String> entry : roomMap.entrySet())
-        {
-            if (entry.getKey() <= currentWave)
-            {
-                roomName = entry.getValue();
-            } else
-            {
-                break;
-            }
-        }
-        return roomName;
+        return "Inf Wave " + currentWave;
     }
 
     public int getDuration()

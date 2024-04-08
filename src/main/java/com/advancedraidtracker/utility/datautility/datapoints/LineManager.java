@@ -53,4 +53,9 @@ public class LineManager
     {
         return parsers.getOrDefault(room, new UnknownParser(raid)).getRoomAutos();
     }
+
+    public int getFirstPossibleNonIdleTick(RaidRoom room)
+    {
+        return parsers.getOrDefault(room, new UnknownParser(raid)).getFirstPossibleNonIdleTick();
+    }
 }

@@ -10,6 +10,12 @@ public class UnknownParser extends RoomParser
     }
 
     @Override
+    public int getFirstPossibleNonIdleTick()
+    {
+        return 0;
+    }
+
+    @Override
     public Map<Integer, String> getLines()
     {
         return lines;

@@ -16,6 +16,12 @@ public class ZebakParser extends RoomParser
     }
 
     @Override
+    public int getFirstPossibleNonIdleTick()
+    {
+        return 3;
+    }
+
+    @Override
     public Map<Integer, String> getLines()
     {
         addLinesFromCollection(data.getList(DataPoint.ZEBAK_BOULDER_ATTACKS), "Jug");

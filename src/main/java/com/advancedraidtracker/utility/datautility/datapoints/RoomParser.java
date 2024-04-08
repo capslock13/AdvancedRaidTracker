@@ -69,4 +69,6 @@ public abstract class RoomParser
     {
         return getRoomTime();
     }
+
+    public abstract int getFirstPossibleNonIdleTick();
 }

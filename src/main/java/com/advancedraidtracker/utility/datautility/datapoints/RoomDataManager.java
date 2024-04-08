@@ -97,6 +97,11 @@ public class RoomDataManager
         map.put(point.name, value);
     }
 
+    public void set(String point, int value)
+    {
+        map.put(point, value);
+    }
+
     public void set(DataPoint point, int value, String player)
     {
         Map<String, Integer> playerMap = playerSpecificMap.getOrDefault(point.name, new HashMap<>());

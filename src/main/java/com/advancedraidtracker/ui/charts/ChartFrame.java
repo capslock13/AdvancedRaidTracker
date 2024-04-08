@@ -5,10 +5,12 @@ import com.advancedraidtracker.constants.RaidRoom;
 import com.advancedraidtracker.constants.RaidType;
 import com.advancedraidtracker.ui.BaseFrame;
 import com.advancedraidtracker.utility.datautility.ChartData;
+import com.advancedraidtracker.utility.datautility.DataPoint;
 import com.advancedraidtracker.utility.datautility.DataReader;
 import com.advancedraidtracker.utility.datautility.datapoints.col.Colo;
 import com.advancedraidtracker.utility.datautility.datapoints.Raid;
 import com.advancedraidtracker.utility.datautility.datapoints.RoomParser;
+import com.advancedraidtracker.utility.datautility.datapoints.inf.Inf;
 import com.advancedraidtracker.utility.datautility.datapoints.toa.Toa;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.callback.ClientThread;
@@ -32,7 +34,8 @@ public class ChartFrame extends BaseFrame
     private int frameY = this.getHeight();
     private Set<String> TOBRooms = new LinkedHashSet<>(Arrays.asList("Maiden", "Bloat", "Nylocas", "Sotetseg", "Xarpus", "Verzik P1", "Verzik P2", "Verzik P3"));
     private Set<String> TOARooms = new LinkedHashSet<>(Arrays.asList("Apmeken", "Baba", "Scabaras", "Kephri", "Het", "Akkha", "Crondis", "Zebak", "Wardens P1", "Wardens P2", "Wardens P3"));
-    private Set<String> COLRooms = new LinkedHashSet<>(Arrays.asList("Wave 1", "Wave 2", "Wave 3", "Wave 4", "Wave 5", "Wave 6", "Wave 7", "Wave 8", "Wave 9", "Wave 10", "Wave 11", "Wave 12"));
+    private Set<String> COLRooms = new LinkedHashSet<>(Arrays.asList("Col Wave 1", "Col Wave 2", "Col Wave 3", "Col Wave 4", "Col Wave 5", "Col Wave 6", "Col Wave 7", "Col Wave 8", "Col Wave 9", "Col Wave 10", "Col Wave 11", "Col Wave 12"));
+    private Set<String> InfRooms = new LinkedHashSet<>(Arrays.asList("Inf Wave 1", "Inf Wave 2", "Inf Wave 3", "Inf Wave 4", "Inf Wave 5", "Inf Wave 6", "Inf Wave 7", "Inf Wave 8", "Inf Wave 9", "Inf Wave 10", "Inf Wave 11", "Inf Wave 12"));
 
     public ChartFrame(Raid roomData, AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager, SpriteManager spriteManager)
     {
@@ -48,7 +51,12 @@ public class ChartFrame extends BaseFrame
         } else if (roomData instanceof Colo)
         {
             activeSet = COLRooms;
-        } else
+        }
+        else if (roomData instanceof Inf)
+        {
+            activeSet = InfRooms;
+        }
+        else
         {
             activeSet = TOBRooms;
         }
@@ -69,9 +77,28 @@ public class ChartFrame extends BaseFrame
             if (bossName.contains("Wave"))
             {
                 int starttick = 1;
-                chartPanel.setStartTick(starttick);
-                chartPanel.setTick(starttick + roomData.get(bossName + " Duration"));
-            } else
+                if(roomData instanceof Inf)
+                {
+                    java.util.List<Integer> waveDurations = roomData.getList(DataPoint.INFERNO_WAVE_DURATIONS);
+                    java.util.List<Integer> waveStarts = roomData.getList(DataPoint.INFERNO_WAVE_STARTS);
+                    int waveTime = 0;
+                    int waveStart = 0;
+                    int wave = Integer.parseInt(bossName.split(" ")[2]);
+                    if(waveDurations.size() > wave-1)
+                    {
+                        waveTime = waveDurations.get(wave-1);
+                    }
+                    waveStart = ((Inf) roomData).waveStarts.getOrDefault(wave, 1);
+                    chartPanel.setStartTick(waveStart);
+                    chartPanel.setTick(waveStart+waveTime);
+                }
+                else
+                {
+                    chartPanel.setStartTick(starttick);
+                    chartPanel.setTick(starttick + roomData.get(bossName + " Duration"));
+                }
+            }
+            else
             {
                 chartPanel.setStartTick((bossName.contains("Verzik") || bossName.contains("Wardens")) ? //Just trust
                         (bossName.contains("P1") ? 1 : (bossName.contains("P2") ? roomData.get(bossName.replace('2', '1') + " Time") :

@@ -15,6 +15,12 @@ public class NylocasParser extends RoomParser
     }
 
     @Override
+    public int getFirstPossibleNonIdleTick()
+    {
+        return 6;
+    }
+
+    @Override
     public Map<Integer, String> getLines()
     {
         addLinesFromCollection(data.getList(DataPoint.NYLO_STALLS_TOTAL), "Stall");

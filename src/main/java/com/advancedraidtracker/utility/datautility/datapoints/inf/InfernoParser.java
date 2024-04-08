@@ -15,6 +15,12 @@ public class InfernoParser extends RoomParser
     }
 
     @Override
+    public int getFirstPossibleNonIdleTick()
+    {
+        return 1; //todo hmm
+    }
+
+    @Override
     public Map<Integer, String> getLines()
     {
         return new HashMap<>();

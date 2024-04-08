@@ -15,6 +15,12 @@ public class BabaParser extends RoomParser
     }
 
     @Override
+    public int getFirstPossibleNonIdleTick()
+    {
+        return 5;
+    }
+
+    @Override
     public Map<Integer, String> getLines()
     {
         lines.put(data.get(DataPoint.BABA_P1_DURATION), "Boulder 1 Start");

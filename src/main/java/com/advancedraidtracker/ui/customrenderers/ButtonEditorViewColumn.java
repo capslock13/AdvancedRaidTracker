@@ -78,7 +78,7 @@ public class ButtonEditorViewColumn extends DefaultCellEditor
             } else if (data.get(row) instanceof Inf)
             {
                 Inf infData = (Inf) data.get(row);
-                ViewInfernoFrame raid = new ViewInfernoFrame(infData, config);
+                ViewInfernoFrame raid = new ViewInfernoFrame(infData, config, itemManager);
                 raid.open();
             } else if (data.get(row) instanceof Colo)
             {

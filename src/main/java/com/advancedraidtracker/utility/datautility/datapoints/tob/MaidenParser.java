@@ -16,6 +16,12 @@ public class MaidenParser extends RoomParser
     }
 
     @Override
+    public int getFirstPossibleNonIdleTick()
+    {
+        return 5;
+    }
+
+    @Override
     public Map<Integer, String> getLines()
     {
         lines.put(data.get(DataPoint.MAIDEN_70_SPLIT), "70s");

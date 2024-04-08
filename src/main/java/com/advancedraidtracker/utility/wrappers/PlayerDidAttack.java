@@ -140,7 +140,14 @@ public class PlayerDidAttack
             img = itemManager.getImage(weaponID, 1, false);
         } else
         {
-            img = spriteManager.getSprite(getSpellIcon(Integer.parseInt(animation)), 0);
+            try
+            {
+                img = spriteManager.getSprite(getSpellIcon(Integer.parseInt(animation)), 0);
+            }
+            catch (Exception e)
+            {
+
+            }
         }
     }
 }

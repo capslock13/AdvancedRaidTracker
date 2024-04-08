@@ -89,19 +89,31 @@ public class Inf extends Raid
     @Override
     public String getSplits()
     {
-        String split = "";
+        StringBuilder split = new StringBuilder();
+        int last = -1;
         for (Integer val : roomMap.keySet())
         {
             if (val > 1)
             {
-                int i = waveStarts.getOrDefault(val, startTime) - startTime;
+                int i = waveStarts.getOrDefault(val, -1);
                 if(i > 0)
                 {
-                    split += "Wave " + val + ", Split: " + RoomUtil.time(i) + "\n";
+                    int lastTime = (val == 9) ? 0 : waveStarts.getOrDefault(last, -1);
+                    split.append("Wave ").append(val).append(", Split: ").append(RoomUtil.time(i)).append((lastTime > 0) ? " (+ " + (RoomUtil.time(i - lastTime)) + ")" : "").append("\n");
                 }
             }
+            last = val;
         }
-        return split;
+        if(!completed)
+        {
+            split.append("Duration (Failed): ").append(RoomUtil.time(endTime - startTime)).append(" (+").append(RoomUtil.time(endTime - startTime - waveStarts.getOrDefault(highestWaveStarted, 0))).append(")\n");
+        }
+        else
+        {
+            split.append("Duration (Success): ").append(RoomUtil.time(endTime)).append(" (+").append(RoomUtil.time(endTime - waveStarts.getOrDefault(highestWaveStarted, 0))).append(")\n");
+
+        }
+        return split.toString();
     }
 
     @Override

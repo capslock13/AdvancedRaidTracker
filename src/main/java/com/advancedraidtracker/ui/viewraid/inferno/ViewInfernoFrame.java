@@ -79,15 +79,15 @@ public class ViewInfernoFrame extends BaseFrame
         setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
 
         JPanel topPanel = getThemedPanel();
-        topPanel.setPreferredSize(new Dimension(800, 100));
+        topPanel.setPreferredSize(new Dimension(900, 100));
 
         JTabbedPane tabbedPane = getThemedTabbedPane();
-        tabbedPane.setPreferredSize(new Dimension(800, 500));
+        tabbedPane.setPreferredSize(new Dimension(900, 500));
 
 
         tabbedPane.addTab("Basic View", getBasicPanel());
         tabbedPane.addTab("Detailed View", getDetailedPanel());
-        setPreferredSize(new Dimension(800, 600));
+        setPreferredSize(new Dimension(900, 600));
 
         add(topPanel);
         add(tabbedPane);
@@ -113,6 +113,11 @@ public class ViewInfernoFrame extends BaseFrame
             sum += infData.get(point, RaidRoom.getRoom("Inf Wave " + i));
         }
         return sum;
+    }
+
+    public int getTimeThroughWave(int wave)
+    {
+            return 0;
     }
 
 
@@ -142,9 +147,6 @@ public class ViewInfernoFrame extends BaseFrame
 
         for (String wave : InfernoHandler.roomMap.values())
         {
-            JPanel panel = getTitledPanel(wave);
-            panel.setPreferredSize(new Dimension(200, 125));
-            panel.setLayout(new GridLayout(0, 1));
             int start = 0;
             int end = 0;
             if (wave.contains("-"))
@@ -156,6 +158,17 @@ public class ViewInfernoFrame extends BaseFrame
                 start = Integer.parseInt(wave.split(" ")[1]);
                 end = start;
             }
+            int split = infData.waveStarts.getOrDefault(start, -1);
+            int nextSplit = infData.waveStarts.getOrDefault(end+1, -1);
+            String title = (split > 0) ? green + wave + " - " + RoomUtil.time(split) : red + wave;
+            if(split > 0 && nextSplit > 0)
+            {
+                title += " (+" + RoomUtil.time(nextSplit-split) +")";
+            }
+
+            JPanel panel = getTitledPanel(title);
+            panel.setPreferredSize(new Dimension(200, 125));
+            panel.setLayout(new GridLayout(0, 1));
 
             panel.add(getThemedLabel("<html>Prayer Used: " + blue + getDataPointSum(DataPoint.PRAYER_USED, start, end)));
             panel.add(getThemedLabel("<html>Damage Dealt: " + green + getDataPointSum(DataPoint.DAMAGE_DEALT, start, end)));
@@ -213,6 +226,7 @@ public class ViewInfernoFrame extends BaseFrame
             title += " - " + RoomUtil.time(waveTime);
         }
         JPanel container = getTitledPanel(title);
+        container.setPreferredSize(new Dimension(300, 200));
         container.setLayout(new GridLayout(1, 2));
         JPanel base = getThemedPanel();
         base.setLayout(new GridLayout(0, 1));

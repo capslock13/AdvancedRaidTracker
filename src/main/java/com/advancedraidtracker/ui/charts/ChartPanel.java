@@ -668,7 +668,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                     tick = tick.substring(0, tick.length() - 1);
                 }
                 int textPosition = (config.wrapAllBoxes()) ? xOffset + scale - strWidth - (scale / 4) : xOffset + (scale / 2) - (strWidth / 2);
-                if (yOffset - (fontHeight / 2) > scale + 5 && xOffset > LEFT_MARGIN)
+                if (yOffset - (fontHeight / 2) > scale + 5 && xOffset > LEFT_MARGIN-5)
                 {
                     if (config.useTimeOnChart())
                     {
@@ -792,7 +792,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                         roomSpecificText = "Instance Time";
                     }
                     int textYPosition = getYOffset((j * ticksToShow) + 1) + ((playerOffsets.size() + 2) * scale) - (scale / 2) + (fontHeight / 2);
-                    if (textYPosition > scale + 5 && !specific.isEmpty()  && textPosition > LEFT_MARGIN)
+                    if (textYPosition > scale + 5 && !specific.isEmpty()  && textPosition > LEFT_MARGIN-5)
                     {
                         g.drawString(roomSpecificText, 5, textYPosition);
                     }
@@ -832,7 +832,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                         g.setColor(config.fontColor());
                         String time = String.valueOf(((i + instanceTime) % 4) + 1);
                         int strWidth = getStringBounds(g, time).width;
-                        if (yOffset - (scale / 2) > scale + 5 && xOffset > LEFT_MARGIN)
+                        if (yOffset - (scale / 2) > scale + 5 && xOffset > LEFT_MARGIN-5)
                         {
                             g.drawString(time, xOffset + (scale / 2) - (strWidth / 2), yOffset - (scale / 2));
                         }
@@ -847,7 +847,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                     yOffset += (playerOffsets.size() + 2) * scale;
                     g.setColor(config.fontColor());
                     int strWidth = getStringBounds(g, specific.get(i)).width;
-                    if (yOffset > scale + 5 && xOffset > LEFT_MARGIN)
+                    if (yOffset > scale + 5 && xOffset > LEFT_MARGIN-5)
                     {
                         g.drawString(specific.get(i), xOffset + (scale / 2) - (strWidth / 2), yOffset - (scale / 2) + (fontHeight / 2));
                     }
@@ -868,7 +868,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                 yOffset += (playerOffsets.size() + 1) * scale;
                 g.setColor(config.fontColor());
                 int textOffset = (scale / 2) - (getStringBounds(g, damage).width) / 2;
-                if (yOffset > scale + 5 && xOffset+textOffset > LEFT_MARGIN)
+                if (yOffset > scale + 5 && xOffset+textOffset > LEFT_MARGIN-5)
                 {
                     g.drawString(damage, xOffset + textOffset, yOffset + (scale / 2) - (fontHeight / 2));
                 }
@@ -905,7 +905,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                         continue;
                     }
                     int yOffset = ((playerOffsets.get(box.player) + 1) * scale) + getYOffset(box.tick);
-                    if (yOffset > scale + 5 && xOffset > LEFT_MARGIN)
+                    if (yOffset > scale + 5 && xOffset > LEFT_MARGIN-5)
                     {
                         if (config != null && config.useIconsOnChart())
                         {
@@ -925,7 +925,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                                     }
                                     fillBoxStyleAccordingToConfig(g, xOffset + 2, yOffset + 2, scale - 3, scale - 3, 5, 5);
                                     BufferedImage scaled = getScaledImage(box.attack.img, (scale - 2), (scale - 2));
-                                    if (box.playerAnimation.equals(PlayerAnimation.HAMMER_BOP) || box.playerAnimation.equals(PlayerAnimation.BGS_WHACK) || box.playerAnimation.equals(PlayerAnimation.UNCHARGED_SCYTHE) || box.playerAnimation.equals(PlayerAnimation.KODAI_BOP))
+                                    if (box.playerAnimation.equals(PlayerAnimation.HAMMER_BOP) || box.playerAnimation.equals(PlayerAnimation.BGS_WHACK) || box.playerAnimation.equals(PlayerAnimation.UNCHARGED_SCYTHE) || box.playerAnimation.equals(PlayerAnimation.KODAI_BOP) || box.playerAnimation.equals(PlayerAnimation.CHALLY_WHACK))
                                     {
                                         g.drawImage(createFlipped(createDropShadow(scaled)), xOffset + 3, yOffset + 3, null);
                                         g.drawImage(createFlipped(scaled), xOffset + 2, yOffset + 1, null);
@@ -1001,7 +1001,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                     g.drawLine(xOffset, yOffset + (scale / 2), xOffset, yOffset + boxHeight - scale);
                     int stringLength = getStringBounds(g, lines.get(i)).width;
                     g.setColor(config.fontColor());
-                    if (yOffset + (scale / 2) > scale + 5 && xOffset-(stringLength/2) > LEFT_MARGIN)
+                    if (yOffset + (scale / 2) > scale + 5 && xOffset-(stringLength/2) > LEFT_MARGIN-5)
                     {
                         g.drawString(lines.get(i), xOffset - (stringLength / 2), yOffset + (scale / 2)); //todo
                     }
@@ -1091,7 +1091,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             }
             int xOffset = getXOffset(selectedTick);
             int yOffset = ((playerOffsets.get(selectedPlayer) + 1) * scale) + getYOffset(selectedTick);
-            if (yOffset > scale + 5 && xOffset > LEFT_MARGIN)
+            if (yOffset > scale + 5 && xOffset > LEFT_MARGIN-5)
             {
                 g.drawRect(xOffset, yOffset, scale, scale);
             }
@@ -1429,7 +1429,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                     {
                         g.setColor(config.idleColor());
                     }
-                    if (yOffset > scale + 5 && xOffset > LEFT_MARGIN)
+                    if (yOffset > scale + 5 && xOffset > LEFT_MARGIN-5)
                     {
                         fillBoxStyleAccordingToConfig(g, xOffset + 2, yOffset + 2, scale - 3, scale - 3, 5, 5);
                     }
@@ -1537,7 +1537,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             if (y > 20) //todo why do I use 20 here when TOP_MARGIN is 30?
             {
                 int boxNumber = (y - 20) / boxHeight;
-                if (x > LEFT_MARGIN)
+                if (x > LEFT_MARGIN-5)
                 {
                     int tick = startTick + (ticksToShow * boxNumber + ((x - LEFT_MARGIN) / scale));
                     int playerOffsetPosition = (((y - TOP_MARGIN - scale) % boxHeight) / scale);
@@ -1682,7 +1682,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                     {
                         weapon = selectedPrimary.weaponIDs[0];
                     }
-                    addAttack(new PlayerDidAttack(itemManager, selectedPlayer, "", selectedTick, weapon, "", "", 0, 0, "", ""), selectedPrimary);
+                    addAttack(new PlayerDidAttack(itemManager, selectedPlayer, String.valueOf(selectedPrimary.animations[0]), selectedTick, weapon, "", "", 0, 0, "", ""), selectedPrimary);
                 } else if (selectedPrimary.equals(PlayerAnimation.NOT_SET))
                 {
                     removeAttack(selectedTick, selectedPlayer);
@@ -1696,7 +1696,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                     {
                         weapon = selectedSecondary.weaponIDs[0];
                     }
-                    addAttack(new PlayerDidAttack(itemManager, selectedPlayer, "", selectedTick, weapon, "", "", 0, 0, "", ""), selectedSecondary);
+                    addAttack(new PlayerDidAttack(itemManager, selectedPlayer, String.valueOf(selectedPrimary.animations[0]), selectedTick, weapon, "", "", 0, 0, "", ""), selectedSecondary);
                 } else if (selectedSecondary.equals(PlayerAnimation.NOT_SET))
                 {
                     removeAttack(selectedTick, selectedPlayer);

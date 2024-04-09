@@ -24,12 +24,11 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
-import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.List;
 
+import static com.advancedraidtracker.ui.charts.ChartConstants.*;
 import static com.advancedraidtracker.utility.UISwingUtility.*;
 
 @Slf4j
@@ -51,10 +50,14 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     int instanceTime = 0;
     int ticksToShow = 50;
 
-    int selectedTick = -1;
-    String selectedPlayer = "";
+    int hoveredTick = -1;
 
-    int selectedRow = -1;
+    List<ChartTick> selectedTicks = new ArrayList<>();
+    boolean selectionDragActive = false;
+
+    String hoveredPlayer = "";
+
+    int hoveredColumn = -1;
     boolean checkBoxHovered = false;
     boolean checkBox2Hovered = false;
     boolean checkBox3Hovered = false;
@@ -133,14 +136,15 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     {
         if (isActive || !live)
         {
+            recalculateSize();
             boxesToShow = Math.min(1 + ((windowHeight - TITLE_BAR_PLUS_TAB_HEIGHT - scale) / boxHeight), boxCount);
             if (img != null)
             {
                 img.flush();
             }
             img = new BufferedImage(windowWidth, windowHeight, BufferedImage.TYPE_INT_ARGB);
-            recalculateSize();
             sendToBottom();
+            drawGraph();
         }
     }
 
@@ -266,9 +270,9 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         startTick = 0;
         baseEndTick = 0;
         baseStartTick = 0;
-        selectedRow = -1;
-        selectedTick = -1;
-        selectedPlayer = "";
+        hoveredColumn = -1;
+        hoveredTick = -1;
+        hoveredPlayer = "";
         synchronized (outlineBoxes)
         {
             outlineBoxes.clear();
@@ -315,67 +319,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
     public void addAttack(PlayerDidAttack attack, PlayerAnimation playerAnimation)
     {
-        if (clientThread != null)
-        {
-            if (config.useUnkitted())
-            {
-                attack.useUnkitted();
-            }
-            clientThread.invoke(() ->
-            {
-                attack.setIcons(itemManager, spriteManager);
-            });
-            clientThread.invoke(attack::setWornNames);
-        }
-        if (playerAnimation.equals(PlayerAnimation.NOT_SET))
-        {
-            playerAnimation = AnimationDecider.getWeapon(attack.animation, attack.spotAnims, attack.projectile, attack.weapon);
-        }
-        if (playerAnimation != PlayerAnimation.EXCLUDED_ANIMATION && playerAnimation != PlayerAnimation.UNDECIDED)
-        {
-            boolean isTarget = RoomUtil.isPrimaryBoss(attack.targetedID) && attack.targetedID != -1;
-            String targetString = playerAnimation.name + ": ";
-            String targetName = getBossName(attack.targetedID, attack.targetedIndex, attack.tick);
-            if (targetName.equals("?"))
-            {
-                targetString += attack.targetName;
-            } else
-            {
-                targetString += targetName;
-            }
-            synchronized (actions)
-            {
-                actions.put(attack, targetString);
-            }
-            String additionalText = "";
-            if (targetString.contains("(on w"))
-            {
-                additionalText = targetString.substring(targetString.indexOf("(on w") + 5);
-                additionalText = "s" + additionalText.substring(0, additionalText.indexOf(")"));
-            } else if (targetString.contains("small") || targetString.contains("big"))
-            {
-                additionalText = getShortenedString(targetString, playerAnimation.name.length());
-            } else if (targetString.contains("70s") || targetString.contains("50s") || targetString.contains("30s"))
-            {
-                String shortenedString = targetString.substring(playerAnimation.name.length() + 2);
-                shortenedString = shortenedString.substring(0, 2);
-                String proc = targetString.substring(targetString.indexOf("0s") - 1, targetString.indexOf("0s") + 1);
-
-                additionalText = proc + shortenedString;
-            }
-            synchronized (outlineBoxes)
-            {
-                outlineBoxes.add(new OutlineBox(attack, playerAnimation.shorthand, playerAnimation.color, isTarget, additionalText, playerAnimation, playerAnimation.attackTicks, RaidRoom.getRoom(this.room)));
-            }
-            for (int i = attack.tick; i < attack.tick + playerAnimation.attackTicks; i++)
-            {
-                playerWasOnCD.put(attack.player, i);
-            }
-        }
-        if (!live)
-        {
-            drawGraph();
-        }
+        addAttack(attack, playerAnimation, false);
     }
 
     public void addAttack(PlayerDidAttack attack)
@@ -411,7 +355,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
     public void addLiveAttack(PlayerDidAttack attack)
     {
-        attack.tick += endTick;
+        attack.tick += baseEndTick;
         addAttack(new PlayerDidAttack(attack.itemManager, attack.player, attack.animation, attack.tick, attack.weapon, attack.projectile, attack.spotAnims, attack.targetedIndex, attack.targetedID, attack.targetName, attack.wornItems));
     }
 
@@ -426,6 +370,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     public void incrementTick()
     {
         endTick++;
+        baseEndTick++;
         if (endTick % ticksToShow == 0 || endTick == 1)
         {
             recalculateSize();
@@ -496,6 +441,16 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
     private final ClientThread clientThread;
 
+    private static volatile boolean isShiftPressed = false;
+
+    public static boolean isShiftPressed()
+    {
+        synchronized (ChartPanel.class)
+        {
+            return isShiftPressed;
+        }
+    }
+
     private static volatile boolean isCtrlPressed = false;
     public static boolean isCtrlPressed()
     {
@@ -534,25 +489,165 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         {
             synchronized (ChartPanel.class)
             {
+                if(!shouldDraw() || (!room.equals("Creator") && !(e.getKeyCode() == KeyEvent.VK_CONTROL)))
+                {
+                    return false;
+                }
                 switch (e.getID())
                 {
                     case KeyEvent.KEY_PRESSED:
-                        if (e.getKeyCode() == KeyEvent.VK_CONTROL)
+                        switch(e.getKeyCode())
                         {
-                            isCtrlPressed = true;
+                            case KeyEvent.VK_CONTROL:
+                                isCtrlPressed = true;
+                                break;
+                            case KeyEvent.VK_SHIFT:
+                                isShiftPressed = true;
+                                break;
                         }
                         break;
-
                     case KeyEvent.KEY_RELEASED:
-                        if (e.getKeyCode() == KeyEvent.VK_CONTROL)
+                        switch(e.getKeyCode())
                         {
-                            isCtrlPressed = false;
+                            case KeyEvent.VK_CONTROL:
+                                isCtrlPressed = false;
+                                break;
+                            case KeyEvent.VK_SHIFT:
+                                isShiftPressed = false;
+                                break;
+                            case KeyEvent.VK_C:
+                                if(isCtrlPressed())
+                                {
+                                    log.info("Copying! " + room);
+                                    copyAttacks();
+                                }
+                                break;
+                            case KeyEvent.VK_V:
+                                if(isCtrlPressed())
+                                {
+                                    log.info("Pasting! " + room);
+                                    pasteAttacks();
+                                }
+                                break;
+                            case KeyEvent.VK_DELETE:
+                                if(currentTool == SELECTION_TOOL)
+                                {
+                                    List<OutlineBox> selectedBoxes = new ArrayList<>();
+                                    for(ChartTick tick : selectedTicks)
+                                    {
+                                        for(OutlineBox box : outlineBoxes)
+                                        {
+                                            if(box.tick == tick.getTick() && Objects.equals(box.player, tick.getPlayer()))
+                                            {
+                                                selectedBoxes.add(box);
+                                            }
+                                        }
+                                    }
+                                    for(OutlineBox box : selectedBoxes)
+                                    {
+                                        removeAttack(box);
+                                    }
+                                    actionHistory.add(new ChartAction(selectedBoxes, ChartActionType.REMOVE_ATTACKS));
+                                    selectedTicks.clear();
+                                    redraw();
+                                }
+                                break;
+                            case KeyEvent.VK_Z:
+                                if(isCtrlPressed())
+                                {
+                                    if(!actionHistory.isEmpty())
+                                    {
+                                        processChartAction(actionHistory.pop());
+                                    }
+                                }
+                                break;
+                            case KeyEvent.VK_ENTER:
+                                if(!selectedTicks.isEmpty())
+                                {
+                                    List<OutlineBox> createdBoxes = new ArrayList<>();
+                                    for(ChartTick tick : selectedTicks)
+                                    {
+                                        int weapon = 0;
+                                        if (selectedPrimary.weaponIDs.length > 0)
+                                        {
+                                            weapon = selectedPrimary.weaponIDs[0];
+                                        }
+                                        PlayerDidAttack createdAttack = new PlayerDidAttack(itemManager, tick.getPlayer(), String.valueOf(selectedPrimary.animations[0]), tick.getTick(), weapon, "", "", 0, 0, "", "");
+                                        if (clientThread != null)
+                                        {
+                                            if (config.useUnkitted())
+                                            {
+                                                createdAttack.useUnkitted();
+                                            }
+                                            clientThread.invoke(() ->
+                                            {
+                                                createdAttack.setIcons(itemManager, spriteManager);
+                                            });
+                                            clientThread.invoke(createdAttack::setWornNames);
+                                        }
+                                        OutlineBox createdBox = new OutlineBox(createdAttack, selectedPrimary.shorthand, selectedPrimary.color, true, "", selectedPrimary, selectedPrimary.attackTicks, tick.getTick(), tick.getPlayer(), RaidRoom.getRoom(room));
+                                        createdBoxes.add(createdBox);
+                                        addAttack(createdBox);
+                                    }
+                                    actionHistory.add(new ChartAction(createdBoxes, ChartActionType.ADD_ATTACKS));
+                                    redraw();
+                                }
+                                break;
+                            case KeyEvent.VK_A:
+                                if(isCtrlPressed())
+                                {
+                                    selectedTicks.clear();
+                                    currentTool = SELECTION_TOOL;
+                                    synchronized (outlineBoxes)
+                                    {
+                                        for (OutlineBox box : outlineBoxes)
+                                        {
+                                            selectedTicks.add(new ChartTick(box.tick, box.player));
+                                        }
+                                    }
+                                    redraw();
+                                }
+                                break;
+
                         }
                         break;
+                    case KeyEvent.KEY_TYPED:
                 }
                 return false;
             }
         });
+    }
+
+    private List<OutlineBox> getSelectedOutlineBoxes()
+    {
+        List<OutlineBox> selectedBoxes = new ArrayList<>();
+        for(ChartTick tick : selectedTicks)
+        {
+            for(OutlineBox box : outlineBoxes)
+            {
+                if(box.tick == tick.getTick() && Objects.equals(box.player, tick.getPlayer()))
+                {
+                    selectedBoxes.add(box);
+                    removeAttack(box);
+                }
+            }
+        }
+        return selectedBoxes;
+    }
+
+    private void processChartAction(ChartAction action)
+    {
+        for(OutlineBox box : action.getBoxes())
+        {
+            if(action.getActionType().equals(ChartActionType.ADD_ATTACKS))
+            {
+                removeAttack(box);
+            }
+            else if(action.getActionType().equals(ChartActionType.REMOVE_ATTACKS))
+            {
+                addAttack(box);
+            }
+        }
     }
 
     @Override
@@ -925,7 +1020,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                                     }
                                     fillBoxStyleAccordingToConfig(g, xOffset + 2, yOffset + 2, scale - 3, scale - 3, 5, 5);
                                     BufferedImage scaled = getScaledImage(box.attack.img, (scale - 2), (scale - 2));
-                                    if (box.playerAnimation.equals(PlayerAnimation.HAMMER_BOP) || box.playerAnimation.equals(PlayerAnimation.BGS_WHACK) || box.playerAnimation.equals(PlayerAnimation.UNCHARGED_SCYTHE) || box.playerAnimation.equals(PlayerAnimation.KODAI_BOP) || box.playerAnimation.equals(PlayerAnimation.CHALLY_WHACK))
+                                    if (box.playerAnimation.equals(PlayerAnimation.HAMMER_BOP) || box.playerAnimation.equals(PlayerAnimation.BGS_WHACK) || box.playerAnimation.equals(PlayerAnimation.UNCHARGED_SCYTHE) || box.playerAnimation.equals(PlayerAnimation.KODAI_BOP) || box.playerAnimation.equals(PlayerAnimation.CHALLY_WHACK) || box.playerAnimation.equals(PlayerAnimation.ZCB_AUTO))
                                     {
                                         g.drawImage(createFlipped(createDropShadow(scaled)), xOffset + 3, yOffset + 3, null);
                                         g.drawImage(createFlipped(scaled), xOffset + 2, yOffset + 1, null);
@@ -947,7 +1042,6 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                                 }
                             } catch (Exception e)
                             {
-
                             }
                         } else
                         {
@@ -994,7 +1088,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                     int xOffset = getXOffset(i);
                     int yOffset = getYOffset(i);
                     g.setColor(config.markerColor());
-                    if (linePlacementModeActive && selectedTick == i)
+                    if (currentTool == ADD_LINE_TOOL && hoveredTick == i)
                     {
                         g.setColor(new Color(40, 140, 235));
                     }
@@ -1079,18 +1173,18 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
     private void drawSelectedOutlineBox(Graphics2D g)
     {
-        if (selectedTick != -1 && !selectedPlayer.equalsIgnoreCase(""))
+        if (hoveredTick != -1 && !hoveredPlayer.equalsIgnoreCase(""))
         {
             g.setColor(config.fontColor());
             if (enforceCD)
             {
-                if (playerWasOnCD.containsEntry(selectedPlayer, selectedTick))
+                if (playerWasOnCD.containsEntry(hoveredPlayer, hoveredTick))
                 {
                     g.setColor(Color.RED);
                 }
             }
-            int xOffset = getXOffset(selectedTick);
-            int yOffset = ((playerOffsets.get(selectedPlayer) + 1) * scale) + getYOffset(selectedTick);
+            int xOffset = getXOffset(hoveredTick);
+            int yOffset = ((playerOffsets.get(hoveredPlayer) + 1) * scale) + getYOffset(hoveredTick);
             if (yOffset > scale + 5 && xOffset > LEFT_MARGIN-5)
             {
                 g.drawRect(xOffset, yOffset, scale, scale);
@@ -1110,18 +1204,18 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
     private void drawSelectedRow(Graphics2D g)
     {
-        if (selectedRow != -1 && shouldTickBeDrawn(selectedRow))
+        if (hoveredColumn != -1 && shouldTickBeDrawn(hoveredColumn))
         {
             g.setColor(config.fontColor());
-            int xOffset = getXOffset(selectedRow);
-            int yOffset = getYOffset(selectedRow);
+            int xOffset = getXOffset(hoveredColumn);
+            int yOffset = getYOffset(hoveredColumn);
             int additionalRows = 1 + getAdditionalRow();
             g.drawRect(xOffset, yOffset, scale, scale * (attackers.size() + additionalRows));
 
             int selectedTickHP = -1;
             try
             {
-                selectedTickHP = roomHP.get(selectedRow + 1);
+                selectedTickHP = roomHP.get(hoveredColumn + 1);
             } catch (Exception ignored)
             {
 
@@ -1140,11 +1234,11 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                     break;
                 case "Nylocas":
                     offset = 5;
-                    offset += (4 - ((offset + selectedRow) % 4));
+                    offset += (4 - ((offset + hoveredColumn) % 4));
                     offset -= 2;
                     break;
             }
-            String bossWouldHaveDied = (offset != -1) ? "Melee attack on this tick killing would result in: " + RoomUtil.time(selectedRow + 1 + offset + 1) + " (Quick death: " + RoomUtil.time(selectedRow + offset + 1) + ")" : "";
+            String bossWouldHaveDied = (offset != -1) ? "Melee attack on this tick killing would result in: " + RoomUtil.time(hoveredColumn + 1 + offset + 1) + " (Quick death: " + RoomUtil.time(hoveredColumn + offset + 1) + ")" : "";
             String HPString = "Boss HP: " + ((selectedTickHP == -1) ? "-" : RoomUtil.varbitHPtoReadable(selectedTickHP));
             HoverBox hoverBox = new HoverBox(HPString, config);
             if (offset != -1)
@@ -1169,11 +1263,11 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
     private void drawHoverBox(Graphics2D g)
     {
-        synchronized (actions.keySet())
+        synchronized (actions)
         {
             for (PlayerDidAttack action : actions.keySet())
             {
-                if (action.tick == selectedTick && action.player.equals(selectedPlayer) && shouldTickBeDrawn(action.tick))
+                if (action.tick == hoveredTick && action.player.equals(hoveredPlayer) && shouldTickBeDrawn(action.tick))
                 {
                     Point location = getPoint(action.tick, action.player);
                     HoverBox hoverBox = new HoverBox(actions.get(action) + ": " + action.animation, config);
@@ -1450,18 +1544,52 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
     private void drawLinePlacement(Graphics2D g) //chart creator
     {
-        if (shouldTickBeDrawn(selectedTick) && !lines.containsKey(selectedTick))
+        if (shouldTickBeDrawn(hoveredTick) && !lines.containsKey(hoveredTick))
         {
-            int xOffset = getXOffset(selectedTick);
-            int yOffset = getYOffset(selectedTick);
+            int xOffset = getXOffset(hoveredTick);
+            int yOffset = getYOffset(hoveredTick);
             g.setColor(config.markerColor());
             g.drawLine(xOffset, yOffset + (scale / 2), xOffset, yOffset + boxHeight - scale);
         }
     }
 
+    private void drawSelectedTicks(Graphics2D g)
+    {
+        for(ChartTick tick : selectedTicks)
+        {
+            if(playerOffsets.containsKey(tick.getPlayer()))
+            {
+                int xOffset = getXOffset(tick.getTick());
+                int yOffset = getYOffset(tick.getTick());
+                yOffset += (playerOffsets.get(tick.getPlayer())+1) * scale;
+                g.setColor(getTransparentColor(config.fontColor(), 128));
+                g.drawRect(xOffset, yOffset, scale, scale);
+            }
+        }
+    }
+
+    private void drawSelectionRegion(Graphics2D g)
+    {
+        if(selectionDragActive && playerOffsets.containsKey(activeDragPlayer) && playerOffsets.containsKey(dragStartPlayer))
+        {
+            int beginTick = Math.min(dragStartTick, activeDragTick);
+            int stopTick = Math.max(dragStartTick, activeDragTick);
+            int xStart = getXOffset(beginTick);
+            int xEnd = getXOffset(stopTick)+scale;
+            int lowOffset = Math.min(playerOffsets.get(activeDragPlayer), playerOffsets.get(dragStartPlayer));
+            int highOffset = Math.max(playerOffsets.get(activeDragPlayer), playerOffsets.get(dragStartPlayer));
+            int yStart = getYOffset(beginTick)+scale+(lowOffset*scale);
+            int yEnd = getYOffset(stopTick)+scale+scale+(highOffset*scale);
+            g.setColor(getTransparentColor(config.primaryDark(), 180));
+            g.fillRect(xStart, yStart, xEnd-xStart, yEnd-yStart);
+            g.setColor(config.fontColor());
+            g.drawRect(xStart, yStart, xEnd-xStart, yEnd-yStart);
+        }
+    }
+
     private synchronized void drawGraph()
     {
-        if (!shouldDraw())
+        if (!shouldDraw() || img == null)
         {
             return;
         }
@@ -1494,7 +1622,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         drawMarkerLines(g);
         drawMaidenCrabs(g);
 
-        if (!linePlacementModeActive)
+        if (currentTool != ADD_LINE_TOOL)
         {
             drawSelectedOutlineBox(g);
             drawSelectedRow(g);
@@ -1510,10 +1638,14 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             drawCheckBox3(g);
         }
 
-        if (linePlacementModeActive)
+        if (currentTool == ADD_LINE_TOOL)
         {
             drawLinePlacement(g);
         }
+
+        drawSelectedTicks(g);
+
+        drawSelectionRegion(g);
 
         g.setColor(oldColor);
         g.dispose();
@@ -1528,7 +1660,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         recalculateSize();
     }
 
-    public void getTickHovered(int x, int y)
+    public void setTickHovered(int x, int y)
     {
         if (boxHeight > 0 && scale > 0)
         {
@@ -1543,25 +1675,25 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                     int playerOffsetPosition = (((y - TOP_MARGIN - scale) % boxHeight) / scale);
                     if (playerOffsetPosition >= 0 && playerOffsetPosition < attackers.size() && (y - TOP_MARGIN - scale > 0))
                     {
-                        selectedTick = tick;
-                        selectedPlayer = attackers.get(playerOffsetPosition);
-                        selectedRow = -1;
+                        hoveredTick = tick;
+                        hoveredPlayer = attackers.get(playerOffsetPosition);
+                        hoveredColumn = -1;
                     } else if (y % boxHeight < TOP_MARGIN + scale)
                     {
-                        selectedRow = tick;
-                        selectedPlayer = "";
-                        selectedTick = -1;
+                        hoveredColumn = tick;
+                        hoveredPlayer = "";
+                        hoveredTick = -1;
                     } else
                     {
-                        selectedPlayer = "";
-                        selectedTick = -1;
-                        selectedRow = -1;
+                        hoveredPlayer = "";
+                        hoveredTick = -1;
+                        hoveredColumn = -1;
                     }
                 } else
                 {
-                    selectedPlayer = "";
-                    selectedTick = -1;
-                    selectedRow = -1;
+                    hoveredPlayer = "";
+                    hoveredTick = -1;
+                    hoveredColumn = -1;
                 }
                 drawGraph();
             }
@@ -1621,7 +1753,17 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     @Override
     public void mousePressed(MouseEvent e)
     {
-
+        if(SwingUtilities.isMiddleMouseButton(e))
+        {
+            if(!isDragging)
+            {
+                currentScrollOffsetX = 0;
+                currentScrollOffsetY = 0;
+                startTick = baseStartTick;
+                endTick = baseEndTick;
+                redraw();
+            }
+        }
     }
 
     private boolean isDragging = false;
@@ -1634,13 +1776,13 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             checkRelease(e);
             isDragging = false;
         }
-        if(SwingUtilities.isRightMouseButton(e))
-        {
-            currentScrollOffsetX = 0;
-            currentScrollOffsetY = 0;
-            startTick = baseStartTick;
-            endTick = baseEndTick;
-        }
+    }
+
+    private final Stack<ChartAction> actionHistory = new Stack<>();
+
+    private void reverseAction(ChartAction action)
+    {
+
     }
 
     private void checkRelease(MouseEvent e)
@@ -1659,53 +1801,166 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             drawGraph();
         } else
         {
-            if (linePlacementModeActive)
+            if (currentTool == ADD_LINE_TOOL)
             {
-                if (selectedTick != -1)
+                if (hoveredTick != -1)
                 {
                     if (SwingUtilities.isLeftMouseButton(e))
                     {
-                        addLine(selectedTick, manualLineText);
+                        addLine(hoveredTick, manualLineText);
                     } else if (SwingUtilities.isRightMouseButton(e))
                     {
-                        lines.remove(selectedTick);
+                        lines.remove(hoveredTick);
                     }
                 }
                 return;
             }
             if (SwingUtilities.isLeftMouseButton(e))
             {
-                if (selectedTick != -1 && !selectedPrimary.equals(PlayerAnimation.NOT_SET))
+                if(currentTool == SELECTION_TOOL)
                 {
-                    int weapon = 0;
-                    if (selectedPrimary.weaponIDs.length > 0)
+                    if(isCtrlPressed)
                     {
-                        weapon = selectedPrimary.weaponIDs[0];
+                        ChartTick tick = new ChartTick(hoveredTick, hoveredPlayer);
+                        if(!selectedTicks.contains(tick))
+                        {
+                            selectedTicks.add(tick);
+                        }
                     }
-                    addAttack(new PlayerDidAttack(itemManager, selectedPlayer, String.valueOf(selectedPrimary.animations[0]), selectedTick, weapon, "", "", 0, 0, "", ""), selectedPrimary);
-                } else if (selectedPrimary.equals(PlayerAnimation.NOT_SET))
+                    else
+                    {
+                        selectedTicks.clear();
+                        selectedTicks.add(new ChartTick(hoveredTick, hoveredPlayer));
+                    }
+                }
+                else if(isShiftPressed())
                 {
-                    removeAttack(selectedTick, selectedPlayer);
+                    selectionDragActive = false;
+                }
+                else if(selectedTicks.size() > 1)
+                {
+                    selectedTicks.clear();
+                }
+                else
+                {
+                    if (hoveredTick != -1 && !selectedPrimary.equals(PlayerAnimation.NOT_SET))
+                    {
+                        int weapon = 0;
+                        if (selectedPrimary.weaponIDs.length > 0)
+                        {
+                            weapon = selectedPrimary.weaponIDs[0];
+                        }
+                        addAttack(new PlayerDidAttack(itemManager, hoveredPlayer, String.valueOf(selectedPrimary.animations[0]), hoveredTick, weapon, "", "", 0, 0, "", ""), selectedPrimary, true);
+                    } else if (selectedPrimary.equals(PlayerAnimation.NOT_SET))
+                    {
+                        removeAttack(hoveredTick, hoveredPlayer, true);
+                    }
+                    if (hoveredTick != -1)
+                    {
+                        if (isDragging)
+                        {
+                            if (dragStartTick > 0 && activeDragTick > 0 && !dragStartPlayer.isEmpty() && !activeDragPlayer.isEmpty())
+                            {
+                                selectionDragActive = false;
+                            }
+                            log.info("Stopped dragging. Drag started at: " + dragStartX + ", " + dragStartY + " (" + dragStartTick + ", " + dragStartPlayer + ")" + " and ended at: " + activeDragX + ", " + activeDragY + " (" + activeDragTick + ", " + activeDragPlayer + ")");
+                        }
+                    }
                 }
             } else if (SwingUtilities.isRightMouseButton(e))
             {
-                if (selectedTick != -1 && !selectedSecondary.equals(PlayerAnimation.NOT_SET))
+                if (hoveredTick != -1 && !selectedSecondary.equals(PlayerAnimation.NOT_SET) && currentTool == ADD_ATTACK_TOOL)
                 {
                     int weapon = 0;
                     if (selectedSecondary.weaponIDs.length > 0)
                     {
                         weapon = selectedSecondary.weaponIDs[0];
                     }
-                    addAttack(new PlayerDidAttack(itemManager, selectedPlayer, String.valueOf(selectedPrimary.animations[0]), selectedTick, weapon, "", "", 0, 0, "", ""), selectedSecondary);
+                    addAttack(new PlayerDidAttack(itemManager, hoveredPlayer, String.valueOf(selectedPrimary.animations[0]), hoveredTick, weapon, "", "", 0, 0, "", ""), selectedSecondary, true);
                 } else if (selectedSecondary.equals(PlayerAnimation.NOT_SET))
                 {
-                    removeAttack(selectedTick, selectedPlayer);
+                    removeAttack(hoveredTick, hoveredPlayer, true);
                 }
             }
         }
     }
 
-    private void removeAttack(int tick, String player)
+    private void addAttack(PlayerDidAttack attack, PlayerAnimation playerAnimation, boolean recordAttack)
+    {
+        if (clientThread != null)
+        {
+            if (config.useUnkitted())
+            {
+                attack.useUnkitted();
+            }
+            clientThread.invoke(() ->
+            {
+                attack.setIcons(itemManager, spriteManager);
+            });
+            clientThread.invoke(attack::setWornNames);
+        }
+        if (playerAnimation.equals(PlayerAnimation.NOT_SET))
+        {
+            playerAnimation = AnimationDecider.getWeapon(attack.animation, attack.spotAnims, attack.projectile, attack.weapon);
+        }
+        if (playerAnimation != PlayerAnimation.EXCLUDED_ANIMATION && playerAnimation != PlayerAnimation.UNDECIDED)
+        {
+            boolean isTarget = RoomUtil.isPrimaryBoss(attack.targetedID) && attack.targetedID != -1;
+            String targetString = playerAnimation.name + ": ";
+            String targetName = getBossName(attack.targetedID, attack.targetedIndex, attack.tick);
+            if (targetName.equals("?"))
+            {
+                targetString += attack.targetName;
+            } else
+            {
+                targetString += targetName;
+            }
+            synchronized (actions)
+            {
+                actions.put(attack, targetString);
+            }
+            String additionalText = "";
+            if (targetString.contains("(on w"))
+            {
+                additionalText = targetString.substring(targetString.indexOf("(on w") + 5);
+                additionalText = "s" + additionalText.substring(0, additionalText.indexOf(")"));
+            } else if (targetString.contains("small") || targetString.contains("big"))
+            {
+                additionalText = getShortenedString(targetString, playerAnimation.name.length());
+            } else if (targetString.contains("70s") || targetString.contains("50s") || targetString.contains("30s"))
+            {
+                String shortenedString = targetString.substring(playerAnimation.name.length() + 2);
+                shortenedString = shortenedString.substring(0, 2);
+                String proc = targetString.substring(targetString.indexOf("0s") - 1, targetString.indexOf("0s") + 1);
+
+                additionalText = proc + shortenedString;
+            }
+            synchronized (outlineBoxes)
+            {
+                OutlineBox outlineBox = new OutlineBox(attack, playerAnimation.shorthand, playerAnimation.color, isTarget, additionalText, playerAnimation, playerAnimation.attackTicks, attack.tick, attack.player, RaidRoom.getRoom(this.room));
+                outlineBoxes.add(outlineBox);
+                if(recordAttack)
+                {
+                    actionHistory.add(new ChartAction(List.of(outlineBox), ChartActionType.ADD_ATTACKS));
+                }
+            }
+            for (int i = attack.tick; i < attack.tick + playerAnimation.attackTicks; i++)
+            {
+                playerWasOnCD.put(attack.player, i);
+            }
+        }
+        if (!live)
+        {
+            drawGraph();
+        }
+    }
+
+    private void removeAttack(OutlineBox box)
+    {
+        removeAttack(box.tick, box.player, false);
+    }
+
+    private void removeAttack(int tick, String player, boolean shouldRecord)
     {
         if (tick != -1 && room.equals("Creator")) //don't allow attacks to be removed if this chart panel isn't part of the chart creator
         {
@@ -1727,16 +1982,20 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                         playerWasOnCD.remove(player, i);
                     }
                 }
+                if(shouldRecord)
+                {
+                    actionHistory.push(new ChartAction(removedBoxes, ChartActionType.REMOVE_ATTACKS));
+                }
             }
         }
         drawGraph();
     }
 
-    boolean linePlacementModeActive = false;
+    int currentTool = NO_TOOL;
 
     public void setToolSelection(int tool)
     {
-        linePlacementModeActive = tool == 1;
+        currentTool = tool;
     }
 
     @Override
@@ -1747,9 +2006,9 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     @Override
     public void mouseExited(MouseEvent e)
     {
-        selectedPlayer = "";
-        selectedTick = -1;
-        selectedRow = -1;
+        hoveredPlayer = "";
+        hoveredTick = -1;
+        hoveredColumn = -1;
         drawGraph();
     }
 
@@ -1759,33 +2018,172 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     int lastScrollOffsetY = 0;
     int lastStartTick = 0;
     int lastEndTick = 0;
+    int dragStartTick = 0;
+    String dragStartPlayer = "";
+    int activeDragTick = 0;
+    String activeDragPlayer = "";
+    int activeDragX = 0;
+    int activeDragY = 0;
     @Override
     public void mouseDragged(MouseEvent e)
     {
+        setDraggedTickValues(e.getX(), e.getY());
         if(!isDragging)
         {
             dragStartX = e.getX();
             dragStartY = e.getY();
-            lastScrollOffsetX = 0;
-            lastScrollOffsetY = currentScrollOffsetY;
-            lastStartTick = startTick;
-            lastEndTick = endTick;
         }
-        else
-        {
-            currentScrollOffsetY = lastScrollOffsetY + (dragStartY - e.getY());
-            currentScrollOffsetX = lastScrollOffsetX + (dragStartX - e.getX());
-            if(lastStartTick+(currentScrollOffsetX/scale) > 0)
-            {
-                startTick = lastStartTick + (currentScrollOffsetX / scale);
-                endTick = lastEndTick + (currentScrollOffsetX/scale);
-            }
-            drawGraph();
-        }
-        isDragging = true;
         if(SwingUtilities.isMiddleMouseButton(e))
         {
-            log.info(e.getX() +", " + e.getY());
+            if (!isDragging)
+            {
+                lastScrollOffsetX = 0;
+                lastScrollOffsetY = currentScrollOffsetY;
+                lastStartTick = startTick;
+                lastEndTick = endTick;
+            } else
+            {
+                currentScrollOffsetY = lastScrollOffsetY + (dragStartY - e.getY());
+                currentScrollOffsetX = lastScrollOffsetX + (dragStartX - e.getX());
+                if (lastStartTick + (currentScrollOffsetX / scale) > 0)
+                {
+                    startTick = lastStartTick + (currentScrollOffsetX / scale);
+                    endTick = lastEndTick + (currentScrollOffsetX / scale);
+                }
+                drawGraph();
+            }
+        }
+        else if(SwingUtilities.isLeftMouseButton(e) && isShiftPressed())
+        {
+            if(!isDragging)
+            {
+                selectionDragActive = true;
+                dragStartPlayer = hoveredPlayer;
+                dragStartTick = hoveredTick;
+            }
+            else
+            {
+                activeDragX = e.getX();
+                activeDragY = e.getY();
+            }
+        }
+        isDragging = true;
+    }
+
+    public void setDraggedTickValues(int x, int y) //todo migrate generic
+    {
+        if (boxHeight > 0 && scale > 0)
+        {
+            y = y + currentScrollOffsetY;
+            x = x + (currentScrollOffsetX%scale);
+            if (y > 20) //todo why do I use 20 here when TOP_MARGIN is 30?
+            {
+                int boxNumber = (y - 20) / boxHeight;
+                if (x > LEFT_MARGIN-5)
+                {
+                    int tick = startTick + (ticksToShow * boxNumber + ((x - LEFT_MARGIN) / scale));
+                    int playerOffsetPosition = (((y - TOP_MARGIN - scale) % boxHeight) / scale);
+                    if (playerOffsetPosition >= 0 && playerOffsetPosition < attackers.size() && (y - TOP_MARGIN - scale > 0))
+                    {
+                        activeDragTick = tick;
+                        activeDragPlayer = attackers.get(playerOffsetPosition);
+                    } else if (y % boxHeight < TOP_MARGIN + scale)
+                    {
+                        activeDragTick = tick;
+                        activeDragPlayer = "";
+                    } else
+                    {
+                        activeDragPlayer = "";
+                        activeDragTick = -1;
+                    }
+                } else
+                {
+                    activeDragPlayer = "";
+                    activeDragTick = -1;
+                }
+                drawGraph();
+            }
+        }
+    }
+
+    private List<OutlineBox> copiedOutlineBoxes = new ArrayList<>();
+    int copiedTick = 0;
+    int copiedPlayer = 0;
+
+    public void copyAttacks()
+    {
+        log.info("attempting to copy selected boxes: " + selectedTicks.size());
+        if(!selectedTicks.isEmpty())
+        {
+            int lowestTick = Integer.MAX_VALUE;
+            int lowestPlayer = Integer.MAX_VALUE;
+            for(ChartTick chartTick : selectedTicks)
+            {
+                lowestTick = Math.min(lowestTick, chartTick.getTick());
+                lowestPlayer = Math.min(lowestPlayer, playerOffsets.get(chartTick.getPlayer()));
+            }
+            copiedTick = lowestTick;
+            copiedPlayer = lowestPlayer;
+            log.info("copied tick: " + copiedTick + ", copied player: " + copiedPlayer);
+            copiedOutlineBoxes.clear();
+            synchronized (outlineBoxes)
+            {
+                for(OutlineBox box : outlineBoxes)
+                {
+                    if(selectedTicks.stream().anyMatch(b->b.getTick()==box.tick && b.getPlayer().equals(box.player)))
+                    {
+                        copiedOutlineBoxes.add(box);
+                        log.info("Copied " + box.playerAnimation.name + " on tick " + box.tick + " by player: " + box.player);
+                    }
+                }
+            }
+        }
+    }
+
+    public void pasteAttacks()
+    {
+        if(selectedTicks.size() == 1)
+        {
+            List<OutlineBox> boxesToAddToHistory = new ArrayList<>();
+            for (OutlineBox box : copiedOutlineBoxes)
+            {
+                log.info("attempting to paste " + box.playerAnimation.name + " on tick " + box.tick + " by player: " + box.player);
+                int tickOffset = selectedTicks.get(0).getTick() - copiedTick;
+                int playerOffset = playerOffsets.get(selectedTicks.get(0).getPlayer()) - copiedPlayer;
+                log.info("offsets, tick: " + tickOffset + ", player: " + playerOffset);
+                if (playerOffset + playerOffsets.get(box.player) <= playerOffsets.size() - 1 && tickOffset < endTick)
+                {
+                    synchronized (outlineBoxes)
+                    {
+                        String translatedPlayer = "";
+                        for (String player : playerOffsets.keySet())
+                        {
+                            if (playerOffsets.get(player).equals(playerOffset + playerOffsets.get(box.player)))
+                            {
+                                translatedPlayer = player;
+                                log.info("attack is being moved to " + (box.tick+tickOffset) + " on player: " + translatedPlayer);
+                            }
+                        }
+                        OutlineBox outlineBox = new OutlineBox(box.attack, box.letter, box.color, box.primaryTarget, box.additionalText, box.playerAnimation, box.cd, box.tick+tickOffset, translatedPlayer, RaidRoom.getRoom(this.room));
+                        addAttack(outlineBox);
+                        boxesToAddToHistory.add(outlineBox);
+                    }
+                }
+            }
+            actionHistory.push(new ChartAction(boxesToAddToHistory, ChartActionType.ADD_ATTACKS));
+        }
+        drawGraph();
+    }
+
+    public void addAttack(OutlineBox box)
+    {
+        synchronized (outlineBoxes)
+        {
+            outlineBoxes.add(box);
+        }
+        for(int i = box.tick; i < box.tick+box.cd; i++)
+        {
+            playerWasOnCD.put(box.player, i);
         }
     }
 
@@ -1795,7 +2193,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         checkBoxHovered = e.getX() >= 180 && e.getX() <= 200 && e.getY() >= 2 && e.getY() <= 22;
         checkBox2Hovered = e.getX() >= 290 && e.getX() <= 310 && e.getY() >= 2 && e.getY() <= 22;
         checkBox3Hovered = e.getX() >= 410 && e.getX() <= 430 && e.getY() >= 2 && e.getY() <= 22;
-        getTickHovered(e.getX(), e.getY());
+        setTickHovered(e.getX(), e.getY());
         drawGraph();
     }
 

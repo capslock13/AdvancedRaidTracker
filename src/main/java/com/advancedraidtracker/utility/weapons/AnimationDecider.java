@@ -27,6 +27,11 @@ public class AnimationDecider
             return event;
         }
 
+        if(animation == 1979)
+        {
+            return PlayerAnimation.BARRAGE;
+        }
+
         int maxMatches = 0;
         int minPopulatedArrays = Integer.MAX_VALUE;
         int animationMatches = 0;

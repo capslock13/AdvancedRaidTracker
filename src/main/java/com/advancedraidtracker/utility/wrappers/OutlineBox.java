@@ -16,19 +16,18 @@ public class OutlineBox
     public Color color;
     public boolean primaryTarget;
     public PlayerAnimation playerAnimation;
-
     public String additionalText;
     public int cd;
     public PlayerDidAttack attack;
     private RaidRoom room;
 
-    public OutlineBox(PlayerDidAttack attack, String letter, Color color, boolean primaryTarget, String additionalText, PlayerAnimation playerAnimation, int cd, RaidRoom room)
+    public OutlineBox(PlayerDidAttack attack, String letter, Color color, boolean primaryTarget, String additionalText, PlayerAnimation playerAnimation, int cd, int tick, String player, RaidRoom room)
     {
         this.room = room;
         this.playerAnimation = playerAnimation;
         this.attack = attack;
-        this.player = attack.player;
-        this.tick = attack.tick;
+        this.player = player;
+        this.tick = tick;
         this.letter = letter;
         this.color = color;
         this.primaryTarget = primaryTarget;

@@ -76,7 +76,7 @@ public class PlayerDidAttack
         setUnkitted = true;
     }
 
-    private int getReplacement(int original)
+    public static int getReplacement(int original)
     {
         if (scythe.contains(original))
         {
@@ -121,9 +121,10 @@ public class PlayerDidAttack
             Map.entry(4409, SpriteID.SPELL_HEAL_GROUP),
             Map.entry(8973, 2979), //resurrect greater ghost; not in the API
             Map.entry(827, SpriteID.TAB_INVENTORY),
-            Map.entry(832, SpriteID.MAP_ICON_WATER_SOURCE));
+            Map.entry(832, SpriteID.MAP_ICON_WATER_SOURCE),
+            Map.entry(7855, SpriteID.SPELL_FIRE_SURGE));
 
-    private int getSpellIcon(int animation)
+    public static int getSpellIcon(int animation)
     {
         return spellIconMap.getOrDefault(animation, 0);
     }
@@ -146,7 +147,7 @@ public class PlayerDidAttack
             }
             catch (Exception e)
             {
-
+                e.printStackTrace();
             }
         }
     }

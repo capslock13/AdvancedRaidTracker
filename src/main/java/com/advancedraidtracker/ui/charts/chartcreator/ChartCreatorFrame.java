@@ -36,7 +36,7 @@ public class ChartCreatorFrame extends BaseFrame
         menu.setBorder(BorderFactory.createTitledBorder("Menu"));
         menu.setPreferredSize(new Dimension(0, 50));
 
-        ChartToolPanel tools = new ChartToolPanel(config, this);
+        ChartToolPanel tools = new ChartToolPanel(config, this, itemManager, clientThread, spriteManager);
         tools.setBorder(BorderFactory.createTitledBorder("Tools"));
         tools.setPreferredSize(new Dimension(350, 0));
 

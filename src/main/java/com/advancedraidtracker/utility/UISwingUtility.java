@@ -707,6 +707,11 @@ public class UISwingUtility
         );
     }
 
+    public static Color getTransparentColor(Color base, int opacity)
+    {
+        return new Color(base.getRed(), base.getGreen(), base.getBlue(), opacity);
+    }
+
     public static TitledBorder getColoredTitledBorder(String title, Color color)
     {
         TitledBorder border = BorderFactory.createTitledBorder(title);

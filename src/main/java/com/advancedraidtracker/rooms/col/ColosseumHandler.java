@@ -361,7 +361,6 @@ public class ColosseumHandler extends RoomHandler
         } else if (message.getMessage().contains("Colosseum duration: "))
         {
             active = false;
-            log.info("Found duration msg: " + message.getMessage());
             String[] split = message.getMessage().split(" ");
             if (split.length >= 3)
             {

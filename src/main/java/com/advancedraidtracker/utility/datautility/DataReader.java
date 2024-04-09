@@ -28,6 +28,7 @@ import static com.advancedraidtracker.utility.datautility.DataWriter.PLUGIN_DIRE
 @Slf4j
 public class DataReader //todo move any methods that read files to here. I believe Raid side panel and the filter manager class has some?
 {
+    public static List<String> parsedFiles = new ArrayList<>();
     /**
      * Gets a raid from a single log file, current structure is that each
      * raid has its own log file.
@@ -197,22 +198,30 @@ public class DataReader //todo move any methods that read files to here. I belie
      */
     public static List<Raid> getAllRaids()
     {
-        try
+        try (Stream<Path> subLogFiles = Files.walk(Paths.get(PLUGIN_DIRECTORY)))
         {
-            Stream<Path> subLogFiles = Files.walk(Paths.get(PLUGIN_DIRECTORY)); //todo try-with-resources
-
             return subLogFiles
-                    .filter(file -> !file.toAbsolutePath()
-                            .startsWith(Paths.get(PLUGIN_DIRECTORY, "misc-dir").toString())
-                            && !Files.isDirectory(file))
-                    .map(DataReader::getRaid)
-                    .filter(Objects::nonNull).sorted(Comparator.comparing(Raid::getDate)).collect(Collectors.toList());
-        } catch (Exception e)
+                    .filter(file -> !file.toAbsolutePath().startsWith(Paths.get(PLUGIN_DIRECTORY, "misc-dir").toString())
+                            && !Files.isDirectory(file)
+                            && !parsedFiles.contains(file.getFileName().toString()))
+                    .map(file ->
+                    {
+                        Raid raid = DataReader.getRaid(file);
+                        if (raid != null)
+                        {
+                            parsedFiles.add(file.getFileName().toString());
+                        }
+                        return raid;
+                    })
+                    .filter(Objects::nonNull)
+                    .sorted(Comparator.comparing(Raid::getDate))
+                    .collect(Collectors.toList());
+        }
+        catch (Exception e)
         {
-            log.info("Could not retrieve raids");
             e.printStackTrace();
         }
-        return null;
+        return new ArrayList<>();
     }
 
 }

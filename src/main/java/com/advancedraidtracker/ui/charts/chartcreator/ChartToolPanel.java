@@ -78,7 +78,6 @@ public class ChartToolPanel extends JPanel implements MouseListener, MouseMotion
                         weaponID = getReplacement(weaponID);
                     }
                     iconMap.put(playerAnimation, itemManager.getImage(weaponID, 1, false));
-                    log.info("Adding: " + playerAnimation.name);
                 } else
                 {
                     try
@@ -89,7 +88,6 @@ public class ChartToolPanel extends JPanel implements MouseListener, MouseMotion
                             animation = playerAnimation.animations[0];
                         }
                         iconMap.put(playerAnimation, spriteManager.getSprite(getSpellIcon(animation), 0));
-                        log.info("Adding: " + playerAnimation.name);
                     }
                     catch (Exception e)
                     {

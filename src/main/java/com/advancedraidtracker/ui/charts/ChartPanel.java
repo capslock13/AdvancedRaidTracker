@@ -518,14 +518,12 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                             case KeyEvent.VK_C:
                                 if(isCtrlPressed())
                                 {
-                                    log.info("Copying! " + room);
                                     copyAttacks();
                                 }
                                 break;
                             case KeyEvent.VK_V:
                                 if(isCtrlPressed())
                                 {
-                                    log.info("Pasting! " + room);
                                     pasteAttacks();
                                 }
                                 break;
@@ -1863,7 +1861,6 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                             {
                                 selectionDragActive = false;
                             }
-                            log.info("Stopped dragging. Drag started at: " + dragStartX + ", " + dragStartY + " (" + dragStartTick + ", " + dragStartPlayer + ")" + " and ended at: " + activeDragX + ", " + activeDragY + " (" + activeDragTick + ", " + activeDragPlayer + ")");
                         }
                     }
                 }
@@ -2112,7 +2109,6 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
     public void copyAttacks()
     {
-        log.info("attempting to copy selected boxes: " + selectedTicks.size());
         if(!selectedTicks.isEmpty())
         {
             int lowestTick = Integer.MAX_VALUE;
@@ -2124,7 +2120,6 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             }
             copiedTick = lowestTick;
             copiedPlayer = lowestPlayer;
-            log.info("copied tick: " + copiedTick + ", copied player: " + copiedPlayer);
             copiedOutlineBoxes.clear();
             synchronized (outlineBoxes)
             {
@@ -2133,7 +2128,6 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                     if(selectedTicks.stream().anyMatch(b->b.getTick()==box.tick && b.getPlayer().equals(box.player)))
                     {
                         copiedOutlineBoxes.add(box);
-                        log.info("Copied " + box.playerAnimation.name + " on tick " + box.tick + " by player: " + box.player);
                     }
                 }
             }
@@ -2147,10 +2141,8 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             List<OutlineBox> boxesToAddToHistory = new ArrayList<>();
             for (OutlineBox box : copiedOutlineBoxes)
             {
-                log.info("attempting to paste " + box.playerAnimation.name + " on tick " + box.tick + " by player: " + box.player);
                 int tickOffset = selectedTicks.get(0).getTick() - copiedTick;
                 int playerOffset = playerOffsets.get(selectedTicks.get(0).getPlayer()) - copiedPlayer;
-                log.info("offsets, tick: " + tickOffset + ", player: " + playerOffset);
                 if (playerOffset + playerOffsets.get(box.player) <= playerOffsets.size() - 1 && tickOffset < endTick)
                 {
                     synchronized (outlineBoxes)
@@ -2161,7 +2153,6 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                             if (playerOffsets.get(player).equals(playerOffset + playerOffsets.get(box.player)))
                             {
                                 translatedPlayer = player;
-                                log.info("attack is being moved to " + (box.tick+tickOffset) + " on player: " + translatedPlayer);
                             }
                         }
                         OutlineBox outlineBox = new OutlineBox(box.attack, box.letter, box.color, box.primaryTarget, box.additionalText, box.playerAnimation, box.cd, box.tick+tickOffset, translatedPlayer, RaidRoom.getRoom(this.room));

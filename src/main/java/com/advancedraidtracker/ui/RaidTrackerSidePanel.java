@@ -3,12 +3,9 @@ package com.advancedraidtracker.ui;
 import com.advancedraidtracker.*;
 import com.advancedraidtracker.ui.charts.chartcreator.ChartCreatorFrame;
 import com.advancedraidtracker.utility.UISwingUtility;
-import com.advancedraidtracker.utility.datautility.DataReader;
 import com.advancedraidtracker.utility.datautility.datapoints.Raid;
-import com.advancedraidtracker.utility.datautility.datapoints.tob.Tob;
 import com.advancedraidtracker.utility.wrappers.RaidsArrayWrapper;
 import com.advancedraidtracker.utility.datautility.RaidsManager;
-import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.callback.ClientThread;
@@ -22,18 +19,12 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static com.advancedraidtracker.utility.UISwingUtility.*;
 import static com.advancedraidtracker.utility.datautility.DataReader.getAllRaids;
-import static com.advancedraidtracker.utility.datautility.DataWriter.PLUGIN_DIRECTORY;
+import static com.advancedraidtracker.utility.datautility.DataReader.parsedFiles;
 
 @Slf4j
 public class RaidTrackerSidePanel extends PluginPanel
@@ -74,6 +65,10 @@ public class RaidTrackerSidePanel extends PluginPanel
             RaidTrackerSidePanel.itemManager = itemManager;
             raidsData = getAllRaids();
             raids = new Raids(config, itemManager, clientThread, configManager, spriteManager);
+            if(raidsData != null)
+            {
+                raids.updateFrameData(raidsData);
+            }
             removeAll();
             buildComponents();
             updateUI();
@@ -96,8 +91,6 @@ public class RaidTrackerSidePanel extends PluginPanel
                 al ->
                         new Thread(() ->
                         {
-                            raids = new Raids(config, itemManager, plugin.clientThread, configManager, spriteManager);
-                            raids.createFrame(raidsData);
                             raids.repaint();
                             raids.open();
                         }).start());
@@ -110,13 +103,14 @@ public class RaidTrackerSidePanel extends PluginPanel
                             tableRaidsButton.setEnabled(false);
                             raidCountLabel.setText("Refreshing, Please Wait...");
                             raidsData = getAllRaids();
+                            if(raidsData != null)
+                            {
+                                raids.updateFrameData(raidsData);
+                                raids.repaint();
+                                raids.pack();
+                            }
                             DefaultTableModel model = getTableModel();
                             loadRaidsTable.setModel(model);
-                            if (raids != null)
-                            {
-                                raids.clearData();
-                                raids = null;
-                            }
                             viewRaidsButton.setEnabled(true);
                             tableRaidsButton.setEnabled(true);
                             updateRaidCountLabel();
@@ -125,8 +119,7 @@ public class RaidTrackerSidePanel extends PluginPanel
         tableRaidsButton.addActionListener(
                 al ->
                 {
-                    raids = new Raids(config, itemManager, plugin.clientThread, configManager, spriteManager);
-                    raids.createFrame(getTableData());
+                    raids.updateFrameData(getTableData());
                     raids.repaint();
                     raids.open();
                 }
@@ -251,7 +244,7 @@ public class RaidTrackerSidePanel extends PluginPanel
 
     private void updateRaidCountLabel()
     {
-        raidCountLabel.setText("Raids Found: " + raidsData.size());
+        raidCountLabel.setText("New Raids Found: " + raidsData.size() + " (" + parsedFiles.size() + " Total)");
     }
 
 }

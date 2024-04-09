@@ -23,7 +23,6 @@ import com.advancedraidtracker.utility.datautility.datapoints.inf.Inf;
 import com.advancedraidtracker.utility.datautility.datapoints.toa.Toa;
 import com.advancedraidtracker.utility.datautility.datapoints.tob.Tob;
 import com.advancedraidtracker.utility.wrappers.StringInt;
-import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.ItemID;
@@ -49,7 +48,6 @@ import java.time.format.FormatStyle;
 import java.util.*;
 import java.util.List;
 
-import static com.advancedraidtracker.constants.RaidRoom.*;
 import static com.advancedraidtracker.rooms.inf.InfernoHandler.roomMap;
 import static com.advancedraidtracker.utility.UISwingUtility.*;
 
@@ -97,7 +95,9 @@ public class Raids extends BaseFrame implements UpdateableWindow
     JTable table;
     JPanel container;
     private JPanel filterTableContainer;
-    public List<Raid> currentData;
+    public List<Raid> currentData = new ArrayList<>();
+    public List<Raid> inactiveData = new ArrayList<>();
+
     private JComboBox<String> timeFilterChoice;
     private JComboBox<String> timeFilterOperator;
     private JTextField timeFilterValue;
@@ -131,6 +131,7 @@ public class Raids extends BaseFrame implements UpdateableWindow
         this.configManager = configManager;
         this.spriteManager = spriteManager;
         columnHeaders = new ArrayList<>();
+
         for (String s : columnHeaderNames)
         {
             columnHeaders.add(getCheckBoxMenuItem(s));
@@ -141,6 +142,56 @@ public class Raids extends BaseFrame implements UpdateableWindow
         activeFilters = new ArrayList<>();
         this.config = config;
         this.setPreferredSize(new Dimension(1200, 820));
+
+        aliasText = getThemedTextArea();
+        tabbedPane = getThemedTabbedPane();
+        int index = 0;
+        for (RaidType raidType : RaidType.values())
+        {
+            averageLabels2.add(new LinkedHashMap<>());
+            medianLabels2.add(new LinkedHashMap<>());
+            maxLabels2.add(new LinkedHashMap<>());
+            minLabels2.add(new LinkedHashMap<>());
+
+            for (RaidRoom room : RaidRoom.getRaidRoomsForRaidType(raidType))
+            {
+                String labelName = room.name;
+                if (labelName.contains("-") && labelName.contains("Wave"))
+                {
+                    String[] split = labelName.split(" ");
+                    if (split.length == 2)
+                    {
+                        labelName = split[1];
+                    }
+                }
+                averageLabels2.get(index).put(labelName, getThemedLabel("", SwingConstants.RIGHT));
+                medianLabels2.get(index).put(labelName, getThemedLabel("", SwingConstants.RIGHT));
+                maxLabels2.get(index).put(labelName, getThemedLabel("", SwingConstants.RIGHT));
+                minLabels2.get(index).put(labelName, getThemedLabel("", SwingConstants.RIGHT));
+            }
+            index++;
+        }
+        customColumnComboBox.setEnabled(true);
+        for (Component c : customColumnComboBox.getComponents())
+        {
+            //we are using the combobox for its appearance only, we do not want the real combobox dropdown to pop up when clicked because we are using
+            //a jpopupmenu to display the content of the dropdown. Even if we set it not visible it will flash for a frame before going away.
+            if (c instanceof AbstractButton)
+            {
+                c.setEnabled(false);
+            }
+        }
+        customColumnComboBox.addItem("Challenge Time");
+
+        timeFollowsTab = getThemedCheckBox("Time Follows Tab");
+        timeFollowsTab.setSelected(true);
+
+        JPopupMenu tstMenu = getCustomColumnPopUpMenu();
+
+        table = getThemedTable();
+        table.getTableHeader().setComponentPopupMenu(tstMenu);
+
+        createFrame();
     }
 
     public JComboBox<String> customColumnComboBox = getThemedComboBox();
@@ -1006,62 +1057,25 @@ public class Raids extends BaseFrame implements UpdateableWindow
         }
     }
 
-    public void createFrame(List<Raid> data)
+    private boolean swapped = false;
+
+    public void updateFrameData(List<Raid> data)
     {
-        aliasText = getThemedTextArea();
-        tabbedPane = getThemedTabbedPane();
-        int index = 0;
-        for (RaidType raidType : RaidType.values())
+        currentData.addAll(data);
+        for (int i = 0; i < currentData.size(); i++)
         {
-            averageLabels2.add(new LinkedHashMap<>());
-            medianLabels2.add(new LinkedHashMap<>());
-            maxLabels2.add(new LinkedHashMap<>());
-            minLabels2.add(new LinkedHashMap<>());
-
-            for (RaidRoom room : RaidRoom.getRaidRoomsForRaidType(raidType))
-            {
-                String labelName = room.name;
-                if (labelName.contains("-") && labelName.contains("Wave"))
-                {
-                    String[] split = labelName.split(" ");
-                    if (split.length == 2)
-                    {
-                        labelName = split[1];
-                    }
-                }
-                averageLabels2.get(index).put(labelName, getThemedLabel("", SwingConstants.RIGHT));
-                medianLabels2.get(index).put(labelName, getThemedLabel("", SwingConstants.RIGHT));
-                maxLabels2.get(index).put(labelName, getThemedLabel("", SwingConstants.RIGHT));
-                minLabels2.get(index).put(labelName, getThemedLabel("", SwingConstants.RIGHT));
-            }
-            index++;
+            currentData.get(i).setIndex(i);
         }
-        customColumnComboBox.setEnabled(true);
-        for (Component c : customColumnComboBox.getComponents())
-        {
-            //we are using the combobox for its appearance only, we do not want the real combobox dropdown to pop up when clicked because we are using
-            //a jpopupmenu to display the content of the dropdown. Even if we set it not visible it will flash for a frame before going away.
-            if (c instanceof AbstractButton)
-            {
-                c.setEnabled(false);
-            }
-        }
-        customColumnComboBox.addItem("Challenge Time");
+        updateTable();
+    }
 
-        timeFollowsTab = getThemedCheckBox("Time Follows Tab");
-        timeFollowsTab.setSelected(true);
-
-        for (int i = 0; i < data.size(); i++)
+    public void createFrame()
+    {
+        for (int i = 0; i < currentData.size(); i++)
         {
-            data.get(i).setIndex(i);
+            currentData.get(i).setIndex(i);
         }
 
-        currentData = data;
-
-        JPopupMenu tstMenu = getCustomColumnPopUpMenu();
-
-        table = getThemedTable();
-        table.getTableHeader().setComponentPopupMenu(tstMenu);
         JScrollPane pane = getThemedScrollPane(table);
 
         JPanel tablePanel = getTitledPanel("Raids");
@@ -1110,7 +1124,7 @@ public class Raids extends BaseFrame implements UpdateableWindow
         List<Raid> coxData = new ArrayList<>();
         List<Raid> infData = new ArrayList<>();
         List<Raid> colData = new ArrayList<>();
-        for (Raid raidData : data)
+        for (Raid raidData : currentData)
         {
             if (raidData instanceof Tob)
             {
@@ -1133,7 +1147,7 @@ public class Raids extends BaseFrame implements UpdateableWindow
         List<Integer> toaIconIDs = new ArrayList<>(Arrays.asList(ItemID.NEUTRALISING_POTION, ItemID.BABI, ItemID.SWARM, ItemID.KEPHRITI, ItemID.DRAGON_PICKAXE, ItemID.AKKHITO, ItemID.WATER_CONTAINER, ItemID.ZEBO, ItemID.ELIDINIS_GUARDIAN));
         List<Integer> coxIconIDs = new ArrayList<>(Arrays.asList(ItemID.TEKTINY, ItemID.DRAGON_WARHAMMER, ItemID.KINDLING, ItemID.DYNAMITE, ItemID.VANGUARD, ItemID.LOCKPICK, ItemID.VESPINA, ItemID.PHOENIX_NECKLACE, ItemID.DRAGON_PICKAXE, ItemID.VASA_MINIRIO, ItemID.SALVE_AMULET_E, ItemID.PUPPADILE, ItemID.OLMLET));
 
-        index = 0;
+        int index = 0;
         tobTabSubpanel.addTab("Overall", overallPanels.get(1));
         toaTabSubpanel.addTab("Overall", overallPanels.get(2));
         coxTabSubpanel.addTab("Overall", overallPanels.get(3));
@@ -1261,7 +1275,7 @@ public class Raids extends BaseFrame implements UpdateableWindow
 
         topContainer.add(tabbedPane);
         topContainer.add(additionalFiltersPanel);
-        new Thread(() -> setLabels(data)).start();
+        new Thread(() -> setLabels(currentData)).start();
         filterTableContainer = getThemedPanel();
         filterTable = getThemedTable();
         filterTable.setPreferredSize(new Dimension(380, 135));

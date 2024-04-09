@@ -321,7 +321,6 @@ public class MaidenHandler extends TOBRoomHandler
             case MAIDEN_MATOMENOS_HM:
             case MAIDEN_MATOMENOS_SM:
                 String crabName = identifySpawn(npc);
-                log.info("crab spawn identified: " + crabName);
                 clog.addLine(ADD_NPC_MAPPING, String.valueOf(npc.getIndex()), crabName, getName());
                 plugin.liveFrame.getPanel(getName()).addNPCMapping(npc.getIndex(), crabName);
                 plugin.liveFrame.getPanel(getName()).addMaidenCrab(crabName);

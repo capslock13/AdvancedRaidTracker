@@ -52,14 +52,10 @@ public class ViewTOARaid extends BaseFrame
         bottomContainer.setPreferredSize(new Dimension(800, 400));
         bottomContainer.setLayout(new GridLayout(2, 4));
         JPanel apmekenPanel = getApmekenPanel();
-        JPanel babaPanel = getBabaPanel();
         JPanel scabarasPanel = getScabarasPanel();
-        JPanel kephriPanel = getKephriPanel();
 
         JPanel hetPanel = getHetPanel();
-        JPanel akkhaPanel = getAkkhaPanel();
         JPanel crondisPanel = getCrondisPanel();
-        JPanel zebakPanel = getZebakPanel();
 
         bottomContainer.add(apmekenPanel);
         bottomContainer.add(scabarasPanel);
@@ -73,48 +69,12 @@ public class ViewTOARaid extends BaseFrame
         pack();
     }
 
-    private JPanel getZebakPanel()
-    {
-        JPanel panel = getTitledPanel("Zebak");
-        panel.setLayout(new GridLayout(0, 2));
-        panel.add(getThemedLabel("Jugs Pushed: "));
-        panel.add(getThemedLabel(String.valueOf(toaData.get(DataPoint.ZEBAK_JUGS_PUSHED))));
-
-        panel.add(getThemedLabel("Earthquakes: "));
-        panel.add(getThemedLabel(String.valueOf(toaData.get(DataPoint.ZEBAK_BOULDER_ATTACKS))));
-
-        panel.add(getThemedLabel("WaterFalls: "));
-        panel.add(getThemedLabel(String.valueOf(toaData.get(DataPoint.ZEBAK_WATERFALL_ATTACKS))));
-
-        panel.add(getThemedLabel("Enraged: "));
-        panel.add(getThemedLabel(RoomUtil.time(toaData.get(DataPoint.ZEBAK_ENRAGED_SPLIT))));
-
-        panel.add(getThemedLabel("Room Time: "));
-        panel.add(getThemedLabel(green+RoomUtil.time(toaData.get(DataPoint.ZEBAK_TIME)) + " (" + RoomUtil.time(toaData.get(DataPoint.ZEBAK_ENRAGED_DURATION)) + ")"));
-
-        panel.add(getThemedLabel(""));
-        panel.add(getThemedLabel(""));
-
-        panel.add(getThemedLabel(""));
-        panel.add(getThemedLabel(""));
-
-        panel.add(getThemedLabel(""));
-        panel.add(getThemedLabel(""));
-
-        panel.add(getThemedLabel(""));
-        panel.add(getThemedLabel(""));
-
-        panel.add(getThemedLabel(""));
-        panel.add(getThemedLabel(""));
-
-        return panel;
-    }
-
     private JPanel getCrondisPanel()
     {
         int puzzleTime = toaData.get(DataPoint.CRONDIS_TIME);
         int bossTime = toaData.get(DataPoint.ZEBAK_TIME);
         int pathTime = puzzleTime+bossTime;
+        String bodyColor = getBodyColor("Crondis");
 
         JPanel panel = getTitledPanel(green + "Path of Crondis - " + RoomUtil.time(pathTime));
         panel.setLayout(new GridLayout(0, 2));
@@ -148,48 +108,6 @@ public class ViewTOARaid extends BaseFrame
 
         panel.add(getThemedLabel("Zebak Time: "));
         panel.add(getThemedLabel(green+RoomUtil.time(toaData.get(DataPoint.ZEBAK_TIME)) + " (" + RoomUtil.time(toaData.get(DataPoint.ZEBAK_ENRAGED_DURATION)) + ")"));
-
-        return panel;
-    }
-
-    private JPanel getAkkhaPanel()
-    {
-        JPanel panel = getTitledPanel("Akkha");
-        panel.setLayout(new GridLayout(0, 2));
-
-        panel.add(getThemedLabel("Null Hits: "));
-        panel.add(getThemedLabel(String.valueOf(toaData.get(DataPoint.AKKHA_NULL_HIT))));
-
-        panel.add(getThemedLabel("Shadow1 Start:"));
-        panel.add(getThemedLabel(String.valueOf(RoomUtil.time(toaData.get(DataPoint.AKKHA_P1_DURATION)))));
-
-        panel.add(getThemedLabel("Shadow1 End: "));
-        panel.add(getThemedLabel(RoomUtil.time(toaData.get(DataPoint.AKKHA_P2_SPLIT)) + " (" + RoomUtil.time(toaData.get(DataPoint.AKKHA_SHADOW_1_DURATION)) + ")"));
-
-        panel.add(getThemedLabel("Shadow2 Start: "));
-        panel.add(getThemedLabel(RoomUtil.time(toaData.get(DataPoint.AKKHA_SHADOW_2_SPLIT)) + " (" + RoomUtil.time(toaData.get(DataPoint.AKKHA_P2_DURATION)) + ")"));
-
-        panel.add(getThemedLabel("Shadow2 End: "));
-        panel.add(getThemedLabel(RoomUtil.time(toaData.get(DataPoint.AKKHA_P3_SPLIT)) + " (" + RoomUtil.time(toaData.get(DataPoint.AKKHA_SHADOW_2_DURATION)) + ")"));
-
-        panel.add(getThemedLabel("Shadow3 Start: "));
-        panel.add(getThemedLabel(RoomUtil.time(toaData.get(DataPoint.AKKHA_SHADOW_3_SPLIT)) + " (" + RoomUtil.time(toaData.get(DataPoint.AKKHA_P3_DURATION)) + ")"));
-
-        panel.add(getThemedLabel("Shadow3 End: "));
-        panel.add(getThemedLabel(RoomUtil.time(toaData.get(DataPoint.AKKHA_P4_SPLIT)) + " (" + RoomUtil.time(toaData.get(DataPoint.AKKHA_SHADOW_3_DURATION)) + ")"));
-
-        panel.add(getThemedLabel("Shadow4 Start: "));
-        panel.add(getThemedLabel(RoomUtil.time(toaData.get(DataPoint.AKKHA_SHADOW_4_SPLIT)) + " (" + RoomUtil.time(toaData.get(DataPoint.AKKHA_P4_DURATION)) + ")"));
-
-        panel.add(getThemedLabel("Shadow4 End: "));
-        panel.add(getThemedLabel(RoomUtil.time(toaData.get(DataPoint.AKKHA_P5_SPLIT)) + " (" + RoomUtil.time(toaData.get(DataPoint.AKKHA_SHADOW_4_DURATION)) + ")"));
-
-        panel.add(getThemedLabel("Phase5 End: "));
-        panel.add(getThemedLabel(RoomUtil.time(toaData.get(DataPoint.AKKHA_FINAL_PHASE_SPLIT)) + " (" + RoomUtil.time(toaData.get(DataPoint.AKKHA_P5_DURATION)) + ")"));
-
-        panel.add(getThemedLabel("Room Time: "));
-        panel.add(getThemedLabel(RoomUtil.time(toaData.get(DataPoint.AKKHA_TIME)) + " (" + RoomUtil.time(toaData.get(DataPoint.AKKHA_FINAL_PHASE_DURATION)) + ")"));
-
 
         return panel;
     }
@@ -246,41 +164,6 @@ public class ViewTOARaid extends BaseFrame
         return panel;
     }
 
-    private JPanel getKephriPanel()
-    {
-        JPanel panel = getTitledPanel("Kephri");
-        panel.setLayout(new GridLayout(0, 2));
-
-        panel.add(getThemedLabel("Swarm Heals: "));
-        panel.add(getThemedLabel(toaData.get(DataPoint.KEPHRI_SWARMS_HEALED) + "/" + toaData.get(DataPoint.KEPHRI_SWARMS_TOTAL)));
-
-        panel.add(getThemedLabel("Melee Heals: "));
-        panel.add(getThemedLabel(String.valueOf(toaData.get(DataPoint.KEPHRI_MELEE_SCARAB_HEALS))));
-
-        panel.add(getThemedLabel("Melee Alive: "));
-        panel.add(getThemedLabel(RoomUtil.time(toaData.get(DataPoint.KEPHRI_MELEE_TICKS_ALIVE))));
-
-        panel.add(getThemedLabel("Dung Throws: "));
-        panel.add(getThemedLabel(String.valueOf(toaData.get(DataPoint.KEPHRI_DUNG_THROWN))));
-
-        panel.add(getThemedLabel("Swarm1 Start:"));
-        panel.add(getThemedLabel(String.valueOf(RoomUtil.time(toaData.get(DataPoint.KEPHRI_P1_DURATION)))));
-
-        panel.add(getThemedLabel("Swarm1 End: "));
-        panel.add(getThemedLabel(RoomUtil.time(toaData.get(DataPoint.KEPHRI_P2_SPLIT)) + " (" + RoomUtil.time(toaData.get(DataPoint.KEPHRI_SWARM1_DURATION)) + ")"));
-
-        panel.add(getThemedLabel("Swarm2 Start: "));
-        panel.add(getThemedLabel(RoomUtil.time(toaData.get(DataPoint.KEPHRI_SWARM2_SPLIT)) + " (" + RoomUtil.time(toaData.get(DataPoint.KEPHRI_P2_DURATION)) + ")"));
-
-        panel.add(getThemedLabel("Swarm2 End: "));
-        panel.add(getThemedLabel(RoomUtil.time(toaData.get(DataPoint.KEPHRI_P3_SPLIT)) + " (" + RoomUtil.time(toaData.get(DataPoint.KEPHRI_SWARM2_DURATION)) + ")"));
-
-        panel.add(getThemedLabel("Room Time: "));
-        panel.add(getThemedLabel(green+RoomUtil.time(toaData.get(DataPoint.KEPHRI_TIME)) + " (" + RoomUtil.time(toaData.get(DataPoint.KEPHRI_P3_DURATION)) + ")"));
-
-        return panel;
-    }
-
     private JPanel getScabarasPanel()
     {
         int puzzleTime = toaData.get(DataPoint.SCABARAS_TIME);
@@ -320,49 +203,6 @@ public class ViewTOARaid extends BaseFrame
         panel.add(getThemedLabel("Kephri Time: "));
         panel.add(getThemedLabel(green+RoomUtil.time(toaData.get(DataPoint.KEPHRI_TIME)) + " (" + RoomUtil.time(toaData.get(DataPoint.KEPHRI_P3_DURATION)) + ")"));
         return panel;
-    }
-
-    private JPanel getBabaPanel()
-    {
-        JPanel panel = getTitledPanel("Baba");
-        panel.setLayout(new GridLayout(0, 2));
-        panel.add(getThemedLabel("Thrown: "));
-        panel.add(getThemedLabel(String.valueOf(toaData.get(DataPoint.BABA_BOULDERS_THROWN))));
-
-        panel.add(getThemedLabel("Broken: "));
-        panel.add(getThemedLabel(String.valueOf(toaData.get(DataPoint.BABA_BOULDERS_BROKEN))));
-
-        panel.add(getThemedLabel("Boulder1 Start:"));
-        panel.add(getThemedLabel(String.valueOf(RoomUtil.time(toaData.get(DataPoint.BABA_P1_DURATION)))));
-
-        panel.add(getThemedLabel("Boulder1 End: "));
-        panel.add(getThemedLabel(RoomUtil.time(toaData.get(DataPoint.BABA_P2_SPLIT)) + " (" + RoomUtil.time(toaData.get(DataPoint.BABA_BOULDER_1_DURATION)) + ")"));
-
-        panel.add(getThemedLabel("Boulder2 Start: "));
-        panel.add(getThemedLabel(RoomUtil.time(toaData.get(DataPoint.BABA_BOULDER_2_SPLIT)) + " (" + RoomUtil.time(toaData.get(DataPoint.BABA_P2_DURATION)) + ")"));
-
-        panel.add(getThemedLabel("Boulder2 End: "));
-        panel.add(getThemedLabel(RoomUtil.time(toaData.get(DataPoint.BABA_P3_SPLIT)) + " (" + RoomUtil.time(toaData.get(DataPoint.BABA_BOULDER_2_DURATION)) + ")"));
-
-        panel.add(getThemedLabel("Room Time: "));
-        panel.add(getThemedLabel(green+RoomUtil.time(toaData.get(DataPoint.BABA_TIME)) + " (" + RoomUtil.time(toaData.get(DataPoint.BABA_P3_DURATION)) + ")"));
-
-        panel.add(getThemedLabel(""));
-        panel.add(getThemedLabel(""));
-
-        panel.add(getThemedLabel(""));
-        panel.add(getThemedLabel(""));
-        return panel;
-    }
-
-    private String getBodyColor(String room)
-    {
-        String color = dark;
-        if (toaData.get(room + " Time") > 0)
-        {
-            color = full;
-        }
-        return color;
     }
 
     private JPanel getApmekenPanel()
@@ -408,5 +248,15 @@ public class ViewTOARaid extends BaseFrame
         panel.add(getThemedLabel(green+RoomUtil.time(toaData.get(DataPoint.BABA_TIME)) + " (" + RoomUtil.time(toaData.get(DataPoint.BABA_P3_DURATION)) + ")"));
 
         return panel;
+    }
+
+    private String getBodyColor(String room)
+    {
+        String color = dark;
+        if (toaData.get(room + " Time") > 0)
+        {
+            color = full;
+        }
+        return color;
     }
 }

@@ -4,13 +4,20 @@ import com.advancedraidtracker.constants.LogID;
 import com.advancedraidtracker.constants.ParseInstruction;
 import com.advancedraidtracker.constants.RaidRoom;
 import com.advancedraidtracker.constants.RaidType;
+import com.advancedraidtracker.utility.RoomUtil;
 import com.advancedraidtracker.utility.datautility.DataPoint;
 import com.advancedraidtracker.utility.datautility.datapoints.LogEntry;
 import com.advancedraidtracker.utility.datautility.datapoints.Raid;
 import lombok.extern.slf4j.Slf4j;
+import net.runelite.client.util.Text;
 
 import java.nio.file.Path;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 import static com.advancedraidtracker.constants.ParseType.*;
@@ -169,4 +176,90 @@ public class Toa extends Raid
     {
         return room.isTOA();
     }
+
+
+    @Override
+    public String getSplits()
+    {
+        LocalDate date = getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        DateTimeFormatter formatter =
+                DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(Locale.getDefault());
+        String split = getScaleString() + ", " + formatter.format(date) + "\n";
+
+        int sum = 0;
+        DataPoint currentPoint;
+
+        currentPoint = APMEKEN_TIME;
+        if(get(currentPoint) > 0)
+        {
+            split += currentPoint.room.name + ": " + RoomUtil.time(sum) + " (+" + RoomUtil.time(get(currentPoint)) + ")\n";
+            sum += get(currentPoint);
+        }
+
+        currentPoint = BABA_TIME;
+        if(get(currentPoint) > 0)
+        {
+            split += currentPoint.room.name + ": " + RoomUtil.time(sum) + " (+" + RoomUtil.time(get(currentPoint)) + ")\n";
+            sum += get(currentPoint);
+        }
+
+        currentPoint = SCABARAS_TIME;
+        if(get(currentPoint) > 0)
+        {
+            split += currentPoint.room.name + ": " + RoomUtil.time(sum) + " (+" + RoomUtil.time(get(currentPoint)) + ")\n";
+            sum += get(currentPoint);
+        }
+
+        currentPoint = KEPHRI_TIME;
+        if(get(currentPoint) > 0)
+        {
+            split += currentPoint.room.name + ": " + RoomUtil.time(sum) + " (+" + RoomUtil.time(get(currentPoint)) + ")\n";
+            sum += get(currentPoint);
+        }
+
+        currentPoint = HET_TIME;
+        if(get(currentPoint) > 0)
+        {
+            split += currentPoint.room.name + ": " + RoomUtil.time(sum) + " (+" + RoomUtil.time(get(currentPoint)) + ")\n";
+            sum += get(currentPoint);
+        }
+
+        currentPoint = AKKHA_TIME;
+        if(get(currentPoint) > 0)
+        {
+            split += currentPoint.room.name + ": " + RoomUtil.time(sum) + " (+" + RoomUtil.time(get(currentPoint)) + ")\n";
+            sum += get(currentPoint);
+        }
+
+        currentPoint = CRONDIS_TIME;
+        if(get(currentPoint) > 0)
+        {
+            split += currentPoint.room.name + ": " + RoomUtil.time(sum) + " (+" + RoomUtil.time(get(currentPoint)) + ")\n";
+            sum += get(currentPoint);
+        }
+
+        currentPoint = ZEBAK_TIME;
+        if(get(currentPoint) > 0)
+        {
+            split += currentPoint.room.name + ": " + RoomUtil.time(sum) + " (+" + RoomUtil.time(get(currentPoint)) + ")\n";
+            sum += get(currentPoint);
+        }
+
+        currentPoint = WARDENS_TIME;
+        if(get(currentPoint) > 0)
+        {
+            split += currentPoint.room.name + ": " + RoomUtil.time(sum) + " (+" + RoomUtil.time(get(currentPoint)) + ")\n";
+            sum += get(currentPoint);
+        }
+
+        if (completed)
+        {
+            split += "Duration (Completion): " + RoomUtil.time(getChallengeTime()) + " (+" + RoomUtil.time(get(WARDENS_TIME)) + ")";
+        } else
+        {
+            split += "Duration (" + Text.removeTags(roomStatus) + "): " + RoomUtil.time(getChallengeTime());
+        }
+        return split;
+    }
+
 }

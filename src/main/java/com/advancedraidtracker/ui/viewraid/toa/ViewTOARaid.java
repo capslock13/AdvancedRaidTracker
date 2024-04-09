@@ -1,9 +1,11 @@
 package com.advancedraidtracker.ui.viewraid.toa;
 
 import com.advancedraidtracker.AdvancedRaidTrackerConfig;
+import com.advancedraidtracker.constants.RaidRoom;
 import com.advancedraidtracker.ui.BaseFrame;
 import com.advancedraidtracker.utility.RoomUtil;
 import com.advancedraidtracker.utility.datautility.DataPoint;
+import com.advancedraidtracker.utility.datautility.datapoints.Raid;
 import com.advancedraidtracker.utility.datautility.datapoints.toa.Toa;
 
 import javax.swing.*;
@@ -21,9 +23,18 @@ public class ViewTOARaid extends BaseFrame
     String blue = "<html><font color='#6666DD'>";
     String orange = "<html><font color='#ddaa1c'>";
 
+    String full;
+    String soft;
+    String dark;
+
     public ViewTOARaid(Toa toaData, AdvancedRaidTrackerConfig config)
     {
         this.toaData = toaData;
+
+        Color c = config.fontColor();
+        full = colorStr(c);
+        soft = colorStr(c.darker());
+        dark = colorStr(c.darker().darker());
         setTitle("View Raid");
         setPreferredSize(new Dimension(800, 600));
         setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
@@ -54,11 +65,6 @@ public class ViewTOARaid extends BaseFrame
         bottomContainer.add(scabarasPanel);
         bottomContainer.add(hetPanel);
         bottomContainer.add(crondisPanel);
-
-        bottomContainer.add(babaPanel);
-        bottomContainer.add(kephriPanel);
-        bottomContainer.add(akkhaPanel);
-        bottomContainer.add(zebakPanel);
 
         add(topContainer);
         add(bottomContainer);
@@ -347,6 +353,16 @@ public class ViewTOARaid extends BaseFrame
         panel.add(getThemedLabel(""));
         panel.add(getThemedLabel(""));
         return panel;
+    }
+
+    private String getBodyColor(String room)
+    {
+        String color = dark;
+        if (toaData.get(room + " Time") > 0)
+        {
+            color = full;
+        }
+        return color;
     }
 
     private JPanel getApmekenPanel()

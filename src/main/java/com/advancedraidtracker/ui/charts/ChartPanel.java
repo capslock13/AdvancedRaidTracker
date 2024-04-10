@@ -466,6 +466,14 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         }
     }
 
+    public void release()
+    {
+        img = null;
+        removeMouseListener(this);
+        removeMouseWheelListener(this);
+        removeMouseMotionListener(this);
+    }
+
     public ChartPanel(String room, boolean isLive, AdvancedRaidTrackerConfig config, ClientThread clientThread, ConfigManager configManager, ItemManager itemManager, SpriteManager spriteManager)
     {
         this.itemManager = itemManager;
@@ -484,6 +492,13 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         boxWidth = LEFT_MARGIN + scale * (ticksToShow + 1);
         windowWidth = boxWidth+10;
         windowHeight = 600;
+        if(!isLive)
+        {
+            addMouseListener(this);
+            addMouseMotionListener(this);
+            addMouseWheelListener(this);
+            img = new BufferedImage(windowWidth, windowHeight, BufferedImage.TYPE_INT_ARGB);
+        }
         setFocusable(true);
         requestFocus();
         recalculateSize();

@@ -39,9 +39,7 @@ import javax.swing.text.BadLocationException;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -122,6 +120,7 @@ public class Raids extends BaseFrame implements UpdateableWindow
 
     public String[] rooms = {"Maiden", "Bloat", "Nylocas", "Sotetseg", "Xarpus", "Verzik", "Challenge"};
     private final ConfigManager configManager;
+    private final ChartFrame chartFrame;
 
     private final Set<String> shouldNotBeSortedByTicks = new HashSet<>(Arrays.asList("", "Scale", "Raid", "Status", "Players", "Spectate", "Date"));
 
@@ -131,6 +130,7 @@ public class Raids extends BaseFrame implements UpdateableWindow
         this.itemManager = itemManager;
         this.configManager = configManager;
         this.spriteManager = spriteManager;
+        this.chartFrame = new ChartFrame(config, itemManager, clientThread, configManager, spriteManager);
         columnHeaders = new ArrayList<>();
 
         for (String s : columnHeaderNames)
@@ -1701,8 +1701,8 @@ public class Raids extends BaseFrame implements UpdateableWindow
             }
             if (raidData != null)
             {
-                ChartFrame roomCharts = new ChartFrame(raidData, config, itemManager, clientThread, configManager, spriteManager);
-                roomCharts.open();
+                chartFrame.switchTo(raidData);
+                chartFrame.open();
             }
         });
 

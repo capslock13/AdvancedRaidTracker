@@ -23,7 +23,10 @@ import javax.swing.Timer;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.*;
+import java.util.List;
 
 import static com.advancedraidtracker.utility.UISwingUtility.*;
 
@@ -36,9 +39,43 @@ public class ChartFrame extends BaseFrame
     private Set<String> TOARooms = new LinkedHashSet<>(Arrays.asList("Apmeken", "Baba", "Scabaras", "Kephri", "Het", "Akkha", "Crondis", "Zebak", "Wardens P1", "Wardens P2", "Wardens P3"));
     private Set<String> COLRooms = new LinkedHashSet<>(Arrays.asList("Col Wave 1", "Col Wave 2", "Col Wave 3", "Col Wave 4", "Col Wave 5", "Col Wave 6", "Col Wave 7", "Col Wave 8", "Col Wave 9", "Col Wave 10", "Col Wave 11", "Col Wave 12"));
     private Set<String> InfRooms = new LinkedHashSet<>(Arrays.asList("Inf Wave 1", "Inf Wave 2", "Inf Wave 3", "Inf Wave 4", "Inf Wave 5", "Inf Wave 6", "Inf Wave 7", "Inf Wave 8", "Inf Wave 9", "Inf Wave 10", "Inf Wave 11", "Inf Wave 12"));
+    AdvancedRaidTrackerConfig config;
+    List<ChartPanel> panels = new ArrayList<>();
+    ItemManager itemManager;
+    ClientThread clientThread;
+    ConfigManager configManager;
+    SpriteManager spriteManager;
 
-    public ChartFrame(Raid roomData, AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager, SpriteManager spriteManager)
+    public ChartFrame(AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager, SpriteManager spriteManager)
     {
+        this.config = config;
+        this.itemManager = itemManager;
+        this.clientThread = clientThread;
+        this.configManager = configManager;
+        this.spriteManager = spriteManager;
+        addWindowListener(new WindowAdapter()
+        {
+            @Override
+            public void windowClosed(WindowEvent e)
+            {
+                releasePanels();
+            }
+        });
+    }
+
+    private void releasePanels()
+    {
+        for(ChartPanel panel : panels)
+        {
+            panel.release();
+        }
+        panels.clear();
+    }
+
+    public void switchTo(Raid roomData)
+    {
+        getContentPane().removeAll();
+        releasePanels();
         ChartData chartData = DataReader.getChartData(roomData.getFilepath(), itemManager);
 
         JTabbedPane basepane = getThemedTabbedPane();
@@ -121,6 +158,7 @@ public class ChartFrame extends BaseFrame
 
             chartPanel.redraw();
             basepane.addChangeListener(cl -> chartPanel.redraw());
+            panels.add(chartPanel);
             chart.add(chartPanel);
             tab.add(getThemedScrollPane(chart));
             basepane.add(bossName, tab);

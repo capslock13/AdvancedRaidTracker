@@ -261,7 +261,7 @@ public interface AdvancedRaidTrackerConfig extends Config
     )
     default boolean useUnkitted()
     {
-        return false;
+        return true;
     }
 
     @ConfigItem(

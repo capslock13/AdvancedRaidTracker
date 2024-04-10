@@ -3,7 +3,7 @@ package com.advancedraidtracker.rooms.col;
 import com.advancedraidtracker.AdvancedRaidTrackerConfig;
 import com.advancedraidtracker.AdvancedRaidTrackerPlugin;
 import com.advancedraidtracker.constants.LogID;
-import com.advancedraidtracker.rooms.tob.RoomHandler;
+import com.advancedraidtracker.rooms.RoomHandler;
 import com.advancedraidtracker.ui.charts.LiveChart;
 import com.advancedraidtracker.utility.Point;
 import com.advancedraidtracker.utility.RoomUtil;
@@ -201,6 +201,7 @@ public class ColosseumHandler extends RoomHandler
             NPC npc = (NPC) hitsplatApplied.getActor();
             clog.addLine(LogID.COLOSSEUM_NPC_HEALED, String.valueOf(hitsplatApplied.getHitsplat().getAmount()), String.valueOf(npc.getId()), npc.getName(), String.valueOf((client.getTickCount() - roomStartTick)), getName());
         }
+        super.updateHitsplatApplied(hitsplatApplied);
     }
 
     public String getInvos()
@@ -305,6 +306,7 @@ public class ColosseumHandler extends RoomHandler
         if (message.getMessage().contains("Wave duration: "))
         {
             active = false;
+            log.info("setting inactive...");
             String[] messageSplit = message.getMessage().split(" ");
             if (messageSplit.length == 6)
             {

@@ -1,6 +1,7 @@
 package com.advancedraidtracker;
 
 import com.advancedraidtracker.constants.*;
+import com.advancedraidtracker.rooms.RoomHandler;
 import com.advancedraidtracker.rooms.col.ColosseumHandler;
 import com.advancedraidtracker.rooms.cox.*;
 import com.advancedraidtracker.rooms.inf.InfernoHandler;
@@ -1620,10 +1621,6 @@ public class AdvancedRaidTrackerPlugin extends Plugin
         if (event.getActor() instanceof Player)
         {
             Player p = (Player) event.getActor();
-            if(event.getActor().getAnimation() == 10923 || event.getActor().getAnimation() == 10914)
-            {
-                log.info(event.getActor().getAnimation() + " on tick " + client.getTickCount());
-            }
             if (event.getActor().getAnimation() == 6294 || event.getActor().getAnimation() == 722 || event.getActor().getAnimation() == 6299 || event.getActor().getAnimation() == -1)
             {
                 if (activelyPiping.containsKey(p))
@@ -1920,7 +1917,6 @@ public class AdvancedRaidTrackerPlugin extends Plugin
     @Subscribe
     public void onHitsplatApplied(HitsplatApplied event)
     {
-        log.info(event.getHitsplat().getAmount() + " applied on tick: " + client.getTickCount());
         if (inTheatre)
         {
             if (event.getActor() instanceof Player && inTheatre)

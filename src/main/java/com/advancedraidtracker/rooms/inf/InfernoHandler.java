@@ -3,7 +3,7 @@ package com.advancedraidtracker.rooms.inf;
 import com.advancedraidtracker.AdvancedRaidTrackerConfig;
 import com.advancedraidtracker.AdvancedRaidTrackerPlugin;
 import com.advancedraidtracker.constants.LogID;
-import com.advancedraidtracker.rooms.tob.RoomHandler;
+import com.advancedraidtracker.rooms.RoomHandler;
 import com.advancedraidtracker.utility.RoomUtil;
 import com.advancedraidtracker.utility.datautility.DataWriter;
 import lombok.extern.slf4j.Slf4j;

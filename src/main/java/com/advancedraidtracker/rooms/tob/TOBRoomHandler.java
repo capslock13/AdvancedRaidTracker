@@ -2,6 +2,7 @@ package com.advancedraidtracker.rooms.tob;
 
 import com.advancedraidtracker.AdvancedRaidTrackerConfig;
 import com.advancedraidtracker.AdvancedRaidTrackerPlugin;
+import com.advancedraidtracker.rooms.RoomHandler;
 import com.advancedraidtracker.utility.datautility.DataWriter;
 import net.runelite.api.Client;
 

@@ -1,4 +1,4 @@
-package com.advancedraidtracker.rooms.tob;
+package com.advancedraidtracker.rooms;
 
 
 import com.advancedraidtracker.AdvancedRaidTrackerConfig;

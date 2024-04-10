@@ -214,7 +214,10 @@ public class Raids extends BaseFrame implements UpdateableWindow
     {
         for(MouseListener listener : table.getTableHeader().getMouseListeners())
         {
-            table.getTableHeader().removeMouseListener(listener);
+            if(listener instanceof DynamicTableHeaderRenderer.MouseEventReposter)
+            {
+                table.getTableHeader().removeMouseListener(listener);
+            }
         }
         int completions = 0;
         int attempts = 0;

@@ -484,13 +484,9 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         boxWidth = LEFT_MARGIN + scale * (ticksToShow + 1);
         windowWidth = boxWidth+10;
         windowHeight = 600;
-        img = new BufferedImage(windowWidth, windowHeight, BufferedImage.TYPE_INT_ARGB);
         setFocusable(true);
         requestFocus();
         recalculateSize();
-        addMouseListener(this);
-        addMouseMotionListener(this);
-        addMouseWheelListener(this);
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(e ->
         {
             synchronized (ChartPanel.class)

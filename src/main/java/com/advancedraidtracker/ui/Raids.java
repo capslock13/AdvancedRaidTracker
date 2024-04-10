@@ -41,6 +41,7 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -211,6 +212,10 @@ public class Raids extends BaseFrame implements UpdateableWindow
 
     public void updateTable()
     {
+        for(MouseListener listener : table.getTableHeader().getMouseListeners())
+        {
+            table.getTableHeader().removeMouseListener(listener);
+        }
         int completions = 0;
         int attempts = 0;
         int tobAttempts = 0;

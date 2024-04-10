@@ -102,9 +102,15 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         if(!isActive)
         {
             img = null;
+            removeMouseListener(this);
+            removeMouseMotionListener(this);
+            removeMouseWheelListener(this);
         }
         else
         {
+            addMouseListener(this);
+            addMouseMotionListener(this);
+            addMouseWheelListener(this);
             createImage();
         }
     }

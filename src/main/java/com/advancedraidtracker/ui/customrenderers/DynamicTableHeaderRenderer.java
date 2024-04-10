@@ -66,7 +66,7 @@ public class DynamicTableHeaderRenderer implements TableCellRenderer
                 this.editor.setForeground(header.getForeground());
                 this.editor.setBackground(header.getBackground());
                 this.editor.setFont(header.getFont());
-                reporter = new MouseEventReposter(header, col, this.editor, popupMenu, window);
+                reporter = new MouseEventReposter(header, col, this.editor, popupMenu);
                 header.addMouseListener(reporter);
             }
         }
@@ -87,7 +87,7 @@ public class DynamicTableHeaderRenderer implements TableCellRenderer
         private JPopupMenu menu;
 
 
-        public MouseEventReposter(JTableHeader header, int column, Component editor, JPopupMenu menu, Raids window)
+        public MouseEventReposter(JTableHeader header, int column, Component editor, JPopupMenu menu)
         {
             this.header = header;
             this.column = column;

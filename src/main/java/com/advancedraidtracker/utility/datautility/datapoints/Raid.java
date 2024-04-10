@@ -15,6 +15,7 @@ import java.util.*;
 
 import static com.advancedraidtracker.constants.RaidRoom.*;
 import static com.advancedraidtracker.utility.datautility.DataPoint.*;
+import static com.advancedraidtracker.utility.datautility.datapoints.RoomDataManager.getDataPointStringAsShort;
 
 @Slf4j
 public abstract class Raid
@@ -87,7 +88,7 @@ public abstract class Raid
     /**
      * Parsers for specific rooms
      */
-    private final List<LogEntry> raidData;
+    private List<LogEntry> raidData;
 
     protected RoomDataManager data = new RoomDataManager();
 
@@ -169,11 +170,11 @@ public abstract class Raid
                 if (point.playerSpecific)
                 {
                     RoomDataManager rdm = data;
-                    if (rdm.playerSpecificMap.containsKey(point.name))
+                    if (rdm.playerSpecificMap.containsKey(getDataPointStringAsShort(point.name)))
                     {
-                        for (String player : rdm.playerSpecificMap.get(point.name).keySet())
+                        for (Short player : rdm.playerSpecificMap.get(getDataPointStringAsShort(point.name)).keySet())
                         {
-                            sum += rdm.playerSpecificMap.get(point.name).get(player);
+                            sum += rdm.playerSpecificMap.get(getDataPointStringAsShort(point.name)).get(player);
                         }
                     }
                 } else
@@ -188,11 +189,11 @@ public abstract class Raid
             {
                 int sum = 0;
                 RoomDataManager rdm = data;
-                if (rdm.playerSpecificMap.containsKey(point.name))
+                if (rdm.playerSpecificMap.containsKey(getDataPointStringAsShort(point.name)))
                 {
-                    for (String player : rdm.playerSpecificMap.get(point.name).keySet())
+                    for (Short player : rdm.playerSpecificMap.get(getDataPointStringAsShort(point.name)).keySet())
                     {
-                        sum += rdm.playerSpecificMap.get(point.name).get(player);
+                        sum += rdm.playerSpecificMap.get(getDataPointStringAsShort(point.name)).get(player);
                     }
                 }
                 return sum;
@@ -309,6 +310,11 @@ public abstract class Raid
     }
 
     private boolean verzikSet = false; //idk
+
+    public void clearRawData()
+    {
+        raidData = null;
+    }
 
     public void parseAllEntries()
     {

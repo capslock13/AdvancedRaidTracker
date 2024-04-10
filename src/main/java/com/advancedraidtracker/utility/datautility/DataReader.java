@@ -79,6 +79,10 @@ public class DataReader //todo move any methods that read files to here. I belie
                 }
             }
         }
+        if(ret != null)
+        {
+            ret.clearRawData();
+        }
         return ret;
     }
 

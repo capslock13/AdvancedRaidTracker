@@ -67,7 +67,7 @@ public class DataPointMenu
                 continue;
             }
             JMenu menu = createMenu(raidType.name);
-
+            Map<String, JMenu> infernoSubMenus = new LinkedHashMap<>();
             Map<RaidRoom, JMenu> roomSubMenus = new LinkedHashMap<>();
             for (RaidRoom room : RaidRoom.getRaidRoomsForRaidType(raidType))
             {

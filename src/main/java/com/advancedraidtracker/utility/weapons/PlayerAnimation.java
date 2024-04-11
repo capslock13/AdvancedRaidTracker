@@ -114,12 +114,13 @@ public enum PlayerAnimation
     BLUE_MOON_SPEAR_SPEC("Blue Moon spear Spec", "BMS", new Color(40, 100, 100), 5, new int[]{1710}, new int[]{}, new int[]{ItemID.BLUE_MOON_SPEAR}, new int[]{}),
     ELDER_MAUL("Elder Maul", "EM", new Color(100, 60, 60), 6, new int[]{7516}, new int[]{}, new int[]{ItemID.ELDER_MAUL, ItemID.ELDER_MAUL_OR}, new int[]{}),
     ABYSSAL_DAGGER("Abyssal Dagger", "ad", new Color(20, 20, 20), 4, new int[]{3297, 3294}, new int[]{}, new int[]{ItemID.ABYSSAL_DAGGER, ItemID.ABYSSAL_DAGGER_P, ItemID.ABYSSAL_DAGGER_P_13269, ItemID.ABYSSAL_DAGGER_P_13271}, new int[]{}),
-
     ABYSSAL_DAGGER_SPEC("Abyssal Dagger Spec", "AD", new Color(20, 20, 20), 4, new int[]{3300}, new int[]{}, new int[]{ItemID.ABYSSAL_DAGGER, ItemID.ABYSSAL_DAGGER_P, ItemID.ABYSSAL_DAGGER_P_13269, ItemID.ABYSSAL_DAGGER_P_13271}, new int[]{}),
     KODAI_BOP("Kodai Bop", "f", new Color(50, 50, 170), 4, new int[]{414}, new int[]{}, new int[]{ItemID.KODAI_WAND}, new int[]{}),
     PICKAXE("Pickaxe", "PX", new Color(150, 50, 120), 5, new int[]{400, 401}, new int[]{}, new int[]{ItemID.CRYSTAL_PICKAXE, ItemID.DRAGON_PICKAXE, ItemID.DRAGON_PICKAXE_OR, ItemID.RUNE_PICKAXE, ItemID.ADAMANT_PICKAXE, ItemID.MITHRIL_PICKAXE, ItemID.BLACK_PICKAXE, ItemID.STEEL_PICKAXE, ItemID.IRON_PICKAXE, ItemID.BRONZE_PICKAXE}, new int[]{}),
-
+    BONE_DAGGER_POKE("Bone Dagger Poke", "bd", new Color(150, 20, 20), 4, new int[]{386, 390}, new int[]{}, new int[]{ItemID.BONE_DAGGER, ItemID.BONE_DAGGER_P, ItemID.BONE_DAGGER_P_8876, ItemID.BONE_DAGGER_P_8878}, new int []{}),
+    BONE_DAGGER_SPEC("Bone Dagger Spec", "BD", new Color(150, 20, 20), 4, new int[]{4198}, new int[]{}, new int[]{ItemID.BONE_DAGGER, ItemID.BONE_DAGGER_P, ItemID.BONE_DAGGER_P_8876, ItemID.BONE_DAGGER_P_8878}, new int[]{}),
     UNARMED("Unarmed", "???", new Color(0, 0, 0), 4, new int[]{422, 423}, new int[]{}, new int[]{-1}, new int[]{}),
+
 
 
     ;

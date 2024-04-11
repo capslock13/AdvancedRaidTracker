@@ -1,9 +1,7 @@
 package com.advancedraidtracker.utility.datautility.datapoints;
 
 import com.advancedraidtracker.constants.*;
-import com.advancedraidtracker.utility.RoomUtil;
 import com.advancedraidtracker.utility.datautility.*;
-import com.advancedraidtracker.utility.datautility.datapoints.col.Colo;
 import com.google.common.collect.ImmutableMap;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,8 +12,9 @@ import java.nio.file.Path;
 import java.util.*;
 
 import static com.advancedraidtracker.constants.RaidRoom.*;
+import static com.advancedraidtracker.constants.RaidType.TOB;
 import static com.advancedraidtracker.utility.datautility.DataPoint.*;
-import static com.advancedraidtracker.utility.datautility.datapoints.RoomDataManager.getDataPointStringAsShort;
+import static com.advancedraidtracker.utility.datautility.datapoints.RoomDataManager.getDataPointStringAsInteger;
 
 @Slf4j
 public abstract class Raid
@@ -99,6 +98,7 @@ public abstract class Raid
     protected String green = "<html><font color='#44AF33'>";
     protected String orange = "<html><font color='#FF7733'>";
     protected String yellow = "<html><font color='#FFFF33'>";
+    protected List<String> roomStarts = new ArrayList<>();
 
     protected boolean wasReset = false; //todo idk where these belong tbh
     protected String lastRoom = "";
@@ -170,11 +170,11 @@ public abstract class Raid
                 if (point.playerSpecific)
                 {
                     RoomDataManager rdm = data;
-                    if (rdm.playerSpecificMap.containsKey(getDataPointStringAsShort(point.name)))
+                    if (rdm.playerSpecificMap.containsKey(getDataPointStringAsInteger(point.name)))
                     {
-                        for (Short player : rdm.playerSpecificMap.get(getDataPointStringAsShort(point.name)).keySet())
+                        for (Integer player : rdm.playerSpecificMap.get(getDataPointStringAsInteger(point.name)).keySet())
                         {
-                            sum += rdm.playerSpecificMap.get(getDataPointStringAsShort(point.name)).get(player);
+                            sum += rdm.playerSpecificMap.get(getDataPointStringAsInteger(point.name)).get(player);
                         }
                     }
                 } else
@@ -189,11 +189,11 @@ public abstract class Raid
             {
                 int sum = 0;
                 RoomDataManager rdm = data;
-                if (rdm.playerSpecificMap.containsKey(getDataPointStringAsShort(point.name)))
+                if (rdm.playerSpecificMap.containsKey(getDataPointStringAsInteger(point.name)))
                 {
-                    for (Short player : rdm.playerSpecificMap.get(getDataPointStringAsShort(point.name)).keySet())
+                    for (Integer player : rdm.playerSpecificMap.get(getDataPointStringAsInteger(point.name)).keySet())
                     {
-                        sum += rdm.playerSpecificMap.get(getDataPointStringAsShort(point.name)).get(player);
+                        sum += rdm.playerSpecificMap.get(getDataPointStringAsInteger(point.name)).get(player);
                     }
                 }
                 return sum;
@@ -264,7 +264,11 @@ public abstract class Raid
 
     public boolean getTimeAccurate(DataPoint point)
     {
-        return get(point) > -1;
+        if(point.getRaidType().equals(TOB))
+        {
+            return this.getRaidType() == TOB && getRoomAccurate(point.room);
+        }
+        return get(point) > -1 && point.getRaidType() == getRaidType();
         //return getRoomAccurate(point.room);
     }
 
@@ -416,6 +420,7 @@ public abstract class Raid
                         break;
                     case ROOM_START_FLAG:
                         currentRoom = entry.logEntry.getRoom().name;
+                        roomStarts.add(currentRoom);
                         wasReset = false;
                         break;
                     case AGNOSTIC:
@@ -466,9 +471,21 @@ public abstract class Raid
         return players.size();
     }
 
-    @Setter
     @Getter
     public boolean favorite = false;
+
+    public void setFavorite(boolean state)
+    {
+        if(state)
+        {
+            DataReader.addFavorite(getDate().getTime());
+        }
+        else
+        {
+            DataReader.removeFavorite(getDate().getTime());
+        }
+        favorite = state;
+    }
 
     /**
      * @return Scale String in non int form

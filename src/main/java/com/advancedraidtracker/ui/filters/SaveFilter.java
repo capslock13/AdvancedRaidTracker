@@ -14,7 +14,7 @@ public class SaveFilter extends BaseFrame
 {
     private final JTextField field;
 
-    public SaveFilter(ArrayList<ImplicitFilter> filters, ArrayList<String> quickFiltersState)
+    public SaveFilter(ArrayList<ImplicitFilter> filters, java.util.List<String> quickFiltersState)
     {
         getContentPane().removeAll();
         setTitle("Save Filter");
@@ -53,7 +53,7 @@ public class SaveFilter extends BaseFrame
         return saveButton;
     }
 
-    private JButton getSaveButton(ArrayList<ImplicitFilter> filters, ArrayList<String> quickFiltersState)
+    private JButton getSaveButton(ArrayList<ImplicitFilter> filters, java.util.List<String> quickFiltersState)
     {
         JButton saveButton = getThemedButton("Save with quick filters");
         saveButton.addActionListener(e ->

@@ -100,6 +100,19 @@ public class Tob extends Raid
     }
 
     @Override
+    public boolean getRoomAccurate(RaidRoom room)
+    {
+        if(room == MAIDEN)
+        {
+            return roomStarts.contains("Maiden") && super.getRoomAccurate(room);
+        }
+        else
+        {
+            return super.getRoomAccurate(room);
+        }
+    }
+
+    @Override
     public boolean isAccurate()
     {
         return (getRoomAccurate(MAIDEN) && getRoomAccurate(BLOAT) && getRoomAccurate(NYLOCAS) && getRoomAccurate(SOTETSEG) && getRoomAccurate(XARPUS) && getRoomAccurate(VERZIK));

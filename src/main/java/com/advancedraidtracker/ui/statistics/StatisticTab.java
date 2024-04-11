@@ -23,9 +23,7 @@ public class StatisticTab extends JPanel
         setOpaque(true);
         this.room = room;
         this.data = data;
-        JPanel panel = getThemedPanel();
         panels = new ArrayList<>();
-        panel.setLayout(new GridLayout(2, 3));
         panels.add(new StatisticRoomPanel(data, StatisticRoomPanel.stat.AVERAGE, room, config));
         panels.add(new StatisticRoomPanel(data, StatisticRoomPanel.stat.MEDIAN, room, config));
         panels.add(new StatisticRoomPanel(data, StatisticRoomPanel.stat.MODE, room, config));

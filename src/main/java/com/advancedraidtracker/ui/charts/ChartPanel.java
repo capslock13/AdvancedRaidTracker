@@ -25,11 +25,16 @@ import java.awt.event.*;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.*;
 import java.util.List;
 
 import static com.advancedraidtracker.ui.charts.ChartConstants.*;
+import static com.advancedraidtracker.ui.charts.ChartIO.loadChartFromFile;
+import static com.advancedraidtracker.ui.charts.ChartIO.saveChart;
 import static com.advancedraidtracker.utility.UISwingUtility.*;
+import static com.advancedraidtracker.utility.datautility.DataWriter.PLUGIN_DIRECTORY;
+import static com.advancedraidtracker.utility.wrappers.OutlineBox.getIcon;
 
 @Slf4j
 public class ChartPanel extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener
@@ -62,7 +67,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     boolean checkBox2Hovered = false;
     boolean checkBox3Hovered = false;
 
-    int startTick;
+    public int startTick;
     public int endTick;
 
     List<String> attackers = new ArrayList<>();
@@ -75,14 +80,15 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     public boolean finished = false;
     private boolean enforceCD = false;
     private final boolean live;
-    private final ArrayList<Integer> autos = new ArrayList<>();
+    private final List<Integer> autos = new ArrayList<>();
     private Map<Integer, String> NPCMap = new HashMap<>();
-    private final ArrayList<DawnSpec> dawnSpecs = new ArrayList<>();
-    private final ArrayList<ThrallOutlineBox> thrallOutlineBoxes = new ArrayList<>();
-    private final ArrayList<OutlineBox> outlineBoxes = new ArrayList<>();
+    private final List<DawnSpec> dawnSpecs = new ArrayList<>();
+    private final List<ThrallOutlineBox> thrallOutlineBoxes = new ArrayList<>();
+    private final List<OutlineBox> outlineBoxes = new ArrayList<>();
     private final Map<Integer, String> specific = new HashMap<>();
+    @Getter
     private final Map<Integer, String> lines = new HashMap<>();
-    private final ArrayList<String> crabDescriptions = new ArrayList<>();
+    private final List<String> crabDescriptions = new ArrayList<>();
 
     @Setter
     private Map<Integer, Integer> roomHP = new HashMap<>();
@@ -256,7 +262,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     public void setRoomFinished(int tick)
     {
         finished = true;
-        if (tick - endTick < 10)
+        if (tick - endTick < 10) //todo what is the purpose?
         {
             endTick = tick;
         }
@@ -387,7 +393,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         }
     }
 
-    public void setTick(int tick)
+    public void setEndTick(int tick)
     {
         endTick = tick;
         baseEndTick = tick;
@@ -481,6 +487,9 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         this.configManager = configManager;
         this.config = config;
         this.clientThread = clientThread;
+        OutlineBox.spriteManager = spriteManager;
+        OutlineBox.itemManager = itemManager;
+        OutlineBox.clientThread = clientThread;
         setBackground(config.primaryDark());
         setOpaque(true);
         scale = 26;
@@ -582,7 +591,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                                     List<OutlineBox> createdBoxes = new ArrayList<>();
                                     for(ChartTick tick : selectedTicks)
                                     {
-                                        int weapon = 0;
+                                        /*int weapon = 0;
                                         if (selectedPrimary.weaponIDs.length > 0)
                                         {
                                             weapon = selectedPrimary.weaponIDs[0];
@@ -599,8 +608,8 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                                                 createdAttack.setIcons(itemManager, spriteManager);
                                             });
                                             clientThread.invoke(createdAttack::setWornNames);
-                                        }
-                                        OutlineBox createdBox = new OutlineBox(createdAttack, selectedPrimary.shorthand, selectedPrimary.color, true, "", selectedPrimary, selectedPrimary.attackTicks, tick.getTick(), tick.getPlayer(), RaidRoom.getRoom(room));
+                                        }*/ //todo icon
+                                        OutlineBox createdBox = new OutlineBox(selectedPrimary.shorthand, selectedPrimary.color, true, "", selectedPrimary, selectedPrimary.attackTicks, tick.getTick(), tick.getPlayer(), RaidRoom.getRoom(room), selectedPrimary.weaponIDs[0]);
                                         createdBoxes.add(createdBox);
                                         addAttack(createdBox);
                                     }
@@ -623,7 +632,29 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                                     redraw();
                                 }
                                 break;
-
+                            case KeyEvent.VK_S:
+                                if(isCtrlPressed())
+                                {
+                                    saveChart(this);
+                                    log.info("saving");
+                                }
+                                break;
+                            case KeyEvent.VK_O:
+                                if(isCtrlPressed())
+                                {
+                                    JFileChooser fileChooser = new JFileChooser();
+                                    fileChooser.setCurrentDirectory(new File(PLUGIN_DIRECTORY + "/misc-dir/"));
+                                    if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
+                                    {
+                                        File file = fileChooser.getSelectedFile();
+                                        ChartIOData data = loadChartFromFile(file.getAbsolutePath());
+                                        if(data != null)
+                                        {
+                                            applyFromSave(data);
+                                        }
+                                    }
+                                }
+                                break;
                         }
                         break;
                     case KeyEvent.KEY_TYPED:
@@ -631,6 +662,36 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                 return false;
             }
         });
+    }
+
+    public void applyFromSave(ChartIOData data)
+    {
+        setStartTick(data.getStartTick());
+        setEndTick(data.getEndTick());
+        room = data.getRoomName();
+        roomSpecificText = data.getRoomSpecificText();
+
+        autos.clear();
+        addAutos(data.getAutos());
+
+        specific.clear();
+        addRoomSpecificDatum(data.getRoomSpecificTextMapping());
+
+        lines.clear();
+        addLines(data.getLines());
+
+        outlineBoxes.clear();
+        addAttacks(data.getOutlineBoxes());
+
+        recalculateSize();
+    }
+
+    public void addAttacks(List<OutlineBox> outlineBoxes)
+    {
+        for(OutlineBox box : outlineBoxes)
+        {
+            addAttack(box);
+        }
     }
 
     private List<OutlineBox> getSelectedOutlineBoxes()
@@ -1034,7 +1095,12 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                                         g.setColor(config.attackBoxColor());
                                     }
                                     fillBoxStyleAccordingToConfig(g, xOffset + 2, yOffset + 2, scale - 3, scale - 3, 5, 5);
-                                    BufferedImage scaled = getScaledImage(box.attack.img, (scale - 2), (scale - 2));
+                                    BufferedImage icon = getIcon(box.playerAnimation, box.weapon);
+                                    if(icon == null)
+                                    {
+                                        continue;
+                                    }
+                                    BufferedImage scaled = getScaledImage(icon, (scale - 2), (scale - 2));
                                     if (box.playerAnimation.equals(PlayerAnimation.HAMMER_BOP) || box.playerAnimation.equals(PlayerAnimation.BGS_WHACK) || box.playerAnimation.equals(PlayerAnimation.UNCHARGED_SCYTHE) || box.playerAnimation.equals(PlayerAnimation.KODAI_BOP) || box.playerAnimation.equals(PlayerAnimation.CHALLY_WHACK) || box.playerAnimation.equals(PlayerAnimation.ZCB_AUTO))
                                     {
                                         g.drawImage(createFlipped(createDropShadow(scaled)), xOffset + 3, yOffset + 3, null);
@@ -1903,14 +1969,6 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     {
         if (clientThread != null)
         {
-            if (config.useUnkitted())
-            {
-                attack.useUnkitted();
-            }
-            clientThread.invoke(() ->
-            {
-                attack.setIcons(itemManager, spriteManager);
-            });
             clientThread.invoke(attack::setWornNames);
         }
         if (playerAnimation.equals(PlayerAnimation.NOT_SET))
@@ -1951,7 +2009,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             }
             synchronized (outlineBoxes)
             {
-                OutlineBox outlineBox = new OutlineBox(attack, playerAnimation.shorthand, playerAnimation.color, isTarget, additionalText, playerAnimation, playerAnimation.attackTicks, attack.tick, attack.player, RaidRoom.getRoom(this.room));
+                OutlineBox outlineBox = new OutlineBox(playerAnimation.shorthand, playerAnimation.color, isTarget, additionalText, playerAnimation, playerAnimation.attackTicks, attack.tick, attack.player, RaidRoom.getRoom(this.room), attack.weapon);
                 outlineBoxes.add(outlineBox);
                 if(recordAttack)
                 {
@@ -2120,7 +2178,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         }
     }
 
-    private List<OutlineBox> copiedOutlineBoxes = new ArrayList<>();
+    private final List<OutlineBox> copiedOutlineBoxes = new ArrayList<>();
     int copiedTick = 0;
     int copiedPlayer = 0;
 
@@ -2172,7 +2230,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                                 translatedPlayer = player;
                             }
                         }
-                        OutlineBox outlineBox = new OutlineBox(box.attack, box.letter, box.color, box.primaryTarget, box.additionalText, box.playerAnimation, box.cd, box.tick+tickOffset, translatedPlayer, RaidRoom.getRoom(this.room));
+                        OutlineBox outlineBox = new OutlineBox(box.letter, box.color, box.primaryTarget, box.additionalText, box.playerAnimation, box.cd, box.tick+tickOffset, translatedPlayer, RaidRoom.getRoom(this.room), box.weapon);
                         addAttack(outlineBox);
                         boxesToAddToHistory.add(outlineBox);
                     }
@@ -2282,5 +2340,10 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     {
         enforceCD = bool;
         redraw();
+    }
+
+    public ChartIOData getForSerialization()
+    {
+        return new ChartIOData(startTick, endTick, room, roomSpecificText, autos, specific, lines, outlineBoxes);
     }
 }

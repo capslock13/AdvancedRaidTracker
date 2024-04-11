@@ -14,7 +14,7 @@ import com.advancedraidtracker.utility.wrappers.PlayerDidAttack;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.game.ItemManager;
 
-import java.io.File;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -41,6 +41,7 @@ public class DataReader //todo move any methods that read files to here. I belie
         List<String> raidData = getRaidStrings(path);
         List<LogEntry> currentRaid = new ArrayList<>();
         Raid ret = null;
+        boolean started = false;
         for (String line : raidData)
         {
             //todo find a better way to handle legacy/mismatched values. 8 16 26 46 arent used anymore 998 999 were for testing only. 975 976 were bloat testing
@@ -51,6 +52,10 @@ public class DataReader //todo move any methods that read files to here. I belie
             //legacy or otherwise ignored values to be excluded while testing parser
             {
                 continue; //todo remove (see above)
+            }
+            if(split[3].equals("0"))
+            {
+                currentRaid.clear();
             }
             LogEntry entry = new LogEntry(split); //todo going off of the above comments, this constructor needs to gracefully handle bad args so that
             //todo the check can be passed to the isSimple() line below for chart data
@@ -228,4 +233,147 @@ public class DataReader //todo move any methods that read files to here. I belie
         return new ArrayList<>();
     }
 
+    public static List<Long> getFavorites()
+    {
+        List<Long> favorites = new ArrayList<>();
+        String filePath = PLUGIN_DIRECTORY + "misc-dir/favorites.presets";
+        Path path = Paths.get(filePath);
+        if (Files.exists(path))
+        {
+            try (BufferedReader reader = new BufferedReader(new FileReader(filePath)))
+            {
+                String line;
+                while ((line = reader.readLine()) != null)
+                {
+                    try
+                    {
+                        long favorite = Long.parseLong(line.trim());
+                        favorites.add(favorite);
+                    }
+                    catch (Exception ignored)
+                    {
+                        log.info("Encountered non-Long value in favorites file: " + line);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                log.info("Failed to read file");
+            }
+        }
+        return favorites;
+    }
+
+    public static void addFavorite(Long favorite)
+    {
+        String filePath = PLUGIN_DIRECTORY + "misc-dir/favorites.presets";
+        Path path = Paths.get(filePath);
+        try
+        {
+            Path parentDir = path.getParent();
+            if (!Files.exists(parentDir))
+            {
+                Files.createDirectories(parentDir);
+            }
+            if (!Files.exists(path))
+            {
+                Files.createFile(path);
+            }
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true)))
+            {
+                writer.write(String.valueOf(favorite));
+                writer.newLine();
+            }
+        }
+        catch (Exception e)
+        {
+            log.info("Failed to add favorite: " + favorite);
+        }
+    }
+
+    public static void removeFavorite(Long favorite)
+    {
+        String filePath = PLUGIN_DIRECTORY + "misc-dir/favorites.presets";
+        Path path = Paths.get(filePath);
+
+        if (Files.exists(path))
+        {
+            try
+            {
+                Path tempFile = Files.createTempFile("favorites", ".tmp");
+
+                try (BufferedReader reader = new BufferedReader(new FileReader(filePath));
+                     BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile.toFile())))
+                {
+                    String line;
+                    while ((line = reader.readLine()) != null)
+                    {
+                        long currentFavorite = Long.parseLong(line.trim());
+                        if (currentFavorite != favorite)
+                        {
+                            writer.write(String.valueOf(currentFavorite));
+                            writer.newLine();
+                        }
+                    }
+                }
+                Files.move(tempFile, path, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+            } catch (Exception e)
+            {
+                log.info("Failed to remove favorite: " + favorite);
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static void saveFilterState(List<String> filterStates)
+    {
+        File directory = new File(PLUGIN_DIRECTORY + "misc-dir/");
+        if (!directory.exists())
+        {
+            directory.mkdirs();
+        }
+
+        File file = new File(directory, "filterstates.presets");
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file)))
+        {
+            for (String state : filterStates)
+            {
+                writer.write(state);
+                writer.newLine();
+            }
+        }
+        catch (Exception e)
+        {
+            log.info("Could not save filter state");
+            e.printStackTrace();
+        }
+    }
+
+    public static List<String> getFilterStates()
+    {
+        List<String> filterStates = new ArrayList<>();
+        File file = new File(PLUGIN_DIRECTORY + "misc-dir/filterstates.presets");
+        if (file.exists())
+        {
+            try (BufferedReader reader = new BufferedReader(new FileReader(file)))
+            {
+                String line;
+                while ((line = reader.readLine()) != null)
+                {
+                    if (line.length() >= 3)
+                    {
+                        filterStates.add(line.substring(3));
+                    } else
+                    {
+                        filterStates.add(line);
+                    }
+                }
+            } catch (Exception e)
+            {
+                log.info("Could not retrieve filter states");
+                e.printStackTrace();
+            }
+        }
+        return filterStates;
+    }
 }

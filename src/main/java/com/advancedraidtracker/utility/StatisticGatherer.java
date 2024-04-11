@@ -171,10 +171,12 @@ public class StatisticGatherer //todo this whole class is a mess
             return -1;
         }
         List<Double> values = new ArrayList<>();
+        int skipped = 0;
         for (Raid room : data)
         {
             if (!room.getTimeAccurate(param))
             {
+                skipped++;
                 continue;
             }
             int d = room.get(param);

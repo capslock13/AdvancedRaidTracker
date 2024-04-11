@@ -2,8 +2,10 @@ package com.advancedraidtracker.ui.charts.chartcreator;
 
 import com.advancedraidtracker.AdvancedRaidTrackerConfig;
 import com.advancedraidtracker.ui.BaseFrame;
+import com.advancedraidtracker.ui.charts.ChartIOData;
 import com.advancedraidtracker.ui.charts.ChartPanel;
 import com.advancedraidtracker.utility.weapons.PlayerAnimation;
+import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.game.ItemManager;
@@ -11,11 +13,18 @@ import net.runelite.client.game.SpriteManager;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.advancedraidtracker.utility.UISwingUtility.getThemedPanel;
-
+import static com.advancedraidtracker.ui.charts.ChartIO.loadChartFromClipboard;
+import static com.advancedraidtracker.ui.charts.ChartIO.loadChartFromFile;
+import static com.advancedraidtracker.utility.UISwingUtility.*;
+import static com.advancedraidtracker.utility.datautility.DataWriter.PLUGIN_DIRECTORY;
+@Slf4j
 public class ChartCreatorFrame extends BaseFrame
 {
     private final ChartPanel chart;
@@ -54,6 +63,45 @@ public class ChartCreatorFrame extends BaseFrame
 
         add(container);
         setPreferredSize(new Dimension(1000, 600));
+
+        JMenuBar menuBar = new JMenuBar();
+        JMenu fileMenu = getThemedMenu("File");
+        JMenuItem importFromClipboard = getThemedMenuItem("Import from clipboard");
+
+        importFromClipboard.addActionListener(o ->
+        {
+            try
+            {
+                ChartIOData data = loadChartFromClipboard((String) Toolkit.getDefaultToolkit()
+                        .getSystemClipboard().getData(DataFlavor.stringFlavor));
+                chart.applyFromSave(data);
+            } catch (Exception e)
+            {
+                log.info("Failed to copy");
+            }
+
+        });
+
+        JMenuItem openMenu = getThemedMenuItem("Open...");
+        openMenu.addActionListener(o->
+        {
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setCurrentDirectory(new File(PLUGIN_DIRECTORY + "/misc-dir/"));
+            if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
+            {
+                File file = fileChooser.getSelectedFile();
+                ChartIOData data = loadChartFromFile(file.getAbsolutePath());
+                if(data != null)
+                {
+                    chart.applyFromSave(data);
+                }
+            }
+        });
+
+        fileMenu.add(importFromClipboard);
+        menuBar.add(fileMenu);
+        setJMenuBar(menuBar);
+
         pack();
         tools.build();
     }
@@ -76,7 +124,7 @@ public class ChartCreatorFrame extends BaseFrame
 
     public void setEndTick(int tick)
     {
-        chart.setTick(tick);
+        chart.setEndTick(tick);
     }
 
     public void setPrimaryTool(PlayerAnimation tool)

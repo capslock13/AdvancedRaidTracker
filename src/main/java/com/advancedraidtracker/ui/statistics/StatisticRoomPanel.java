@@ -68,7 +68,7 @@ public class StatisticRoomPanel extends JPanel
                 borderString = "Minimum";
                 break;
         }
-        setLayout(new BorderLayout());
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         TitledBorder border = BorderFactory.createTitledBorder(borderString);
         border.setTitleColor(config.fontColor());
         setBorder(border);

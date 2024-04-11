@@ -226,7 +226,6 @@ public class AdvancedRaidTrackerPlugin extends Plugin
     protected void startUp() throws Exception
     {
         super.startUp();
-
         splitLegacyFiles();
         migrateSavedFilesToZip();
         localPlayers = new ArrayList<>();

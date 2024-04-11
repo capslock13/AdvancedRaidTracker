@@ -6,6 +6,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -141,7 +142,7 @@ public class FilterManager
         }
     }
 
-    public static void saveFilter(String name, ArrayList<ImplicitFilter> filters, ArrayList<String> quickFiltersState)
+    public static void saveFilter(String name, ArrayList<ImplicitFilter> filters, List<String> quickFiltersState)
     {
         try
         {

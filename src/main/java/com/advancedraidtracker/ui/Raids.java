@@ -121,6 +121,7 @@ public class Raids extends BaseFrame implements UpdateableWindow
     public String[] rooms = {"Maiden", "Bloat", "Nylocas", "Sotetseg", "Xarpus", "Verzik", "Challenge"};
     private final ConfigManager configManager;
     private final ChartFrame chartFrame;
+    private final List<Long> favorites;
 
     private final Set<String> shouldNotBeSortedByTicks = new HashSet<>(Arrays.asList("", "Scale", "Raid", "Status", "Players", "Spectate", "Date"));
 
@@ -131,8 +132,9 @@ public class Raids extends BaseFrame implements UpdateableWindow
         this.configManager = configManager;
         this.spriteManager = spriteManager;
         this.chartFrame = new ChartFrame(config, itemManager, clientThread, configManager, spriteManager);
-        columnHeaders = new ArrayList<>();
 
+        columnHeaders = new ArrayList<>();
+        favorites = DataReader.getFavorites();
         for (String s : columnHeaderNames)
         {
             columnHeaders.add(getCheckBoxMenuItem(s));
@@ -142,7 +144,7 @@ public class Raids extends BaseFrame implements UpdateableWindow
         comparisons = new ArrayList<>();
         activeFilters = new ArrayList<>();
         this.config = config;
-        this.setPreferredSize(new Dimension(1200, 820));
+        this.setPreferredSize(new Dimension(1225, 820));
 
         aliasText = getThemedTextArea();
         tabbedPane = getThemedTabbedPane();
@@ -925,14 +927,14 @@ public class Raids extends BaseFrame implements UpdateableWindow
             subPanel.add(labelMap.get(s));
             index++;
         }
-        for (int i = index; i < 19; i++) //enforce formatting, 19 is the most labels used by any panel (Akkha splits)
+        /*for (int i = index; i < 19; i++) //enforce formatting, 19 is the most labels used by any panel (Akkha splits)
         {
             JLabel leftLabel = getThemedLabel("");
             JLabel rightLabel = getThemedLabel("");
             subPanel.add(leftLabel);
             subPanel.add(rightLabel);
-        }
-        subPanel.setPreferredSize(new Dimension(100, 250));
+        }*/
+        //subPanel.setPreferredSize(new Dimension(100, 250));
         JScrollPane scrollPane = getThemedScrollPane(subPanel);
         scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         panel.add(scrollPane);
@@ -1065,11 +1067,23 @@ public class Raids extends BaseFrame implements UpdateableWindow
         }
     }
 
-    private boolean swapped = false;
+    public void quickFilterStateChanged()
+    {
+        saveQuickFilters();
+        updateTable();
+    }
+
 
     public void updateFrameData(List<Raid> data)
     {
-        currentData.addAll(data);
+        for(Raid raid : data)
+        {
+            currentData.add(raid);
+            if(favorites.contains(raid.getDate().getTime()))
+            {
+                raid.setFavorite(true);
+            }
+        }
         for (int i = 0; i < currentData.size(); i++)
         {
             currentData.get(i).setIndex(i);
@@ -1210,28 +1224,29 @@ public class Raids extends BaseFrame implements UpdateableWindow
         additionalFiltersPanel.setMinimumSize(new Dimension(220, 300));
         additionalFiltersPanel.setPreferredSize(new Dimension(220, 300));
 
-        filterSpectateOnly = getActionListenCheckBox("Spectated", al -> updateTable());
-        filterInRaidOnly = getActionListenCheckBox("In Raid", al -> updateTable());
-        filterCompletionOnly = getActionListenCheckBox("Completed", al -> updateTable());
-        filterWipeResetOnly = getActionListenCheckBox("Wipe/Reset", al -> updateTable());
-        filterComboBoxScale = UISwingUtility.getActionListenCheckBox(new String[]{"Solo", "Duo", "Trio", "4-Man", "5-Man", "6-Man", "7-Man", "8-Man"}, al -> updateTable());
-        filterCheckBoxScale = getActionListenCheckBox("Scale", al -> updateTable());
-        filterTodayOnly = getActionListenCheckBox("Today", al -> updateTable());
-        filterPartyOnly = getActionListenCheckBox("In Party", al -> updateTable());
-        filterPartialData = getActionListenCheckBox("Filter Partial", al -> updateTable());
-        filterPartialOnly = getActionListenCheckBox("Filter Partial Rooms", al -> updateTable());
-        filterFavoritesOnly = getActionListenCheckBox("Favorites", al -> updateTable());
+        filterSpectateOnly = getActionListenCheckBox("Spectated", al -> quickFilterStateChanged());
+        filterInRaidOnly = getActionListenCheckBox("In Raid", al -> quickFilterStateChanged());
+        filterCompletionOnly = getActionListenCheckBox("Completed", al -> quickFilterStateChanged());
+        filterWipeResetOnly = getActionListenCheckBox("Wipe/Reset", al -> quickFilterStateChanged());
+        filterComboBoxScale = UISwingUtility.getActionListenCheckBox(new String[]{"Solo", "Duo", "Trio", "4-Man", "5-Man", "6-Man", "7-Man", "8-Man"}, al -> quickFilterStateChanged());
+        filterCheckBoxScale = getActionListenCheckBox("Scale", al -> quickFilterStateChanged());
+        filterTodayOnly = getActionListenCheckBox("Today", al -> quickFilterStateChanged());
+        filterPartyOnly = getActionListenCheckBox("In Party", al -> quickFilterStateChanged());
+        filterPartialData = getActionListenCheckBox("Filter Partial", al -> quickFilterStateChanged());
+        filterPartialOnly = getActionListenCheckBox("Filter Partial Rooms", al -> quickFilterStateChanged());
+        filterFavoritesOnly = getActionListenCheckBox("Favorites", al -> quickFilterStateChanged());
         filterPartialData.setToolTipText("Removes data sets that have any rooms that were partially completed");
-        filterIncludeNormal = getActionListenCheckBox("Normal", true, al -> updateTable());
-        filterIncludeEntry = getActionListenCheckBox("Entry", true, al -> updateTable());
-        filterIncludeHard = getActionListenCheckBox("Hard", true, al -> updateTable());
+        filterIncludeNormal = getActionListenCheckBox("Normal", true, al -> quickFilterStateChanged());
+        filterIncludeEntry = getActionListenCheckBox("Entry", true, al -> quickFilterStateChanged());
+        filterIncludeHard = getActionListenCheckBox("Hard", true, al -> quickFilterStateChanged());
 
-        filterIncludeTOB = getActionListenCheckBox("ToB", true, al -> updateTable());
-        filterIncludeTOA = getActionListenCheckBox("ToA", true, al -> updateTable());
-        filterIncludeCOX = getActionListenCheckBox("CoX", true, al -> updateTable());
-        filterIncludeInferno = getActionListenCheckBox("Inferno", true, al -> updateTable());
-        filterIncludeColosseum = getActionListenCheckBox("Colosseum", true, al -> updateTable());
+        filterIncludeTOB = getActionListenCheckBox("ToB", true, al -> quickFilterStateChanged());
+        filterIncludeTOA = getActionListenCheckBox("ToA", true, al -> quickFilterStateChanged());
+        filterIncludeCOX = getActionListenCheckBox("CoX", true, al -> quickFilterStateChanged());
+        filterIncludeInferno = getActionListenCheckBox("Inferno", true, al -> quickFilterStateChanged());
+        filterIncludeColosseum = getActionListenCheckBox("Colosseum", true, al -> quickFilterStateChanged());
 
+        loadQuickFilters();
 
         JPanel scaleContainer = getThemedPanel();
         scaleContainer.setLayout(new BoxLayout(scaleContainer, BoxLayout.X_AXIS));
@@ -1271,15 +1286,15 @@ public class Raids extends BaseFrame implements UpdateableWindow
 
         tabbedPane.addTab("", tobTabSubpanel);
         tabbedPane.addTab("", toaTabSubpanel);
-        tabbedPane.addTab("", coxTabSubpanel);
+        //tabbedPane.addTab("", coxTabSubpanel);
         tabbedPane.addTab("", infTabSubpanel);
         tabbedPane.addTab("", colTabSubpanel);
 
         tabbedPane.setIconAt(0, new ImageIcon(itemManager.getImage(ItemID.SCYTHE_OF_VITUR)));
         tabbedPane.setIconAt(1, new ImageIcon(itemManager.getImage(ItemID.TUMEKENS_SHADOW)));
-        tabbedPane.setIconAt(2, new ImageIcon(itemManager.getImage(ItemID.TWISTED_BOW)));
-        tabbedPane.setIconAt(3, new ImageIcon(itemManager.getImage(ItemID.INFERNAL_CAPE)));
-        tabbedPane.setIconAt(4, new ImageIcon(itemManager.getImage(ItemID.DIZANAS_QUIVER)));
+        //tabbedPane.setIconAt(2, new ImageIcon(itemManager.getImage(ItemID.TWISTED_BOW)));
+        tabbedPane.setIconAt(2, new ImageIcon(itemManager.getImage(ItemID.INFERNAL_CAPE)));
+        tabbedPane.setIconAt(3, new ImageIcon(itemManager.getImage(ItemID.DIZANAS_QUIVER)));
 
         topContainer.add(tabbedPane);
         topContainer.add(additionalFiltersPanel);
@@ -1838,28 +1853,7 @@ public class Raids extends BaseFrame implements UpdateableWindow
         saveFiltersButton.addActionListener(
                 al ->
                 {
-                    ArrayList<String> quickFiltersState = new ArrayList<>();
-                    quickFiltersState.add("QF-Spectate Only:" + filterSpectateOnly.isSelected());
-                    quickFiltersState.add("QF-Favorites Only:" + filterFavoritesOnly.isSelected());
-                    quickFiltersState.add("QF-In Raid Only:" + filterInRaidOnly.isSelected());
-                    quickFiltersState.add("QF-Completion Only:" + filterCompletionOnly.isSelected());
-                    quickFiltersState.add("QF-Wipe/Reset Only:" + filterWipeResetOnly.isSelected());
-                    quickFiltersState.add("QF-Today Only:" + filterTodayOnly.isSelected());
-                    quickFiltersState.add("QF-Party Only:" + filterPartyOnly.isSelected());
-                    quickFiltersState.add("QF-Partial Raids:" + filterPartialData.isSelected());
-                    quickFiltersState.add("QF-ToB:" + filterIncludeTOB.isSelected());
-                    quickFiltersState.add("QF-ToA:" + filterIncludeTOA.isSelected());
-                    quickFiltersState.add("QF-CoX:" + filterIncludeCOX.isSelected());
-                    quickFiltersState.add("QF-Inferno:" + filterIncludeInferno.isSelected());
-                    quickFiltersState.add("QF-Colosseum:" + filterIncludeColosseum.isSelected());
-                    quickFiltersState.add("QF-Normal Mode Only:" + filterIncludeNormal.isSelected());
-                    quickFiltersState.add("QF-Include Hard Mode" + filterIncludeHard.isSelected());
-                    quickFiltersState.add("QF-Include Entry Mode" + filterIncludeEntry.isSelected());
-                    quickFiltersState.add("QF-Scale:" + filterCheckBoxScale.isSelected() + ":" + filterComboBoxScale.getSelectedIndex());
-                    quickFiltersState.add("QF-View Raid By:" + customColumnComboBox.getItemAt(customColumnComboBox.getSelectedIndex()));
-                    //quickFiltersState.add("QF-Table Sort By:" + sortOptionsBox.getItemAt(sortOptionsBox.getSelectedIndex())); .//todo
-                    //quickFiltersState.add("QF-Table Sort:" + sortOrderBox.getItemAt(sortOrderBox.getSelectedIndex())); //todo
-                    SaveFilter saveFilter = new SaveFilter(activeFilters, quickFiltersState);
+                    SaveFilter saveFilter = new SaveFilter(activeFilters, getQuickFilterStates());
                     saveFilter.open();
                 });
         JButton loadFiltersButton = getThemedButton("Load");
@@ -1972,6 +1966,29 @@ public class Raids extends BaseFrame implements UpdateableWindow
         built = true;
     }
 
+    public List<String> getQuickFilterStates()
+    {
+        List<String> quickFiltersState = new ArrayList<>();
+        quickFiltersState.add("QF-Spectate Only:" + filterSpectateOnly.isSelected());
+        quickFiltersState.add("QF-Favorites Only:" + filterFavoritesOnly.isSelected());
+        quickFiltersState.add("QF-In Raid Only:" + filterInRaidOnly.isSelected());
+        quickFiltersState.add("QF-Completion Only:" + filterCompletionOnly.isSelected());
+        quickFiltersState.add("QF-Wipe/Reset Only:" + filterWipeResetOnly.isSelected());
+        quickFiltersState.add("QF-Today Only:" + filterTodayOnly.isSelected());
+        quickFiltersState.add("QF-Party Only:" + filterPartyOnly.isSelected());
+        quickFiltersState.add("QF-Partial Raids:" + filterPartialData.isSelected());
+        quickFiltersState.add("QF-ToB:" + filterIncludeTOB.isSelected());
+        quickFiltersState.add("QF-ToA:" + filterIncludeTOA.isSelected());
+        quickFiltersState.add("QF-CoX:" + filterIncludeCOX.isSelected());
+        quickFiltersState.add("QF-Inferno:" + filterIncludeInferno.isSelected());
+        quickFiltersState.add("QF-Colosseum:" + filterIncludeColosseum.isSelected());
+        quickFiltersState.add("QF-Normal Mode Only:" + filterIncludeNormal.isSelected());
+        quickFiltersState.add("QF-Include Hard Mode:" + filterIncludeHard.isSelected());
+        quickFiltersState.add("QF-Include Entry Mode:" + filterIncludeEntry.isSelected());
+        quickFiltersState.add("QF-Scale:" + filterCheckBoxScale.isSelected() + ":" + filterComboBoxScale.getSelectedIndex());
+        quickFiltersState.add("QF-View Raid By:" + customColumnComboBox.getItemAt(customColumnComboBox.getSelectedIndex()));
+        return quickFiltersState;
+    }
 
     public String[] columnHeaderNames = new String[]{"Date", "Raid", "Time", "Scale", "Status", "Players", "Favorite", "Spectate", "View"};
     public ArrayList<JCheckBoxMenuItem> columnHeaders;
@@ -1995,6 +2012,19 @@ public class Raids extends BaseFrame implements UpdateableWindow
     private JMenu getMenu(String text)
     {
         return getThemedMenu(text);
+    }
+
+    private void saveQuickFilters()
+    {
+        DataReader.saveFilterState(getQuickFilterStates());
+    }
+
+    private void loadQuickFilters()
+    {
+        for(String filter : DataReader.getFilterStates())
+        {
+            setFilterState(filter);
+        }
     }
 
     private JCheckBoxMenuItem getCheckBoxMenuItem(String name, String state)

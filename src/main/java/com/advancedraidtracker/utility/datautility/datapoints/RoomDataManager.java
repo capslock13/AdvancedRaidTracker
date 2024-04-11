@@ -17,48 +17,47 @@ import java.util.Map;
 public class RoomDataManager
 {
     Map<String, Integer> map;
-    Map<Short, Map<Short, Integer>> playerSpecificMap;
+    Map<Integer, Map<Integer, Integer>> playerSpecificMap;
     Map<String, Integer> tickMap;
     Multimap<DataPoint, Integer> intList = ArrayListMultimap.create();
 
-    //Making the change to map player names and datapoints as shorts reduced retained memory by ~20%
-    //2068 raids went from 33.8MB to 27.5MB in memory. Not sure if worth but leaving for now
-    //Really hope no one raids with more than 65k different people....
+    //Making the change to map player names and datapoints as ints reduced retained memory by ~20%. Shorts were the same due to padding.
+    //2068 raids went from 33.8MB to 27.5MB retained size in heap dump. Not sure if worth but leaving for now
 
-    public static BiMap<String, Short> playerShortMap = HashBiMap.create();
-    public static short highestPlayerShort = Short.MIN_VALUE;
-    public static BiMap<String, Short> dataPointShortMap = HashBiMap.create();
-    public static short highestDataPointShort = Short.MIN_VALUE;
-    public static String getShortAsDataPointString(Short val)
+    public static BiMap<String, Integer> playerIntegerMap = HashBiMap.create();
+    public static Integer highestPlayerInteger = Integer.MIN_VALUE;
+    public static BiMap<String, Integer> dataPointIntegerMap = HashBiMap.create();
+    public static Integer highestDataPointInteger = Integer.MIN_VALUE;
+    public static String getIntegerAsDataPointString(Integer val)
     {
-        return dataPointShortMap.inverse().getOrDefault(val, "Unknown Data Point");
+        return dataPointIntegerMap.inverse().getOrDefault(val, "Unknown Data Point");
     }
-    public static Short getDataPointStringAsShort(String point)
+    public static Integer getDataPointStringAsInteger(String point)
     {
-        if(dataPointShortMap.containsKey(point))
+        if(dataPointIntegerMap.containsKey(point))
         {
-            return dataPointShortMap.get(point);
+            return dataPointIntegerMap.get(point);
         }
         else
         {
-            dataPointShortMap.put(point, highestDataPointShort);
-            return highestDataPointShort++;
+            dataPointIntegerMap.put(point, highestDataPointInteger);
+            return highestDataPointInteger++;
         }
     }
-    public static String getShortAsPlayer(short val)
+    public static String getIntegerAsPlayer(Integer val)
     {
-        return playerShortMap.inverse().getOrDefault(val, "Unknown Player");
+        return playerIntegerMap.inverse().getOrDefault(val, "Unknown Player");
     }
-    public static Short getPlayerAsShort(String player)
+    public static Integer getPlayerAsInteger(String player)
     {
-        if(playerShortMap.containsKey(player))
+        if(playerIntegerMap.containsKey(player))
         {
-            return playerShortMap.get(player);
+            return playerIntegerMap.get(player);
         }
         else
         {
-            playerShortMap.put(player, highestPlayerShort);
-            return highestPlayerShort++;
+            playerIntegerMap.put(player, highestPlayerInteger);
+            return highestPlayerInteger++;
         }
     }
 
@@ -102,9 +101,9 @@ public class RoomDataManager
             incrementBy(point, value);
             return;
         }
-        Map<Short, Integer> playerMap = playerSpecificMap.getOrDefault(getDataPointStringAsShort(point.name), new HashMap<>());
-        playerMap.merge(getPlayerAsShort(player), value, Integer::sum);
-        playerSpecificMap.put(getDataPointStringAsShort(point.name), playerMap);
+        Map<Integer, Integer> playerMap = playerSpecificMap.getOrDefault(getDataPointStringAsInteger(point.name), new HashMap<>());
+        playerMap.merge(getPlayerAsInteger(player), value, Integer::sum);
+        playerSpecificMap.put(getDataPointStringAsInteger(point.name), playerMap);
     }
 
     public void incrementBy(DataPoint point, int value, RaidRoom room)
@@ -126,13 +125,18 @@ public class RoomDataManager
             }
             return;
         }
-        Map<Short, Integer> playerMapTotal = playerSpecificMap.getOrDefault(getDataPointStringAsShort("Total " + point.name), new HashMap<>());
-        playerMapTotal.merge(getPlayerAsShort(player), value, Integer::sum);
-        playerSpecificMap.put(getDataPointStringAsShort("Total " + point.name), playerMapTotal);
+        applyToMap(point, value, player, room);
+    }
 
-        Map<Short, Integer> playerMapRoom = playerSpecificMap.getOrDefault(getDataPointStringAsShort(room.name + " " + point.name), new HashMap<>());
-        playerMapRoom.merge(getPlayerAsShort(player), value, Integer::sum);
-        playerSpecificMap.put(getDataPointStringAsShort(room.name + " " + point.name), playerMapRoom);
+    private void applyToMap(DataPoint point, int value, String player, RaidRoom room)
+    {
+        Map<Integer, Integer> playerMapTotal = playerSpecificMap.getOrDefault(getDataPointStringAsInteger("Total " + point.name), new HashMap<>());
+        playerMapTotal.merge(getPlayerAsInteger(player), value, Integer::sum);
+        playerSpecificMap.put(getDataPointStringAsInteger("Total " + point.name), playerMapTotal);
+
+        Map<Integer, Integer> playerMapRoom = playerSpecificMap.getOrDefault(getDataPointStringAsInteger(room.name + " " + point.name), new HashMap<>());
+        playerMapRoom.merge(getPlayerAsInteger(player), value, Integer::sum);
+        playerSpecificMap.put(getDataPointStringAsInteger(room.name + " " + point.name), playerMapRoom);
     }
 
     public void set(DataPoint point, int value)
@@ -147,20 +151,14 @@ public class RoomDataManager
 
     public void set(DataPoint point, int value, String player)
     {
-        Map<Short, Integer> playerMap = playerSpecificMap.getOrDefault(getDataPointStringAsShort(point.name), new HashMap<>());
-        playerMap.put(getPlayerAsShort(player), value);
-        playerSpecificMap.put(getDataPointStringAsShort(point.name), playerMap);
+        Map<Integer, Integer> playerMap = playerSpecificMap.getOrDefault(getDataPointStringAsInteger(point.name), new HashMap<>());
+        playerMap.put(getPlayerAsInteger(player), value);
+        playerSpecificMap.put(getDataPointStringAsInteger(point.name), playerMap);
     }
 
     public void set(DataPoint point, int value, String player, RaidRoom room)
     {
-        Map<Short, Integer> playerMap = playerSpecificMap.getOrDefault(getDataPointStringAsShort("Total " + point.name), new HashMap<>());
-        playerMap.merge(getPlayerAsShort(player), value, Integer::sum);
-        playerSpecificMap.put(getDataPointStringAsShort("Total " + point.name), playerMap);
-
-        Map<Short, Integer> playerRoomMap = playerSpecificMap.getOrDefault(getDataPointStringAsShort(room.name + " " + point.name), new HashMap<>());
-        playerRoomMap.merge(getPlayerAsShort(player), value, Integer::sum);
-        playerSpecificMap.put(getDataPointStringAsShort(room.name + " " + point.name), playerRoomMap);
+        applyToMap(point, value, player, room);
     }
 
     public void set(DataPoint point, int value, RaidRoom room)
@@ -174,12 +172,12 @@ public class RoomDataManager
         int val = map.getOrDefault(point, 0);
         if (val == 0)
         {
-            if (playerSpecificMap.containsKey(getDataPointStringAsShort(point)))
+            if (playerSpecificMap.containsKey(getDataPointStringAsInteger(point)))
             {
                 int sum = 0;
-                for (Short player : playerSpecificMap.get(getDataPointStringAsShort(point)).keySet())
+                for (Integer player : playerSpecificMap.get(getDataPointStringAsInteger(point)).keySet())
                 {
-                    sum += playerSpecificMap.get(getDataPointStringAsShort(point)).getOrDefault(player, 0);
+                    sum += playerSpecificMap.get(getDataPointStringAsInteger(point)).getOrDefault(player, 0);
                 }
                 if (sum != 0)
                 {
@@ -195,9 +193,9 @@ public class RoomDataManager
         if (point.playerSpecific)
         {
             int sum = 0;
-            for (Short name : playerSpecificMap.get(getDataPointStringAsShort(point.name)).keySet())
+            for (Integer name : playerSpecificMap.get(getDataPointStringAsInteger(point.name)).keySet())
             {
-                sum += playerSpecificMap.get(getDataPointStringAsShort(point.name)).get(name);
+                sum += playerSpecificMap.get(getDataPointStringAsInteger(point.name)).get(name);
             }
             return sum;
         }
@@ -211,14 +209,14 @@ public class RoomDataManager
             int sum = 0;
             for (RaidRoom room : RaidRoom.values())
             {
-                sum += playerSpecificMap.getOrDefault(getDataPointStringAsShort(room.name + " " + point.name), new HashMap<>()).getOrDefault(getPlayerAsShort(player), 0);
+                sum += playerSpecificMap.getOrDefault(getDataPointStringAsInteger(room.name + " " + point.name), new HashMap<>()).getOrDefault(getPlayerAsInteger(player), 0);
             }
             if (sum > 0)
             {
                 return sum;
             }
         }
-        return playerSpecificMap.getOrDefault(getDataPointStringAsShort(point.name), new HashMap<>()).getOrDefault(getPlayerAsShort(player), 0);
+        return playerSpecificMap.getOrDefault(getDataPointStringAsInteger(point.name), new HashMap<>()).getOrDefault(getPlayerAsInteger(player), 0);
     }
 
     public int get(DataPoint point, RaidRoom room)
@@ -226,9 +224,9 @@ public class RoomDataManager
         if (point.playerSpecific)
         {
             int sum = 0;
-            for (Short name : playerSpecificMap.getOrDefault(getDataPointStringAsShort(room.name + " " + point.name), new HashMap<>()).keySet())
+            for (Integer name : playerSpecificMap.getOrDefault(getDataPointStringAsInteger(room.name + " " + point.name), new HashMap<>()).keySet())
             {
-                sum += playerSpecificMap.get(getDataPointStringAsShort(room.name + " " + point.name)).get(name);
+                sum += playerSpecificMap.get(getDataPointStringAsInteger(room.name + " " + point.name)).get(name);
             }
             return sum;
         }
@@ -257,11 +255,11 @@ public class RoomDataManager
             log.info(point + ": " + map.get(point));
         }
         log.info("Player Specific DataPoint: ");
-        for (Short point : playerSpecificMap.keySet())
+        for (Integer point : playerSpecificMap.keySet())
         {
-            for (Short name : playerSpecificMap.get(point).keySet())
+            for (Integer name : playerSpecificMap.get(point).keySet())
             {
-                log.info(getShortAsPlayer(name) + ", " + getShortAsDataPointString(point) + ": " + playerSpecificMap.get(point).get(name));
+                log.info(getIntegerAsPlayer(name) + ", " + getIntegerAsDataPointString(point) + ": " + playerSpecificMap.get(point).get(name));
             }
         }
         log.info("Mapped: ");

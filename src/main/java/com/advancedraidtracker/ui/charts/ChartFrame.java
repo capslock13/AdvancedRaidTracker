@@ -2,14 +2,12 @@ package com.advancedraidtracker.ui.charts;
 
 import com.advancedraidtracker.*;
 import com.advancedraidtracker.constants.RaidRoom;
-import com.advancedraidtracker.constants.RaidType;
 import com.advancedraidtracker.ui.BaseFrame;
 import com.advancedraidtracker.utility.datautility.ChartData;
 import com.advancedraidtracker.utility.datautility.DataPoint;
 import com.advancedraidtracker.utility.datautility.DataReader;
 import com.advancedraidtracker.utility.datautility.datapoints.col.Colo;
 import com.advancedraidtracker.utility.datautility.datapoints.Raid;
-import com.advancedraidtracker.utility.datautility.datapoints.RoomParser;
 import com.advancedraidtracker.utility.datautility.datapoints.inf.Inf;
 import com.advancedraidtracker.utility.datautility.datapoints.toa.Toa;
 import lombok.extern.slf4j.Slf4j;
@@ -127,12 +125,12 @@ public class ChartFrame extends BaseFrame
                     }
                     waveStart = ((Inf) roomData).waveStarts.getOrDefault(wave, 1);
                     chartPanel.setStartTick(waveStart);
-                    chartPanel.setTick(waveStart+waveTime);
+                    chartPanel.setEndTick(waveStart+waveTime);
                 }
                 else
                 {
                     chartPanel.setStartTick(starttick);
-                    chartPanel.setTick(starttick + roomData.get(bossName + " Duration"));
+                    chartPanel.setEndTick(starttick + roomData.get(bossName + " Duration"));
                 }
             }
             else
@@ -140,7 +138,7 @@ public class ChartFrame extends BaseFrame
                 chartPanel.setStartTick((bossName.contains("Verzik") || bossName.contains("Wardens")) ? //Just trust
                         (bossName.contains("P1") ? 1 : (bossName.contains("P2") ? roomData.get(bossName.replace('2', '1') + " Time") :
                                 roomData.get(bossName.replace('3', '1') + " Time") + roomData.get(bossName.replace('3', '2') + " Time"))) : 1);
-                chartPanel.setTick(((bossName.contains("Verzik") || bossName.contains("Wardens")) && !bossName.contains("P1"))
+                chartPanel.setEndTick(((bossName.contains("Verzik") || bossName.contains("Wardens")) && !bossName.contains("P1"))
                         ? (bossName.contains("P2")) ? roomData.get(bossName + " Time") +
                         roomData.get(bossName.replace('2', '1') + " Time") :
                         roomData.get(bossName.substring(0, bossName.length() - 2) + "Time") : roomData.get(bossName + " Time"));

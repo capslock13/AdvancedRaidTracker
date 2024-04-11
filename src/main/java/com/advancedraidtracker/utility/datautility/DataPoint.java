@@ -285,6 +285,21 @@ public enum DataPoint
 
     ;;
 
+    public RaidType getRaidType()
+    {
+        if(isTOA())
+            return RaidType.TOA;
+        if(isTOB())
+            return RaidType.TOB;
+        if(isCOX())
+            return RaidType.COX;
+        if(isInferno())
+            return RaidType.INFERNO;
+        if(isColosseum())
+            return RaidType.COLOSSEUM;
+        return RaidType.ALL;
+    }
+
     public static ArrayList<DataPoint> getTOBValues()
     {
         ArrayList<DataPoint> dataPoints = new ArrayList<>();
@@ -338,6 +353,16 @@ public enum DataPoint
                 || room.equals(WARDENS)
                 || room.equals(ALL)
                 || room.equals(ANY);
+    }
+
+    public boolean isInferno()
+    {
+        return room.equals(INFERNO);
+    }
+
+    public boolean isColosseum()
+    {
+        return room.equals(COLOSSEUM);
     }
 
     public boolean isExclusivelyTOA()

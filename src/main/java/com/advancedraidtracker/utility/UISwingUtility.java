@@ -724,8 +724,8 @@ public class UISwingUtility
         JCheckBoxMenuItem item = new JCheckBoxMenuItem(name);
         item.setBackground(Color.black);
         item.setOpaque(true);
-        return item;/*
-        item.setUI(new BasicMenuItemUI() //todo how to make this code below work while keeping the checkbox?
+
+        item.setUI(new BasicCheckBoxMenuItemUI()
         {
             {
                 super.selectionBackground = computeBlendColor(config.fontColor(), config.primaryDark(), 128);
@@ -744,10 +744,11 @@ public class UISwingUtility
                 item.setBackground(config.primaryDark());
             }
         });
+
         item.setBackground(config.primaryDark());
         item.setForeground(config.fontColor());
         item.setOpaque(true);
-        return item;*/
+        return item;
     }
 
     public static JPopupMenu getThemedPopupMenu()

@@ -27,8 +27,9 @@ import static com.advancedraidtracker.ui.charts.ChartPanel.createDropShadow;
 import static com.advancedraidtracker.ui.charts.ChartPanel.isCtrlPressed;
 import static com.advancedraidtracker.utility.UISwingUtility.*;
 import static com.advancedraidtracker.utility.UISwingUtility.createFlipped;
-import static com.advancedraidtracker.utility.wrappers.PlayerDidAttack.getReplacement;
-import static com.advancedraidtracker.utility.wrappers.PlayerDidAttack.getSpellIcon;
+import static com.advancedraidtracker.utility.wrappers.OutlineBox.getReplacement;
+import static com.advancedraidtracker.utility.wrappers.OutlineBox.getSpellIcon;
+
 
 @Slf4j
 public class ChartToolPanel extends JPanel implements MouseListener, MouseMotionListener

@@ -1,6 +1,7 @@
 package com.advancedraidtracker.utility.datautility.datapoints;
 
 import com.advancedraidtracker.constants.*;
+import com.advancedraidtracker.utility.RoomUtil;
 import com.advancedraidtracker.utility.datautility.*;
 import com.google.common.collect.ImmutableMap;
 import lombok.Getter;
@@ -213,7 +214,8 @@ public abstract class Raid
         }
         else if((datapoint.startsWith("Col") || datapoint.startsWith("Inf")) && datapoint.contains("-"))
         {
-            String[] words = datapoint.split(" ");
+            String refined = datapoint.replaceAll("Time", "Duration");
+            String[] words = refined.split(" ");
             if(words.length > 2)
             {
                 String[] vals = words[2].split("-");
@@ -289,10 +291,33 @@ public abstract class Raid
         return roomStartAccurate.getOrDefault(room, false) || roomEndAccurate.getOrDefault(room, false);
     }
 
+    public boolean isFullRaid()
+    {
+        for(RaidRoom room : RaidRoom.getRaidRoomsForRaidType(getRaidType()))
+        {
+            if(get(room.name + " Time") <= 0)
+            {
+                return false;
+            }
+        }
+        return isCompleted();
+    }
+
     public boolean getTimeAccurate(DataPoint point)
     {
+        if(point.equals(CHALLENGE_TIME))
+        {
+            return getChallengeTime() > 0;
+        }
         if(point.getRaidType().equals(TOB))
         {
+            if(point == NYLOCAS_TIME)
+            {
+                if(get(NYLO_BOSS_DURATION) < 35)
+                {
+                    return false;
+                }
+            }
             return this.getRaidType() == TOB && getRoomAccurate(point.room);
         }
         return get(point) > -1 && point.getRaidType() == getRaidType();

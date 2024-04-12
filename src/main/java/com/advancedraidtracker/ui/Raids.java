@@ -32,6 +32,7 @@ import net.runelite.client.game.ItemManager;
 import net.runelite.client.game.SpriteManager;
 
 import javax.swing.*;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.*;
@@ -46,7 +47,9 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import static com.advancedraidtracker.constants.RaidType.ALL;
 import static com.advancedraidtracker.rooms.inf.InfernoHandler.roomMap;
 import static com.advancedraidtracker.utility.UISwingUtility.*;
 
@@ -172,6 +175,14 @@ public class Raids extends BaseFrame implements UpdateableWindow
                 maxLabels2.get(index).put(labelName, getThemedLabel("", SwingConstants.RIGHT));
                 minLabels2.get(index).put(labelName, getThemedLabel("", SwingConstants.RIGHT));
             }
+            averageLabels2.get(index).put("Sum", getThemedLabel("", SwingConstants.RIGHT));
+            medianLabels2.get(index).put("Sum", getThemedLabel("", SwingConstants.RIGHT));
+            maxLabels2.get(index).put("Sum", getThemedLabel("", SwingConstants.RIGHT));
+            minLabels2.get(index).put("Sum", getThemedLabel("", SwingConstants.RIGHT));
+            averageLabels2.get(index).put("Challenge", getThemedLabel("", SwingConstants.RIGHT));
+            medianLabels2.get(index).put("Challenge", getThemedLabel("", SwingConstants.RIGHT));
+            maxLabels2.get(index).put("Challenge", getThemedLabel("", SwingConstants.RIGHT));
+            minLabels2.get(index).put("Challenge", getThemedLabel("", SwingConstants.RIGHT));
             index++;
         }
         customColumnComboBox.setEnabled(true);
@@ -523,6 +534,15 @@ public class Raids extends BaseFrame implements UpdateableWindow
         resizeColumnWidth(table);
         table.setFillsViewportHeight(true);
         List<Raid> finalTableData = tableData;
+        for(ChangeListener cl : tabbedPane.getChangeListeners())
+        {
+            tabbedPane.removeChangeListener(cl);
+        }
+        tabbedPane.addChangeListener(cl ->
+        {
+            new Thread(() -> setLabels(finalTableData)).start();
+        });
+
         new Thread(() -> setLabels(finalTableData)).start();
         container.validate();
         container.repaint();
@@ -699,13 +719,12 @@ public class Raids extends BaseFrame implements UpdateableWindow
     {
         try
         {
-            if (!value.contains("Player:"))
+            DataPoint pointFound = DataPoint.getValue(value);
+            if(pointFound != DataPoint.UNKNOWN)
             {
-                return DataPoint.getValue(value).isTime();
-            } else
-            {
-                return false;
+                return pointFound.isTime();
             }
+            else return value.contains("Time") || value.contains("Entry") || value.contains("Split") || value.contains("Duration");
         } catch (Exception e)
         {
             return false;
@@ -824,12 +843,42 @@ public class Raids extends BaseFrame implements UpdateableWindow
 
     public void setOverallLabels(List<Raid> data)
     {
-
-        setOverallAverageLabels(data);
-        setOverallMedianLabels(data);
-        setOverallMinLabels(data);
-        setOverallMaxLabels(data);
+        List<Raid> ammendedData = data.stream().filter(o->o.getRaidType() == raids[tabbedPane.getSelectedIndex()]).collect(Collectors.toList());
+        for(Map<String, JLabel> labelMap : averageLabels2)
+        {
+            for(JLabel label : labelMap.values())
+            {
+                label.setText("Calculating");
+            }
+        }
+        for(Map<String, JLabel> labelMap : medianLabels2)
+        {
+            for(JLabel label : labelMap.values())
+            {
+                label.setText("Calculating");
+            }
+        }
+        for(Map<String, JLabel> labelMap : minLabels2)
+        {
+            for(JLabel label : labelMap.values())
+            {
+                label.setText("Calculating");
+            }
+        }
+        for(Map<String, JLabel> labelMap : maxLabels2)
+        {
+            for(JLabel label : labelMap.values())
+            {
+                label.setText("Calculating");
+            }
+        }
+        setOverallAverageLabels(ammendedData);
+        setOverallMedianLabels(ammendedData);
+        setOverallMinLabels(ammendedData);
+        setOverallMaxLabels(ammendedData);
     }
+
+    private static RaidType[] raids = {RaidType.TOB, RaidType.TOA, RaidType.INFERNO, RaidType.COLOSSEUM, ALL, ALL};
 
     public void setOverallAverageLabels(List<Raid> data)
     {
@@ -837,7 +886,30 @@ public class Raids extends BaseFrame implements UpdateableWindow
         {
             for (String s : labelMap.keySet())
             {
-                labelMap.get(s).setText(RoomUtil.time(StatisticGatherer.getGenericAverage(data, DataPoint.getValue(s + " Time"))));
+                if(s.startsWith("Sum"))
+                {
+                    double sum = 0;
+                    for(String room : labelMap.keySet())
+                    {
+                        if(!room.startsWith("Sum") && !room.startsWith("Challenge"))
+                        {
+                            int val = (int) StatisticGatherer.getGenericAverage(data, DataPoint.getValue(room + " Time"));
+                            sum += val;
+                        }
+                    }
+                    labelMap.get(s).setText(RoomUtil.time(sum));
+                }
+                else
+                {
+                    if(s.startsWith("Challenge"))
+                    {
+                        labelMap.get(s).setText(RoomUtil.time(StatisticGatherer.getGenericAverage(data.stream().filter(Raid::isFullRaid).collect(Collectors.toList()), DataPoint.getValue(s + " Time"))));
+                    }
+                    else
+                    {
+                        labelMap.get(s).setText(RoomUtil.time(StatisticGatherer.getGenericAverage(data, DataPoint.getValue(s + " Time"))));
+                    }
+                }
             }
         }
     }
@@ -848,7 +920,29 @@ public class Raids extends BaseFrame implements UpdateableWindow
         {
             for (String s : labelMap.keySet())
             {
-                labelMap.get(s).setText(RoomUtil.time(StatisticGatherer.getGenericMedian(data, DataPoint.getValue(s + " Time"))));
+                if(s.startsWith("Sum"))
+                {
+                    double sum = 0;
+                    for(String room : labelMap.keySet())
+                    {
+                        if(!room.startsWith("Sum") && !room.startsWith("Challenge"))
+                        {
+                            sum += StatisticGatherer.getGenericMedian(data, DataPoint.getValue(room + " Time"));
+                        }
+                    }
+                    labelMap.get(s).setText(RoomUtil.time(sum));
+                }
+                else
+                {
+                    if(s.startsWith("Challenge"))
+                    {
+                        labelMap.get(s).setText(RoomUtil.time(StatisticGatherer.getGenericMedian(data.stream().filter(Raid::isFullRaid).collect(Collectors.toList()), DataPoint.getValue(s + " Time"))));
+                    }
+                    else
+                    {
+                        labelMap.get(s).setText(RoomUtil.time(StatisticGatherer.getGenericMedian(data, DataPoint.getValue(s + " Time"))));
+                    }
+                }
             }
         }
     }
@@ -859,7 +953,30 @@ public class Raids extends BaseFrame implements UpdateableWindow
         {
             for (String s : labelMap.keySet())
             {
-                labelMap.get(s).setText(RoomUtil.time(StatisticGatherer.getGenericMin(data, DataPoint.getValue(s + " Time"))));
+                if(s.startsWith("Sum"))
+                {
+                    double sum = 0;
+                    for(String room : labelMap.keySet())
+                    {
+                        if(!room.startsWith("Sum") && !room.startsWith("Challenge"))
+                        {
+                            int val = (int) StatisticGatherer.getGenericMin(data, DataPoint.getValue(room + " Time"));
+                            sum += val;
+                        }
+                    }
+                    labelMap.get(s).setText(RoomUtil.time(sum));
+                }
+                else
+                {
+                    if(s.startsWith("Challenge"))
+                    {
+                        labelMap.get(s).setText(RoomUtil.time(StatisticGatherer.getGenericMin(data.stream().filter(Raid::isFullRaid).collect(Collectors.toList()), DataPoint.getValue(s + " Time"))));
+                    }
+                    else
+                    {
+                        labelMap.get(s).setText(RoomUtil.time(StatisticGatherer.getGenericMin(data, DataPoint.getValue(s + " Time"))));
+                    }
+                }
             }
         }
     }
@@ -870,7 +987,29 @@ public class Raids extends BaseFrame implements UpdateableWindow
         {
             for (String s : labelMap.keySet())
             {
-                labelMap.get(s).setText(RoomUtil.time(StatisticGatherer.getGenericMax(data, DataPoint.getValue(s + " Time"))));
+                if(s.startsWith("Sum"))
+                {
+                    double sum = 0;
+                    for(String room : labelMap.keySet())
+                    {
+                        if(!room.startsWith("Sum") && !room.startsWith("Challenge"))
+                        {
+                            sum += StatisticGatherer.getGenericMax(data, DataPoint.getValue(room + " Time"));
+                        }
+                    }
+                    labelMap.get(s).setText(RoomUtil.time(sum));
+                }
+                else
+                {
+                    if(s.startsWith("Challenge"))
+                    {
+                        labelMap.get(s).setText(RoomUtil.time(StatisticGatherer.getGenericMax(data.stream().filter(Raid::isFullRaid).collect(Collectors.toList()), DataPoint.getValue(s + " Time"))));
+                    }
+                    else
+                    {
+                        labelMap.get(s).setText(RoomUtil.time(StatisticGatherer.getGenericMax(data, DataPoint.getValue(s + " Time"))));
+                    }
+                }
             }
         }
     }
@@ -1289,6 +1428,14 @@ public class Raids extends BaseFrame implements UpdateableWindow
         //tabbedPane.addTab("", coxTabSubpanel);
         tabbedPane.addTab("", infTabSubpanel);
         tabbedPane.addTab("", colTabSubpanel);
+
+        tabbedPane.addChangeListener(cl ->
+        {
+            new Thread(() ->
+            {
+                setOverallLabels(currentData);
+            }).start();
+        });
 
         tabbedPane.setIconAt(0, new ImageIcon(itemManager.getImage(ItemID.SCYTHE_OF_VITUR)));
         tabbedPane.setIconAt(1, new ImageIcon(itemManager.getImage(ItemID.TUMEKENS_SHADOW)));
@@ -2218,7 +2365,7 @@ public class Raids extends BaseFrame implements UpdateableWindow
         for (RaidType raidType : RaidType.values())
         {
             JMenu raidLevelMenu = getMenu(raidType.name);
-            if (raidType.equals(RaidType.ALL))
+            if (raidType.equals(ALL))
             {
                 for (DataPoint.MenuCategories menuCategories : DataPoint.MenuCategories.values())
                 {

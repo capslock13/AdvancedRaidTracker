@@ -54,7 +54,12 @@ public class Inf extends Raid
                     if (entry.getValueAsInt("Wave Number") == 69)
                     {
                         endTime = entry.getValueAsInt("Room Tick");
+                        data.set("Inf Wave " + entry.getValueAsInt("Wave Number") + " Duration", 1);
                         completed = true;
+                    }
+                    else
+                    {
+                        data.set("Inf Wave " + entry.getValueAsInt("Wave Number") + " Duration", entry.getValueAsInt("Room Tick"));
                     }
                 }
                 else if(entry.logEntry.equals(LogID.INFERNO_NPC_SPAWN))

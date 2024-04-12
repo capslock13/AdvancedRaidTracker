@@ -169,15 +169,20 @@ public class RoomDataManager
 
     public int get(String point)
     {
-        int val = map.getOrDefault(point, 0);
+        String refined = point;
+        if(point.startsWith("Col") || point.startsWith("Inf"))
+        {
+            refined = point.replaceAll("Time", "Duration");
+        }
+        int val = map.getOrDefault(refined, 0);
         if (val == 0)
         {
-            if (playerSpecificMap.containsKey(getDataPointStringAsInteger(point)))
+            if (playerSpecificMap.containsKey(getDataPointStringAsInteger(refined)))
             {
                 int sum = 0;
-                for (Integer player : playerSpecificMap.get(getDataPointStringAsInteger(point)).keySet())
+                for (Integer player : playerSpecificMap.get(getDataPointStringAsInteger(refined)).keySet())
                 {
-                    sum += playerSpecificMap.get(getDataPointStringAsInteger(point)).getOrDefault(player, 0);
+                    sum += playerSpecificMap.get(getDataPointStringAsInteger(refined)).getOrDefault(player, 0);
                 }
                 if (sum != 0)
                 {
@@ -185,7 +190,7 @@ public class RoomDataManager
                 }
             }
         }
-        return map.getOrDefault(point, 0);
+        return map.getOrDefault(refined, 0);
     }
 
     public int get(DataPoint point)

@@ -190,7 +190,7 @@ public class DataPointMenu
         }
         List<RaidRoom> roomsToAdd = RoomUtil.getVariations(waveName);
         roomsToAdd.add(RaidRoom.getRoom(contentName));
-        for (DataPoint point : DataPoint.getRoomPoints(roomsToAdd.toArray(new RaidRoom[0])))
+        for (DataPoint point : DataPoint.getRoomPoints(RaidRoom.getRoom(contentName), RaidRoom.getRoom(waveName)))
         {
             if (!point.menuType.equals(DataPoint.MenuType.EXCLUDED))
             {
@@ -203,11 +203,15 @@ public class DataPointMenu
                 }
             }
         }
-        for (JMenu categoryMenu : categoryMenus.values())
+        for (DataPoint.MenuType menuType : categoryMenus.keySet())
         {
-            if (categoryMenu.getMenuComponents().length != 0)
+            if(menuType == DataPoint.MenuType.TIME && (contentName.equals("Inferno") || waveName.contains("-")))
             {
-                wave.add(categoryMenu);
+                categoryMenus.get(menuType).add(createMenuItem(waveName + " Duration"));
+            }
+            if (categoryMenus.get(menuType).getMenuComponents().length != 0)
+            {
+                wave.add(categoryMenus.get(menuType));
             }
         }
         return wave;

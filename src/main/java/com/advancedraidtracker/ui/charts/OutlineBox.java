@@ -1,4 +1,4 @@
-package com.advancedraidtracker.utility.wrappers;
+package com.advancedraidtracker.ui.charts;
 
 import com.advancedraidtracker.constants.RaidRoom;
 import com.advancedraidtracker.utility.ItemReference;
@@ -196,7 +196,7 @@ public class OutlineBox
             Map.entry(1816, SpriteID.SPELL_LUMBRIDGE_HOME_TELEPORT),
             Map.entry(8970, SpriteID.SPELL_DEATH_CHARGE),
             Map.entry(4409, SpriteID.SPELL_HEAL_GROUP),
-            Map.entry(8973, 2979), //resurrect greater ghost; not in the API
+            Map.entry(8973, 2979), //resurrect greater ghost; not in the API 2979
             Map.entry(827, SpriteID.TAB_INVENTORY),
             Map.entry(832, SpriteID.MAP_ICON_WATER_SOURCE),
             Map.entry(7855, SpriteID.SPELL_FIRE_SURGE));

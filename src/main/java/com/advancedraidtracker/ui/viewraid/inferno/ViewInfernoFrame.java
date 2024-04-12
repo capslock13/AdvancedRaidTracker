@@ -108,7 +108,7 @@ public class ViewInfernoFrame extends BaseFrame
     public int getDataPointSum(DataPoint point, int startWave, int endWave)
     {
         int sum = 0;
-        for (int i = startWave; i < endWave; i++)
+        for (int i = startWave; i < endWave+1; i++)
         {
             sum += infData.get(point, RaidRoom.getRoom("Inf Wave " + i));
         }

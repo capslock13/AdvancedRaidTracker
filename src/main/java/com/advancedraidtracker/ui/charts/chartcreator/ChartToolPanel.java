@@ -2,8 +2,6 @@ package com.advancedraidtracker.ui.charts.chartcreator;
 
 import com.advancedraidtracker.AdvancedRaidTrackerConfig;
 import com.advancedraidtracker.ui.charts.ChartPanel;
-import com.advancedraidtracker.ui.charts.ChartTick;
-import com.advancedraidtracker.utility.weapons.AnimationDecider;
 import com.advancedraidtracker.utility.weapons.PlayerAnimation;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.callback.ClientThread;
@@ -17,7 +15,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
-import java.lang.reflect.Array;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,8 +24,8 @@ import static com.advancedraidtracker.ui.charts.ChartPanel.createDropShadow;
 import static com.advancedraidtracker.ui.charts.ChartPanel.isCtrlPressed;
 import static com.advancedraidtracker.utility.UISwingUtility.*;
 import static com.advancedraidtracker.utility.UISwingUtility.createFlipped;
-import static com.advancedraidtracker.utility.wrappers.OutlineBox.getReplacement;
-import static com.advancedraidtracker.utility.wrappers.OutlineBox.getSpellIcon;
+import static com.advancedraidtracker.ui.charts.OutlineBox.getReplacement;
+import static com.advancedraidtracker.ui.charts.OutlineBox.getSpellIcon;
 
 
 @Slf4j

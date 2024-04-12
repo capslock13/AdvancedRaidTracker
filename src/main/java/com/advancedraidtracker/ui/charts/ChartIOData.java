@@ -1,7 +1,5 @@
 package com.advancedraidtracker.ui.charts;
 
-import com.advancedraidtracker.utility.wrappers.DawnSpec;
-import com.advancedraidtracker.utility.wrappers.OutlineBox;
 import lombok.Value;
 
 import java.util.List;

@@ -34,7 +34,7 @@ import static com.advancedraidtracker.ui.charts.ChartIO.loadChartFromFile;
 import static com.advancedraidtracker.ui.charts.ChartIO.saveChart;
 import static com.advancedraidtracker.utility.UISwingUtility.*;
 import static com.advancedraidtracker.utility.datautility.DataWriter.PLUGIN_DIRECTORY;
-import static com.advancedraidtracker.utility.wrappers.OutlineBox.getIcon;
+import static com.advancedraidtracker.ui.charts.OutlineBox.getIcon;
 
 @Slf4j
 public class ChartPanel extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener

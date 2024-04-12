@@ -512,7 +512,7 @@ public class Raids extends BaseFrame implements UpdateableWindow
             } else if (table.getColumnName(i).equals("Favorite"))
             {
                 table.getColumn(table.getColumnName(i)).setCellEditor(new ButtonEditorFavoriteColumn(getThemedCheckBox(), tableData, config, itemManager));
-                table.getColumn(table.getColumnName(i)).setCellRenderer(new ButtonRendererFavoriteColumn(config, tableData));
+                table.getColumn(table.getColumnName(i)).setCellRenderer(new ButtonRendererFavoriteColumn(tableData));
             } else
             {
                 table.getColumn(table.getColumnName(i)).setCellEditor(new NonEditableCell(getThemedTextField()));
@@ -1817,18 +1817,16 @@ public class Raids extends BaseFrame implements UpdateableWindow
         {
             ArrayList<ArrayList<StringInt>> crabData = new ArrayList<>();
             int[] toRemove = table.getSelectedRows();
-            for (int i = 0; i < toRemove.length; i++)
+            /*(for (int i = 0; i < toRemove.length; i++)
             {
                 Raid row = currentData.get(Integer.parseInt(table.getModel().getValueAt(toRemove[i], 0).toString()));
-                /*
-                if (row instanceof SimpleTOBData)
-                {
-                    crabData.add(((SimpleTOBData) row).maidenCrabs);
-                }
 
-                 */
+                if (row instanceof Tob)
+                {
+                    crabData.add(((Tob) row));
+                }
             }
-            new CrabLeakInfo(crabData); //todo "s" prefix
+            new CrabLeakInfo(crabData); //todo "s" prefix(*/
         });
         raidPopup.add(analyzeCrabs);
         raidPopup.add(exportRaids);

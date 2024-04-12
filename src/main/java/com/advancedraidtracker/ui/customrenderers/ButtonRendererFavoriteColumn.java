@@ -15,13 +15,10 @@ public class ButtonRendererFavoriteColumn extends JButton implements TableCellRe
     ImageIcon filled;
     ImageIcon outline;
 
-    public ButtonRendererFavoriteColumn(AdvancedRaidTrackerConfig config, java.util.List<Raid> data)
+    public ButtonRendererFavoriteColumn(java.util.List<Raid> data)
     {
         this.data = data;
-        filled = new ImageIcon(ImageUtil.loadImageResource(AdvancedRaidTrackerPlugin.class, "/com/advancedraidtracker/heartfilled.png").getScaledInstance(16, 16, Image.SCALE_SMOOTH));
-        outline = new ImageIcon(ImageUtil.loadImageResource(AdvancedRaidTrackerPlugin.class, "/com/advancedraidtracker/heartoutline.png").getScaledInstance(16, 16, Image.SCALE_SMOOTH));
-
-        setIcon(outline);
+        setIcon(IconManager.getHeartOutline());
     }
 
     @Override
@@ -37,7 +34,7 @@ public class ButtonRendererFavoriteColumn extends JButton implements TableCellRe
             setForeground(table.getForeground());
             setBackground(table.getBackground());
         }
-        setIcon(data.get(row).isFavorite() ? filled : outline);
+        setIcon(data.get(row).isFavorite() ? IconManager.getHeartFilled() : IconManager.getHeartOutline());
         return this;
     }
 }

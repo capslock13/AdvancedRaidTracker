@@ -2,17 +2,21 @@ package com.advancedraidtracker.ui;
 
 import com.advancedraidtracker.constants.RaidRoom;
 import com.advancedraidtracker.constants.RaidType;
+import com.advancedraidtracker.utility.RoomUtil;
 import com.advancedraidtracker.utility.datautility.DataPoint;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import static com.advancedraidtracker.constants.RaidRoom.ALL;
+import static com.advancedraidtracker.constants.RaidType.COLOSSEUM;
+import static com.advancedraidtracker.constants.RaidType.INFERNO;
 import static com.advancedraidtracker.rooms.inf.InfernoHandler.roomMap;
 import static com.advancedraidtracker.utility.UISwingUtility.getThemedMenu;
 import static com.advancedraidtracker.utility.UISwingUtility.getThemedMenuItem;
@@ -66,41 +70,55 @@ public class DataPointMenu
                 menus.put(RaidType.ALL, menu);
                 continue;
             }
-            JMenu menu = createMenu(raidType.name);
-            Map<String, JMenu> infernoSubMenus = new LinkedHashMap<>();
+            JMenu menu;
             Map<RaidRoom, JMenu> roomSubMenus = new LinkedHashMap<>();
-            for (RaidRoom room : RaidRoom.getRaidRoomsForRaidType(raidType))
+            if(raidType == INFERNO || raidType == RaidType.COLOSSEUM)
             {
-                JMenu roomMenu = createMenu(room.name);
-                Map<DataPoint.MenuType, JMenu> categoryMenus = new LinkedHashMap<>();
-                for (DataPoint.MenuType menuType : DataPoint.MenuType.values())
+                if(raidType == INFERNO)
                 {
-                    if (!menuType.excluded)
-                    {
-                        categoryMenus.put(menuType, createMenu(menuType.name));
-                    }
+                    menu = getWaveSubMenus("Inferno", "Inf", infernoSplits, 69);
                 }
-                for (DataPoint point : DataPoint.getRoomPoints(room))
+                else
                 {
-                    if (!point.menuType.equals(DataPoint.MenuType.EXCLUDED))
+                    menu = getWaveSubMenus("Colosseum", "Col", colosseumSplits, 12);
+                }
+            }
+            else
+            {
+                menu = createMenu(raidType.name);
+                for (RaidRoom room : RaidRoom.getRaidRoomsForRaidType(raidType))
+                {
+                    JMenu roomMenu = createMenu(room.name);
+                    Map<DataPoint.MenuType, JMenu> categoryMenus = new LinkedHashMap<>();
+                    for (DataPoint.MenuType menuType : DataPoint.MenuType.values())
                     {
-                        if (point.room.equals(ALL))
+                        if (!menuType.excluded)
                         {
-                            categoryMenus.get(point.menuType).add(createMenuItem(room.name + " " + point.name));
-                        } else
-                        {
-                            categoryMenus.get(point.menuType).add(createMenuItem(point.name));
+                            categoryMenus.put(menuType, createMenu(menuType.name));
                         }
                     }
-                }
-                for (JMenu categoryMenu : categoryMenus.values())
-                {
-                    if (categoryMenu.getMenuComponents().length != 0)
+                    for (DataPoint point : DataPoint.getRoomPoints(room))
                     {
-                        roomMenu.add(categoryMenu);
+                        if (!point.menuType.equals(DataPoint.MenuType.EXCLUDED))
+                        {
+                            if (point.room.equals(ALL))
+                            {
+                                categoryMenus.get(point.menuType).add(createMenuItem(room.name + " " + point.name));
+                            } else
+                            {
+                                categoryMenus.get(point.menuType).add(createMenuItem(point.name));
+                            }
+                        }
                     }
+                    for (JMenu categoryMenu : categoryMenus.values())
+                    {
+                        if (categoryMenu.getMenuComponents().length != 0)
+                        {
+                            roomMenu.add(categoryMenu);
+                        }
+                    }
+                    roomSubMenus.put(room, roomMenu);
                 }
-                roomSubMenus.put(room, roomMenu);
             }
             for (JMenu roomMenu : roomSubMenus.values())
             {
@@ -138,4 +156,63 @@ public class DataPointMenu
         window.setComboBox(name);
         window.update();
     }
+
+    public JMenu getWaveSubMenus(String contentName, String prefix, List<String> relevantSplits, int highestWave)
+    {
+        JMenu menu = createMenu(contentName);
+
+        JMenu allWaves = createMenu("All Waves");
+        for(int i = 1; i < highestWave+1; i++)
+        {
+            allWaves.add(getSubMenuForWave(contentName, prefix+ " Wave " + i));
+        }
+        menu.add(allWaves);
+
+        for(String splitSubMenu : relevantSplits)
+        {
+            JMenu splitMenu = createMenu(splitSubMenu);
+            splitMenu.add(getSubMenuForWave(contentName, prefix + " " + splitSubMenu));
+            menu.add(splitMenu);
+        }
+        return menu;
+    }
+
+    public JMenu getSubMenuForWave(String contentName, String waveName)
+    {
+        JMenu wave = createMenu(waveName);
+        Map<DataPoint.MenuType, JMenu> categoryMenus = new LinkedHashMap<>();
+        for (DataPoint.MenuType menuType : DataPoint.MenuType.values())
+        {
+            if (!menuType.excluded)
+            {
+                categoryMenus.put(menuType, createMenu(menuType.name));
+            }
+        }
+        List<RaidRoom> roomsToAdd = RoomUtil.getVariations(waveName);
+        roomsToAdd.add(RaidRoom.getRoom(contentName));
+        for (DataPoint point : DataPoint.getRoomPoints(roomsToAdd.toArray(new RaidRoom[0])))
+        {
+            if (!point.menuType.equals(DataPoint.MenuType.EXCLUDED))
+            {
+                if (point.room.equals(ALL))
+                {
+                    categoryMenus.get(point.menuType).add(createMenuItem(waveName + " " + point.name));
+                } else
+                {
+                    categoryMenus.get(point.menuType).add(createMenuItem(point.name));
+                }
+            }
+        }
+        for (JMenu categoryMenu : categoryMenus.values())
+        {
+            if (categoryMenu.getMenuComponents().length != 0)
+            {
+                wave.add(categoryMenu);
+            }
+        }
+        return wave;
+    }
+
+    private static final List<String> infernoSplits = List.of("Wave 1-8", "Wave 9-17", "Wave 18-24", "Wave 25-34", "Wave 35-41", "Wave 42-49", "Wave 50-56", "Wave 57-59", "Wave 60-62", "Wave 63-65", "Wave 66", "Wave 67", "Wave 68", "Wave 69");
+    private static final List<String> colosseumSplits = List.of("Wave 1-6", "Wave 7-11", "Wave 1-11");
 }

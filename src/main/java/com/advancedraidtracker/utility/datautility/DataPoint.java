@@ -253,31 +253,31 @@ public enum DataPoint
     ZEBAK_BOULDER_ATTACKS("Zebak Boulder Attacks", types.INT_MAP, ZEBAK, MISC),
     ZEBAK_WATERFALL_ATTACKS("Zebak Waterfall Attacks", types.INT_MAP, ZEBAK, MISC),
 
-    COLOSSEUM_WAVE_1_DURATION("Col Wave 1 Duration", types.TIME_SPLIT, COLOSSEUM, TIME),
-    COLOSSEUM_WAVE_2_SPLIT("Col Wave 2 Split", types.TIME_SPLIT, COLOSSEUM, TIME),
-    COLOSSEUM_WAVE_2_DURATION("Col Wave 2 Duration", types.TIME_SPLIT, COLOSSEUM, TIME),
-    COLOSSEUM_WAVE_3_SPLIT("Col Wave 3 Split", types.TIME_SPLIT, COLOSSEUM, TIME),
-    COLOSSEUM_WAVE_3_DURATION("Col Wave 3 Duration", types.TIME_SPLIT, COLOSSEUM, TIME),
-    COLOSSEUM_WAVE_4_SPLIT("Col Wave 4 Split", types.TIME_SPLIT, COLOSSEUM, TIME),
-    COLOSSEUM_WAVE_4_DURATION("Col Wave 4 Duration", types.TIME_SPLIT, COLOSSEUM, TIME),
-    COLOSSEUM_WAVE_5_SPLIT("Col Wave 5 Split", types.TIME_SPLIT, COLOSSEUM, TIME),
-    COLOSSEUM_WAVE_5_DURATION("Col Wave 5 Duration", types.TIME_SPLIT, COLOSSEUM, TIME),
-    COLOSSEUM_WAVE_6_SPLIT("Col Wave 6 Split", types.TIME_SPLIT, COLOSSEUM, TIME),
-    COLOSSEUM_WAVE_6_DURATION("Col Wave 6 Duration", types.TIME_SPLIT, COLOSSEUM, TIME),
-    COLOSSEUM_WAVE_7_SPLIT("Col Wave 7 Split", types.TIME_SPLIT, COLOSSEUM, TIME),
-    COLOSSEUM_WAVE_7_DURATION("Col Wave 7 Duration", types.TIME_SPLIT, COLOSSEUM, TIME),
-    COLOSSEUM_WAVE_8_SPLIT("Col Wave 8 Split", types.TIME_SPLIT, COLOSSEUM, TIME),
-    COLOSSEUM_WAVE_8_DURATION("Col Wave 8 Duration", types.TIME_SPLIT, COLOSSEUM, TIME),
-    COLOSSEUM_WAVE_9_SPLIT("Col Wave 9 Split", types.TIME_SPLIT, COLOSSEUM, TIME),
-    COLOSSEUM_WAVE_9_DURATION("Col Wave 9 Duration", types.TIME_SPLIT, COLOSSEUM, TIME),
-    COLOSSEUM_WAVE_10_SPLIT("Col Wave 10 Split", types.TIME_SPLIT, COLOSSEUM, TIME),
-    COLOSSEUM_WAVE_10_DURATION("Col Wave 10 Duration", types.TIME_SPLIT, COLOSSEUM, TIME),
-    COLOSSEUM_WAVE_11_SPLIT("Col Wave 11 Split", types.TIME_SPLIT, COLOSSEUM, TIME),
-    COLOSSEUM_WAVE_11_DURATION("Col Wave 11 Duration", types.TIME_SPLIT, COLOSSEUM, TIME),
-    COLOSSEUM_WAVE_12_SPLIT("Col Wave 12 Split", types.TIME_SPLIT, COLOSSEUM, TIME),
-    COLOSSEUM_WAVE_12_DURATION("Col Wave 12 Duration", types.TIME_SPLIT, COLOSSEUM, TIME),
-    COLOSSEUM_PERFECT_PARRY("Perfect Parries", types.OTHER_INT, COLOSSEUM, MISC),
-    COLOSSEUM_GRAPPLES("Grapples", types.INT_MAP, COLOSSEUM, MISC),
+    COLOSSEUM_WAVE_1_DURATION("Col Wave 1 Duration", types.TIME_SPLIT, WAVE_1_COL, TIME),
+    COLOSSEUM_WAVE_2_SPLIT("Col Wave 2 Split", types.TIME_SPLIT, WAVE_2_COL, TIME),
+    COLOSSEUM_WAVE_2_DURATION("Col Wave 2 Duration", types.TIME_SPLIT, WAVE_2_COL, TIME),
+    COLOSSEUM_WAVE_3_SPLIT("Col Wave 3 Split", types.TIME_SPLIT, WAVE_3_COL, TIME),
+    COLOSSEUM_WAVE_3_DURATION("Col Wave 3 Duration", types.TIME_SPLIT, WAVE_3_COL, TIME),
+    COLOSSEUM_WAVE_4_SPLIT("Col Wave 4 Split", types.TIME_SPLIT, WAVE_4_COL, TIME),
+    COLOSSEUM_WAVE_4_DURATION("Col Wave 4 Duration", types.TIME_SPLIT, WAVE_4_COL, TIME),
+    COLOSSEUM_WAVE_5_SPLIT("Col Wave 5 Split", types.TIME_SPLIT, WAVE_5_COL, TIME),
+    COLOSSEUM_WAVE_5_DURATION("Col Wave 5 Duration", types.TIME_SPLIT, WAVE_5_COL, TIME),
+    COLOSSEUM_WAVE_6_SPLIT("Col Wave 6 Split", types.TIME_SPLIT, WAVE_6_COL, TIME),
+    COLOSSEUM_WAVE_6_DURATION("Col Wave 6 Duration", types.TIME_SPLIT, WAVE_6_COL, TIME),
+    COLOSSEUM_WAVE_7_SPLIT("Col Wave 7 Split", types.TIME_SPLIT, WAVE_7_COL, TIME),
+    COLOSSEUM_WAVE_7_DURATION("Col Wave 7 Duration", types.TIME_SPLIT, WAVE_7_COL, TIME),
+    COLOSSEUM_WAVE_8_SPLIT("Col Wave 8 Split", types.TIME_SPLIT, WAVE_8_COL, TIME),
+    COLOSSEUM_WAVE_8_DURATION("Col Wave 8 Duration", types.TIME_SPLIT, WAVE_8_COL, TIME),
+    COLOSSEUM_WAVE_9_SPLIT("Col Wave 9 Split", types.TIME_SPLIT, WAVE_9_COL, TIME),
+    COLOSSEUM_WAVE_9_DURATION("Col Wave 9 Duration", types.TIME_SPLIT, WAVE_9_COL, TIME),
+    COLOSSEUM_WAVE_10_SPLIT("Col Wave 10 Split", types.TIME_SPLIT, WAVE_10_COL, TIME),
+    COLOSSEUM_WAVE_10_DURATION("Col Wave 10 Duration", types.TIME_SPLIT, WAVE_10_COL, TIME),
+    COLOSSEUM_WAVE_11_SPLIT("Col Wave 11 Split", types.TIME_SPLIT, WAVE_11_COL, TIME),
+    COLOSSEUM_WAVE_11_DURATION("Col Wave 11 Duration", types.TIME_SPLIT, WAVE_11_COL, TIME),
+    COLOSSEUM_WAVE_12_SPLIT("Col Wave 12 Split", types.TIME_SPLIT, WAVE_12_COL, TIME),
+    COLOSSEUM_WAVE_12_DURATION("Col Wave 12 Duration", types.TIME_SPLIT, WAVE_12_COL, TIME),
+    COLOSSEUM_PERFECT_PARRY("Perfect Parries", types.OTHER_INT, WAVE_12_COL, MISC),
+    COLOSSEUM_GRAPPLES("Grapples", types.INT_MAP, WAVE_12_COL, MISC),
     COLOSSEUM_NPC_HEALED("NPC Healed", types.OTHER_INT, ALL, MISC),
     INFERNO_WAVE_STARTS("Inferno Wave Starts", types.INT_MAP, INFERNO, MenuType.EXCLUDED, false),
     INFERNO_WAVE_DURATIONS("Inferno Wave Durations", types.INT_MAP, INFERNO, MenuType.EXCLUDED, false),
@@ -400,7 +400,7 @@ public enum DataPoint
         }
     }
 
-    public static Map<String, DataPoint> dataPointCache = new HashMap<>();
+    public static final Map<String, DataPoint> dataPointCache = new HashMap<>();
 
     public static DataPoint getValue(String s)
     {
@@ -535,12 +535,12 @@ public enum DataPoint
         return Arrays.copyOf(valuesToGather.toArray(), valuesToGather.size(), String[].class);
     }
 
-    public static List<DataPoint> getRoomPoints(RaidRoom room)
+    public static List<DataPoint> getRoomPoints(RaidRoom ... room)
     {
         List<DataPoint> points = new ArrayList<>();
         for (DataPoint point : values())
         {
-            if (point.room == room || point.room.equals(ALL))
+            if (List.of(room).contains(point.room) || point.room.equals(ALL))
             {
                 points.add(point);
             }

@@ -1,15 +1,20 @@
 package com.advancedraidtracker.utility;
 
+import com.advancedraidtracker.constants.RaidRoom;
 import com.advancedraidtracker.constants.RaidType;
 import com.advancedraidtracker.constants.Room;
 import com.advancedraidtracker.constants.TobIDs;
+import com.advancedraidtracker.utility.datautility.datapoints.Raid;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.Player;
 import net.runelite.api.coords.WorldPoint;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class RoomUtil
@@ -284,5 +289,32 @@ public class RoomUtil
             }
         }
         return false;
+    }
+
+    public static List<RaidRoom> getVariations(String name)
+    {
+        List<RaidRoom> rooms = new ArrayList<>();
+        String[] words = name.split(" ");
+        if(words.length > 2)
+        {
+            String[] vals = words[2].split("-");
+            if(vals.length == 2)
+            {
+                try
+                {
+                    int start = Integer.parseInt(vals[0]);
+                    int end = Integer.parseInt(vals[1]);
+                    for(int i = start; i < end+1; i++)
+                    {
+                        rooms.add(RaidRoom.getRoom(words[0] + " Wave " + i));
+                    }
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return rooms;
     }
 }

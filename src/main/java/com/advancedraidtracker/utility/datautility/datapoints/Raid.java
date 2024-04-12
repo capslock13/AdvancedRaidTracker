@@ -10,6 +10,7 @@ import net.runelite.client.util.Text;
 
 import java.nio.file.Path;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.advancedraidtracker.constants.RaidRoom.*;
 import static com.advancedraidtracker.constants.RaidType.TOB;
@@ -209,6 +210,32 @@ public abstract class Raid
         if (datapoint.equals("Challenge Time"))
         {
             return getChallengeTime();
+        }
+        else if((datapoint.startsWith("Col") || datapoint.startsWith("Inf")) && datapoint.contains("-"))
+        {
+            String[] words = datapoint.split(" ");
+            if(words.length > 2)
+            {
+                String[] vals = words[2].split("-");
+                if(vals.length == 2)
+                {
+                    try
+                    {
+                        int start = Integer.parseInt(vals[0]);
+                        int end = Integer.parseInt(vals[1]);
+                        int sum = 0;
+                        for(int i = start; i < end+1; i++)
+                        {
+                            sum += get(words[0] + " Wave " + i + " " + Arrays.stream(words).skip(3).collect(Collectors.joining(" ")));
+                        }
+                        return sum;
+                    }
+                    catch (Exception e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+            }
         }
         return data.get(datapoint);
     }

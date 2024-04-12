@@ -91,7 +91,6 @@ public class ComparisonViewPanel extends JPanel implements UpdateableWindow
     private final ConfigManager configManager;
 
     private final ClientThread clientThread;
-    private List<String> comboFlatData = new ArrayList<>();
 
     public ComparisonViewPanel(List<List<Raid>> raidData, List<String> names, AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager)
     {
@@ -308,8 +307,8 @@ public class ComparisonViewPanel extends JPanel implements UpdateableWindow
 
         for (int i = 0; i < topGraphs.size(); i++)
         {
-            topGraphs.get(i).switchKey(Objects.requireNonNull(DataPoint.getValue(Objects.requireNonNull(compareByComboBox.getSelectedItem()).toString())));
-            bottomGraphs.get(i).switchKey(Objects.requireNonNull(DataPoint.getValue(Objects.requireNonNull(compareByComboBox.getSelectedItem()).toString())));
+            topGraphs.get(i).switchKey((Objects.requireNonNull(compareByComboBox.getSelectedItem()).toString()));
+            bottomGraphs.get(i).switchKey((Objects.requireNonNull(compareByComboBox.getSelectedItem()).toString()));
 
             topGraphs.get(i).generateScales();
             bottomGraphs.get(i).generateScales();

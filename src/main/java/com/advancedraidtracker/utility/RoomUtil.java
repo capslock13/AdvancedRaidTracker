@@ -4,6 +4,7 @@ import com.advancedraidtracker.constants.RaidRoom;
 import com.advancedraidtracker.constants.RaidType;
 import com.advancedraidtracker.constants.Room;
 import com.advancedraidtracker.constants.TobIDs;
+import com.advancedraidtracker.utility.datautility.DataPoint;
 import com.advancedraidtracker.utility.datautility.datapoints.Raid;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
@@ -106,6 +107,22 @@ public class RoomUtil
     public static String value(int value)
     {
         return (value < 0) ? "-" : String.valueOf(value);
+    }
+
+    public static boolean isTime(String value)
+    {
+        try
+        {
+            DataPoint pointFound = DataPoint.getValue(value);
+            if(pointFound != DataPoint.UNKNOWN)
+            {
+                return pointFound.isTime();
+            }
+            else return value.contains("Time") || value.contains("Entry") || value.contains("Split") || value.contains("Duration");
+        } catch (Exception e)
+        {
+            return false;
+        }
     }
 
     public static String time(double ticks)

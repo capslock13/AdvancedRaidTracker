@@ -61,7 +61,7 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
     private final Color gradientEndSelected;
     private final Color gradientStartSelectedAndHighlighted;
     private final Color gradientEndSelectedAndHighlighted;
-    private DataPoint activeKey;
+    private String activeKey;
     private boolean time = false;
     private final BufferedImage img = new BufferedImage(IMG_WIDTH, IMG_HEIGHT, BufferedImage.TYPE_INT_ARGB);
     private final List<Raid> internalData;
@@ -123,9 +123,9 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
     }
 
 
-    public void switchKey(DataPoint key)
+    public void switchKey(String key)
     {
-        time = key.isTime();
+        time = RoomUtil.isTime(key);
         activeKey = key;
     }
 
@@ -534,7 +534,7 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
         Font font = new Font("SansSerif", Font.PLAIN, 14);
         g.setFont(font);
         g.setColor(config.fontColor());
-        String title = activeKey.name + " (Based on " + totalCount + " raids)";
+        String title = activeKey + " (Based on " + totalCount + " raids)";
         g.drawString(title, 300 - g.getFontMetrics().stringWidth(title) / 2, 16);
         g.setFont(oldFont);
     }
@@ -806,7 +806,7 @@ public class GraphPanel extends JPanel implements MouseMotionListener, MouseList
         return count;
     }
 
-    private GraphInternalDataContainer getInternalDataSet(DataPoint key)
+    private GraphInternalDataContainer getInternalDataSet(String key)
     {
         List<Integer> intDataSet = new ArrayList<>();
         List<Raid> fullDataSet = new ArrayList<>();

@@ -51,6 +51,7 @@ import java.util.stream.Collectors;
 
 import static com.advancedraidtracker.constants.RaidType.ALL;
 import static com.advancedraidtracker.rooms.inf.InfernoHandler.roomMap;
+import static com.advancedraidtracker.utility.RoomUtil.isTime;
 import static com.advancedraidtracker.utility.UISwingUtility.*;
 
 @Slf4j
@@ -715,21 +716,6 @@ public class Raids extends BaseFrame implements UpdateableWindow
         return (isTime(column) ? RoomUtil.time(valueToDisplay) : valueToDisplay);
     }
 
-    boolean isTime(String value) //todo what is the purpose?
-    {
-        try
-        {
-            DataPoint pointFound = DataPoint.getValue(value);
-            if(pointFound != DataPoint.UNKNOWN)
-            {
-                return pointFound.isTime();
-            }
-            else return value.contains("Time") || value.contains("Entry") || value.contains("Split") || value.contains("Duration");
-        } catch (Exception e)
-        {
-            return false;
-        }
-    }
 
 
     public void resizeColumnWidthFilters(JTable table)

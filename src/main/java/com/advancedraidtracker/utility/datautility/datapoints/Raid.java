@@ -303,6 +303,16 @@ public abstract class Raid
         return isCompleted();
     }
 
+    public boolean getTimeAccurate(String point)
+    {
+        DataPoint pointFound = DataPoint.getValue(point);
+        if(pointFound != DataPoint.UNKNOWN)
+        {
+            return pointFound.isTime();
+        }
+        return true;
+    }
+
     public boolean getTimeAccurate(DataPoint point)
     {
         if(point.equals(CHALLENGE_TIME))

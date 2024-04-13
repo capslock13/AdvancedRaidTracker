@@ -27,6 +27,7 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.security.Key;
 import java.util.*;
 import java.util.List;
 
@@ -482,6 +483,45 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         removeMouseMotionListener(this);
     }
 
+    public void appendToSelected(char c)
+    {
+        for(ChartTick tick : selectedTicks)
+        {
+            synchronized (outlineBoxes)
+            {
+                for(OutlineBox box : outlineBoxes)
+                {
+                    if(box.tick == tick.getTick() && Objects.equals(box.player, tick.getPlayer()))
+                    {
+                        box.additionalText += c;
+                    }
+                }
+            }
+        }
+        redraw();
+    }
+
+    public void removeLastCharFromSelected()
+    {
+        for(ChartTick tick : selectedTicks)
+        {
+            synchronized (outlineBoxes)
+            {
+                for(OutlineBox box : outlineBoxes)
+                {
+                    if(box.tick == tick.getTick() && Objects.equals(box.player, tick.getPlayer()))
+                    {
+                        if(!box.additionalText.isEmpty())
+                        {
+                            box.additionalText = box.additionalText.substring(0, box.additionalText.length()-1);
+                        }
+                    }
+                }
+            }
+        }
+        redraw();
+    }
+
     public ChartPanel(String room, boolean isLive, AdvancedRaidTrackerConfig config, ClientThread clientThread, ConfigManager configManager, ItemManager itemManager, SpriteManager spriteManager)
     {
         this.itemManager = itemManager;
@@ -536,6 +576,17 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                         }
                         break;
                     case KeyEvent.KEY_RELEASED:
+                        if(KeyEvent.getKeyText(e.getKeyCode()).length() == 1 || e.getKeyCode() == KeyEvent.VK_SPACE)
+                        {
+                            if(!isCtrlPressed())
+                            {
+                                appendToSelected((char) e.getKeyCode());
+                            }
+                        }
+                        else if(e.getKeyCode() == KeyEvent.VK_BACK_SPACE)
+                        {
+                            removeLastCharFromSelected(); //todo if ctrl delete word?
+                        }
                         switch(e.getKeyCode())
                         {
                             case KeyEvent.VK_CONTROL:
@@ -1287,10 +1338,9 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             int selectedTickHP = -1;
             try
             {
-                selectedTickHP = roomHP.get(hoveredColumn + 1);
+                selectedTickHP = roomHP.getOrDefault(hoveredColumn + 1, -1);
             } catch (Exception ignored)
             {
-                ignored.printStackTrace();
             }
             int offset = -1;
             switch (room) //todo map?
@@ -1311,8 +1361,6 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                     break;
             }
             String bossWouldHaveDied = (offset != -1) ? "Melee attack on this tick killing would result in: " + RoomUtil.time(hoveredColumn + 1 + offset + 1) + " (Quick death: " + RoomUtil.time(hoveredColumn + offset + 1) + ")" : "";
-            log.info("Trying to find tick: " + (hoveredColumn+1));
-            log.info("Map: " + roomHP);
             String HPString = "Boss HP: " + ((selectedTickHP == -1) ? "-" : RoomUtil.varbitHPtoReadable(selectedTickHP));
             HoverBox hoverBox = new HoverBox(HPString, config);
             if (offset != -1)
@@ -1950,7 +1998,8 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                         weapon = selectedSecondary.weaponIDs[0];
                     }
                     addAttack(new PlayerDidAttack(itemManager, hoveredPlayer, String.valueOf(selectedPrimary.animations[0]), hoveredTick, weapon, "", "", 0, 0, "", ""), selectedSecondary, true);
-                } else if (selectedSecondary.equals(PlayerAnimation.NOT_SET))
+                }
+                else if (selectedSecondary.equals(PlayerAnimation.NOT_SET) && currentTool == ADD_ATTACK_TOOL)
                 {
                     removeAttack(hoveredTick, hoveredPlayer, true);
                 }

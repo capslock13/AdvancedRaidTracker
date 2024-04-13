@@ -37,11 +37,17 @@ public class ChartToolPanel extends JPanel implements MouseListener, MouseMotion
     private PlayerAnimation primary = PlayerAnimation.SCYTHE;
     private PlayerAnimation secondary = PlayerAnimation.NOT_SET;
     private PlayerAnimation hoveredAttack = PlayerAnimation.EXCLUDED_ANIMATION;
+    List<ChartTool> tools = List.of(
+            new ChartTool(1, ADD_LINE_TOOL, "Line"),
+            new ChartTool(1, SELECTION_TOOL, "Select"),
+            new ChartTool(1, ADD_TEXT_TOOL, "Text"),
+            new ChartTool(1, ADD_AUTO_TOOL, "Auto")
+    );
 
     int tool = 0;
     int hoveredTool = NO_TOOL;
     int toolMargin = 10;
-    int xMargin = 5;
+    static final int xMargin = 5;
     int yMargin = 15;
     int initialXMargin = 5;
     int initialYMargin;
@@ -190,28 +196,6 @@ public class ChartToolPanel extends JPanel implements MouseListener, MouseMotion
             }
             g.drawRect(xMargin + 1, yMargin + 1, (toolMargin) + (toolHeight * 2) + (toolHeight * 2), toolHeight * 2);
         }
-        if (tool == ADD_LINE_TOOL || hoveredTool == ADD_LINE_TOOL)
-        {
-            if (hoveredTool == ADD_LINE_TOOL)
-            {
-                g.setColor(config.fontColor());
-            } else
-            {
-                g.setColor(new Color(45, 140, 235));
-            }
-            g.drawRect(xMargin + 1 + (2 * toolMargin) + (toolHeight * 2) + (toolHeight * 2), yMargin + 1, 2 * toolHeight, toolHeight * 2);
-        }
-        if (tool == SELECTION_TOOL || hoveredTool == SELECTION_TOOL)
-        {
-            if (hoveredTool == SELECTION_TOOL)
-            {
-                g.setColor(config.fontColor());
-            } else
-            {
-                g.setColor(new Color(45, 140, 235));
-            }
-            g.drawRect(xMargin + 1 + (3 * toolMargin) + (toolHeight * 2) + (toolHeight * 2) + (toolHeight * 2), yMargin + 1, 2 * toolHeight, toolHeight * 2);
-        }
 
         //draw primary
 
@@ -271,27 +255,33 @@ public class ChartToolPanel extends JPanel implements MouseListener, MouseMotion
             g.fillRoundRect(xMargin + 4, yMargin + 4, toolHeight * 2 - 6, toolHeight * 2 - 6, 10, 10);
             g.drawString(secondary.shorthand, xMargin + textOffset - 1, yMargin + (getStringHeight(g) / 2) + (toolHeight) + 1);
         }
-        //draw line tool
 
-        xMargin += toolMargin + toolHeight * 2;
-        g.setColor(config.markerColor());
-        g.fillRoundRect(xMargin + 4, yMargin + 4, toolHeight * 2 - 6, toolHeight * 2 - 6, 10, 10);
-        g.setColor(config.boxColor());
-        g.drawRoundRect(xMargin + 3, yMargin + 3, toolHeight * 2 - 5, toolHeight * 2 - 5, 10, 10);
-        textOffset = (toolHeight) - (getStringWidth(g, "Line") / 2);
-        g.setColor(config.fontColor());
-        g.drawString("Line", xMargin + textOffset - 1, yMargin + (getStringHeight(g) / 2) + (toolHeight) + 1);
+        int index = 0;
+        for(ChartTool chartTool : tools)
+        {
+            xMargin += toolMargin + toolHeight * 2;
+            g.setColor(config.markerColor());
+            //g.fillRoundRect(xMargin+4, yMargin+4, toolHeight * 2 - 6, toolHeight * 2 -6, 10, 10);
+            g.setColor(config.boxColor());
+            g.drawRoundRect(xMargin + 3, yMargin + 3, toolHeight * 2 - 5, toolHeight * 2 - 5, 10, 10);
+            textOffset = (toolHeight) - (getStringWidth(g, chartTool.getName()) / 2);
+            g.setColor(config.fontColor());
+            g.drawString(chartTool.getName(), xMargin + textOffset - 1, yMargin + (getStringHeight(g) / 2) + (toolHeight) + 1);
 
-        //draw selection tool
-
-        xMargin += toolMargin + toolHeight*2;
-        g.setColor(config.markerColor());
-        g.fillRoundRect(xMargin +4, yMargin+4, toolHeight*2 - 6, toolHeight * 2- 6, 10, 10);
-        g.setColor(config.boxColor());
-        g.drawRoundRect(xMargin + 3, yMargin + 3, toolHeight * 2 - 5, toolHeight * 2 - 5, 10, 10);
-        textOffset = (toolHeight) - (getStringWidth(g, "Select") / 2);
-        g.setColor(config.fontColor());
-        g.drawString("Select", xMargin + textOffset - 1, yMargin + (getStringHeight(g) / 2) + (toolHeight) + 1);
+            if(tool == chartTool.getTool() || hoveredTool == chartTool.getTool())
+            {
+                if(hoveredTool == chartTool.getTool())
+                {
+                    g.setColor(config.fontColor());
+                }
+                else
+                {
+                    g.setColor(new Color(45, 140, 235));
+                }
+                g.drawRect(6 + ((2+index)*toolMargin) + (2+index)*(toolHeight*2), 16, 2*toolHeight, toolHeight*2);
+            }
+            index++;
+        }
 
         //draw tools
 
@@ -362,22 +352,20 @@ public class ChartToolPanel extends JPanel implements MouseListener, MouseMotion
             if (x > 6 && x < (6 + toolMargin + (4 * config.chartScaleSize())))
             {
                 hoveredTool = ADD_ATTACK_TOOL;
-            } else if (x > (6 + (4 * config.chartScaleSize()) + (2 * toolMargin)) && x < (6 + (6 * config.chartScaleSize()) + (2 * toolMargin)))
-            {
-                hoveredTool = ADD_LINE_TOOL;
+                return;
             }
-            else if(x > (6 + (6 * config.chartScaleSize()) + (3*toolMargin)) && x < (6 + (8*config.chartScaleSize()) + (3*toolMargin)))
+            int index = 0;
+            for(ChartTool chartTool : tools)
             {
-                hoveredTool = SELECTION_TOOL;
+                if(x > (6 + ((4+(2*index)) * config.chartScaleSize()) + ((2+(index)) * toolMargin)) && x < (6 + ((6+(2*index)) * config.chartScaleSize()) + ((2+index)*toolMargin)))
+                {
+                    hoveredTool = chartTool.getTool();
+                    return;
+                }
+                index++;
             }
-            else
-            {
-                hoveredTool = NO_TOOL;
-            }
-        } else
-        {
-            hoveredTool = NO_TOOL;
         }
+        hoveredTool = NO_TOOL;
     }
 
     private void setHoveredAttack(int x, int y)
@@ -406,10 +394,18 @@ public class ChartToolPanel extends JPanel implements MouseListener, MouseMotion
         {
             if (SwingUtilities.isLeftMouseButton(e))
             {
-                if (tool == ADD_ATTACK_TOOL || tool == ADD_LINE_TOOL || tool == SELECTION_TOOL)
+                if (tool == ADD_ATTACK_TOOL || tool == ADD_LINE_TOOL || tool == SELECTION_TOOL || tool == ADD_TEXT_TOOL)
                 {
                     tool = hoveredTool;
                     parentFrame.setToolSelection(hoveredTool);
+                    if(tool == ADD_TEXT_TOOL)
+                    {
+                        setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
+                    }
+                    else
+                    {
+                        setCursor(Cursor.getDefaultCursor());
+                    }
                     drawPanel();
                 }
             }

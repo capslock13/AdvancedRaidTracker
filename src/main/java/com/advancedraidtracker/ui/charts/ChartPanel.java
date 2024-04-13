@@ -13,6 +13,7 @@ import com.google.common.collect.Multimap;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import net.runelite.api.ItemID;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.game.ItemManager;
@@ -32,9 +33,11 @@ import java.util.List;
 import static com.advancedraidtracker.ui.charts.ChartConstants.*;
 import static com.advancedraidtracker.ui.charts.ChartIO.loadChartFromFile;
 import static com.advancedraidtracker.ui.charts.ChartIO.saveChart;
+import static com.advancedraidtracker.ui.charts.OutlineBox.getSpellSpecificIcon;
 import static com.advancedraidtracker.utility.UISwingUtility.*;
 import static com.advancedraidtracker.utility.datautility.DataWriter.PLUGIN_DIRECTORY;
 import static com.advancedraidtracker.ui.charts.OutlineBox.getIcon;
+import static com.advancedraidtracker.utility.weapons.PlayerAnimation.*;
 
 @Slf4j
 public class ChartPanel extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener
@@ -269,8 +272,8 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         drawGraph();
     }
 
-    int baseStartTick = 0;
-    int baseEndTick = 0;
+    int baseStartTick = 1;
+    int baseEndTick = 1;
 
     public void resetGraph()
     {
@@ -278,10 +281,10 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         currentBox = 0;
         currentScrollOffsetY = 0;
         currentScrollOffsetX = 0;
-        endTick = 0;
-        startTick = 0;
-        baseEndTick = 0;
-        baseStartTick = 0;
+        endTick = 1;
+        startTick = 1;
+        baseEndTick = 1;
+        baseStartTick = 1;
         hoveredColumn = -1;
         hoveredTick = -1;
         hoveredPlayer = "";
@@ -490,13 +493,14 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         OutlineBox.spriteManager = spriteManager;
         OutlineBox.itemManager = itemManager;
         OutlineBox.clientThread = clientThread;
+        OutlineBox.useUnkitted = config.useUnkitted();
         setBackground(config.primaryDark());
         setOpaque(true);
         scale = 26;
         live = isLive;
         this.room = room;
-        startTick = 0;
-        endTick = 0;
+        startTick = 1;
+        endTick = 1;
         shouldWrap = true;
         boxWidth = LEFT_MARGIN + scale * (ticksToShow + 1);
         windowWidth = boxWidth+10;
@@ -591,24 +595,6 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                                     List<OutlineBox> createdBoxes = new ArrayList<>();
                                     for(ChartTick tick : selectedTicks)
                                     {
-                                        /*int weapon = 0;
-                                        if (selectedPrimary.weaponIDs.length > 0)
-                                        {
-                                            weapon = selectedPrimary.weaponIDs[0];
-                                        }
-                                        PlayerDidAttack createdAttack = new PlayerDidAttack(itemManager, tick.getPlayer(), String.valueOf(selectedPrimary.animations[0]), tick.getTick(), weapon, "", "", 0, 0, "", "");
-                                        if (clientThread != null)
-                                        {
-                                            if (config.useUnkitted())
-                                            {
-                                                createdAttack.useUnkitted();
-                                            }
-                                            clientThread.invoke(() ->
-                                            {
-                                                createdAttack.setIcons(itemManager, spriteManager);
-                                            });
-                                            clientThread.invoke(createdAttack::setWornNames);
-                                        }*/ //todo icon
                                         OutlineBox createdBox = new OutlineBox(selectedPrimary.shorthand, selectedPrimary.color, true, "", selectedPrimary, selectedPrimary.attackTicks, tick.getTick(), tick.getPlayer(), RaidRoom.getRoom(room), selectedPrimary.weaponIDs[0]);
                                         createdBoxes.add(createdBox);
                                         addAttack(createdBox);
@@ -1110,6 +1096,12 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                                         g.drawImage(createDropShadow(scaled), xOffset + 3, yOffset + 3, null);
                                         g.drawImage(scaled, xOffset + 2, yOffset + 1, null);
                                     }
+                                    BufferedImage secondary = getSpellSpecificIcon(box.secondaryID);
+                                    if(secondary != null && secondary != icon)
+                                    {
+                                        BufferedImage scaledSecondary = getScaledImage(secondary, scale/2, scale/2);
+                                        g.drawImage(scaledSecondary, xOffset + (scale/2), yOffset+(scale/2), null);
+                                    }
                                     if (!box.additionalText.isEmpty())
                                     {
                                         int textOffset;
@@ -1231,7 +1223,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
      */
     private int getMaxTick(String owner, int startTick)
     {
-        int maxTick = startTick + 99; //todo fix assumption that thralls always last 99 tick
+        int maxTick = startTick + 99;
         synchronized (thrallOutlineBoxes)
         {
             for (ThrallOutlineBox boxCompare : thrallOutlineBoxes)
@@ -1965,6 +1957,9 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         }
     }
 
+    Map<String, Integer> playerSBSCoolDown = new HashMap<>();
+    Map<String, Integer> playerVengCoolDown = new HashMap<>();
+
     private void addAttack(PlayerDidAttack attack, PlayerAnimation playerAnimation, boolean recordAttack)
     {
         if (clientThread != null)
@@ -1987,6 +1982,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             {
                 targetString += targetName;
             }
+            targetString += "- spotanim: " + attack.spotAnims;
             synchronized (actions)
             {
                 actions.put(attack, targetString);
@@ -2010,8 +2006,38 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             synchronized (outlineBoxes)
             {
                 OutlineBox outlineBox = new OutlineBox(playerAnimation.shorthand, playerAnimation.color, isTarget, additionalText, playerAnimation, playerAnimation.attackTicks, attack.tick, attack.player, RaidRoom.getRoom(this.room), attack.weapon);
+                String[] spotAnims = attack.spotAnims.split(":");
+                if (playerAnimation == SBS)
+                {
+                    playerSBSCoolDown.put(attack.player, attack.tick + 10);
+                }
+
+                if (spotAnims.length > 0)
+                {
+                    if (!Objects.equals(spotAnims[0], ""))
+                    {
+                        int graphic = Integer.parseInt(spotAnims[0]);
+                        if (graphic == 1062 && playerSBSCoolDown.getOrDefault(attack.player, 0) <= attack.tick) //sbs
+                        {
+                            outlineBox.secondaryID = Integer.parseInt(spotAnims[0]);
+                            playerSBSCoolDown.put(attack.player, attack.tick + 10);
+                        } else if (graphic != 1062)//non sbs secondary graphic -> force reset?
+                        {
+                            playerSBSCoolDown.put(attack.player, 0);
+                        }
+                        if (graphic != 1062 && !(playerAnimation == BARRAGE || playerAnimation == BLITZ))
+                        {
+                            outlineBox.secondaryID = Integer.parseInt(spotAnims[0]);
+                        }
+                    }
+                }
+                if (playerAnimation == BARRAGE || playerAnimation == BLITZ || playerAnimation == THRALL_CAST || playerAnimation == VENG_SELF
+                        || playerAnimation == AID_OTHER || playerAnimation == HUMIDIFY || playerAnimation == MAGIC_IMBUE)
+                {
+                    playerSBSCoolDown.put(attack.player, 0);
+                }
                 outlineBoxes.add(outlineBox);
-                if(recordAttack)
+                if (recordAttack)
                 {
                     actionHistory.add(new ChartAction(List.of(outlineBox), ChartActionType.ADD_ATTACKS));
                 }

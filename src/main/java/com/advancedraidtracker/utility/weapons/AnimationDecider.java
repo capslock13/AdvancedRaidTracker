@@ -31,6 +31,10 @@ public class AnimationDecider
         {
             return PlayerAnimation.BARRAGE;
         }
+        if(animation == 6299)
+        {
+            return PlayerAnimation.SBS;
+        }
 
         int maxMatches = 0;
         int minPopulatedArrays = Integer.MAX_VALUE;
@@ -59,6 +63,10 @@ public class AnimationDecider
                         .anyMatch(g -> spotAnims.contains(String.valueOf(g)));
                 if (graphicMatch)
                 {
+                    if(animation == -2)
+                    {
+                        return playerAnimation;
+                    }
                     matches++;
                 }
             }

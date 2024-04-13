@@ -30,6 +30,7 @@ public class OutlineBox
     public int cd;
     private final RaidRoom room;
     public int weapon;
+    public int secondaryID = -2;
 
     @Setter
     String[] wornItems = new String[0];
@@ -185,7 +186,7 @@ public class OutlineBox
     private static final Map<Integer, Integer> spellIconMap = Map.ofEntries(
             Map.entry(-1, SpriteID.UNKNOWN_INFORMATION_I),
             Map.entry(6299, SpriteID.SPELL_SPELLBOOK_SWAP),
-            Map.entry(1000000, SpriteID.EMOTE_WAVE),
+            Map.entry(100000, SpriteID.EMOTE_WAVE),
             Map.entry(4411, SpriteID.SPELL_VENGEANCE_OTHER),
             Map.entry(8316, SpriteID.SPELL_VENGEANCE),
             Map.entry(6294, SpriteID.SPELL_HUMIDIFY),
@@ -201,6 +202,18 @@ public class OutlineBox
             Map.entry(832, SpriteID.MAP_ICON_WATER_SOURCE),
             Map.entry(7855, SpriteID.SPELL_FIRE_SURGE));
 
+    private static final Map<Integer, Integer> graphicToSpellSpriteMap = Map.ofEntries(
+            Map.entry(1873, 8973), //mage thrall
+            Map.entry(1874, 8973), //range thrall
+            Map.entry(1875, 8973), //melee thrall
+            Map.entry(1854, 8970), //death charge
+            Map.entry(726, 8316), //veng self
+            Map.entry(2605, 8316),
+            Map.entry(141, 722), //magic imbue
+            Map.entry(1061, 6294), //humid
+            Map.entry(1062, 6299) //sbs
+    );
+
     public static int getSpellIcon(int animation)
     {
         return spellIconMap.getOrDefault(animation, 0);
@@ -212,6 +225,37 @@ public class OutlineBox
     public static ClientThread clientThread;
     public static ItemManager itemManager;
     public static SpriteManager spriteManager;
+
+    public static BufferedImage getSpellSpecificIcon(int id)
+    {
+        int spriteID = graphicToSpellSpriteMap.getOrDefault(id, -2);
+        if(spriteID == -2)
+        {
+            return null;
+        }
+        try
+        {
+            if (iconMap.containsKey("Sprite:" + spriteID))
+            {
+                return iconMap.get("Sprite:" + spriteID);
+            } else
+            {
+                if (clientThread != null)
+                {
+                    clientThread.invoke(() ->
+                    {
+                        if (spriteManager != null)
+                        {
+                            iconMap.put("Sprite:"+spriteID, spriteManager.getSprite(getSpellIcon(spriteID), 0));
+                        }
+                    });
+                }
+            }
+        } catch (Exception ignored)
+        {
+        }
+        return null;
+    }
 
     public static BufferedImage getIcon(PlayerAnimation animation, int weapon)
     {

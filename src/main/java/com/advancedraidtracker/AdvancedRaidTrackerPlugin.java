@@ -10,6 +10,7 @@ import com.advancedraidtracker.rooms.tob.*;
 import com.advancedraidtracker.ui.charts.ChartTheme;
 import com.advancedraidtracker.ui.charts.LiveChart;
 import com.advancedraidtracker.ui.RaidTrackerSidePanel;
+import com.advancedraidtracker.ui.charts.OutlineBox;
 import com.advancedraidtracker.utility.*;
 import com.advancedraidtracker.utility.datautility.DataWriter;
 import com.advancedraidtracker.utility.thrallvengtracking.*;
@@ -999,6 +1000,18 @@ public class AdvancedRaidTrackerPlugin extends Plugin
         chinSpawned.clear();
     }
 
+    private void checkGraphics()
+    {
+        for(Player p : deferredGraphics)
+        {
+            if(!deferredAnimations.contains(p))
+            {
+                generatePlayerAttackInfo(p, -2);
+            }
+        }
+        deferredGraphics.clear();
+    }
+
     @Subscribe
     public void onGameTick(GameTick event)
     {
@@ -1016,6 +1029,7 @@ public class AdvancedRaidTrackerPlugin extends Plugin
         handleBarraged();
         handleChinSpawns();
         wasPiping.clear();
+        checkGraphics();
         checkAnimationsThatChanged();
         checkOverheadTextsThatChanged();
         checkActivelyPiping();
@@ -1273,6 +1287,8 @@ public class AdvancedRaidTrackerPlugin extends Plugin
         playersWhoHaveOverheadText.clear();
     }
 
+    List<Player> deferredGraphics = new ArrayList<>();
+
     private void checkAnimationsThatChanged()
     {
         for (Player p : deferredAnimations)
@@ -1473,6 +1489,10 @@ public class AdvancedRaidTrackerPlugin extends Plugin
         }
         if (inTheatre)
         {
+            if(event.getActor() instanceof Player)
+            {
+                deferredGraphics.add((Player) event.getActor());
+            }
             currentRoom.updateGraphicChanged(event);
         }
     }
@@ -1573,6 +1593,10 @@ public class AdvancedRaidTrackerPlugin extends Plugin
     @Subscribe
     public void onConfigChanged(ConfigChanged event)
     {
+        if(event.getGroup().equals("Advanced Raid Tracker") && event.getKey().contains("unkitted"))
+        {
+            OutlineBox.useUnkitted = config.useUnkitted();
+        }
         if (event.getGroup().equals("Advanced Raid Tracker") && event.getKey().contains("primary"))
         {
             liveFrame.redrawAll();
@@ -1599,6 +1623,10 @@ public class AdvancedRaidTrackerPlugin extends Plugin
     @Subscribe
     public void onAnimationChanged(AnimationChanged event)
     {
+        if(event.getActor().equals(client.getLocalPlayer()))
+        {
+            log.info("Animation: " + event.getActor().getAnimation() + " tick " + client.getTickCount());
+        }
         if (event.getActor() instanceof NPC)
         {
             if (currentRoom != null)

@@ -6,7 +6,7 @@ import java.awt.*;
 
 public enum PlayerAnimation
 {
-    NOT_SET("Not Set", "", new Color(0, 0, 0), -1, new int[]{}, new int[]{}, new int[]{}, new int[]{}),
+    NOT_SET("Clear", "", new Color(0, 0, 0), -1, new int[]{}, new int[]{}, new int[]{}, new int[]{}),
     UNDECIDED("Undecided", "?", new Color(0, 0, 0), -1, new int[]{}, new int[]{}, new int[]{}, new int[]{}),
     BLOWPIPE("Blowpipe", "BP", new Color(100, 150, 200), 2, new int[]{5061, 10656}, new int[]{}, new int[]{ItemID.TOXIC_BLOWPIPE, ItemID.BLAZING_BLOWPIPE}, new int[]{1122}),
     BLOWPIPE_SPEC("Blowpipe spec", "bp", new Color(100, 150, 200), 2, new int[]{5061, 10656}, new int[]{}, new int[]{ItemID.TOXIC_BLOWPIPE, ItemID.BLAZING_BLOWPIPE}, new int[]{1043, 2599}),

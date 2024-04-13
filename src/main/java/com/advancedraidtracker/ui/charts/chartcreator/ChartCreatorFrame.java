@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.advancedraidtracker.ui.charts.ChartConstants.ADD_ATTACK_TOOL;
 import static com.advancedraidtracker.ui.charts.ChartIO.loadChartFromClipboard;
 import static com.advancedraidtracker.ui.charts.ChartIO.loadChartFromFile;
 import static com.advancedraidtracker.utility.UISwingUtility.*;
@@ -55,7 +56,15 @@ public class ChartCreatorFrame extends BaseFrame
         JPanel bottomContainer = getThemedPanel();
         bottomContainer.setLayout(new BoxLayout(bottomContainer, BoxLayout.X_AXIS));
 
-        bottomContainer.add(chart);
+        JPanel bottomLeftcontainer = getThemedPanel();
+        bottomLeftcontainer.setLayout(new BoxLayout(bottomLeftcontainer, BoxLayout.Y_AXIS));
+        bottomLeftcontainer.add(chart);
+        ChartStatusBar chartStatusBar = new ChartStatusBar("");
+        chart.setStatusBar(chartStatusBar);
+        chart.setToolSelection(ADD_ATTACK_TOOL);
+        bottomLeftcontainer.add(chartStatusBar);
+
+        bottomContainer.add(bottomLeftcontainer);
         bottomContainer.add(tools);
 
         container.add(menu);

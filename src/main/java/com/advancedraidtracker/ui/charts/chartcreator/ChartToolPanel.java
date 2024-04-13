@@ -20,8 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.advancedraidtracker.ui.charts.ChartConstants.*;
-import static com.advancedraidtracker.ui.charts.ChartPanel.createDropShadow;
-import static com.advancedraidtracker.ui.charts.ChartPanel.isCtrlPressed;
+import static com.advancedraidtracker.ui.charts.ChartPanel.*;
 import static com.advancedraidtracker.utility.UISwingUtility.*;
 import static com.advancedraidtracker.utility.UISwingUtility.createFlipped;
 import static com.advancedraidtracker.ui.charts.OutlineBox.getReplacement;
@@ -59,6 +58,7 @@ public class ChartToolPanel extends JPanel implements MouseListener, MouseMotion
 
     public ChartToolPanel(AdvancedRaidTrackerConfig config, ChartCreatorFrame parentFrame, ItemManager itemManager, ClientThread clientThread, SpriteManager spriteManager)
     {
+        tool = ADD_ATTACK_TOOL;
         this.itemManager = itemManager;
         this.parentFrame = parentFrame;
         this.config = config;
@@ -114,7 +114,7 @@ public class ChartToolPanel extends JPanel implements MouseListener, MouseMotion
             {
                 if (e.getID() == KeyEvent.KEY_PRESSED)
                 {
-                    if(!isCtrlPressed())
+                    if(!isCtrlPressed() && !isTextEditing)
                     {
                         switch (e.getKeyCode())
                         {
@@ -131,6 +131,16 @@ public class ChartToolPanel extends JPanel implements MouseListener, MouseMotion
                             case KeyEvent.VK_L:
                                 tool = ADD_LINE_TOOL;
                                 parentFrame.setToolSelection(ADD_LINE_TOOL);
+                                drawPanel();
+                                break;
+                        }
+                    }
+                    else if(isCtrlPressed())
+                    {
+                        switch(e.getKeyCode())
+                        {
+                            case KeyEvent.VK_A:
+                                tool = SELECTION_TOOL;
                                 drawPanel();
                                 break;
                         }
@@ -256,12 +266,13 @@ public class ChartToolPanel extends JPanel implements MouseListener, MouseMotion
             g.drawString(secondary.shorthand, xMargin + textOffset - 1, yMargin + (getStringHeight(g) / 2) + (toolHeight) + 1);
         }
 
-        int index = 0;
+        int index = 2;
+        int yIndex = 0;
         for(ChartTool chartTool : tools)
         {
-            xMargin += toolMargin + toolHeight * 2;
+            xMargin = 5 +(toolMargin + toolHeight * 2)*index;
+            yMargin = 15 + (toolMargin+toolHeight*2)*yIndex;
             g.setColor(config.markerColor());
-            //g.fillRoundRect(xMargin+4, yMargin+4, toolHeight * 2 - 6, toolHeight * 2 -6, 10, 10);
             g.setColor(config.boxColor());
             g.drawRoundRect(xMargin + 3, yMargin + 3, toolHeight * 2 - 5, toolHeight * 2 - 5, 10, 10);
             textOffset = (toolHeight) - (getStringWidth(g, chartTool.getName()) / 2);
@@ -278,12 +289,22 @@ public class ChartToolPanel extends JPanel implements MouseListener, MouseMotion
                 {
                     g.setColor(new Color(45, 140, 235));
                 }
-                g.drawRect(6 + ((2+index)*toolMargin) + (2+index)*(toolHeight*2), 16, 2*toolHeight, toolHeight*2);
+                g.drawRect(xMargin, yMargin, 2*toolHeight, toolHeight*2);
             }
             index++;
+            if(index % 3 == 0)
+            {
+                index = 0;
+                yIndex++;
+            }
         }
 
         //draw tools
+
+        int numberOfModes = 2 + tools.size();
+        int modeRows = ((numberOfModes-1)/3);
+
+        int yStart = initialYMargin + (modeRows*(toolHeight*2+toolMargin));
 
         List<PlayerAnimation> filteredValues = Arrays.stream(PlayerAnimation.values()).filter(o->!excludedAnimations.contains(o)).collect(Collectors.toList());
         toolCount = filteredValues.size();
@@ -297,7 +318,7 @@ public class ChartToolPanel extends JPanel implements MouseListener, MouseMotion
             int positionInRow = i / toolsPerColumn;
             int positionInColumn = i % toolsPerColumn;
             int xOffset = initialXMargin + (positionInRow * (toolHeight + (toolMargin / 2)));
-            int yOffset = initialYMargin + (positionInColumn * (toolHeight + (toolMargin / 2)));
+            int yOffset = yStart + (positionInColumn * (toolHeight + (toolMargin / 2)));
 
             g.setColor(PlayerAnimation.values()[i].color);
 
@@ -354,15 +375,24 @@ public class ChartToolPanel extends JPanel implements MouseListener, MouseMotion
                 hoveredTool = ADD_ATTACK_TOOL;
                 return;
             }
-            int index = 0;
-            for(ChartTool chartTool : tools)
+        }
+        int index = 2;
+        int yIndex = 0;
+        for(ChartTool chartTool : tools)
+        {
+            if(y > (16+((config.chartScaleSize()*2+toolMargin)*yIndex)) && y < (config.chartScaleSize() * 2 + 16+((config.chartScaleSize()*2+toolMargin)*yIndex)))
             {
-                if(x > (6 + ((4+(2*index)) * config.chartScaleSize()) + ((2+(index)) * toolMargin)) && x < (6 + ((6+(2*index)) * config.chartScaleSize()) + ((2+index)*toolMargin)))
+                if (x > (6 + (((2 * index)) * config.chartScaleSize()) + (((index)) * toolMargin)) && x < (6 + ((2 + (2 * index)) * config.chartScaleSize()) + ((index) * toolMargin)))
                 {
                     hoveredTool = chartTool.getTool();
                     return;
                 }
-                index++;
+            }
+            index++;
+            if(index%3 == 0)
+            {
+                index = 0;
+                yIndex++;
             }
         }
         hoveredTool = NO_TOOL;
@@ -370,11 +400,14 @@ public class ChartToolPanel extends JPanel implements MouseListener, MouseMotion
 
     private void setHoveredAttack(int x, int y)
     {
+        int numberOfModes = 2 + tools.size();
+        int modeRows = ((numberOfModes-1)/3);
+        int yStart = initialYMargin + (modeRows*(config.chartScaleSize()*2+toolMargin));
         int gap = config.chartScaleSize() + (toolMargin / 2);
-        if (x > 5 && y > 15 + (config.chartScaleSize() * 2) + (toolMargin / 2))
+        if (x > 5 && y > (yStart-initialYMargin+15) + (config.chartScaleSize() * 2) + (toolMargin / 2))
         {
             int positionInRow = (x - initialXMargin) / gap;
-            int positionInColumn = (y - initialYMargin) / gap;
+            int positionInColumn = (y - yStart) / gap;
             int index = positionInRow * toolsPerColumn + positionInColumn;
             List<PlayerAnimation> filteredValues = Arrays.stream(PlayerAnimation.values()).filter(o->!excludedAnimations.contains(o)).collect(Collectors.toList());
 
@@ -394,7 +427,7 @@ public class ChartToolPanel extends JPanel implements MouseListener, MouseMotion
         {
             if (SwingUtilities.isLeftMouseButton(e))
             {
-                if (tool == ADD_ATTACK_TOOL || tool == ADD_LINE_TOOL || tool == SELECTION_TOOL || tool == ADD_TEXT_TOOL)
+                //if (tool == ADD_ATTACK_TOOL || tool == ADD_LINE_TOOL || tool == SELECTION_TOOL || tool == ADD_TEXT_TOOL || tool == ADD_AUTO_TOOL)
                 {
                     tool = hoveredTool;
                     parentFrame.setToolSelection(hoveredTool);
@@ -452,7 +485,8 @@ public class ChartToolPanel extends JPanel implements MouseListener, MouseMotion
     @Override
     public void mouseExited(MouseEvent e)
     {
-
+        hoveredTool = NO_TOOL;
+        hoveredAttack = PlayerAnimation.EXCLUDED_ANIMATION;
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.advancedraidtracker.ui.charts;
 import com.advancedraidtracker.AdvancedRaidTrackerConfig;
 import com.advancedraidtracker.constants.RaidRoom;
 import com.advancedraidtracker.constants.TobIDs;
+import com.advancedraidtracker.ui.charts.chartcreator.ChartStatusBar;
 import com.advancedraidtracker.utility.*;
 import com.advancedraidtracker.utility.Point;
 import com.advancedraidtracker.utility.weapons.PlayerAnimation;
@@ -43,6 +44,8 @@ import static com.advancedraidtracker.utility.weapons.PlayerAnimation.*;
 @Slf4j
 public class ChartPanel extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener
 {
+    @Setter
+    private ChartStatusBar statusBar;
     private final int TITLE_BAR_PLUS_TAB_HEIGHT = 63;
     private boolean shouldWrap;
     private BufferedImage img;
@@ -519,8 +522,10 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                 }
             }
         }
-        redraw();
+        drawGraph();
     }
+
+    public static boolean isTextEditing = false;
 
     public ChartPanel(String room, boolean isLive, AdvancedRaidTrackerConfig config, ClientThread clientThread, ConfigManager configManager, ItemManager itemManager, SpriteManager spriteManager)
     {
@@ -591,6 +596,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                         {
                             case KeyEvent.VK_CONTROL:
                                 isCtrlPressed = false;
+                                autoScrollAmount = 0;
                                 break;
                             case KeyEvent.VK_SHIFT:
                                 isShiftPressed = false;
@@ -640,18 +646,49 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                                 }
                                 break;
                             case KeyEvent.VK_ENTER:
-                                if(!selectedTicks.isEmpty())
+                                if(isTextEditing)
+                                {
+                                    isTextEditing = false;
+                                    setCursor(Cursor.getDefaultCursor());
+                                }
+                                else if(!selectedTicks.isEmpty())
                                 {
                                     List<OutlineBox> createdBoxes = new ArrayList<>();
+                                    boolean shouldApplyBoxes = true;
                                     for(ChartTick tick : selectedTicks)
                                     {
-                                        OutlineBox createdBox = new OutlineBox(selectedPrimary.shorthand, selectedPrimary.color, true, "", selectedPrimary, selectedPrimary.attackTicks, tick.getTick(), tick.getPlayer(), RaidRoom.getRoom(room), selectedPrimary.weaponIDs[0]);
-                                        createdBoxes.add(createdBox);
-                                        addAttack(createdBox);
+                                        synchronized (outlineBoxes)
+                                        {
+                                            for(OutlineBox box : outlineBoxes)
+                                            {
+                                                if (tick.getTick() == box.tick && tick.getPlayer().equals(box.player))
+                                                {
+                                                    shouldApplyBoxes = false;
+                                                    break;
+                                                }
+                                            }
+                                            if(shouldApplyBoxes)
+                                            {
+                                                OutlineBox createdBox = new OutlineBox(selectedPrimary.shorthand, selectedPrimary.color, true, "", selectedPrimary, selectedPrimary.attackTicks, tick.getTick(), tick.getPlayer(), RaidRoom.getRoom(room), selectedPrimary.weaponIDs[0]);
+                                                createdBoxes.add(createdBox);
+                                            }
+                                        }
                                     }
-                                    actionHistory.add(new ChartAction(createdBoxes, ChartActionType.ADD_ATTACKS));
-                                    redraw();
+                                    if(shouldApplyBoxes)
+                                    {
+                                        for(OutlineBox box : createdBoxes)
+                                        {
+                                            addAttack(box);
+                                            actionHistory.add(new ChartAction(createdBoxes, ChartActionType.ADD_ATTACKS));
+                                        }
+                                    }
+                                    else
+                                    {
+                                        isTextEditing = true;
+                                        setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
+                                    }
                                 }
+                                redraw();
                                 break;
                             case KeyEvent.VK_A:
                                 if(isCtrlPressed())
@@ -665,7 +702,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                                             selectedTicks.add(new ChartTick(box.tick, box.player));
                                         }
                                     }
-                                    redraw();
+                                    drawGraph();
                                 }
                                 break;
                             case KeyEvent.VK_S:
@@ -865,7 +902,13 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                     }
                 }
                 int ticks = i - (stallsUntilThisPoint * 4);
-                if (autos.contains(ticks))
+                boolean autosContains = autos.contains(ticks);
+                boolean potentialAutosContains = potentialAutos.contains(ticks);
+                if(autosContains && potentialAutosContains)
+                {
+                    g.setColor(new Color(40, 140, 235));
+                }
+                else if (autosContains || potentialAutosContains)
                 {
                     g.setColor(Color.RED);
                 }
@@ -895,16 +938,34 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         }
     }
 
+    List<Integer> potentialAutos = new ArrayList<>();
+
+    private void drawAuto(Graphics2D g, int tick, int opacity)
+    {
+        g.setColor(new Color(255, 80, 80, opacity));
+        int xOffset = getXOffset(tick);
+        int yOffset = getYOffset(tick);
+        g.fillRect(xOffset, yOffset + scale, scale, boxHeight - (scale * (2 + getAdditionalRow())));
+    }
+
     private void drawAutos(Graphics2D g)
     {
         for (Integer i : autos)
         {
             if (shouldTickBeDrawn(i))
             {
-                g.setColor(new Color(255, 80, 80, 40));
-                int xOffset = getXOffset(i);
-                int yOffset = getYOffset(i);
-                g.fillRect(xOffset, yOffset + scale, scale, boxHeight - (scale * (2 + getAdditionalRow())));
+                drawAuto(g, i, 40);
+            }
+        }
+    }
+
+    private void drawPotentialAutos(Graphics2D g)
+    {
+        for(Integer i : potentialAutos)
+        {
+            if(shouldTickBeDrawn(i))
+            {
+                drawAuto(g, i, 20);
             }
         }
     }
@@ -1684,7 +1745,14 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                 int xOffset = getXOffset(tick.getTick());
                 int yOffset = getYOffset(tick.getTick());
                 yOffset += (playerOffsets.get(tick.getPlayer())+1) * scale;
-                g.setColor(getTransparentColor(config.fontColor(), 128));
+                if(isTextEditing)
+                {
+                    g.setColor(config.markerColor());
+                }
+                else
+                {
+                    g.setColor(getTransparentColor(config.fontColor(), 128));
+                }
                 g.drawRect(xOffset, yOffset, scale, scale);
             }
         }
@@ -1741,6 +1809,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         drawThrallBoxes(g);
         drawPrimaryBoxes(g);
         drawAutos(g);
+        drawPotentialAutos(g);
         drawMarkerLines(g);
         drawMaidenCrabs(g);
 
@@ -1768,10 +1837,36 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         drawSelectedTicks(g);
 
         drawSelectionRegion(g);
-
+        updateStatus();
         g.setColor(oldColor);
         g.dispose();
         repaint();
+    }
+
+    public void updateStatus()
+    {
+        switch(currentTool)
+        {
+            case ADD_ATTACK_TOOL:
+                setStatus("Left Click: " + selectedPrimary.name + ", Right Click: " + selectedSecondary.name);
+                break;
+            case ADD_AUTO_TOOL:
+                setStatus("Adding " + potentialAutos.size() + " autos. Spacing: " + autoScrollAmount);
+                break;
+            case ADD_LINE_TOOL:
+                setStatus("Placing Lines");
+                break;
+            case ADD_TEXT_TOOL:
+                setStatus("Setting Text");
+                break;
+            case SELECTION_TOOL:
+                setStatus(selectedTicks.size() + " ticks selected. ");
+                if(isTextEditing)
+                {
+                    appendStatus("Editing Box Text");
+                }
+                break;
+        }
     }
 
     public void setAttackers(List<String> attackers)
@@ -1851,20 +1946,38 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         {
             if(e.getWheelRotation() < 0)
             {
-                if(startTick > 0)
+                if(currentTool == ADD_AUTO_TOOL)
                 {
-                    startTick--;
-                    endTick--;
+                    autoScrollAmount = Math.max(0, --autoScrollAmount);
+                    setPotentialAutos();
+                }
+                else
+                {
+                    if (startTick > 0)
+                    {
+                        startTick--;
+                        endTick--;
+                    }
                 }
             }
             else
             {
-                startTick++;
-                endTick++;
+                if(currentTool == ADD_AUTO_TOOL)
+                {
+                    autoScrollAmount++;
+                    setPotentialAutos();
+                }
+                else
+                {
+                    startTick++;
+                    endTick++;
+                }
             }
         }
         recalculateSize();
     }
+
+    private int autoScrollAmount;
 
     @Override
     public void mouseClicked(MouseEvent e)
@@ -1923,85 +2036,115 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             drawGraph();
         } else
         {
-            if (currentTool == ADD_LINE_TOOL)
+            switch(currentTool)
             {
-                if (hoveredTick != -1)
-                {
-                    if (SwingUtilities.isLeftMouseButton(e))
+                case ADD_LINE_TOOL:
+                    if(hoveredTick != -1)
                     {
-                        addLine(hoveredTick, manualLineText);
-                    } else if (SwingUtilities.isRightMouseButton(e))
-                    {
-                        lines.remove(hoveredTick);
-                    }
-                }
-                return;
-            }
-            if (SwingUtilities.isLeftMouseButton(e))
-            {
-                if(currentTool == SELECTION_TOOL)
-                {
-                    if(isCtrlPressed)
-                    {
-                        ChartTick tick = new ChartTick(hoveredTick, hoveredPlayer);
-                        if(!selectedTicks.contains(tick))
+                        if (SwingUtilities.isLeftMouseButton(e))
                         {
-                            selectedTicks.add(tick);
+                            addLine(hoveredTick, manualLineText);
+                        }
+                        else if (SwingUtilities.isRightMouseButton(e))
+                        {
+                            lines.remove(hoveredTick);
                         }
                     }
-                    else
+                    break;
+                case SELECTION_TOOL:
+                    if(SwingUtilities.isLeftMouseButton(e))
                     {
-                        selectedTicks.clear();
-                        selectedTicks.add(new ChartTick(hoveredTick, hoveredPlayer));
-                    }
-                }
-                else if(isShiftPressed())
-                {
-                    selectionDragActive = false;
-                }
-                else if(selectedTicks.size() > 1)
-                {
-                    selectedTicks.clear();
-                }
-                else
-                {
-                    if (hoveredTick != -1 && !selectedPrimary.equals(PlayerAnimation.NOT_SET))
-                    {
-                        int weapon = 0;
-                        if (selectedPrimary.weaponIDs.length > 0)
+                        if(isCtrlPressed())
                         {
-                            weapon = selectedPrimary.weaponIDs[0];
-                        }
-                        addAttack(new PlayerDidAttack(itemManager, hoveredPlayer, String.valueOf(selectedPrimary.animations[0]), hoveredTick, weapon, "", "", 0, 0, "", ""), selectedPrimary, true);
-                    } else if (selectedPrimary.equals(PlayerAnimation.NOT_SET))
-                    {
-                        removeAttack(hoveredTick, hoveredPlayer, true);
-                    }
-                    if (hoveredTick != -1)
-                    {
-                        if (isDragging)
-                        {
-                            if (dragStartTick > 0 && activeDragTick > 0 && !dragStartPlayer.isEmpty() && !activeDragPlayer.isEmpty())
+                            ChartTick tick = new ChartTick(hoveredTick, hoveredPlayer);
+                            if(!selectedTicks.contains(tick))
                             {
-                                selectionDragActive = false;
+                                selectedTicks.add(tick);
+                            }
+                        }
+                        else
+                        {
+                            selectedTicks.clear();
+                            selectedTicks.add(new ChartTick(hoveredTick, hoveredPlayer));
+                        }
+                    }
+                    else if(SwingUtilities.isRightMouseButton(e))
+                    {
+
+                    }
+                    break;
+                case ADD_ATTACK_TOOL:
+                    if(SwingUtilities.isLeftMouseButton(e))
+                    {
+                        if (hoveredTick != -1 && !selectedPrimary.equals(PlayerAnimation.NOT_SET))
+                        {
+                            int weapon = 0;
+                            if (selectedPrimary.weaponIDs.length > 0)
+                            {
+                                weapon = selectedPrimary.weaponIDs[0];
+                            }
+                            addAttack(new PlayerDidAttack(itemManager, hoveredPlayer, String.valueOf(selectedPrimary.animations[0]), hoveredTick, weapon, "", "", 0, 0, "", ""), selectedPrimary, true);
+                        }
+                        else if (selectedPrimary.equals(PlayerAnimation.NOT_SET))
+                        {
+                            removeAttack(hoveredTick, hoveredPlayer, true);
+                        }
+                        if (hoveredTick != -1)
+                        {
+                            if (isDragging)
+                            {
+                                if (dragStartTick > 0 && activeDragTick > 0 && !dragStartPlayer.isEmpty() && !activeDragPlayer.isEmpty())
+                                {
+                                    selectionDragActive = false;
+                                }
                             }
                         }
                     }
-                }
-            } else if (SwingUtilities.isRightMouseButton(e))
-            {
-                if (hoveredTick != -1 && !selectedSecondary.equals(PlayerAnimation.NOT_SET) && currentTool == ADD_ATTACK_TOOL)
-                {
-                    int weapon = 0;
-                    if (selectedSecondary.weaponIDs.length > 0)
+                    else if(SwingUtilities.isRightMouseButton(e))
                     {
-                        weapon = selectedSecondary.weaponIDs[0];
+                        if (hoveredTick != -1 && !selectedSecondary.equals(PlayerAnimation.NOT_SET))
+                        {
+                            int weapon = 0;
+                            if (selectedSecondary.weaponIDs.length > 0)
+                            {
+                                weapon = selectedSecondary.weaponIDs[0];
+                            }
+                            addAttack(new PlayerDidAttack(itemManager, hoveredPlayer, String.valueOf(selectedPrimary.animations[0]), hoveredTick, weapon, "", "", 0, 0, "", ""), selectedSecondary, true);
+                        }
+                        else if (selectedSecondary.equals(PlayerAnimation.NOT_SET))
+                        {
+                            removeAttack(hoveredTick, hoveredPlayer, true);
+                        }
                     }
-                    addAttack(new PlayerDidAttack(itemManager, hoveredPlayer, String.valueOf(selectedPrimary.animations[0]), hoveredTick, weapon, "", "", 0, 0, "", ""), selectedSecondary, true);
-                }
-                else if (selectedSecondary.equals(PlayerAnimation.NOT_SET) && currentTool == ADD_ATTACK_TOOL)
+                    break;
+                case ADD_AUTO_TOOL:
+                    if(SwingUtilities.isLeftMouseButton(e))
+                    {
+                        for(Integer potential : potentialAutos)
+                        {
+                            if(!autos.contains(potential))
+                            {
+                                autos.add(potential);
+                            }
+                        }
+                        potentialAutos.clear();
+                    }
+                    else if(SwingUtilities.isRightMouseButton(e))
+                    {
+                        autos.removeAll(potentialAutos);
+                        potentialAutos.clear();
+                    }
+                    break;
+            }
+            if (SwingUtilities.isLeftMouseButton(e))
+            {
+                if(isShiftPressed())
                 {
-                    removeAttack(hoveredTick, hoveredPlayer, true);
+                    selectionDragActive = false;
+                }
+                else if(selectedTicks.size() > 1 && !isCtrlPressed())
+                {
+                    selectedTicks.clear();
                 }
             }
         }
@@ -2143,7 +2286,16 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
     public void setToolSelection(int tool)
     {
+        if(tool == ADD_TEXT_TOOL)
+        {
+            setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
+        }
+        else
+        {
+            setCursor(Cursor.getDefaultCursor());
+        }
         currentTool = tool;
+        drawGraph();
     }
 
     @Override
@@ -2329,6 +2481,25 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         }
     }
 
+    private void setPotentialAutos()
+    {
+        potentialAutos.clear();
+        if(hoveredTick != -1)
+        {
+            potentialAutos.add(hoveredTick);
+            if(autoScrollAmount > 0)
+            {
+                for(int i = hoveredTick; i < endTick; i++)
+                {
+                    if(((i-hoveredTick) % autoScrollAmount) == 0)
+                    {
+                        potentialAutos.add(i);
+                    }
+                }
+            }
+        }
+    }
+
     @Override
     public void mouseMoved(MouseEvent e)
     {
@@ -2336,6 +2507,14 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         checkBox2Hovered = e.getX() >= 290 && e.getX() <= 310 && e.getY() >= 2 && e.getY() <= 22;
         checkBox3Hovered = e.getX() >= 410 && e.getX() <= 430 && e.getY() >= 2 && e.getY() <= 22;
         setTickHovered(e.getX(), e.getY());
+        if(currentTool == ADD_AUTO_TOOL)
+        {
+            setPotentialAutos();
+        }
+        else
+        {
+            potentialAutos.clear();
+        }
         drawGraph();
     }
 
@@ -2422,4 +2601,29 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     {
         return new ChartIOData(startTick, endTick, room, roomSpecificText, autos, specific, lines, outlineBoxes);
     }
+
+    public void setStatus(String text)
+    {
+        if(statusBar != null)
+        {
+            statusBar.set(text);
+        }
+    }
+
+    public void appendStatus(String text)
+    {
+        if(statusBar != null)
+        {
+            statusBar.append(text);
+        }
+    }
+
+    public void appendToStartStatus(String text)
+    {
+        if(statusBar != null)
+        {
+            statusBar.appendToStart(text);
+        }
+    }
+
 }

@@ -145,7 +145,7 @@ public class DataReader //todo move any methods that read files to here. I belie
                         chartData.addNPCMapping(currentRoom, Integer.parseInt(line[4]), line[5]);
                         break;
                     case "576": //Update HP
-                        chartData.addHPMapping(currentRoom, Integer.parseInt(line[4]), Integer.parseInt(line[5]));
+                        chartData.addHPMapping(currentRoom, Integer.parseInt(line[5]), Integer.parseInt(line[4]));
                         break;
                     case "801": //Player Attacked
                         chartData.addAttack(currentRoom, ChartData.getPlayerDidAttack(line, itemManager));

@@ -107,6 +107,7 @@ public class ChartFrame extends BaseFrame
             chartPanel.setNPCMappings(chartData.getNPCMapping(room));
             chartPanel.addAttacks(chartData.getAttacks(room));
             chartPanel.setRoomHP(chartData.getHPMapping(room));
+            log.info("adding room hp; size: " + chartData.getHPMapping(room).size());
             chartPanel.setAttackers(new ArrayList<>(roomData.getPlayers()));
             chartPanel.enableWrap();
             if (bossName.contains("Wave"))

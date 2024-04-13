@@ -75,7 +75,6 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
     List<String> attackers = new ArrayList<>();
 
-    List<String> playersOnly = new ArrayList<>();
     String room;
     @Setter
     String roomSpecificText = "";
@@ -1291,7 +1290,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                 selectedTickHP = roomHP.get(hoveredColumn + 1);
             } catch (Exception ignored)
             {
-
+                ignored.printStackTrace();
             }
             int offset = -1;
             switch (room) //todo map?
@@ -1312,6 +1311,8 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                     break;
             }
             String bossWouldHaveDied = (offset != -1) ? "Melee attack on this tick killing would result in: " + RoomUtil.time(hoveredColumn + 1 + offset + 1) + " (Quick death: " + RoomUtil.time(hoveredColumn + offset + 1) + ")" : "";
+            log.info("Trying to find tick: " + (hoveredColumn+1));
+            log.info("Map: " + roomHP);
             String HPString = "Boss HP: " + ((selectedTickHP == -1) ? "-" : RoomUtil.varbitHPtoReadable(selectedTickHP));
             HoverBox hoverBox = new HoverBox(HPString, config);
             if (offset != -1)
@@ -1375,11 +1376,11 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         {
             for (Integer tick : lines.keySet())
             {
-                if (lines.get(tick).equals("Dead"))
+                if (lines.get(tick).contains("Dead"))
                 {
                     continue;
                 }
-                String proc = lines.get(tick);
+                String proc = lines.get(tick).split(" ")[0];
                 int xOffset = getXOffset(tick + 1);
                 int yOffset = 10 + getYOffset(tick + 1);
                 if (yOffset <= scale + 5)

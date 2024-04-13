@@ -197,7 +197,10 @@ public class AdvancedRaidTrackerPlugin extends Plugin
     protected void shutDown()
     {
         partyIntact = false;
-        clog.addLine(LEFT_TOB, String.valueOf(client.getTickCount() - currentRoom.roomStartTick), currentRoom.getName());
+        if(currentRoom != null)
+        {
+            clog.addLine(LEFT_TOB, String.valueOf(client.getTickCount() - currentRoom.roomStartTick), currentRoom.getName());
+        }
         clientToolbar.removeNavigation(navButtonPrimary);
     }
 

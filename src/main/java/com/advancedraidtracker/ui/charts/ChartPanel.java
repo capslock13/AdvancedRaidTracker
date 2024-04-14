@@ -2141,6 +2141,19 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                 if(isShiftPressed())
                 {
                     selectionDragActive = false;
+                    int lowestPlayer = Math.min(playerOffsets.get(activeDragPlayer), playerOffsets.get(dragStartPlayer));
+                    int highestPlayer = Math.max(playerOffsets.get(activeDragPlayer), playerOffsets.get(dragStartPlayer));
+                    int lowestTick = Math.min(activeDragTick, dragStartTick);
+                    int highestTick = Math.max(activeDragTick, dragStartTick);
+                    log.info(playerOffsets.toString());
+                    log.info("Checking between: " + lowestTick + " and " + highestTick + " and between players " + lowestPlayer + ", " + highestPlayer);
+                    for(OutlineBox box : outlineBoxes)
+                    {
+                        if(box.tick >= lowestTick && box.tick <= highestTick && playerOffsets.get(box.player) >= lowestPlayer && playerOffsets.get(box.player) <= highestPlayer)
+                        {
+                            selectedTicks.add(new ChartTick(box.tick, box.player));
+                        }
+                    }
                 }
                 else if(selectedTicks.size() > 1 && !isCtrlPressed())
                 {

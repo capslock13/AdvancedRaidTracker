@@ -2612,7 +2612,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
     public ChartIOData getForSerialization()
     {
-        return new ChartIOData(startTick, endTick, room, roomSpecificText, autos, specific, lines, outlineBoxes);
+        return new ChartIOData(startTick, endTick, room, roomSpecificText, autos, specific, lines, outlineBoxes, new HashMap<>(), "");
     }
 
     public void setStatus(String text)

@@ -1,5 +1,6 @@
 package com.advancedraidtracker.ui.charts;
 
+import com.advancedraidtracker.utility.Point;
 import lombok.Value;
 
 import java.util.List;
@@ -16,4 +17,6 @@ public class ChartIOData
     Map<Integer, String> roomSpecificTextMapping;
     Map<Integer, String> lines;
     List<OutlineBox> outlineBoxes;
+    Map<Point, String> textMapping;
+    String title;
 }

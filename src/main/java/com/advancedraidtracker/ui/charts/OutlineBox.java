@@ -4,6 +4,7 @@ import com.advancedraidtracker.constants.RaidRoom;
 import com.advancedraidtracker.utility.ItemReference;
 import com.advancedraidtracker.utility.weapons.AnimationDecider;
 import com.advancedraidtracker.utility.weapons.PlayerAnimation;
+import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.ItemID;
@@ -28,11 +29,12 @@ public class OutlineBox
     public PlayerAnimation playerAnimation;
     public String additionalText;
     public int cd;
-    private final RaidRoom room;
+    public final RaidRoom room;
     public int weapon;
     public int secondaryID = -2;
 
     @Setter
+    @Getter
     String[] wornItems = new String[0];
 
     public OutlineBox(String letter, Color color, boolean primaryTarget, String additionalText, PlayerAnimation playerAnimation, int cd, int tick, String player, RaidRoom room, int weapon)

@@ -1,8 +1,10 @@
 package com.advancedraidtracker.ui.charts;
 
+import com.advancedraidtracker.utility.JsonTypeAdapters;
 import com.google.gson.*;
 import lombok.extern.slf4j.Slf4j;
 
+import java.awt.*;
 import java.io.FileReader;
 import java.io.FileWriter;
 
@@ -16,7 +18,7 @@ public class ChartIO
     {
         try(FileReader reader = new FileReader(PLUGIN_DIRECTORY+"misc-dir/test.json"))
         {
-            Gson gson = new Gson();
+            Gson gson = new GsonBuilder().registerTypeAdapter(Color.class, new JsonTypeAdapters.ColorDeserializer()).create();
             return gson.fromJson(reader, ChartIOData.class);
         }
         catch (Exception e)
@@ -34,7 +36,7 @@ public class ChartIO
     {
         try (FileWriter writer = new FileWriter(PLUGIN_DIRECTORY+"misc-dir/test.json"))
         {
-            Gson gson = new GsonBuilder().enableComplexMapKeySerialization().create();
+            Gson gson = new GsonBuilder().enableComplexMapKeySerialization().registerTypeAdapter(Color.class, new JsonTypeAdapters.ColorSerializer()).create();
             gson.toJson(panel.getForSerialization(), writer);
         }
         catch (Exception e)

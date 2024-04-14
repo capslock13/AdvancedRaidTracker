@@ -51,7 +51,6 @@ public class ChartToolPanel extends JPanel implements MouseListener, MouseMotion
     int initialXMargin = 5;
     int initialYMargin;
     int toolsPerColumn;
-    private ItemManager itemManager;
 
     Map<PlayerAnimation, BufferedImage> iconMap = new HashMap<>();
     private final Set<PlayerAnimation> excludedAnimations = new HashSet<>(Arrays.asList(PlayerAnimation.UNARMED, PlayerAnimation.UNDECIDED, PlayerAnimation.EXCLUDED_ANIMATION, PlayerAnimation.ACCURSED_SCEPTRE_AUTO, PlayerAnimation.ACCURSED_SCEPTRE_SPEC, PlayerAnimation.COLOSSEUM_AUTO, PlayerAnimation.COLOSSEUM_SPECIAL, PlayerAnimation.KERIS_SUN_SPEC));
@@ -59,7 +58,6 @@ public class ChartToolPanel extends JPanel implements MouseListener, MouseMotion
     public ChartToolPanel(AdvancedRaidTrackerConfig config, ChartCreatorFrame parentFrame, ItemManager itemManager, ClientThread clientThread, SpriteManager spriteManager)
     {
         tool = ADD_ATTACK_TOOL;
-        this.itemManager = itemManager;
         this.parentFrame = parentFrame;
         this.config = config;
         addMouseListener(this);
@@ -114,7 +112,7 @@ public class ChartToolPanel extends JPanel implements MouseListener, MouseMotion
             {
                 if (e.getID() == KeyEvent.KEY_PRESSED)
                 {
-                    if(!isCtrlPressed() && !isTextEditing)
+                    if(!isCtrlPressed() && !isEditingBoxText && currentlyBeingEdited == null)
                     {
                         switch (e.getKeyCode())
                         {

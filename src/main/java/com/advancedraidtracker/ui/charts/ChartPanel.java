@@ -14,7 +14,6 @@ import com.google.common.collect.Multimap;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import net.runelite.api.ItemID;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.game.ItemManager;
@@ -28,7 +27,6 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.security.Key;
 import java.util.*;
 import java.util.List;
 
@@ -456,6 +454,8 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         drawGraph();
     }
 
+    int draggedTextOffsetX = 0;
+    int draggedTextOffsetY = 0;
 
     private final ClientThread clientThread;
 
@@ -506,26 +506,40 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
     public void removeLastCharFromSelected()
     {
-        for(ChartTick tick : selectedTicks)
+        if(currentTool == SELECTION_TOOL)
         {
-            synchronized (outlineBoxes)
+            for (ChartTick tick : selectedTicks)
             {
-                for(OutlineBox box : outlineBoxes)
+                synchronized (outlineBoxes)
                 {
-                    if(box.tick == tick.getTick() && Objects.equals(box.player, tick.getPlayer()))
+                    for (OutlineBox box : outlineBoxes)
                     {
-                        if(!box.additionalText.isEmpty())
+                        if (box.tick == tick.getTick() && Objects.equals(box.player, tick.getPlayer()))
                         {
-                            box.additionalText = box.additionalText.substring(0, box.additionalText.length()-1);
+                            if (!box.additionalText.isEmpty())
+                            {
+                                box.additionalText = box.additionalText.substring(0, box.additionalText.length() - 1);
+                            }
                         }
                     }
+                }
+            }
+        }
+        else if(currentTool == ADD_TEXT_TOOL)
+        {
+            if(currentlyBeingEdited != null)
+            {
+                String editedText = textMapping.get(currentlyBeingEdited);
+                if(!editedText.isEmpty())
+                {
+                    textMapping.put(currentlyBeingEdited, editedText.substring(0, editedText.length()-1));
                 }
             }
         }
         drawGraph();
     }
 
-    public static boolean isTextEditing = false;
+    public static boolean isEditingBoxText = false;
 
     public ChartPanel(String room, boolean isLive, AdvancedRaidTrackerConfig config, ClientThread clientThread, ConfigManager configManager, ItemManager itemManager, SpriteManager spriteManager)
     {
@@ -581,17 +595,6 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                         }
                         break;
                     case KeyEvent.KEY_RELEASED:
-                        if(KeyEvent.getKeyText(e.getKeyCode()).length() == 1 || e.getKeyCode() == KeyEvent.VK_SPACE)
-                        {
-                            if(!isCtrlPressed())
-                            {
-                                appendToSelected((char) e.getKeyCode());
-                            }
-                        }
-                        else if(e.getKeyCode() == KeyEvent.VK_BACK_SPACE)
-                        {
-                            removeLastCharFromSelected(); //todo if ctrl delete word?
-                        }
                         switch(e.getKeyCode())
                         {
                             case KeyEvent.VK_CONTROL:
@@ -646,10 +649,14 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                                 }
                                 break;
                             case KeyEvent.VK_ENTER:
-                                if(isTextEditing)
+                                if(isEditingBoxText)
                                 {
-                                    isTextEditing = false;
+                                    isEditingBoxText = false;
                                     setCursor(Cursor.getDefaultCursor());
+                                }
+                                if(currentlyBeingEdited != null)
+                                {
+                                    stoppedEditingTextBox();
                                 }
                                 else if(!selectedTicks.isEmpty())
                                 {
@@ -684,11 +691,11 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                                     }
                                     else
                                     {
-                                        isTextEditing = true;
+                                        isEditingBoxText = true;
                                         setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
                                     }
                                 }
-                                redraw();
+                                drawGraph();
                                 break;
                             case KeyEvent.VK_A:
                                 if(isCtrlPressed())
@@ -730,7 +737,30 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                                 break;
                         }
                         break;
-                    case KeyEvent.KEY_TYPED:
+                        case KeyEvent.KEY_TYPED:
+                            if (!isCtrlPressed())
+                            {
+                                if((int)e.getKeyChar() == 8) //Unicode Backspace (U+0008)
+                                {
+                                    removeLastCharFromSelected();
+                                }
+                                else
+                                {
+                                    if (currentTool == SELECTION_TOOL)
+                                    {
+                                        appendToSelected(e.getKeyChar());
+                                    } else if (currentTool == ADD_TEXT_TOOL)
+                                    {
+                                        if (currentlyBeingEdited != null)
+                                        {
+                                            textMapping.merge(currentlyBeingEdited, String.valueOf(e.getKeyChar()), String::concat);
+                                        }
+                                    }
+                                }
+                            }
+                            drawGraph();
+                        break;
+
                 }
                 return false;
             }
@@ -755,6 +785,9 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
         outlineBoxes.clear();
         addAttacks(data.getOutlineBoxes());
+
+        textMapping.clear();
+        textMapping = data.getTextMapping();
 
         recalculateSize();
     }
@@ -1745,7 +1778,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                 int xOffset = getXOffset(tick.getTick());
                 int yOffset = getYOffset(tick.getTick());
                 yOffset += (playerOffsets.get(tick.getPlayer())+1) * scale;
-                if(isTextEditing)
+                if(isEditingBoxText)
                 {
                     g.setColor(config.markerColor());
                 }
@@ -1813,7 +1846,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         drawMarkerLines(g);
         drawMaidenCrabs(g);
 
-        if (currentTool != ADD_LINE_TOOL)
+        if (currentTool != ADD_LINE_TOOL && currentTool != ADD_TEXT_TOOL)
         {
             drawSelectedOutlineBox(g);
             drawSelectedRow(g);
@@ -1835,12 +1868,68 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         }
 
         drawSelectedTicks(g);
-
         drawSelectionRegion(g);
+
+        drawMappedText(g);
+        if(currentTool == ADD_TEXT_TOOL)
+        {
+            drawCurrentlyEditedTextBox(g);
+            drawAlignmentMarkers(g);
+        }
+
         updateStatus();
         g.setColor(oldColor);
         g.dispose();
         repaint();
+    }
+
+    private void drawAlignmentMarkers(Graphics2D g)
+    {
+        g.setColor(config.markerColor());
+        if(currentTool == ADD_TEXT_TOOL && currentlyBeingEdited == null)
+        {
+            for(Line l : alignmentMarkers)
+            {
+                g.drawLine(l.getP1().getX(), l.getP1().getY(), l.getP2().getX(), l.getP2().getY());
+            }
+        }
+    }
+
+    private void drawMappedText(Graphics2D g)
+    {
+        g.setColor(config.fontColor());
+        for(Point p : textMapping.keySet())
+        {
+            if(p.equals(currentlyBeingHovered) && isDragging)
+            {
+                g.drawString(textMapping.get(p), p.getX()+alignmentOffsetX, p.getY()-alignmentOffsetY);
+            }
+            else
+            {
+                g.drawString(textMapping.get(p), p.getX(), p.getY());
+            }
+        }
+    }
+
+    private void drawCurrentlyEditedTextBox(Graphics2D g)
+    {
+        if(currentlyBeingEdited != null)
+        {
+            g.setColor(new Color(40, 140, 235));
+            g.drawRect(currentlyBeingEdited.getX()-5, currentlyBeingEdited.getY()-20 + (getStringHeight(g)/2), 10 + getStringWidth(g, textMapping.get(currentlyBeingEdited)), 20);
+        }
+        else if(currentlyBeingHovered != null)
+        {
+            g.setColor(config.boxColor());
+            if(isDragging)
+            {
+                g.drawRect(currentlyBeingHovered.getX() - 5, currentlyBeingHovered.getY() - 20 + (getStringHeight(g) / 2), 10 + getStringWidth(g, textMapping.get(currentlyBeingHovered)), 20);
+            }
+            else
+            {
+                g.drawRect(currentlyBeingHovered.getX() - 5+alignmentOffsetX, currentlyBeingHovered.getY() - 20 + (getStringHeight(g) / 2)+alignmentOffsetY, 10 + getStringWidth(g, textMapping.get(currentlyBeingHovered)), 20);
+            }
+        }
     }
 
     public void updateStatus()
@@ -1861,7 +1950,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                 break;
             case SELECTION_TOOL:
                 setStatus(selectedTicks.size() + " ticks selected. ");
-                if(isTextEditing)
+                if(isEditingBoxText)
                 {
                     appendStatus("Editing Box Text");
                 }
@@ -1906,11 +1995,13 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                         hoveredTick = -1;
                         hoveredColumn = -1;
                     }
+                    currentlyBeingHovered = getNearByText(new Point(x, y));
                 } else
                 {
                     hoveredPlayer = "";
                     hoveredTick = -1;
                     hoveredColumn = -1;
+                    currentlyBeingHovered = null;
                 }
                 drawGraph();
             }
@@ -1982,7 +2073,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     @Override
     public void mouseClicked(MouseEvent e)
     {
-        checkRelease(e);
+        checkRelease(e, false);
     }
 
     @Override
@@ -2008,7 +2099,9 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     {
         if (isDragging) //prevent checkRelease from being double called by both clicked and released
         {
-            checkRelease(e);
+            checkRelease(e, true);
+            draggedTextOffsetX = 0;
+            draggedTextOffsetY = 0;
             isDragging = false;
         }
     }
@@ -2020,7 +2113,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
     }
 
-    private void checkRelease(MouseEvent e)
+    private void checkRelease(MouseEvent e, boolean wasDragging)
     {
         if (checkBoxHovered)
         {
@@ -2135,6 +2228,45 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                         potentialAutos.clear();
                     }
                     break;
+                case ADD_TEXT_TOOL:
+                    if(SwingUtilities.isLeftMouseButton(e) && !wasDragging)
+                    {
+                        Point nearby = getNearByText(new Point(e.getX(), e.getY()));
+                        if(currentlyBeingEdited != null) //currently editing a text box
+                        {
+                            if(nearby != currentlyBeingEdited) //clicked away from current box
+                            {
+                                stoppedEditingTextBox();
+                            }
+                        }
+                        else //not currently editing a text box
+                        {
+                            if(nearby != null) //clicked an existing text box
+                            {
+                                currentlyBeingEdited = nearby;
+                            }
+                            else //create a new text box
+                            {
+                                currentlyBeingEdited = new Point(e.getX(), e.getY());
+                                textMapping.put(currentlyBeingEdited, "");
+                            }
+                        }
+                    }
+                    else if(wasDragging)
+                    {
+                        if(currentlyBeingHovered != null)
+                        {
+                            Point movedPoint = new Point(currentlyBeingHovered.getX()+alignmentOffsetX, currentlyBeingHovered.getY()+alignmentOffsetY);
+                            String text = textMapping.get(currentlyBeingHovered);
+                            textMapping.remove(currentlyBeingHovered);
+                            currentlyBeingHovered = movedPoint;
+                            textMapping.put(movedPoint, text);
+                        }
+                        alignmentOffsetX = 0;
+                        alignmentOffsetY = 0;
+                    }
+                    drawGraph();
+                    break;
             }
             if (SwingUtilities.isLeftMouseButton(e))
             {
@@ -2145,8 +2277,6 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                     int highestPlayer = Math.max(playerOffsets.get(activeDragPlayer), playerOffsets.get(dragStartPlayer));
                     int lowestTick = Math.min(activeDragTick, dragStartTick);
                     int highestTick = Math.max(activeDragTick, dragStartTick);
-                    log.info(playerOffsets.toString());
-                    log.info("Checking between: " + lowestTick + " and " + highestTick + " and between players " + lowestPlayer + ", " + highestPlayer);
                     for(OutlineBox box : outlineBoxes)
                     {
                         if(box.tick >= lowestTick && box.tick <= highestTick && playerOffsets.get(box.player) >= lowestPlayer && playerOffsets.get(box.player) <= highestPlayer)
@@ -2163,6 +2293,56 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         }
     }
 
+    private void stoppedEditingTextBox()
+    {
+        if(currentlyBeingEdited != null && textMapping.containsKey(currentlyBeingEdited))
+        {
+            if (textMapping.get(currentlyBeingEdited).isEmpty())
+            {
+                textMapping.remove(currentlyBeingEdited);
+            }
+        }
+        currentlyBeingEdited = null;
+    }
+
+    boolean isOuterEdgeOfNearbyText = false;
+
+    public boolean inRectangle(Rectangle rect, int x, int y)
+    {
+        return x > rect.x && x < rect.x+rect.width && y > rect.y && y < rect.y+rect.height;
+    }
+
+    private void setIsOuterEdgeOfNearbyText(boolean state)
+    {
+        if(currentTool == ADD_TEXT_TOOL && currentlyBeingEdited == null) //don't change cursor if actively editing
+        {
+            isOuterEdgeOfNearbyText = state;
+            setCursor(Cursor.getPredefinedCursor(state ? Cursor.MOVE_CURSOR : Cursor.TEXT_CURSOR));
+        }
+    }
+
+    private Point getNearByText(Point current)
+    {
+        for(Point p : textMapping.keySet())
+        {
+            Rectangle bounds = getStringBounds((Graphics2D) img.getGraphics(), textMapping.get(p));
+            bounds.x += p.getX();
+            bounds.y += p.getY();
+
+            Rectangle boundsExtruded = new Rectangle(bounds.x-5, bounds.y-5, bounds.width+10, bounds.height+10);
+            if(inRectangle(boundsExtruded, current.getX(), current.getY()))
+            {
+                setIsOuterEdgeOfNearbyText(!inRectangle(bounds, current.getX(), current.getY()));
+                return p;
+            }
+        }
+        setIsOuterEdgeOfNearbyText(false);
+        return null;
+    }
+
+    Map<Point, String> textMapping = new HashMap<>();
+    public static Point currentlyBeingEdited = null;
+    private Point currentlyBeingHovered = null;
     Map<String, Integer> playerSBSCoolDown = new HashMap<>();
     Map<String, Integer> playerVengCoolDown = new HashMap<>();
 
@@ -2188,7 +2368,6 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             {
                 targetString += targetName;
             }
-            targetString += "- spotanim: " + attack.spotAnims;
             synchronized (actions)
             {
                 actions.put(attack, targetString);
@@ -2380,6 +2559,21 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                 activeDragY = e.getY();
             }
         }
+        else if(currentTool == ADD_TEXT_TOOL && currentlyBeingEdited == null && isOuterEdgeOfNearbyText && currentlyBeingHovered != null)
+        {
+            setAlignmentMarkers(e.getX()-draggedTextOffsetX, e.getY()-draggedTextOffsetY);
+            if(!isDragging)
+            {
+                draggedTextOffsetX = e.getX()-currentlyBeingHovered.getX();
+                draggedTextOffsetY = e.getY()-currentlyBeingHovered.getY();
+            }
+            Point movedPoint = new Point(e.getX()-draggedTextOffsetX, e.getY()-draggedTextOffsetY);
+            String text = textMapping.get(currentlyBeingHovered);
+            textMapping.remove(currentlyBeingHovered);
+            currentlyBeingHovered = movedPoint;
+            textMapping.put(currentlyBeingHovered, text);
+
+        }
         isDragging = true;
     }
 
@@ -2422,6 +2616,9 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     private final List<OutlineBox> copiedOutlineBoxes = new ArrayList<>();
     int copiedTick = 0;
     int copiedPlayer = 0;
+
+    int alignmentOffsetX = 0;
+    int alignmentOffsetY = 0;
 
     public void copyAttacks()
     {
@@ -2513,6 +2710,26 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         }
     }
 
+    List<Line> alignmentMarkers = new ArrayList<>();
+
+    private void setAlignmentMarkers(int x, int y)
+    {
+        alignmentMarkers.clear();
+        if(currentTool == ADD_TEXT_TOOL && currentlyBeingEdited == null)
+        {
+            for(Point p : textMapping.keySet())
+            {
+                if(Math.abs(p.getX()-x) < 5)
+                {
+                    alignmentOffsetX = p.getX()-x;
+                    Point p1 = (p.getY() > y) ? new Point(p.getX(), y+10) : new Point(p.getX(), p.getY()+10);
+                    Point p2 = (p.getY() > y) ? new Point(p.getX(), p.getY()-10) : new Point(p.getX(), y-10);
+                    alignmentMarkers.add(new Line(p1, p2));
+                }
+            }
+        }
+    }
+
     @Override
     public void mouseMoved(MouseEvent e)
     {
@@ -2520,6 +2737,10 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         checkBox2Hovered = e.getX() >= 290 && e.getX() <= 310 && e.getY() >= 2 && e.getY() <= 22;
         checkBox3Hovered = e.getX() >= 410 && e.getX() <= 430 && e.getY() >= 2 && e.getY() <= 22;
         setTickHovered(e.getX(), e.getY());
+
+
+        setAlignmentMarkers(e.getX(), e.getY());
+
         if(currentTool == ADD_AUTO_TOOL)
         {
             setPotentialAutos();
@@ -2607,12 +2828,12 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     public void setEnforceCD(boolean bool)
     {
         enforceCD = bool;
-        redraw();
+        drawGraph();
     }
 
     public ChartIOData getForSerialization()
     {
-        return new ChartIOData(startTick, endTick, room, roomSpecificText, autos, specific, lines, outlineBoxes, new HashMap<>(), "");
+        return new ChartIOData(startTick, endTick, room, roomSpecificText, autos, specific, lines, outlineBoxes, textMapping, "");
     }
 
     public void setStatus(String text)

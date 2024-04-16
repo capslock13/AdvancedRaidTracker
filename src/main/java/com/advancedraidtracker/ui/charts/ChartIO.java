@@ -16,7 +16,7 @@ public class ChartIO
 
     public static ChartIOData loadChartFromFile(String file)
     {
-        try(FileReader reader = new FileReader(PLUGIN_DIRECTORY+"misc-dir/test.json"))
+        try(FileReader reader = new FileReader(file))
         {
             Gson gson = new GsonBuilder().registerTypeAdapter(Color.class, new JsonTypeAdapters.ColorDeserializer()).create();
             return gson.fromJson(reader, ChartIOData.class);
@@ -29,7 +29,7 @@ public class ChartIO
 
     public static ChartIOData loadChartFromClipboard(String string)
     {
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder().registerTypeAdapter(Color.class, new JsonTypeAdapters.ColorDeserializer()).create();
         return gson.fromJson(string, ChartIOData.class);
     }
     public static void saveChart(ChartPanel panel)

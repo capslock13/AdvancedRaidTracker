@@ -156,12 +156,19 @@ public class ChartCreatorFrame extends BaseFrame implements ChartListener
 			chart.exportImage();
 		});
 
+		JMenuItem exportAttackData = getThemedMenuItem("Copy Attack Data to Clipboard");
+		exportAttackData.addActionListener(o ->
+		{
+			chart.copyAttackData();
+		});
+
 		fileMenu.add(newMenu);
 		fileMenu.add(openMenu);
 		fileMenu.add(saveMenu);
 		fileMenu.add(saveAsMenu);
 		fileMenu.add(exportMenu);
 		fileMenu.add(importFromClipboard);
+		fileMenu.add(exportAttackData);
 
         menuBar.add(fileMenu);
         setJMenuBar(menuBar);

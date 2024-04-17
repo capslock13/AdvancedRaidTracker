@@ -14,6 +14,8 @@ import com.advancedraidtracker.utility.weapons.AnimationDecider;
 import com.advancedraidtracker.utility.wrappers.*;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import javax.swing.border.LineBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -2593,6 +2595,27 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         }
         drawGraph();
     }
+
+	public void copyAttackData()
+	{
+		String attackData = "";
+		for(String player : playerOffsets.keySet())
+		{
+			attackData += player + ",";
+			for(OutlineBox box : outlineBoxes)
+			{
+				if(box.player.equals(player))
+				{
+					attackData += "{" + box.tick + ":" + box.playerAnimation.ordinal() + "},";
+				}
+			}
+			attackData += "\n";
+		}
+
+		StringSelection selection = new StringSelection(attackData);
+		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+		clipboard.setContents(selection, selection);
+	}
 
     int currentTool = NO_TOOL;
 

@@ -65,13 +65,22 @@ public class ChartSpecCalculatorPanel extends JPanel implements ChartListener
 		for(String player : playerAttacks.keySet())
 		{
 			int spec = 100;
+			int firstReduction = -1;
 			List<OutlineBox> orderedAttacks = playerAttacks.get(player).stream().sorted(Comparator.comparing(OutlineBox::getTick)).collect(Collectors.toList());
 			for(OutlineBox box : orderedAttacks)
 			{
 				spec -= box.playerAnimation.spec;
-				if(spec < 0)
+				if(firstReduction < 0 && spec < 100)
 				{
-					log.info(player + " ran out of spec on tick " + box.tick);
+					firstReduction = box.tick;
+				}
+				if(spec == -5)
+				{
+					log.info(player + " needs to preach and start between tick " + (157-box.tick) + " and " + (157-firstReduction));
+				}
+				else if(spec < 0)
+				{
+					log.info(player + "went below 0 spec on tick " + box.tick);
 				}
 			}
 			log.info(player + " ended with " + spec + " spec");

@@ -27,7 +27,6 @@ public enum PlayerAnimation
     ZCB_SPEC("ZCB Spec", "ZC", new Color(10, 170, 50), 5, new int[]{9168}, new int[]{}, new int[]{ItemID.ZARYTE_CROSSBOW}, new int[]{1995}, 75),
     SCYTHE("Scythe", "S", new Color(230, 100, 100), 5, new int[]{8056}, new int[]{}, new int[]{ItemID.SCYTHE_OF_VITUR, ItemID.CORRUPTED_SCYTHE_OF_VITUR, ItemID.SANGUINE_SCYTHE_OF_VITUR, ItemID.HOLY_SCYTHE_OF_VITUR}, new int[]{}, 0),
     UNCHARGED_SCYTHE("Uncharged Scythe", "S?", new Color(230, 100, 100), 5, new int[]{8056}, new int[]{}, new int[]{ItemID.SCYTHE_OF_VITUR_UNCHARGED, ItemID.CORRUPTED_SCYTHE_OF_VITUR_UNCHARGED, ItemID.SANGUINE_SCYTHE_OF_VITUR_UNCHARGED, ItemID.HOLY_SCYTHE_OF_VITUR_UNCHARGED}, new int[]{}, 0, true),
-
     DINHS_SPEC("Dinhs Spec", "BW", new Color(20, 20, 20), 5, new int[]{7511}, new int[]{}, new int[]{ItemID.DINHS_BULWARK, ItemID.DINHS_BLAZING_BULWARK}, new int[]{}, 50),
     BLACK_CHIN("Black Chinchompa", "CC", new Color(0, 130, 0), 3, new int[]{7618}, new int[]{}, new int[]{ItemID.BLACK_CHINCHOMPA, -1}, new int[]{1272}, 0),
     RED_CHIN("Red Chinchompa", "RCC", new Color(0, 130, 0), 3, new int[]{7618}, new int[]{}, new int[]{ItemID.RED_CHINCHOMPA, -1}, new int[]{909}, 0),
@@ -63,7 +62,6 @@ public enum PlayerAnimation
     FANG_SPEC("Osmumten's Fang Spec", "FNG", new Color(10, 10, 100), 5, new int[]{6118}, new int[]{}, new int[]{ItemID.OSMUMTENS_FANG, ItemID.OSMUMTENS_FANG_OR}, new int[]{}, 25, true),
     TSOTD("Toxic Staff of the Dead", "TS", new Color(70, 10, 10), 4, new int[]{428, 440, 419}, new int[]{}, new int[]{ItemID.TOXIC_STAFF_OF_THE_DEAD, ItemID.STAFF_OF_THE_DEAD, ItemID.STAFF_OF_LIGHT}, new int[]{}, 0),
     TSOTD_SPEC("Toxic Staff of the Dead Spec", "TS?", new Color(70, 10, 10), 4, new int[]{7083, 7967, 1720}, new int[]{}, new int[]{ItemID.TOXIC_STAFF_OF_THE_DEAD, ItemID.STAFF_OF_THE_DEAD, ItemID.STAFF_OF_LIGHT}, new int[]{}, 100, true),
-
     VOID_WAKER("Voidwaker", "vw", new Color(60, 30, 10), 4, new int[]{386, 390}, new int[]{}, new int[]{ItemID.VOIDWAKER}, new int[]{}, 0, true),
     VOID_WAKER_SPEC("Voidwaker Spec", "VW", new Color(160, 70, 70), 4, new int[]{1378}, new int[]{}, new int[]{ItemID.VOIDWAKER}, new int[]{}, 50),
     MINING("Mining", "M", new Color(30, 30, 30), 3, new int[]{9479}, new int[]{}, new int[]{ItemID.DRAGON_PICKAXE}, new int[]{}, 0),
@@ -72,7 +70,6 @@ public enum PlayerAnimation
     KERIS_BREACHING("Keris of the Breaching", "KB", new Color(140, 140, 30), 4, new int[]{381, 419}, new int[]{}, new int[]{ItemID.KERIS_PARTISAN_OF_BREACHING}, new int[]{}, 0),
     KERIS_CORRUPTION("Keris of the Corruption", "kc", new Color(10, 140, 30), 4, new int[]{381, 419}, new int[]{}, new int[]{ItemID.KERIS_PARTISAN_OF_CORRUPTION}, new int[]{}, 0),
     KERIS_SUN("Keris of the Sun", "ks", new Color(10, 140, 30), 4, new int[]{}, new int[]{381, 419}, new int[]{}, new int[]{ItemID.KERIS_PARTISAN_OF_THE_SUN}, 0),
-
     KERIS_CORRUPTION_SPEC("Keris of the Corruption spec", "KC", new Color(140, 140, 30), 4, new int[]{9544}, new int[]{}, new int[]{ItemID.KERIS_PARTISAN_OF_CORRUPTION}, new int[]{}, 75),
     KERIS_SUN_SPEC("Keris of the Sun spec", "KS", new Color(140, 140, 30), 4, new int[]{9546}, new int[]{}, new int[]{ItemID.KERIS_PARTISAN_OF_THE_SUN}, new int[]{}, 75),
     PICKUP("Pickup Animation", "PCK", new Color(30, 30, 90), -1, new int[]{827}, new int[]{}, new int[]{}, new int[]{}, 0),
@@ -83,12 +80,10 @@ public enum PlayerAnimation
     GLAIVE_AUTO("Glaive Auto", "g", new Color(0, 70, 0), 6, new int[]{10923}, new int[]{}, new int[]{ItemID.TONALZTICS_OF_RALOS}, new int[]{}, 0,true),
     GLAIVE_SPEC("Glaive Spec", "G", new Color(0, 70, 0), 6, new int[]{10914}, new int[]{}, new int[]{ItemID.TONALZTICS_OF_RALOS}, new int[]{}, 50),
     ABYSSAL_BLUDEGON("Abyssal Bludegon", "ab", new Color(10, 70, 80), 4, new int[]{3298}, new int[]{}, new int[]{ItemID.ABYSSAL_BLUDGEON}, new int[]{}, 0),
-
     ABYSSAL_BLUDEGON_SPEC("Abyssal Bludegon Spec", "AB", new Color(10, 70, 80), 4, new int[]{3299}, new int[]{}, new int[]{ItemID.ABYSSAL_BLUDGEON}, new int[]{}, 50,true),
     VENATOR_BOW("Venator bow", "VNB", new Color(10, 70, 10), 4, new int[]{9858}, new int[]{}, new int[]{ItemID.VENATOR_BOW}, new int[]{}, 0),
     ARMADYL_CROSSBOW("Armadyl crossbow", "ACB", new Color(10, 70, 10), 5, new int[]{7552}, new int[]{}, new int[]{ItemID.ARMADYL_CROSSBOW}, new int[]{}, 0),
     DRAGON_HUNTER_CROSSBOW("Dragon Hunter crossbow", "DHCB", new Color(10, 70, 10), 5, new int[]{7552}, new int[]{}, new int[]{ItemID.DRAGON_HUNTER_CROSSBOW, ItemID.DRAGON_HUNTER_CROSSBOW_B, ItemID.DRAGON_HUNTER_CROSSBOW_T}, new int[]{}, 0),
-
     BOWFA("Bowfa", "BOF", new Color(10, 70, 10), 4, new int[]{426}, new int[]{}, new int[]{ItemID.BOW_OF_FAERDHINEN, ItemID.BOW_OF_FAERDHINEN_C}, new int[]{}, 0),
     SOULREAPER_AUTO("Soulreaper Auto", "sr", new Color(80, 10, 10), 5, new int[]{10172, 10171}, new int[]{}, new int[]{ItemID.SOULREAPER_AXE}, new int[]{}, 0),
     SOULREAPER_SPEC("Soulreaper Spec", "SR", new Color(80, 10, 10), 5, new int[]{10173}, new int[]{}, new int[]{ItemID.SOULREAPER_AXE}, new int[]{}, 0, true), //todo idk how spec works, look into this

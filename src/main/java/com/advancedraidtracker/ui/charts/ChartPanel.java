@@ -3,6 +3,9 @@ package com.advancedraidtracker.ui.charts;
 import com.advancedraidtracker.AdvancedRaidTrackerConfig;
 import com.advancedraidtracker.constants.RaidRoom;
 import com.advancedraidtracker.constants.TobIDs;
+import static com.advancedraidtracker.ui.charts.ChartActionType.ADD_ELEMENT;
+import static com.advancedraidtracker.ui.charts.ChartActionType.REMOVE_ELEMENT;
+import static com.advancedraidtracker.ui.charts.ChartObjectType.ATTACK;
 import com.advancedraidtracker.ui.charts.chartcreator.ChartStatusBar;
 import com.advancedraidtracker.utility.*;
 import com.advancedraidtracker.utility.Point;
@@ -11,6 +14,11 @@ import com.advancedraidtracker.utility.weapons.AnimationDecider;
 import com.advancedraidtracker.utility.wrappers.*;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
+import javax.swing.border.LineBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.DefaultTreeModel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -47,6 +55,9 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     private final int TITLE_BAR_PLUS_TAB_HEIGHT = 63;
     private boolean shouldWrap;
     private BufferedImage img;
+	boolean changesSaved = false;
+
+	String associatedFileName = "";
     int scale;
     int boxCount;
     int boxHeight;
@@ -88,6 +99,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     private Map<Integer, String> NPCMap = new HashMap<>();
     private final List<DawnSpec> dawnSpecs = new ArrayList<>();
     private final List<ThrallOutlineBox> thrallOutlineBoxes = new ArrayList<>();
+	@Getter
     private final List<OutlineBox> outlineBoxes = new ArrayList<>();
     private final Map<Integer, String> specific = new HashMap<>();
     @Getter
@@ -105,6 +117,25 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     private ConfigManager configManager;
     @Getter
     private boolean isActive = false;
+	List<ChartListener> listeners = new ArrayList<>();
+
+	public void addChartListener(ChartListener listener)
+	{
+		listeners.add(listener);
+	}
+
+	public void removeChartListener(ChartListener listener)
+	{
+		listeners.remove(listener);
+	}
+
+	public void updateChart(ChartChangedEvent event)
+	{
+		for(ChartListener listener : listeners)
+		{
+			listener.onChartChanged(event);
+		}
+	}
 
     public void setActive(boolean state)
     {
@@ -194,10 +225,12 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     public void addLine(int tick, String lineInfo)
     {
         lines.put(tick, lineInfo);
+		changesSaved = false;
     }
 
     public void addLines(Map<Integer, String> lineData)
     {
+		changesSaved = false;
         lines.putAll(lineData);
     }
 
@@ -209,11 +242,13 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     public void addAuto(int autoTick)
     {
         autos.add(autoTick);
+		changesSaved = false;
     }
 
     public void addAutos(List<Integer> autos)
     {
         this.autos.addAll(autos);
+		changesSaved = false;
     }
 
     public void addThrallBox(ThrallOutlineBox thrallOutlineBox)
@@ -336,11 +371,13 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     public void addAttack(PlayerDidAttack attack, PlayerAnimation playerAnimation)
     {
         addAttack(attack, playerAnimation, false);
+		changesSaved = false;
     }
 
     public void addAttack(PlayerDidAttack attack)
     {
         addAttack(attack, PlayerAnimation.NOT_SET);
+		changesSaved = false;
     }
 
     private static String getShortenedString(String targetString, int index)
@@ -533,6 +570,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                 if(!editedText.isEmpty())
                 {
                     textMapping.put(currentlyBeingEdited, editedText.substring(0, editedText.length()-1));
+					changesSaved = false;
                 }
             }
         }
@@ -543,6 +581,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
     public ChartPanel(String room, boolean isLive, AdvancedRaidTrackerConfig config, ClientThread clientThread, ConfigManager configManager, ItemManager itemManager, SpriteManager spriteManager)
     {
+		setFocusable(true);
         this.itemManager = itemManager;
         this.spriteManager = spriteManager;
         this.configManager = configManager;
@@ -573,6 +612,25 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         setFocusable(true);
         requestFocus();
         recalculateSize();
+
+		addFocusListener(new FocusAdapter()
+		{
+			@Override
+			public void focusGained(FocusEvent e)
+			{
+				super.focusGained(e);
+				setBorder(new LineBorder(config.boxColor()));
+
+			}
+
+			@Override
+			public void focusLost(FocusEvent e)
+			{
+				super.focusLost(e);
+				setBorder(null);
+			}
+		});
+
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(e ->
         {
             synchronized (ChartPanel.class)
@@ -634,7 +692,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                                     {
                                         removeAttack(box);
                                     }
-                                    actionHistory.add(new ChartAction(selectedBoxes, ChartActionType.REMOVE_ATTACKS));
+                                    actionHistory.add(new ChartAction(selectedBoxes, ChartActionType.REMOVE_ELEMENT));
                                     selectedTicks.clear();
                                     redraw();
                                 }
@@ -686,7 +744,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                                         for(OutlineBox box : createdBoxes)
                                         {
                                             addAttack(box);
-                                            actionHistory.add(new ChartAction(createdBoxes, ChartActionType.ADD_ATTACKS));
+                                            actionHistory.add(new ChartAction(createdBoxes, ADD_ELEMENT));
                                         }
                                     }
                                     else
@@ -712,29 +770,6 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                                     drawGraph();
                                 }
                                 break;
-                            case KeyEvent.VK_S:
-                                if(isCtrlPressed())
-                                {
-                                    saveChart(this);
-                                    log.info("saving");
-                                }
-                                break;
-                            case KeyEvent.VK_O:
-                                if(isCtrlPressed())
-                                {
-                                    JFileChooser fileChooser = new JFileChooser();
-                                    fileChooser.setCurrentDirectory(new File(PLUGIN_DIRECTORY + "/misc-dir/"));
-                                    if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
-                                    {
-                                        File file = fileChooser.getSelectedFile();
-                                        ChartIOData data = loadChartFromFile(file.getAbsolutePath());
-                                        if(data != null)
-                                        {
-                                            applyFromSave(data);
-                                        }
-                                    }
-                                }
-                                break;
                         }
                         break;
                         case KeyEvent.KEY_TYPED:
@@ -754,6 +789,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                                         if (currentlyBeingEdited != null)
                                         {
                                             textMapping.merge(currentlyBeingEdited, String.valueOf(e.getKeyChar()), String::concat);
+											changesSaved = false;
                                         }
                                     }
                                 }
@@ -767,8 +803,66 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         });
     }
 
+	public void openFile()
+	{
+		JFileChooser fileChooser = new JFileChooser();
+		fileChooser.setCurrentDirectory(new File(PLUGIN_DIRECTORY + "/misc-dir/"));
+		fileChooser.setFileFilter(new FileNameExtensionFilter("Chart Files", "json"));
+		if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
+		{
+			File file = fileChooser.getSelectedFile();
+			ChartIOData data = loadChartFromFile(file.getAbsolutePath());
+			associatedFileName = file.getAbsolutePath();
+			if(data != null)
+			{
+				applyFromSave(data);
+			}
+		}
+	}
+
+	public void saveFile()
+	{
+		if(associatedFileName.isEmpty())
+		{
+			JFileChooser saveFile = new JFileChooser();
+			saveFile.setCurrentDirectory(new File(PLUGIN_DIRECTORY + "/misc-dir/"));
+			saveFile.setFileFilter(new FileNameExtensionFilter("Chart Files", "json"));
+			if(saveFile.showSaveDialog(this) == JFileChooser.APPROVE_OPTION)
+			{
+				File file = saveFile.getSelectedFile();
+				associatedFileName = file.getAbsolutePath();
+				saveChart(this, associatedFileName);
+				changesSaved = true;
+			}
+		}
+		else
+		{
+			saveChart(this, associatedFileName);
+		}
+	}
+
+	public void exportImage()
+	{
+
+	}
+
+	public void saveAs()
+	{
+		JFileChooser saveFile = new JFileChooser();
+		saveFile.setCurrentDirectory(new File(PLUGIN_DIRECTORY + "/misc-dir/"));
+		saveFile.setFileFilter(new FileNameExtensionFilter("Chart Files", "json"));
+		if(saveFile.showSaveDialog(this) == JFileChooser.APPROVE_OPTION)
+		{
+			File file = saveFile.getSelectedFile();
+			associatedFileName = file.getAbsolutePath();
+			saveChart(this, associatedFileName);
+			changesSaved = true;
+		}
+	}
+
     public void applyFromSave(ChartIOData data)
     {
+		changesSaved = true;
         setStartTick(data.getStartTick());
         setEndTick(data.getEndTick());
         room = data.getRoomName();
@@ -788,9 +882,31 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
         textMapping.clear();
         textMapping = data.getTextMapping();
+		playerSBSCoolDown.clear();
+		playerWasOnCD.clear();
+		playerVengCoolDown.clear();
 
         recalculateSize();
     }
+
+	public void newFile()
+	{
+		if(!changesSaved)
+		{
+			int result = JOptionPane.showConfirmDialog(this, "You have unsaved changes. Would you like to save?");
+			if(result == JOptionPane.YES_OPTION)
+			{
+				saveFile();
+			}
+			else if(result == JOptionPane.CANCEL_OPTION)
+			{
+				return;
+			}
+		}
+		applyFromSave(new ChartIOData(1, 50, "Creator", "", new ArrayList<>(), new HashMap<>(), new HashMap<>(), new ArrayList<>(), new HashMap<>(), ""));
+		changesSaved = true;
+		associatedFileName = "";
+	}
 
     public void addAttacks(List<OutlineBox> outlineBoxes)
     {
@@ -821,11 +937,11 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     {
         for(OutlineBox box : action.getBoxes())
         {
-            if(action.getActionType().equals(ChartActionType.ADD_ATTACKS))
+            if(action.getActionType().equals(ADD_ELEMENT))
             {
                 removeAttack(box);
             }
-            else if(action.getActionType().equals(ChartActionType.REMOVE_ATTACKS))
+            else if(action.getActionType().equals(ChartActionType.REMOVE_ELEMENT))
             {
                 addAttack(box);
             }
@@ -1231,7 +1347,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                                         continue;
                                     }
                                     BufferedImage scaled = getScaledImage(icon, (scale - 2), (scale - 2));
-                                    if (box.playerAnimation.equals(PlayerAnimation.HAMMER_BOP) || box.playerAnimation.equals(PlayerAnimation.BGS_WHACK) || box.playerAnimation.equals(PlayerAnimation.UNCHARGED_SCYTHE) || box.playerAnimation.equals(PlayerAnimation.KODAI_BOP) || box.playerAnimation.equals(PlayerAnimation.CHALLY_WHACK) || box.playerAnimation.equals(PlayerAnimation.ZCB_AUTO))
+                                    if (box.playerAnimation.shouldFlip)
                                     {
                                         g.drawImage(createFlipped(createDropShadow(scaled)), xOffset + 3, yOffset + 3, null);
                                         g.drawImage(createFlipped(scaled), xOffset + 2, yOffset + 1, null);
@@ -2115,6 +2231,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
     private void checkRelease(MouseEvent e, boolean wasDragging)
     {
+		requestFocus();
         if (checkBoxHovered)
         {
             configManager.setConfiguration("Advanced Raid Tracker", "useIconsOnChart", !config.useIconsOnChart());
@@ -2348,6 +2465,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
     private void addAttack(PlayerDidAttack attack, PlayerAnimation playerAnimation, boolean recordAttack)
     {
+		changesSaved = false;
         if (clientThread != null)
         {
             clientThread.invoke(attack::setWornNames);
@@ -2422,9 +2540,10 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                     playerSBSCoolDown.put(attack.player, 0);
                 }
                 outlineBoxes.add(outlineBox);
+				updateChart(new ChartChangedEvent(ADD_ELEMENT, ATTACK, outlineBox));
                 if (recordAttack)
                 {
-                    actionHistory.add(new ChartAction(List.of(outlineBox), ChartActionType.ADD_ATTACKS));
+                    actionHistory.add(new ChartAction(List.of(outlineBox), ADD_ELEMENT));
                 }
             }
             for (int i = attack.tick; i < attack.tick + playerAnimation.attackTicks; i++)
@@ -2465,9 +2584,10 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                         playerWasOnCD.remove(player, i);
                     }
                 }
-                if(shouldRecord)
+				updateChart(new ChartChangedEvent(REMOVE_ELEMENT, ATTACK, removedBoxes.toArray()));
+				if(shouldRecord)
                 {
-                    actionHistory.push(new ChartAction(removedBoxes, ChartActionType.REMOVE_ATTACKS));
+					actionHistory.push(new ChartAction(removedBoxes, ChartActionType.REMOVE_ELEMENT));
                 }
             }
         }
@@ -2674,13 +2794,14 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                     }
                 }
             }
-            actionHistory.push(new ChartAction(boxesToAddToHistory, ChartActionType.ADD_ATTACKS));
+            actionHistory.push(new ChartAction(boxesToAddToHistory, ADD_ELEMENT));
         }
         drawGraph();
     }
 
     public void addAttack(OutlineBox box)
     {
+		changesSaved = false;
         synchronized (outlineBoxes)
         {
             outlineBoxes.add(box);
@@ -2859,5 +2980,60 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             statusBar.appendToStart(text);
         }
     }
+
+	@Setter
+	private JTree tree;
+
+	public void updateTree()
+	{
+		if(tree != null)
+		{
+			tree.setModel(null);
+			tree.setCellRenderer(new DefaultTreeCellRenderer()
+			{
+				@Override
+				public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded,
+																  boolean isLeaf, int row, boolean focused)
+				{
+					Component cell = super.getTreeCellRendererComponent(tree, value, selected, expanded, isLeaf, row, focused);
+					cell.setForeground(config.fontColor());
+					return cell;
+				}
+			});
+			DefaultMutableTreeNode root = new DefaultMutableTreeNode("Layers")
+			{
+				{
+					setForeground(config.fontColor());
+				}
+			};
+			DefaultMutableTreeNode attacks = new DefaultMutableTreeNode("Attacks")
+			{
+				{
+					setForeground(config.fontColor());
+				}
+			};
+			Map<String, DefaultMutableTreeNode> playerNodes = new LinkedHashMap<>();
+			for(String player : playerOffsets.keySet())
+			{
+				playerNodes.put(player, new DefaultMutableTreeNode(player)
+				{
+					{
+						setForeground(config.fontColor());
+					}
+				});
+			}
+			for(OutlineBox box : outlineBoxes)
+			{
+				playerNodes.get(box.player).add(new DefaultMutableTreeNode(box));
+			}
+			for(DefaultMutableTreeNode nodes : playerNodes.values())
+			{
+				attacks.add(nodes);
+			}
+
+			root.add(attacks);
+			tree.setModel(new DefaultTreeModel(root));
+		}
+	}
 
 }

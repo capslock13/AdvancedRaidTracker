@@ -1,6 +1,12 @@
 package com.advancedraidtracker.utility;
 
 import com.advancedraidtracker.AdvancedRaidTrackerConfig;
+import javax.swing.plaf.TreeUI;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeCellRenderer;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -757,4 +763,46 @@ public class UISwingUtility
 
         return jPopupMenu;
     }
+
+	public static JTree getThemedTree(String root)
+	{
+		JTree tree = new JTree()
+		{
+			{
+				addFocusListener(new FocusAdapter()
+				{
+					@Override
+					public void focusGained(FocusEvent e)
+					{
+						super.focusGained(e);
+						setBorder(new LineBorder(config.boxColor()));
+					}
+
+					@Override
+					public void focusLost(FocusEvent e)
+					{
+						super.focusLost(e);
+						setBorder(null);
+					}
+				});
+			}
+		};
+
+		tree.setCellRenderer(new DefaultTreeCellRenderer()
+		{
+			@Override
+			public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded,
+														  boolean isLeaf, int row, boolean focused)
+			{
+				Component cell = super.getTreeCellRendererComponent(tree, value, selected, expanded, isLeaf, row, focused);
+				cell.setForeground(config.fontColor());
+				return cell;
+			}
+		});
+		tree.setModel(new DefaultTreeModel(new DefaultMutableTreeNode(root)));
+		tree.setBackground(config.primaryDark());
+		tree.setForeground(config.fontColor());
+		tree.setOpaque(true);
+		return tree;
+	}
 }

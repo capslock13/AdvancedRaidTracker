@@ -37,6 +37,17 @@ public class OutlineBox
     @Getter
     String[] wornItems = new String[0];
 
+	public int getTick()
+	{
+		return tick;
+	}
+
+	@Override
+	public String toString()
+	{
+		return tick + ": " + playerAnimation.name;
+	}
+
     public OutlineBox(String letter, Color color, boolean primaryTarget, String additionalText, PlayerAnimation playerAnimation, int cd, int tick, String player, RaidRoom room, int weapon)
     {
         this.room = room;

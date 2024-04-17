@@ -13,6 +13,7 @@ public class ChartStatusBar extends JPanel
     JLabel label;
     public ChartStatusBar(String text)
     {
+		setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
         setLayout(new BorderLayout());
         JPanel panel = getThemedPanel();
         panel.setLayout(new BorderLayout());

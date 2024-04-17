@@ -2,6 +2,6 @@ package com.advancedraidtracker.ui.charts;
 
 public enum ChartActionType
 {
-    ADD_ATTACKS,
-    REMOVE_ATTACKS
+	ADD_ELEMENT,
+	REMOVE_ELEMENT
 }

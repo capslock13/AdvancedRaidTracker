@@ -32,9 +32,9 @@ public class ChartIO
         Gson gson = new GsonBuilder().registerTypeAdapter(Color.class, new JsonTypeAdapters.ColorDeserializer()).create();
         return gson.fromJson(string, ChartIOData.class);
     }
-    public static void saveChart(ChartPanel panel)
+    public static void saveChart(ChartPanel panel, String fileName)
     {
-        try (FileWriter writer = new FileWriter(PLUGIN_DIRECTORY+"misc-dir/test.json"))
+        try (FileWriter writer = new FileWriter(fileName))
         {
             Gson gson = new GsonBuilder().enableComplexMapKeySerialization().registerTypeAdapter(Color.class, new JsonTypeAdapters.ColorSerializer()).create();
             gson.toJson(panel.getForSerialization(), writer);

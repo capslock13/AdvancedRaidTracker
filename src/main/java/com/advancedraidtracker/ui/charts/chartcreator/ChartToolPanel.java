@@ -3,6 +3,9 @@ package com.advancedraidtracker.ui.charts.chartcreator;
 import com.advancedraidtracker.AdvancedRaidTrackerConfig;
 import com.advancedraidtracker.ui.charts.ChartPanel;
 import com.advancedraidtracker.utility.weapons.PlayerAnimation;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import javax.swing.border.LineBorder;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.game.ItemManager;
@@ -63,6 +66,7 @@ public class ChartToolPanel extends JPanel implements MouseListener, MouseMotion
         addMouseListener(this);
         addMouseMotionListener(this);
         setBackground(config.primaryDark());
+		setFocusable(true);
         setOpaque(true);
         clientThread.invoke(()->
         {
@@ -106,6 +110,24 @@ public class ChartToolPanel extends JPanel implements MouseListener, MouseMotion
         {
 
         }
+
+		addFocusListener(new FocusAdapter()
+		{
+			@Override
+			public void focusGained(FocusEvent e)
+			{
+				super.focusGained(e);
+				setBorder(new LineBorder(config.boxColor()));
+			}
+
+			@Override
+			public void focusLost(FocusEvent e)
+			{
+				super.focusLost(e);
+				setBorder(null);
+			}
+		});
+
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(e ->
         {
             synchronized (ChartPanel.class)
@@ -216,7 +238,7 @@ public class ChartToolPanel extends JPanel implements MouseListener, MouseMotion
             if(!primary.equals(PlayerAnimation.NOT_SET))
             {
                 BufferedImage scaled = getScaledImage(iconMap.get(primary), (toolHeight * 2 - 4), (toolHeight * 2 - 4));
-                if (primary.equals(PlayerAnimation.HAMMER_BOP) || primary.equals(PlayerAnimation.BGS_WHACK) || primary.equals(PlayerAnimation.UNCHARGED_SCYTHE) || primary.equals(PlayerAnimation.KODAI_BOP) || primary.equals(PlayerAnimation.CHALLY_WHACK))
+                if (primary.shouldFlip)
                 {
                     g.drawImage(createFlipped(createDropShadow(scaled)), xMargin + 3, yMargin + 3, null);
                     g.drawImage(createFlipped(scaled), xMargin + 2, yMargin + 1, null);
@@ -246,7 +268,7 @@ public class ChartToolPanel extends JPanel implements MouseListener, MouseMotion
             if(!secondary.equals(PlayerAnimation.NOT_SET))
             {
                 BufferedImage scaled = getScaledImage(iconMap.get(secondary), (toolHeight * 2 - 2), (toolHeight * 2 - 2));
-                if (secondary.equals(PlayerAnimation.HAMMER_BOP) || secondary.equals(PlayerAnimation.BGS_WHACK) || secondary.equals(PlayerAnimation.UNCHARGED_SCYTHE) || secondary.equals(PlayerAnimation.KODAI_BOP) || secondary.equals(PlayerAnimation.CHALLY_WHACK))
+                if (secondary.shouldFlip)
                 {
                     g.drawImage(createFlipped(createDropShadow(scaled)), xMargin + 3, yMargin + 3, null);
                     g.drawImage(createFlipped(scaled), xMargin + 2, yMargin + 1, null);
@@ -327,7 +349,7 @@ public class ChartToolPanel extends JPanel implements MouseListener, MouseMotion
                     if(!playerAnimation.equals(PlayerAnimation.NOT_SET))
                     {
                         BufferedImage scaled = getScaledImage(iconMap.get(playerAnimation), (toolHeight - 2), (toolHeight - 2));
-                        if (playerAnimation.equals(PlayerAnimation.HAMMER_BOP) || playerAnimation.equals(PlayerAnimation.BGS_WHACK) || playerAnimation.equals(PlayerAnimation.UNCHARGED_SCYTHE) || playerAnimation.equals(PlayerAnimation.KODAI_BOP) || playerAnimation.equals(PlayerAnimation.CHALLY_WHACK))
+                        if (playerAnimation.shouldFlip)
                         {
                             g.drawImage(createFlipped(createDropShadow(scaled)), xOffset + 3, yOffset + 3, null);
                             g.drawImage(createFlipped(scaled), xOffset + 2, yOffset + 1, null);
@@ -421,6 +443,7 @@ public class ChartToolPanel extends JPanel implements MouseListener, MouseMotion
 
     private void handleRelease(MouseEvent e)
     {
+		requestFocus();
         if (hoveredAttack.equals(PlayerAnimation.EXCLUDED_ANIMATION))
         {
             if (SwingUtilities.isLeftMouseButton(e))

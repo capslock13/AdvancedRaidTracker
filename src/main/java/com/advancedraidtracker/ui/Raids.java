@@ -135,7 +135,7 @@ public class Raids extends BaseFrame implements UpdateableWindow
         this.itemManager = itemManager;
         this.configManager = configManager;
         this.spriteManager = spriteManager;
-        this.chartFrame = new ChartFrame(config, itemManager, clientThread, configManager, spriteManager);
+        this.chartFrame = new ChartFrame(config, itemManager, clientThread, configManager, spriteManager, this);
 
         columnHeaders = new ArrayList<>();
         favorites = DataReader.getFavorites();
@@ -223,6 +223,7 @@ public class Raids extends BaseFrame implements UpdateableWindow
         return true;
     }
 
+	private List<Raid> tableData = new ArrayList<>();
 
     public void updateTable()
     {
@@ -246,7 +247,7 @@ public class Raids extends BaseFrame implements UpdateableWindow
         int infCompletions = 0;
         int colCompletions = 0;
 
-        List<Raid> tableData = new ArrayList<>();
+        tableData = new ArrayList<>();
         for (Raid data : currentData)
         {
             boolean shouldDataBeIncluded = true;
@@ -2123,6 +2124,40 @@ public class Raids extends BaseFrame implements UpdateableWindow
 
     public String[] columnHeaderNames = new String[]{"Date", "Raid", "Time", "Scale", "Status", "Players", "Favorite", "Spectate", "View"};
     public ArrayList<JCheckBoxMenuItem> columnHeaders;
+
+	public Raid getNextRaid(int index)
+	{
+		boolean next = false;
+		for(int i = 0; i < tableData.size(); i++)
+		{
+			if(next)
+			{
+				return tableData.get(i);
+			}
+			if(tableData.get(i).getIndex() == index)
+			{
+				next = true;
+			}
+		}
+		return null;
+	}
+
+	public Raid getPreviousRaid(int index)
+	{
+		boolean next = false;
+		for(int i = tableData.size()-1; i >= 0; i--)
+		{
+			if(next)
+			{
+				return tableData.get(i);
+			}
+			if(tableData.get(i).getIndex() == index)
+			{
+				next = true;
+			}
+		}
+		return null;
+	}
 
     private void getUpdatedPopupMenu(String newItem)
     {

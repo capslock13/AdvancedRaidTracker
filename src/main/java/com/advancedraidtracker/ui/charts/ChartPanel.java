@@ -16,6 +16,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
+import java.beans.PropertyChangeListener;
 import javax.swing.border.LineBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -49,8 +50,7 @@ import static com.advancedraidtracker.utility.datautility.DataWriter.PLUGIN_DIRE
 import static com.advancedraidtracker.ui.charts.OutlineBox.getIcon;
 import static com.advancedraidtracker.utility.weapons.PlayerAnimation.*;
 
-@Slf4j
-public class ChartPanel extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener
+public class ChartPanel extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener, FocusListener, KeyEventDispatcher
 {
     @Setter
     private ChartStatusBar statusBar;
@@ -426,7 +426,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     {
         endTick++;
         baseEndTick++;
-        if (endTick % ticksToShow == 0 || endTick == 1)
+        if (endTick % ticksToShow < 2 || endTick == 1)
         {
             recalculateSize();
             sendToBottom();
@@ -519,10 +519,17 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
     public void release()
     {
+		resetGraph();
         img = null;
         removeMouseListener(this);
         removeMouseWheelListener(this);
         removeMouseMotionListener(this);
+		KeyboardFocusManager.getCurrentKeyboardFocusManager().removeKeyEventDispatcher(this);
+		removeFocusListener(this);
+		for(PropertyChangeListener cl : getPropertyChangeListeners())
+		{
+			removePropertyChangeListener(cl);
+		}
     }
 
     public void appendToSelected(char c)
@@ -583,7 +590,6 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 
     public ChartPanel(String room, boolean isLive, AdvancedRaidTrackerConfig config, ClientThread clientThread, ConfigManager configManager, ItemManager itemManager, SpriteManager spriteManager)
     {
-		setFocusable(true);
         this.itemManager = itemManager;
         this.spriteManager = spriteManager;
         this.configManager = configManager;
@@ -609,200 +615,13 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             addMouseListener(this);
             addMouseMotionListener(this);
             addMouseWheelListener(this);
+			KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(this);
+			addFocusListener(this);
             img = new BufferedImage(windowWidth, windowHeight, BufferedImage.TYPE_INT_ARGB);
         }
         setFocusable(true);
         requestFocus();
         recalculateSize();
-
-		addFocusListener(new FocusAdapter()
-		{
-			@Override
-			public void focusGained(FocusEvent e)
-			{
-				super.focusGained(e);
-				setBorder(new LineBorder(config.boxColor()));
-
-			}
-
-			@Override
-			public void focusLost(FocusEvent e)
-			{
-				super.focusLost(e);
-				setBorder(null);
-			}
-		});
-
-        KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(e ->
-        {
-            synchronized (ChartPanel.class)
-            {
-                if(!shouldDraw() || (!room.equals("Creator") && !(e.getKeyCode() == KeyEvent.VK_CONTROL)))
-                {
-                    return false;
-                }
-                switch (e.getID())
-                {
-                    case KeyEvent.KEY_PRESSED:
-                        switch(e.getKeyCode())
-                        {
-                            case KeyEvent.VK_CONTROL:
-                                isCtrlPressed = true;
-                                break;
-                            case KeyEvent.VK_SHIFT:
-                                isShiftPressed = true;
-                                break;
-                        }
-                        break;
-                    case KeyEvent.KEY_RELEASED:
-                        switch(e.getKeyCode())
-                        {
-                            case KeyEvent.VK_CONTROL:
-                                isCtrlPressed = false;
-                                autoScrollAmount = 0;
-                                break;
-                            case KeyEvent.VK_SHIFT:
-                                isShiftPressed = false;
-                                break;
-                            case KeyEvent.VK_C:
-                                if(isCtrlPressed())
-                                {
-                                    copyAttacks();
-                                }
-                                break;
-                            case KeyEvent.VK_V:
-                                if(isCtrlPressed())
-                                {
-                                    pasteAttacks();
-                                }
-                                break;
-                            case KeyEvent.VK_DELETE:
-                                if(currentTool == SELECTION_TOOL)
-                                {
-                                    List<OutlineBox> selectedBoxes = new ArrayList<>();
-                                    for(ChartTick tick : selectedTicks)
-                                    {
-                                        for(OutlineBox box : outlineBoxes)
-                                        {
-                                            if(box.tick == tick.getTick() && Objects.equals(box.player, tick.getPlayer()))
-                                            {
-                                                selectedBoxes.add(box);
-                                            }
-                                        }
-                                    }
-                                    for(OutlineBox box : selectedBoxes)
-                                    {
-                                        removeAttack(box);
-                                    }
-                                    actionHistory.add(new ChartAction(selectedBoxes, ChartActionType.REMOVE_ELEMENT));
-                                    selectedTicks.clear();
-                                    redraw();
-                                }
-                                break;
-                            case KeyEvent.VK_Z:
-                                if(isCtrlPressed())
-                                {
-                                    if(!actionHistory.isEmpty())
-                                    {
-                                        processChartAction(actionHistory.pop());
-                                    }
-                                }
-                                break;
-                            case KeyEvent.VK_ENTER:
-                                if(isEditingBoxText)
-                                {
-                                    isEditingBoxText = false;
-                                    setCursor(Cursor.getDefaultCursor());
-                                }
-                                if(currentlyBeingEdited != null)
-                                {
-                                    stoppedEditingTextBox();
-                                }
-                                else if(!selectedTicks.isEmpty())
-                                {
-                                    List<OutlineBox> createdBoxes = new ArrayList<>();
-                                    boolean shouldApplyBoxes = true;
-                                    for(ChartTick tick : selectedTicks)
-                                    {
-                                        synchronized (outlineBoxes)
-                                        {
-                                            for(OutlineBox box : outlineBoxes)
-                                            {
-                                                if (tick.getTick() == box.tick && tick.getPlayer().equals(box.player))
-                                                {
-                                                    shouldApplyBoxes = false;
-                                                    break;
-                                                }
-                                            }
-                                            if(shouldApplyBoxes)
-                                            {
-                                                OutlineBox createdBox = new OutlineBox(selectedPrimary.shorthand, selectedPrimary.color, true, "", selectedPrimary, selectedPrimary.attackTicks, tick.getTick(), tick.getPlayer(), RaidRoom.getRoom(room), selectedPrimary.weaponIDs[0]);
-                                                createdBoxes.add(createdBox);
-                                            }
-                                        }
-                                    }
-                                    if(shouldApplyBoxes)
-                                    {
-                                        for(OutlineBox box : createdBoxes)
-                                        {
-                                            addAttack(box);
-                                            actionHistory.add(new ChartAction(createdBoxes, ADD_ELEMENT));
-                                        }
-                                    }
-                                    else
-                                    {
-                                        isEditingBoxText = true;
-                                        setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
-                                    }
-                                }
-                                drawGraph();
-                                break;
-                            case KeyEvent.VK_A:
-                                if(isCtrlPressed())
-                                {
-                                    selectedTicks.clear();
-                                    currentTool = SELECTION_TOOL;
-                                    synchronized (outlineBoxes)
-                                    {
-                                        for (OutlineBox box : outlineBoxes)
-                                        {
-                                            selectedTicks.add(new ChartTick(box.tick, box.player));
-                                        }
-                                    }
-                                    drawGraph();
-                                }
-                                break;
-                        }
-                        break;
-                        case KeyEvent.KEY_TYPED:
-                            if (!isCtrlPressed())
-                            {
-                                if((int)e.getKeyChar() == 8) //Unicode Backspace (U+0008)
-                                {
-                                    removeLastCharFromSelected();
-                                }
-                                else
-                                {
-                                    if (currentTool == SELECTION_TOOL)
-                                    {
-                                        appendToSelected(e.getKeyChar());
-                                    } else if (currentTool == ADD_TEXT_TOOL)
-                                    {
-                                        if (currentlyBeingEdited != null)
-                                        {
-                                            textMapping.merge(currentlyBeingEdited, String.valueOf(e.getKeyChar()), String::concat);
-											changesSaved = false;
-                                        }
-                                    }
-                                }
-                            }
-                            drawGraph();
-                        break;
-
-                }
-                return false;
-            }
-        });
     }
 
 	public void openFile()
@@ -887,6 +706,8 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 		playerSBSCoolDown.clear();
 		playerWasOnCD.clear();
 		playerVengCoolDown.clear();
+		playerThrallCoolDown.clear();
+		playerDCCoolDown.clear();
 
         recalculateSize();
     }
@@ -2464,6 +2285,8 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
     private Point currentlyBeingHovered = null;
     Map<String, Integer> playerSBSCoolDown = new HashMap<>();
     Map<String, Integer> playerVengCoolDown = new HashMap<>();
+	Map<String, Integer> playerThrallCoolDown = new HashMap<>();
+	Map<String, Integer> playerDCCoolDown = new HashMap<>();
 
     private void addAttack(PlayerDidAttack attack, PlayerAnimation playerAnimation, boolean recordAttack)
     {
@@ -2511,11 +2334,28 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             synchronized (outlineBoxes)
             {
                 OutlineBox outlineBox = new OutlineBox(playerAnimation.shorthand, playerAnimation.color, isTarget, additionalText, playerAnimation, playerAnimation.attackTicks, attack.tick, attack.player, RaidRoom.getRoom(this.room), attack.weapon);
+				outlineBox.setWornItems(attack.wornItems);
+				if(clientThread != null)
+				{
+					clientThread.invoke(outlineBox::setWornNames);
+				}
                 String[] spotAnims = attack.spotAnims.split(":");
                 if (playerAnimation == SBS)
                 {
                     playerSBSCoolDown.put(attack.player, attack.tick + 10);
                 }
+				else if(playerAnimation == VENG_SELF)
+				{
+					playerVengCoolDown.put(attack.player, attack.tick+15);
+				}
+				else if(playerAnimation == DEATH_CHARGE)
+				{
+					playerDCCoolDown.put(attack.player, attack.tick+15);
+				}
+				else if(playerAnimation == THRALL_CAST)
+				{
+					playerThrallCoolDown.put(attack.player, attack.tick+15);
+				}
 
                 if (spotAnims.length > 0)
                 {
@@ -2526,11 +2366,27 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                         {
                             outlineBox.secondaryID = Integer.parseInt(spotAnims[0]);
                             playerSBSCoolDown.put(attack.player, attack.tick + 10);
-                        } else if (graphic != 1062)//non sbs secondary graphic -> force reset?
+                        }
+						else if(graphic == 726 && playerVengCoolDown.getOrDefault(attack.player, 0) <= attack.tick)
+						{
+							outlineBox.secondaryID = Integer.parseInt(spotAnims[0]);
+							playerVengCoolDown.put(attack.player, attack.tick+15);
+						}
+						else if(graphic == 1854 && playerDCCoolDown.getOrDefault(attack.player, 0) <= attack.tick)
+						{
+							outlineBox.secondaryID = Integer.parseInt(spotAnims[0]);
+							playerDCCoolDown.put(attack.player, attack.tick+15);
+						}
+						else if((graphic == 1873 || graphic == 1874 || graphic == 1875) && playerThrallCoolDown.getOrDefault(attack.player, 0) <= attack.tick)
+						{
+							outlineBox.secondaryID = Integer.parseInt(spotAnims[0]);
+							playerThrallCoolDown.put(attack.player, attack.tick+15);
+						}
+						if (graphic != 1062)//non sbs secondary graphic -> force reset?
                         {
                             playerSBSCoolDown.put(attack.player, 0);
                         }
-                        if (graphic != 1062 && !(playerAnimation == BARRAGE || playerAnimation == BLITZ))
+                        if (graphic != 1062 && graphic != 726 && graphic != 1854 && graphic != 1873 && graphic != 1874 && graphic != 1875 && !(playerAnimation == BARRAGE || playerAnimation == BLITZ))
                         {
                             outlineBox.secondaryID = Integer.parseInt(spotAnims[0]);
                         }
@@ -3059,4 +2915,187 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 		}
 	}
 
+	@Override
+	public void focusGained(FocusEvent e)
+	{
+		setBorder(new LineBorder(config.boxColor()));
+	}
+
+	@Override
+	public void focusLost(FocusEvent e)
+	{
+		setBorder(null);
+	}
+
+	@Override
+	public boolean dispatchKeyEvent(KeyEvent e)
+	{
+		synchronized (ChartPanel.class)
+		{
+			if(!shouldDraw() || (!room.equals("Creator") && !(e.getKeyCode() == KeyEvent.VK_CONTROL)))
+			{
+				return false;
+			}
+			switch (e.getID())
+			{
+				case KeyEvent.KEY_PRESSED:
+					switch(e.getKeyCode())
+					{
+						case KeyEvent.VK_CONTROL:
+							isCtrlPressed = true;
+							break;
+						case KeyEvent.VK_SHIFT:
+							isShiftPressed = true;
+							break;
+					}
+					break;
+				case KeyEvent.KEY_RELEASED:
+					switch(e.getKeyCode())
+					{
+						case KeyEvent.VK_CONTROL:
+							isCtrlPressed = false;
+							autoScrollAmount = 0;
+							break;
+						case KeyEvent.VK_SHIFT:
+							isShiftPressed = false;
+							break;
+						case KeyEvent.VK_C:
+							if(isCtrlPressed())
+							{
+								copyAttacks();
+							}
+							break;
+						case KeyEvent.VK_V:
+							if(isCtrlPressed())
+							{
+								pasteAttacks();
+							}
+							break;
+						case KeyEvent.VK_DELETE:
+							if(currentTool == SELECTION_TOOL)
+							{
+								List<OutlineBox> selectedBoxes = new ArrayList<>();
+								for(ChartTick tick : selectedTicks)
+								{
+									for(OutlineBox box : outlineBoxes)
+									{
+										if(box.tick == tick.getTick() && Objects.equals(box.player, tick.getPlayer()))
+										{
+											selectedBoxes.add(box);
+										}
+									}
+								}
+								for(OutlineBox box : selectedBoxes)
+								{
+									removeAttack(box);
+								}
+								actionHistory.add(new ChartAction(selectedBoxes, ChartActionType.REMOVE_ELEMENT));
+								selectedTicks.clear();
+								redraw();
+							}
+							break;
+						case KeyEvent.VK_Z:
+							if(isCtrlPressed())
+							{
+								if(!actionHistory.isEmpty())
+								{
+									processChartAction(actionHistory.pop());
+								}
+							}
+							break;
+						case KeyEvent.VK_ENTER:
+							if(isEditingBoxText)
+							{
+								isEditingBoxText = false;
+								setCursor(Cursor.getDefaultCursor());
+							}
+							if(currentlyBeingEdited != null)
+							{
+								stoppedEditingTextBox();
+							}
+							else if(!selectedTicks.isEmpty())
+							{
+								List<OutlineBox> createdBoxes = new ArrayList<>();
+								boolean shouldApplyBoxes = true;
+								for(ChartTick tick : selectedTicks)
+								{
+									synchronized (outlineBoxes)
+									{
+										for(OutlineBox box : outlineBoxes)
+										{
+											if (tick.getTick() == box.tick && tick.getPlayer().equals(box.player))
+											{
+												shouldApplyBoxes = false;
+												break;
+											}
+										}
+										if(shouldApplyBoxes)
+										{
+											OutlineBox createdBox = new OutlineBox(selectedPrimary.shorthand, selectedPrimary.color, true, "", selectedPrimary, selectedPrimary.attackTicks, tick.getTick(), tick.getPlayer(), RaidRoom.getRoom(room), selectedPrimary.weaponIDs[0]);
+											createdBoxes.add(createdBox);
+										}
+									}
+								}
+								if(shouldApplyBoxes)
+								{
+									for(OutlineBox box : createdBoxes)
+									{
+										addAttack(box);
+										actionHistory.add(new ChartAction(createdBoxes, ADD_ELEMENT));
+									}
+								}
+								else
+								{
+									isEditingBoxText = true;
+									setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
+								}
+							}
+							drawGraph();
+							break;
+						case KeyEvent.VK_A:
+							if(isCtrlPressed())
+							{
+								selectedTicks.clear();
+								currentTool = SELECTION_TOOL;
+								synchronized (outlineBoxes)
+								{
+									for (OutlineBox box : outlineBoxes)
+									{
+										selectedTicks.add(new ChartTick(box.tick, box.player));
+									}
+								}
+								drawGraph();
+							}
+							break;
+					}
+					break;
+				case KeyEvent.KEY_TYPED:
+					if (!isCtrlPressed())
+					{
+						if((int)e.getKeyChar() == 8) //Unicode Backspace (U+0008)
+						{
+							removeLastCharFromSelected();
+						}
+						else
+						{
+							if (currentTool == SELECTION_TOOL)
+							{
+								appendToSelected(e.getKeyChar());
+							} else if (currentTool == ADD_TEXT_TOOL)
+							{
+								if (currentlyBeingEdited != null)
+								{
+									textMapping.merge(currentlyBeingEdited, String.valueOf(e.getKeyChar()), String::concat);
+									changesSaved = false;
+								}
+							}
+						}
+					}
+					drawGraph();
+					break;
+
+			}
+			return false;
+		}
+	}
 }

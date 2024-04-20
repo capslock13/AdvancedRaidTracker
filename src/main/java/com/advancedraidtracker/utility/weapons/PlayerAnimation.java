@@ -116,7 +116,7 @@ public enum PlayerAnimation
     BONE_DAGGER_POKE("Bone Dagger Poke", "bd", new Color(150, 20, 20), 4, new int[]{386, 390}, new int[]{}, new int[]{ItemID.BONE_DAGGER, ItemID.BONE_DAGGER_P, ItemID.BONE_DAGGER_P_8876, ItemID.BONE_DAGGER_P_8878}, new int []{}, 0, true),
     BONE_DAGGER_SPEC("Bone Dagger Spec", "BD", new Color(150, 20, 20), 4, new int[]{4198}, new int[]{}, new int[]{ItemID.BONE_DAGGER, ItemID.BONE_DAGGER_P, ItemID.BONE_DAGGER_P_8876, ItemID.BONE_DAGGER_P_8878}, new int[]{}, 75),
     UNARMED("Unarmed", "???", new Color(0, 0, 0), 4, new int[]{422, 423}, new int[]{}, new int[]{-1}, new int[]{}, 0),
-
+	VENG_APPLIED("Veng Applied", "VA", new Color(0, 0, 0, 0), -1, new int[]{-3}, new int[]{}, new int[]{}, new int[]{}, 0),
 
 
     ;

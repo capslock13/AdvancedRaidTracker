@@ -32,6 +32,7 @@ public class PlayerDidAttack
     public ItemManager itemManager;
 
     private PlayerAnimation playerAnimation = PlayerAnimation.UNDECIDED;
+	public int damage = 0;
 
     public PlayerDidAttack(ItemManager itemManager, String player, String animation, int tick, int weapon, String projectile, String spotAnims, int targetedIndex, int targetedID, String targetName, String worn)
     {

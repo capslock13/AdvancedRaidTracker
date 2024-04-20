@@ -211,6 +211,11 @@ public class LiveChart extends BaseFrame
         pack();
     }
 
+	public void open(String room)
+	{
+		getPanel(room).setActive(true);
+		super.open();
+	}
 
     public void switchToTOB()
     {

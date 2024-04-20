@@ -2,6 +2,7 @@ package com.advancedraidtracker.ui.charts;
 
 import com.advancedraidtracker.constants.RaidRoom;
 import com.advancedraidtracker.utility.ItemReference;
+import com.advancedraidtracker.utility.PlayerWornItems;
 import com.advancedraidtracker.utility.weapons.AnimationDecider;
 import com.advancedraidtracker.utility.weapons.PlayerAnimation;
 import lombok.Getter;
@@ -22,7 +23,8 @@ import static com.advancedraidtracker.constants.RaidRoom.BLOAT;
 public class OutlineBox
 {
     public String player;
-    public int tick;
+    @Getter
+	public int tick;
     public String letter;
     public Color color;
     public boolean primaryTarget;
@@ -32,15 +34,15 @@ public class OutlineBox
     public final RaidRoom room;
     public int weapon;
     public int secondaryID = -2;
+	public int tertiaryID = -3;
 
     @Setter
     @Getter
-    String[] wornItems = new String[0];
+    String[] wornItemNames = new String[0];
 
-	public int getTick()
-	{
-		return tick;
-	}
+	@Setter
+	@Getter
+	String wornItems = "";
 
 	@Override
 	public String toString()
@@ -95,9 +97,14 @@ public class OutlineBox
         }
     }
 
+	public void setWornNames()
+	{
+		wornItemNames = new PlayerWornItems(wornItems, itemManager).getAll();
+	}
+
     public void createOutline()
     {
-        if(wornItems.length == 0)
+        if(wornItemNames.length == 0)
         {
             return;
         }
@@ -107,14 +114,14 @@ public class OutlineBox
         }
         int correctItems = 0;
         boolean voidHelmWorn = false;
-        if (wornItems.length == 9)
+        if (wornItemNames.length == 9)
         {
-            setStyle(wornItems[3]);
-            if (wornItems[0].toLowerCase().contains("void"))
+            setStyle(wornItemNames[3]);
+            if (wornItemNames[0].toLowerCase().contains("void"))
             {
                 voidHelmWorn = true;
             }
-            for (String s : wornItems)
+            for (String s : wornItemNames)
             {
                 if (anyMatch(s, ItemReference.ITEMS[style]) || (voidHelmWorn && s.toLowerCase().contains("void")))
                 {
@@ -130,7 +137,7 @@ public class OutlineBox
                     }
                 }
             }
-            if (wornItems[2].toLowerCase().contains("blood fury") && style == MELEE)
+            if (wornItemNames[2].toLowerCase().contains("blood fury") && style == MELEE)
             {
                 correctItems++;
             }
@@ -193,7 +200,7 @@ public class OutlineBox
     private static final Set<Integer> bp = new HashSet<>(Collections.singletonList(ItemID.BLAZING_BLOWPIPE));
     private static final Set<Integer> sang = new HashSet<>(Collections.singletonList(ItemID.HOLY_SANGUINESTI_STAFF));
     private static final Set<Integer> bulwark = new HashSet<>(Collections.singletonList(ItemID.DINHS_BLAZING_BULWARK));
-    private static final Set<Integer> claws = new HashSet<>(Collections.singletonList(ItemID.CORRUPTED_DRAGON_CLAWS));
+    private static final Set<Integer> claws = new HashSet<>(Collections.singletonList(ItemID.DRAGON_CLAWS_CR));
     private static final Set<Integer> dwh = new HashSet<>(Arrays.asList(ItemID.DRAGON_WARHAMMER_CR, ItemID.DRAGON_WARHAMMER_OR));
 
     private static final Map<Integer, Integer> spellIconMap = Map.ofEntries(
@@ -213,6 +220,7 @@ public class OutlineBox
             Map.entry(8973, 2979), //resurrect greater ghost; not in the API 2979
             Map.entry(827, SpriteID.TAB_INVENTORY),
             Map.entry(832, SpriteID.MAP_ICON_WATER_SOURCE),
+			Map.entry(-3, SpriteID.SPELL_VENGEANCE_DISABLED),
             Map.entry(7855, SpriteID.SPELL_FIRE_SURGE));
 
     private static final Map<Integer, Integer> graphicToSpellSpriteMap = Map.ofEntries(

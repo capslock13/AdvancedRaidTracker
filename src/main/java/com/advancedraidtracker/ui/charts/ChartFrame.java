@@ -3,6 +3,8 @@ package com.advancedraidtracker.ui.charts;
 import com.advancedraidtracker.*;
 import com.advancedraidtracker.constants.RaidRoom;
 import com.advancedraidtracker.ui.BaseFrame;
+import com.advancedraidtracker.ui.Raids;
+import static com.advancedraidtracker.ui.charts.ChartPanel.isCtrlPressed;
 import com.advancedraidtracker.utility.datautility.ChartData;
 import com.advancedraidtracker.utility.datautility.DataPoint;
 import com.advancedraidtracker.utility.datautility.DataReader;
@@ -10,6 +12,11 @@ import com.advancedraidtracker.utility.datautility.datapoints.col.Colo;
 import com.advancedraidtracker.utility.datautility.datapoints.Raid;
 import com.advancedraidtracker.utility.datautility.datapoints.inf.Inf;
 import com.advancedraidtracker.utility.datautility.datapoints.toa.Toa;
+import java.awt.event.ComponentListener;
+import static java.awt.event.KeyEvent.KEY_RELEASED;
+import static java.awt.event.KeyEvent.VK_LEFT;
+import static java.awt.event.KeyEvent.VK_RIGHT;
+import javax.swing.event.ChangeListener;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
@@ -43,22 +50,47 @@ public class ChartFrame extends BaseFrame
     ClientThread clientThread;
     ConfigManager configManager;
     SpriteManager spriteManager;
+	Raids raids;
+	int currentIndex = 0;
 
-    public ChartFrame(AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager, SpriteManager spriteManager)
+    public ChartFrame(AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager, SpriteManager spriteManager, Raids raids)
     {
         this.config = config;
         this.itemManager = itemManager;
         this.clientThread = clientThread;
         this.configManager = configManager;
         this.spriteManager = spriteManager;
+		this.raids = raids;
         addWindowListener(new WindowAdapter()
         {
             @Override
-            public void windowClosed(WindowEvent e)
+            public void windowClosing(WindowEvent e)
             {
                 releasePanels();
             }
         });
+
+		KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(e ->
+		{
+			synchronized (ChartFrame.class)
+			{
+				if(isCtrlPressed())
+				{
+					if(e.getID() == KEY_RELEASED)
+					{
+						if(e.getKeyCode() == VK_LEFT)
+						{
+							switchToPrevious();
+						}
+						else if(e.getKeyCode() == VK_RIGHT)
+						{
+							switchToNext();
+						}
+					}
+				}
+			}
+			return false;
+		});
     }
 
     private void releasePanels()
@@ -70,13 +102,36 @@ public class ChartFrame extends BaseFrame
         panels.clear();
     }
 
+	public void switchToNext()
+	{
+		Raid raid = raids.getNextRaid(currentIndex);
+		if(raid != null)
+		{
+			switchTo(raid);
+		}
+	}
+
+	public void switchToPrevious()
+	{
+		Raid raid = raids.getPreviousRaid(currentIndex);
+		if(raid != null)
+		{
+			switchTo(raid);
+		}
+	}
+	JTabbedPane basepane;
+
     public void switchTo(Raid roomData)
     {
+		currentIndex = roomData.getIndex();
         getContentPane().removeAll();
         releasePanels();
         ChartData chartData = DataReader.getChartData(roomData.getFilepath(), itemManager);
-
-        JTabbedPane basepane = getThemedTabbedPane();
+		if(basepane != null)
+		{
+			basepane.removeAll();
+		}
+		basepane = getThemedTabbedPane();
 
         Set<String> activeSet;
 
@@ -107,7 +162,6 @@ public class ChartFrame extends BaseFrame
             chartPanel.setNPCMappings(chartData.getNPCMapping(room));
             chartPanel.addAttacks(chartData.getAttacks(room));
             chartPanel.setRoomHP(chartData.getHPMapping(room));
-            log.info("adding room hp; size: " + chartData.getHPMapping(room).size());
             chartPanel.setAttackers(new ArrayList<>(roomData.getPlayers()));
             chartPanel.enableWrap();
             if (bossName.contains("Wave"))
@@ -169,6 +223,10 @@ public class ChartFrame extends BaseFrame
 
             resizeTimer.setRepeats(false);
 
+			for(ComponentListener cl : getComponentListeners())
+			{
+				removeComponentListener(cl);
+			}
             addComponentListener(new ComponentAdapter()
             {
                 @Override

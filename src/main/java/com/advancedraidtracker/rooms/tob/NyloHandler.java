@@ -362,19 +362,19 @@ public class NyloHandler extends TOBRoomHandler
             case NYLO_BOSS_MELEE_HM:
             case NYLO_BOSS_MELEE_SM:
                 clog.addLine(MELEE_PHASE, String.valueOf(client.getTickCount() - roomStartTick));
-                plugin.addDelayedLine(RaidRoom.NYLOCAS, client.getTickCount() - roomStartTick, "Phase");
+                plugin.addDelayedLine(RaidRoom.NYLOCAS, client.getTickCount() - roomStartTick+1, "Phase");
                 break;
             case NYLO_BOSS_MAGE:
             case NYLO_BOSS_MAGE_HM:
             case NYLO_BOSS_MAGE_SM:
                 clog.addLine(MAGE_PHASE, String.valueOf(client.getTickCount() - roomStartTick));
-                plugin.addDelayedLine(RaidRoom.NYLOCAS, client.getTickCount() - roomStartTick, "Phase");
+                plugin.addDelayedLine(RaidRoom.NYLOCAS, client.getTickCount() - roomStartTick+1, "Phase");
                 break;
             case NYLO_BOSS_RANGE:
             case NYLO_BOSS_RANGE_HM:
             case NYLO_BOSS_RANGE_SM:
                 clog.addLine(RANGE_PHASE, String.valueOf(client.getTickCount() - roomStartTick));
-                plugin.addDelayedLine(RaidRoom.NYLOCAS, client.getTickCount() - roomStartTick, "Phase");
+                plugin.addDelayedLine(RaidRoom.NYLOCAS, client.getTickCount() - roomStartTick+1, "Phase");
                 break;
         }
     }
@@ -423,7 +423,7 @@ public class NyloHandler extends TOBRoomHandler
         clog.addLine(BOSS_SPAWN, String.valueOf(client.getTickCount() - roomStartTick));
         roomState = BOSS;
         bossSpawn = client.getTickCount() - 2;
-        plugin.addDelayedLine(RaidRoom.NYLOCAS, client.getTickCount() - roomStartTick - 2, "W" + currentWave);
+        plugin.addDelayedLine(RaidRoom.NYLOCAS, client.getTickCount() - roomStartTick + 2, "Boss Attackable");
         sendTimeMessage("Wave 'Nylocas boss spawn' complete! Duration: ", bossSpawn - roomStartTick, bossSpawn - lastDead);
     }
 

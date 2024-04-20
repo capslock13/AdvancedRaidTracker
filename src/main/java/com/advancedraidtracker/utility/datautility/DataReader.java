@@ -180,6 +180,14 @@ public class DataReader //todo move any methods that read files to here. I belie
                             }
                         }
                         break;
+					case "406": //veng procced
+						if(line.length > 6)
+						{
+							PlayerDidAttack attack = new PlayerDidAttack(itemManager, line[4], "-3", Integer.parseInt(line[6]), -1, "-1", "-1", -1, -1, "-1", "-1");
+							attack.damage = Integer.parseInt(line[5]);
+							chartData.addAttack(currentRoom, attack);
+						}
+						break;
                 }
             }
             chartData.addDawnSpecs(dawnSpecs);

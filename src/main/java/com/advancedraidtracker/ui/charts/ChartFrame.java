@@ -5,6 +5,8 @@ import com.advancedraidtracker.SimpleTOBData;
 import com.advancedraidtracker.AdvancedRaidTrackerConfig;
 import com.advancedraidtracker.ui.BaseFrame;
 import com.advancedraidtracker.utility.datautility.DataPoint;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
@@ -305,6 +307,23 @@ public class ChartFrame extends BaseFrame
             verzP1RCP.redraw();
             verzP2RCP.redraw();
             verzP3RCP.redraw();
+
+			addWindowListener(new WindowAdapter()
+			{
+				@Override
+				public void windowClosing(WindowEvent e)
+				{
+					super.windowClosing(e);
+					maidenRCP.release();
+					bloatRCP.release();
+					nyloRCP.release();
+					soteRCP.release();
+					xarpRCP.release();
+					verzP1RCP.release();
+					verzP2RCP.release();
+					verzP3RCP.release();
+				}
+			});
 
             Timer resizeTimer = new Timer(20, e ->
             {

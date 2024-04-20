@@ -102,6 +102,14 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         }
     }
 
+	public void release()
+	{
+		resetGraph();
+		img = null;
+		removeMouseListener(this);
+		removeMouseWheelListener(this);
+		removeMouseMotionListener(this);
+	}
 
     private final AdvancedRaidTrackerConfig config;
 

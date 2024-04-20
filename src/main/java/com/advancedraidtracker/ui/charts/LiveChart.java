@@ -111,7 +111,14 @@ public class LiveChart extends BaseFrame
 
     public ChartPanel getPanel(String room)
     {
-        return tobPanels.getOrDefault(room, new ChartPanel("", true, config, clientThread, configManager));
+		if(tobPanels.containsKey(room)) //do not use getOrDefault because it will allocate a BufferedImage every call even if the map does contain the key value
+		{
+			return tobPanels.get(room);
+		}
+		else
+		{
+			return new ChartPanel("", true, config, clientThread, configManager);
+		}
     }
 
     public void incrementTick(String room)

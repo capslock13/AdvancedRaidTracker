@@ -14,6 +14,7 @@ import com.advancedraidtracker.utility.wrappers.QueuedPlayerAttackLessProjectile
 import com.advancedraidtracker.utility.wrappers.ThrallOutlineBox;
 import com.google.inject.Inject;
 import com.google.inject.Provides;
+import javax.swing.SwingUtilities;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.coords.LocalPoint;
@@ -690,7 +691,8 @@ public class AdvancedRaidTrackerPlugin extends Plugin
 
             if (currentRoom.isActive())
             {
-                liveFrame.incrementTick(currentRoom.getName());
+				SwingUtilities.invokeLater(() ->
+					liveFrame.incrementTick(currentRoom.getName()));
                 int HP_VARBIT = 6448;
                 liveFrame.getPanel(currentRoom.getName()).addRoomHP(client.getTickCount() - currentRoom.roomStartTick, client.getVarbitValue(HP_VARBIT));
                 clog.addLine(UPDATE_HP, String.valueOf(client.getVarbitValue(HP_VARBIT)), String.valueOf(client.getTickCount() - currentRoom.roomStartTick), currentRoom.getName());

@@ -8,6 +8,7 @@ import com.advancedraidtracker.utility.datautility.DataPoint;
 import com.advancedraidtracker.utility.datautility.datapoints.Raid;
 import com.advancedraidtracker.utility.datautility.datapoints.toa.Toa;
 
+import java.util.Calendar;
 import javax.swing.*;
 
 import java.awt.*;
@@ -19,7 +20,7 @@ public class ViewTOARaid extends BaseFrame
     Toa toaData;
     private final String HTML = "<html>";
     String red = "<html><font color='#FF0000'>";
-    String green = "<html><font color='#33FF33'>";
+    String green = "<html><font color='#44AF33'>";
     String blue = "<html><font color='#6666DD'>";
     String orange = "<html><font color='#ddaa1c'>";
 
@@ -36,17 +37,15 @@ public class ViewTOARaid extends BaseFrame
         soft = colorStr(c.darker());
         dark = colorStr(c.darker().darker());
         setTitle("View Raid");
-        setPreferredSize(new Dimension(800, 600));
+        setPreferredSize(new Dimension(800, 650));
         setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
         JPanel topContainer = getThemedPanel();
         topContainer.setLayout(new GridLayout(1, 2));
         topContainer.setPreferredSize(new Dimension(800, 200));
 
-        JPanel summaryPanel = getTitledPanel("Summary");
-        JPanel wardensPanel = getTitledPanel("Wardens");
 
-        topContainer.add(summaryPanel);
-        topContainer.add(wardensPanel);
+        topContainer.add(getSummaryPanel());
+        topContainer.add(getWardensPanel());
 
         JPanel bottomContainer = getThemedPanel();
         bottomContainer.setPreferredSize(new Dimension(800, 400));
@@ -68,6 +67,78 @@ public class ViewTOARaid extends BaseFrame
         setResizable(false);
         pack();
     }
+
+	private JPanel getSummaryPanel()
+	{
+		JPanel panel = getTitledPanel("Summary");
+		panel.setLayout(new GridLayout(1, 2));
+
+		JPanel leftPanel = getThemedPanel();
+		JPanel rightPanel = getThemedPanel();
+
+		leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
+		rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
+
+		Calendar cal = Calendar.getInstance();
+
+		cal.setTime(toaData.getDate());
+		String dateString = (cal.get(Calendar.MONTH) + 1) + "-" + cal.get(Calendar.DAY_OF_MONTH) + "-" + cal.get(Calendar.YEAR);
+
+		leftPanel.add(getThemedLabel("Date: " + dateString));
+		leftPanel.add(getThemedLabel("Scale: " + toaData.getScaleString()));
+		leftPanel.add(getThemedLabel("<html>Raid Status: " + toaData.getRoomStatus()));
+		leftPanel.add(getThemedLabel("Time: " + RoomUtil.time(toaData.getChallengeTime())));
+		leftPanel.add(getThemedLabel());
+
+		int apmeken = toaData.get(DataPoint.APMEKEN_TIME);
+		int baba = toaData.get(DataPoint.BABA_TIME);
+		leftPanel.add(getThemedLabel("<html>Baba: " + RoomUtil.time(apmeken) + " / " + RoomUtil.time(baba) + " (" + RoomUtil.time(apmeken+baba) + ")"));
+
+		int scabaras = toaData.get(DataPoint.SCABARAS_TIME);
+		int kephri = toaData.get(DataPoint.KEPHRI_TIME);
+		leftPanel.add(getThemedLabel("<html>Kephri: " + RoomUtil.time(scabaras) + " / " + RoomUtil.time(kephri) + " (" + RoomUtil.time(scabaras+kephri) + ")"));
+
+		int het = toaData.get(DataPoint.HET_TIME);
+		int akkha = toaData.get(DataPoint.AKKHA_TIME);
+		leftPanel.add(getThemedLabel("<html>Akkha: " + RoomUtil.time(het) + " / " + RoomUtil.time(akkha) + " (" + RoomUtil.time(het+akkha) + ")"));
+
+		int crondis = toaData.get(DataPoint.CRONDIS_TIME);
+		int zebak = toaData.get(DataPoint.ZEBAK_TIME);
+		leftPanel.add(getThemedLabel("<html>Zebak: " + RoomUtil.time(crondis) + " / " + RoomUtil.time(zebak) + " (" + RoomUtil.time(crondis+zebak) + ")"));
+
+
+		rightPanel.add(getThemedLabel("Players: "));
+		for(String player : toaData.getPlayers())
+		{
+			rightPanel.add(getThemedLabel("    " + player));
+		}
+
+		panel.add(leftPanel);
+		panel.add(rightPanel);
+
+		return panel;
+	}
+
+	private JPanel getWardensPanel()
+	{
+		JPanel panel = getTitledPanel("<html>Wardens - " + green + RoomUtil.time(toaData.get(DataPoint.WARDENS_TIME)));
+		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
+		panel.add(getSplitPanel("P1 Time: ", "<html>" + green + RoomUtil.time(toaData.get(DataPoint.WARDENS_P1_DURATION))));
+		panel.add(getSplitPanel("P2 Downs: ", String.valueOf(toaData.get(DataPoint.WARDENS_P2_DOWNS))));
+		panel.add(getSplitPanel("P2 Time: ", "<html>" + green + RoomUtil.time(toaData.get(DataPoint.WARDENS_P2_DURATION))));
+		panel.add(getSplitPanel("P3 Until Enraged Time: ", RoomUtil.time(toaData.get(DataPoint.WARDENS_UNTIL_ENRAGED_DURATION))));
+		panel.add(getSplitPanel("P3 Enraged Time: " , RoomUtil.time(toaData.get(DataPoint.WARDENS_ENRAGED_DURATION))));
+		panel.add(getSplitPanel("P3 Time: ", "<html>" + green + RoomUtil.time(toaData.get(DataPoint.WARDENS_P3_DURATION))));
+		panel.add(getSplitPanel("Skull 1 Duration: ", RoomUtil.time(toaData.get(DataPoint.WARDENS_SKULL_1_DURATION))));
+		panel.add(getSplitPanel("Skull 2 Duration: ", RoomUtil.time(toaData.get(DataPoint.WARDENS_SKULL_2_DURATION))));
+		panel.add(getSplitPanel("Skull 3 Duration: ", RoomUtil.time(toaData.get(DataPoint.WARDENS_SKULL_3_DURATION))));
+		panel.add(getSplitPanel("Skull 4 Duration: ", RoomUtil.time(toaData.get(DataPoint.WARDENS_SKULL_4_DURATION))));
+
+
+
+		return panel;
+	}
 
     private JPanel getCrondisPanel()
     {

@@ -40,7 +40,7 @@ import static java.awt.Color.RED;
 public class ViewColosseumFrame extends BaseFrame
 {
     String red = "<html><font color='#FF0000'>";
-    String green = "<html><font color='#33FF33'>";
+    String green = "<html><font color='#44AF33'>";
     String blue = "<html><font color='#6666DD'>";
     String orange = "<html><font color='#ddaa1c'>";
     String full;

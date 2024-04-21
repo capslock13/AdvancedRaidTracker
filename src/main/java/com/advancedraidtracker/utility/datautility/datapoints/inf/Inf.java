@@ -45,6 +45,7 @@ public class Inf extends Raid
                     lastCheckPoint = InfernoHandler.getLastRelevantSplit(highestWaveStarted);
                     currentRoom = "Inf Wave " + highestWaveStarted;
                     waveStarts.put(highestWaveStarted, entry.getValueAsInt("Client Tick")-startTime);
+					data.set("Inf Wave " + entry.getValueAsInt("Wave Number") + " Split", entry.getValueAsInt("Client Tick")-startTime);
                 }
                 else if (entry.logEntry.equals(LogID.INFERNO_TIMER_STARTED))
                 {

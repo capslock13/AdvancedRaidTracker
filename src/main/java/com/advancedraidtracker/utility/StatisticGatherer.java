@@ -1,5 +1,6 @@
 package com.advancedraidtracker.utility;
 
+import static com.advancedraidtracker.utility.RoomUtil.isTime;
 import com.advancedraidtracker.utility.datautility.DataPoint;
 import com.advancedraidtracker.utility.datautility.datapoints.Raid;
 import lombok.extern.slf4j.Slf4j;
@@ -101,31 +102,36 @@ public class StatisticGatherer //todo this whole class is a mess
 
     public static double getGenericAverage(List<Raid> data, DataPoint parameter)
     {
-        if (parameter == DataPoint.CHALLENGE_TIME)
-        {
-            ArrayList<Raid> raidData = new ArrayList<>(data);
-            return getOverallTimeAverage(raidData);
-        }
-        double total = 0;
-        double count = 1;
-        for (Raid room : data)
-        {
-            if (!room.getTimeAccurate(parameter))
-            {
-                continue;
-            }
-            int d = room.get(parameter);
-            if (d != -1)
-            {
-                if (parameter.type != DataPoint.types.TIME || d != 0)
-                {
-                    total += d;
-                    count++;
-                }
-            }
-        }
-        return total / count;
+		return getGenericAverage(data, parameter.name);
     }
+
+	public static double getGenericAverage(List<Raid> data, String parameter)
+	{
+		if (parameter.equals("Overall Time"))
+		{
+			ArrayList<Raid> raidData = new ArrayList<>(data);
+			return getOverallTimeAverage(raidData);
+		}
+		double total = 0;
+		double count = 1;
+		for (Raid room : data)
+		{
+			if (!room.getTimeAccurate(parameter))
+			{
+				continue;
+			}
+			int d = room.get(parameter);
+			if (d != -1)
+			{
+				if(!isTime(parameter) || d > 0)
+				{
+					total += d;
+					count++;
+				}
+			}
+		}
+		return total / count;
+	}
 
     public static double getGenericMedian(List<Integer> data)
     {
@@ -160,9 +166,9 @@ public class StatisticGatherer //todo this whole class is a mess
         return median;
     }
 
-    public static double getGenericMedian(List<Raid> data, DataPoint param)
+    public static double getGenericMedian(List<Raid> data, String param)
     {
-        if (param == DataPoint.OVERALL_TIME)
+        if (Objects.equals(param, "Overall Time"))
         {
             return getOverallMedian(data);
         }
@@ -171,17 +177,20 @@ public class StatisticGatherer //todo this whole class is a mess
             return -1;
         }
         List<Double> values = new ArrayList<>();
-        int skipped = 0;
         for (Raid room : data)
         {
             if (!room.getTimeAccurate(param))
             {
-                skipped++;
                 continue;
             }
             int d = room.get(param);
             if (d != -1)
-                values.add((double) d);
+			{
+				if(!isTime(param) || d > 0)
+				{
+					values.add((double) d);
+				}
+			}
         }
         Collections.sort(values);
         if (!values.isEmpty())
@@ -209,9 +218,9 @@ public class StatisticGatherer //todo this whole class is a mess
         return getGenericMin(data, false);
     }
 
-    public static double getGenericMin(List<Raid> data, DataPoint parameter)
+    public static double getGenericMin(List<Raid> data, String parameter)
     {
-        if (parameter == DataPoint.OVERALL_TIME)
+        if (Objects.equals(parameter, "Overall Time"))
         {
             return getOverallTimeMin(data);
         }
@@ -225,7 +234,7 @@ public class StatisticGatherer //todo this whole class is a mess
             int d = room.get(parameter);
             if (d < minValue && d != -1)
             {
-                if (parameter.type != DataPoint.types.TIME || room.get(parameter) != 0)
+                if (!isTime(parameter) || room.get(parameter) != 0)
                 {
                     minValue = d;
                 }
@@ -248,9 +257,9 @@ public class StatisticGatherer //todo this whole class is a mess
         return maxValue;
     }
 
-    public static double getGenericMax(List<Raid> data, DataPoint parameter)
+    public static double getGenericMax(List<Raid> data, String parameter)
     {
-        if (parameter == DataPoint.OVERALL_TIME)
+        if (Objects.equals(parameter, "Overall Time"))
         {
             return getOverallMax(data);
         }

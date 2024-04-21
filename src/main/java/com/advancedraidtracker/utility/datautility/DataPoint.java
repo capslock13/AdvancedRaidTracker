@@ -20,7 +20,7 @@ public enum DataPoint
     XARPUS_TIME("Xarpus Time", types.TIME, XARPUS, MenuType.TIME),
     VERZIK_TIME("Verzik Time", types.TIME, VERZIK, MenuType.TIME),
     DEFENSE("Defense", types.OTHER_INT, ALL, SPEC),
-    TIME_OUTSIDE_ROOMS("Time Outside Rooms", types.TIME, ANY, TIME),
+    TIME_OUTSIDE_ROOMS("Time Outside Rooms", types.TIME, ANY, EXCLUDED),
     MAIDEN_BLOOD_SPAWNED("Maiden blood spawned", types.OTHER_INT, MAIDEN, MISC),
     MAIDEN_BLOOD_THROWN("Maiden blood thrown", types.OTHER_INT, MAIDEN, MISC),
     MAIDEN_PLAYER_STOOD_IN_THROWN_BLOOD("Maiden player stood in thrown blood", types.OTHER_INT, MAIDEN, MISC, true),
@@ -605,9 +605,9 @@ public enum DataPoint
         return namesToGather;
     }
 
-    public static ArrayList<String> getTimeNamesByRoom(RaidRoom room)
+    public static List<String> getTimeNamesByRoom(RaidRoom room)
     {
-        ArrayList<String> timesToGather = new ArrayList<>();
+        List<String> timesToGather = new ArrayList<>();
         for (DataPoint point : DataPoint.values())
         {
             if (point.room.equals(room) && (point.type.equals(types.TIME) || point.type.equals(types.TIME_DURATION) || point.type.equals(types.TIME_SPLIT)))

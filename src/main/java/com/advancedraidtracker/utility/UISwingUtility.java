@@ -805,4 +805,13 @@ public class UISwingUtility
 		tree.setOpaque(true);
 		return tree;
 	}
+
+	public static JPanel getSplitPanel(String label1, String label2)
+	{
+		JPanel splitPanel = getThemedPanel();
+		splitPanel.setLayout(new GridLayout(1, 2));
+		splitPanel.add(getThemedLabel(label1));
+		splitPanel.add(getThemedLabel(label2));
+		return splitPanel;
+	}
 }

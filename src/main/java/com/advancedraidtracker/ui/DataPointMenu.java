@@ -26,7 +26,7 @@ public class DataPointMenu
 {
     @Getter
     private JComboBox<String> comboBox;
-    private UpdateableWindow window;
+    private final UpdateableWindow window;
 
     public DataPointMenu(JPopupMenu popmenu, JComboBox<String> box, UpdateableWindow window)
     { //todo handle edge cases differently
@@ -34,11 +34,17 @@ public class DataPointMenu
         this.comboBox = box;
 
         Map<RaidType, JMenu> menus = new LinkedHashMap<>();
+
         for (RaidType raidType : RaidType.values())
         {
             if (raidType.equals(RaidType.ALL))
             {
                 JMenu menu = createMenu(raidType.name);
+				JMenu timeCategoryAll = createMenu("Time");
+				timeCategoryAll.add(createMenuItem("Challenge Time"));
+				timeCategoryAll.add(createMenuItem("Overall Time"));
+				timeCategoryAll.add(createMenuItem("Time Outside Rooms"));
+				menu.add(timeCategoryAll);
                 Map<DataPoint.MenuType, JMenu> categoryMenus = new LinkedHashMap<>();
                 for (DataPoint.MenuType menuType : DataPoint.MenuType.values())
                 {

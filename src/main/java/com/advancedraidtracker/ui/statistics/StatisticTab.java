@@ -14,14 +14,12 @@ import static com.advancedraidtracker.utility.UISwingUtility.getTitledPanel;
 public class StatisticTab extends JPanel
 {
     private final ArrayList<StatisticRoomPanel> panels;
-    RaidRoom room;
     java.util.List<Raid> data;
 
-    public StatisticTab(java.util.List<Raid> data, RaidRoom room, AdvancedRaidTrackerConfig config)
+    public StatisticTab(java.util.List<Raid> data, String room, AdvancedRaidTrackerConfig config)
     {
         setBackground(config.primaryDark());
         setOpaque(true);
-        this.room = room;
         this.data = data;
         panels = new ArrayList<>();
         panels.add(new StatisticRoomPanel(data, StatisticRoomPanel.stat.AVERAGE, room, config));

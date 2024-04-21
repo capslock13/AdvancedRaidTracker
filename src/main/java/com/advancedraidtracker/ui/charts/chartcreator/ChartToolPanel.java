@@ -237,16 +237,21 @@ public class ChartToolPanel extends JPanel implements MouseListener, MouseMotion
         {
             if(!primary.equals(PlayerAnimation.NOT_SET))
             {
-                BufferedImage scaled = getScaledImage(iconMap.get(primary), (toolHeight * 2 - 4), (toolHeight * 2 - 4));
-                if (primary.shouldFlip)
-                {
-                    g.drawImage(createFlipped(createDropShadow(scaled)), xMargin + 3, yMargin + 3, null);
-                    g.drawImage(createFlipped(scaled), xMargin + 2, yMargin + 1, null);
-                } else
-                {
-                    g.drawImage(createDropShadow(scaled), xMargin + 3, yMargin + 3, null);
-                    g.drawImage(scaled, xMargin + 2, yMargin + 1, null);
-                }
+				BufferedImage img = iconMap.get(primary);
+				if(img != null)
+				{
+					BufferedImage scaled = getScaledImage(iconMap.get(primary), (toolHeight * 2 - 4), (toolHeight * 2 - 4));
+					if (primary.shouldFlip)
+					{
+						g.drawImage(createFlipped(createDropShadow(scaled)), xMargin + 3, yMargin + 3, null);
+						g.drawImage(createFlipped(scaled), xMargin + 2, yMargin + 1, null);
+					}
+					else
+					{
+						g.drawImage(createDropShadow(scaled), xMargin + 3, yMargin + 3, null);
+						g.drawImage(scaled, xMargin + 2, yMargin + 1, null);
+					}
+				}
             }
         }
         else

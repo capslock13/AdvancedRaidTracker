@@ -3,6 +3,7 @@ package com.advancedraidtracker.ui.statistics;
 import com.advancedraidtracker.AdvancedRaidTrackerConfig;
 import com.advancedraidtracker.constants.RaidRoom;
 import com.advancedraidtracker.utility.RoomUtil;
+import static com.advancedraidtracker.utility.RoomUtil.isTime;
 import com.advancedraidtracker.utility.datautility.DataPoint;
 import com.advancedraidtracker.utility.StatisticGatherer;
 import com.advancedraidtracker.utility.datautility.datapoints.Raid;
@@ -34,19 +35,35 @@ public class StatisticRoomPanel extends JPanel
     private final List<String> labelNames;
     private final stat type;
 
-    public StatisticRoomPanel(List<Raid> data, stat type, RaidRoom room, AdvancedRaidTrackerConfig config)
+    public StatisticRoomPanel(List<Raid> data, stat type, String roomName, AdvancedRaidTrackerConfig config)
     {
         super();
+		RaidRoom room = RaidRoom.getRoom(roomName);
         JPanel subPanel = getThemedPanel();
         setBackground(config.primaryDark());
         setOpaque(true);
         this.type = type;
         timeLabels = new ArrayList<>();
-        ArrayList<JLabel> nameLabels = new ArrayList<>();
-        labelNames = DataPoint.getTimeNamesByRoom(room);
+        List<JLabel> nameLabels = new ArrayList<>();
+		if(roomName.contains("Wave") && !roomName.contains("Col"))
+		{
+			labelNames = new ArrayList<>();
+			labelNames.add("Inf " + roomName + " Split");
+			labelNames.add("Inf " + roomName + " Time");
+			for(RaidRoom raidRoom : RoomUtil.getVariations("Inf " + roomName))
+			{
+				labelNames.add(raidRoom.name + " Split");
+				labelNames.add(raidRoom.name + " Time");
+			}
+		}
+		else
+		{
+			labelNames = DataPoint.getTimeNamesByRoom(room);
+		}
         for (String s : labelNames)
         {
-            nameLabels.add(getThemedLabel(s.substring(s.indexOf(' ') + 1), SwingConstants.LEFT));
+			String name = (s.startsWith("Inf") || s.startsWith("Col")) ? s : s.substring(s.indexOf(' ') + 1);
+            nameLabels.add(getThemedLabel(name, SwingConstants.LEFT));
             timeLabels.add(getThemedLabel("-", SwingConstants.RIGHT));
         }
         String borderString = "";
@@ -72,18 +89,20 @@ public class StatisticRoomPanel extends JPanel
         TitledBorder border = BorderFactory.createTitledBorder(borderString);
         border.setTitleColor(config.fontColor());
         setBorder(border);
-        subPanel.setLayout(new GridLayout(0, 2));
+        subPanel.setLayout(new GridLayout(0, 1));
         for (int i = 0; i < labelNames.size(); i++)
         {
-            subPanel.add(nameLabels.get(i));
-            subPanel.add(timeLabels.get(i));
+			JPanel labelSubPanel = getThemedPanel();
+			labelSubPanel.setLayout(new BorderLayout());
+            labelSubPanel.add(nameLabels.get(i), BorderLayout.WEST);
+			labelSubPanel.add(timeLabels.get(i), BorderLayout.EAST);
+			subPanel.add(labelSubPanel);
         }
         for (int i = labelNames.size(); i < 14; i++)
         {
             subPanel.add(getThemedLabel(""));
-            subPanel.add(getThemedLabel(""));
         }
-        subPanel.setPreferredSize(new Dimension(100, 200));
+        subPanel.setPreferredSize(new Dimension(100, 250));
         JScrollPane scrollPane = getThemedScrollPane(subPanel);
         scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
@@ -98,9 +117,9 @@ public class StatisticRoomPanel extends JPanel
             ArrayList<Integer> collectedData = new ArrayList<>();
             for (Raid d : data)
             {
-                if (d.getTimeAccurate(Objects.requireNonNull(DataPoint.getValue(labelNames.get(i)))))
+                if (d.getTimeAccurate(labelNames.get(i)))
                 {
-                    if (Objects.requireNonNull(DataPoint.getValue(labelNames.get(i))).type != DataPoint.types.TIME || d.get(labelNames.get(i)) != 0)
+                    if (!isTime(labelNames.get(i)) || d.get(labelNames.get(i)) != 0)
                     {
                         collectedData.add(d.get(labelNames.get(i)));
                     }

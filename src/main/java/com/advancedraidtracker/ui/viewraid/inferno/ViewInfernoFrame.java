@@ -58,7 +58,7 @@ public class ViewInfernoFrame extends BaseFrame
             7699, new Color(0, 255, 255), 7703, new Color(0, 255, 255)
     );
     String red = "<html><font color='#FF0000'>";
-    String green = "<html><font color='#33FF33'>";
+    String green = "<html><font color='#44AF33'>";
     String blue = "<html><font color='#6666DD'>";
     String orange = "<html><font color='#ddaa1c'>";
     String full;

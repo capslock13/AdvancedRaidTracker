@@ -35,6 +35,10 @@ public class AnimationDecider
         {
             return PlayerAnimation.SBS;
         }
+		if(animation == 8316)
+		{
+			return PlayerAnimation.VENG_SELF;
+		}
 
         int maxMatches = 0;
         int minPopulatedArrays = Integer.MAX_VALUE;

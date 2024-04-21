@@ -1156,6 +1156,10 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                                     int opacity = config.iconBackgroundOpacity();
                                     opacity = Math.min(255, opacity);
                                     opacity = Math.max(0, opacity);
+									if(box.playerAnimation.color.getAlpha() == 0)
+									{
+										opacity = 0;
+									}
                                     if (config.attackBoxColor().equals(Color.WHITE))
                                     {
                                         g.setColor(new Color(box.color.getRed(), box.color.getGreen(), box.color.getBlue(), opacity));
@@ -1185,6 +1189,15 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                                         BufferedImage scaledSecondary = getScaledImage(secondary, scale/2, scale/2);
                                         g.drawImage(scaledSecondary, xOffset + (scale/2), yOffset+(scale/2), null);
                                     }
+									if(box.tertiaryID != -2)
+									{
+										BufferedImage tertiary = getSpellSpecificIcon(box.tertiaryID);
+										if (tertiary != null)
+										{
+											BufferedImage scaledTertiary = getScaledImage(tertiary, scale/2, scale/2);
+											g.drawImage(scaledTertiary, xOffset + (scale/2), yOffset, null);
+										}
+									}
                                     if (!box.additionalText.isEmpty())
                                     {
                                         int textOffset;
@@ -1195,6 +1208,15 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                                         g.drawString(box.additionalText, xOffset + textOffset, yOffset + scale - 3);
                                         g.setFont(f);
                                     }
+									if(box.damage > -1)
+									{
+										Font f = g.getFont();
+										g.setFont(f.deriveFont(9.0f));
+										int textOffset = (scale)-(getStringWidth(g, String.valueOf(box.damage)))-5;
+										g.setColor(config.fontColor());
+										g.drawString(String.valueOf(box.damage), xOffset+textOffset, yOffset+3+getStringHeight(g));
+										g.setFont(f);
+									}
                                 }
                             } catch (Exception e)
                             {
@@ -1425,12 +1447,15 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                 if (action.tick == hoveredTick && action.player.equals(hoveredPlayer) && shouldTickBeDrawn(action.tick))
                 {
                     Point location = getPoint(action.tick, action.player);
-                    HoverBox hoverBox = new HoverBox(actions.get(action) + ": " + action.animation, config);
-                    hoverBox.addString("");
-                    for (String item : action.wornItemNames)
-                    {
-                        hoverBox.addString("." + item);
-                    }
+                    HoverBox hoverBox = new HoverBox(actions.get(action), config);
+					if(action.getPlayerAnimation().attackTicks > 0)
+					{
+						hoverBox.addString("");
+						for (String item : action.wornItemNames)
+						{
+							hoverBox.addString("." + item);
+						}
+					}
                     int xPosition = location.getX() + 10;
                     if (xPosition + hoverBox.getWidth(g) > windowWidth) //box would render off screen
                     {
@@ -2311,9 +2336,13 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             {
                 targetString += targetName;
             }
+			if(playerAnimation == VENG_APPLIED)
+			{
+				targetString = playerAnimation.name + ": " + attack.damage;
+			}
             synchronized (actions)
             {
-                actions.put(attack, targetString);
+				actions.put(attack, targetString);
             }
             String additionalText = "";
             if (targetString.contains("(on w"))
@@ -2335,6 +2364,10 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             {
                 OutlineBox outlineBox = new OutlineBox(playerAnimation.shorthand, playerAnimation.color, isTarget, additionalText, playerAnimation, playerAnimation.attackTicks, attack.tick, attack.player, RaidRoom.getRoom(this.room), attack.weapon);
 				outlineBox.setWornItems(attack.wornItems);
+				if(attack.damage > -1)
+				{
+					outlineBox.setDamage(attack.damage);
+				}
 				if(clientThread != null)
 				{
 					clientThread.invoke(outlineBox::setWornNames);
@@ -2397,6 +2430,31 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                 {
                     playerSBSCoolDown.put(attack.player, 0);
                 }
+				if(playerAnimation != VENG_APPLIED)
+				{
+					for (OutlineBox box : outlineBoxes)
+					{
+						if (box.playerAnimation == VENG_APPLIED)
+						{
+							if (box.tick == attack.tick && Objects.equals(box.player, attack.player))
+							{
+								outlineBoxes.remove(box);
+								for(PlayerDidAttack pda : actions.keySet())
+								{
+									if(pda.tick == box.tick && pda.player.equals(box.player) && pda != attack)
+									{
+										actions.remove(pda);
+										actions.put(attack, targetString + " (Veng Applied: " + box.damage + ")");
+										break;
+									}
+								}
+								outlineBox.tertiaryID = -3;
+								outlineBox.setDamage(box.damage);
+								break;
+							}
+						}
+					}
+				}
                 outlineBoxes.add(outlineBox);
 				updateChart(new ChartChangedEvent(ADD_ELEMENT, ATTACK, outlineBox));
                 if (recordAttack)

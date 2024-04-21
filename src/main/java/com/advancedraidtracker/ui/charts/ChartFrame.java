@@ -151,6 +151,11 @@ public class ChartFrame extends BaseFrame
             activeSet = TOBRooms;
         }
 
+		for(ComponentListener cl : getComponentListeners())
+		{
+			removeComponentListener(cl);
+		}
+
         for (String bossName : activeSet)
         {
             RaidRoom room = RaidRoom.getRoom(bossName);
@@ -223,10 +228,6 @@ public class ChartFrame extends BaseFrame
 
             resizeTimer.setRepeats(false);
 
-			for(ComponentListener cl : getComponentListeners())
-			{
-				removeComponentListener(cl);
-			}
             addComponentListener(new ComponentAdapter()
             {
                 @Override

@@ -34,7 +34,12 @@ public class OutlineBox
     public final RaidRoom room;
     public int weapon;
     public int secondaryID = -2;
-	public int tertiaryID = -3;
+	@Setter
+	public int damage = -1;
+
+	@Setter
+	@Getter
+	public int tertiaryID = -2;
 
     @Setter
     @Getter
@@ -220,7 +225,7 @@ public class OutlineBox
             Map.entry(8973, 2979), //resurrect greater ghost; not in the API 2979
             Map.entry(827, SpriteID.TAB_INVENTORY),
             Map.entry(832, SpriteID.MAP_ICON_WATER_SOURCE),
-			Map.entry(-3, SpriteID.SPELL_VENGEANCE_DISABLED),
+			Map.entry(-3, SpriteID.SPELL_VENGEANCE_OTHER_DISABLED),
             Map.entry(7855, SpriteID.SPELL_FIRE_SURGE));
 
     private static final Map<Integer, Integer> graphicToSpellSpriteMap = Map.ofEntries(
@@ -232,7 +237,9 @@ public class OutlineBox
             Map.entry(2605, 8316),
             Map.entry(141, 722), //magic imbue
             Map.entry(1061, 6294), //humid
-            Map.entry(1062, 6299) //sbs
+            Map.entry(1062, 6299), //sbs
+			Map.entry(-3, -3) //veng disabled
+
     );
 
     public static int getSpellIcon(int animation)

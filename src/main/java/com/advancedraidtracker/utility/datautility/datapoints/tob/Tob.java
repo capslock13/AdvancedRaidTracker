@@ -264,10 +264,22 @@ public class Tob extends Raid
         return true;
     }
 
+	public boolean getCompletedRoomsAccurate()
+	{
+		for(RaidRoom room : RaidRoom.values())
+		{
+			if(room.isTOB() && getRoomPartiallyAccurate(room) && !getRoomAccurate(room))
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+
     @Override
     public String getRoomStatus()
     {
-        return roomStatus;
+        return roomStatus + (getCompletedRoomsAccurate() ? "" : "*");
     }
 
     /**

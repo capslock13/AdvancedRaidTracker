@@ -79,6 +79,7 @@ public enum DataPoint
     SOTE_SPECS_P2("Sote specs p2", types.OTHER_INT, SOTETSEG, SPEC),
     SOTE_SPECS_P3("Sote specs p3", types.OTHER_INT, SOTETSEG, SPEC),
     SOTE_SPECS_TOTAL("Sote specs total", types.OTHER_INT, SOTETSEG, SPEC),
+	SOTE_SPECS_ATTEMPTED_TOTAL("Sote Specs Attempted Total", types.OTHER_INT, SOTETSEG, SPEC),
     XARP_HEALING("Xarp Healing", types.OTHER_INT, XARPUS, MISC),
     VERZIK_BOUNCES("Verzik bounces", types.INT_MAP, VERZIK, MISC, true),
     VERZIK_CRABS_SPAWNED("Verzik crabs spawned", types.INT_MAP, VERZIK, EXCLUDED),

@@ -68,7 +68,7 @@ public abstract class Raid
      * If the player was in a runelite party to get precise defence tracking.
      */
     @Getter
-    protected boolean inParty;
+    protected boolean inParty = false;
 
     /**
      * Amount of players in the raid.
@@ -113,7 +113,7 @@ public abstract class Raid
 
     public boolean getDefenseAccurate(RaidRoom room) //todo implement
     {
-        return defenseAccurate.getOrDefault(room, false);
+        return defenseAccurate.getOrDefault(room, inParty);
     }
 
     public abstract int getTimeSum();
@@ -372,6 +372,12 @@ public abstract class Raid
             case SPECTATE:
                 spectated = true;
                 break;
+			case PARTY_COMPLETE:
+				inParty = true;
+				break;
+			case PARTY_INCOMPLETE:
+				inParty = false;
+				break;
         }
     }
 
@@ -471,10 +477,10 @@ public abstract class Raid
                         data.set(instruction.dataPoint2, data.get(instruction.dataPoint1) - data.get(instruction.dataPoint3));
                         break;
                     case DWH:
-                        data.dwh(instruction.dataPoint1);
+                        data.dwh(instruction.dataPoint1, currentRoom);
                         break;
                     case BGS:
-                        data.bgs(instruction.dataPoint1, entry.getFirstInt());
+                        data.bgs(instruction.dataPoint1, entry.getFirstInt(), currentRoom);
                         break;
                     case ROOM_END_FLAG:
                         lastRoom = entry.logEntry.getRoom().name;

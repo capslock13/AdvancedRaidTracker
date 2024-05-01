@@ -23,6 +23,23 @@ public class RoomDataManager
 
     //Making the change to map player names and datapoints as ints reduced retained memory by ~20%. Shorts were the same due to padding.
     //2068 raids went from 33.8MB to 27.5MB retained size in heap dump. Not sure if worth but leaving for now
+	private static final Map<String, Integer> initialDefences = Map.ofEntries(
+		Map.entry("Maiden", 200),
+		Map.entry("Bloat", 100),
+		Map.entry("Nylocas", 50),
+		Map.entry("Xarpus", 250),
+		Map.entry("Akkha", 80),
+		Map.entry("Baba", 80),
+		Map.entry("Zebak", 70),
+		Map.entry("Kephri", 80)
+	);
+
+	private static final Map<String, Integer> minimumDefences = Map.ofEntries(
+		Map.entry("Akkha", 60),
+		Map.entry("Baba", 60),
+		Map.entry("Zebak", 50),
+		Map.entry("Kephri", 60)
+	);
 
     public static BiMap<String, Integer> playerIntegerMap = HashBiMap.create();
     public static Integer highestPlayerInteger = Integer.MIN_VALUE;
@@ -238,18 +255,18 @@ public class RoomDataManager
         return map.getOrDefault(room.name + " " + point.name, 0);
     }
 
-    public void dwh(DataPoint point)
+    public void dwh(DataPoint point, String room)
     {
-        double defense = map.getOrDefault(point.name, 0); //fix defense todo
-        defense *= .7;
-        map.put(point.name, (int) defense);
+        double defense = map.getOrDefault(room + " " + point.name, initialDefences.getOrDefault(room, -1)); //fix defense todo
+		defense = Math.max(defense*.7, minimumDefences.getOrDefault(room, 0));
+        map.put(room + " " + point.name, (int) defense);
     }
 
-    public void bgs(DataPoint point, int damage)
+    public void bgs(DataPoint point, int damage, String room)
     {
-        int defense = map.getOrDefault(point.name, 0); //todo fix defense
-        defense = Math.max(defense - damage, 0);
-        map.put(point.name, defense);
+        int defense = map.getOrDefault(room + " " + point.name, initialDefences.getOrDefault(room, -1)); //todo fix defense
+        defense = Math.max(defense - damage, minimumDefences.getOrDefault(room, 0));
+        map.put(room + " " + point.name, defense);
     }
 
     public void dumpValues() //used for testing only

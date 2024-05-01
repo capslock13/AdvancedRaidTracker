@@ -27,6 +27,7 @@ public enum LogID
             "Party Members", "Player1", "Player2", "Player3", "Player4", "Player5", "Player6", "Player7", "Player8"),
     HAMMER_HIT(2, true, ANY,
             new ParseInstruction(INCREMENT, PLAYER_HAMMER_HIT_COUNT),
+			new ParseInstruction(MANUAL_PARSE),
             new ParseInstruction(DWH, DEFENSE),
             "Hammer Hit", "Player", "Room Tick"),
     BGS_HIT(3, true, ANY,
@@ -46,6 +47,7 @@ public enum LogID
             "Entered New TOB Region", "Room (Int)"),
     HAMMER_ATTEMPTED(7, true, ANY,
             new ParseInstruction(INCREMENT, PLAYER_HAMMER_ATTEMPTED),
+			new ParseInstruction(MANUAL_PARSE),
             "DWH Attempted", "Player"),
     DAWN_DROPPED(800, true, VERZIK,
             new ParseInstruction(MAP, DAWN_DROPS),
@@ -233,7 +235,7 @@ public enum LogID
     //DEPRECATED_BLOAT_HAND(975, false, BLOAT, "Bloat Hand", "Game Object ID", "RegionX", "RegionY", "Room Tick"),
     //DEPRECATED_BLOAT_DIRECTION(976, false, BLOAT, "Bloat Direction on instance creation", "Orientation (Runelite Angle)", "NPC Index"),
 
-    PARTY_COMPLETE(100, true, ANY_TOB, //todo
+    PARTY_COMPLETE(100, true, ANY, //todo
             new ParseInstruction(AGNOSTIC),
             "Party Is Complete"),
     PARTY_INCOMPLETE(101, true, ANY_TOB, //todo

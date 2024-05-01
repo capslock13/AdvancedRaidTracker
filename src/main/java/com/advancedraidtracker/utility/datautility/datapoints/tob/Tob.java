@@ -231,6 +231,26 @@ public class Tob extends Raid
 					{
 						maidenCrabs.add(new StringInt(entry.getValue("Description"), entry.getValueAsInt("Health")));
 					}
+					else if(entry.logEntry.equals(LogID.HAMMER_HIT) && currentRoom.equals("Sotetseg"))
+					{
+						if(get(SOTE_M2_SPLIT) > 0)
+						{
+							data.increment(SOTE_SPECS_P3);
+						}
+						else if(get(SOTE_M1_SPLIT) > 0)
+						{
+							data.increment(SOTE_SPECS_P2);
+						}
+						else
+						{
+							data.increment(SOTE_SPECS_P1);
+						}
+						data.increment(SOTE_SPECS_TOTAL);
+					}
+					else if(entry.logEntry.equals(LogID.HAMMER_ATTEMPTED) && currentRoom.equals("Sotetseg"))
+					{
+						data.increment(SOTE_SPECS_ATTEMPTED_TOTAL);
+					}
                 }
             }
         } catch (Exception ignored)

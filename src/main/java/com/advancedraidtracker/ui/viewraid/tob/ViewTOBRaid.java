@@ -236,8 +236,8 @@ public class ViewTOBRaid extends BaseFrame //todo @fisu not sure if you wanted t
         JPanel sotetsegSubPanel = getThemedPanel();
         sotetsegSubPanel.setLayout(new GridLayout(8, 2));
 
-        sotetsegSubPanel.add(getThemedLabel(soteBodyColor + "Hammers hit")); //todo sote specs maybe?
-        sotetsegSubPanel.add(getThemedLabel(soteBodyColor + ((data.getDefenseAccurate(SOTETSEG)) ? data.get(DataPoint.SOTE_SPECS_P1) + " " + data.get(DataPoint.SOTE_SPECS_P2) + " " + data.get(DataPoint.SOTE_SPECS_P3) + " (" + (data.get(DataPoint.SOTE_SPECS_TOTAL)) + ")" : INCOMPLETE_MARKER)));
+        sotetsegSubPanel.add(getThemedLabel(soteBodyColor + "Hammers hit"));
+        sotetsegSubPanel.add(getThemedLabel(soteBodyColor + ((data.getDefenseAccurate(SOTETSEG)) ? data.get(DataPoint.SOTE_SPECS_P1) + " " + data.get(DataPoint.SOTE_SPECS_P2) + " " + data.get(DataPoint.SOTE_SPECS_P3) + " (" + (data.get(DataPoint.SOTE_SPECS_TOTAL)) + "/" + data.get(SOTE_SPECS_ATTEMPTED_TOTAL) + ")" : INCOMPLETE_MARKER)));
 
         sotetsegSubPanel.add(getThemedLabel(soteBodyColor + "Deaths"));
         sotetsegSubPanel.add(getThemedLabel(soteBodyColor + data.get(DataPoint.DEATHS, SOTETSEG))); //todo specific deaths

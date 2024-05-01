@@ -331,7 +331,6 @@ public abstract class Raid
             return this.getRaidType() == TOB && getRoomAccurate(point.room);
         }
         return get(point) > -1 && point.getRaidType() == getRaidType();
-        //return getRoomAccurate(point.room);
     }
 
     public int getIfAccurate(DataPoint point)

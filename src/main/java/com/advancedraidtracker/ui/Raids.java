@@ -1157,10 +1157,17 @@ public class Raids extends BaseFrame implements UpdateableWindow
         {
             if (lastColumnClicked.equals("Custom"))
             {
-                if (raid.getTimeAccurate(DataPoint.getValue(customColumnComboBox.getSelectedItem().toString())))
-                {
-                    filteredSortData.add(raid);
-                }
+				if(RoomUtil.isTime(customColumnComboBox.getSelectedItem().toString()))
+				{
+					if (raid.getTimeAccurate(DataPoint.getValue(customColumnComboBox.getSelectedItem().toString())))
+					{
+						filteredSortData.add(raid);
+					}
+				}
+				else
+				{
+					filteredSortData.add(raid); //todo filter non time inaccurates
+				}
             } else
             {
                 if (raid.getTimeAccurate(DataPoint.getValue(lastColumnClicked)))

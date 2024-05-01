@@ -376,7 +376,6 @@ public class AdvancedRaidTrackerPlugin extends Plugin
                 {
                     lastSplits = infernoHandler.getStatString() + lastSplits + "Duration (Success): " + RoomUtil.time(infernoHandler.getDuration()) + " (+" + RoomUtil.time(client.getTickCount() - infernoHandler.getLastWaveStartTime()) + ")";
                 }
-                //clog.addLine(LEFT_TOB, String.valueOf(client.getTickCount() - currentRoom.roomStartTick), currentRoom.getName());
                 currentRoom = lobbyTOB;
                 infernoHandler.reset();
                 inTheatre = false;

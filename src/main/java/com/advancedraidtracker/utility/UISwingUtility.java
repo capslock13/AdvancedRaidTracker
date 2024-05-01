@@ -34,7 +34,7 @@ import static com.advancedraidtracker.utility.datautility.DataWriter.PLUGIN_DIRE
 import static net.runelite.client.RuneLite.RUNELITE_DIR;
 
 @Slf4j
-public class UISwingUtility
+public class UISwingUtility //methods used to get components that override LAF
 {
     @Setter
     private static AdvancedRaidTrackerConfig config;

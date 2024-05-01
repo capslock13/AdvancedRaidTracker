@@ -9,6 +9,7 @@ import com.advancedraidtracker.utility.datautility.DataPoint;
 import com.advancedraidtracker.utility.datautility.datapoints.LogEntry;
 import com.advancedraidtracker.utility.datautility.datapoints.Raid;
 import com.advancedraidtracker.utility.datautility.datapoints.RoomParser;
+import com.advancedraidtracker.utility.wrappers.StringInt;
 import lombok.Getter;
 import net.runelite.client.util.Text;
 
@@ -25,7 +26,11 @@ import static com.advancedraidtracker.utility.datautility.DataPoint.*;
 
 public class Tob extends Raid
 {
-    /**
+	@Getter
+	private final ArrayList<StringInt> maidenCrabs = new ArrayList<>();
+
+
+	/**
      * Enum for what difficulty the raid is.
      */
     public enum RaidMode
@@ -214,13 +219,18 @@ public class Tob extends Raid
                                 break;
                         }
                         data.incrementBy(XARP_HEALING, healAmount);
-                    } else if (entry.logEntry.equals(LogID.BLOAT_SCYTHE_1ST_WALK))
+                    }
+					else if (entry.logEntry.equals(LogID.BLOAT_SCYTHE_1ST_WALK))
                     {
                         if (data.get(BLOAT_DOWNS) == 0)
                         {
                             data.increment(BLOAT_FIRST_WALK_SCYTHES, entry.getValue("Player"));
                         }
                     }
+					else if(entry.logEntry.equals(LogID.CRAB_LEAK))
+					{
+						maidenCrabs.add(new StringInt(entry.getValue("Description"), entry.getValueAsInt("Health")));
+					}
                 }
             }
         } catch (Exception ignored)

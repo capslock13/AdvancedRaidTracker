@@ -1966,15 +1966,16 @@ public class Raids extends BaseFrame implements UpdateableWindow
         {
             ArrayList<ArrayList<StringInt>> crabData = new ArrayList<>();
             int[] toRemove = table.getSelectedRows();
-            /*(for (int i = 0; i < toRemove.length; i++)
-            {
-                Raid row = currentData.get(Integer.parseInt(table.getModel().getValueAt(toRemove[i], 0).toString()));
+			for (int j : toRemove)
+			{
+				Raid row = currentData.get(Integer.parseInt(table.getModel().getValueAt(j, 0).toString()));
 
-                if (row instanceof Tob)
-                {
-                    crabData.add(((Tob) row));
-                }
-            }
+				if (row instanceof Tob)
+				{
+					Tob tob = (Tob) row;
+					crabData.add(tob.getMaidenCrabs());
+				}
+			}
             new CrabLeakInfo(crabData); //todo "s" prefix(*/
         });
         raidPopup.add(analyzeCrabs);

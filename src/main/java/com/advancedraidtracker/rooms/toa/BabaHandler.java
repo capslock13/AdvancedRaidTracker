@@ -46,7 +46,7 @@ public class BabaHandler extends TOARoomHandler
     @Override
     public void updateGameTick(GameTick gameTick)
     {
-        if (roomState == RoomState.BabaRoomState.NOT_STARTED && RoomUtil.playerPastLine(15188, 23, true, client))
+        if (roomState == RoomState.BabaRoomState.NOT_STARTED && RoomUtil.playerPastLine(15188, 23, true, client, false))
         {
             roomState = RoomState.BabaRoomState.PHASE_1;
             roomStartTick = client.getTickCount();
@@ -72,6 +72,8 @@ public class BabaHandler extends TOARoomHandler
             clog.addLine(LogID.TOA_BABA_FINISHED, duration);
             plugin.liveFrame.setRoomFinished(getName(), duration);
             active = false;
+			plugin.lastSplits += "Baba: " + RoomUtil.time(plugin.currentDurationSum) + "(+" + RoomUtil.time(duration) + ")\n";
+			plugin.currentDurationSum += duration;
         } else if (spawned.getNpc().getId() == 11783)
         {
             clog.addLine(LogID.TOA_BABA_BOULDER_THROW, client.getTickCount() - roomStartTick);

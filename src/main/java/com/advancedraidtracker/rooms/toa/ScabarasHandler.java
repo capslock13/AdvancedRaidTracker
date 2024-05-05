@@ -142,16 +142,14 @@ public class ScabarasHandler extends TOARoomHandler
                 }
             }
         }
-        WorldPoint wp = client.getLocalPlayer().getWorldLocation();
-        //log.info("Tick: " + client.getTickCount() + ", Location:" + wp.getRegionX() + ", " + wp.getRegionY());
-        if (!active)
+        if (!active && roomStartTick == -1)
         {
-            if (RoomUtil.playerPastLine(14162, 12, true, client)) //todo fix magic numbers
+            if (RoomUtil.playerPastLine(14162, 12, true, client, false, true)) //todo fix magic numbers
             {
                 roomStartTick = client.getTickCount();
                 active = true;
                 clog.addLine(LogID.TOA_SCABARAS_START, roomStartTick);
-            }
+			}
         }
         super.updateGameTick(event);
     }
@@ -217,5 +215,7 @@ public class ScabarasHandler extends TOARoomHandler
         sendTimeMessage("Scabaras Puzzle time: ", scabarasDuration);
         clog.addLine(LogID.TOA_SCABARAS_FINISHED, scabarasDuration);
         plugin.liveFrame.setRoomFinished(getName(), scabarasDuration);
+		plugin.lastSplits += "Scabaras: " + RoomUtil.time(plugin.currentDurationSum) + "(+" + RoomUtil.time(scabarasDuration) + ")\n";
+		plugin.currentDurationSum += scabarasDuration;
     }
 }

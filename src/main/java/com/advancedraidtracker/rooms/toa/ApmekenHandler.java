@@ -35,7 +35,7 @@ public class ApmekenHandler extends TOARoomHandler
     @Override
     public void updateGameTick(GameTick event)
     {
-        if (!active && RoomUtil.playerPastLine(15186, 20, true, client)) //todo fix magic numbers
+        if (!active && roomStartTick == -1 && RoomUtil.playerPastLine(15186, 20, true, client, false)) //todo fix magic numbers
         {
             active = true;
             roomStartTick = client.getTickCount();
@@ -75,6 +75,8 @@ public class ApmekenHandler extends TOARoomHandler
             sendTimeMessage("Apmeken Duration: ", duration);
             clog.addLine(LogID.TOA_APMEKEN_FINISHED, duration);
             plugin.liveFrame.setRoomFinished(getName(), duration);
+			plugin.lastSplits += "Apmeken: " + RoomUtil.time(plugin.currentDurationSum) + "(+" + RoomUtil.time(duration) + ")\n";
+			plugin.currentDurationSum += duration;
         }
     }
 }

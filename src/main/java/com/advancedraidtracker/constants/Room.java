@@ -25,7 +25,7 @@ public enum Room
     HET("Het", TOA, new int[]{14674}),
     AKKHA("Akkha", TOA, new int[]{14676}),
     WARDENS("Wardens", TOA, new int[]{14672}),
-    TOMB("Tomb", TOA, new int[]{14672}),
+    TOMB("Tomb", TOA, new int[]{0}), //hmm todo
     COX_LOBBY("COX Lobby", COX, InstanceTemplates.RAIDS_LOBBY),
     TEKTON("Tekton", COX, InstanceTemplates.RAIDS_TEKTON),
     CRABS("Crabs", COX, InstanceTemplates.RAIDS_CRABS),

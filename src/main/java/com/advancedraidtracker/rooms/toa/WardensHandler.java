@@ -4,6 +4,7 @@ import com.advancedraidtracker.AdvancedRaidTrackerConfig;
 import com.advancedraidtracker.AdvancedRaidTrackerPlugin;
 import com.advancedraidtracker.constants.LogID;
 import com.advancedraidtracker.utility.RoomState;
+import com.advancedraidtracker.utility.RoomUtil;
 import com.advancedraidtracker.utility.datautility.DataWriter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
@@ -118,11 +119,16 @@ public class WardensHandler extends TOARoomHandler
     {
         if (roomState == ENRAGED && (event.getNpc().getId() == 11761 || event.getNpc().getId() == 11762))
         {
+			int duration = client.getTickCount()-roomStartTick;
             sendTimeMessage("Wardens Duration: ", client.getTickCount() - roomStartTick, client.getTickCount() - enraged);
             clog.addLine(LogID.TOA_WARDENS_FINISHED, client.getTickCount() - roomStartTick);
             roomState = FINISHED;
             plugin.liveFrame.setRoomFinished(getName(), client.getTickCount() - roomStartTick);
-        } else if (coreActive && (event.getNpc().getId() == 11770 || event.getNpc().getId() == 11771))
+			plugin.lastSplits += "Wardens: " + RoomUtil.time(plugin.currentDurationSum) + "(+" + RoomUtil.time(duration) + ")\n";
+			plugin.currentDurationSum += duration;
+			plugin.lastSplits += "Duration (Completion): " + RoomUtil.time(plugin.currentDurationSum);
+        }
+		else if (coreActive && (event.getNpc().getId() == 11770 || event.getNpc().getId() == 11771))
         {
             coreActive = false;
             clog.addLine(LogID.TOA_WARDENS_CORE_DESPAWNED, client.getTickCount() - roomStartTick);

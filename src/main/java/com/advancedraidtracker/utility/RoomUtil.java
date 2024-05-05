@@ -248,7 +248,12 @@ public class RoomUtil
         return false;
     }
 
-    public static boolean playerPastLine(int region, int regionXY, boolean vertical, Client client)
+	public static boolean playerPastLine(int region, int regionXY, boolean vertical, Client client, boolean inverted)
+	{
+		return playerPastLine(region, regionXY, vertical, client, inverted, false);
+	}
+
+    public static boolean playerPastLine(int region, int regionXY, boolean vertical, Client client, boolean inverted, boolean scabaras)
     {
         if (inRegion(client, region))
         {
@@ -257,18 +262,42 @@ public class RoomUtil
                 WorldPoint wp = p.getWorldLocation();
                 int x = wp.getRegionX();
                 int y = wp.getRegionY();
+				if(scabaras && x == 32 && y == 32)
+				{
+					continue;
+				}
                 if (vertical)
                 {
-                    if (x > regionXY)
-                    {
-                        return true;
-                    }
+					if(inverted)
+					{
+						if(x < regionXY)
+						{
+							return true;
+						}
+					}
+					else
+					{
+						if (x > regionXY)
+						{
+							return true;
+						}
+					}
                 } else
                 {
-                    if (y > regionXY)
-                    {
-                        return true;
-                    }
+					if(inverted)
+					{
+						if(y < regionXY)
+						{
+							return true;
+						}
+					}
+					else
+					{
+						if (y > regionXY)
+						{
+							return true;
+						}
+					}
                 }
             }
         }

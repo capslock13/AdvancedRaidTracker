@@ -98,6 +98,8 @@ public class ZebakHandler extends TOARoomHandler
             clog.addLine(LogID.TOA_ZEBAK_FINISHED, duration);
             plugin.liveFrame.setRoomFinished(getName(), duration);
             active = false;
+			plugin.lastSplits += "Zebak: " + RoomUtil.time(plugin.currentDurationSum) + "(+" + RoomUtil.time(duration) + ")\n";
+			plugin.currentDurationSum += duration;
         }
         if (changed == 11732)
         {

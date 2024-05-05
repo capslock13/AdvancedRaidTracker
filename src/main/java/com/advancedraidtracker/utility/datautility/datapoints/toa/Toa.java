@@ -134,7 +134,7 @@ public class Toa extends Raid
                     }
                 } else if (Objects.requireNonNull(instruction.type) == MANUAL_PARSE)
                 {
-                    if (entry.logEntry.equals(LogID.TOA_WARDENS_SKULLS_STARTED)) //todo revisit when not cooked //todo pt2 also it just doesnt work
+                    if (entry.logEntry.equals(LogID.TOA_WARDENS_SKULLS_STARTED))
                     {
                         for (int i = 1; i < 5; i++)
                         {
@@ -145,7 +145,7 @@ public class Toa extends Raid
                             }
                         }
                     }
-                    if (entry.logEntry.equals(LogID.TOA_WARDENS_SKULLS_ENDED)) //todo revisit when not cooked //todo pt2 also it just doesnt work
+                    if (entry.logEntry.equals(LogID.TOA_WARDENS_SKULLS_ENDED))
                     {
                         for (int i = 1; i < 5; i++)
                         {

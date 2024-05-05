@@ -197,6 +197,8 @@ public class KephriHandler extends TOARoomHandler
             clog.addLine(LogID.TOA_KEPHRI_FINISHED, duration);
             plugin.liveFrame.setRoomFinished(getName(), duration);
             active = false;
+			plugin.lastSplits += "Kephri: " + RoomUtil.time(plugin.currentDurationSum) + "(+" + RoomUtil.time(duration) + ")\n";
+			plugin.currentDurationSum += duration;
         }
     }
 }

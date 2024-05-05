@@ -28,7 +28,7 @@ public class CrondisHandler extends TOARoomHandler
     @Override
     public void updateGameTick(GameTick event)
     {
-        if (!active && RoomUtil.playerPastLine(15698, 44, true, client)) //todo fix magic numbers
+        if (!active && roomStartTick == -1 && RoomUtil.playerPastLine(15698, 46, true, client, true)) //todo fix magic numbers
         {
             active = true;
             roomStartTick = client.getTickCount();
@@ -52,6 +52,8 @@ public class CrondisHandler extends TOARoomHandler
             sendTimeMessage("Crondis Duration: ", duration);
             clog.addLine(LogID.TOA_CRONDIS_FINISHED, duration);
             plugin.liveFrame.setRoomFinished(getName(), duration);
+			plugin.lastSplits += "Crondis: " + RoomUtil.time(plugin.currentDurationSum) + "(+" + RoomUtil.time(duration) + ")\n";
+			plugin.currentDurationSum += duration;
         }
     }
 

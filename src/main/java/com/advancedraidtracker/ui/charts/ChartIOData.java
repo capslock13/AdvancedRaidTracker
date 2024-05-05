@@ -1,5 +1,10 @@
 package com.advancedraidtracker.ui.charts;
 
+import com.advancedraidtracker.ui.charts.chartelements.ChartAuto;
+import com.advancedraidtracker.ui.charts.chartelements.ChartLine;
+import com.advancedraidtracker.ui.charts.chartelements.ChartTextBox;
+import com.advancedraidtracker.ui.charts.chartelements.OutlineBox;
+import com.advancedraidtracker.ui.charts.chartelements.ThrallOutlineBox;
 import com.advancedraidtracker.utility.Point;
 import lombok.Value;
 
@@ -13,10 +18,11 @@ public class ChartIOData
     int endTick;
     String roomName;
     String roomSpecificText;
-    List<Integer> autos;
+    List<ChartAuto> autos;
     Map<Integer, String> roomSpecificTextMapping;
-    Map<Integer, String> lines;
+    List<ChartLine> lines;
     List<OutlineBox> outlineBoxes;
-    Map<Point, String> textMapping;
+    List<ChartTextBox> textMapping;
     String title;
+	List<ThrallOutlineBox> thrallOutlineBoxes;
 }

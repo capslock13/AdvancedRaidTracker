@@ -3,6 +3,7 @@ package com.advancedraidtracker.rooms.tob;
 import com.advancedraidtracker.AdvancedRaidTrackerConfig;
 import com.advancedraidtracker.AdvancedRaidTrackerPlugin;
 import com.advancedraidtracker.constants.RaidRoom;
+import com.advancedraidtracker.utility.RoomUtil;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.NPC;
@@ -440,5 +441,7 @@ public class NyloHandler extends TOBRoomHandler
         sendTimeMessage("Wave 'Nylocas boss' complete! Duration: ", deathTick - roomStartTick + offset1, deathTick + offset1 - bossSpawn, false);
         clog.addLine(NYLO_DESPAWNED, String.valueOf(deathTick - roomStartTick + offset1));
         active = false;
+		plugin.lastSplits += "Nylocas: " + RoomUtil.time(deathTick+offset1-roomStartTick) + " (" + RoomUtil.time(plugin.currentDurationSum) + ")\n";
+		plugin.currentDurationSum += (deathTick+offset1-roomStartTick);
     }
 }

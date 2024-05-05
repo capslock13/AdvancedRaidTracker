@@ -88,6 +88,10 @@ public class DataReader //todo move any methods that read files to here. I belie
         {
             ret.clearRawData();
         }
+		if(ret != null && ret.getScale() == 0)
+		{
+			ret = null;
+		}
         return ret;
     }
 

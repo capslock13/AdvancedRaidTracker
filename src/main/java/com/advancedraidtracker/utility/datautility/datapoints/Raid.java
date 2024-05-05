@@ -125,7 +125,7 @@ public abstract class Raid
      */
     public String getPlayerString()
     {
-        return Text.toJagexName(String.join(",", getPlayers()));
+        return RoomUtil.toCleanName(String.join(",", getPlayers()));
     }
 
     @Getter
@@ -308,7 +308,7 @@ public abstract class Raid
         DataPoint pointFound = DataPoint.getValue(point);
         if(pointFound != DataPoint.UNKNOWN)
         {
-            return pointFound.isTime();
+            return pointFound.isTime() && getTimeAccurate(pointFound);
         }
         return true;
     }
@@ -319,6 +319,14 @@ public abstract class Raid
         {
             return getChallengeTime() > 0;
         }
+		else if(point.equals(OVERALL_TIME))
+		{
+			return get(OVERALL_TIME) > 0;
+		}
+		else if(point.equals(TIME_OUTSIDE_ROOMS))
+		{
+			return get(TIME_OUTSIDE_ROOMS) > 0;
+		}
         if(point.getRaidType().equals(TOB))
         {
             if(point == NYLOCAS_TIME)
@@ -358,7 +366,7 @@ public abstract class Raid
                     String player = entry.getValue("Player" + i);
                     if (!player.isEmpty())
                     {
-                        players.add(Text.toJagexName(player));
+                        players.add(RoomUtil.toCleanName(player));
                     }
                 }
                 break;
@@ -376,6 +384,16 @@ public abstract class Raid
 				break;
 			case PARTY_INCOMPLETE:
 				inParty = false;
+				break;
+			case LEFT_TOB:
+				if(get(OVERALL_TIME) < 1)
+				{
+					Date end = new Date(entry.ts);
+					Long timeDifference = end.getTime() - getDate().getTime();
+					int ticks = (int) (timeDifference / 600.0);
+					data.set(OVERALL_TIME, ticks);
+					data.set(TIME_OUTSIDE_ROOMS, get(OVERALL_TIME) - get(CHALLENGE_TIME));
+				}
 				break;
         }
     }

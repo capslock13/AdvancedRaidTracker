@@ -48,7 +48,10 @@ public class StatisticRoomPanel extends JPanel
 		if(roomName.contains("Wave") && !roomName.contains("Col"))
 		{
 			labelNames = new ArrayList<>();
-			labelNames.add("Inf " + roomName + " Split");
+			if(!roomName.contains("-"))
+			{
+				labelNames.add("Inf " + roomName + " Split");
+			}
 			labelNames.add("Inf " + roomName + " Time");
 			for(RaidRoom raidRoom : RoomUtil.getVariations("Inf " + roomName))
 			{
@@ -102,7 +105,7 @@ public class StatisticRoomPanel extends JPanel
         {
             subPanel.add(getThemedLabel(""));
         }
-        subPanel.setPreferredSize(new Dimension(100, 250));
+        subPanel.setPreferredSize(new Dimension(100, 300));
         JScrollPane scrollPane = getThemedScrollPane(subPanel);
         scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 

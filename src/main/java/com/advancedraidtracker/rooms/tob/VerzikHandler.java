@@ -4,6 +4,7 @@ import com.advancedraidtracker.AdvancedRaidTrackerConfig;
 import com.advancedraidtracker.AdvancedRaidTrackerPlugin;
 import com.advancedraidtracker.constants.LogID;
 import com.advancedraidtracker.constants.RaidRoom;
+import com.advancedraidtracker.utility.RoomUtil;
 import com.advancedraidtracker.utility.datautility.DataWriter;
 import com.advancedraidtracker.utility.wrappers.PlayerDidAttack;
 import com.advancedraidtracker.utility.wrappers.DawnSpec;
@@ -374,6 +375,19 @@ public class VerzikHandler extends TOBRoomHandler
         plugin.addDelayedLine(RaidRoom.VERZIK, client.getTickCount() - roomStartTick, "Dead");
         plugin.liveFrame.setRoomFinished(getName(), verzikP3EndTick - roomStartTick);
         active = false;
-
+		if(!plugin.lastSplits.contains("Completion"))
+		{
+			plugin.lastSplits += "Verzik: " + RoomUtil.time(verzikP3EndTick - roomStartTick) + "\n";
+			plugin.lastSplits += "Duration (Completion): " + RoomUtil.time(plugin.currentDurationSum + (verzikP3EndTick - roomStartTick));
+		}
+		else
+		{
+			log.info("Before: " + plugin.lastSplits);
+			plugin.lastSplits = plugin.lastSplits.substring(0, plugin.lastSplits.lastIndexOf("\n"));
+			plugin.lastSplits = plugin.lastSplits.substring(0, plugin.lastSplits.lastIndexOf("\n"));
+			plugin.lastSplits += "\nVerzik: " + RoomUtil.time(verzikP3EndTick-roomStartTick);
+			plugin.lastSplits += "\n" + "Duration (Completion): " + RoomUtil.time(plugin.currentDurationSum + (verzikP3EndTick - roomStartTick));
+			log.info("After: " + plugin.lastSplits);
+		}
     }
 }

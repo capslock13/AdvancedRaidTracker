@@ -5,7 +5,7 @@ import com.advancedraidtracker.utility.weapons.AnimationDecider;
 import com.advancedraidtracker.utility.weapons.PlayerAnimation;
 import com.advancedraidtracker.utility.wrappers.DawnSpec;
 import com.advancedraidtracker.utility.wrappers.PlayerDidAttack;
-import com.advancedraidtracker.utility.wrappers.ThrallOutlineBox;
+import com.advancedraidtracker.ui.charts.chartelements.ThrallOutlineBox;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import lombok.extern.slf4j.Slf4j;

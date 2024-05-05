@@ -91,6 +91,11 @@ public class RaidTrackerSidePanel extends PluginPanel
                 al ->
                         new Thread(() ->
                         {
+							if(raids.hasShelfedData)
+							{
+								raids.clearFrameData();
+								raids.restoreShelfedData();
+							}
                             raids.repaint();
                             raids.open();
                         }).start());
@@ -119,6 +124,8 @@ public class RaidTrackerSidePanel extends PluginPanel
         tableRaidsButton.addActionListener(
                 al ->
                 {
+					raids.shelfFrameData();
+					raids.clearFrameData();
                     raids.updateFrameData(getTableData());
                     raids.repaint();
                     raids.open();

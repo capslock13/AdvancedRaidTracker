@@ -1,17 +1,14 @@
 package com.advancedraidtracker.ui.charts;
 
 import com.advancedraidtracker.AdvancedRaidTrackerConfig;
+import com.advancedraidtracker.ui.charts.chartelements.OutlineBox;
 import static com.advancedraidtracker.utility.UISwingUtility.getThemedLabel;
-import com.advancedraidtracker.utility.datautility.datapoints.Raid;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import java.awt.BorderLayout;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import javax.swing.JLabel;
 import javax.swing.JPanel;

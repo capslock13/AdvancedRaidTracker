@@ -1,4 +1,4 @@
-package com.advancedraidtracker.ui.charts;
+package com.advancedraidtracker.ui.charts.chartelements;
 
 import com.advancedraidtracker.constants.RaidRoom;
 import com.advancedraidtracker.utility.ItemReference;
@@ -52,7 +52,7 @@ public class OutlineBox
 	@Override
 	public String toString()
 	{
-		return tick + ": " + playerAnimation.name;
+		return tick + ": " + playerAnimation.name + " (" + player + ")";
 	}
 
     public OutlineBox(String letter, Color color, boolean primaryTarget, String additionalText, PlayerAnimation playerAnimation, int cd, int tick, String player, RaidRoom room, int weapon)

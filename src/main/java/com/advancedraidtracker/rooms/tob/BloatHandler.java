@@ -72,6 +72,8 @@ public class BloatHandler extends TOBRoomHandler
             sendTimeMessage("Wave 'Bloat last down' complete! Duration: ", splitLastDown(), " Room time: ", bloatDeathTick - roomStartTick, true);
         }
         active = false;
+		plugin.lastSplits += "Bloat: " + RoomUtil.time(bloatDeathTick-roomStartTick) + " (" + RoomUtil.time(plugin.currentDurationSum) + ")\n";
+		plugin.currentDurationSum += (bloatDeathTick-roomStartTick);
     }
 
     public int splitLastDown()

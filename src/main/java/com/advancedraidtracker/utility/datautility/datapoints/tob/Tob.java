@@ -251,6 +251,18 @@ public class Tob extends Raid
 					{
 						data.increment(SOTE_SPECS_ATTEMPTED_TOTAL);
 					}
+					else if(entry.logEntry.equals(LogID.MAIDEN_SPAWNED))
+					{
+						date = new Date(entry.ts);
+					}
+					else if(entry.logEntry.equals(LogID.VERZIK_P3_DESPAWNED))
+					{
+						Date end = new Date(entry.ts);
+						Long timeDifference = end.getTime()-getDate().getTime();
+						int ticks = (int)(timeDifference/600.0)+6; //death anim length
+						data.set(OVERALL_TIME, ticks);
+						data.set(TIME_OUTSIDE_ROOMS, get(OVERALL_TIME) - get(CHALLENGE_TIME));
+					}
                 }
             }
         } catch (Exception ignored)

@@ -194,5 +194,7 @@ public class XarpusHandler extends TOBRoomHandler
         String splitMessage = "Wave 'Xarpus phase 3' complete. Duration: " + timeColor() + RoomUtil.time(xarpusEndTick - xarpusEntryTick) + " (" + RoomUtil.time(xarpusEndTick - xarpusScreechTick) + ")";
         this.client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", splitMessage, null, false);
         active = false;
+		plugin.lastSplits += "Xarpus: " + RoomUtil.time(xarpusEndTick-roomStartTick) + " (" + RoomUtil.time(plugin.currentDurationSum) + ")\n";
+		plugin.currentDurationSum += (xarpusEndTick-roomStartTick);
     }
 }

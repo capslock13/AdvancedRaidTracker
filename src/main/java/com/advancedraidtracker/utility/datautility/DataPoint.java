@@ -363,7 +363,12 @@ public enum DataPoint
 
     public boolean isColosseum()
     {
-        return room.equals(COLOSSEUM);
+        return room.equals(COLOSSEUM)
+			|| room.equals(WAVE_1_COL) || room.equals(WAVE_2_COL) || room.equals(WAVE_3_COL) || room.equals(WAVE_4_COL)
+		|| room.equals(WAVE_5_COL) || room.equals(WAVE_6_COL) || room.equals(WAVE_7_COL) || room.equals(WAVE_8_COL)
+		|| room.equals(WAVE_9_COL) || room.equals(WAVE_10_COL) || room.equals(WAVE_11_COL) || room.equals(WAVE_12_COL)
+
+			;
     }
 
     public boolean isExclusivelyTOA()

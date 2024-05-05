@@ -1221,6 +1221,27 @@ public class Raids extends BaseFrame implements UpdateableWindow
         updateTable();
     }
 
+	public void clearFrameData()
+	{
+		currentData.clear();
+	}
+
+	private List<Raid> shelfedData = new ArrayList<>();
+	public void shelfFrameData()
+	{
+		hasShelfedData = true;
+		shelfedData.addAll(currentData);
+	}
+
+	public boolean hasShelfedData = false;
+
+	public void restoreShelfedData()
+	{
+		hasShelfedData = false;
+		currentData.addAll(shelfedData);
+		shelfedData.clear();
+		updateTable();
+	}
 
     public void updateFrameData(List<Raid> data)
     {
@@ -1413,7 +1434,7 @@ public class Raids extends BaseFrame implements UpdateableWindow
 
         filterHolder.add(filterIncludeTOB);
         filterHolder.add(filterIncludeTOA);
-        filterHolder.add(filterIncludeCOX);
+        //filterHolder.add(filterIncludeCOX); //todo for later
         filterHolder.add(filterIncludeInferno);
         filterHolder.add(filterIncludeColosseum);
 

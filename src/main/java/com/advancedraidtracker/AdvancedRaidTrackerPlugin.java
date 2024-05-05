@@ -10,14 +10,14 @@ import com.advancedraidtracker.rooms.tob.*;
 import com.advancedraidtracker.ui.charts.ChartTheme;
 import com.advancedraidtracker.ui.charts.LiveChart;
 import com.advancedraidtracker.ui.RaidTrackerSidePanel;
-import com.advancedraidtracker.ui.charts.OutlineBox;
+import com.advancedraidtracker.ui.charts.chartelements.OutlineBox;
 import com.advancedraidtracker.utility.*;
 import com.advancedraidtracker.utility.datautility.DataWriter;
 import com.advancedraidtracker.utility.thrallvengtracking.*;
 import com.advancedraidtracker.utility.wrappers.PlayerCopy;
 import com.advancedraidtracker.utility.wrappers.PlayerDidAttack;
 import com.advancedraidtracker.utility.wrappers.QueuedPlayerAttackLessProjectiles;
-import com.advancedraidtracker.utility.wrappers.ThrallOutlineBox;
+import com.advancedraidtracker.ui.charts.chartelements.ThrallOutlineBox;
 import com.google.inject.Inject;
 import com.google.inject.Provides;
 import javax.swing.SwingUtilities;
@@ -363,6 +363,7 @@ public class AdvancedRaidTrackerPlugin extends Plugin
                 inInferno = true;
                 activeState = true;
                 lastSplits = "";
+				currentDurationSum = 0;
             }
         } else
         {
@@ -404,6 +405,7 @@ public class AdvancedRaidTrackerPlugin extends Plugin
                 inColosseum = true;
                 activeState = true;
                 lastSplits = "";
+				currentDurationSum = 0;
             }
         } else
         {
@@ -446,6 +448,7 @@ public class AdvancedRaidTrackerPlugin extends Plugin
             liveFrame.resetAll();
             liveFrame.switchToTOB();
             lastSplits = "";
+			currentDurationSum = 0;
         }
         if (inRegion(client, TOA_LOBBY))
         {
@@ -460,6 +463,7 @@ public class AdvancedRaidTrackerPlugin extends Plugin
             liveFrame.resetAll();
             liveFrame.switchToTOA();
             lastSplits = "";
+			currentDurationSum = 0;
         }
         switch (room)
         {
@@ -472,6 +476,7 @@ public class AdvancedRaidTrackerPlugin extends Plugin
                     liveFrame.resetAll();
                     liveFrame.switchToTOB();
                     lastSplits = "";
+					currentDurationSum = 0;
                 }
                 activeState = true;
                 break;
@@ -1629,10 +1634,6 @@ public class AdvancedRaidTrackerPlugin extends Plugin
     @Subscribe
     public void onAnimationChanged(AnimationChanged event)
     {
-        if(event.getActor().equals(client.getLocalPlayer()))
-        {
-            log.info("Animation: " + event.getActor().getAnimation() + " tick " + client.getTickCount());
-        }
         if (event.getActor() instanceof NPC)
         {
             if (currentRoom != null)
@@ -2051,5 +2052,7 @@ public class AdvancedRaidTrackerPlugin extends Plugin
 
     @Getter
     public String lastSplits = "";
+
+	public int currentDurationSum = 0;
 
 }

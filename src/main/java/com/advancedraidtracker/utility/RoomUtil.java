@@ -6,6 +6,7 @@ import com.advancedraidtracker.constants.Room;
 import com.advancedraidtracker.constants.TobIDs;
 import com.advancedraidtracker.utility.datautility.DataPoint;
 import com.advancedraidtracker.utility.datautility.datapoints.Raid;
+import com.google.common.base.CharMatcher;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.Player;
@@ -39,6 +40,11 @@ public class RoomUtil
             return ticks;
         }
     }
+
+	public static String toCleanName(String str)
+	{
+		return CharMatcher.ascii().retainFrom(str.replaceAll("[ -]", " ")).trim();
+	}
 
     public static String varbitHPtoReadable(int varbitHP)
     {

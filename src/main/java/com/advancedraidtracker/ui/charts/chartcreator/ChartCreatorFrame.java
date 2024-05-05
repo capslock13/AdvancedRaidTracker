@@ -4,12 +4,16 @@ import com.advancedraidtracker.AdvancedRaidTrackerConfig;
 import com.advancedraidtracker.ui.BaseFrame;
 import com.advancedraidtracker.ui.charts.ChartActionType;
 import com.advancedraidtracker.ui.charts.ChartChangedEvent;
+import static com.advancedraidtracker.ui.charts.ChartConstants.SELECTION_TOOL;
 import com.advancedraidtracker.ui.charts.ChartIOData;
 import com.advancedraidtracker.ui.charts.ChartListener;
 import com.advancedraidtracker.ui.charts.ChartPanel;
 import com.advancedraidtracker.ui.charts.ChartSpecCalculatorPanel;
+import com.advancedraidtracker.ui.charts.chartelements.OutlineBox;
 import com.advancedraidtracker.utility.weapons.PlayerAnimation;
 import java.awt.event.KeyEvent;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
@@ -85,11 +89,40 @@ public class ChartCreatorFrame extends BaseFrame implements ChartListener
 		root.add(new DefaultMutableTreeNode("Lines"));
 		root.add(new DefaultMutableTreeNode("Text"));
 		root.add(new DefaultMutableTreeNode("Autos"));
+		root.add(new DefaultMutableTreeNode("Thralls"));
+
+		tree.addTreeSelectionListener(new TreeSelectionListener()
+		{
+			@Override
+			public void valueChanged(TreeSelectionEvent e)
+			{
+				List<OutlineBox> boxesToSelect = new ArrayList<>();
+				for(TreePath tp : tree.getSelectionModel().getSelectionPaths())
+				{
+					for(Object obj : tp.getPath())
+					{
+						DefaultMutableTreeNode dmtn = (DefaultMutableTreeNode) obj;
+						if(dmtn.getUserObject() instanceof OutlineBox)
+						{
+							boxesToSelect.add((OutlineBox) dmtn.getUserObject());
+						}
+					}
+				}
+				chart.chartSelectionChanged(boxesToSelect);
+				chart.setToolSelection(SELECTION_TOOL);
+				tools.setTool(SELECTION_TOOL);
+			}
+		});
 		JPanel treePanel = getThemedPanel();
 		treePanel.setLayout(new BorderLayout());
 		treePanel.add(tree, BorderLayout.CENTER);
 		treePanel.setPreferredSize(new Dimension(300, 0));
-		bottomContainer.add(treePanel);
+		JScrollPane treeScroll = getThemedScrollPane(treePanel);
+		treeScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		treeScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		treeScroll.setViewportView(tree);
+		treeScroll.setPreferredSize(new Dimension(300, 0));
+		bottomContainer.add(treeScroll);
 
         bottomContainer.add(bottomLeftcontainer);
         bottomContainer.add(tools);
@@ -99,10 +132,8 @@ public class ChartCreatorFrame extends BaseFrame implements ChartListener
 		container.add(chartStatusBar);
 
         add(container);
-        //setPreferredSize(new Dimension(1000, 600));
 
         JMenuBar menuBar = new JMenuBar();
-
 
         JMenu fileMenu = getThemedMenu("File");
 

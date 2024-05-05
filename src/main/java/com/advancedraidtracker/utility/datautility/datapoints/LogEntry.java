@@ -10,7 +10,7 @@ import java.util.*;
 public class LogEntry
 {
     private final static HashSet<String> intValues = new HashSet<>(Arrays.asList("Damage", "Room Tick", "Raid Level", "Wave Number", "Amount", "Health"));
-    long ts;
+    public long ts;
     int raid;
     public LogID logEntry;
     public Map<String, String> values;

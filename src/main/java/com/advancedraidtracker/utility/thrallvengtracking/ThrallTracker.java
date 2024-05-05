@@ -2,7 +2,7 @@ package com.advancedraidtracker.utility.thrallvengtracking;
 
 import com.advancedraidtracker.AdvancedRaidTrackerPlugin;
 import com.advancedraidtracker.constants.LogID;
-import com.advancedraidtracker.utility.wrappers.ThrallOutlineBox;
+import com.advancedraidtracker.ui.charts.chartelements.ThrallOutlineBox;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Actor;
 import net.runelite.api.NPC;

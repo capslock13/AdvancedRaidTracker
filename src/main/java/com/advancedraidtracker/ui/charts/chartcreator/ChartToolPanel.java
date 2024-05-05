@@ -26,8 +26,8 @@ import static com.advancedraidtracker.ui.charts.ChartConstants.*;
 import static com.advancedraidtracker.ui.charts.ChartPanel.*;
 import static com.advancedraidtracker.utility.UISwingUtility.*;
 import static com.advancedraidtracker.utility.UISwingUtility.createFlipped;
-import static com.advancedraidtracker.ui.charts.OutlineBox.getReplacement;
-import static com.advancedraidtracker.ui.charts.OutlineBox.getSpellIcon;
+import static com.advancedraidtracker.ui.charts.chartelements.OutlineBox.getReplacement;
+import static com.advancedraidtracker.ui.charts.chartelements.OutlineBox.getSpellIcon;
 
 
 @Slf4j
@@ -43,14 +43,13 @@ public class ChartToolPanel extends JPanel implements MouseListener, MouseMotion
             new ChartTool(1, ADD_LINE_TOOL, "Line"),
             new ChartTool(1, SELECTION_TOOL, "Select"),
             new ChartTool(1, ADD_TEXT_TOOL, "Text"),
-            new ChartTool(1, ADD_AUTO_TOOL, "Auto")
+            new ChartTool(1, ADD_AUTO_TOOL, "Auto"),
+			new ChartTool(1, ADD_THRALL_TOOL, "Thrall")
     );
 
     int tool = 0;
     int hoveredTool = NO_TOOL;
     int toolMargin = 10;
-    static final int xMargin = 5;
-    int yMargin = 15;
     int initialXMargin = 5;
     int initialYMargin;
     int toolsPerColumn;
@@ -203,14 +202,12 @@ public class ChartToolPanel extends JPanel implements MouseListener, MouseMotion
         g.setColor(config.primaryDark());
         g.fillRect(0, 0, img.getWidth(), img.getHeight());
 
-        int toolCount = PlayerAnimation.values().length;
+        int toolCount;
         int height = 550;
         int toolHeight = config.chartScaleSize();
         int xMargin = 5;
         int yMargin = 15;
-        int totalToolHeight = toolCount * (toolHeight + toolMargin);
         initialYMargin = 15 + (toolHeight * 2) + (toolMargin / 2);
-        int columns = (totalToolHeight / height) + 1;
         toolsPerColumn = (height) / (toolHeight + toolMargin);
 
         //draw active outline
@@ -241,25 +238,14 @@ public class ChartToolPanel extends JPanel implements MouseListener, MouseMotion
 				if(img != null)
 				{
 					BufferedImage scaled = getScaledImage(iconMap.get(primary), (toolHeight * 2 - 4), (toolHeight * 2 - 4));
-					if (primary.shouldFlip)
-					{
-						g.drawImage(createFlipped(createDropShadow(scaled)), xMargin + 3, yMargin + 3, null);
-						g.drawImage(createFlipped(scaled), xMargin + 2, yMargin + 1, null);
-					}
-					else
-					{
-						g.drawImage(createDropShadow(scaled), xMargin + 3, yMargin + 3, null);
-						g.drawImage(scaled, xMargin + 2, yMargin + 1, null);
-					}
+					drawIcon(g, primary, xMargin, yMargin, scaled);
 				}
             }
         }
         else
         {
-            g.setColor(primary.color);
-            g.fillRoundRect(xMargin + 4, yMargin + 4, toolHeight * 2 - 6, toolHeight * 2 - 6, 10, 10);
-            g.drawString(primary.shorthand, xMargin + textOffset - 1, yMargin + (getStringHeight(g) / 2) + (toolHeight) + 1);
-        }
+			setColorAndDrawBoxAndText(g, toolHeight, xMargin, yMargin, textOffset, primary);
+		}
         //draw secondary
 
         xMargin += toolMargin + toolHeight * 2;
@@ -273,23 +259,13 @@ public class ChartToolPanel extends JPanel implements MouseListener, MouseMotion
             if(!secondary.equals(PlayerAnimation.NOT_SET))
             {
                 BufferedImage scaled = getScaledImage(iconMap.get(secondary), (toolHeight * 2 - 2), (toolHeight * 2 - 2));
-                if (secondary.shouldFlip)
-                {
-                    g.drawImage(createFlipped(createDropShadow(scaled)), xMargin + 3, yMargin + 3, null);
-                    g.drawImage(createFlipped(scaled), xMargin + 2, yMargin + 1, null);
-                } else
-                {
-                    g.drawImage(createDropShadow(scaled), xMargin + 3, yMargin + 3, null);
-                    g.drawImage(scaled, xMargin + 2, yMargin + 1, null);
-                }
-            }
+				drawIcon(g, secondary, xMargin, yMargin, scaled);
+			}
         }
         else
         {
-            g.setColor(secondary.color);
-            g.fillRoundRect(xMargin + 4, yMargin + 4, toolHeight * 2 - 6, toolHeight * 2 - 6, 10, 10);
-            g.drawString(secondary.shorthand, xMargin + textOffset - 1, yMargin + (getStringHeight(g) / 2) + (toolHeight) + 1);
-        }
+			setColorAndDrawBoxAndText(g, toolHeight, xMargin, yMargin, textOffset, secondary);
+		}
 
         int index = 2;
         int yIndex = 0;
@@ -354,16 +330,8 @@ public class ChartToolPanel extends JPanel implements MouseListener, MouseMotion
                     if(!playerAnimation.equals(PlayerAnimation.NOT_SET))
                     {
                         BufferedImage scaled = getScaledImage(iconMap.get(playerAnimation), (toolHeight - 2), (toolHeight - 2));
-                        if (playerAnimation.shouldFlip)
-                        {
-                            g.drawImage(createFlipped(createDropShadow(scaled)), xOffset + 3, yOffset + 3, null);
-                            g.drawImage(createFlipped(scaled), xOffset + 2, yOffset + 1, null);
-                        } else
-                        {
-                            g.drawImage(createDropShadow(scaled), xOffset + 3, yOffset + 3, null);
-                            g.drawImage(scaled, xOffset + 2, yOffset + 1, null);
-                        }
-                    }
+						drawIcon(g, playerAnimation, xOffset, yOffset, scaled);
+					}
                 }
                 catch (Exception e)
                 {
@@ -391,7 +359,27 @@ public class ChartToolPanel extends JPanel implements MouseListener, MouseMotion
         repaint();
     }
 
-    private void setHoveredTool(int x, int y)
+	private void setColorAndDrawBoxAndText(Graphics2D g, int toolHeight, int xMargin, int yMargin, int textOffset, PlayerAnimation primary)
+	{
+		g.setColor(primary.color);
+		g.fillRoundRect(xMargin + 4, yMargin + 4, toolHeight * 2 - 6, toolHeight * 2 - 6, 10, 10);
+		g.drawString(primary.shorthand, xMargin + textOffset - 1, yMargin + (getStringHeight(g) / 2) + (toolHeight) + 1);
+	}
+
+	private void drawIcon(Graphics2D g, PlayerAnimation playerAnimation, int xOffset, int yOffset, BufferedImage scaled)
+	{
+		if (playerAnimation.shouldFlip)
+		{
+			g.drawImage(createFlipped(createDropShadow(scaled)), xOffset + 3, yOffset + 3, null);
+			g.drawImage(createFlipped(scaled), xOffset + 2, yOffset + 1, null);
+		} else
+		{
+			g.drawImage(createDropShadow(scaled), xOffset + 3, yOffset + 3, null);
+			g.drawImage(scaled, xOffset + 2, yOffset + 1, null);
+		}
+	}
+
+	private void setHoveredTool(int x, int y)
     {
         if (y > 16 && y < (16 + (config.chartScaleSize() * 2)))
         {
@@ -423,6 +411,12 @@ public class ChartToolPanel extends JPanel implements MouseListener, MouseMotion
         hoveredTool = NO_TOOL;
     }
 
+	public void setTool(int tool)
+	{
+		this.tool = tool;
+		drawPanel();
+	}
+
     private void setHoveredAttack(int x, int y)
     {
         int numberOfModes = 2 + tools.size();
@@ -452,22 +446,19 @@ public class ChartToolPanel extends JPanel implements MouseListener, MouseMotion
         if (hoveredAttack.equals(PlayerAnimation.EXCLUDED_ANIMATION))
         {
             if (SwingUtilities.isLeftMouseButton(e))
-            {
-                //if (tool == ADD_ATTACK_TOOL || tool == ADD_LINE_TOOL || tool == SELECTION_TOOL || tool == ADD_TEXT_TOOL || tool == ADD_AUTO_TOOL)
-                {
-                    tool = hoveredTool;
-                    parentFrame.setToolSelection(hoveredTool);
-                    if(tool == ADD_TEXT_TOOL)
-                    {
-                        setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
-                    }
-                    else
-                    {
-                        setCursor(Cursor.getDefaultCursor());
-                    }
-                    drawPanel();
-                }
-            }
+			{
+				tool = hoveredTool;
+				parentFrame.setToolSelection(hoveredTool);
+				if (tool == ADD_TEXT_TOOL)
+				{
+					setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
+				}
+				else
+				{
+					setCursor(Cursor.getDefaultCursor());
+				}
+				drawPanel();
+			}
             return;
         }
         if (SwingUtilities.isLeftMouseButton(e))

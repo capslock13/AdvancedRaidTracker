@@ -5,7 +5,8 @@ public enum ChartObjectType
 	ATTACK("Attacks"),
 	LINE("Lines"),
 	TEXT("Text"),
-	AUTO("Auto")
+	AUTO("Autos"),
+	THRALL("Thralls"),
 	;
 
 	public final String name;

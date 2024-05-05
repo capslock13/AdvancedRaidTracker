@@ -6,6 +6,7 @@ import com.advancedraidtracker.utility.RoomState;
 import com.advancedraidtracker.constants.RaidRoom;
 import com.advancedraidtracker.constants.TobIDs;
 
+import com.advancedraidtracker.utility.RoomUtil;
 import com.advancedraidtracker.utility.datautility.DataWriter;
 import com.advancedraidtracker.utility.maidenbloodtracking.BloodDamageToBeApplied;
 import com.advancedraidtracker.utility.maidenbloodtracking.BloodPositionWrapper;
@@ -132,7 +133,7 @@ public class MaidenHandler extends TOBRoomHandler
         if (roomStartTick != -1)
             sendTimeMessage("Wave 'Maiden phase 1' complete! Duration: ", p70 - roomStartTick);
         clog.addLine(MAIDEN_70S, String.valueOf(p70 - roomStartTick));
-        plugin.addDelayedLine(RaidRoom.MAIDEN, p70 - roomStartTick - 2, "70s");
+        plugin.addDelayedLine(RaidRoom.MAIDEN, p70 - roomStartTick, "70s");
 
     }
 
@@ -143,7 +144,7 @@ public class MaidenHandler extends TOBRoomHandler
         if (roomStartTick != -1)
             sendTimeMessage("Wave 'Maiden phase 2' complete! Duration: ", p50 - roomStartTick, p50 - p70);
         clog.addLine(MAIDEN_50S, String.valueOf(p50 - roomStartTick));
-        plugin.addDelayedLine(RaidRoom.MAIDEN, p50 - roomStartTick - 2, "50s");
+        plugin.addDelayedLine(RaidRoom.MAIDEN, p50 - roomStartTick, "50s");
     }
 
     public void proc30()
@@ -153,7 +154,7 @@ public class MaidenHandler extends TOBRoomHandler
         if (roomStartTick != -1)
             sendTimeMessage("Wave 'Maiden phase 3' complete! Duration: ", p30 - roomStartTick, p30 - p50);
         clog.addLine(MAIDEN_30S, String.valueOf(p30 - roomStartTick));
-        plugin.addDelayedLine(RaidRoom.MAIDEN, p30 - roomStartTick - 2, "30s");
+        plugin.addDelayedLine(RaidRoom.MAIDEN, p30 - roomStartTick, "30s");
     }
 
     public void endMaiden()
@@ -166,6 +167,8 @@ public class MaidenHandler extends TOBRoomHandler
         clog.addLine(ACCURATE_MAIDEN_END);
         plugin.addDelayedLine(RaidRoom.MAIDEN, client.getTickCount() - roomStartTick, "Dead");
         plugin.liveFrame.setRoomFinished(getName(), maidenDeathTick - roomStartTick);
+		plugin.lastSplits += "Maiden: " + RoomUtil.time(maidenDeathTick-roomStartTick) + "\n";
+		plugin.currentDurationSum += (maidenDeathTick-roomStartTick);
     }
 
     private boolean didAuto = false;
@@ -195,10 +198,12 @@ public class MaidenHandler extends TOBRoomHandler
                     }
                 }
             }
-        } else if (event.getActor().getAnimation() == DINHS_BULWARK_ANIMATION)
+        }
+		else if (event.getActor().getAnimation() == DINHS_BULWARK_ANIMATION)
         {
             dinhsers.add((Player) event.getActor());
-        } else if (event.getActor().getAnimation() == MAIDEN_AUTO_ANIMATION)
+        }
+		else if (event.getActor().getAnimation() == MAIDEN_AUTO_ANIMATION)
         {
             didAuto = true;
         }

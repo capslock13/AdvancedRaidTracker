@@ -33,6 +33,9 @@ public class ScabarasHandler extends TOARoomHandler
     int expectedEndTick = -1;
     private Point origin = null;
     private Point end = null;
+
+	//todo revisit/finish optimal puzzle time evaluation
+
     //bottom left end: +10x +1y <--- solo,  +10x -1y <-- team
     //top right end: +5x -7y, +8x -1y team
     //bottom right end +5x +5y <-- solo, +8x -1y team
@@ -43,13 +46,13 @@ public class ScabarasHandler extends TOARoomHandler
     //br origin 35, 27
     //bl origin 18, 28
 
-    private static final Map<String, Point> soloEndPointMap = new HashMap<String, Point>()
-    {{
-        put("18 40", new Point(28, 36));
-        put("35 40", new Point(40, 35));
-        put("18 28", new Point(28, 28));
-        put("35 27", new Point(40, 32));
-    }};
+    private static final Map<String, Point> soloEndPointMap = new HashMap<>()
+	{{
+		put("18 40", new Point(28, 36));
+		put("35 40", new Point(40, 35));
+		put("18 28", new Point(28, 28));
+		put("35 27", new Point(40, 32));
+	}};
 
     public ScabarasHandler(Client client, DataWriter clog, AdvancedRaidTrackerConfig config, AdvancedRaidTrackerPlugin plugin, TOAHandler handler)
     {

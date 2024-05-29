@@ -1876,7 +1876,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         {
             return;
         }
-		if(System.nanoTime()-lastRefresh < 20*1000000)
+		if(System.nanoTime()-lastRefresh < 20*1000000) //don't redraw more often than every 20ms
 		{
 			return;
 		}
@@ -2033,7 +2033,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 	private long lastHoverRefresh = 0;
     public void setTickHovered(int x, int y)
     {
-		if(System.nanoTime()-lastHoverRefresh < 20*1000000)
+		if(System.nanoTime()-lastHoverRefresh < 20*1000000) //don't recalculate hover more than once per 20ms
 		{
 			return;
 		}
@@ -2345,7 +2345,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                     }
                     else if(wasDragging)
                     {
-                        if(currentlyBeingHovered != null)
+                        if(currentlyBeingHovered != null) //if stopped dragging a text box, move it to align with nearest textbox axis
                         {
 							currentlyBeingHovered.point = new Point(currentlyBeingHovered.point.getX()+alignmentOffsetX, currentlyBeingHovered.point.getY()+alignmentOffsetY);
                         }
@@ -2357,7 +2357,7 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 				case ADD_THRALL_TOOL:
 					if(SwingUtilities.isLeftMouseButton(e))
 					{
-						addThrallBox(new ThrallOutlineBox(hoveredPlayer, hoveredTick, MAGE_THRALL));
+						addThrallBox(new ThrallOutlineBox(hoveredPlayer, hoveredTick, MAGE_THRALL)); //todo maybe give options for other color thralls?
 					}
 					else if(SwingUtilities.isRightMouseButton(e))
 					{
@@ -2649,6 +2649,21 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
 					actionHistory.push(new ChartAction(removedBoxes, ChartActionType.REMOVE_ELEMENT));
                 }
             }
+			synchronized (actions)
+			{
+				List<PlayerDidAttack> removedAttacks = new ArrayList<>();
+				for(PlayerDidAttack attack : actions.keySet())
+				{
+					if(attack.tick == tick && attack.player.equals(player))
+					{
+						removedAttacks.add(attack);
+					}
+				}
+				for(PlayerDidAttack attack : removedAttacks)
+				{
+					actions.remove(attack);
+				}
+			}
         }
         drawGraph();
     }
@@ -2725,15 +2740,16 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
             dragStartX = e.getX();
             dragStartY = e.getY();
         }
-        if(SwingUtilities.isMiddleMouseButton(e))
+        if(SwingUtilities.isMiddleMouseButton(e)) //middle mouse drag shifts x and y of viewport
         {
-            if (!isDragging)
+            if (!isDragging) //capture position at start of middle mouse drag
             {
                 lastScrollOffsetX = 0;
                 lastScrollOffsetY = currentScrollOffsetY;
                 lastStartTick = startTick;
                 lastEndTick = endTick;
-            } else
+            }
+			else //adjust offsets relative to captured drag position
             {
                 currentScrollOffsetY = lastScrollOffsetY + (dragStartY - e.getY());
                 currentScrollOffsetX = lastScrollOffsetX + (dragStartX - e.getX());
@@ -2745,15 +2761,15 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
                 drawGraph();
             }
         }
-        else if(SwingUtilities.isLeftMouseButton(e) && isShiftPressed())
+        else if(SwingUtilities.isLeftMouseButton(e) && isShiftPressed()) //shift drag to select ticks
         {
-            if(!isDragging)
+            if(!isDragging) //capture start player & tick
             {
                 selectionDragActive = true;
                 dragStartPlayer = hoveredPlayer;
                 dragStartTick = hoveredTick;
             }
-            else
+            else //currently dragging, keep track of position so on release can find the region to select
             {
                 activeDragX = e.getX();
                 activeDragY = e.getY();
@@ -2761,7 +2777,8 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         }
         else if(currentTool == ADD_TEXT_TOOL && currentlyBeingEdited == null && isOuterEdgeOfNearbyText && currentlyBeingHovered != null)
         {
-            setAlignmentMarkers(e.getX()-draggedTextOffsetX, e.getY()-draggedTextOffsetY);
+			//Dragging while text editing is active and no textbox is being edited, and is dragging a text box
+            setAlignmentMarkers(e.getX()-draggedTextOffsetX, e.getY()-draggedTextOffsetY); //set the alignment markers
             if(!isDragging)
             {
                 draggedTextOffsetX = e.getX()-currentlyBeingHovered.getPoint().getX();

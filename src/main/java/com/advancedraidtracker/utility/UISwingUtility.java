@@ -165,7 +165,8 @@ public class UISwingUtility //methods used to get components that override LAF
         try
         {
             darkCheckBox.setSelectedIcon(new ImageIcon(ImageIO.read(new File(RUNELITE_DIR.getAbsolutePath() + "test.png"))));
-        } catch (Exception e)
+        }
+		catch (Exception e)
         {
 
         }

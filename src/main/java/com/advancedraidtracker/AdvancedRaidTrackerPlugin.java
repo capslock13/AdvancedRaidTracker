@@ -1034,6 +1034,7 @@ public class AdvancedRaidTrackerPlugin extends Plugin
             }
             loggingIn = false;
         }
+
         handleBarraged();
         handleChinSpawns();
         wasPiping.clear();

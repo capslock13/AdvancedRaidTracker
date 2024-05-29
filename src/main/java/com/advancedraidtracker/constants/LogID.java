@@ -593,6 +593,7 @@ public enum LogID
             new ParseInstruction(SPLIT, WARDENS_TIME, WARDENS_ENRAGED_DURATION, WARDENS_ENRAGED_SPLIT),
             new ParseInstruction(SUM, WARDENS_P3_DURATION, WARDENS_UNTIL_ENRAGED_DURATION, WARDENS_ENRAGED_DURATION),
             new ParseInstruction(ROOM_END_FLAG),
+			new ParseInstruction(MANUAL_PARSE),
             "Wardens Finished", "Room Tick"),
     TOA_WARDENS_SKULLS_STARTED(1205, true, WARDENS,
             new ParseInstruction(MANUAL_PARSE),

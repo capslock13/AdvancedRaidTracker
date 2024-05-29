@@ -7,6 +7,7 @@ import java.lang.reflect.Type;
 
 public class JsonTypeAdapters
 {
+	//java 17 and later does not allow gson to use reflection to access private member fields so custom serializers are used
     public static class ColorDeserializer implements JsonDeserializer<Color>
     {
         @Override

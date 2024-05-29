@@ -108,7 +108,7 @@ public enum PlayerAnimation
     ZOMBIE_AXE("Zombie Axe", "ZBX", new Color(150, 0, 10), 5, new int[]{7004, 3852}, new int[]{}, new int[]{ItemID.ZOMBIE_AXE}, new int[]{}, 0),
     BLUE_MOON_SPEAR_AUTO("Blue Moon Spear", "bms", new Color(40, 100, 100), 5, new int[]{1711, 1712}, new int[]{}, new int[]{ItemID.BLUE_MOON_SPEAR}, new int[]{}, 0),
     BLUE_MOON_SPEAR_SPEC("Blue Moon spear Spec", "BMS", new Color(40, 100, 100), 5, new int[]{1710}, new int[]{}, new int[]{ItemID.BLUE_MOON_SPEAR}, new int[]{}, 50, true),
-    ELDER_MAUL("Elder Maul", "EM", new Color(100, 60, 60), 6, new int[]{7516}, new int[]{}, new int[]{ItemID.ELDER_MAUL, ItemID.ELDER_MAUL_OR}, new int[]{}, 0),
+    ELDER_MAUL("Elder Maul", "EM", new Color(100, 60, 60), 6, new int[]{7516}, new int[]{}, new int[]{ItemID.ELDER_MAUL, ItemID.ELDER_MAUL_OR}, new int[]{}, 0, true),
     ABYSSAL_DAGGER("Abyssal Dagger", "ad", new Color(20, 20, 20), 4, new int[]{3297, 3294}, new int[]{}, new int[]{ItemID.ABYSSAL_DAGGER, ItemID.ABYSSAL_DAGGER_P, ItemID.ABYSSAL_DAGGER_P_13269, ItemID.ABYSSAL_DAGGER_P_13271}, new int[]{}, 0, true),
     ABYSSAL_DAGGER_SPEC("Abyssal Dagger Spec", "AD", new Color(20, 20, 20), 4, new int[]{3300}, new int[]{}, new int[]{ItemID.ABYSSAL_DAGGER, ItemID.ABYSSAL_DAGGER_P, ItemID.ABYSSAL_DAGGER_P_13269, ItemID.ABYSSAL_DAGGER_P_13271}, new int[]{}, 25),
     KODAI_BOP("Kodai Bop", "f", new Color(50, 50, 170), 4, new int[]{414}, new int[]{}, new int[]{ItemID.KODAI_WAND}, new int[]{}, 0, true),
@@ -117,6 +117,7 @@ public enum PlayerAnimation
     BONE_DAGGER_SPEC("Bone Dagger Spec", "BD", new Color(150, 20, 20), 4, new int[]{4198}, new int[]{}, new int[]{ItemID.BONE_DAGGER, ItemID.BONE_DAGGER_P, ItemID.BONE_DAGGER_P_8876, ItemID.BONE_DAGGER_P_8878}, new int[]{}, 75),
     UNARMED("Unarmed", "???", new Color(0, 0, 0), 4, new int[]{422, 423}, new int[]{}, new int[]{-1}, new int[]{}, 0),
 	VENG_APPLIED("Veng Applied", "VA", new Color(0, 0, 0, 0), -1, new int[]{-3}, new int[]{}, new int[]{}, new int[]{}, 0),
+	ELDER_MAUL_SPEC("Elder Maul Spec", "EM", new Color(100, 60, 60), 6, new int[]{11124},new int[]{},new int[]{ItemID.ELDER_MAUL, ItemID.ELDER_MAUL_OR}, new int[]{}, 50),
 
 
     ;

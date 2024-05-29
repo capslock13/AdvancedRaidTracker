@@ -8,6 +8,7 @@ import com.advancedraidtracker.utility.RoomUtil;
 import com.advancedraidtracker.utility.datautility.DataPoint;
 import com.advancedraidtracker.utility.datautility.datapoints.LogEntry;
 import com.advancedraidtracker.utility.datautility.datapoints.Raid;
+import java.util.Date;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.util.Text;
 
@@ -156,6 +157,14 @@ public class Toa extends Raid
                             }
                         }
                     }
+					else if(entry.logEntry.equals(LogID.TOA_WARDENS_FINISHED))
+					{
+						Date end = new Date(entry.ts);
+						Long timeDifference = end.getTime()-getDate().getTime();
+						int ticks = (int)(timeDifference/600.0);
+						data.set(OVERALL_TIME, ticks);
+						data.set(TIME_OUTSIDE_ROOMS, get(OVERALL_TIME) - get(CHALLENGE_TIME)); //todo not accurate potentially?
+					}
                 }
             }
         } catch (Exception ignored)

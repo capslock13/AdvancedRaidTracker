@@ -11,6 +11,8 @@ import com.advancedraidtracker.ui.charts.ChartPanel;
 import com.advancedraidtracker.ui.charts.ChartSpecCalculatorPanel;
 import com.advancedraidtracker.ui.charts.chartelements.OutlineBox;
 import com.advancedraidtracker.utility.weapons.PlayerAnimation;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
@@ -203,6 +205,30 @@ public class ChartCreatorFrame extends BaseFrame implements ChartListener
 
         menuBar.add(fileMenu);
         setJMenuBar(menuBar);
+
+		Timer resizeTimer = new Timer(20, e ->
+		{
+			chart.setSize();
+		});
+
+		resizeTimer.setRepeats(false);
+
+		addComponentListener(new ComponentAdapter()
+		{
+			@Override
+			public void componentResized(ComponentEvent e)
+			{
+				super.componentResized(e);
+				if (resizeTimer.isRunning()) //redrawing on every resize event will cause severe stuttering, wait 20ms after stopped resizing
+				{
+					resizeTimer.restart();
+				} else
+				{
+					resizeTimer.start();
+				}
+				Component c = (Component) e.getSource();
+			}
+		});
 
         pack();
         tools.build();

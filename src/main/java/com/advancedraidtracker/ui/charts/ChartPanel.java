@@ -192,6 +192,13 @@ public class ChartPanel extends JPanel implements MouseListener, MouseMotionList
         createImage();
     }
 
+	public void setSize()
+	{
+		windowWidth = getWidth();
+		windowHeight = getHeight();
+		createImage();
+	}
+
     public void createImage()
     {
         if (isActive || !live)

@@ -71,9 +71,9 @@ import static net.runelite.api.Varbits.TOA_RAID_LEVEL;
 
 @Slf4j
 @PluginDescriptor(
-        name = "Advanced Raid Tracker",
-        description = "Tracking and statistics for Theatre of Blood",
-        tags = {"timers", "tob", "tracker", "time", "theatre", "analytics"}
+        name = "Advanced PVM Tracker",
+        description = "Tracking and statistics for various PVM activities",
+        tags = {"timers", "tob", "tracker", "time", "theatre", "analytics", "toa", "inferno", "colosseum", "col", "inf", "pvm"}
 )
 public class AdvancedRaidTrackerPlugin extends Plugin
 {

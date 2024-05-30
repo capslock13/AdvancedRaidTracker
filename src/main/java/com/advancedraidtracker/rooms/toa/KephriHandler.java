@@ -136,7 +136,7 @@ public class KephriHandler extends TOARoomHandler
                 if (player.getWorldLocation().distanceTo(wp) == 0)
                 {
                     //clog.addLine(LogID.TOA_KEPHRI_BOMB_TANKED, String.valueOf(client.getTickCount()-roomStartTick), player.getName());
-                    //log.info(player.getName() + " tanked a bomb");
+                    //log.info(player.getName() + " tanked a bomb"); //todo find a different way to determine this, off by a tick
                 }
             }
         }

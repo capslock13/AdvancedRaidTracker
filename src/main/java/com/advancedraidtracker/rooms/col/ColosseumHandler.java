@@ -306,7 +306,6 @@ public class ColosseumHandler extends RoomHandler
         if (message.getMessage().contains("Wave duration: "))
         {
             active = false;
-            log.info("setting inactive...");
             String[] messageSplit = message.getMessage().split(" ");
             if (messageSplit.length == 6)
             {

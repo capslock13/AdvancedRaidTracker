@@ -25,7 +25,7 @@ public class FilterPlayers extends FilterCondition
         stringValue = val;
     }
 
-    private boolean cleanContains(Raid data, String player) //todo test if this is necessary?
+    private boolean cleanContains(Raid data, String player)
     {
         for (String p : data.getPlayers())
         {

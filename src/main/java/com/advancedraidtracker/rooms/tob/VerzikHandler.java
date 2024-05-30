@@ -237,7 +237,6 @@ public class VerzikHandler extends TOBRoomHandler
 
         if (id == VERZIK_BECOMES_BAT)
         {
-            //log.info("Verzik dead from animation changed"); //todo why is this sometimes called?
             endP3();
         }
     }
@@ -382,12 +381,10 @@ public class VerzikHandler extends TOBRoomHandler
 		}
 		else
 		{
-			log.info("Before: " + plugin.lastSplits);
 			plugin.lastSplits = plugin.lastSplits.substring(0, plugin.lastSplits.lastIndexOf("\n"));
 			plugin.lastSplits = plugin.lastSplits.substring(0, plugin.lastSplits.lastIndexOf("\n"));
 			plugin.lastSplits += "\nVerzik: " + RoomUtil.time(verzikP3EndTick-roomStartTick);
 			plugin.lastSplits += "\n" + "Duration (Completion): " + RoomUtil.time(plugin.currentDurationSum + (verzikP3EndTick - roomStartTick));
-			log.info("After: " + plugin.lastSplits);
 		}
     }
 }

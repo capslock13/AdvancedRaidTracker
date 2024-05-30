@@ -230,7 +230,7 @@ public enum LogID
             new ParseInstruction(RAID_SPECIFIC),
             "Joined Raid After Start", "Room Name"),
     SPECTATE(99, true, ANY_TOB,
-            new ParseInstruction(AGNOSTIC), //todo make this raid specific
+            new ParseInstruction(AGNOSTIC),
             "Is Spectating"),
     //DEPRECATED_1(998, true, ANY_TOB, "DEPRECATED"),
     //DEPRECATED_2(999, true, ANY_TOB, "DEPRECATED"),
@@ -238,13 +238,13 @@ public enum LogID
     //DEPRECATED_BLOAT_HAND(975, false, BLOAT, "Bloat Hand", "Game Object ID", "RegionX", "RegionY", "Room Tick"),
     //DEPRECATED_BLOAT_DIRECTION(976, false, BLOAT, "Bloat Direction on instance creation", "Orientation (Runelite Angle)", "NPC Index"),
 
-    PARTY_COMPLETE(100, true, ANY, //todo
+    PARTY_COMPLETE(100, true, ANY,
             new ParseInstruction(AGNOSTIC),
             "Party Is Complete"),
-    PARTY_INCOMPLETE(101, true, ANY_TOB, //todo
+    PARTY_INCOMPLETE(101, true, ANY_TOB,
             new ParseInstruction(AGNOSTIC),
             "Party Is Not Complete"),
-    PARTY_ACCURATE_PREMAIDEN(102, true, ANY_TOB, //todo
+    PARTY_ACCURATE_PREMAIDEN(102, true, ANY_TOB,
             new ParseInstruction(AGNOSTIC),
             "Party Is Complete Prior To Maiden"),
 
@@ -353,16 +353,16 @@ public enum LogID
             new ParseInstruction(MAP, THRALL_DESPAWNS),
             "Thrall Despawn", "Player", "Room Tick"),
     DAWN_SPEC(487, false, VERZIK,
-            new ParseInstruction(MANUAL_PARSE), //todo revisit this and thrall above
+            new ParseInstruction(MANUAL_PARSE),
             "Dawn Spec", "Player", "Room Tick Damage Applied"),
     DAWN_DAMAGE(488, false, VERZIK,
-            new ParseInstruction(MANUAL_PARSE), //todo revisit this and thrall above
+            new ParseInstruction(MANUAL_PARSE),
             "Dawn Damage", "Damage", "Room Tick"),
     MAIDEN_PLAYER_DRAINED(530, true, MAIDEN,
             new ParseInstruction(INCREMENT, MAIDEN_MELEE_DRAINS),
             "Player Drained", "Player", "Room Tick"),
     MAIDEN_AUTO(531, true, MAIDEN,
-            new ParseInstruction(MANUAL_PARSE), //todo
+            new ParseInstruction(MANUAL_PARSE),
             "Maiden Auto", "Player targeted", "Room Tick"),
     UPDATE_HP(576, false, ANY_TOB,
             new ParseInstruction(MANUAL_PARSE),

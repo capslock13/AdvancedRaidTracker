@@ -48,10 +48,8 @@ public class LogEntry
                 try
                 {
                     returnVal = Integer.parseInt(values.get(value));
-                } catch (Exception e)
+                } catch (Exception ignored)
                 {
-                    log.info("Value: " + value + " Failed with " + logEntry.getId() + " and string: " + String.join(",", lines));
-                    log.info("Values array: " + String.join(",", values.keySet()));
                 }
                 return returnVal;
             }

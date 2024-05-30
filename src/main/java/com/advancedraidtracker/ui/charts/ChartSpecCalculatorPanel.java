@@ -73,14 +73,17 @@ public class ChartSpecCalculatorPanel extends JPanel implements ChartListener
 				}
 				if(spec == -5)
 				{
-					log.info(player + " needs to preach and start between tick " + (157-box.tick) + " and " + (157-firstReduction));
+					//todo future use
+					//log.info(player + " needs to preach and start between tick " + (157-box.tick) + " and " + (157-firstReduction));
 				}
 				else if(spec < 0)
 				{
-					log.info(player + "went below 0 spec on tick " + box.tick);
+					//todo future use
+					//log.info(player + "went below 0 spec on tick " + box.tick);
 				}
 			}
-			log.info(player + " ended with " + spec + " spec");
+			//todo future use
+			//log.info(player + " ended with " + spec + " spec");
 		}
 	}
 }

@@ -1,7 +1,5 @@
 package com.advancedraidtracker.constants;
 
-import lombok.RequiredArgsConstructor;
-
 public enum ParseType
 {
     UNUSED(0),

@@ -109,18 +109,14 @@ public class ScabarasHandler extends TOARoomHandler
         if (origin != null)
         {
             int totalTicks = getTicksToMove(origin, points.get(0));
-            //log.info("start -> 1: " + totalTicks);
             for (int i = 0; i < 4; i++)
             {
                 int move = getTicksToMove(points.get(i), points.get(i + 1));
-                //log.info((i+1) + " to " + (i+2) + " added " + move + " ticks");
                 totalTicks += move;
             }
             int move = getTicksToMove(points.get(4), end);
             totalTicks += move;
-            //log.info("5 to end added " + move + " ticks");
             expectedEndTick = startTick + totalTicks;
-            //log.info("expected to end on " + expectedEndTick);
         }
     }
 
@@ -132,7 +128,6 @@ public class ScabarasHandler extends TOARoomHandler
         if (points.size() == 5)
         {
             solvePuzzle();
-            //log.info("5 found");
             points.clear();
         }
         if (!solved && expectedEndTick >= client.getTickCount())
@@ -141,13 +136,13 @@ public class ScabarasHandler extends TOARoomHandler
             {
                 if (player.getWorldLocation().getRegionX() == end.getX() && player.getWorldLocation().getRegionY() == end.getY())
                 {
-                    //log.info(client.getTickCount()-expectedEndTick + " ticks lost");
+                    //log.info(client.getTickCount()-expectedEndTick + " ticks lost"); //todo future use
                 }
             }
         }
         if (!active && roomStartTick == -1)
         {
-            if (RoomUtil.playerPastLine(14162, 12, true, client, false, true)) //todo fix magic numbers
+            if (RoomUtil.playerPastLine(14162, 12, true, client, false, true))
             {
                 roomStartTick = client.getTickCount();
                 active = true;
@@ -171,7 +166,7 @@ public class ScabarasHandler extends TOARoomHandler
             Tile gTile = client.getScene().getTiles()[client.getPlane()][lp.getSceneX()][lp.getSceneY()];
             if (gTile.getGroundObject() != null && gTile.getGroundObject().getId() == 45340)
             {
-                //reset puzzle
+                //reset puzzle todo future use
             }
         }
     }
@@ -186,7 +181,6 @@ public class ScabarasHandler extends TOARoomHandler
                 if (player.getWorldLocation().getRegionX() == origin.getX() && player.getWorldLocation().getRegionY() == origin.getY())
                 {
                     startTick = client.getTickCount();
-                    //log.info("starting: " + client.getTickCount());
                     return;
                 }
             }
@@ -201,13 +195,12 @@ public class ScabarasHandler extends TOARoomHandler
         {
             origin = new Point(wp.getRegionX(), wp.getRegionY() - 1);
             end = soloEndPointMap.get(wp.getRegionX() + " " + wp.getRegionY());
-            //log.info("start: " + origin.getX() + ", " + origin.getY());
-            //log.info("end: " + end.getX() + " , " + end.getY());
+			//todo future use
         }
         if (objectSpawned.getGameObject().getId() == 45341)
         {
             points.add(new Point(wp.getRegionX(), wp.getRegionY()));
-            //log.info("adding: " + wp.getRegionX() + ", " + wp.getRegionY());
+			//todo future use
         }
     }
 

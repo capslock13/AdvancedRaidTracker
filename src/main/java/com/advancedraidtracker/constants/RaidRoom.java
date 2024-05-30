@@ -3,8 +3,6 @@ package com.advancedraidtracker.constants;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.advancedraidtracker.rooms.inf.InfernoHandler.roomMap;
-
 public enum RaidRoom
 {
     MAIDEN(0, "Maiden"), BLOAT(1, "Bloat"), NYLOCAS(2, "Nylocas"), SOTETSEG(3, "Sotetseg"), XARPUS(4, "Xarpus"), VERZIK(5, "Verzik"), UNKNOWN(-1, "Unknown"), ANY_TOB(6, "Any TOB"),
@@ -92,27 +90,6 @@ public enum RaidRoom
         return this.equals(ANY_TOA) || this.equals(ANY_TOB) || this.equals(ANY) || this.equals(ALL);
     }
 
-    public RaidType getRaidType()
-    {
-        if (isTOB())
-        {
-            return RaidType.TOB;
-        } else if (isTOA())
-        {
-            return RaidType.TOA;
-        } else if (isCOX())
-        {
-            return RaidType.COX;
-        } else if (isInferno())
-        {
-            return RaidType.INFERNO;
-        } else if (isColo())
-        {
-            return RaidType.COLOSSEUM;
-        }
-        return RaidType.ALL;
-    }
-
     public boolean isColo()
     {
         return this.equals(COLOSSEUM) || this.equals(WAVE_1_COL) || this.equals(WAVE_2_COL) || this.equals(WAVE_3_COL) || this.equals(WAVE_4_COL)
@@ -162,26 +139,9 @@ public enum RaidRoom
     public boolean isCOX()
     {
         return this.value >= TEKTON.value && this.value <= OLM.value;
-        //return this.equals(TEKTON) || this.equals(CRABS) || this.equals(ICE_DEMON) || this.equals(SHAMANS) || this.equals(VANGUARDS) || this.equals(THIEVING) ||
-        //      this.equals(VESPULA) || this.equals(TIGHT_ROPE) || this.equals(GUARDIANS) || this.equals(VASA_NISTIRIO) || this.equals(SKELETAL_MYSTICS) || this.equals(MUTTADILES) || this.equals(OLM);
     }
 
-    public static Map<RaidRoom, Integer> firstTickMap = Map.of(
-            MAIDEN, 5,
-            BLOAT, 2,
-            NYLOCAS, 5,
-            SOTETSEG, 5, //todo mazes...
-            XARPUS, 0, //todo ye ye
-            VERZIK, 0 //p1
-
-    );
-
-    public int getFirstAttackTick(int scale)
-    {
-        return 1;
-    }
-
-    public static Map<String, RaidRoom> roomCache = new HashMap<>();
+    public static final Map<String, RaidRoom> roomCache = new HashMap<>();
 
     public static RaidRoom getRoom(String name)
     {

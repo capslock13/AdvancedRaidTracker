@@ -175,92 +175,52 @@ public class UISwingUtility //methods used to get components that override LAF
         return darkCheckBox;
     }
 
+	public static JComboBox<String> getThemedComboBox()
+	{
+		JComboBox<String> comboBox = new JComboBox<>();
+		setComboBox(comboBox);
+		return comboBox;
+	}
     public static JComboBox<String> getThemedComboBox(String[] options)
-    {
-        JComboBox<String> comboBox = new JComboBox<>(options);
-        comboBox.setRenderer(new DefaultListCellRenderer()
-        {
-            @Override
-            public Component getListCellRendererComponent(JList list, Object value,
-                                                          int index, boolean isSelected, boolean cellHasFocus)
-            {
-                super.getListCellRendererComponent(list, value, index, isSelected,
-                        cellHasFocus);
-                if (isSelected)
-                {
-                    setBackground(computeBlendColor(config.fontColor(), config.primaryDark(), 128));
-                } else
-                {
-                    setBackground(config.primaryMiddle());
-                }
-                setForeground(config.fontColor());
-                return this;
-            }
-        });
-        comboBox.setBorder(BorderFactory.createLineBorder(config.primaryMiddle()));
-        comboBox.setBackground(config.primaryMiddle());
-        comboBox.setForeground(config.fontColor());
-        comboBox.setOpaque(true);
-        return comboBox;
-    }
+	{
+		JComboBox<String> comboBox = new JComboBox<>(options);
+		setComboBox(comboBox);
+		return comboBox;
+	}
 
-    public static JComboBox<String> getThemedComboBox()
-    {
-        JComboBox<String> comboBox = new JComboBox<>();
-        comboBox.setRenderer(new DefaultListCellRenderer()
-        {
-            @Override
-            public Component getListCellRendererComponent(JList list, Object value,
-                                                          int index, boolean isSelected, boolean cellHasFocus)
-            {
-                super.getListCellRendererComponent(list, value, index, isSelected,
-                        cellHasFocus);
-                if (cellHasFocus)
-                {
-                    setBackground(computeBlendColor(config.fontColor(), config.primaryDark(), 128));
-                } else
-                {
-                    setBackground(config.primaryMiddle());
-                }
-                setForeground(config.fontColor());
-                return this;
-            }
-        });
-        comboBox.setBorder(BorderFactory.createLineBorder(config.primaryMiddle()));
-        comboBox.setBackground(config.primaryMiddle());
-        comboBox.setForeground(config.fontColor());
-        comboBox.setOpaque(true);
-        return comboBox;
-    }
+	public static JComboBox<Integer> getThemedComboBox(Integer[] options)
+	{
+		JComboBox<Integer> comboBox = new JComboBox<>(options);
+		setComboBox(comboBox);
+		return comboBox;
+	}
 
-    public static JComboBox<Integer> getThemedComboBox(Integer[] options)
-    {
-        JComboBox<Integer> comboBox = new JComboBox<>(options);
-        comboBox.setRenderer(new DefaultListCellRenderer()
-        {
-            @Override
-            public Component getListCellRendererComponent(JList list, Object value,
-                                                          int index, boolean isSelected, boolean cellHasFocus)
-            {
-                super.getListCellRendererComponent(list, value, index, isSelected,
-                        cellHasFocus);
-                if (cellHasFocus)
-                {
-                    setBackground(computeBlendColor(config.fontColor(), config.primaryDark(), 128));
-                } else
-                {
-                    setBackground(config.primaryMiddle());
-                }
-                setForeground(config.fontColor());
-                return this;
-            }
-        });
-        comboBox.setBorder(BorderFactory.createLineBorder(config.primaryMiddle()));
-        comboBox.setBackground(config.primaryMiddle());
-        comboBox.setForeground(config.fontColor());
-        comboBox.setOpaque(true);
-        return comboBox;
-    }
+	public static void setComboBox(JComboBox<?> comboBox)
+	{
+		comboBox.setRenderer(new DefaultListCellRenderer()
+		{
+			@Override
+			public Component getListCellRendererComponent(JList list, Object value,
+														  int index, boolean isSelected, boolean cellHasFocus)
+			{
+				super.getListCellRendererComponent(list, value, index, isSelected,
+					cellHasFocus);
+				if (cellHasFocus)
+				{
+					setBackground(computeBlendColor(config.fontColor(), config.primaryDark(), 128));
+				} else
+				{
+					setBackground(config.primaryMiddle());
+				}
+				setForeground(config.fontColor());
+				return this;
+			}
+		});
+		comboBox.setBorder(BorderFactory.createLineBorder(config.primaryMiddle()));
+		comboBox.setBackground(config.primaryMiddle());
+		comboBox.setForeground(config.fontColor());
+		comboBox.setOpaque(true);
+	}
 
     public static JComboBox<String> getActionListenCheckBox(String[] options, ActionListener actionListener)
     {
@@ -458,9 +418,7 @@ public class UISwingUtility //methods used to get components that override LAF
 
     public static JLabel getThemedLabel()
     {
-        JLabel label = new JLabel();
-        label.setForeground(config.fontColor());
-        return label;
+		return getThemedLabel("");
     }
 
     public static JButton getThemedButton(String text)
@@ -494,7 +452,20 @@ public class UISwingUtility //methods used to get components that override LAF
 
     public static JTable getThemedTable()
     {
-        JTable table = new JTable();
+		return getThemedTable(null, null);
+    }
+
+    public static JTable getThemedTable(Object[][] obj, String[] strs)
+    {
+        JTable table;
+		if(obj == null || strs == null)
+		{
+			table = new JTable();
+		}
+		else
+		{
+			table = new JTable(obj, strs);
+		}
         table.getTableHeader().setBackground(config.primaryMiddle());
         table.getTableHeader().setOpaque(true);
         table.setForeground(config.fontColor());
@@ -504,17 +475,6 @@ public class UISwingUtility //methods used to get components that override LAF
         return table;
     }
 
-    public static JTable getThemedTable(Object[][] obj, String[] strs)
-    {
-        JTable table = new JTable(obj, strs);
-        table.getTableHeader().setBackground(config.primaryMiddle());
-        table.getTableHeader().setOpaque(true);
-        table.setForeground(config.fontColor());
-        table.getTableHeader().setForeground(config.fontColor());
-        table.setBackground(config.primaryDark());
-        table.setOpaque(true);
-        return table;
-    }
 
 
     public static JScrollPane getThemedScrollPane(JComponent component)
@@ -592,34 +552,12 @@ public class UISwingUtility //methods used to get components that override LAF
 
     public static JCheckBox getThemedCheckBox(String name)
     {
-        JCheckBox checkBox = new JCheckBox(name);
-        checkBox.setBackground(config.primaryMiddle());
-        try
-        {
-            checkBox.setSelectedIcon(new ImageIcon(ImageIO.read(new File(RUNELITE_DIR.getAbsolutePath() + "test.png"))));
-        } catch (Exception e)
-        {
-
-        }
-        checkBox.setForeground(config.fontColor());
-        checkBox.setOpaque(false);
-        return checkBox;
+		return getThemedCheckBox(name, false);
     }
 
     public static JCheckBox getThemedCheckBox()
     {
-        JCheckBox checkBox = new JCheckBox();
-        checkBox.setOpaque(false);
-        checkBox.setBackground(config.primaryMiddle());
-        try
-        {
-            checkBox.setSelectedIcon(new ImageIcon(ImageIO.read(new File(RUNELITE_DIR.getAbsolutePath() + "test.png"))));
-        } catch (Exception e)
-        {
-
-        }
-        checkBox.setForeground(config.fontColor());
-        return checkBox;
+		return getThemedCheckBox("", false);
     }
 
     public static JTabbedPane getThemedTabbedPane()

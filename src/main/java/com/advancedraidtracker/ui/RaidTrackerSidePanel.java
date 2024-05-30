@@ -49,14 +49,10 @@ public class RaidTrackerSidePanel extends PluginPanel
     RaidTrackerSidePanel(AdvancedRaidTrackerPlugin plugin, AdvancedRaidTrackerConfig config, ItemManager itemManager, ClientThread clientThread, ConfigManager configManager, SpriteManager spriteManager)
     {
         UISwingUtility.setConfig(config);
-        this.getParent().setBackground(config.primaryDark());
-        setBackground(config.primaryDark());
-        setForeground(config.primaryDark());
-        setOpaque(true);
         this.clientThread = clientThread;
         this.configManager = configManager;
         this.spriteManager = spriteManager;
-        pleaseWait = getThemedLabel("Parsing Files...", SwingConstants.CENTER);
+        pleaseWait = new JLabel("Parsing Files...", SwingConstants.CENTER);
         add(pleaseWait);
         new Thread(() ->
         {
@@ -77,15 +73,15 @@ public class RaidTrackerSidePanel extends PluginPanel
 
     private void buildComponents()
     {
-        JPanel container = getThemedPanel();
-        JPanel primaryContainer = getThemedPanel();
+        JPanel container = new JPanel();
+        JPanel primaryContainer = new JPanel();
 
         primaryContainer.setLayout(new GridLayout(0, 1));
 
-        JButton viewRaidsButton = getThemedButton("View All Raids");
-        JButton refreshRaidsButton = getThemedButton("Refresh");
+        JButton viewRaidsButton = new JButton("View All Raids");
+        JButton refreshRaidsButton = new JButton("Refresh");
 
-        JButton tableRaidsButton = getThemedButton("View Saved Raids From Table");
+        JButton tableRaidsButton = new JButton("View Saved Raids From Table");
 
         viewRaidsButton.addActionListener(
                 al ->
@@ -132,18 +128,18 @@ public class RaidTrackerSidePanel extends PluginPanel
                 }
         );
 
-        JButton livePanelButton = getThemedButton("View Live Room");
+        JButton livePanelButton = new JButton("View Live Room");
         livePanelButton.addActionListener(al ->
                 plugin.openLiveFrame());
 
-        JButton chartCreatorButton = getThemedButton("Create A Chart");
+        JButton chartCreatorButton = new JButton("Create A Chart");
         chartCreatorButton.addActionListener(al ->
         {
             ChartCreatorFrame chartCreator = new ChartCreatorFrame(config, itemManager, clientThread, configManager, spriteManager);
             chartCreator.open();
         });
 
-        JButton copyLastSplitsButton = getThemedButton("Copy Last Splits");
+        JButton copyLastSplitsButton = new JButton("Copy Last Splits");
         copyLastSplitsButton.addActionListener(al ->
         {
             String lastSplits = plugin.getLastSplits();
@@ -159,7 +155,7 @@ public class RaidTrackerSidePanel extends PluginPanel
             }
         });
 
-        raidCountLabel = getThemedLabel("", SwingConstants.CENTER);
+        raidCountLabel = new JLabel("", SwingConstants.CENTER);
         updateRaidCountLabel();
         primaryContainer.add(raidCountLabel);
         primaryContainer.add(refreshRaidsButton);
@@ -173,24 +169,6 @@ public class RaidTrackerSidePanel extends PluginPanel
         loadRaidsTable = new JTable(model)
         {
             @Override
-            public Color getBackground()
-            {
-                return config.primaryDark();
-            }
-
-            @Override
-            public Color getForeground()
-            {
-                return config.fontColor();
-            }
-
-            @Override
-            public boolean isOpaque()
-            {
-                return true;
-            }
-
-            @Override
             public Class<?> getColumnClass(int column)
             {
                 if (column == 0)
@@ -201,9 +179,8 @@ public class RaidTrackerSidePanel extends PluginPanel
             }
         };
 
-        loadRaidsTable.getTableHeader().setBackground(config.primaryLight());
         loadRaidsTable.setPreferredScrollableViewportSize(loadRaidsTable.getPreferredScrollableViewportSize());
-        JScrollPane scrollPane = getThemedScrollPane(loadRaidsTable);
+        JScrollPane scrollPane = new JScrollPane(loadRaidsTable);
         scrollPane.setPreferredSize(new Dimension(225, scrollPane.getPreferredSize().height));
         container.add(primaryContainer);
         container.add(scrollPane);

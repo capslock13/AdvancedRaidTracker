@@ -2,6 +2,7 @@ package com.advancedraidtracker.ui;
 
 import com.advancedraidtracker.constants.RaidRoom;
 import com.advancedraidtracker.constants.RaidType;
+import static com.advancedraidtracker.constants.RaidType.COX;
 import com.advancedraidtracker.utility.RoomUtil;
 import com.advancedraidtracker.utility.datautility.DataPoint;
 import lombok.Getter;
@@ -37,6 +38,10 @@ public class DataPointMenu
 
         for (RaidType raidType : RaidType.values())
         {
+			if(raidType == COX)
+			{
+				continue;
+			}
             if (raidType.equals(RaidType.ALL))
             {
                 JMenu menu = createMenu(raidType.name);

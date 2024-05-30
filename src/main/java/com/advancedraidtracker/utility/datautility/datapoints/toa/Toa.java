@@ -29,6 +29,7 @@ import static com.advancedraidtracker.utility.datautility.DataPoint.VERZIK_TIME;
 @Slf4j
 public class Toa extends Raid
 {
+	public Date overallTimeStart;
     public Toa(Path filepath, List<LogEntry> raidData)
     {
         super(filepath, raidData);
@@ -160,10 +161,25 @@ public class Toa extends Raid
 					else if(entry.logEntry.equals(LogID.TOA_WARDENS_FINISHED))
 					{
 						Date end = new Date(entry.ts);
-						Long timeDifference = end.getTime()-getDate().getTime();
+						long timeDifference;
+						if(overallTimeStart != null)
+						{
+							timeDifference = end.getTime()-overallTimeStart.getTime();
+						}
+						else
+						{
+							timeDifference = end.getTime() - getDate().getTime();
+						}
 						int ticks = (int)(timeDifference/600.0);
-						data.set(OVERALL_TIME, ticks);
-						data.set(TIME_OUTSIDE_ROOMS, get(OVERALL_TIME) - get(CHALLENGE_TIME)); //todo not accurate potentially?
+						data.set(OVERALL_TIME, ticks+1);
+						data.set(TIME_OUTSIDE_ROOMS, get(OVERALL_TIME) - get(CHALLENGE_TIME));
+					}
+					if(entry.logEntry.equals(LogID.ENTERED_NEW_TOA_REGION))
+					{
+						if(!entry.getValue("Region").equals("TOA Nexus") && overallTimeStart == null)
+						{
+							overallTimeStart = new Date(entry.ts);
+						}
 					}
                 }
             }

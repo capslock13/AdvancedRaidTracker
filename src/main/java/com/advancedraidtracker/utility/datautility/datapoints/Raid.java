@@ -134,7 +134,7 @@ public abstract class Raid
     protected Raid(Path filepath, List<LogEntry> raidData)
     {
         this.raidData = raidData;
-        date = new Date(0L); //todo figure out why dates dont parse properly on some raids
+        date = new Date(0L);
         this.filepath = filepath;
         this.players = new LinkedHashSet<>();
         this.lineManager = new LineManager(this);

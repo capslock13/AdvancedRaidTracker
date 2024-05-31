@@ -68,7 +68,7 @@ public class Colo extends Raid
                     currentRoom = "Col Wave " + highestWaveStarted;
                 } else if (entry.logEntry.equals(LogID.COLOSSEUM_WAVE_12_END))
                 {
-                    data.set(CHALLENGE_TIME, entry.getFirstInt());
+                    data.set(CHALLENGE_TIME, entry.getFirstInt()+1);
                     int val = data.get(CHALLENGE_TIME) - get(COLOSSEUM_WAVE_12_SPLIT);
                     data.set(DataPoint.COLOSSEUM_WAVE_12_DURATION, val);
                     completed = true;

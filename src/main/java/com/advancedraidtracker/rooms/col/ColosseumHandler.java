@@ -131,7 +131,7 @@ public class ColosseumHandler extends RoomHandler
     private Multimap<Integer, Integer> offeredInvos = ArrayListMultimap.create();
     public final static Map<Integer, String> invoMap = new HashMap<>()
     {{
-        put(0, "Scorpion");
+        put(0, "Mantimayhem");
         put(1, "Reentry");
         put(2, "Bees");
         put(3, "Volatility");

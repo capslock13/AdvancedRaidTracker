@@ -50,7 +50,8 @@ public class Inf extends Raid
                 else if (entry.logEntry.equals(LogID.INFERNO_TIMER_STARTED))
                 {
                     startTime = entry.getValueAsInt("Client Tick");
-                } else if (entry.logEntry.equals(LogID.INFERNO_WAVE_ENDED))
+                }
+				else if (entry.logEntry.equals(LogID.INFERNO_WAVE_ENDED))
                 {
                     if (entry.getValueAsInt("Wave Number") == 69)
                     {

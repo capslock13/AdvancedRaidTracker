@@ -55,7 +55,8 @@ public class ChartData
         {
             for (PlayerDidAttack attack : getAttacks(room))
             {
-                int cd = AnimationDecider.getWeapon(attack.animation, attack.spotAnims, attack.projectile, attack.weapon).attackTicks;
+				PlayerAnimation playerAnimation = AnimationDecider.getWeapon(attack.animation, attack.spotAnims, attack.projectile, attack.weapon);
+				int cd = playerAnimation.attackTicks;
                 if (attack.tick + cd > lastAttack && cd > 0)
                 {
                     lastAttack = attack.tick + cd;
@@ -126,6 +127,13 @@ public class ChartData
 
     public void addAttack(RaidRoom room, PlayerDidAttack attack)
     {
+		for(PlayerDidAttack checkedAttack : attacks.values())
+		{
+			if(checkedAttack.tick == attack.tick && checkedAttack.player.equals(attack.player) && checkedAttack.animation.equals(attack.animation))
+			{
+				return;
+			}
+		}
         attacks.put(room, attack);
     }
 

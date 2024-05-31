@@ -76,7 +76,8 @@ public class ItemReference
                     "kodai",
                     "ice",
                     "ward",
-                    "dawnbringer"
+                    "dawnbringer",
+					"ancient sceptre"
             }
     };
     public static final int MELEE = 1;

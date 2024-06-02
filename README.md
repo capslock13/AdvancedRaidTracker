@@ -1,5 +1,5 @@
 # Advanced Raid Tracker
-This plugin tracks various advanced statistics and data about your theatre of blood runs.
+This plugin tracks various advanced statistics and data about various PVM activities.
 
 ## User Interface
 ### Side Bar
@@ -104,7 +104,7 @@ You can save a combination of filters by hitting 'save' in the filter options pa
 
 ![](imgs/savefilters.jpg)
 
-These filters are saved to .runelite/theatretracker/filters. You can view and load saved filter combinations with the 'load' button in filter options:
+These filters are saved to .runelite/advancedraidtracker/misc-dir/filters. You can view and load saved filter combinations with the 'load' button in filter options:
 
 ![](imgs/loadfilters.jpg)
 

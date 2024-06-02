@@ -78,7 +78,7 @@ public class InfernoHandler extends RoomHandler
                 clog.addLine(LogID.INFERNO_WAVE_STARTED, String.valueOf(currentWave), String.valueOf(client.getTickCount()), "Inf Wave " + currentWave);
                 if (getLastRelevantSplit() > lastWaveCheckPoint)
                 {
-                    plugin.lastSplits += "Wave: " + (currentWave) + ", Split: " + RoomUtil.time(client.getTickCount() - waveStartTicks.get(0)) + " (+" + RoomUtil.time(client.getTickCount() - waveStartTicks.get(lastWaveCheckPoint)) + ")\n";
+                    plugin.lastSplits += "Wave: " + (currentWave) + ", Split: " + RoomUtil.time(client.getTickCount() - waveStartTicks.get(0)) + " (+" + RoomUtil.time(client.getTickCount() - waveStartTicks.get(lastWaveCheckPoint - ((lastWaveCheckPoint == 1) ? 1 : 0))) + ")\n";
                     lastWaveCheckPoint = getLastRelevantSplit();
                 }
             }

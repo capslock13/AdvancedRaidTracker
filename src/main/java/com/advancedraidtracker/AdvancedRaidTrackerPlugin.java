@@ -12,6 +12,7 @@ import com.advancedraidtracker.ui.charts.LiveChart;
 import com.advancedraidtracker.ui.RaidTrackerSidePanel;
 import com.advancedraidtracker.ui.charts.chartelements.OutlineBox;
 import com.advancedraidtracker.utility.*;
+import com.advancedraidtracker.utility.datautility.DataReader;
 import com.advancedraidtracker.utility.datautility.DataWriter;
 import com.advancedraidtracker.utility.thrallvengtracking.*;
 import com.advancedraidtracker.utility.wrappers.PlayerCopy;
@@ -203,6 +204,7 @@ public class AdvancedRaidTrackerPlugin extends Plugin
             clog.addLine(LEFT_TOB, String.valueOf(client.getTickCount() - currentRoom.roomStartTick), currentRoom.getName());
         }
         clientToolbar.removeNavigation(navButtonPrimary);
+		DataReader.parsedFiles.clear();
     }
 
     public void openLiveFrame()
@@ -284,6 +286,10 @@ public class AdvancedRaidTrackerPlugin extends Plugin
         deferredTick = 0;
         currentPlayers = new ArrayList<>();
         playersAttacked = new ArrayList<>();
+		if(client.getLocalPlayer() != null)
+		{
+			clog.setName(client.getLocalPlayer().getName());
+		}
     }
 
     @Subscribe

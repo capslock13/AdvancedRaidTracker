@@ -389,7 +389,7 @@ public class DataWriter
 
     public void writeFile()
     {
-        if (config.writeToLog())
+        if (config.writeToLog() && !activeUsername.isEmpty())
         {
             try
             {

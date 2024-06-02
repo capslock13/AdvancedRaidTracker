@@ -25,7 +25,7 @@ public class StatisticGatherer //todo this whole class is a mess
         double count = 0;
         for (Raid d : data)
         {
-            //total += d.getTimeSum(); //todo uhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
+            total += d.getTimeSum();
             count++;
         }
         return total / count;

@@ -41,6 +41,8 @@ public class ItemReference
                     "tanzanite",
 					"magma",
 					"goblin paint cannon",
+					"strength",
+					"combat bracelet"
             },
             {
                     "masori",

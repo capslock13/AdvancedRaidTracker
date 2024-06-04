@@ -127,7 +127,7 @@ public class ChartData
 
     public void addAttack(RaidRoom room, PlayerDidAttack attack)
     {
-		for(PlayerDidAttack checkedAttack : attacks.values())
+		for(PlayerDidAttack checkedAttack : attacks.get(room))
 		{
 			if(checkedAttack.tick == attack.tick && checkedAttack.player.equals(attack.player) && checkedAttack.animation.equals(attack.animation))
 			{

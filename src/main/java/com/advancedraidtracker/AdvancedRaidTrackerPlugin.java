@@ -7,6 +7,7 @@ import com.advancedraidtracker.rooms.cox.*;
 import com.advancedraidtracker.rooms.inf.InfernoHandler;
 import com.advancedraidtracker.rooms.toa.*;
 import com.advancedraidtracker.rooms.tob.*;
+import com.advancedraidtracker.ui.charts.ChartIO;
 import com.advancedraidtracker.ui.charts.ChartTheme;
 import com.advancedraidtracker.ui.charts.LiveChart;
 import com.advancedraidtracker.ui.RaidTrackerSidePanel;
@@ -19,6 +20,7 @@ import com.advancedraidtracker.utility.wrappers.PlayerCopy;
 import com.advancedraidtracker.utility.wrappers.PlayerDidAttack;
 import com.advancedraidtracker.utility.wrappers.QueuedPlayerAttackLessProjectiles;
 import com.advancedraidtracker.ui.charts.chartelements.ThrallOutlineBox;
+import com.google.gson.Gson;
 import com.google.inject.Inject;
 import com.google.inject.Provides;
 import javax.swing.SwingUtilities;
@@ -229,6 +231,9 @@ public class AdvancedRaidTrackerPlugin extends Plugin
 
     private RaidTrackerSidePanel timersPanelPrimary;
 
+	@Inject
+	private Gson gson;
+
     @Override
     protected void startUp() throws Exception
     {
@@ -248,6 +253,7 @@ public class AdvancedRaidTrackerPlugin extends Plugin
         liveFrame = new LiveChart(config, itemManager, clientThread, configManager, spriteManager);
         playersTextChanged = new ArrayList<>();
         clog = new DataWriter(config);
+		ChartIO.gson = gson;
 
         final BufferedImage icon = ImageUtil.loadImageResource(AdvancedRaidTrackerPlugin.class, "/com/advancedraidtracker/icon.png");
         navButtonPrimary = NavigationButton.builder().tooltip("Advanced Raid Tracker").icon(icon).priority(10).panel(timersPanelPrimary).build();

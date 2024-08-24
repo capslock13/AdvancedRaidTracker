@@ -62,7 +62,8 @@ public class ItemReference
                     "darts",
                     "quiver",
                     "eclipse",
-                    "ralos"
+                    "ralos",
+					"dizana"
             },
             {
                     "ancestral",

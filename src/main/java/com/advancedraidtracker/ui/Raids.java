@@ -690,7 +690,15 @@ public class Raids extends BaseFrame implements UpdateableWindow
             case "Status":
                 return raid.getRoomStatus();
             case "Raid":
-                return raid.getRaidType().colorName();
+				if(raid instanceof Tob)
+				{
+					Tob tob = (Tob) raid;
+					if(tob.isHardMode)
+					{
+						return "<html><font color='#FF0000'>" + "HMT";
+					}
+				}
+				return raid.getRaidType().colorName();
             case "Players":
                 return (String.join(",", raid.getPlayers()).replaceAll(String.valueOf((char) 160), String.valueOf(' '))); //todo replace with Text method
             case "Spectate":

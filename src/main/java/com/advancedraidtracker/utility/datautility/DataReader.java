@@ -219,25 +219,25 @@ public class DataReader //todo move any methods that read files to here. I belie
      */
     public static List<Raid> getAllRaids()
     {
-        try (Stream<Path> subLogFiles = Files.walk(Paths.get(PLUGIN_DIRECTORY)))
-        {
-            return subLogFiles
-                    .filter(file -> !file.toAbsolutePath().startsWith(Paths.get(PLUGIN_DIRECTORY, "misc-dir").toString())
-                            && !Files.isDirectory(file)
-                            && !parsedFiles.contains(file.getFileName().toString()))
-                    .map(file ->
-                    {
-                        Raid raid = DataReader.getRaid(file);
-                        if (raid != null)
-                        {
-                            parsedFiles.add(file.getFileName().toString());
-                        }
-                        return raid;
-                    })
-                    .filter(Objects::nonNull)
-                    .sorted(Comparator.comparing(Raid::getDate))
-                    .collect(Collectors.toList());
-        }
+		try (Stream<Path> subLogFiles = Files.walk(Paths.get(PLUGIN_DIRECTORY)))
+		{
+			return subLogFiles
+				.filter(file -> (!(file.toAbsolutePath().startsWith(Paths.get(PLUGIN_DIRECTORY, "misc-dir").toString()) || file.toAbsolutePath().startsWith(Paths.get(PLUGIN_DIRECTORY, "dpsutility").toString())))
+					&& !Files.isDirectory(file)
+					&& !parsedFiles.contains(file.getFileName().toString()))
+				.map(file ->
+				{
+					Raid raid = DataReader.getRaid(file);
+					if (raid != null)
+					{
+						parsedFiles.add(file.getFileName().toString());
+					}
+					return raid;
+				})
+				.filter(Objects::nonNull)
+				.sorted(Comparator.comparing(Raid::getDate))
+				.collect(Collectors.toList());
+		}
         catch (Exception e)
         {
             e.printStackTrace();

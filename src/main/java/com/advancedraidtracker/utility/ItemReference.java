@@ -39,6 +39,7 @@ public class ItemReference
                     "keris",
                     "barrows",
                     "tanzanite",
+                    "rancour",
 					"magma",
 					"goblin paint cannon",
 					"strength",

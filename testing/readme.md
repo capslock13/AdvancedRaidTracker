@@ -22,7 +22,7 @@ Select which branch you're using, expand the 'remote' menu option:
 
 ![](resources/5.jpg)
 
-Select data-extended -> checkout
+Select advanced-features -> checkout
 
 ![](resources/6.jpg)
 

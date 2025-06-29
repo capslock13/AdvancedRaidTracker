@@ -1,5 +1,7 @@
 package com.advancedraidtracker.utility.weapons;
 
+import net.runelite.api.ItemID;
+
 import java.awt.*;
 
 public enum WeaponAttack
@@ -44,7 +46,16 @@ public enum WeaponAttack
     THRALL_CAST("Thrall Cast", "TC", new Color(20, 65, 187), -1),
     BLADE_OF_SAELDOR("Blade of Saeldor", "BS", new Color(67, 10, 45), 4),
     FANG("Osmumten's Fang", "OF", new Color(10, 10, 100), 5),
+
+    SULPHUR_BLADES("Sulphur Blades", "SUL", new Color(180, 20, 40), 4),
+    ELDER_MAUL_SPEC("Elder Maul Spec", "EM", new Color(100, 60, 60), 6),
+    ELDER_MAUL("Elder Maul", "EM", new Color(100, 60, 60), 6),
+    GLAIVE_AUTO("Glaive Auto", "g", new Color(0, 70, 0), 6),
+    GLAIVE_SPEC("Glaive Spec", "G", new Color(0, 70, 0), 6),
+    DUAL_MAUCUAHUITL("Dual Maucuahuitl", "DMC", new Color(180, 30, 60), 4),
+    
     TSOTD("Toxic Staff of the Dead", "TS", new Color(70, 10, 10), 4),
+
 
 
     ;

@@ -35,6 +35,10 @@ public class ItemReference
                     "torture",
                     "serpentine helm",
                     "barrows",
+                    "rancour",
+                    "oathplate",
+                    "sulphur",
+                    "macuahuitl"
             },
             {
                     "masori",
@@ -46,7 +50,9 @@ public class ItemReference
                     "pegasian",
                     "buckler",
                     "chinchompa",
-                    "vambraces"
+                    "vambraces",
+                    "ralos",
+                    "dizana"
             },
             {
                     "ancestral",
@@ -62,7 +68,8 @@ public class ItemReference
                     "kodai",
                     "ice",
                     "ward",
-                    "dawnbringer"
+                    "dawnbringer",
+                    "ancient sceptre"
             }
     };
 

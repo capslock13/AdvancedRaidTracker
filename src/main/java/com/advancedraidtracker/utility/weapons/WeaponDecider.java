@@ -33,6 +33,7 @@ public class WeaponDecider
                     weaponUsed = WeaponAttack.BLOWPIPE;
                 }
                 break;
+            case 11430:
             case 1167:
                 if (spotAnims.stream().anyMatch(p -> p.equalsIgnoreCase("1540")))
                 {
@@ -131,6 +132,24 @@ public class WeaponDecider
                 {
                     weaponUsed = WeaponAttack.ZCB_SPEC;
                 }
+                break;
+            case 2068:
+                weaponUsed = WeaponAttack.SULPHUR_BLADES;
+                break;
+            case 10989:
+                weaponUsed = WeaponAttack.DUAL_MAUCUAHUITL;
+                break;
+            case 7516:
+                weaponUsed = WeaponAttack.ELDER_MAUL;
+                break;
+            case 11124:
+                weaponUsed = WeaponAttack.ELDER_MAUL_SPEC;
+                break;
+            case 10923:
+                weaponUsed = WeaponAttack.GLAIVE_AUTO;
+                break;
+            case 10914:
+                weaponUsed = WeaponAttack.GLAIVE_SPEC;
                 break;
             case 393:
                 weaponUsed = WeaponAttack.CLAW_SCRATCH;

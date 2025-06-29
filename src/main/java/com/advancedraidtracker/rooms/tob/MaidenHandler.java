@@ -27,9 +27,9 @@ import static com.advancedraidtracker.utility.RoomUtil.crossedLine;
 
 import com.advancedraidtracker.utility.wrappers.MaidenCrab;
 import net.runelite.api.kit.KitType;
+import net.runelite.client.game.ItemEquipmentStats;
 import net.runelite.client.game.ItemManager;
-import net.runelite.http.api.item.ItemEquipmentStats;
-import net.runelite.http.api.item.ItemStats;
+import net.runelite.client.game.ItemStats;
 
 @Slf4j
 public class MaidenHandler extends RoomHandler
@@ -232,7 +232,7 @@ public class MaidenHandler extends RoomHandler
         };
         for(int item : wornItems)
         {
-            ItemStats itemStats = itemManager.getItemStats(item, false);
+            ItemStats itemStats = itemManager.getItemStats(item);
             if(itemStats != null)
             {
                 ItemEquipmentStats itemEquipmentStats = itemStats.getEquipment();

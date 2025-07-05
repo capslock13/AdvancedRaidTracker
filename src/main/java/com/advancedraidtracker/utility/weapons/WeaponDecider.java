@@ -56,7 +56,12 @@ public class WeaponDecider
                 }
                 break;
             case 1979:
+            case 10092:
                 weaponUsed = WeaponAttack.FREEZE; //todo add lowercase if bad weapon
+                break;
+            case 1978:
+            case 10091:
+                weaponUsed = WeaponAttack.BLITZ;
                 break;
             case 8056:
                 weaponUsed = WeaponAttack.SCYTHE;

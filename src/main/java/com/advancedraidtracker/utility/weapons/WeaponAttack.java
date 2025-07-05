@@ -26,6 +26,7 @@ public enum WeaponAttack
     CHIN("Chinchompa", "CC", new Color(0, 130, 0), 3),
     WHIP("Tent Whip", "TW", new Color(10, 70, 80), 4),
     FREEZE("Freeze", "F", new Color(50, 50, 170), 5),
+    BLITZ("Blitz/Rush", "BR", new Color(50, 50, 170), 5),
     DAWN_SPEC("Dawnbringer Spec", "DB", new Color(10, 100, 150), 4),
     DAWN_AUTO("Dawnbringer Auto", "db", new Color(10, 100, 150), 4),
     CLAW_SCRATCH("Claw Scratch", "c", new Color(76, 89, 1), 4),

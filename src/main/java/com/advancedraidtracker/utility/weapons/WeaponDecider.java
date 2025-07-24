@@ -33,6 +33,15 @@ public class WeaponDecider
                     weaponUsed = WeaponAttack.BLOWPIPE;
                 }
                 break;
+            case 12397:
+                weaponUsed = WeaponAttack.EYE_OF_AYAK;
+                break;
+            case 12394:
+                weaponUsed = WeaponAttack.EYE_OF_AYAK_SPEC;
+                break;
+            case 12342:
+                weaponUsed = WeaponAttack.EARTHBOUND_TACPATL;
+                break;
             case 11430:
             case 1167:
                 if (spotAnims.stream().anyMatch(p -> p.equalsIgnoreCase("1540")))

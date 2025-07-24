@@ -54,6 +54,10 @@ public enum WeaponAttack
     GLAIVE_AUTO("Glaive Auto", "g", new Color(0, 70, 0), 6),
     GLAIVE_SPEC("Glaive Spec", "G", new Color(0, 70, 0), 6),
     DUAL_MAUCUAHUITL("Dual Maucuahuitl", "DMC", new Color(180, 30, 60), 4),
+
+    EYE_OF_AYAK("Eye of Ayak", "AY", new Color(30, 120, 130), 3),
+    EYE_OF_AYAK_SPEC("Eye of Ayak Spec", "AYS", new Color(30, 120, 130), 5),
+    EARTHBOUND_TACPATL("Earthbound Tacpatl", "TAC", new Color(180, 20, 40), 4),
     
     TSOTD("Toxic Staff of the Dead", "TS", new Color(70, 10, 10), 4),
 

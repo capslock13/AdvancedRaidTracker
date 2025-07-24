@@ -38,7 +38,9 @@ public class ItemReference
                     "rancour",
                     "oathplate",
                     "sulphur",
-                    "macuahuitl"
+                    "macuahuitl",
+                    "tacpatl",
+                    "avernic treads"
             },
             {
                     "masori",
@@ -52,7 +54,8 @@ public class ItemReference
                     "chinchompa",
                     "vambraces",
                     "ralos",
-                    "dizana"
+                    "dizana",
+                    "avernic treads"
             },
             {
                     "ancestral",
@@ -69,7 +72,10 @@ public class ItemReference
                     "ice",
                     "ward",
                     "dawnbringer",
-                    "ancient sceptre"
+                    "ancient sceptre",
+                    "ayak",
+                    "confliction",
+                    "avernic treads"
             }
     };
 
